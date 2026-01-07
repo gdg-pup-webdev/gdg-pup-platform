@@ -23,6 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   console.log("Rendering RootLayout");
+  throw new Error("Test error in RootLayout"); 
   return (
     <html lang="en">
       <body
