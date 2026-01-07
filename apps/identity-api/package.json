@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node dist/index.js",
     "test": "vitest run",
     "generate:types": "supabase gen types typescript --project-id wyrtawquejbdedxsdtwz > src/types/database.types.ts",
