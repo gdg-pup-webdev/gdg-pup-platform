@@ -37,7 +37,8 @@ const NexusApiHealthCheckCard = () => {
 
       const result = await callEndpoint(
         configs.nexusApiBaseUrl,
-        nexusApiContract.health.get, 
+        nexusApiContract.health.get,
+        {}
       );
 
       await Promise.resolve(
