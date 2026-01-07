@@ -16,18 +16,7 @@ export const nexusApiRoutes = createRoute({
       routes: createRoutes({
         get: createEndpoint({
           method: "GET",
-          request: {
-            params: z.object({
-              userId: z.string(),
-            }),
-            query: z.object({
-              page: z.number().optional(),
-              size: z.number().optional(),
-            }),
-            body: z.object({
-              data: z.string(),
-            }),
-          },
+          request: {},
           response: {
             200: z.object({
               status: z.string(),

@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "npm run build --workspace=@packages/api-typing && npm run build --workspace=@packages/webdev-api-contracts --workspace=@packages/nexus-api-contracts --workspace=@packages/identity-api-contracts"
+    "build-packages": "npm run build --workspace=@packages/api-typing --workspace=@packages/webdev-api-contracts --workspace=@packages/nexus-api-contracts --workspace=@packages/identity-api-contracts",
+    "postinstall": "npm run build-packages"
   }
 }

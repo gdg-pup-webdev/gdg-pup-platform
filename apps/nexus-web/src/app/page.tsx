@@ -37,12 +37,7 @@ const NexusApiHealthCheckCard = () => {
 
       const result = await callEndpoint(
         configs.nexusApiBaseUrl,
-        nexusApiContract.health.get,
-        {
-          params: { userId: "test-user" },
-          query: {},
-          body: { data: "test-data" },
-        }
+        nexusApiContract.health.get, 
       );
 
       await Promise.resolve(
