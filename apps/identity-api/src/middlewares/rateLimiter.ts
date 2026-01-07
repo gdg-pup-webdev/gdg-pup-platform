@@ -1,4 +1,4 @@
-import { ServerError } from "@/classes/ServerError.js";
+import { ServerError } from "../classes/ServerError.js";
 import { rateLimit } from "express-rate-limit";
 
 export const rateLimiter = rateLimit({

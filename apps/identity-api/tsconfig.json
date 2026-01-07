@@ -13,9 +13,6 @@
     "types": ["node"],
     "sourceMap": true,
     "baseUrl": "./",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "declaration": true, // Generates .d.ts files
     "declarationMap": true // Allows jumping to definition from consumer
   },

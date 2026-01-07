@@ -1,9 +1,9 @@
 import express from "express";
 import { setupLoader } from "./loaders/setup.loader.js";
 import { parsersLoader } from "./loaders/parse.loader.js";
-import { routesLoader } from "./loaders/routes.loader.js";
 import { errorHandlerLoader } from "./loaders/errorHandlers.loader.js";
 import { configs } from "./configs/configs.js";
+import { routesLoader } from "./loaders/routes.loader.js";
 
 const app = express();
 const port = configs.port;
@@ -15,10 +15,7 @@ setupLoader(app);
 parsersLoader(app);
 
 // load routes
-// routesLoader(app);
-app.use("/", (req, res) => {
-  res.send("Welcome to Identity API");
-});
+routesLoader(app);
 
 // error handlers
 errorHandlerLoader(app);
