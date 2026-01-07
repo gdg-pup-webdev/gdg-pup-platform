@@ -7,6 +7,7 @@ export class HealthCheckController {
   getHealthCheck = createExpressController(
     nexusApiContract.health.get,
     async ({ input, output, res, req }) => {
+      
       return output(200, {
         status: "success",
         message: "Nexus API: Health check successful",

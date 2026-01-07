@@ -1,10 +1,11 @@
 import { createExpressController } from "@packages/api-typing";
 import { identityApiContract } from "@packages/identity-api-contracts";
+import { RequestHandler } from "express";
 
 export class HealthCheckController {
   constructor() {}
 
-  getHealthCheck = createExpressController(
+  getHealthCheck : RequestHandler = createExpressController(
     identityApiContract.health.get,
     async ({ input, output, res, req }) => {
       return output(200, {

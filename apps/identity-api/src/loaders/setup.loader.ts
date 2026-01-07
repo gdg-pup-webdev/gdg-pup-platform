@@ -1,7 +1,7 @@
 import { Express } from "express";
 import { loggerMiddleware } from "../middlewares/logger.middleware.js";
 import { rateLimiter } from "../middlewares/rateLimiter.js";
-import { configs } from "src/configs/configs.js";
+import { configs } from "../configs/configs.js";
 import cors from "cors";
 
 export const setupLoader = (app: Express) => {
