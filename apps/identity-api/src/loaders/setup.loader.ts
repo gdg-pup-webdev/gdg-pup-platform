@@ -6,12 +6,12 @@ import { configs } from "@/configs/configs.js";
 
 export const setupLoader = (app: Express) => {
   // CORS config
-  app.use(
-    cors({
-      origin: [configs.clientBaseUrl || ""],
-      credentials: true,
-    })
-  );
+  // app.use(
+  //   cors({
+  //     origin: [configs.clientBaseUrl || ""],
+  //     credentials: true,
+  //   })
+  // );
 
   app.use(loggerMiddleware.pino);
 
