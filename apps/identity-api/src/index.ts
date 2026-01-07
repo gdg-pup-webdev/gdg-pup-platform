@@ -1,6 +1,6 @@
 import express from "express";
 import { setupLoader } from "./loaders/setup.loader.js";
-import { parsersLoader } from "./loaders/parse.loader.js";
+import { parsersLoader } from "./loaders/parser.loader.js";
 import { errorHandlerLoader } from "./loaders/errorHandlers.loader.js";
 import { configs } from "./configs/configs.js";
 import { routesLoader } from "./loaders/routes.loader.js";

@@ -1,7 +1,7 @@
 {
   "name": "nexus-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",

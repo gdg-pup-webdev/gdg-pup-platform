@@ -4,7 +4,7 @@ import {
   HealthCheckController,
 } from "./healthCheck.controller.js";
 
-export class HealthCheckRoute {
+export class HealthCheckRouter {
   constructor(
     private controller: HealthCheckController = healthCheckControllerImport
   ) {}
@@ -16,4 +16,4 @@ export class HealthCheckRoute {
   }
 }
 
-export const healthCheckRoute = new HealthCheckRoute();
+export const healthCheckRouter = new HealthCheckRouter();
