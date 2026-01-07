@@ -1,7 +1,11 @@
 "use client";
 
+import { configs } from "@/configs/servers.config";
 import { callEndpoint } from "@packages/api-typing";
-import { identityApiContract, IdentityApiTypes } from "@packages/identity-api-contracts";
+import {
+  identityApiContract,
+  IdentityApiTypes,
+} from "@packages/identity-api-contracts";
 import { nexusApiContract, NexusApiTypes } from "@packages/nexus-api-contracts";
 import React from "react";
 
@@ -9,7 +13,7 @@ const HomePage = () => {
   return (
     <>
       <div className="w-full h-screen flex flex-col gap-8 justify-center items-center">
-        <div className="text-3xl font-bold">Nexus Web</div>
+        <div className="text-8xl font-bold">Nexus Web</div>
         <div className="flex flex-row gap-4">
           <NexusApiHealthCheckCard />
           <IdentityApiHealthCheckCard />
@@ -29,8 +33,9 @@ const NexusApiHealthCheckCard = () => {
   const handleNexusApiHealthCheck = async () => {
     try {
       setLoading(true);
+      setError(null);
       const result = await callEndpoint(
-        "http://localhost:8000/",
+        configs.nexusApiBaseUrl,
         nexusApiContract.health.get,
         {}
       );
@@ -97,8 +102,9 @@ const IdentityApiHealthCheckCard = () => {
   const handleIdentityApiHealthCheck = async () => {
     try {
       setLoading(true);
+      setError(null);
       const result = await callEndpoint(
-        "http://localhost:8100/",
+        configs.identityApiBaseUrl,
         identityApiContract.health.get,
         {}
       );

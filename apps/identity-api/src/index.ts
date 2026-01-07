@@ -1,47 +1,26 @@
-import express from "express"; 
-import { globalErrorHandler } from "./middlewares/error.middleware.js";
-import { loggerMiddleware } from "./middlewares/logger.middleware.js";
-import { rateLimiter } from "./middlewares/rateLimiter.js";
-import cors from "cors";
-import { healthCheckRoute } from "./modules/healthCheck/healthCheck.route.js";
+import express from "express";
+import { setupLoader } from "./loaders/setup.loader.js";
+import { parsersLoader } from "./loaders/parse.loader.js";
+import { routesLoader } from "./loaders/routes.loader.js";
+import { errorHandlerLoader } from "./loaders/errorHandlers.loader.js";
+import { configs } from "./configs/configs.js";
 
 const app = express();
-const port = process.env.PORT || 8100;
+const port = configs.port;
 
-// CORS config
-app.use(
-  cors({
-    origin: [
-      process.env.DEV_MODE === "true" && "http://localhost:3000",
-      process.env.CLIENT_URL!,
-    ],
-    credentials: true,
-  })
-);
-
-// Cors config
-// app.use(
-//   cors({
-//     origin: ["http://localhost:3000"],
-//     credentials: true,
-//   })
-// );
-
-app.use(loggerMiddleware.pino);
-
-// Rate limiting
-app.use(rateLimiter);
+// setup api
+setupLoader(app);
 
 // Parsing body
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.set("query parser", "extended");
- 
-// Health check
-app.use("/api/health", healthCheckRoute.getRouter());
+parsersLoader(app);
 
-app.use(globalErrorHandler);
+// load routes
+routesLoader(app);
 
+// error handlers
+errorHandlerLoader(app);
+
+// listen
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });

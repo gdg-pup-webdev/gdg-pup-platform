@@ -9,7 +9,7 @@ export class HealthCheckController {
     async ({ input, output, res, req }) => {
       return output(200, {
         status: "success",
-        message: "Health check successful",
+        message: "Identity API: Health check successful",
       });
     }
   );
