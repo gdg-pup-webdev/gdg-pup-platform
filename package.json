@@ -1,0 +1,11 @@
+{
+  "name": "gdg-webdev-platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "postinstall": "npm run build --workspace=@packages/api-typing && npm run build --workspace=@packages/webdev-api-contracts"
+  }
+}
