@@ -6,7 +6,7 @@ import cors from "cors";
 import { healthCheckRoute } from "./modules/healthCheck/healthCheck.route.js";
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8100;
 
 // CORS config
 app.use(
