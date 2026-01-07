@@ -8,7 +8,7 @@ export const setupLoader = (app: Express) => {
   // CORS config
   app.use(
     cors({
-      origin: [configs.clientBaseUrl || ""],
+      origin: [configs.clientBaseUrl || "http://localhost:3000"],
       credentials: true,
     })
   );
