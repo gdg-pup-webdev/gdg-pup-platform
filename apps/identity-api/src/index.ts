@@ -15,7 +15,10 @@ setupLoader(app);
 parsersLoader(app);
 
 // load routes
-routesLoader(app);
+// routesLoader(app);
+app.use("/", (req, res) => {
+  res.send("Welcome to Identity API");
+});
 
 // error handlers
 errorHandlerLoader(app);
