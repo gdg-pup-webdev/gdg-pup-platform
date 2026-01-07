@@ -1,5 +1,5 @@
 {
-  "name": "webdev-api",
+  "name": "nexus-api",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -18,7 +18,7 @@
   "description": "",
   "dependencies": { 
     "@packages/api-typing": "^1.0.0",
-    "@packages/webdev-api-contracts": "^1.0.0",
+    "@packages/nexus-api-contracts": "^1.0.0",
     "@supabase/supabase-js": "^2.86.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

@@ -4,7 +4,7 @@ import {
   questionService as defaultQuestionService,
   QuestionService,
 } from "./question.service.js"; 
-import { createExpressController } from "@packages/api-typing";
+import { createExpressController } from "@packages/api-typing"; 
 import { webdevApiContract } from "@packages/webdev-api-contracts";
 
 export class QuestionSystemController {

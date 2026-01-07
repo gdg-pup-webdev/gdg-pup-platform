@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "webdev-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint"
   },
-  "dependencies": {
+  "dependencies": { 
     "@packages/api-typing": "^1.0.0",
     "@packages/webdev-api-contracts": "^1.0.0",
     "@supabase/supabase-js": "^2.89.0",
