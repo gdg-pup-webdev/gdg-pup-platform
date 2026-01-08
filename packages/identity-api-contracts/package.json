@@ -4,21 +4,16 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
-  "files": [
-    "dist"
-  ],
   "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
     "build": "tsc && tsc-alias",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "gen-types:supabase": "supabase gen types typescript --project-id wyrtawquejbdedxsdtwz > src/types/supabase.types.ts",
-    "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/schemas/supabase.schema.ts",
-    "gen-types": "npm run gen-types:supabase && npm run gen-types:zod"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "description": "API types for the project",
+  "description": "",
   "dependencies": {
-    "express": "^5.2.1",
     "supazod": "^4.5.0",
     "zod": "^4.3.2"
   },
@@ -28,6 +23,7 @@
     "supabase": "^2.70.5",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "tsx": "^4.21.0"
   }
 }
