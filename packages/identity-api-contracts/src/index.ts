@@ -6,7 +6,7 @@ import {
   createRoutes,
 } from "@packages/api-typing";
 import { z } from "zod";
-import { SchemaFactory } from "./schemaFactory.utils.js";
+import { SchemaFactory } from "@/schemaFactory.utils.js";
 
 export const identityApiRoutes = createRoute({
   path: "/api",

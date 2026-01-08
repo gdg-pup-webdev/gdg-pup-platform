@@ -41,9 +41,9 @@ const NexusApiHealthCheckCard = () => {
         {}
       );
 
-      await Promise.resolve(
-        new Promise((resolve) => setTimeout(resolve, 1000))
-      );
+      // await Promise.resolve(
+      //   new Promise((resolve) => setTimeout(resolve, 1000))
+      // );
 
       if (result.status === 200) {
         setRes(result.body);
@@ -110,9 +110,9 @@ const IdentityApiHealthCheckCard = () => {
         {}
       );
 
-      await Promise.resolve(
-        new Promise((resolve) => setTimeout(resolve, 1000))
-      );
+      // await Promise.resolve(
+      //   new Promise((resolve) => setTimeout(resolve, 1000))
+      // );
 
       if (result.status === 200) {
         setRes(result.body);
