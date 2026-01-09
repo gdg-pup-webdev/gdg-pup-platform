@@ -31,6 +31,21 @@ export namespace SchemaFactory {
       });
     };
 
+    export const list = <T extends z.ZodTypeAny>(dataSchema: T) => {
+      return z.object({
+        status: z.string(),
+        message: z.string(),
+        data: dataSchema.array(),
+        meta: z.object({
+          totalRecords: z.number(),
+          pageSize: z.number(),
+          currentPage: z.number(),
+          totalPages: z.number(),
+        }),
+      });
+    };
+
+
     export const error = () => {
       return z.object({
         status: z.string(),
