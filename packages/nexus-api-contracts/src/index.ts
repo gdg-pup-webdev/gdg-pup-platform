@@ -2,13 +2,14 @@ import {
   ApiTypes,
   createContract,
   createEndpoint,
+  createExpressController,
   createRoute,
   createRoutes,
 } from "@packages/api-typing";
 import { z } from "zod";
-import { SchemaFactory } from "./schemaFactory.utils.js";
+import { SchemaFactory } from "./schemaFactory.utils.js"; 
 
-export const nexusApiRoutes = createRoute({
+const nexusApiRoutes = createRoute({
   path: "/api",
   routes: createRoutes({
     health: createRoute({
@@ -30,5 +31,5 @@ export const nexusApiRoutes = createRoute({
   }),
 });
 
-export const nexusApiContract = createContract(nexusApiRoutes);
-export type NexusApiTypes = ApiTypes<typeof nexusApiRoutes>;
+export const Contract = createContract(nexusApiRoutes); 
+export type * as Models from "./models/index.js";

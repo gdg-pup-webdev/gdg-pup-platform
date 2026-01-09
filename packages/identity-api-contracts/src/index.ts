@@ -32,3 +32,5 @@ export const identityApiRoutes = createRoute({
 
 export const identityApiContract = createContract(identityApiRoutes);
 export type IdentityApiTypes = ApiTypes<typeof identityApiRoutes>;
+
+// identityApiContract.health.get.

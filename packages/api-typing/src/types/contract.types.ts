@@ -134,7 +134,7 @@ export type ContractDefinition<T extends RouteType> = {
   [K in keyof T["routes"]]: T["routes"][K] extends RouteType
     ? ContractDefinition<T["routes"][K]> 
     : T["routes"][K] extends EndpointType
-      ? T["routes"][K] // 👈 RETURN THE ENDPOINT (With Schemas), NOT THE INFERRED DATA
+      ? T["routes"][K] & { path: string } // 👈 RETURN THE ENDPOINT (With Schemas), NOT THE INFERRED DATA
       : never;
 };
 

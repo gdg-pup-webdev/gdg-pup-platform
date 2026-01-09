@@ -13,6 +13,8 @@ type FetchOptions = Omit<RequestInit, "body" | "method"> & {
 // Helper: Combine Zod Inputs + Fetch Options
 type ClientArgs<T extends EndpointType> = InferRequestInput<T> & FetchOptions;
 
+
+
 export const callEndpoint = async <T extends EndpointType>(
   baseUrl: string,
   endpoint: T,
