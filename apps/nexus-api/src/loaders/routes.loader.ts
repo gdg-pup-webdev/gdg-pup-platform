@@ -6,6 +6,7 @@ import { articleRouterInstance } from "@/modules/articleSystem/articleSystem.rou
 import { eventSystemRouterInstance } from "@/modules/eventSystem/evenSystem.route.js";
 import { resourceSystemRouterInstance } from "@/modules/resourceSystem/resourceSystem.route.js";
 import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js";
+import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
 
 export const routesLoader = (app: Express) => {
   app.use("/api/article-system", articleRouterInstance.getRotuer());
@@ -14,11 +15,15 @@ export const routesLoader = (app: Express) => {
   app.use("/api/leaderboard", leaderboardSystemRouterInstance.getRouter());
   app.use("/api/resource-system", resourceSystemRouterInstance.getRouter());
   app.use("/api/users", userSystemRouterInstance.getRouter());
+  app.use(
+    "/api/user-resource-system",
+    userResourceSystemRouterInstance.getRouter()
+  );
 
   /**
    * TESTING ROUTES
    */
-  app.use("/api/test", testIncrementWalletPoints);
+  app.use("/api/test", checkTokens);
 };
 
 /**
@@ -35,4 +40,13 @@ const testIncrementWalletPoints: RequestHandler = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
   return res.status(200).json({ data });
+};
+
+/**
+ * check parsed tokens
+ */
+const checkTokens: RequestHandler = async (req, res) => {
+  const supabaseToken = req.supabaseAccessToken;
+  const googleToken = req.googleAccessToken;
+  return res.status(200).json({ supabaseToken, googleToken });
 };

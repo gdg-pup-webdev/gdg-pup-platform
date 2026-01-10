@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase.js";
+import { Models } from "@packages/nexus-api-contracts";
 
 export class ProjectRepository {
   constructor() {}
@@ -8,6 +9,25 @@ export class ProjectRepository {
       .from("user_project")
       .select("*")
       .eq("user_id", userId);
+    if (error) {
+      return { error };
+    }
+    return { data };
+  };
+
+  create = async (dto: Models.userResourceSystem.project.insertDTO) => {
+    // parse schema 
+    const dtoParseRes = Models.userResourceSystem.project.insertDTO.safeParse(dto);
+    if (!dtoParseRes.success) {
+      return { error: new Error(`Invalid project data. ${dtoParseRes.error.message}`) };
+    }
+    const parsedDto = dtoParseRes.data;
+
+    const { data, error } = await supabase
+      .from("user_project")
+      .insert(parsedDto)
+      .select("*")
+      .single();
     if (error) {
       return { error };
     }
