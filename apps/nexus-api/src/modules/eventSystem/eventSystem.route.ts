@@ -16,7 +16,10 @@ export class EventSystemRouter {
     router.post("/events", this.eventSystemController.create);
     router.delete("/events/:eventId", this.eventSystemController.delete);
     router.put("/events/:eventId", this.eventSystemController.update);
-    router.get("/events/:eventId/attendees", (req, res) => {});
+    router.get(
+      "/events/:eventId/attendees",
+      this.eventSystemController.listEventAttendees
+    );
 
     router.post("/checkin", this.eventSystemController.checkin);
 

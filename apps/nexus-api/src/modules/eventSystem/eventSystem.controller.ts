@@ -1,8 +1,15 @@
 import { RequestHandler } from "express";
 import { EventService, eventServiceInstance } from "./event.service.js";
+import {
+  AttendanceService,
+  attendanceServiceInstance,
+} from "./attendance.service.js";
 
 export class EventSystemController {
-  constructor(private eventService: EventService = eventServiceInstance) {}
+  constructor(
+    private eventService: EventService = eventServiceInstance,
+    private attendanceService: AttendanceService = attendanceServiceInstance
+  ) {}
 
   list: RequestHandler = async (req, res) => {
     const { data, error } = await this.eventService.list();
@@ -43,6 +50,16 @@ export class EventSystemController {
       checkinMethod
     );
 
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+    return res.status(200).json({ data });
+  };
+
+  listEventAttendees: RequestHandler = async (req, res) => {
+    const eventId = req.params.eventId;
+    const { data, error } =
+      await this.attendanceService.listEventAttendees(eventId);
     if (error) {
       return res.status(500).json({ error: error.message });
     }

@@ -74,6 +74,7 @@ export const publicArticleRelationshipsSchema = z.tuple([
 
 export const publicEventRowSchema = z.object({
   attendance_points: z.number(),
+  attendees_count: z.number(),
   category: z.string().nullable(),
   created_at: z.string(),
   creator_id: z.string().nullable(),
@@ -88,6 +89,7 @@ export const publicEventRowSchema = z.object({
 
 export const publicEventInsertSchema = z.object({
   attendance_points: z.number().optional(),
+  attendees_count: z.number().optional(),
   category: z.string().optional().nullable(),
   created_at: z.string().optional(),
   creator_id: z.string().optional().nullable(),
@@ -102,6 +104,7 @@ export const publicEventInsertSchema = z.object({
 
 export const publicEventUpdateSchema = z.object({
   attendance_points: z.number().optional(),
+  attendees_count: z.number().optional(),
   category: z.string().optional().nullable(),
   created_at: z.string().optional(),
   creator_id: z.string().optional().nullable(),
@@ -261,12 +264,12 @@ export const publicResourceTagJunctionRelationshipsSchema = z.tuple([
 export const publicUserRowSchema = z.object({
   avatar_url: z.string().nullable(),
   created_at: z.string(),
-  display_name: z.string().nullable(),
+  display_name: z.string(),
   email: z.string(),
-  first_name: z.string(),
+  first_name: z.string().nullable(),
   gdg_id: z.string(),
   id: z.string(),
-  last_name: z.string(),
+  last_name: z.string().nullable(),
   status: z.string(),
   updated_at: z.string(),
 });
@@ -274,25 +277,25 @@ export const publicUserRowSchema = z.object({
 export const publicUserInsertSchema = z.object({
   avatar_url: z.string().optional().nullable(),
   created_at: z.string().optional(),
-  display_name: z.string().optional().nullable(),
+  display_name: z.string(),
   email: z.string(),
-  first_name: z.string(),
+  first_name: z.string().optional().nullable(),
   gdg_id: z.string().optional(),
   id: z.string().optional(),
-  last_name: z.string(),
-  status: z.string(),
-  updated_at: z.string(),
+  last_name: z.string().optional().nullable(),
+  status: z.string().optional(),
+  updated_at: z.string().optional(),
 });
 
 export const publicUserUpdateSchema = z.object({
   avatar_url: z.string().optional().nullable(),
   created_at: z.string().optional(),
-  display_name: z.string().optional().nullable(),
+  display_name: z.string().optional(),
   email: z.string().optional(),
-  first_name: z.string().optional(),
+  first_name: z.string().optional().nullable(),
   gdg_id: z.string().optional(),
   id: z.string().optional(),
-  last_name: z.string().optional(),
+  last_name: z.string().optional().nullable(),
   status: z.string().optional(),
   updated_at: z.string().optional(),
 });

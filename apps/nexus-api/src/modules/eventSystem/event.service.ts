@@ -94,6 +94,12 @@ export class EventService {
       return { error };
     }
 
+    // increment attendees count in event record
+    const { data: updatedEventData, error: updateEventError } =
+      await this.update(eventId, {
+        attendees_count: eventData.attendees_count + 1,
+      });
+
     // increment points to user wallet if applicable
     const { data: walletData, error: walletError } =
       await this.walletService.incrementPoints(
@@ -106,7 +112,9 @@ export class EventService {
       return { error: walletError };
     }
 
-    return { data: { attendance: data, wallet: walletData } };
+    return {
+      data: { attendance: data, wallet: walletData, event: updatedEventData },
+    };
   };
 }
 

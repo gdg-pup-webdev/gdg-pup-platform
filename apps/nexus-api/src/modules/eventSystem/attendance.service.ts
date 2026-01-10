@@ -20,6 +20,15 @@ export class AttendanceService {
     }
     return { data };
   };
+
+  listEventAttendees = async (eventId: string) => {
+    const { data, error } =
+      await this.attendanceRepository.listEventAttendees(eventId);
+    if (error) {
+      return { error };
+    }
+    return { data };
+  };
 }
 
 export const attendanceServiceInstance = new AttendanceService();

@@ -15,6 +15,17 @@ export class AttendanceRepository {
     }
     return { data };
   };
+
+  listEventAttendees = async (eventId: string) => {
+    const { data, error } = await supabase
+      .from("event_attendance")
+      .select("*, user(*)")
+      .eq("event_id", eventId);
+    if (error) {
+      return { error };
+    }
+    return { data };
+  };
 }
 
 export const attendanceRepositoryInstance = new AttendanceRepository();
