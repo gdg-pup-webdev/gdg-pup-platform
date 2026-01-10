@@ -68,6 +68,7 @@ export type Database = {
       event: {
         Row: {
           attendance_points: number
+          attendees_count: number
           category: string | null
           created_at: string
           creator_id: string | null
@@ -81,6 +82,7 @@ export type Database = {
         }
         Insert: {
           attendance_points?: number
+          attendees_count?: number
           category?: string | null
           created_at?: string
           creator_id?: string | null
@@ -94,6 +96,7 @@ export type Database = {
         }
         Update: {
           attendance_points?: number
+          attendees_count?: number
           category?: string | null
           created_at?: string
           creator_id?: string | null
@@ -247,36 +250,36 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
-          display_name: string | null
+          display_name: string
           email: string
-          first_name: string
+          first_name: string | null
           gdg_id: string
           id: string
-          last_name: string
+          last_name: string | null
           status: string
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
-          display_name?: string | null
+          display_name: string
           email: string
-          first_name: string
+          first_name?: string | null
           gdg_id?: string
           id?: string
-          last_name: string
-          status: string
-          updated_at: string
+          last_name?: string | null
+          status?: string
+          updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
-          display_name?: string | null
+          display_name?: string
           email?: string
-          first_name?: string
+          first_name?: string | null
           gdg_id?: string
           id?: string
-          last_name?: string
+          last_name?: string | null
           status?: string
           updated_at?: string
         }

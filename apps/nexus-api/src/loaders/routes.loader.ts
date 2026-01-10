@@ -3,7 +3,7 @@ import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.ro
 import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
 import { userSystemRouterInstance } from "@/modules/users/userSystem.route.js";
 import { articleRouterInstance } from "@/modules/articleSystem/articleSystem.route.js";
-import { eventSystemRouterInstance } from "@/modules/eventSystem/evenSystem.route.js";
+import { eventSystemRouterInstance } from "@/modules/eventSystem/eventSystem.route.js";
 import { resourceSystemRouterInstance } from "@/modules/resourceSystem/resourceSystem.route.js";
 import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js";
 import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
@@ -23,6 +23,7 @@ export const routesLoader = (app: Express) => {
   /**
    * TESTING ROUTES
    */
+  app.use("/api/test/testauth", checkTokens);
   app.use("/api/test", checkTokens);
 };
 
