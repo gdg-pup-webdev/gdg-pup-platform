@@ -19,6 +19,15 @@ export class ProjectService {
     return { data };
   };
 
+  getOne = async (id: string) => {
+    const { data, error } = await this.projectRepository.getOne(id);
+    if (error) {
+      return { error };
+    }
+    return { data };
+  };
+
+
   create = async (
     dto: Omit<
       Models.userResourceSystem.project.insertDTO,
@@ -30,12 +39,30 @@ export class ProjectService {
       ...dto,
       user_id: userId,
     });
- 
 
     if (error) {
       return { error };
     }
     return { data: data as Models.userResourceSystem.project.row };
+  };
+
+  delete = async (id: string) => {
+    const { data, error } = await this.projectRepository.delete(id);
+    if (error) {
+      return { error };
+    }
+    return { data };
+  };
+
+  update = async (
+    id: string,
+    dto: Models.userResourceSystem.project.updateDTO
+  ) => {
+    const { data, error } = await this.projectRepository.update(id, dto);
+    if (error) {
+      return { error };
+    }
+    return { data };
   };
 }
 
