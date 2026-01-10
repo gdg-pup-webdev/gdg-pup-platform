@@ -75,14 +75,42 @@ export const nexusApiRoutes = createRoute({
                 }),
               }),
             }),
+            profile: createRoute({
+              path: "/profile",
+              routes: createRoutes({
+                get: createEndpoint({
+                  method: "GET",
+                  request: {},
+                  response: {
+                    200: SchemaFactory.Response.single(
+                      Models.memberMetaSystem.profile.row
+                    ),
+                    500: SchemaFactory.Response.error(),
+                  },
+                }),
+              }),
+            }),
+            role: createRoute({
+              path: "/role",
+              routes: createRoutes({
+                get: createEndpoint({
+                  method: "GET",
+                  request: {},
+                  response: {
+                    200: SchemaFactory.Response.single(
+                      Models.memberMetaSystem.role.row
+                    ),
+                    500: SchemaFactory.Response.error(),
+                  },
+                }),
+              }),
+            }),
           }),
         }),
       }),
     }),
   }),
 });
-
-
 
 export const nexusApiContract = createContract(nexusApiRoutes);
 export type NexusApiTypes = ApiTypes<typeof nexusApiRoutes>;

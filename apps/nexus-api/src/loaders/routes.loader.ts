@@ -1,5 +1,15 @@
 import { Express } from "express";
-import { healthCheckRoute } from "../modules/healthCheck/healthCheck.route.js";
+import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.route.js";
+import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
+import { userSystemRouterInstance } from "@/modules/userSystem/userSystem.route.js";
+import { articleRouterInstance } from "@/modules/articlesSystem/articleSystem.route.js";
+import { eventSystemRouterInstance } from "@/modules/eventSystem/evenSystem.route.js";
+import { resourceSystemRouterInstance } from "@/modules/resourceSystem/resourceSystem.route.js";
 export const routesLoader = (app: Express) => {
-  app.use("/api/health", healthCheckRoute.getRouter());
+  app.use("/api/article-system", articleRouterInstance.getRotuer());
+  app.use("/api/event-system", eventSystemRouterInstance.getRouter());
+  app.use("/api/health", healthCheckRouterInstance.getRouter());
+  app.use("/api/leaderboard", leaderboardSystemRouterInstance.getRouter());
+  app.use("/api/resource-system", resourceSystemRouterInstance.getRouter());
+  app.use("/api/users", userSystemRouterInstance.getRouter());
 };
