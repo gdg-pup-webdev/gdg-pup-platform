@@ -6,14 +6,15 @@ import {
   identityApiContract,
   IdentityApiTypes,
 } from "@packages/identity-api-contracts";
-import { nexusApiContract, NexusApiTypes } from "@packages/nexus-api-contracts";
+import { Contract, ContractTypes } from "@packages/nexus-api-contracts";
+import Link from "next/link";
 import React from "react";
 
 const HomePage = () => {
   return (
     <>
       <div className="w-full h-screen flex flex-col gap-8 justify-center items-center">
-        <div className="text-8xl font-bold">Nexus Web</div>
+        <div className="text-8xl font-bold">Nexus Web</div> 
         <div className="flex flex-row gap-4">
           <NexusApiHealthCheckCard />
           <IdentityApiHealthCheckCard />
@@ -25,7 +26,7 @@ const HomePage = () => {
 
 const NexusApiHealthCheckCard = () => {
   const [res, setRes] = React.useState<
-    NexusApiTypes["health"]["get"]["response"][200] | null
+    ContractTypes["health"]["get"]["response"][200] | null
   >(null);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -37,7 +38,7 @@ const NexusApiHealthCheckCard = () => {
 
       const result = await callEndpoint(
         configs.nexusApiBaseUrl,
-        nexusApiContract.health.get,
+        Contract.health.get,
         {}
       );
 
