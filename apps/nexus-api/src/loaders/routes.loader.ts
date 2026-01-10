@@ -1,10 +1,11 @@
-import { Express } from "express";
+import { Express, RequestHandler } from "express";
 import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.route.js";
 import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
 import { userSystemRouterInstance } from "@/modules/users/userSystem.route.js";
 import { articleRouterInstance } from "@/modules/articleSystem/articleSystem.route.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/evenSystem.route.js";
 import { resourceSystemRouterInstance } from "@/modules/resourceSystem/resourceSystem.route.js";
+import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js";
 
 export const routesLoader = (app: Express) => {
   app.use("/api/article-system", articleRouterInstance.getRotuer());
@@ -13,4 +14,25 @@ export const routesLoader = (app: Express) => {
   app.use("/api/leaderboard", leaderboardSystemRouterInstance.getRouter());
   app.use("/api/resource-system", resourceSystemRouterInstance.getRouter());
   app.use("/api/users", userSystemRouterInstance.getRouter());
+
+  /**
+   * TESTING ROUTES
+   */
+  app.use("/api/test", testIncrementWalletPoints);
+};
+
+/**
+ * call wallet increment points to check if transaction side effects are working
+ */
+const testIncrementWalletPoints: RequestHandler = async (req, res) => {
+  const { data, error } = await walletServiceInstance.incrementPoints(
+    "f2758768-142d-4231-afdb-e65fe4f19f35",
+    50,
+    "test_source",
+    "test_id"
+  );
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+  return res.status(200).json({ data });
 };

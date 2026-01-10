@@ -35,9 +35,9 @@ export class WalletService {
       return { error: walletFetchError || new Error("Wallet not found.") };
     }
 
-    // calculate new balance
-    const newBalance = wallet.balance + amount;
-
+    /**
+     * SIDE EFFECTS
+     */
     // create new transaction to increment points
     const { data, error } = await this.transactionRepository.createTransaction({
       wallet_id: wallet.id,
@@ -49,6 +49,11 @@ export class WalletService {
       return { error: error || new Error("Failed to create transaction.") };
     }
 
+    /**
+     * MAIN BUSINESS LOGIC
+     */
+    // calculate new balance
+    const newBalance = wallet.balance + amount;
     // update wallet balance
     const { error: updateError } =
       await this.walletRepository.updateWalletBalance(userId, newBalance);
@@ -74,6 +79,9 @@ export class WalletService {
       return { error: walletFetchError || new Error("Wallet not found.") };
     }
 
+    /**
+     * SIDE EFFECTS
+     */
     // create new transaction to decrement points by 1
     const { data, error } = await this.transactionRepository.createTransaction({
       wallet_id: wallet.id,
@@ -85,9 +93,11 @@ export class WalletService {
       return { error: error || new Error("Failed to create transaction.") };
     }
 
+    /**
+     * MAIN BUSINESS LOGIC
+     */
     // calculate new balance
     const newBalance = wallet.balance - amount;
-
     // update wallet balance
     const { error: updateError } =
       await this.walletRepository.updateWalletBalance(userId, newBalance);
