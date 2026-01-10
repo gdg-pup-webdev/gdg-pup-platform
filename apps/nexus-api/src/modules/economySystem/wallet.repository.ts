@@ -15,6 +15,20 @@ export class WalletRepository {
     }
     return { data: data as Models.economySystem.wallet.row };
   };
+
+  
+  updateWalletBalance = async (userId: string, newBalance: number) => {
+    const { data, error } = await supabase
+      .from("wallet")
+      .update({ balance: newBalance })
+      .eq("user_id", userId)
+      .select("*")
+      .single();
+
+    if (error) return { error };
+
+    return { data };
+  };
 }
 
 export const walletRepositoryInstance = new WalletRepository();

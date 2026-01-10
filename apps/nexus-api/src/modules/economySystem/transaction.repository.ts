@@ -28,6 +28,21 @@ export class TransactionRepository {
       },
     };
   };
+
+  createTransaction = async (
+    dto: Models.economySystem.transaction.insertDTO
+  ) => {
+    // insert transaction into database
+    const { data, error } = await supabase
+      .from("wallet_transaction")
+      .insert(dto)
+      .select("*")
+      .single();
+
+    if (error) return { error };
+
+    return { data: data as Models.economySystem.transaction.row };
+  };
 }
 
 export const transactionRepositoryInstance = new TransactionRepository();

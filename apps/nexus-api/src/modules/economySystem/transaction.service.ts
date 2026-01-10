@@ -1,3 +1,4 @@
+import { Models } from "@packages/nexus-api-contracts";
 import {
   TransactionRepository,
   transactionRepositoryInstance,
@@ -7,7 +8,6 @@ import { WalletService, walletServiceInstance } from "./wallet.service.js";
 export class TransactionService {
   constructor(
     private walletService: WalletService = walletServiceInstance,
-
     private transactionRepository: TransactionRepository = transactionRepositoryInstance
   ) {}
 
@@ -29,6 +29,17 @@ export class TransactionService {
     }
 
     return { data: walletTransactions };
+  };
+
+  create = async (dto: Models.economySystem.transaction.insertDTO) => {
+    const { data, error } =
+      await this.transactionRepository.createTransaction(dto);
+
+    if (error) {
+      return { error: error || new Error("Failed to create transaction.") };
+    }
+
+    return { data };
   };
 }
 
