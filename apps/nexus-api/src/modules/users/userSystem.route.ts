@@ -13,10 +13,13 @@ export class UserSystemRouter {
     const router = Router();
 
     router.get("/:userId", this.userSystemController.getUserById);
-    router.get("/:userId/wallet", (req, res) => {});
-    router.get("/:userId/wallet/transactions", (req, res) => {});
+    router.get("/:userId/wallet", this.userSystemController.getUserWallet);
+    router.get(
+      "/:userId/wallet/transactions",
+      this.userSystemController.listUserWalletTransactions
+    );
     router.get("/:userId/roles", (req, res) => {});
-    router.get("/:userId/profile", (req, res) => {});
+    router.get("/:userId/profile", this.userSystemController.getUserProfile);
 
     router.get("/:userId/projects", (req, res) => {});
 
