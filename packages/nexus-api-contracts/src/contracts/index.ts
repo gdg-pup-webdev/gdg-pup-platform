@@ -7,6 +7,7 @@ import {
 } from "@packages/api-typing"; 
 import { healthCheckRoutes } from "./healthCheck/index.js";
 import { userSystemRoutes } from "./userSystem/index.js";
+import { Models } from "@/models/index.js";
 
 export const nexusApiRoutes = createRoute({
   path: "/api",
@@ -21,6 +22,7 @@ export const nexusApiRoutes = createRoute({
     }),
   }),
 });
+
 
 export const nexusApiContract = createContract(nexusApiRoutes);
 export type NexusApiTypes = ApiTypes<typeof nexusApiRoutes>;
