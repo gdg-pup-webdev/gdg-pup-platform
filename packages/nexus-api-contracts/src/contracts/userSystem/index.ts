@@ -69,7 +69,7 @@ export const userSystemRoutes = createRoutes({
             method: "GET",
             request: {},
             response: {
-              200: SchemaFactory.Response.single(Models.userSystem.role.row),
+              200: SchemaFactory.Response.single(Models.roleSystem.role.row),
               500: SchemaFactory.Response.error(),
             },
           }),

@@ -18,10 +18,10 @@ export class UserSystemRouter {
       "/:userId/wallet/transactions",
       this.userSystemController.listUserWalletTransactions
     );
-    router.get("/:userId/roles", (req, res) => {});
+    router.get("/:userId/roles", this.userSystemController.listUserRoles);
     router.get("/:userId/profile", this.userSystemController.getUserProfile);
 
-    router.get("/:userId/projects", (req, res) => {});
+    router.get("/:userId/projects", this.userSystemController.listUserProjects);
 
     return router;
   }
