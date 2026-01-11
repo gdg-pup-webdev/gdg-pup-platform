@@ -12,20 +12,26 @@ export class UserSystemRouter {
   getRouter() {
     const router = Router();
 
-    router.get("/:userId", this.userSystemController.getUserById);
+    router.get("/users/:userId", this.userSystemController.getUserById);
 
-    router.get("/:userId/wallet", this.userSystemController.getUserWallet);
+    router.get("/users/:userId/wallet", this.userSystemController.getUserWallet);
 
     router.get(
-      "/:userId/wallet/transactions",
+      "/users/:userId/wallet/transactions",
       this.userSystemController.listUserWalletTransactions
     );
 
-    router.get("/:userId/roles", this.userSystemController.listUserRoles);
+    router.get("/users/:userId/roles", this.userSystemController.listUserRoles);
 
-    router.get("/:userId/profile", this.userSystemController.getUserProfile);
+    router.get(
+      "/users/:userId/profile",
+      this.userSystemController.getUserProfile
+    );
 
-    router.get("/:userId/projects", this.userSystemController.listUserProjects);
+    router.get(
+      "/users/:userId/projects",
+      this.userSystemController.listUserProjects
+    );
 
     return router;
   }

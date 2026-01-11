@@ -14,7 +14,7 @@ const HomePage = () => {
   return (
     <>
       <div className="w-full h-screen flex flex-col gap-8 justify-center items-center">
-        <div className="text-8xl font-bold">Nexus Web</div> 
+        <div className="text-8xl font-bold">Nexus Web</div>
         <div className="flex flex-row gap-4">
           <NexusApiHealthCheckCard />
           <IdentityApiHealthCheckCard />

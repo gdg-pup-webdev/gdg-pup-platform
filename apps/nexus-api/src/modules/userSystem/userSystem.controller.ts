@@ -17,6 +17,9 @@ import {
   ProjectService,
   projectServiceInstance,
 } from "../userResourceSystem/project.service.js";
+import { createExpressController } from "@packages/api-typing";
+import { Contract } from "@packages/nexus-api-contracts";
+import { ServerError } from "@/classes/ServerError.js";
 
 export class UserSystemController {
   constructor(
@@ -28,14 +31,22 @@ export class UserSystemController {
     private projectService: ProjectService = projectServiceInstance
   ) {}
 
-  getUserById: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } = await this.userService.getUserById(userId);
-    if (error) {
-      return res.status(400).json({ error });
+  getUserById: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.get,
+    async ({ input, output, ctx }) => {
+      const { res, req } = ctx;
+      const userId = input.params.userId;
+      const { data, error } = await this.userService.getUserById(userId);
+      if (error) {
+        throw new ServerError(400, "Bad Request", error.message);
+      }
+      return output(200, {
+        status: "success",
+        message: "User fetched successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 
   getUserProfile: RequestHandler = async (req: any, res: any) => {
     const userId = req.params.userId;

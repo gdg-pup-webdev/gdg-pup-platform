@@ -57,7 +57,7 @@ export class EventSystemController {
   };
 
   listEventAttendees: RequestHandler = async (req, res) => {
-    const eventId = req.params.eventId;
+    const eventId = req.params.eventId as string;
     const { data, error } =
       await this.attendanceService.listEventAttendees(eventId);
     if (error) {

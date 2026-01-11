@@ -7,7 +7,7 @@ export class UserResourceSystemController {
   ) {}
 
   getOne: RequestHandler = async (req, res) => {
-    const projectId = req.params.projectId;
+    const projectId = req.params.projectId as string;
     const { data, error } = await this.projectService.getOne(projectId);
     if (error) {
       return res.status(500).json({ error: error.message });
@@ -27,7 +27,7 @@ export class UserResourceSystemController {
   };
 
   update: RequestHandler = async (req, res) => {
-    const projectId = req.params.projectId;
+    const projectId = req.params.projectId as string;
     const dto = req.body;
 
     const { data, error } = await this.projectService.update(projectId, dto);
@@ -38,7 +38,7 @@ export class UserResourceSystemController {
   };
 
   delete: RequestHandler = async (req, res) => {
-    const projectId = req.params.projectId;
+    const projectId = req.params.projectId as string;
     const { data, error } = await this.projectService.delete(projectId);
     if (error) {
       return res.status(500).json({ error: error.message });

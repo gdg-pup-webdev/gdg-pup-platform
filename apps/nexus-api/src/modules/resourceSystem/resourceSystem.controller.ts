@@ -3,24 +3,40 @@ import {
   ResourceService,
   resourceServiceInstance,
 } from "./resource.service.js";
+import { createExpressController } from "@packages/api-typing";
+import { Contract  } from "@packages/nexus-api-contracts";
+import { ServerError } from "@/classes/ServerError.js";
 
 export class ResourceSystemController {
   constructor(
     private readonly resourceService: ResourceService = resourceServiceInstance
   ) {}
 
-  create: RequestHandler = async (req, res) => {
-    const user = req.user!;
-    const userId = user.id;
-    const { data, error } = await this.resourceService.create(req.body, userId);
-    if (error) {
-      return res.status(500).json({ error: error.message });
+  create: RequestHandler = createExpressController(
+    Contract.resourceSystem.resources.post,
+    async ({ input, output, ctx }) => {
+      const { res, req } = ctx;
+      const user = req.user!;
+      const userId = user.id;
+
+      const { data, error } = await this.resourceService.create(
+        input.body.data,
+        userId
+      );
+      if (error) {
+        throw new ServerError(500, error.message);
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Resource created successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 
   delete: RequestHandler = async (req, res) => {
-    const { resourceId } = req.params;
+    const resourceId = req.params.resourceId as string;
     const { data, error } = await this.resourceService.delete(resourceId);
     if (error) {
       return res.status(500).json({ error: error.message });
@@ -29,7 +45,7 @@ export class ResourceSystemController {
   };
 
   update: RequestHandler = async (req, res) => {
-    const { resourceId } = req.params;
+    const resourceId = req.params.resourceId as string;
     const { data, error } = await this.resourceService.update(
       resourceId,
       req.body
@@ -49,7 +65,7 @@ export class ResourceSystemController {
   };
 
   getOne: RequestHandler = async (req, res) => {
-    const { resourceId } = req.params;
+    const resourceId = req.params.resourceId as string;
     const { data, error } = await this.resourceService.getOne(resourceId);
     if (error) {
       return res.status(500).json({ error: error.message });

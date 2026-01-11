@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export namespace SchemaFactory {
-  export namespace Response {
+  export namespace Response { 
+
     export const empty = () => {
       return z.object({
         status: z.string(),
@@ -45,7 +46,6 @@ export namespace SchemaFactory {
       });
     };
 
-
     export const error = () => {
       return z.object({
         status: z.string(),
@@ -61,6 +61,20 @@ export namespace SchemaFactory {
           .optional(),
       });
     };
+
+    /**
+     * - 400 Bad Request
+     * - 403 Forbidden
+     * - 500 Internal Server Error
+     */
+    export const standardErrors = () => {
+      return {
+        400: SchemaFactory.Response.error(),
+        403: SchemaFactory.Response.error(),
+        404: SchemaFactory.Response.error(),
+        500: SchemaFactory.Response.error(),
+      };
+    };
   }
 
   export namespace Request {
@@ -74,5 +88,11 @@ export namespace SchemaFactory {
         });
       };
     }
+
+    export const withPayload = <T extends z.ZodTypeAny>(dataSchema: T) => {
+      return z.object({
+        data: dataSchema,
+      });
+    };
   }
 }
