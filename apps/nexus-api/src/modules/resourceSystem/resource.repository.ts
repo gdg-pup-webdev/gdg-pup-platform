@@ -1,6 +1,9 @@
 import { supabase } from "@/lib/supabase.js";
 import { Models } from "@packages/nexus-api-contracts";
-import { Tables, TablesInsert } from "@packages/nexus-api-contracts/dist/types/supabase.types.js";
+import {
+  Tables,
+  TablesInsert,
+} from "@packages/nexus-api-contracts/dist/types/supabase.types.js";
 
 export class ResourceResponsitory {
   constructor() {}
@@ -54,7 +57,20 @@ export class ResourceResponsitory {
     if (error) {
       return { error };
     }
-    return { data: data as Models.resourceSystem.resource.row[] };
+
+    const { count, error: countError } = await supabase
+      .from("resource")
+      .select("*", { count: "exact", head: true });
+    if (countError) {
+      return { error: countError };
+    }
+
+    return {
+      data: {
+        listData: data as Models.resourceSystem.resource.row[],
+        count: (count || 0) as number,
+      },
+    };
   };
 
   getOne = async (resourceId: string) => {
@@ -69,6 +85,5 @@ export class ResourceResponsitory {
     return { data: data as Models.resourceSystem.resource.row };
   };
 }
-
 
 export const resourceReponsitoryInstance = new ResourceResponsitory();

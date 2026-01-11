@@ -7,7 +7,7 @@ import z from "zod";
 export const attendees = createRoute({
     path: "/attendees",
     routes: {
-        get: {
+        list: {
             method: "GET",
             request: {
                 params: z.object({

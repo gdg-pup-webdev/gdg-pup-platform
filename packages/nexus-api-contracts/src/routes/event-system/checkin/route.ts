@@ -7,9 +7,13 @@ export const checkin = createRoute({
   routes: {
     post: {
       method: "POST",
-      request: {},
+      request: {
+        body: SchemaFactory.Request.withPayload(
+          Models.eventSystem.checkin.insertDTO
+        ),
+      },
       response: {
-        200: SchemaFactory.Response.empty(),
+        200: SchemaFactory.Response.single(Models.eventSystem.attendance.row),
         ...SchemaFactory.Response.standardErrors(),
       },
     },

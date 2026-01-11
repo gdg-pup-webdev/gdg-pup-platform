@@ -9,7 +9,21 @@ export class EventRepository {
     if (error) {
       return { error };
     }
-    return { data };
+
+    const {count, error: countError } = await supabase
+      .from("event")
+      .select("*", { count: "exact", head: true });
+
+    if (countError) {
+      return { error: countError };
+    }
+
+
+    
+    return { data : {
+      listData: data as Models.eventSystem.event.row[], 
+      count: (count || 0) as number
+    } };
   };
 
   createEvent = async (dto: Models.eventSystem.event.insertDTO) => {
@@ -21,7 +35,7 @@ export class EventRepository {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data : data as Models.eventSystem.event.row };
   };
 
   getEventById = async (id: string) => {
@@ -59,7 +73,7 @@ export class EventRepository {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data : data as Models.eventSystem.event.row };
   };
 }
 
