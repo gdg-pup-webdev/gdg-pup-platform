@@ -1,7 +1,6 @@
 import {
   createEndpoint,
-  createRoute,
-  createRoutes,
+  createRoute, 
 } from "@packages/api-typing";
 
 import users from "./users/route.js";
