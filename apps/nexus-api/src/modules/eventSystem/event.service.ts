@@ -22,7 +22,14 @@ export class EventService {
 
   list = async () => {
     const { data, error } = await this.eventRepository.listEvents();
+
+    // if (error instanceof somespecificerror) {
+    //   // handle specific error
+    //   throw new ServerError.internalError("specific message");
+    // }
+
     if (error) {
+      // handle unknown error
       return { error };
     }
     return { data };
