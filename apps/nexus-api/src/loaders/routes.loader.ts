@@ -30,18 +30,18 @@ export const routesLoader = (app: Express) => {
 /**
  * call wallet increment points to check if transaction side effects are working
  */
-const testIncrementWalletPoints: RequestHandler = async (req, res) => {
-  const { data, error } = await walletServiceInstance.incrementPoints(
-    "f2758768-142d-4231-afdb-e65fe4f19f35",
-    50,
-    "test_source",
-    "test_id"
-  );
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-  return res.status(200).json({ data });
-};
+// const testIncrementWalletPoints: RequestHandler = async (req, res) => {
+//   const { data, error } = await walletServiceInstance.incrementPoints(
+//     "f2758768-142d-4231-afdb-e65fe4f19f35",
+//     50,
+//     "test_source",
+//     "test_id"
+//   );
+//   if (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+//   return res.status(200).json({ data });
+// };
 
 /**
  * check parsed tokens

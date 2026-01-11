@@ -4,7 +4,7 @@ import {
   resourceServiceInstance,
 } from "./resource.service.js";
 import { createExpressController } from "@packages/api-typing";
-import { Contract  } from "@packages/nexus-api-contracts";
+import { Contract } from "@packages/nexus-api-contracts";
 import { ServerError } from "@/classes/ServerError.js";
 
 export class ResourceSystemController {
@@ -35,43 +35,88 @@ export class ResourceSystemController {
     }
   );
 
-  delete: RequestHandler = async (req, res) => {
-    const resourceId = req.params.resourceId as string;
-    const { data, error } = await this.resourceService.delete(resourceId);
-    if (error) {
-      return res.status(500).json({ error: error.message });
-    }
-    return res.status(200).json({ data });
-  };
+  delete: RequestHandler = createExpressController(
+    Contract.resourceSystem.resources.resource.delete,
+    async ({ input, output, ctx }) => {
+      const resourceId = input.params.resourceId;
+      const { data, error } = await this.resourceService.delete(resourceId);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
 
-  update: RequestHandler = async (req, res) => {
-    const resourceId = req.params.resourceId as string;
-    const { data, error } = await this.resourceService.update(
-      resourceId,
-      req.body
-    );
-    if (error) {
-      return res.status(500).json({ error: error.message });
+      return output(200, {
+        status: "success",
+        message: "Resource deleted successfully",
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 
-  list: RequestHandler = async (req, res) => {
-    const { data, error } = await this.resourceService.list();
-    if (error) {
-      return res.status(500).json({ error: error.message });
-    }
-    return res.status(200).json({ data });
-  };
+  update: RequestHandler = createExpressController(
+    Contract.resourceSystem.resources.resource.patch,
+    async ({ input, output, ctx }) => {
+      const resourceId = input.params.resourceId as string;
+      const { data, error } = await this.resourceService.update(
+        resourceId,
+        input.body.data
+      );
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
 
-  getOne: RequestHandler = async (req, res) => {
-    const resourceId = req.params.resourceId as string;
-    const { data, error } = await this.resourceService.getOne(resourceId);
-    if (error) {
-      return res.status(500).json({ error: error.message });
+      return output(200, {
+        status: "success",
+        message: "Resource updated successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
+
+  list: RequestHandler = createExpressController(
+    Contract.resourceSystem.resources.get,
+    async ({ input, output, ctx }) => {
+      const { data, error } = await this.resourceService.list();
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Resources fetched successfully",
+        data: data.listData,
+        meta: {
+          totalRecords: data.count,
+          currentPage: input.query.page.number,
+          pageSize: input.query.page.size,
+          totalPages: Math.ceil(data.count / input.query.page.size),
+        },
+      });
+    }
+  );
+
+  getOne: RequestHandler = createExpressController(
+    Contract.resourceSystem.resources.resource.get,
+    async ({ input, output, ctx }) => {
+      const resourceId = input.params.resourceId as string;
+      const { data, error } = await this.resourceService.getOne(resourceId);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Resource fetched successfully",
+        data,
+      });
+    }
+  );
 }
 
 export const resourceSystemControllerInstance = new ResourceSystemController();

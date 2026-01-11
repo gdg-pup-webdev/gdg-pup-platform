@@ -24,7 +24,23 @@ export class AttendanceRepository {
     if (error) {
       return { error };
     }
-    return { data };
+
+    const { count, error: countError } = await supabase
+      .from("event_attendance")
+      .select("*", { count: "exact", head: true })
+
+      .eq("event_id", eventId);
+
+    if (countError) {
+      return { error: countError };
+    }
+
+    return {
+      data: {
+        listData: data.map((row) => row.user) as Models.userSystem.user.row[],
+        count: (count || 0) as number,
+      },
+    };
   };
 }
 

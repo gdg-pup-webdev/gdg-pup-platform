@@ -11,6 +11,7 @@ import {
   WalletService,
   walletServiceInstance,
 } from "../economySystem/wallet.service.js";
+import { ServerError } from "../../classes/ServerError.js";
 
 export class EventService {
   constructor(
@@ -21,7 +22,14 @@ export class EventService {
 
   list = async () => {
     const { data, error } = await this.eventRepository.listEvents();
+
+    // if (error instanceof somespecificerror) {
+    //   // handle specific error
+    //   throw new ServerError.internalError("specific message");
+    // }
+
     if (error) {
+      // handle unknown error
       return { error };
     }
     return { data };
@@ -49,7 +57,7 @@ export class EventService {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data  };
   };
 
   delete = async (id: string) => {
@@ -65,7 +73,7 @@ export class EventService {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data  };
   };
 
   checkInToEvent = async (
@@ -73,32 +81,45 @@ export class EventService {
     userId: string,
     checkinMethod: string
   ) => {
+    // no need since di naman optional si userId sa params
+    // if (!userId) {
+    //   throw ServerError.internalError("User ID is required");
+    // }
+
     // get the event details
-    const { data: eventData, error: eventError } = await this.getById(eventId);
-    if (eventError) {
-      return { error: eventError };
+    const { data: eventData, error } = await this.getById(eventId);
+    if (error) {
+      return { error };
     }
     if (!eventData) {
-      return { error: { message: "Event not found" } };
+      throw ServerError.notFound("Event not found");
     }
 
     // TODO: check if user has already checked in to this event
 
     // create new attendance record
-    const { data, error } = await this.attendanceService.create(
+    const { data, error: attendanceError } = await this.attendanceService.create(
       eventId,
       userId,
       checkinMethod
     );
-    if (error) {
-      return { error };
+
+    if (attendanceError) {
+      return { error: attendanceError };
     }
 
+
     // increment attendees count in event record
-    const { data: updatedEventData, error: updateEventError } =
-      await this.update(eventId, {
+    const { data: updatedEventData, error: updateError } = await this.update(
+      eventId,
+      {
         attendees_count: eventData.attendees_count + 1,
-      });
+      }
+    );
+
+    if (updateError) {
+      return { error: updateError };
+    }
 
     // increment points to user wallet if applicable
     const { data: walletData, error: walletError } =

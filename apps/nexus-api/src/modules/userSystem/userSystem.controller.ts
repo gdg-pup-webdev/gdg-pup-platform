@@ -20,6 +20,7 @@ import {
 import { createExpressController } from "@packages/api-typing";
 import { Contract } from "@packages/nexus-api-contracts";
 import { ServerError } from "@/classes/ServerError.js";
+import { Server } from "http";
 
 export class UserSystemController {
   constructor(
@@ -38,7 +39,11 @@ export class UserSystemController {
       const userId = input.params.userId;
       const { data, error } = await this.userService.getUserById(userId);
       if (error) {
-        throw new ServerError(400, "Bad Request", error.message);
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
       }
       return output(200, {
         status: "success",
@@ -48,55 +53,120 @@ export class UserSystemController {
     }
   );
 
-  getUserProfile: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } =
-      await this.profileService.getUserProfileByUserId(userId);
-    if (error) {
-      return res.status(400).json({ error });
-    }
-    return res.status(200).json({ data });
-  };
+  getUserProfile: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.profile.get,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
 
-  getUserWallet: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } = await this.walletService.getWalletByUserId(userId);
-    if (error) {
-      return res.status(400).json({ error });
-    }
-    return res.status(200).json({ data });
+      const { data, error } =
+        await this.profileService.getUserProfileByUserId(userId);
 
-    // To be implemented
-  };
+      if (error) {
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
+      }
 
-  listUserWalletTransactions: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } =
-      await this.transactionService.listTransactionsOfUser(userId);
-    if (error) {
-      return res.status(400).json({ error });
+      return output(200, {
+        status: "success",
+        message: "User profile fetched successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 
-  listUserRoles: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } = await this.roleService.getRolesOfUser(userId);
-    if (error) {
-      return res.status(400).json({ error });
-    }
-    return res.status(200).json({ data });
-  };
+  getUserWallet: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.wallet.get,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
+      const { data, error } =
+        await this.walletService.getWalletByUserId(userId);
 
-  listUserProjects: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } =
-      await this.projectService.listProjectsOfUser(userId);
-    if (error) {
-      return res.status(400).json({ error });
+      if (error) {
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "User wallet fetched successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
+
+  listUserWalletTransactions: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.wallet.transactions.list,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
+      const { data, error } =
+        await this.transactionService.listTransactionsOfUser(userId);
+      if (error) {
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
+      }
+      return output(200, {
+        status: "success",
+        message: "User wallet transactions fetched successfully",
+        data: data.listData,
+        meta: {
+          totalRecords: data.count,
+          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: input.query.page.number,
+          pageSize: input.query.page.size,
+        },
+      });
+    }
+  );
+
+  listUserRoles: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.roles.get,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
+      const { data, error } = await this.roleService.getRolesOfUser(userId);
+      if (error) {
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
+      }
+      return output(200, {
+        status: "success",
+        message: "User roles fetched successfully",
+        data,
+      });
+    }
+  );
+
+  listUserProjects: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.projects.get,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
+      const { data, error } =
+        await this.projectService.listProjectsOfUser(userId);
+      if (error) {
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
+      }
+      return output(200, {
+        status: "success",
+        message: "User projects fetched successfully",
+        data,
+      });
+    }
+  );
 }
 
 export const userSystemControllerInstance = new UserSystemController();

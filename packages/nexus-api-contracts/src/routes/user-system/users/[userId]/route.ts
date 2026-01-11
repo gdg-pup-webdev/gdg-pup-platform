@@ -5,6 +5,7 @@ import wallet from "./wallet/route.js";
 import profile from "./profile/route.js";
 import roles from "./roles/route.js";
 import z from "zod";
+import { projects } from "./projects/route.js";
 
 export default createRoute({
   path: "/:userId",
@@ -24,5 +25,6 @@ export default createRoute({
     wallet: wallet,
     profile: profile,
     roles: roles,
+    projects: projects
   },
 });

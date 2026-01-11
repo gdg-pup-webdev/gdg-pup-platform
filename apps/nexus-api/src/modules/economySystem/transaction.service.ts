@@ -4,6 +4,8 @@ import {
   transactionRepositoryInstance,
 } from "./transaction.repository.js";
 import { WalletService, walletServiceInstance } from "./wallet.service.js";
+import { ServerError } from "../../classes/ServerError.js";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export class TransactionService {
   constructor(
@@ -14,9 +16,12 @@ export class TransactionService {
   listTransactionsOfUser = async (userId: string) => {
     const { data: userWallet, error: walletError } =
       await this.walletService.getWalletByUserId(userId);
-
     if (walletError) {
       return { error: walletError };
+    }
+
+    if (!userWallet) {
+      throw ServerError.notFound("Wallet not found.");
     }
 
     const { data: walletTransactions, error: transactionsError } =
@@ -35,9 +40,22 @@ export class TransactionService {
     const { data, error } =
       await this.transactionRepository.createTransaction(dto);
 
-    if (error) {
-      return { error: error || new Error("Failed to create transaction.") };
+    if (error instanceof PostgrestError) {
+      // sure ka na supabase error. pede mo pa inarrow down dito check mo kung table doesnot exist or foreign key violation or constraint violation or whatever
+      throw ServerError.internalError("something about supabase error");
     }
+
+    if (error) {
+      // unknown error. return lang yung error then let the caller handle it
+      // di ka sure anong error. basta may error. handler na ang maghahandle.
+      return { error };
+    }
+
+    if (!data) {
+      // data doesnt exist meaning sure ka na not found error to. 
+      throw ServerError.internalError("Failed to create transaction record.");
+    }
+
 
     return { data };
   };

@@ -3,6 +3,7 @@ import {
   AttendanceRepository,
   attendanceRepositoryInstance,
 } from "./attendance.repository.js";
+import { ServerError } from "../../classes/ServerError.js";
 
 export class AttendanceService {
   constructor(
@@ -18,7 +19,7 @@ export class AttendanceService {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data : data as Models.eventSystem.attendance.row };
   };
 
   listEventAttendees = async (eventId: string) => {
