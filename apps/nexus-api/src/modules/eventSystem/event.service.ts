@@ -75,7 +75,7 @@ export class EventService {
     checkinMethod: string
   ) => {
     if (!userId) {
-      throw ServerError.badRequest("User ID is required");
+      throw ServerError.internalError("User ID is required");
     }
 
     // get the event details

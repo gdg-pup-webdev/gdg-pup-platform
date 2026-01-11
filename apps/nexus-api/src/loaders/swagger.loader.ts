@@ -109,16 +109,6 @@ export const swaggerLoader = (app: Express) => {
           
         },
         responses: {
-          BadRequest: {
-            description: "Bad Request - Invalid input or malformed JSON",
-            content: {
-              "application/json": {
-                schema: {
-                  $ref: "#/components/schemas/ErrorResponse",
-                },
-              },
-            },
-          },
           UnauthorizedError: {
             description: "Unauthorized",
             content: {

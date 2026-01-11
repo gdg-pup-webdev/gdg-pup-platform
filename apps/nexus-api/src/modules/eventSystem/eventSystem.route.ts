@@ -50,8 +50,6 @@ export class EventSystemRouter {
      *     responses:
      *       201:
      *         description: Created
-     *       400:
-     *         $ref: '#/components/responses/BadRequest'
      *       401:
      *         $ref: '#/components/responses/UnauthorizedError'
      *       403:
@@ -120,8 +118,6 @@ export class EventSystemRouter {
      *     responses:
      *       200:
      *         description: Success
-     *       400:
-     *         $ref: '#/components/responses/BadRequest'
      *       401:
      *         $ref: '#/components/responses/UnauthorizedError'
      *       403:
@@ -175,8 +171,6 @@ export class EventSystemRouter {
      *     responses:
      *       200:
      *         description: Success
-     *       400:
-     *         $ref: '#/components/responses/BadRequest'
      *       401:
      *         $ref: '#/components/responses/UnauthorizedError'
      *       403:
