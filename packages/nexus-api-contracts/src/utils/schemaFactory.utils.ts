@@ -48,6 +48,7 @@ export namespace SchemaFactory {
             z.object({
               title: z.string(),
               detail: z.string(),
+              moreDetails: z.unknown().optional(),
               source: z.string().optional(),
             })
           )

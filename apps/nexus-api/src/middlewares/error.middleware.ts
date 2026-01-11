@@ -3,7 +3,7 @@ import {
   ServerResponseValidationError,
 } from "@packages/api-typing";
 import { Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
 
 export const globalErrorHandler = (
   err: any,
@@ -21,11 +21,11 @@ export const globalErrorHandler = (
   if (err instanceof ClientRequestValidationError) {
     return res.status(400).json({
       title: "Bad Request",
-      message: "Request validation failed",
+      message: `Request validation failed. `,
       errors: err.error.issues.map((issue) => {
         let detail = ``;
         if (issue.code === "invalid_type") {
-          detail += ` Expected type: ${issue.expected} `;
+          detail += ` ${z.prettifyError(err.error)}`;
         } else {
           detail = issue.code;
         }
@@ -33,6 +33,7 @@ export const globalErrorHandler = (
         return {
           title: issue.message,
           detail: detail,
+          // moreDetails: z.treeifyError(err.error),
           path: `${issue.path.join(" -> ")}`,
         };
       }),
@@ -52,9 +53,9 @@ export const globalErrorHandler = (
       title: "Internal Server Error",
       message: "Response validation failed. Contract violated.",
       errors: err.error.issues.map((issue) => {
-        let detail = issue.message;
+        let detail = ``;
         if (issue.code === "invalid_type") {
-          detail += ` Expected type: ${issue.expected}, Received type: ${issue.input || "??"}`;
+          detail += ` ${z.prettifyError(err.error)}`;
         } else {
           detail = issue.code;
         }
@@ -62,6 +63,7 @@ export const globalErrorHandler = (
         return {
           title: issue.message,
           detail: detail,
+          // moreDetails: z.treeifyError(err.error),
           path: `${issue.path.join(" -> ")}`,
         };
       }),
