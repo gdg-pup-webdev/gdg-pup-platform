@@ -23,9 +23,9 @@ export const globalErrorHandler = (
       title: "Bad Request",
       message: "Request validation failed",
       errors: err.error.issues.map((issue) => {
-        let detail = issue.message;
+        let detail = ``;
         if (issue.code === "invalid_type") {
-          detail += ` Expected type: ${issue.expected}, Received type: ${issue.input || "??"}`;
+          detail += ` Expected type: ${issue.expected} `;
         } else {
           detail = issue.code;
         }

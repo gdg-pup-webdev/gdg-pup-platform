@@ -17,14 +17,29 @@ export class EventSystemController {
   /**
    * Vanilla express example
    */
-  list: RequestHandler = async (req, res, next) => {
-    const { data, error } = await this.eventService.list();
-    if (error) {
-      throw ServerError.internalError(`Something went wrong: ${error.message}`);
-    }
+  list: RequestHandler = createExpressController(
+    Contract.eventSystem.events.list,
+    async ({ input, output, ctx }) => {
+      const { data, error } = await this.eventService.list();
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
 
-    return res.status(200).json({ data });
-  };
+      return output(200, {
+        status: "success",
+        message: "Events fetched successfully",
+        data: data.listData,
+        meta: {
+          totalRecords: data.count,
+          currentPage: input.query.page.number,
+          pageSize: input.query.page.size,
+          totalPages: Math.ceil(data.count / input.query.page.size),
+        },
+      });
+    }
+  );
 
   /**
    * EXAMPLE USING createExpressController when creating event
@@ -79,45 +94,82 @@ export class EventSystemController {
     }
   );
 
-  delete: RequestHandler = async (req, res, next) => {
-    const eventId = req.params.eventId as string;
+  delete: RequestHandler = createExpressController(
+    Contract.eventSystem.events.event.delete,
+    async ({ input, output, ctx }) => {
+      const eventId = input.params.eventId;
 
-    const { data, error } = await this.eventService.delete(eventId);
-    if (error) {
-      throw ServerError.internalError(`Something went wrong: ${error.message}`);
+      const { data, error } = await this.eventService.delete(eventId);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Event deleted successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 
   getOne: RequestHandler = async (req, res) => {};
 
-  checkin: RequestHandler = async (req, res, next) => {
-    const user = req.user!;
-    // const userId = user.id; // user id from token parser
+  checkin: RequestHandler = createExpressController(
+    Contract.eventSystem.checkin.post,
+    async ({ input, output, ctx }) => {
+      const { req, res } = ctx;
+      const user = req.user!;
+      // const userId = user.id; // user id from token parser
 
-    const body = req.body;
-    const { eventId, checkinMethod, userId } = body;
+      const body = input.body;
+      const { eventId, checkinMethod, attendeeId } = body.data;
 
-    const { data, error } = await this.eventService.checkInToEvent(
-      eventId,
-      userId,
-      checkinMethod
-    );
-    if (error) {
-      throw ServerError.internalError(`Something went wrong: ${error.message}`);
+      const { data, error } = await this.eventService.checkInToEvent(
+        eventId,
+        attendeeId,
+        checkinMethod
+      );
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Attendee checked in successfully",
+        data: data.attendance,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 
-  listEventAttendees: RequestHandler = async (req, res, next) => {
-    const eventId = req.params.eventId as string;
-    const { data, error } =
-      await this.attendanceService.listEventAttendees(eventId);
-    if (error) {
-      throw ServerError.internalError(`Something went wrong: ${error.message}`);
+  listEventAttendees: RequestHandler = createExpressController(
+    Contract.eventSystem.events.event.attendees.list,
+    async ({ input, output, ctx }) => {
+      const eventId = input.params.eventId as string;
+      const { data, error } =
+        await this.attendanceService.listEventAttendees(eventId);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Attendees fetched successfully",
+        data: data.listData,
+        meta: {
+          totalRecords: data.count,
+          currentPage: input.query.page.number,
+          pageSize: input.query.page.size,
+          totalPages: Math.ceil(data.count / input.query.page.size),
+        },
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 }
 
 export const eventSystemControllerInstance = new EventSystemController();

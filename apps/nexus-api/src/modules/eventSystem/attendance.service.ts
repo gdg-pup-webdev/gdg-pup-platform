@@ -19,7 +19,7 @@ export class AttendanceService {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data : data as Models.eventSystem.attendance.row };
   };
 
   listEventAttendees = async (eventId: string) => {

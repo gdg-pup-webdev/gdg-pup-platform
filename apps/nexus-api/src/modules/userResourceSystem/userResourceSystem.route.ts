@@ -14,21 +14,21 @@ export class UserResourceSystemRouter {
 
     router.get("/projects", (req, res) => {});
 
-    router.post("/projects", this.userResourceSystemController.create);
+    router.post("/projects", this.userResourceSystemController.createProject);
 
     router.get(
       "/projects/:projectId",
-      this.userResourceSystemController.getOne
+      this.userResourceSystemController.getOneProject
     );
 
     router.delete(
       "/projects/:projectId",
-      this.userResourceSystemController.delete
+      this.userResourceSystemController.deleteProject
     );
 
     router.patch(
       "/projects/:projectId",
-      this.userResourceSystemController.update
+      this.userResourceSystemController.updateProject
     );
 
     return router;

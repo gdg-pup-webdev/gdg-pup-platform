@@ -57,7 +57,7 @@ export class EventService {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data  };
   };
 
   delete = async (id: string) => {
@@ -73,7 +73,7 @@ export class EventService {
     if (error) {
       return { error };
     }
-    return { data };
+    return { data  };
   };
 
   checkInToEvent = async (
@@ -98,11 +98,16 @@ export class EventService {
     // TODO: check if user has already checked in to this event
 
     // create new attendance record
-    const { data } = await this.attendanceService.create(
+    const { data, error: attendanceError } = await this.attendanceService.create(
       eventId,
       userId,
       checkinMethod
     );
+
+    if (attendanceError) {
+      return { error: attendanceError };
+    }
+
 
     // increment attendees count in event record
     const { data: updatedEventData, error: updateError } = await this.update(
