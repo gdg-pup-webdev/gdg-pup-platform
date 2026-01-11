@@ -17,7 +17,7 @@ export class AttendanceService {
       checkin_method: checkinMethod,
     });
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
     }
     return { data };
   };
@@ -26,7 +26,7 @@ export class AttendanceService {
     const { data, error } =
       await this.attendanceRepository.listEventAttendees(eventId);
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
     }
     return { data };
   };

@@ -5,6 +5,8 @@ import {
   attendanceServiceInstance,
 } from "./attendance.service.js";
 import { ServerError } from "../../classes/ServerError.js";
+import { createExpressController } from "@packages/api-typing";
+import { Contract } from "@packages/nexus-api-contracts";
 
 export class EventSystemController {
   constructor(
@@ -12,18 +14,16 @@ export class EventSystemController {
     private attendanceService: AttendanceService = attendanceServiceInstance
   ) {}
 
+  /**
+   * Vanilla express example
+   */
   list: RequestHandler = async (req, res, next) => {
-    try {
-      const { data } = await this.eventService.list();
-      return res.status(200).json({ data });
-    } catch (error: any) {
-      if (error instanceof ServerError) {
-        return res
-          .status(error.statusCode)
-          .json({ error: error.message, title: error.title });
-      }
-      return next(error);
+    const { data, error } = await this.eventService.list();
+    if (error) {
+      throw ServerError.internalError(`Something went wrong: ${error.message}`);
     }
+
+    return res.status(200).json({ data });
   };
 
   create: RequestHandler = async (req, res, next) => {
@@ -31,48 +31,60 @@ export class EventSystemController {
     const userId = user.id; // user id from token parser
 
     const dto = req.body;
-    try {
-      const { data } = await this.eventService.create(dto, userId);
-      return res.status(200).json({ data });
-    } catch (error: any) {
-      if (error instanceof ServerError) {
-        return res
-          .status(error.statusCode)
-          .json({ error: error.message, title: error.title });
-      }
-      return next(error);
+
+    const { data, error } = await this.eventService.create(dto, userId);
+    if (error) {
+      throw ServerError.internalError(`Something went wrong: ${error.message}`);
     }
+    return res.status(200).json({ data });
+
+    // no need for try catch.
+    // lahat ng error na matothrow within a controller ay macacatch sa global error handler.
+    // chinicheck narin ng global error handler kung instance of ServerError para mahandle ng maayos.
+    // try {
+    // } catch (error: any) {
+    //   if (error instanceof ServerError) {
+    //     return res
+    //       .status(error.statusCode)
+    //       .json({ error: error.message, title: error.title });
+    //   }
+    //   return next(error);
+    // }
   };
+
+  /**
+   * EXAMPLE USING createExpressController
+   * fully typed input object contaning params, query, body
+   * fully typed output function to send response
+   */
+  update: RequestHandler = createExpressController(
+    Contract.eventSystem.events.event.patch,
+    async ({ input, output, ctx }) => {
+      const eventId = input.params.eventId;
+      const dto = input.body.data;
+
+      const { data, error } = await this.eventService.update(eventId, dto);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+      return output(200, {
+        status: "success",
+        message: "Event updated successfully",
+        data,
+      });
+    }
+  );
 
   delete: RequestHandler = async (req, res, next) => {
     const eventId = req.params.eventId as string;
-    try {
-      const { data } = await this.eventService.delete(eventId);
-      return res.status(200).json({ data });
-    } catch (error: any) {
-      if (error instanceof ServerError) {
-        return res
-          .status(error.statusCode)
-          .json({ error: error.message, title: error.title });
-      }
-      return next(error);
-    }
-  };
 
-  update: RequestHandler = async (req, res, next) => {
-    const eventId = req.params.eventId as string;
-    const dto = req.body;
-    try {
-      const { data } = await this.eventService.update(eventId, dto);
-      return res.status(200).json({ data });
-    } catch (error: any) {
-      if (error instanceof ServerError) {
-        return res
-          .status(error.statusCode)
-          .json({ error: error.message, title: error.title });
-      }
-      return next(error);
+    const { data, error } = await this.eventService.delete(eventId);
+    if (error) {
+      throw ServerError.internalError(`Something went wrong: ${error.message}`);
     }
+    return res.status(200).json({ data });
   };
 
   getOne: RequestHandler = async (req, res) => {};
@@ -84,36 +96,25 @@ export class EventSystemController {
     const body = req.body;
     const { eventId, checkinMethod, userId } = body;
 
-    try {
-      const { data } = await this.eventService.checkInToEvent(
-        eventId,
-        userId,
-        checkinMethod
-      );
-      return res.status(200).json({ data });
-    } catch (error: any) {
-      if (error instanceof ServerError) {
-        return res
-          .status(error.statusCode)
-          .json({ error: error.message, title: error.title });
-      }
-      return next(error);
+    const { data, error } = await this.eventService.checkInToEvent(
+      eventId,
+      userId,
+      checkinMethod
+    );
+    if (error) {
+      throw ServerError.internalError(`Something went wrong: ${error.message}`);
     }
+    return res.status(200).json({ data });
   };
 
   listEventAttendees: RequestHandler = async (req, res, next) => {
     const eventId = req.params.eventId as string;
-    try {
-      const { data } = await this.attendanceService.listEventAttendees(eventId);
-      return res.status(200).json({ data });
-    } catch (error: any) {
-      if (error instanceof ServerError) {
-        return res
-          .status(error.statusCode)
-          .json({ error: error.message, title: error.title });
-      }
-      return next(error);
+    const { data, error } =
+      await this.attendanceService.listEventAttendees(eventId);
+    if (error) {
+      throw ServerError.internalError(`Something went wrong: ${error.message}`);
     }
+    return res.status(200).json({ data });
   };
 }
 

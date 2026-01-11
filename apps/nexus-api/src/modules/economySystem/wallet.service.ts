@@ -18,7 +18,10 @@ export class WalletService {
     const { data, error } =
       await this.walletRepository.getWalletByUserId(userId);
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
+    }
+    if (!data) {
+      throw ServerError.notFound("Wallet not found.");
     }
     return { data };
   };
@@ -33,7 +36,7 @@ export class WalletService {
     const { data: wallet, error: walletFetchError } =
       await this.walletRepository.getWalletByUserId(userId);
     if (walletFetchError) {
-      throw ServerError.internalError(walletFetchError.message);
+      return { error: walletFetchError };
     }
     if (!wallet) {
       throw ServerError.notFound("Wallet not found.");
@@ -50,7 +53,7 @@ export class WalletService {
       source_id: sourceId,
     });
     if (error) {
-      throw ServerError.internalError(error.message);
+      return {error}
     }
     if (!data) {
       throw ServerError.internalError("Failed to create transaction record.");

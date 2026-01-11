@@ -23,7 +23,7 @@ export class EventService {
   list = async () => {
     const { data, error } = await this.eventRepository.listEvents();
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
     }
     return { data };
   };
@@ -40,7 +40,7 @@ export class EventService {
       creator_id: creatorId,
     });
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
     }
     return { data };
   };
@@ -48,7 +48,7 @@ export class EventService {
   getById = async (id: string) => {
     const { data, error } = await this.eventRepository.getEventById(id);
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
     }
     return { data };
   };
@@ -56,7 +56,7 @@ export class EventService {
   delete = async (id: string) => {
     const { data, error } = await this.eventRepository.deleteEvent(id);
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
     }
     return { data };
   };
@@ -64,7 +64,7 @@ export class EventService {
   update = async (id: string, dto: Models.eventSystem.event.updateDTO) => {
     const { data, error } = await this.eventRepository.updateEvent(id, dto);
     if (error) {
-      throw ServerError.internalError(error.message);
+      return { error };
     }
     return { data };
   };
@@ -74,12 +74,16 @@ export class EventService {
     userId: string,
     checkinMethod: string
   ) => {
-    if (!userId) {
-      throw ServerError.internalError("User ID is required");
-    }
+    // no need since di naman optional si userId sa params
+    // if (!userId) {
+    //   throw ServerError.internalError("User ID is required");
+    // }
 
     // get the event details
-    const { data: eventData } = await this.getById(eventId);
+    const { data: eventData, error } = await this.getById(eventId);
+    if (error) {
+      return { error };
+    }
     if (!eventData) {
       throw ServerError.notFound("Event not found");
     }
@@ -94,18 +98,28 @@ export class EventService {
     );
 
     // increment attendees count in event record
-    const { data: updatedEventData } =
-      await this.update(eventId, {
+    const { data: updatedEventData, error: updateError } = await this.update(
+      eventId,
+      {
         attendees_count: eventData.attendees_count + 1,
-      });
+      }
+    );
+
+    if (updateError) {
+      return { error: updateError };
+    }
 
     // increment points to user wallet if applicable
-    const { data: walletData } = await this.walletService.incrementPoints(
-      userId,
-      eventData.attendance_points || 0,
-      "event",
-      eventId
-    );
+    const { data: walletData, error: walletError } =
+      await this.walletService.incrementPoints(
+        userId,
+        eventData.attendance_points || 0,
+        "event",
+        eventId
+      );
+    if (walletError) {
+      return { error: walletError };
+    }
 
     return {
       data: { attendance: data, wallet: walletData, event: updatedEventData },
