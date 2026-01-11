@@ -19,11 +19,7 @@ export class AuthMiddleware {
     const user = req.user;
 
     if (!user) {
-      throw new ServerError(
-        401,
-        "Unauthenticated",
-        "You must be logged in to access this resource."
-      );
+      throw ServerError.unauthorized();
     }
 
     next();
@@ -33,11 +29,7 @@ export class AuthMiddleware {
     const role = req.role;
 
     if (!role || role !== "admin") {
-      throw new ServerError(
-        403,
-        "Forbidden",
-        "You must be an admin to perform this action."
-      );
+      throw ServerError.forbidden("You must be an admin to perform this action.");
     }
 
     next();
@@ -49,9 +41,7 @@ export class AuthMiddleware {
       const userRole = req.role;
 
       if (!userRole || !allowedRoles.includes(userRole)) {
-        throw new ServerError(
-          403,
-          "Forbidden",
+        throw ServerError.forbidden(
           "You do not have permission to perform this action."
         );
       }
