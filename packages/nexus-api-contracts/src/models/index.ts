@@ -4,6 +4,7 @@ import * as _userResourceSystem from "./userResourceSystem/index.js";
 import * as _resourceSystem from "./resourceSystem/index.js";
 import * as _roleSystem from "./roleSystem/index.js";
 import { EventSystemModels } from "./eventSystem/index.js";
+import { ArticleSystemModels } from "./articleSystem/index.js";
 
 export namespace Models {
   export import economySystem = EconomySystemModels;
@@ -12,4 +13,5 @@ export namespace Models {
   export import resourceSystem = _resourceSystem;
   export import roleSystem = _roleSystem;
   export import eventSystem = EventSystemModels;
+  export import articleSystem = ArticleSystemModels;
 }
