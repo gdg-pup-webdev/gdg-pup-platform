@@ -26,31 +26,33 @@ export class EventSystemController {
     return res.status(200).json({ data });
   };
 
-  create: RequestHandler = async (req, res, next) => {
-    const user = req.user!;
-    const userId = user.id; // user id from token parser
+  /**
+   * EXAMPLE USING createExpressController when creating event
+   * no need to validate and parse input manually
+   */
+  create: RequestHandler = createExpressController(
+    Contract.eventSystem.events.post,
+    async ({ input, output, ctx }) => {
+      const { req, res } = ctx;
+      const user = req.user!;
+      const userId = user.id; // user id from token parser
 
-    const dto = req.body;
+      const dto = input.body.data;
 
-    const { data, error } = await this.eventService.create(dto, userId);
-    if (error) {
-      throw ServerError.internalError(`Something went wrong: ${error.message}`);
+      const { data, error } = await this.eventService.create(dto, userId);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Event created successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-
-    // no need for try catch.
-    // lahat ng error na matothrow within a controller ay macacatch sa global error handler.
-    // chinicheck narin ng global error handler kung instance of ServerError para mahandle ng maayos.
-    // try {
-    // } catch (error: any) {
-    //   if (error instanceof ServerError) {
-    //     return res
-    //       .status(error.statusCode)
-    //       .json({ error: error.message, title: error.title });
-    //   }
-    //   return next(error);
-    // }
-  };
+  );
 
   /**
    * EXAMPLE USING createExpressController
