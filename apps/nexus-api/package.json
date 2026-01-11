@@ -15,8 +15,8 @@
   "description": "",
   "dependencies": {
     "@packages/api-typing": "^1.0.0",
-    "@packages/nexus-api-contracts": "^1.0.0",
     "@packages/identity-api-contracts": "^1.0.0",
+    "@packages/nexus-api-contracts": "^1.0.0",
     "@supabase/supabase-js": "^2.86.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -29,6 +29,8 @@
     "pino": "^10.1.0",
     "pino-http": "^11.0.0",
     "supazod": "^4.5.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "tsc-alias": "^1.8.16",
     "zod": "^4.1.12"
   },
