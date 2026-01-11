@@ -15,7 +15,7 @@ export default createRoute({
         query: SchemaFactory.Request.Paginated.query(),
       },
       response: {
-        200: SchemaFactory.Response.list(Models.economySystem.transaction.row),
+        200: SchemaFactory.Response.paginated(Models.economySystem.transaction.row),
         ...SchemaFactory.Response.standardErrors(),
       },
     }),
