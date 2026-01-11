@@ -8,7 +8,10 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc && tsc-alias",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/types/supabase.types.ts",
+    "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
+    "gen-types": "npm run gen-types:supabase && npm run gen-types:zod"
   },
   "author": "",
   "license": "ISC",

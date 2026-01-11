@@ -3,17 +3,16 @@ import {
   createContract,
   createEndpoint,
   createRoute,
-  createRoutes,
 } from "@packages/api-typing";
 import { z } from "zod";
 import { SchemaFactory } from "@/schemaFactory.utils.js";
 
 export const identityApiRoutes = createRoute({
   path: "/api",
-  routes: createRoutes({
+  routes: {
     health: createRoute({
       path: "/health",
-      routes: createRoutes({
+      routes: {
         get: createEndpoint({
           method: "GET",
           request: {},
@@ -25,10 +24,12 @@ export const identityApiRoutes = createRoute({
             500: SchemaFactory.Response.error(),
           },
         }),
-      }),
+      },
     }),
-  }),
+  },
 });
 
 export const identityApiContract = createContract(identityApiRoutes);
 export type IdentityApiTypes = ApiTypes<typeof identityApiRoutes>;
+
+// identityApiContract.health.get.

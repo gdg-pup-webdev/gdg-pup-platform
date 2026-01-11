@@ -1,12 +1,13 @@
 import { createExpressController } from "@packages/api-typing";
-import { nexusApiContract } from "@packages/nexus-api-contracts";
+import { Contract } from "@packages/nexus-api-contracts";
+// import { nexusApiContract } from "@packages/nexus-api-contracts";
 
 export class HealthCheckController {
   constructor() {}
 
   getHealthCheck = createExpressController(
-    nexusApiContract.health.get,
-    async ({ input, output, res, req }) => {
+    Contract.health.get,
+    async ({ input, output,ctx }) => {
       
       return output(200, {
         status: "success",

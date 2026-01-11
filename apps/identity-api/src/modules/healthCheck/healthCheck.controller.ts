@@ -7,7 +7,7 @@ export class HealthCheckController {
 
   getHealthCheck : RequestHandler = createExpressController(
     identityApiContract.health.get,
-    async ({ input, output, res, req }) => {
+    async ({ input, output, ctx }) => {
       return output(200, {
         status: "success",
         message: "Identity API: Health check successful",

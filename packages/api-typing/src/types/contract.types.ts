@@ -1,183 +1,170 @@
 import z, { ZodType } from "zod";
 
-export type DeepInfer<T> = {
-  [K in keyof T]: T[K] extends z.ZodTypeAny
-    ? z.infer<T[K]> // Case A: It's a Schema -> Infer it
-    : T[K] extends Record<string, any>
-      ? DeepInfer<T[K]> // Case B: It's a Namespace -> Go Deeper
-      : never; // Case C: Helper functions/consts -> Hide
-};
+// ==========================================
+// 1. CORE DEFINITIONS (The "Shape" of things)
+// ==========================================
 
-export type DeepInferSchema<T> = {
-  [K in keyof T]: T[K] extends z.ZodTypeAny
-    ? T[K] // Case A: It's a Schema -> Infer it
-    : T[K] extends Record<string, any>
-      ? DeepInferSchema<T[K]> // Case B: It's a Namespace -> Go Deeper
-      : never; // Case C: Helper functions/consts -> Hide
-};
+export type ZodValidator = ZodType<any>;
 
-export type ZodValidatorType = ZodType<any>;
-
-// export type EndpointType = {
-//   method: "GET" | "POST" | "PUT" | "DELETE";
-//   request: {
-//     params?: ZodValidatorType;
-//     body?: ZodValidatorType;
-//     query?: ZodValidatorType;
-//   };
-//   response: {
-//     [statusCode: number]: ZodValidatorType;
-//   };
-// };
-
-// export type RouteType = {
-//   path: string;
-//   routes: RoutesType;
-// };
-
-export class EndpointType {
-  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "LIST" | "UPDATE" =
-    "GET";
-  request: {
-    params?: ZodValidatorType;
-    body?: ZodValidatorType;
-    query?: ZodValidatorType;
-  } = {};
+/**
+ * Defines a single API Endpoint.
+ */
+export interface EndpointDef {
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "LIST" | "UPDATE";
+  request?: {
+    params?: ZodValidator;
+    body?: ZodValidator;
+    query?: ZodValidator;
+  };
   response: {
-    [statusCode: number]: ZodValidatorType;
-  } = {};
-}
- 
-
-export class RouteType {
-  path: string = "/";
-  routes: {
-    [routeName: string]: RouteType | EndpointType;
-  } = {};
-}
-
-export type RoutesType = {
-  [routeName: string]: RouteType | EndpointType;
-};
-
-type InferEndpoint <T extends EndpointType> = {
-  method: T["method"];
-  request: {
-    [K in keyof T["request"] as T["request"][K] extends ZodType<any>
-      ? K
-      : never]: z.infer<NonNullable<T["request"][K]>>;
-  }, 
-  response: {
-    [K in keyof T["response"]]:  T["response"][K] extends ZodType<any>
-      ? z.infer<T["response"][K]>
-      : never;
+    [statusCode: number]: ZodValidator;
   };
 }
 
-export type ApiContract<T extends RouteType> = {
-  [K in keyof T["routes"]]: T["routes"][K] extends RouteType
-    ? ApiContract<T["routes"][K]> // Case B: It's a Namespace -> Go Deeper
-    : T["routes"][K] extends EndpointType
-      ? InferEndpoint<T["routes"][K]> // Case A: It's a Schema -> Infer it
-      : never; // Case C: Helper functions/consts -> Hide
+/**
+ * Defines a Route Node (which contains other Routes or Endpoints).
+ */
+export interface RouteDef {
+  path: string;
+  routes: Record<string, RouteDef | EndpointDef>;
+}
+
+// ==========================================
+// 2. TYPE GUARDS (Safety checks)
+// ==========================================
+
+/**
+ * Strict Type Guard to check if a node is an Endpoint.
+ * Checks for the presence of 'method' and 'response'.
+ */
+export const isEndpoint = (node: any): node is EndpointDef => {
+  return (
+    typeof node === "object" &&
+    node !== null &&
+    "method" in node &&
+    "response" in node &&
+    !("routes" in node) // Key distinction: Endpoints don't have children
+  );
 };
 
-export type ApiTypes<T extends RouteType> = {
-  [K in keyof T["routes"]]: T["routes"][K] extends RouteType
-    ? ApiContract<T["routes"][K]> // Case B: It's a Namespace -> Go Deeper
-    : T["routes"][K] extends EndpointType
-      ? DeepInfer<T["routes"][K]> // Case A: It's a Schema -> Infer it
-      : never; // Case C: Helper functions/consts -> Hide
+/**
+ * Strict Type Guard to check if a node is a Route.
+ */
+export const isRoute = (node: any): node is RouteDef => {
+  return (
+    typeof node === "object" &&
+    node !== null &&
+    "routes" in node &&
+    "path" in node
+  );
 };
 
-export const createRoutes = <T extends RoutesType>(routes: T) => routes;
+// ==========================================
+// 3. FACTORIES (Strict Creation)
+// ==========================================
 
-export const createRoute = <T extends RouteType>(route: T): T => {
-  const newRoute = new RouteType();
-  newRoute.path = route.path;
-  newRoute.routes = route.routes;
-  return newRoute as T;
-  // return;
+/**
+ * Utility: Enforces that T contains ONLY keys from Shape.
+ * Extra keys become 'never', triggering a TS error.
+ */
+type Strict<T, Shape> = T & {
+  [K in keyof T]: K extends keyof Shape ? T[K] : never;
 };
 
-export const createEndpoint = <T extends EndpointType>(endpoint: T): T => {
-  const newEndpoint = new EndpointType();
-  newEndpoint.method = endpoint.method;
-  newEndpoint.request = endpoint.request;
-  newEndpoint.response = endpoint.response;
-  return newEndpoint as T;
+/**
+ * Creates a strictly typed Route.
+ */
+export const createRoute = <T extends RouteDef>(
+  route: Strict<T, RouteDef>
+): T => {
+  return route as T;
 };
 
+/**
+ * Creates a strictly typed Endpoint.
+ */
+export const createEndpoint = <T extends EndpointDef>(
+  endpoint: Strict<T, EndpointDef>
+): T => {
+  return endpoint as T;
+};
 
-export type InferEndpointData<T extends EndpointType> = {
+// ==========================================
+// 4. INFERENCE & RECURSION (The Magic)
+// ==========================================
+
+/**
+ * Extract TypeScript types (z.infer) from an Endpoint Definition.
+ */
+type InferEndpointData<T extends EndpointDef> = {
   method: T["method"];
-  path: string; // Add path if you want frontend to know it
   request: {
-    [K in keyof T["request"]]: T["request"][K] extends ZodType<any>
+    [K in keyof T["request"]]: T["request"][K] extends ZodType
       ? z.infer<T["request"][K]>
       : never;
   };
   response: {
-    [K in keyof T["response"]]: T["response"][K] extends ZodType<any>
+    [K in keyof T["response"]]: T["response"][K] extends ZodType
       ? z.infer<T["response"][K]>
       : never;
   };
 };
 
-export type ClientContract<T> = {
-  [K in keyof T]: T[K] extends EndpointType
-    ? InferEndpointData<T[K]>
-    : ClientContract<T[K]>;
+/**
+ * Recursively generates the Type Contract for the frontend.
+ * (Converts Zod schemas -> TS types)
+ */
+export type ApiTypes<T extends RouteDef> = {
+  [K in keyof T["routes"]]: T["routes"][K] extends RouteDef
+    ? ApiTypes<T["routes"][K]> // Recurse
+    : T["routes"][K] extends EndpointDef
+    ? InferEndpointData<T["routes"][K]> // Infer
+    : never;
 };
 
-export type ContractDefinition<T extends RouteType> = {
-  [K in keyof T["routes"]]: T["routes"][K] extends RouteType
-    ? ContractDefinition<T["routes"][K]> 
-    : T["routes"][K] extends EndpointType
-      ? T["routes"][K] // 👈 RETURN THE ENDPOINT (With Schemas), NOT THE INFERRED DATA
-      : never;
+/**
+ * Recursively generates the Runtime Contract.
+ * (Preserves Zod schemas, injects full paths)
+ */
+export type ContractDefinition<T extends RouteDef> = {
+  [K in keyof T["routes"]]: T["routes"][K] extends RouteDef
+    ? ContractDefinition<T["routes"][K]>
+    : T["routes"][K] extends EndpointDef
+    ? T["routes"][K] & { path: string } // Inject Path
+    : never;
 };
 
-export const createContract = <T extends RouteType>(
+// ==========================================
+// 5. CONTRACT BUILDER
+// ==========================================
+
+export const createContract = <T extends RouteDef>(
   rootRoute: T
 ): ContractDefinition<T> => {
   
-  // Recursive helper that carries the 'currentPath' down the tree
-  const buildContract = (route: RouteType, currentPath: string = ""): any => {
-    const contract: any = {};
-    
-    // Clean path joining (handles slashes)
-    const normalizePath = (p: string) => p.startsWith("/") ? p : `/${p}`;
-    const segment = route.path === "/" ? "" : normalizePath(route.path);
-    const fullPath = currentPath + segment;
+  // Recursive function to walk the tree
+  const walk = (node: RouteDef, parentPath: string): any => {
+    const contract: Record<string, any> = {};
 
-    for (const [key, value] of Object.entries(route.routes)) {
-      if ("routes" in value) {
-        // It's a Route -> Recurse and pass the new path
-        contract[key] = buildContract(value as RouteType, fullPath);
-      } else {
-        // It's an Endpoint -> Inject the Full Path!
-        const endpoint = value as EndpointType;
-        // We attach the computed path to the endpoint object
-        (endpoint as any).path = fullPath; 
-        contract[key] = endpoint;
+    // Normalize path joining
+    const currentPathSegment = node.path === "/" ? "" : node.path;
+    // Ensure we don't get double slashes unless it's root
+    const fullPath = `${parentPath.replace(/\/$/, "")}/${currentPathSegment.replace(/^\//, "")}`;
+
+    for (const [key, child] of Object.entries(node.routes)) {
+      if (isRoute(child)) {
+        // Case A: Nested Route -> Recurse
+        contract[key] = walk(child, fullPath);
+      } else if (isEndpoint(child)) {
+        // Case B: Endpoint -> Inject Path & Assign
+        contract[key] = {
+          ...child,
+          path: fullPath === "" ? "/" : fullPath,
+        };
       }
     }
     return contract;
   };
-  return buildContract(rootRoute) as ContractDefinition<T>;
+
+  return walk(rootRoute, "") as ContractDefinition<T>;
 };
-
-// export type ContractType<T extends RoutesType> = {
-//   [K in keyof T]: T[K] extends RouteType
-//     ? ContractType<T[K]["routes"]>
-//     : T[K] extends EndpointType
-//       ? T[K]
-//       : never;
-// };
-
-// export const createContract = <T extends RoutesType>(
-//   routes: T
-// ): ContractType<T> => {
-//   //
-// };
