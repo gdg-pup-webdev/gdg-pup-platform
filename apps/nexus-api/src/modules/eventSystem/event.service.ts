@@ -11,6 +11,7 @@ import {
   WalletService,
   walletServiceInstance,
 } from "../economySystem/wallet.service.js";
+import { ServerError } from "../../classes/ServerError.js";
 
 export class EventService {
   constructor(
@@ -22,7 +23,7 @@ export class EventService {
   list = async () => {
     const { data, error } = await this.eventRepository.listEvents();
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };
@@ -39,7 +40,7 @@ export class EventService {
       creator_id: creatorId,
     });
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };
@@ -47,7 +48,7 @@ export class EventService {
   getById = async (id: string) => {
     const { data, error } = await this.eventRepository.getEventById(id);
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };
@@ -55,7 +56,7 @@ export class EventService {
   delete = async (id: string) => {
     const { data, error } = await this.eventRepository.deleteEvent(id);
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };
@@ -63,7 +64,7 @@ export class EventService {
   update = async (id: string, dto: Models.eventSystem.event.updateDTO) => {
     const { data, error } = await this.eventRepository.updateEvent(id, dto);
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };
@@ -73,44 +74,38 @@ export class EventService {
     userId: string,
     checkinMethod: string
   ) => {
-    // get the event details
-    const { data: eventData, error: eventError } = await this.getById(eventId);
-    if (eventError) {
-      return { error: eventError };
+    if (!userId) {
+      throw ServerError.badRequest("User ID is required");
     }
+
+    // get the event details
+    const { data: eventData } = await this.getById(eventId);
     if (!eventData) {
-      return { error: { message: "Event not found" } };
+      throw ServerError.notFound("Event not found");
     }
 
     // TODO: check if user has already checked in to this event
 
     // create new attendance record
-    const { data, error } = await this.attendanceService.create(
+    const { data } = await this.attendanceService.create(
       eventId,
       userId,
       checkinMethod
     );
-    if (error) {
-      return { error };
-    }
 
     // increment attendees count in event record
-    const { data: updatedEventData, error: updateEventError } =
+    const { data: updatedEventData } =
       await this.update(eventId, {
         attendees_count: eventData.attendees_count + 1,
       });
 
     // increment points to user wallet if applicable
-    const { data: walletData, error: walletError } =
-      await this.walletService.incrementPoints(
-        userId,
-        eventData.attendance_points || 0,
-        "event",
-        eventId
-      );
-    if (walletError) {
-      return { error: walletError };
-    }
+    const { data: walletData } = await this.walletService.incrementPoints(
+      userId,
+      eventData.attendance_points || 0,
+      "event",
+      eventId
+    );
 
     return {
       data: { attendance: data, wallet: walletData, event: updatedEventData },
