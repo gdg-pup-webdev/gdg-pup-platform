@@ -46,7 +46,7 @@ export class EventSystemRouter {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/EventInput'
+     *             $ref: '#/components/schemas/EventRequestBody'
      *     responses:
      *       201:
      *         description: Created
@@ -114,7 +114,7 @@ export class EventSystemRouter {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/EventInput'
+     *             $ref: '#/components/schemas/EventRequestBody'
      *     responses:
      *       200:
      *         description: Success
@@ -167,7 +167,7 @@ export class EventSystemRouter {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/AttendeeInput'
+     *             $ref: '#/components/schemas/AttendeeRequestBody'
      *     responses:
      *       200:
      *         description: Success
