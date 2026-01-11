@@ -1,4 +1,7 @@
+import { Models } from "@/models/index.js";
+import { SchemaFactory } from "@/utils/schemaFactory.utils.js";
 import { createRoute } from "@packages/api-typing";
+import z from "zod";
 
 
 export const attendees = createRoute({
@@ -6,8 +9,16 @@ export const attendees = createRoute({
     routes: {
         get: {
             method: "GET",
-            request: {},
-            response: {},
+            request: {
+                params: z.object({
+                    eventId: z.string(),
+                }),
+                query: SchemaFactory.Request.Paginated.query(),
+            },
+            response: {
+                200: SchemaFactory.Response.paginated(Models.eventSystem.attendee.row),
+                ...SchemaFactory.Response.standardErrors(),
+            },
         },
     },
 })

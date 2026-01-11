@@ -1,8 +1,7 @@
 import { SchemaFactory } from "@/utils/schemaFactory.utils.js";
 import {
   createEndpoint,
-  createRoute,
-  createRoutes,
+  createRoute, 
 } from "@packages/api-typing";
 import z from "zod";
 

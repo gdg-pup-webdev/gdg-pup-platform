@@ -12,6 +12,7 @@ export default createRoute({
         params: z.object({
           userId: z.string(),
         }),
+        query: SchemaFactory.Request.Paginated.query(),
       },
       response: {
         200: SchemaFactory.Response.list(Models.economySystem.transaction.row),

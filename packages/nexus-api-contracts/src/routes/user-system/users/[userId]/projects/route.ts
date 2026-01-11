@@ -12,6 +12,7 @@ export const projects = createRoute({
         params: z.object({
           userId: z.string(),
         }),
+        query: SchemaFactory.Request.Paginated.query(),
       },
       response: {
         200: SchemaFactory.Response.list(Models.userResourceSystem.project.row),

@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export namespace SchemaFactory {
-  export namespace Response {
+  export namespace Response { 
+
     export const empty = () => {
       return z.object({
         status: z.string(),
@@ -70,6 +71,7 @@ export namespace SchemaFactory {
       return {
         400: SchemaFactory.Response.error(),
         403: SchemaFactory.Response.error(),
+        404: SchemaFactory.Response.error(),
         500: SchemaFactory.Response.error(),
       };
     };
@@ -86,5 +88,11 @@ export namespace SchemaFactory {
         });
       };
     }
+
+    export const withPayload = <T extends z.ZodTypeAny>(dataSchema: T) => {
+      return z.object({
+        data: dataSchema,
+      });
+    };
   }
 }
