@@ -1,8 +1,7 @@
 import { z } from "zod";
 
 export namespace SchemaFactory {
-  export namespace Response { 
-
+  export namespace Response {
     export const empty = () => {
       return z.object({
         status: z.string(),
@@ -82,8 +81,8 @@ export namespace SchemaFactory {
       export const query = () => {
         return z.object({
           page: z.object({
-            number: z.coerce.number().int().positive(),
-            size: z.coerce.number().int().positive(),
+            number: z.coerce.number().int().positive().default(1),
+            size: z.coerce.number().int().positive().default(10),
           }),
         });
       };
