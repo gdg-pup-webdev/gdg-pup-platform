@@ -6,6 +6,7 @@ import {
   WalletRepository,
   walletRepositoryInstance,
 } from "./wallet.repository.js";
+import { ServerError } from "../../classes/ServerError.js";
 
 export class WalletService {
   constructor(
@@ -17,7 +18,7 @@ export class WalletService {
     const { data, error } =
       await this.walletRepository.getWalletByUserId(userId);
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };
@@ -31,8 +32,11 @@ export class WalletService {
     // get wallet of the user
     const { data: wallet, error: walletFetchError } =
       await this.walletRepository.getWalletByUserId(userId);
-    if (walletFetchError || !wallet) {
-      return { error: walletFetchError || new Error("Wallet not found.") };
+    if (walletFetchError) {
+      throw ServerError.internalError(walletFetchError.message);
+    }
+    if (!wallet) {
+      throw ServerError.notFound("Wallet not found.");
     }
 
     /**
@@ -45,8 +49,11 @@ export class WalletService {
       source_type: sourceType,
       source_id: sourceId,
     });
-    if (error || !data) {
-      return { error: error || new Error("Failed to create transaction.") };
+    if (error) {
+      throw ServerError.internalError(error.message);
+    }
+    if (!data) {
+      throw ServerError.internalError("Failed to create transaction record.");
     }
 
     /**
@@ -58,7 +65,7 @@ export class WalletService {
     const { error: updateError } =
       await this.walletRepository.updateWalletBalance(userId, newBalance);
     if (updateError) {
-      return { error: updateError };
+      throw ServerError.internalError(updateError.message);
     }
 
     // build response
@@ -75,8 +82,11 @@ export class WalletService {
     // get wallet of the user
     const { data: wallet, error: walletFetchError } =
       await this.walletRepository.getWalletByUserId(userId);
-    if (walletFetchError || !wallet) {
-      return { error: walletFetchError || new Error("Wallet not found.") };
+    if (walletFetchError) {
+      throw ServerError.internalError(walletFetchError.message);
+    }
+    if (!wallet) {
+      throw ServerError.notFound("Wallet not found.");
     }
 
     /**
@@ -89,8 +99,11 @@ export class WalletService {
       source_type: sourceType,
       source_id: sourceId,
     });
-    if (error || !data) {
-      return { error: error || new Error("Failed to create transaction.") };
+    if (error) {
+      throw ServerError.internalError(error.message);
+    }
+    if (!data) {
+      throw ServerError.internalError("Failed to create transaction record.");
     }
 
     /**
@@ -102,7 +115,7 @@ export class WalletService {
     const { error: updateError } =
       await this.walletRepository.updateWalletBalance(userId, newBalance);
     if (updateError) {
-      return { error: updateError };
+      throw ServerError.internalError(updateError.message);
     }
 
     // build response

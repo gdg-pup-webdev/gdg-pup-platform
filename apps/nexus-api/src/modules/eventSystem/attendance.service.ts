@@ -3,6 +3,7 @@ import {
   AttendanceRepository,
   attendanceRepositoryInstance,
 } from "./attendance.repository.js";
+import { ServerError } from "../../classes/ServerError.js";
 
 export class AttendanceService {
   constructor(
@@ -16,7 +17,7 @@ export class AttendanceService {
       checkin_method: checkinMethod,
     });
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };
@@ -25,7 +26,7 @@ export class AttendanceService {
     const { data, error } =
       await this.attendanceRepository.listEventAttendees(eventId);
     if (error) {
-      return { error };
+      throw ServerError.internalError(error.message);
     }
     return { data };
   };

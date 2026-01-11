@@ -4,6 +4,7 @@ import {
   transactionRepositoryInstance,
 } from "./transaction.repository.js";
 import { WalletService, walletServiceInstance } from "./wallet.service.js";
+import { ServerError } from "../../classes/ServerError.js";
 
 export class TransactionService {
   constructor(
@@ -12,12 +13,9 @@ export class TransactionService {
   ) {}
 
   listTransactionsOfUser = async (userId: string) => {
-    const { data: userWallet, error: walletError } =
-      await this.walletService.getWalletByUserId(userId);
-
-    if (walletError) {
-      return { error: walletError };
-    }
+    const { data: userWallet } = await this.walletService.getWalletByUserId(
+      userId
+    );
 
     const { data: walletTransactions, error: transactionsError } =
       await this.transactionRepository.listTransactionsByWalletId(
@@ -25,7 +23,7 @@ export class TransactionService {
       );
 
     if (transactionsError) {
-      return { error: transactionsError };
+      throw ServerError.internalError(transactionsError.message);
     }
 
     return { data: walletTransactions };
@@ -36,7 +34,7 @@ export class TransactionService {
       await this.transactionRepository.createTransaction(dto);
 
     if (error) {
-      return { error: error || new Error("Failed to create transaction.") };
+      throw ServerError.internalError(error.message || "Failed to create transaction.");
     }
 
     return { data };
