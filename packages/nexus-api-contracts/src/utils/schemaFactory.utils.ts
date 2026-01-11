@@ -17,21 +17,15 @@ export namespace SchemaFactory {
       });
     };
 
-    export const paginated = <T extends z.ZodTypeAny>(dataSchema: T) => {
+    export const list = <T extends z.ZodTypeAny>(dataSchema: T) => {
       return z.object({
         status: z.string(),
         message: z.string(),
         data: dataSchema.array(),
-        meta: z.object({
-          totalRecords: z.number(),
-          pageSize: z.number(),
-          currentPage: z.number(),
-          totalPages: z.number(),
-        }),
       });
     };
 
-    export const list = <T extends z.ZodTypeAny>(dataSchema: T) => {
+    export const paginated = <T extends z.ZodTypeAny>(dataSchema: T) => {
       return z.object({
         status: z.string(),
         message: z.string(),
@@ -80,10 +74,12 @@ export namespace SchemaFactory {
     export namespace Paginated {
       export const query = () => {
         return z.object({
-          page: z.object({
-            number: z.coerce.number().int().positive().default(1),
-            size: z.coerce.number().int().positive().default(10),
-          }),
+          page: z
+            .object({
+              number: z.coerce.number().int().positive().default(1),
+              size: z.coerce.number().int().positive().default(10),
+            })
+            .default({ number: 1, size: 10 }), // 👈 THIS IS THE MAGIC FIX
         });
       };
     }

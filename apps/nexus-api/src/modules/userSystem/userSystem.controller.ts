@@ -20,6 +20,7 @@ import {
 import { createExpressController } from "@packages/api-typing";
 import { Contract } from "@packages/nexus-api-contracts";
 import { ServerError } from "@/classes/ServerError.js";
+import { Server } from "http";
 
 export class UserSystemController {
   constructor(
@@ -38,7 +39,11 @@ export class UserSystemController {
       const userId = input.params.userId;
       const { data, error } = await this.userService.getUserById(userId);
       if (error) {
-        throw new ServerError(400, "Bad Request", error.message);
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
       }
       return output(200, {
         status: "success",
@@ -57,7 +62,11 @@ export class UserSystemController {
         await this.profileService.getUserProfileByUserId(userId);
 
       if (error) {
-        throw new ServerError(400, "Bad Request", error.message);
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
       }
 
       return output(200, {
@@ -76,7 +85,11 @@ export class UserSystemController {
         await this.walletService.getWalletByUserId(userId);
 
       if (error) {
-        throw new ServerError(400, "Bad Request", error.message);
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
       }
 
       return output(200, {
@@ -94,7 +107,11 @@ export class UserSystemController {
       const { data, error } =
         await this.transactionService.listTransactionsOfUser(userId);
       if (error) {
-        throw new ServerError(400, "Bad Request", error.message);
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
       }
       return output(200, {
         status: "success",
@@ -110,24 +127,46 @@ export class UserSystemController {
     }
   );
 
-  listUserRoles: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } = await this.roleService.getRolesOfUser(userId);
-    if (error) {
-      return res.status(400).json({ error });
+  listUserRoles: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.roles.get,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
+      const { data, error } = await this.roleService.getRolesOfUser(userId);
+      if (error) {
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
+      }
+      return output(200, {
+        status: "success",
+        message: "User roles fetched successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 
-  listUserProjects: RequestHandler = async (req: any, res: any) => {
-    const userId = req.params.userId;
-    const { data, error } =
-      await this.projectService.listProjectsOfUser(userId);
-    if (error) {
-      return res.status(400).json({ error });
+  listUserProjects: RequestHandler = createExpressController(
+    Contract.userSystem.users.user.projects.get,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
+      const { data, error } =
+        await this.projectService.listProjectsOfUser(userId);
+      if (error) {
+        throw new ServerError(
+          500,
+          "Something happened inside the controller",
+          `Message: ${error.message}`
+        );
+      }
+      return output(200, {
+        status: "success",
+        message: "User projects fetched successfully",
+        data,
+      });
     }
-    return res.status(200).json({ data });
-  };
+  );
 }
 
 export const userSystemControllerInstance = new UserSystemController();
