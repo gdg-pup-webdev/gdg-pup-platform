@@ -7,7 +7,7 @@ export class HealthCheckController {
 
   getHealthCheck = createExpressController(
     Contract.health.get,
-    async ({ input, output, res, req }) => {
+    async ({ input, output,ctx }) => {
       
       return output(200, {
         status: "success",

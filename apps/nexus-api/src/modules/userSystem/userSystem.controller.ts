@@ -34,6 +34,7 @@ export class UserSystemController {
   getUserById: RequestHandler = createExpressController(
     Contract.userSystem.users.user.get,
     async ({ input, output, ctx }) => {
+      const { res, req } = ctx;
       const userId = input.params.userId;
       const { data, error } = await this.userService.getUserById(userId);
       if (error) {

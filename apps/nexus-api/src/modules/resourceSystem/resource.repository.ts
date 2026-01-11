@@ -1,10 +1,11 @@
 import { supabase } from "@/lib/supabase.js";
 import { Models } from "@packages/nexus-api-contracts";
+import { Tables, TablesInsert } from "@packages/nexus-api-contracts/dist/types/supabase.types.js";
 
 export class ResourceResponsitory {
   constructor() {}
 
-  create = async (dto: Models.resourceSystem.resource.insertDTO) => {
+  create = async (dto: TablesInsert<"resource">) => {
     const { data, error } = await supabase
       .from("resource")
       .insert(dto)
