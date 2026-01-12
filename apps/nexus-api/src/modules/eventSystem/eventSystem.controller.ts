@@ -18,7 +18,7 @@ export class EventSystemController {
    * Vanilla express example
    */
   list: RequestHandler = createExpressController(
-    Contract.eventSystem.events.list,
+    Contract.eventSystem.events.get,
     async ({ input, output, ctx }) => {
       const { data, error } = await this.eventService.list();
       if (error) {

@@ -6,16 +6,6 @@ import { Models } from "@/index.js";
 export const events = createRoute({
   path: "/events",
   routes: {
-    list: {
-      method: "GET",
-      request: {
-        query: SchemaFactory.Request.Paginated.query(),
-      },
-      response: {
-        200: SchemaFactory.Response.paginated(Models.eventSystem.event.row),
-        ...SchemaFactory.Response.standardErrors(),
-      },
-    },
     get: {
       method: "GET",
       request: {
