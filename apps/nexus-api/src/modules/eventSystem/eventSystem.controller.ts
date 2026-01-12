@@ -114,7 +114,25 @@ export class EventSystemController {
     }
   );
 
-  getOne: RequestHandler = async (req, res) => {};
+  getOne: RequestHandler = createExpressController(
+    Contract.eventSystem.events.event.get,
+    async ({ input, output, ctx }) => {
+      const eventId = input.params.eventId;
+
+      const { data, error } = await this.eventService.getById(eventId);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Event fetched successfully",
+        data,
+      });
+    }
+  );
 
   checkin: RequestHandler = createExpressController(
     Contract.eventSystem.checkin.post,

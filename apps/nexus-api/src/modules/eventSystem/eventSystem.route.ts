@@ -66,6 +66,36 @@ export class EventSystemRouter {
     /**
      * @openapi
      * /api/event-system/events/{eventId}:
+     *   get:
+     *     tags:
+     *       - Event System
+     *     security:
+     *       - bearerAuth: []
+     *     description: Get an event by ID
+     *     parameters:
+     *       - in: path
+     *         name: eventId
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Success
+     *       401:
+     *         $ref: '#/components/responses/UnauthorizedError'
+     *       403:
+     *         $ref: '#/components/responses/ForbiddenError'
+     *       500:
+     *         $ref: '#/components/responses/InternalServerError'
+     */
+    router.get(
+      "/events/:eventId",
+      this.eventSystemController.getOne
+    );
+
+    /**
+     * @openapi
+     * /api/event-system/events/{eventId}:
      *   delete:
      *     tags:
      *       - Event System
