@@ -5,6 +5,7 @@
 import {z} from "zod";
 
 import { response as api_health_GET_response } from "./routes/api/health/GET";
+import { getResponseModel as model_response_model_getResponseModel } from "./models//response.model";
 
 export const EndpointSchemas = {
   "api_health_GET": {
@@ -34,7 +35,9 @@ export const contract = {
   }
 }
 
-export const models = {}
+export const models = {
+  "response.model_model": model_response_model_getResponseModel
+}
 
 export type ResponseTypes = {
   api_health_GET : { [K in keyof typeof api_health_GET_response]: z.infer<typeof api_health_GET_response[K]> }
