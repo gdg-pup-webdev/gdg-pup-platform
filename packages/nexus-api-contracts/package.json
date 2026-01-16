@@ -13,7 +13,7 @@
     "gen-types:zod": "pnpm exec supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
     "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod",
     "dev": "concurrently \"typed-rest --watch\" \"tsc --watch\"",
-    "build": "pnpm run gen-types && typed-rest && tsc"
+    "build": "pnpm run typed-rest && tsc"
   },
   "dependencies": {
     "@configs/typescript-config": "workspace:*",
