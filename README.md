@@ -4,33 +4,33 @@ The official platform for GDG PUP, built as a modern monorepo with end-to-end ty
 
 ## SETUP
 
-This repository uses a monorepo setup using pnpm as the package manager and turborepo as the workspace manager.
+This repository uses a monorepo setup using **pnpm** as the package manager and **turborepo** as the workspace manager.
 
 Follow all the steps below in order to setup your local workspace.
 
 1. **Clone the reponsitory**
 
-```
+```cmd
 git clone https://github.com/gdg-pup-webdev/gdg-pup-platform.git
 cd gdg-pup-webdev
 ```
 
 2. **Install pnpm and dependencies**
 
-```
+```cmd
 npm install -g pnpm@latest
 pnpm i
 ```
 
 3. **Build the project**
 
-```
+```cmd
 pnpm run build
 ```
 
 4. **Start development mode**
 
-```
+```cmd
 pnpm run dev
 ```
 
