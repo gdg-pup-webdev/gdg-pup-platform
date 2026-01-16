@@ -15,7 +15,7 @@ export class UserResourceSystemRouter {
   ) {}
 
   getRouter() {
-    const router = Router();
+    const router : Router= Router();
 
     /**
      * @openapi

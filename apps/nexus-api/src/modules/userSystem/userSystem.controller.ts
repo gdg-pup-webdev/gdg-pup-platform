@@ -16,11 +16,11 @@ import {
 import {
   ProjectService,
   projectServiceInstance,
-} from "../userResourceSystem/project.service.js";
-import { createExpressController } from "@packages/api-typing";
-import { Contract } from "@packages/nexus-api-contracts";
+} from "../userResourceSystem/project.service.js"; 
+import { contract } from "@packages/nexus-api-contracts";
 import { ServerError } from "@/classes/ServerError.js";
 import { Server } from "http";
+import { createExpressController } from "@packages/typed-rest";
 
 export class UserSystemController {
   constructor(
@@ -33,7 +33,7 @@ export class UserSystemController {
   ) {}
 
   getUserById: RequestHandler = createExpressController(
-    Contract.userSystem.users.user.get,
+    contract.api.user_system.users.userId.GET,
     async ({ input, output, ctx }) => {
       const { res, req } = ctx;
       const userId = input.params.userId;
@@ -54,7 +54,7 @@ export class UserSystemController {
   );
 
   getUserProfile: RequestHandler = createExpressController(
-    Contract.userSystem.users.user.profile.get,
+    contract.api.user_system.users.userId.profile.GET,
     async ({ input, output, ctx }) => {
       const userId = input.params.userId;
 
@@ -78,7 +78,7 @@ export class UserSystemController {
   );
 
   getUserWallet: RequestHandler = createExpressController(
-    Contract.userSystem.users.user.wallet.get,
+    contract.api.user_system.users.userId.wallet.GET,
     async ({ input, output, ctx }) => {
       const userId = input.params.userId;
       const { data, error } =
@@ -101,7 +101,7 @@ export class UserSystemController {
   );
 
   listUserWalletTransactions: RequestHandler = createExpressController(
-    Contract.userSystem.users.user.wallet.transactions.list,
+    contract.api.user_system.users.userId.wallet.transactions.GET,
     async ({ input, output, ctx }) => {
       const userId = input.params.userId;
       const { data, error } =
@@ -128,7 +128,7 @@ export class UserSystemController {
   );
 
   listUserRoles: RequestHandler = createExpressController(
-    Contract.userSystem.users.user.roles.get,
+    contract.api.user_system.users.userId.roles.GET,
     async ({ input, output, ctx }) => {
       const userId = input.params.userId;
       const { data, error } = await this.roleService.getRolesOfUser(userId);
@@ -148,7 +148,7 @@ export class UserSystemController {
   );
 
   listUserProjects: RequestHandler = createExpressController(
-    Contract.userSystem.users.user.projects.get,
+    contract.api.user_system.users.userId.projects.GET,
     async ({ input, output, ctx }) => {
       const userId = input.params.userId;
       const { data, error } =

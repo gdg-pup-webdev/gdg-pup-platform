@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { ProjectService, projectServiceInstance } from "./project.service.js";
-import { createExpressController } from "@packages/api-typing";
-import { Contract } from "@packages/nexus-api-contracts";
+import { ProjectService, projectServiceInstance } from "./project.service.js"; 
+import { contract } from "@packages/nexus-api-contracts";
 import { ServerError } from "@/classes/ServerError.js";
+import { createExpressController } from "@packages/typed-rest";
 
 export class UserResourceSystemController {
   constructor(
@@ -10,7 +10,7 @@ export class UserResourceSystemController {
   ) {}
 
   getOneProject: RequestHandler = createExpressController(
-    Contract.userResourceSystem.projects.project.get,
+    contract.api.user_resource_system.projects.projectId.GET,
     async ({ input, output, ctx }) => {
       const projectId = input.params.projectId;
       const { data, error } = await this.projectService.getOne(projectId);
@@ -30,7 +30,7 @@ export class UserResourceSystemController {
   );
 
   createProject: RequestHandler = createExpressController(
-    Contract.userResourceSystem.projects.post,
+    contract.api.user_resource_system.projects.POST,
     async ({ input, output, ctx }) => {
       const { res, req } = ctx;
       const userId = req.user!.id; // user id from token parser
@@ -52,7 +52,7 @@ export class UserResourceSystemController {
   );
 
   updateProject: RequestHandler = createExpressController(
-    Contract.userResourceSystem.projects.project.patch,
+    contract.api.user_resource_system.projects.projectId.PATCH,
     async ({ input, output, ctx }) => {
       const projectId = input.params.projectId as string;
       const dto = input.body.data;
@@ -73,7 +73,7 @@ export class UserResourceSystemController {
   );
 
   deleteProject: RequestHandler = createExpressController(
-    Contract.userResourceSystem.projects.project.delete,
+    contract.api.user_resource_system.projects.projectId.DELETE,
     async ({ input, output, ctx }) => {
       const projectId = input.params.projectId;
       const { data, error } = await this.projectService.delete(projectId);

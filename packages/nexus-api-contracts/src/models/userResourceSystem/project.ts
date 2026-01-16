@@ -2,8 +2,8 @@ import {
   publicArticleUpdateSchema,
   publicUserProjectInsertSchema,
   publicUserProjectRowSchema,
-} from "@/types/supabase.schema.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+} from "#types/supabase.schema.js";
+import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
 
 export const row = publicUserProjectRowSchema;
 export type row = Tables<"user_project">;

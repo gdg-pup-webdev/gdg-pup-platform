@@ -15,7 +15,7 @@ export class EventSystemRouter {
   ) {}
 
   getRouter() {
-    const router = Router();
+    const router : Router = Router();
 
     /**
      * @openapi

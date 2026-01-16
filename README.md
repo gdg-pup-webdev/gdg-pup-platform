@@ -2,6 +2,28 @@
 
 The official platform for GDG PUP, built as a modern monorepo with end-to-end type safety, contract-first architecture, and a unified development workflow.
 
+## SETUP
+1. **Clone the reponsitory**
+```
+git clone https://github.com/gdg-pup-webdev/gdg-pup-platform.git
+cd gdg-pup-webdev
+```
+2. **Install pnpm and dependencies**
+```
+npm install -g pnpm@latest
+pnpm i
+``` 
+
+3. **Build the project**
+```
+pnpm run build
+```
+
+4. **Start development mode**
+```
+pnpm run dev
+```
+
 ## 📚 Documentation
 
 For a deep dive into the system architecture, contracts, backend, frontend, and database, please read the **[Architecture Guide](./docs/ARCHITECTURE.md)**.

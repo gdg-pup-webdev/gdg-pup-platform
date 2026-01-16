@@ -10,7 +10,7 @@ export class HealthCheckRouter {
   ) {}
 
   getRouter() {
-    const router = Router();
+    const router :Router= Router();
     router.get("/", this.controller.getHealthCheck);
     return router;
   }

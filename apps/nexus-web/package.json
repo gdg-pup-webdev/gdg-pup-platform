@@ -9,9 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@packages/api-typing": "^1.0.0",
-    "@packages/identity-api-contracts": "^1.0.0",
-    "@packages/nexus-api-contracts": "^1.0.0",
+    "@packages/identity-api-contracts": "workspace:*",
+    "@packages/nexus-api-contracts": "workspace:*",
+    "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.90.1",
     "cookies-next": "^6.1.1",
     "next": "16.1.1",

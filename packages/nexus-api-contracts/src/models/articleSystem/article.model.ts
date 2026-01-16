@@ -2,7 +2,7 @@ import {
   publicArticleInsertSchema,
   publicArticleRowSchema,
   publicArticleUpdateSchema,
-} from "@/types/supabase.schema.js";
+} from "#types/supabase.schema.js";
 import z from "zod";
 
 export namespace ArticleModels {
