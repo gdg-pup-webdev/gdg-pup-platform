@@ -1,5 +1,4 @@
-import { publicUserRowSchema } from "@/types/supabase.schema.js";
-import { Tables } from "@/types/supabase.types.js";
+import { publicUserRowSchema } from "#types/supabase.schema.js"; 
 import z from "zod";
 
 

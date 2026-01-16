@@ -2,8 +2,8 @@ import {
   publicEventAttendanceInsertSchema,
   publicEventAttendanceRowSchema,
   publicEventAttendanceUpdateSchema,
-} from "@/types/supabase.schema.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+} from "#types/supabase.schema.js";
+import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
 
 export namespace AttendanceModels {
   export const row = publicEventAttendanceRowSchema;

@@ -3,8 +3,8 @@ import { Router } from "express";
 export class ArticleSystemRouter {
   constructor() {}
 
-  getRotuer() {
-    const router = Router();
+  getRouter() {
+    const router : Router = Router();
 
     /**
      * @openapi

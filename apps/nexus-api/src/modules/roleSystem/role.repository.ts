@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts";
+import { Models } from "@packages/nexus-api-contracts/models";
 
 export class RoleRepository {
   constructor() {}

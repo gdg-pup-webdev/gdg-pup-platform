@@ -2,8 +2,8 @@ import {
   publicResourceInsertSchema,
   publicResourceRowSchema,
   publicResourceUpdateSchema,
-} from "@/types/supabase.schema.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+} from "#types/supabase.schema.js";
+import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
 import z from "zod";
 
 export const row = publicResourceRowSchema;

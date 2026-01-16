@@ -2,10 +2,10 @@ import { RequestHandler } from "express";
 import {
   ResourceService,
   resourceServiceInstance,
-} from "./resource.service.js";
-import { createExpressController } from "@packages/api-typing";
-import { Contract } from "@packages/nexus-api-contracts";
+} from "./resource.service.js"; 
+import { contract } from "@packages/nexus-api-contracts";
 import { ServerError } from "@/classes/ServerError.js";
+import { createExpressController } from "@packages/typed-rest";
 
 export class ResourceSystemController {
   constructor(
@@ -13,7 +13,7 @@ export class ResourceSystemController {
   ) {}
 
   create: RequestHandler = createExpressController(
-    Contract.resourceSystem.resources.post,
+    contract.api.resource_system.resources.POST,
     async ({ input, output, ctx }) => {
       const { res, req } = ctx;
       const user = req.user!;
@@ -36,7 +36,7 @@ export class ResourceSystemController {
   );
 
   delete: RequestHandler = createExpressController(
-    Contract.resourceSystem.resources.resource.delete,
+    contract.api.resource_system.resources.resourceId.DELETE,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.resourceId;
       const { data, error } = await this.resourceService.delete(resourceId);
@@ -54,7 +54,7 @@ export class ResourceSystemController {
   );
 
   update: RequestHandler = createExpressController(
-    Contract.resourceSystem.resources.resource.patch,
+    contract.api.resource_system.resources.resourceId.PATCH,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.resourceId as string;
       const { data, error } = await this.resourceService.update(
@@ -76,7 +76,7 @@ export class ResourceSystemController {
   );
 
   list: RequestHandler = createExpressController(
-    Contract.resourceSystem.resources.get,
+    contract.api.resource_system.resources.GET,
     async ({ input, output, ctx }) => {
       const { data, error } = await this.resourceService.list();
       if (error) {
@@ -100,7 +100,7 @@ export class ResourceSystemController {
   );
 
   getOne: RequestHandler = createExpressController(
-    Contract.resourceSystem.resources.resource.get,
+    contract.api.resource_system.resources.resourceId.GET,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.resourceId as string;
       const { data, error } = await this.resourceService.getOne(resourceId);

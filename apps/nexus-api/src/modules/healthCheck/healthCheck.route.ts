@@ -3,14 +3,14 @@ import {
   healthCheckController as healthCheckControllerImport,
   HealthCheckController,
 } from "./healthCheck.controller.js";
-
+ 
 export class HealthCheckRouter {
   constructor(
     private controller: HealthCheckController = healthCheckControllerImport
   ) {}
 
   getRouter() {
-    const router = Router();
+    const router : Router = Router();
 
     /**
      * @openapi
@@ -29,5 +29,5 @@ export class HealthCheckRouter {
     return router;
   }
 }
-
+ 
 export const healthCheckRouterInstance = new HealthCheckRouter();

@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - packages/*
+  - configs/*
+
+onlyBuiltDependencies:
+  - '@firebase/util'
+  - '@scarf/scarf'
+  - esbuild
+  - protobufjs
+  - sharp
+  - supabase
+  - unrs-resolver

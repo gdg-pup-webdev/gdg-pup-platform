@@ -9,7 +9,7 @@ import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js
 import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
 
 export const routesLoader = (app: Express) => {
-  app.use("/api/article-system", articleRouterInstance.getRotuer());
+  app.use("/api/article-system", articleRouterInstance.getRouter());
   app.use("/api/event-system", eventSystemRouterInstance.getRouter());
   app.use("/api/health", healthCheckRouterInstance.getRouter());
   app.use("/api/leaderboard-system", leaderboardSystemRouterInstance.getRouter());

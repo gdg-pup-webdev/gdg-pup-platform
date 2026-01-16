@@ -1,12 +1,10 @@
 "use client";
 
-import { configs } from "@/configs/servers.config";
-import { callEndpoint } from "@packages/api-typing";
-import {
-  identityApiContract,
-  IdentityApiTypes,
-} from "@packages/identity-api-contracts";
-import { Contract, ContractTypes } from "@packages/nexus-api-contracts";
+import { Responses as identityApiResponseTypes, contract as identityApiContract } from "@packages/identity-api-contracts";
+import { Responses as nexusApiResponseTypes, contract as nexusApiContract } from "@packages/nexus-api-contracts";
+import { callEndpoint } from "@packages/typed-rest";
+
+import { configs } from "@/configs/servers.config"; 
 import Link from "next/link";
 import React from "react";
 
@@ -25,8 +23,9 @@ const HomePage = () => {
 };
 
 const NexusApiHealthCheckCard = () => {
+ 
   const [res, setRes] = React.useState<
-    ContractTypes["health"]["get"]["response"][200] | null
+    nexusApiResponseTypes<"api_health_GET">[200] | null
   >(null);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -38,7 +37,7 @@ const NexusApiHealthCheckCard = () => {
 
       const result = await callEndpoint(
         configs.nexusApiBaseUrl,
-        Contract.health.get,
+       nexusApiContract.api.health.GET,
         {}
       );
 
@@ -96,7 +95,7 @@ const NexusApiHealthCheckCard = () => {
 
 const IdentityApiHealthCheckCard = () => {
   const [res, setRes] = React.useState<
-    IdentityApiTypes["health"]["get"]["response"][200] | null
+    identityApiResponseTypes<"api_health_GET">[200] | null
   >(null);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -107,7 +106,7 @@ const IdentityApiHealthCheckCard = () => {
       setError(null);
       const result = await callEndpoint(
         configs.identityApiBaseUrl,
-        identityApiContract.health.get,
+        identityApiContract.api.health.GET,
         {}
       );
 

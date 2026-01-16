@@ -10,11 +10,14 @@ export class UserSystemRouter {
   ) {}
 
   getRouter() {
-    const router = Router();
+    const router: Router = Router();
 
     router.get("/users/:userId", this.userSystemController.getUserById);
 
-    router.get("/users/:userId/wallet", this.userSystemController.getUserWallet);
+    router.get(
+      "/users/:userId/wallet",
+      this.userSystemController.getUserWallet
+    );
 
     router.get(
       "/users/:userId/wallet/transactions",

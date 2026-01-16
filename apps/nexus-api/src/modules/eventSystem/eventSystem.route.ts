@@ -15,7 +15,7 @@ export class EventSystemRouter {
   ) {}
 
   getRouter() {
-    const router = Router();
+    const router : Router = Router();
 
     /**
      * @openapi
@@ -46,7 +46,7 @@ export class EventSystemRouter {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/EventInput'
+     *             $ref: '#/components/schemas/EventRequestBody'
      *     responses:
      *       201:
      *         description: Created
@@ -61,6 +61,36 @@ export class EventSystemRouter {
       "/events",
       this.authMiddleware.requireAuth(),
       this.eventSystemController.create
+    );
+
+    /**
+     * @openapi
+     * /api/event-system/events/{eventId}:
+     *   get:
+     *     tags:
+     *       - Event System
+     *     security:
+     *       - bearerAuth: []
+     *     description: Get an event by ID
+     *     parameters:
+     *       - in: path
+     *         name: eventId
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Success
+     *       401:
+     *         $ref: '#/components/responses/UnauthorizedError'
+     *       403:
+     *         $ref: '#/components/responses/ForbiddenError'
+     *       500:
+     *         $ref: '#/components/responses/InternalServerError'
+     */
+    router.get(
+      "/events/:eventId",
+      this.eventSystemController.getOne
     );
 
     /**
@@ -114,7 +144,7 @@ export class EventSystemRouter {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/EventInput'
+     *             $ref: '#/components/schemas/EventRequestBody'
      *     responses:
      *       200:
      *         description: Success
@@ -167,7 +197,7 @@ export class EventSystemRouter {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/AttendeeInput'
+     *             $ref: '#/components/schemas/AttendeeRequestBody'
      *     responses:
      *       200:
      *         description: Success

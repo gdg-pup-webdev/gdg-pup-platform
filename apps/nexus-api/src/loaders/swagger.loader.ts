@@ -106,6 +106,91 @@ export const swaggerLoader = (app: Express) => {
               },
             },
           },
+          EventRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/EventInput",
+              },
+            },
+          },
+          AttendeeRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/AttendeeInput",
+              },
+            },
+          },
+          ResourceInput: {
+            type: "object",
+            required: ["title", "resource_url"],
+            properties: {
+              title: {
+                type: "string",
+                description: "The title of the resource",
+              },
+              description: {
+                type: "string",
+                nullable: true,
+                description: "Description of the resource",
+              },
+              resource_url: {
+                type: "string",
+                description: "URL link to the resource",
+              },
+            },
+          },
+          ResourceRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/ResourceInput",
+              },
+            },
+          },
+          UserProjectInput: {
+            type: "object",
+            required: ["title"],
+            properties: {
+              title: {
+                type: "string",
+                description: "The title of the project",
+              },
+              description: {
+                type: "string",
+                nullable: true,
+                description: "Description of the project",
+              },
+              demo_url: {
+                type: "string",
+                nullable: true,
+                description: "URL to the live demo",
+              },
+              repo_url: {
+                type: "string",
+                nullable: true,
+                description: "URL to the repository (e.g., GitHub)",
+              },
+              tech_stack: {
+                type: "string",
+                nullable: true,
+                description: "Technologies used (e.g., React, Node.js, PostgreSQL)",
+              },
+            },
+          },
+          UserProjectRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/UserProjectInput",
+              },
+            },
+          },
           
         },
         responses: {
@@ -121,6 +206,16 @@ export const swaggerLoader = (app: Express) => {
           },
           ForbiddenError: {
             description: "Forbidden",
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/ErrorResponse",
+                },
+              },
+            },
+          },
+          NotFoundError: {
+            description: "Not Found",
             content: {
               "application/json": {
                 schema: {

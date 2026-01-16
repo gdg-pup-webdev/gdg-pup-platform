@@ -5,8 +5,8 @@ import {
   attendanceServiceInstance,
 } from "./attendance.service.js";
 import { ServerError } from "../../classes/ServerError.js";
-import { createExpressController } from "@packages/api-typing";
-import { Contract } from "@packages/nexus-api-contracts";
+import { contract } from "@packages/nexus-api-contracts";
+import { createExpressController } from "@packages/typed-rest";
 
 export class EventSystemController {
   constructor(
@@ -18,7 +18,7 @@ export class EventSystemController {
    * Vanilla express example
    */
   list: RequestHandler = createExpressController(
-    Contract.eventSystem.events.list,
+    contract.api.event_system.events.GET,
     async ({ input, output, ctx }) => {
       const { data, error } = await this.eventService.list();
       if (error) {
@@ -46,7 +46,7 @@ export class EventSystemController {
    * no need to validate and parse input manually
    */
   create: RequestHandler = createExpressController(
-    Contract.eventSystem.events.post,
+    contract.api.event_system.events.POST,
     async ({ input, output, ctx }) => {
       const { req, res } = ctx;
       const user = req.user!;
@@ -75,7 +75,7 @@ export class EventSystemController {
    * fully typed output function to send response
    */
   update: RequestHandler = createExpressController(
-    Contract.eventSystem.events.event.patch,
+    contract.api.event_system.events.eventId.PATCH,
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId;
       const dto = input.body.data;
@@ -95,7 +95,7 @@ export class EventSystemController {
   );
 
   delete: RequestHandler = createExpressController(
-    Contract.eventSystem.events.event.delete,
+    contract.api.event_system.events.eventId.DELETE,
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId;
 
@@ -114,10 +114,28 @@ export class EventSystemController {
     }
   );
 
-  getOne: RequestHandler = async (req, res) => {};
+  getOne: RequestHandler = createExpressController(
+    contract.api.event_system.events.eventId.GET,
+    async ({ input, output, ctx }) => {
+      const eventId = input.params.eventId;
+
+      const { data, error } = await this.eventService.getById(eventId);
+      if (error) {
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Event fetched successfully",
+        data,
+      });
+    }
+  );
 
   checkin: RequestHandler = createExpressController(
-    Contract.eventSystem.checkin.post,
+    contract.api.event_system.checkin.POST,
     async ({ input, output, ctx }) => {
       const { req, res } = ctx;
       const user = req.user!;
@@ -146,7 +164,7 @@ export class EventSystemController {
   );
 
   listEventAttendees: RequestHandler = createExpressController(
-    Contract.eventSystem.events.event.attendees.list,
+    contract.api.event_system.events.eventId.attendees.GET,
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId as string;
       const { data, error } =
