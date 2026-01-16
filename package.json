@@ -1,15 +1,22 @@
 {
-  "name": "gdg-webdev-platform",
+  "name": "gdg-pup-platform",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "build:api-typing": "npm run build --workspace=@packages/api-typing",
-    "build:contracts": "npm run build --workspace=@packages/webdev-api-contracts --workspace=@packages/nexus-api-contracts --workspace=@packages/identity-api-contracts",
-    "build:packages": "npm run build:api-typing && npm run build:contracts",
-    "build": "npm run build:packages && npm run build --workspace=apps/identity-api && npm run build --workspace=apps/nexus-web",
-    "postinstall": "npm run build:packages"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "start": "turbo run start",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
+  },
+  "devDependencies": {
+    "prettier": "3.7.4",
+    "syncpack": "13.0.4",
+    "turbo": "2.7.4",
+    "typescript": "5.9.3"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=18"
   }
 }
