@@ -178,7 +178,8 @@ export const swaggerLoader = (app: Express) => {
               tech_stack: {
                 type: "string",
                 nullable: true,
-                description: "Technologies used (e.g., React, Node.js, PostgreSQL)",
+                description:
+                  "Technologies used (e.g., React, Node.js, PostgreSQL)",
               },
             },
           },
@@ -191,7 +192,6 @@ export const swaggerLoader = (app: Express) => {
               },
             },
           },
-          
         },
         responses: {
           UnauthorizedError: {
@@ -235,13 +235,13 @@ export const swaggerLoader = (app: Express) => {
             },
           },
         },
-      }, 
+      },
       security: [
         {
           bearerAuth: [],
         },
       ],
-    }, 
+    },
     apis: [
       "./src/modules/**/*.route.ts",
       "./src/modules/**/*.controller.ts",
@@ -251,14 +251,28 @@ export const swaggerLoader = (app: Express) => {
 
   const swaggerSpec = swaggerJsdoc(options);
 
-  // Serve Swagger UI
-  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  const assetOptions = {
+    customCssUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
+    customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
+    ],
+  };
 
-  // Expose swagger.json
-  app.get("/docs.json", (req, res) => {
-    res.setHeader("Content-Type", "application/json");
-    res.send(swaggerSpec);
-  });
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
+
+  // WORKS LOCALLY BUT FAILS WHEN DEPLOYED WITH VERCEL DUE TO STATIC ASSET LOADING ISSUE
+  // const swaggerSpec = swaggerJsdoc(options);
+
+  // // Serve Swagger UI
+  // app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+  // // Expose swagger.json
+  // app.get("/docs.json", (req, res) => {
+  //   res.setHeader("Content-Type", "application/json");
+  //   res.send(swaggerSpec);
+  // });
 
   console.log(
     `Swagger docs available at http://localhost:${configs.port}/docs`
