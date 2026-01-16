@@ -36,7 +36,7 @@ export const scanModels = async (modelDir: string) => {
         await iterateModels(subDirPath, tree[dirItem], [...pathStack, dirItem]);
       } else if (dirItem.endsWith(".ts")) {
         // MODEL FILE
-        logger.modelScanner("Scanning model file:", subDirPath);
+        // logger.modelScanner("Scanning model file:", subDirPath);
 
         const raw_model_name = dirItem.replace(".ts", ""); // GET, POST
         const edited_model_name = raw_model_name + "_model";

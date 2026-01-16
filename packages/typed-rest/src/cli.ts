@@ -28,6 +28,7 @@ const segmentIsPathParameter = (segment: string) =>
   segment.startsWith("[") && segment.endsWith("]");
 
 async function generate() {
+  logger.log("Generating API contract...");
   // hold import statements at the top of the generated file
   const imports: string[] = [];
 
@@ -69,7 +70,7 @@ async function generate() {
           [...pathStack, dirItem]
         );
       } else if (dirItem.endsWith(".ts")) {
-        logger.routeScanner("Scanning route file:", fullPath);
+        // logger.routeScanner("Scanning route file:", fullPath);
 
         // METADATA STUFF
         const endpointMethod = dirItem.replace(".ts", ""); // GET, POST
@@ -166,8 +167,10 @@ async function generate() {
     }
   }
 
+  logger.log("Scanning routes in:", SRC_DIR);
   await iterateDirectory(SRC_DIR, route_tree, []);
 
+  logger.log("Scanning models in:", MODEL_DIR);
   const models_res = await scanModels(MODEL_DIR);
   imports.push(
     ...models_res.imports.map(
