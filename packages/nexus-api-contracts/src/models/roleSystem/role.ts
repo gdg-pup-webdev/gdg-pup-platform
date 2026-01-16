@@ -2,8 +2,8 @@ import {
   publicUserRoleInsertSchema,
   publicUserRoleRowSchema,
   publicUserRoleUpdateSchema,
-} from "@/types/supabase.schema.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+} from "#types/supabase.schema.js";
+import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
 
 export const row = publicUserRoleRowSchema;
 export type row = Tables<"user_role">;

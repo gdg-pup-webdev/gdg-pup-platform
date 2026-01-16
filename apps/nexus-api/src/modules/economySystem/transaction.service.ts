@@ -1,4 +1,4 @@
-import { Models } from "@packages/nexus-api-contracts";
+import { Models } from "@packages/nexus-api-contracts/models";
 import {
   TransactionRepository,
   transactionRepositoryInstance,

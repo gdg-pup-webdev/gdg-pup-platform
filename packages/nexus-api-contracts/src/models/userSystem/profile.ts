@@ -2,8 +2,8 @@ import {
   publicUserProfileInsertSchema,
   publicUserProfileRowSchema,
   publicUserProfileUpdateSchema,
-} from "@/types/supabase.schema.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+} from "#types/supabase.schema.js";
+import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
 
 export const row = publicUserProfileRowSchema;
 export type row = Tables<"user_profile">;

@@ -1,9 +1,6 @@
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts";
-import {
-  Tables,
-  TablesInsert,
-} from "@packages/nexus-api-contracts/dist/types/supabase.types.js";
+import { Models } from "@packages/nexus-api-contracts/models"; 
+import { TablesInsert } from "@packages/nexus-api-contracts/types";
 
 export class ResourceResponsitory {
   constructor() {}

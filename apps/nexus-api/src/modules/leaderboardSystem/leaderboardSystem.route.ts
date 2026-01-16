@@ -4,7 +4,7 @@ export class LeaderboardSystemRouter {
   constructor() {}
 
   getRouter() {
-    const router = Router();
+    const router : Router = Router();
 
     router.get("/wallets", (req, res) => {});
 

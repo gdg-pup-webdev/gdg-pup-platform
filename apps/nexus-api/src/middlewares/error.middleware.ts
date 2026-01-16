@@ -1,9 +1,7 @@
-import {
-  ClientRequestValidationError,
-  ServerResponseValidationError,
-} from "@packages/api-typing";
-import { Request, Response, NextFunction } from "express";
-import z, { ZodError } from "zod";
+ 
+import { ContractError } from "@packages/typed-rest";
+import { Request, Response, NextFunction } from "express"; 
+import z, { ZodError } from "zod";  
 
 export const globalErrorHandler = (
   err: any,
@@ -18,7 +16,15 @@ export const globalErrorHandler = (
 
   console.error("ERROR", err); // Log the real error for the dev
 
-  if (err instanceof ClientRequestValidationError) {
+  if (err instanceof ContractError ) {
+    console.error("🚨 CONTRACT VIOLATION 🚨", {
+      path: req.path,
+      method: req.method,
+      validationErrors: err.error.issues,
+    });
+
+    if (err.blame === "client" ) {
+
     return res.status(400).json({
       title: "Bad Request",
       message: `Request validation failed. `,
@@ -38,17 +44,10 @@ export const globalErrorHandler = (
         };
       }),
     });
-  }
+    }
+    else if (err.blame === "server" ) {
 
-  // CASE B: Server broke the contract -> 500
-  if (err instanceof ServerResponseValidationError) {
-    // Log this CRITICALLY - the backend is broken!
-    console.error("🚨 CONTRACT VIOLATION 🚨", {
-      path: req.path,
-      method: req.method,
-      validationErrors: err.error.issues,
-    });
-
+      
     return res.status(500).json({
       title: "Internal Server Error",
       message: "Response validation failed. Contract violated.",
@@ -68,7 +67,9 @@ export const globalErrorHandler = (
         };
       }),
     });
-  }
+
+    }
+  } 
 
   // 3. Handle Operational Errors (AppError)
   if (err.isOperational) {
