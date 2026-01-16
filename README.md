@@ -3,26 +3,41 @@
 The official platform for GDG PUP, built as a modern monorepo with end-to-end type safety, contract-first architecture, and a unified development workflow.
 
 ## SETUP
+
+This repository uses a monorepo setup using pnpm as the package manager and turborepo as the workspace manager.
+
+Follow all the steps below in order to setup your local workspace.
+
 1. **Clone the reponsitory**
+
 ```
 git clone https://github.com/gdg-pup-webdev/gdg-pup-platform.git
 cd gdg-pup-webdev
 ```
+
 2. **Install pnpm and dependencies**
+
 ```
 npm install -g pnpm@latest
 pnpm i
-``` 
+```
 
 3. **Build the project**
+
 ```
 pnpm run build
 ```
 
 4. **Start development mode**
+
 ```
 pnpm run dev
 ```
+
+If you want to know more about the tools that we use, follow the links below:
+- [pnpm](https://pnpm.io/pnpm-cli)
+- [turborepo](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
+- [turborepo_guide_youtube](https://www.youtube.com/watch?v=gpWDZir8dAA&list=WL&index=11&t=137s)
 
 ## 📚 Documentation
 
@@ -31,6 +46,7 @@ For a deep dive into the system architecture, contracts, backend, frontend, and 
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js (v18+)
 - Postgres database (Supabase recommended)
 - Windows Terminal (recommended for `run.bat`)
@@ -38,6 +54,7 @@ For a deep dive into the system architecture, contracts, backend, frontend, and 
 ### Installation
 
 1. **Install dependencies**:
+
    ```batch
    run install -all
    ```
@@ -58,9 +75,9 @@ root/
 │   └── identity-api/           # Identity Service
 ├── packages/                    # Shared internal packages
 │   ├── nexus-api-contracts/    # API Contracts (Zod Schemas & Routes)
-│   ├── api-typing/             # Type-safe Client/Server Helpers
+│   ├── typed-rest/             # Type-safe Client/Server Helpers
 │   └── identity-api-contracts/ # Identity Contracts
-├── run.bat                      # CLI Utility
+├── ...workspace configs         # Configuration files for the workspace
 └── ARCHITECTURE.md              # Detailed Architecture Docs
 ```
 
@@ -68,11 +85,11 @@ root/
 
 A simplified command-line interface for managing the workspace.
 
-| Command | Usage | Description |
-| --- | --- | --- |
-| **Install** | `run install -all` | Install dependencies for all apps |
-| **Dev** | `run dev -all` | Start dev servers in new tabs |
-| **Build** | `run build nexus-api` | Build a specific project |
+| Command     | Usage                 | Description                       |
+| ----------- | --------------------- | --------------------------------- |
+| **Install** | `run install -all`    | Install dependencies for all apps |
+| **Dev**     | `run dev -all`        | Start dev servers in new tabs     |
+| **Build**   | `run build nexus-api` | Build a specific project          |
 
 For more details on workflows, check the [Architecture Guide](./docs/ARCHITECTURE.md#developer-workflows).
 
@@ -82,7 +99,8 @@ For more details on workflows, check the [Architecture Guide](./docs/ARCHITECTUR
 - **Backend**: Express.js, TypeScript
 - **Database**: Supabase (PostgreSQL)
 - **Contracts**: Zod, Supazod
-- **Monorepo**: Custom `run.bat` orchestration
+- **Monorepo**: pnpm (package management) and turborepo (workspace management)
 
 ---
-*Maintained by the GDG PUP Team*
+
+_Maintained by the GDG PUP Team_
