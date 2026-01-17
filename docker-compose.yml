@@ -1,0 +1,39 @@
+
+
+services:
+  nexus-web:
+    build:
+      context: .
+      dockerfile: apps/nexus-web/Dockerfile
+      args:
+        NEXT_PUBLIC_NEXUS_API_URL: ${NEXT_PUBLIC_NEXUS_API_URL}
+        NEXT_PUBLIC_IDENTITY_API_URL: ${NEXT_PUBLIC_IDENTITY_API_URL}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_PUB_KEY: ${NEXT_PUBLIC_SUPABASE_PUB_KEY}
+    ports:
+      - "3000:3000"
+    restart: always
+
+  nexus-api:
+    build:
+      context: .
+      dockerfile: apps/nexus-api/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - apps/nexus-api/.env
+    environment:
+      - PORT=8000
+    restart: always
+
+  identity-api:
+    build:
+      context: .
+      dockerfile: apps/identity-api/Dockerfile
+    ports:
+      - "8100:8100"
+    env_file:
+      - apps/identity-api/.env
+    environment:
+      - PORT=8100
+    restart: always
