@@ -47,23 +47,9 @@ For a deep dive into the system architecture, contracts, backend, frontend, and 
 
 ### Prerequisites
 
-- Node.js (v18+)
+- Node.js (v20+)
 - Postgres database (Supabase recommended)
-- Windows Terminal (recommended for `run.bat`)
-
-### Installation
-
-1. **Install dependencies**:
-
-   ```batch
-   run install -all
-   ```
-
-2. **Start Development**:
-   ```batch
-   run dev -all
-   ```
-   This will open separate tabs for the API and Web Client.
+- Docker Desktop (for containerized development)
 
 ## 🏗️ Project Structure
 
@@ -81,17 +67,7 @@ root/
 └── ARCHITECTURE.md              # Detailed Architecture Docs
 ```
 
-## 🛠️ Monorepo CLI (`run.bat`)
 
-A simplified command-line interface for managing the workspace.
-
-| Command     | Usage                 | Description                       |
-| ----------- | --------------------- | --------------------------------- |
-| **Install** | `run install -all`    | Install dependencies for all apps |
-| **Dev**     | `run dev -all`        | Start dev servers in new tabs     |
-| **Build**   | `run build nexus-api` | Build a specific project          |
-
-For more details on workflows, check the [Architecture Guide](./docs/ARCHITECTURE.md#developer-workflows).
 
 ## 💻 Tech Stack
 
@@ -100,6 +76,50 @@ For more details on workflows, check the [Architecture Guide](./docs/ARCHITECTUR
 - **Database**: Supabase (PostgreSQL)
 - **Contracts**: Zod, Supazod
 - **Monorepo**: pnpm (package management) and turborepo (workspace management)
+- **Containerization**: Docker, Docker Compose
+
+## 🐳 Docker Development
+
+Run the entire platform locally using Docker containers.
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+
+### Quick Start with Docker
+
+1. **Create environment file** (copy from example or create new):
+   ```bash
+   # Root .env for docker-compose
+   NEXT_PUBLIC_NEXUS_API_URL=http://nexus-api:8000
+   NEXT_PUBLIC_IDENTITY_API_URL=http://identity-api:8100
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_PUB_KEY=your-supabase-key
+   ```
+
+2. **Build and start all services**:
+   ```bash
+   docker compose up -d --build
+   ```
+
+3. **Access the services**:
+   | Service | URL |
+   |---------|-----|
+   | Nexus Web | http://localhost:3000 |
+   | Nexus API | http://localhost:8000 |
+   | Identity API | http://localhost:8100 |
+
+### Docker Commands
+
+| Command | Description |
+|---------|-------------|
+| `docker compose up -d` | Start all services (detached) |
+| `docker compose up -d --build` | Rebuild and start all services |
+| `docker compose down` | Stop and remove all containers |
+| `docker compose logs -f` | View logs from all services |
+| `docker compose logs -f nexus-web` | View logs for specific service |
+| `docker compose ps` | List running containers |
+| `docker compose restart` | Restart all services |
 
 ---
 
