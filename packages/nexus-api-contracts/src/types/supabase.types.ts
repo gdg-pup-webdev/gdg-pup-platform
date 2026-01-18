@@ -16,35 +16,35 @@ export type Database = {
     Tables: {
       article: {
         Row: {
-          author_id: string
+          author_id: string | null
           body: string | null
           created_at: string
           id: string
           is_published: boolean
           published_at: string | null
-          releated_event_id: string | null
+          related_event_id: string | null
           title: string
           updated_at: string
         }
         Insert: {
-          author_id: string
+          author_id?: string | null
           body?: string | null
           created_at?: string
           id?: string
           is_published?: boolean
           published_at?: string | null
-          releated_event_id?: string | null
+          related_event_id?: string | null
           title: string
           updated_at?: string
         }
         Update: {
-          author_id?: string
+          author_id?: string | null
           body?: string | null
           created_at?: string
           id?: string
           is_published?: boolean
           published_at?: string | null
-          releated_event_id?: string | null
+          related_event_id?: string | null
           title?: string
           updated_at?: string
         }
@@ -57,10 +57,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "article_releated_event_id_fkey"
-            columns: ["releated_event_id"]
+            foreignKeyName: "article_related_event_id_fkey"
+            columns: ["related_event_id"]
             isOneToOne: false
             referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_comment: {
+        Row: {
+          article_id: string | null
+          body: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          article_id?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          article_id?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_comment_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "article"
             referencedColumns: ["id"]
           },
         ]
@@ -160,7 +195,7 @@ export type Database = {
           },
         ]
       }
-      resource: {
+      external_resource: {
         Row: {
           created_at: string
           description: string | null
@@ -234,7 +269,7 @@ export type Database = {
             foreignKeyName: "resource_tag_junction_resource_id_fkey"
             columns: ["resource_id"]
             isOneToOne: false
-            referencedRelation: "resource"
+            referencedRelation: "external_resource"
             referencedColumns: ["id"]
           },
           {

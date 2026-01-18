@@ -8,6 +8,11 @@ import { query as api_article_system_articles_GET_query } from "./routes/api/art
 import { response as api_article_system_articles_GET_response } from "./routes/api/article-system/articles/GET";
 import { body as api_article_system_articles_POST_body } from "./routes/api/article-system/articles/POST";
 import { response as api_article_system_articles_POST_response } from "./routes/api/article-system/articles/POST";
+import { query as api_article_system_articles_articleId_comments_GET_query } from "./routes/api/article-system/articles/[articleId]/comments/GET";
+import { response as api_article_system_articles_articleId_comments_GET_response } from "./routes/api/article-system/articles/[articleId]/comments/GET";
+import { body as api_article_system_articles_articleId_comments_POST_body } from "./routes/api/article-system/articles/[articleId]/comments/POST";
+import { response as api_article_system_articles_articleId_comments_POST_response } from "./routes/api/article-system/articles/[articleId]/comments/POST";
+import { response as api_article_system_articles_articleId_comments_commentId_DELETE_response } from "./routes/api/article-system/articles/[articleId]/comments/[commentId]/DELETE";
 import { response as api_article_system_articles_articleId_DELETE_response } from "./routes/api/article-system/articles/[articleId]/DELETE";
 import { response as api_article_system_articles_articleId_GET_response } from "./routes/api/article-system/articles/[articleId]/GET";
 import { body as api_article_system_articles_articleId_PATCH_body } from "./routes/api/article-system/articles/[articleId]/PATCH";
@@ -52,6 +57,7 @@ import { response as api_user_system_users_userId_wallet_GET_response } from "./
 import { query as api_user_system_users_userId_wallet_transactions_GET_query } from "./routes/api/user-system/users/[userId]/wallet/transactions/GET";
 import { response as api_user_system_users_userId_wallet_transactions_GET_response } from "./routes/api/user-system/users/[userId]/wallet/transactions/GET";
 import { ArticleModels as model_articleSystem_article_model_ArticleModels } from "./models/articleSystem/article.model";
+import { ArticleCommentModels as model_articleSystem_comment_model_ArticleCommentModels } from "./models/articleSystem/comment.model";
 import { ArticleSystemModels as model_articleSystem_index_ArticleSystemModels } from "./models/articleSystem/index";
 import { EconomySystemModels as model_economySystem_index_EconomySystemModels } from "./models/economySystem/index";
 import { TransactionModels as model_economySystem_transaction_TransactionModels } from "./models/economySystem/transaction";
@@ -99,6 +105,41 @@ export const EndpointSchemas = {
       "method": "POST",
       "path": "/api/article-system/articles",
       "signature": "api_article_system_articles_POST"
+    }
+  },
+  "api_article_system_articles_articleId_comments_GET": {
+    "request": {
+      "params": z.object({articleId: z.string()}),
+      "query": api_article_system_articles_articleId_comments_GET_query
+    },
+    "response": api_article_system_articles_articleId_comments_GET_response,
+    "metadata": {
+      "method": "GET",
+      "path": "/api/article-system/articles/[articleId]/comments",
+      "signature": "api_article_system_articles_articleId_comments_GET"
+    }
+  },
+  "api_article_system_articles_articleId_comments_POST": {
+    "request": {
+      "params": z.object({articleId: z.string()}),
+      "body": api_article_system_articles_articleId_comments_POST_body
+    },
+    "response": api_article_system_articles_articleId_comments_POST_response,
+    "metadata": {
+      "method": "POST",
+      "path": "/api/article-system/articles/[articleId]/comments",
+      "signature": "api_article_system_articles_articleId_comments_POST"
+    }
+  },
+  "api_article_system_articles_articleId_comments_commentId_DELETE": {
+    "request": {
+      "params": z.object({articleId: z.string(),commentId: z.string()})
+    },
+    "response": api_article_system_articles_articleId_comments_commentId_DELETE_response,
+    "metadata": {
+      "method": "DELETE",
+      "path": "/api/article-system/articles/[articleId]/comments/[commentId]",
+      "signature": "api_article_system_articles_articleId_comments_commentId_DELETE"
     }
   },
   "api_article_system_articles_articleId_DELETE": {
@@ -442,6 +483,45 @@ export const contract = {
           }
         },
         "articleId": {
+          "comments": {
+            "GET": {
+              "request": {
+                "params": z.object({articleId: z.string()}),
+                "query": api_article_system_articles_articleId_comments_GET_query
+              },
+              "response": api_article_system_articles_articleId_comments_GET_response,
+              "metadata": {
+                "method": "GET",
+                "path": "/api/article-system/articles/[articleId]/comments",
+                "signature": "api_article_system_articles_articleId_comments_GET"
+              }
+            },
+            "POST": {
+              "request": {
+                "params": z.object({articleId: z.string()}),
+                "body": api_article_system_articles_articleId_comments_POST_body
+              },
+              "response": api_article_system_articles_articleId_comments_POST_response,
+              "metadata": {
+                "method": "POST",
+                "path": "/api/article-system/articles/[articleId]/comments",
+                "signature": "api_article_system_articles_articleId_comments_POST"
+              }
+            },
+            "commentId": {
+              "DELETE": {
+                "request": {
+                  "params": z.object({articleId: z.string(),commentId: z.string()})
+                },
+                "response": api_article_system_articles_articleId_comments_commentId_DELETE_response,
+                "metadata": {
+                  "method": "DELETE",
+                  "path": "/api/article-system/articles/[articleId]/comments/[commentId]",
+                  "signature": "api_article_system_articles_articleId_comments_commentId_DELETE"
+                }
+              }
+            }
+          },
           "DELETE": {
             "request": {
               "params": z.object({articleId: z.string()})
@@ -805,6 +885,7 @@ export const contract = {
 export const models = {
   "articleSystem": {
     "article.model_model": model_articleSystem_article_model_ArticleModels,
+    "comment.model_model": model_articleSystem_comment_model_ArticleCommentModels,
     "index_model": model_articleSystem_index_ArticleSystemModels
   },
   "economySystem": {
@@ -838,6 +919,9 @@ export const models = {
 export type ResponseTypes = {
   api_article_system_articles_GET : { [K in keyof typeof api_article_system_articles_GET_response]: z.infer<typeof api_article_system_articles_GET_response[K]> },
   api_article_system_articles_POST : { [K in keyof typeof api_article_system_articles_POST_response]: z.infer<typeof api_article_system_articles_POST_response[K]> },
+  api_article_system_articles_articleId_comments_GET : { [K in keyof typeof api_article_system_articles_articleId_comments_GET_response]: z.infer<typeof api_article_system_articles_articleId_comments_GET_response[K]> },
+  api_article_system_articles_articleId_comments_POST : { [K in keyof typeof api_article_system_articles_articleId_comments_POST_response]: z.infer<typeof api_article_system_articles_articleId_comments_POST_response[K]> },
+  api_article_system_articles_articleId_comments_commentId_DELETE : { [K in keyof typeof api_article_system_articles_articleId_comments_commentId_DELETE_response]: z.infer<typeof api_article_system_articles_articleId_comments_commentId_DELETE_response[K]> },
   api_article_system_articles_articleId_DELETE : { [K in keyof typeof api_article_system_articles_articleId_DELETE_response]: z.infer<typeof api_article_system_articles_articleId_DELETE_response[K]> },
   api_article_system_articles_articleId_GET : { [K in keyof typeof api_article_system_articles_articleId_GET_response]: z.infer<typeof api_article_system_articles_articleId_GET_response[K]> },
   api_article_system_articles_articleId_PATCH : { [K in keyof typeof api_article_system_articles_articleId_PATCH_response]: z.infer<typeof api_article_system_articles_articleId_PATCH_response[K]> },
@@ -871,6 +955,9 @@ export type ResponseTypes = {
 export type RequestTypes = {
   api_article_system_articles_GET : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_GET" ]["request"][K]> },
   api_article_system_articles_POST : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_POST" ]["request"][K]> },
+  api_article_system_articles_articleId_comments_GET : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"][K]> },
+  api_article_system_articles_articleId_comments_POST : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"][K]> },
+  api_article_system_articles_articleId_comments_commentId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"][K]> },
   api_article_system_articles_articleId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_DELETE" ]["request"][K]> },
   api_article_system_articles_articleId_GET : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_GET" ]["request"][K]> },
   api_article_system_articles_articleId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_PATCH" ]["request"][K]> },
@@ -909,6 +996,18 @@ export type EndpointTypes = {
     "api_article_system_articles_POST": {
           request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_POST" ]["request"][K]> };
         response: { [K in keyof typeof api_article_system_articles_POST_response]: z.infer<typeof api_article_system_articles_POST_response[K]> };
+       },
+    "api_article_system_articles_articleId_comments_GET": {
+          request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"][K]> };
+        response: { [K in keyof typeof api_article_system_articles_articleId_comments_GET_response]: z.infer<typeof api_article_system_articles_articleId_comments_GET_response[K]> };
+       },
+    "api_article_system_articles_articleId_comments_POST": {
+          request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"][K]> };
+        response: { [K in keyof typeof api_article_system_articles_articleId_comments_POST_response]: z.infer<typeof api_article_system_articles_articleId_comments_POST_response[K]> };
+       },
+    "api_article_system_articles_articleId_comments_commentId_DELETE": {
+          request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"][K]> };
+        response: { [K in keyof typeof api_article_system_articles_articleId_comments_commentId_DELETE_response]: z.infer<typeof api_article_system_articles_articleId_comments_commentId_DELETE_response[K]> };
        },
     "api_article_system_articles_articleId_DELETE": {
           request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_DELETE" ]["request"][K]> };

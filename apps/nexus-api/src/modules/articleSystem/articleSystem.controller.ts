@@ -1,0 +1,156 @@
+import { RequestHandler } from "express";
+import { ArticleService, articleServiceInstance } from "./article.service.js";
+import { contract } from "@packages/nexus-api-contracts";
+import { ServerError } from "../../classes/ServerError.js";
+import { createExpressController } from "@packages/typed-rest";
+
+export class ArticleSystemController {
+  constructor(
+    private articleService: ArticleService = articleServiceInstance
+  ) {}
+
+  list: RequestHandler = createExpressController(
+    contract.api.article_system.articles.GET,
+    async ({ input, output }) => {
+      const { data, error } = await this.articleService.list();
+      if (error) throw ServerError.internalError(error.message);
+      return output(200, {
+        status: "success",
+        message: "Articles fetched successfully",
+        data: data.listData,
+        meta: {
+            totalRecords: data.count,
+            currentPage: input.query.page.number,
+            pageSize: input.query.page.size,
+            totalPages: Math.ceil(data.count / input.query.page.size),
+        }
+      });
+    }
+  );
+
+  create: RequestHandler = createExpressController(
+    contract.api.article_system.articles.POST,
+    async ({ input, output, ctx }) => {
+      const { req } = ctx;
+      const user = req.user!;
+      const dto = input.body.data;
+      
+      const { data, error } = await this.articleService.create(dto, user.id);
+      if (error) throw ServerError.internalError(error.message);
+      
+      return output(200, {
+        status: "success",
+        message: "Article created successfully",
+        data,
+      });
+    }
+  );
+
+  getOne: RequestHandler = createExpressController(
+    contract.api.article_system.articles.articleId.GET,
+    async ({ input, output }) => {
+      const { articleId } = input.params;
+      const { data, error } = await this.articleService.getOne(articleId);
+      if (error) throw ServerError.internalError(error.message);
+      
+      return output(200, {
+        status: "success",
+        message: "Article fetched successfully",
+        data,
+      });
+    }
+  );
+  
+  update: RequestHandler = createExpressController(
+    contract.api.article_system.articles.articleId.PATCH,
+    async ({ input, output }) => {
+      const { articleId } = input.params;
+      const dto = input.body.data;
+      const { data, error } = await this.articleService.update(articleId, dto);
+      if (error) throw ServerError.internalError(error.message);
+      
+      return output(200, {
+        status: "success",
+        message: "Article updated successfully",
+        data,
+      });
+    }
+  );
+
+  delete: RequestHandler = createExpressController(
+    contract.api.article_system.articles.articleId.DELETE,
+    async ({ input, output }) => {
+      const { articleId } = input.params;
+      const { data, error } = await this.articleService.delete(articleId);
+      if (error) throw ServerError.internalError(error.message);
+      
+      return output(200, {
+        status: "success",
+        message: "Article deleted successfully",
+      });
+    }
+  );
+
+  listComments: RequestHandler = createExpressController(
+    contract.api.article_system.articles.articleId.comments.GET,
+    async ({ input, output }) => {
+        const { articleId } = input.params;
+        const { data, error } = await this.articleService.listComments(articleId);
+        if (error) throw ServerError.internalError(error.message);
+
+        return output(200, {
+            status: "success",
+            message: "Comments fetched successfully",
+            data: data.listData,
+            meta: {
+              totalRecords: data.count,
+              currentPage: 1,
+              pageSize: 100,
+              totalPages: 1
+            }
+        });
+    }
+  );
+  
+  createComment: RequestHandler = createExpressController(
+    contract.api.article_system.articles.articleId.comments.POST,
+    async ({ input, output, ctx }) => {
+        const { articleId } = input.params;
+        const { req } = ctx;
+        const user = req.user!;
+        
+        // input.body.data is defined in contract as { body: string }
+        const dto = {
+            article_id: articleId,
+            user_id: user.id,
+            body: input.body.data.body
+        };
+
+        const { data, error } = await this.articleService.createComment(dto);
+        if (error) throw ServerError.internalError(error.message);
+
+        return output(201, {
+            status: "success",
+            message: "Comment created successfully",
+            data
+        });
+    }
+  );
+
+  deleteComment: RequestHandler = createExpressController(
+    contract.api.article_system.articles.articleId.comments.commentId.DELETE,
+    async ({ input, output }) => {
+        const { commentId } = input.params;
+        const { data, error } = await this.articleService.deleteComment(commentId);
+        if (error) throw ServerError.internalError(error.message);
+
+        return output(200, {
+            status: "success",
+            message: "Comment deleted successfully"
+        });
+    }
+  );
+
+}
+
+export const articleSystemControllerInstance = new ArticleSystemController();
