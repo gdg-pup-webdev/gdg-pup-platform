@@ -1,5 +1,5 @@
 
-// THIS FILE IS AUTO-GENERATED. DO NOT EDIT. 
+// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
 // RUN "pnpm contract-gen -i ./src/routes -o ./src/contract.ts" TO SYNC CHANGES.
 
 import {z} from "zod";
@@ -36,9 +36,7 @@ export const contract = {
 }
 
 export const models = {
-  "response_model": {
-    "getResponseModel": model_response_model_getResponseModel
-  }
+  "response.model_model": model_response_model_getResponseModel
 }
 
 export type ResponseTypes = {
@@ -59,4 +57,22 @@ export type EndpointTypes = {
 export type Responses<T extends keyof ResponseTypes> = ResponseTypes[T];
 export type Requests<T extends keyof RequestTypes> = RequestTypes[T];
 export type Endpoints<T extends keyof EndpointTypes> = EndpointTypes[T];
+
+export namespace contract {
+  export namespace api {
+    export namespace health {
+      export namespace GET {
+        export namespace request {
+
+        }
+        export type response = { [K in keyof typeof api_health_GET_response]: z.infer<(typeof api_health_GET_response)[K]> };
+        export namespace metadata {
+          export type method = "GET";
+          export type path = "/api/health";
+          export type signature = "api_health_GET";
+        }
+      }
+    }
+  }
+}
 

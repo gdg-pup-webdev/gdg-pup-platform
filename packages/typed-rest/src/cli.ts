@@ -8,12 +8,13 @@ import { listExportsSync } from "./utils/utils";
 import z from "zod";
 import { scanModels } from "#utils/models.utils.js";
 import { logger } from "#utils/logging.utils.js";
+import { scanContractModels } from "#utils/endpointTypes.utils.js";
 
 const program = new Command();
 program
   .name("contract-gen")
   .description(
-    "Generates a single Zod contract object from a file-based API structure"
+    "Generates a single Zod contract object from a file-based API structure",
   )
   .option("-w, --watch", "Watch for file changes and regenerate") // <--- 2. ADD THIS FLAG
   .parse(process.argv);
@@ -45,11 +46,13 @@ async function generate() {
   const endpointTypes: string[] = [];
 
   let route_tree: any = {};
+  let model_tree: Record<string, any> = {};
 
   async function iterateDirectory(
     currentDirectory: string,
     route_tree: any,
-    pathStack: string[]
+    pathStack: string[],
+    model_tree: any,
   ) {
     // Read all files and folders in the current directory
     const dirItems = fs.readdirSync(currentDirectory);
@@ -62,12 +65,15 @@ async function generate() {
         // FOLDER NAME
 
         const route_key = dirItem.replace(/\[|\]/g, "").replace(/-/g, "_");
-        route_tree[route_key.replace(/\[|\]/g, "")] =
-          route_tree[route_key] || {};
+
+        route_tree[route_key] = route_tree[route_key] || {};
+        model_tree[route_key] = model_tree[route_key] || {};
+
         await iterateDirectory(
           fullPath,
-          route_tree[route_key.replace(/\[|\]/g, "")],
-          [...pathStack, dirItem]
+          route_tree[route_key],
+          [...pathStack, dirItem],
+          model_tree[route_key],
         );
       } else if (dirItem.endsWith(".ts")) {
         // logger.routeScanner("Scanning route file:", fullPath);
@@ -88,6 +94,16 @@ async function generate() {
           .replace(/\./g, "_")
           .replace(/-/g, "_");
 
+        // raw code for use in model_tree
+        let requestRaw: any = {};
+        let responseRaw: any = {};
+        let metadataRaw: any = {
+          method: endpointMethod,
+          path: endpointRoute,
+          signature: endpoint_signature,
+        };
+
+        // code wrapped in __CODE_START__ and __CODE_END__ to preserve variable names during JSON serialization
         let request: any = {};
         let response: any = {};
         let metadata: any = {
@@ -103,6 +119,9 @@ async function generate() {
         if (pathParams.length > 0) {
           request["params"] =
             `__CODE_START__z.object({${pathParams.map((p) => `${p}: z.string()`).join(",")}})__CODE_END__`;
+          requestRaw["params"] = z.object(Object.fromEntries(
+            pathParams.map((p) => [p, z.string()]),
+          ));
         }
 
         // CHECK FILE EXPORTS
@@ -112,20 +131,22 @@ async function generate() {
             const schemaImportName = `${endpoint_signature}_response`;
 
             imports.push(
-              `import { ${exportedVariable} as ${schemaImportName} } from "${endpointImportPath}";`
+              `import { ${exportedVariable} as ${schemaImportName} } from "${endpointImportPath}";`,
             );
 
             response = `__CODE_START__${schemaImportName}__CODE_END__`;
+            responseRaw = schemaImportName;
           } else {
             const schemaImportName = `${endpoint_signature}_${exportedVariable}`;
 
             // push schemas to response
             imports.push(
-              `import { ${exportedVariable} as ${schemaImportName} } from "${endpointImportPath}";`
+              `import { ${exportedVariable} as ${schemaImportName} } from "${endpointImportPath}";`,
             );
 
             request[exportedVariable] =
               `__CODE_START__${schemaImportName}__CODE_END__`;
+            requestRaw[exportedVariable] = schemaImportName;
           }
         }
 
@@ -145,14 +166,19 @@ async function generate() {
           response: response,
           metadata: metadata,
         };
+        model_tree[route_key] = {
+          request: requestRaw,
+          response: responseRaw,
+          metadata: metadataRaw,
+        };
 
         // add to types
         requestTypes.push(
-          `${endpoint_signature} : { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> }`
+          `${endpoint_signature} : { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> }`,
         );
 
         responseTypes.push(
-          `${endpoint_signature} : { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> }`
+          `${endpoint_signature} : { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> }`,
         );
 
         endpointTypes.push(`  ${'"' + endpoint_signature + '"'}: {
@@ -168,19 +194,46 @@ async function generate() {
   }
 
   logger.log("Scanning routes in:", SRC_DIR);
-  await iterateDirectory(SRC_DIR, route_tree, []);
+  await iterateDirectory(SRC_DIR, route_tree, [], model_tree);
 
   logger.log("Scanning models in:", MODEL_DIR);
   const models_res = await scanModels(MODEL_DIR);
   imports.push(
     ...models_res.imports.map(
-      (i) => `import { ${i.name} as ${i.alias} } from "${i.path}";`
-    )
+      (i) => `import { ${i.name} as ${i.alias} } from "${i.path}";`,
+    ),
   );
   const modelTreeString = JSON.stringify(models_res.modelTree, null, 2).replace(
     /"__CODE_START__(.*?)__CODE_END__"/g,
-    "$1"
+    "$1",
   );
+
+  /**
+   * 
+export namespace model {
+  export type query = z.infer<typeof api_article_system_articles_articleId_comments_GET_query>;
+}
+   */
+
+/** 
+ infer type of response 
+ { [K in keyof typeof api_event_system_checkin_POST_response]: z.infer<typeof api_event_system_checkin_POST_response[K]> }
+ */
+
+ /** 
+  * infer type of request 
+  { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"][K]> }
+  */
+  // console.log("this is the model tree object", model_tree);
+
+  const contractModelTree = await scanContractModels(SRC_DIR);
+  // console.log("this is the contract model tree", JSON.stringify(contractModelTree, null, 2));
+
+
+
+
+
+
 
   // Serialize the map to a string, but preserve the variable names
   let jsonString = JSON.stringify(endpoints, null, 2);
@@ -191,11 +244,11 @@ async function generate() {
 
   let route_tree_string = JSON.stringify(route_tree, null, 2).replace(
     /"__CODE_START__(.*?)__CODE_END__"/g,
-    "$1"
+    "$1",
   );
 
   const fileContent = `
-// THIS FILE IS AUTO-GENERATED. DO NOT EDIT. 
+// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
 // RUN "pnpm contract-gen -i ./src/routes -o ./src/contract.ts" TO SYNC CHANGES.
 
 import {z} from "zod";
@@ -223,6 +276,8 @@ export type EndpointTypes = {
 export type Responses<T extends keyof ResponseTypes> = ResponseTypes[T];
 export type Requests<T extends keyof RequestTypes> = RequestTypes[T];
 export type Endpoints<T extends keyof EndpointTypes> = EndpointTypes[T];
+
+${contractModelTree}
 
 `;
 

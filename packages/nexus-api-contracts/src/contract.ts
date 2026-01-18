@@ -1,5 +1,5 @@
 
-// THIS FILE IS AUTO-GENERATED. DO NOT EDIT. 
+// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.
 // RUN "pnpm contract-gen -i ./src/routes -o ./src/contract.ts" TO SYNC CHANGES.
 
 import {z} from "zod";
@@ -2644,143 +2644,58 @@ export const contract = {
 }
 
 export const models = {
-  "_vscode": {},
+  ".vscode": {},
   "articleSystem": {
-    "article_model": {
-      "ArticleModels": model_articleSystem_article_model_ArticleModels
-    },
-    "comment_model": {
-      "ArticleCommentModels": model_articleSystem_comment_model_ArticleCommentModels
-    },
-    "index": {
-      "ArticleSystemModels": model_articleSystem_index_ArticleSystemModels
-    }
+    "article.model_model": model_articleSystem_article_model_ArticleModels,
+    "comment.model_model": model_articleSystem_comment_model_ArticleCommentModels,
+    "index_model": model_articleSystem_index_ArticleSystemModels
   },
   "economySystem": {
-    "index": {
-      "EconomySystemModels": model_economySystem_index_EconomySystemModels
-    },
-    "transaction": {
-      "TransactionModels": model_economySystem_transaction_TransactionModels
-    },
-    "wallet": {
-      "WalletModels": model_economySystem_wallet_WalletModels
-    }
+    "index_model": model_economySystem_index_EconomySystemModels,
+    "transaction_model": model_economySystem_transaction_TransactionModels,
+    "wallet_model": model_economySystem_wallet_WalletModels
   },
   "eventSystem": {
-    "attendance_model": {
-      "AttendanceModels": model_eventSystem_attendance_model_AttendanceModels
-    },
-    "attendee_model": {
-      "AttendeeModels": model_eventSystem_attendee_model_AttendeeModels
-    },
-    "checkin_model": {
-      "CheckinModels": model_eventSystem_checkin_model_CheckinModels
-    },
-    "event_model": {
-      "EventModels": model_eventSystem_event_model_EventModels
-    },
-    "index": {
-      "EventSystemModels": model_eventSystem_index_EventSystemModels
-    }
+    "attendance.model_model": model_eventSystem_attendance_model_AttendanceModels,
+    "attendee.model_model": model_eventSystem_attendee_model_AttendeeModels,
+    "checkin.model_model": model_eventSystem_checkin_model_CheckinModels,
+    "event.model_model": model_eventSystem_event_model_EventModels,
+    "index_model": model_eventSystem_index_EventSystemModels
   },
   "fileSystem": {
-    "file": {
-      "row": model_fileSystem_file_row,
-      "insert": model_fileSystem_file_insert,
-      "update": model_fileSystem_file_update
-    }
+    "file_model": model_fileSystem_file_update
   },
-  "index": {
-    "Models": model_index_Models
-  },
+  "index_model": model_index_Models,
   "learningResourceSystem": {
-    "externalResource": {
-      "row": model_learningResourceSystem_externalResource_row,
-      "insert": model_learningResourceSystem_externalResource_insert,
-      "update": model_learningResourceSystem_externalResource_update
-    },
-    "learningResource": {
-      "shape": model_learningResourceSystem_learningResource_shape
-    },
-    "studyJam": {
-      "row": model_learningResourceSystem_studyJam_row,
-      "insert": model_learningResourceSystem_studyJam_insert,
-      "update": model_learningResourceSystem_studyJam_update
-    }
+    "externalResource_model": model_learningResourceSystem_externalResource_update,
+    "learningResource_model": model_learningResourceSystem_learningResource_shape,
+    "studyJam_model": model_learningResourceSystem_studyJam_update
   },
   "publicationSystem": {
-    "article": {
-      "row": model_publicationSystem_article_row,
-      "insert": model_publicationSystem_article_insert,
-      "update": model_publicationSystem_article_update
-    },
-    "event": {
-      "row": model_publicationSystem_event_row,
-      "insert": model_publicationSystem_event_insert,
-      "update": model_publicationSystem_event_update
-    },
-    "highlight": {
-      "row": model_publicationSystem_highlight_row,
-      "insert": model_publicationSystem_highlight_insert,
-      "update": model_publicationSystem_highlight_update
-    }
+    "article_model": model_publicationSystem_article_update,
+    "event_model": model_publicationSystem_event_update,
+    "highlight_model": model_publicationSystem_highlight_update
   },
   "rbacSystem": {
-    "permission": {
-      "row": model_rbacSystem_permission_row,
-      "insert": model_rbacSystem_permission_insert,
-      "update": model_rbacSystem_permission_update
-    },
-    "roles": {
-      "row": model_rbacSystem_roles_row,
-      "insert": model_rbacSystem_roles_insert,
-      "update": model_rbacSystem_roles_update
-    }
+    "permission_model": model_rbacSystem_permission_update,
+    "roles_model": model_rbacSystem_roles_update
   },
   "resourceSystem": {
-    "resource": {
-      "row": model_resourceSystem_resource_row,
-      "insertDTO": model_resourceSystem_resource_insertDTO,
-      "updateDTO": model_resourceSystem_resource_updateDTO
-    }
+    "resource_model": model_resourceSystem_resource_updateDTO
   },
   "roleSystem": {
-    "role": {
-      "row": model_roleSystem_role_row,
-      "insertDTO": model_roleSystem_role_insertDTO,
-      "updateDTO": model_roleSystem_role_updateDTO
-    }
+    "role_model": model_roleSystem_role_updateDTO
   },
   "teamSystem": {
-    "member": {
-      "row": model_teamSystem_member_row,
-      "insert": model_teamSystem_member_insert
-    },
-    "team": {
-      "team": model_teamSystem_team_team,
-      "teamInsertDTO": model_teamSystem_team_teamInsertDTO,
-      "teamUpdateDTO": model_teamSystem_team_teamUpdateDTO
-    }
+    "member_model": model_teamSystem_member_insert,
+    "team_model": model_teamSystem_team_teamUpdateDTO
   },
   "userResourceSystem": {
-    "project": {
-      "row": model_userResourceSystem_project_row,
-      "insertDTO": model_userResourceSystem_project_insertDTO,
-      "updateDTO": model_userResourceSystem_project_updateDTO
-    }
+    "project_model": model_userResourceSystem_project_updateDTO
   },
   "userSystem": {
-    "profile": {
-      "row": model_userSystem_profile_row,
-      "insertDTO": model_userSystem_profile_insertDTO,
-      "updateDTO": model_userSystem_profile_updateDTO
-    },
-    "user": {
-      "row": model_userSystem_user_row,
-      "insertDTO": model_userSystem_user_insertDTO,
-      "updateDTO": model_userSystem_user_updateDTO
-    }
+    "profile_model": model_userSystem_profile_updateDTO,
+    "user_model": model_userSystem_user_updateDTO
   }
 }
 
@@ -3402,4 +3317,1282 @@ export type EndpointTypes = {
 export type Responses<T extends keyof ResponseTypes> = ResponseTypes[T];
 export type Requests<T extends keyof RequestTypes> = RequestTypes[T];
 export type Endpoints<T extends keyof EndpointTypes> = EndpointTypes[T];
+
+export namespace contract {
+  export namespace api {
+    export namespace article_system {
+      export namespace articles {
+        export namespace articleId {
+          export namespace comments {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+                export type query = z.infer<typeof api_article_system_articles_articleId_comments_GET_query>;
+              }
+              export type response = { [K in keyof typeof api_article_system_articles_articleId_comments_GET_response]: z.infer<(typeof api_article_system_articles_articleId_comments_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/article-system/articles/[articleId]/comments";
+                export type signature = "api_article_system_articles_articleId_comments_GET";
+              }
+            }
+            export namespace POST {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+                export type body = z.infer<typeof api_article_system_articles_articleId_comments_POST_body>;
+              }
+              export type response = { [K in keyof typeof api_article_system_articles_articleId_comments_POST_response]: z.infer<(typeof api_article_system_articles_articleId_comments_POST_response)[K]> };
+              export namespace metadata {
+                export type method = "POST";
+                export type path = "/api/article-system/articles/[articleId]/comments";
+                export type signature = "api_article_system_articles_articleId_comments_POST";
+              }
+            }
+            export namespace commentId {
+              export namespace DELETE {
+                export namespace request {
+                  export type params = z.infer<z.ZodObject<{articleId: z.ZodString,commentId: z.ZodString}>>;
+                }
+                export type response = { [K in keyof typeof api_article_system_articles_articleId_comments_commentId_DELETE_response]: z.infer<(typeof api_article_system_articles_articleId_comments_commentId_DELETE_response)[K]> };
+                export namespace metadata {
+                  export type method = "DELETE";
+                  export type path = "/api/article-system/articles/[articleId]/comments/[commentId]";
+                  export type signature = "api_article_system_articles_articleId_comments_commentId_DELETE";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    export namespace event_system {
+      export namespace checkin {
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_event_system_checkin_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_event_system_checkin_POST_response]: z.infer<(typeof api_event_system_checkin_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/event-system/checkin";
+            export type signature = "api_event_system_checkin_POST";
+          }
+        }
+      }
+      export namespace events {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_event_system_events_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_event_system_events_GET_response]: z.infer<(typeof api_event_system_events_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/event-system/events";
+            export type signature = "api_event_system_events_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_event_system_events_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_event_system_events_POST_response]: z.infer<(typeof api_event_system_events_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/event-system/events";
+            export type signature = "api_event_system_events_POST";
+          }
+        }
+        export namespace eventId {
+          export namespace attendees {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{eventId: z.ZodString}>>;
+                export type query = z.infer<typeof api_event_system_events_eventId_attendees_GET_query>;
+              }
+              export type response = { [K in keyof typeof api_event_system_events_eventId_attendees_GET_response]: z.infer<(typeof api_event_system_events_eventId_attendees_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/event-system/events/[eventId]/attendees";
+                export type signature = "api_event_system_events_eventId_attendees_GET";
+              }
+            }
+          }
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{eventId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_event_system_events_eventId_DELETE_response]: z.infer<(typeof api_event_system_events_eventId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/event-system/events/[eventId]";
+              export type signature = "api_event_system_events_eventId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{eventId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_event_system_events_eventId_GET_response]: z.infer<(typeof api_event_system_events_eventId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/event-system/events/[eventId]";
+              export type signature = "api_event_system_events_eventId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{eventId: z.ZodString}>>;
+              export type body = z.infer<typeof api_event_system_events_eventId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_event_system_events_eventId_PATCH_response]: z.infer<(typeof api_event_system_events_eventId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/event-system/events/[eventId]";
+              export type signature = "api_event_system_events_eventId_PATCH";
+            }
+          }
+        }
+      }
+    }
+    export namespace file_system {
+      export namespace files {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_file_system_files_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_file_system_files_GET_response]: z.infer<(typeof api_file_system_files_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/file-system/files";
+            export type signature = "api_file_system_files_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_file_system_files_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_file_system_files_POST_response]: z.infer<(typeof api_file_system_files_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/file-system/files";
+            export type signature = "api_file_system_files_POST";
+          }
+        }
+        export namespace fileId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{fileId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_file_system_files_fileId_DELETE_response]: z.infer<(typeof api_file_system_files_fileId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/file-system/files/[fileId]";
+              export type signature = "api_file_system_files_fileId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{fileId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_file_system_files_fileId_GET_response]: z.infer<(typeof api_file_system_files_fileId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/file-system/files/[fileId]";
+              export type signature = "api_file_system_files_fileId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{fileId: z.ZodString}>>;
+              export type body = z.infer<typeof api_file_system_files_fileId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_file_system_files_fileId_PATCH_response]: z.infer<(typeof api_file_system_files_fileId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/file-system/files/[fileId]";
+              export type signature = "api_file_system_files_fileId_PATCH";
+            }
+          }
+        }
+      }
+    }
+    export namespace health {
+      export namespace GET {
+        export namespace request {
+
+        }
+        export type response = { [K in keyof typeof api_health_GET_response]: z.infer<(typeof api_health_GET_response)[K]> };
+        export namespace metadata {
+          export type method = "GET";
+          export type path = "/api/health";
+          export type signature = "api_health_GET";
+        }
+      }
+    }
+    export namespace leaderboard_system {
+      export namespace GET {
+        export namespace request {
+
+        }
+        export type response = { [K in keyof typeof api_leaderboard_system_GET_response]: z.infer<(typeof api_leaderboard_system_GET_response)[K]> };
+        export namespace metadata {
+          export type method = "GET";
+          export type path = "/api/leaderboard-system";
+          export type signature = "api_leaderboard_system_GET";
+        }
+      }
+    }
+    export namespace learning_resource_system {
+      export namespace externalResources {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_learning_resource_system_externalResources_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_learning_resource_system_externalResources_GET_response]: z.infer<(typeof api_learning_resource_system_externalResources_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/learning-resource-system/externalResources";
+            export type signature = "api_learning_resource_system_externalResources_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_learning_resource_system_externalResources_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_learning_resource_system_externalResources_POST_response]: z.infer<(typeof api_learning_resource_system_externalResources_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/learning-resource-system/externalResources";
+            export type signature = "api_learning_resource_system_externalResources_POST";
+          }
+        }
+        export namespace externalResourceId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{externalResourceId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_DELETE_response]: z.infer<(typeof api_learning_resource_system_externalResources_externalResourceId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/learning-resource-system/externalResources/[externalResourceId]";
+              export type signature = "api_learning_resource_system_externalResources_externalResourceId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{externalResourceId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_GET_response]: z.infer<(typeof api_learning_resource_system_externalResources_externalResourceId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/learning-resource-system/externalResources/[externalResourceId]";
+              export type signature = "api_learning_resource_system_externalResources_externalResourceId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{externalResourceId: z.ZodString}>>;
+              export type body = z.infer<typeof api_learning_resource_system_externalResources_externalResourceId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_PATCH_response]: z.infer<(typeof api_learning_resource_system_externalResources_externalResourceId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/learning-resource-system/externalResources/[externalResourceId]";
+              export type signature = "api_learning_resource_system_externalResources_externalResourceId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace GET {
+        export namespace request {
+          export type query = z.infer<typeof api_learning_resource_system_GET_query>;
+        }
+        export type response = { [K in keyof typeof api_learning_resource_system_GET_response]: z.infer<(typeof api_learning_resource_system_GET_response)[K]> };
+        export namespace metadata {
+          export type method = "GET";
+          export type path = "/api/learning-resource-system";
+          export type signature = "api_learning_resource_system_GET";
+        }
+      }
+      export namespace study_jams {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_learning_resource_system_study_jams_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_learning_resource_system_study_jams_GET_response]: z.infer<(typeof api_learning_resource_system_study_jams_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/learning-resource-system/study-jams";
+            export type signature = "api_learning_resource_system_study_jams_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_learning_resource_system_study_jams_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_learning_resource_system_study_jams_POST_response]: z.infer<(typeof api_learning_resource_system_study_jams_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/learning-resource-system/study-jams";
+            export type signature = "api_learning_resource_system_study_jams_POST";
+          }
+        }
+        export namespace studyJamId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{studyJamId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_DELETE_response]: z.infer<(typeof api_learning_resource_system_study_jams_studyJamId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/learning-resource-system/study-jams/[studyJamId]";
+              export type signature = "api_learning_resource_system_study_jams_studyJamId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{studyJamId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_GET_response]: z.infer<(typeof api_learning_resource_system_study_jams_studyJamId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/learning-resource-system/study-jams/[studyJamId]";
+              export type signature = "api_learning_resource_system_study_jams_studyJamId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{studyJamId: z.ZodString}>>;
+              export type body = z.infer<typeof api_learning_resource_system_study_jams_studyJamId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_PATCH_response]: z.infer<(typeof api_learning_resource_system_study_jams_studyJamId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/learning-resource-system/study-jams/[studyJamId]";
+              export type signature = "api_learning_resource_system_study_jams_studyJamId_PATCH";
+            }
+          }
+        }
+      }
+    }
+    export namespace publication_system {
+      export namespace articles {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_publication_system_articles_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_publication_system_articles_GET_response]: z.infer<(typeof api_publication_system_articles_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/publication-system/articles";
+            export type signature = "api_publication_system_articles_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_publication_system_articles_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_publication_system_articles_POST_response]: z.infer<(typeof api_publication_system_articles_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/publication-system/articles";
+            export type signature = "api_publication_system_articles_POST";
+          }
+        }
+        export namespace articleId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_articles_articleId_DELETE_response]: z.infer<(typeof api_publication_system_articles_articleId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/publication-system/articles/[articleId]";
+              export type signature = "api_publication_system_articles_articleId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_articles_articleId_GET_response]: z.infer<(typeof api_publication_system_articles_articleId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/publication-system/articles/[articleId]";
+              export type signature = "api_publication_system_articles_articleId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+              export type body = z.infer<typeof api_publication_system_articles_articleId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_articles_articleId_PATCH_response]: z.infer<(typeof api_publication_system_articles_articleId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/publication-system/articles/[articleId]";
+              export type signature = "api_publication_system_articles_articleId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace events {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_publication_system_events_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_publication_system_events_GET_response]: z.infer<(typeof api_publication_system_events_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/publication-system/events";
+            export type signature = "api_publication_system_events_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_publication_system_events_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_publication_system_events_POST_response]: z.infer<(typeof api_publication_system_events_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/publication-system/events";
+            export type signature = "api_publication_system_events_POST";
+          }
+        }
+        export namespace articleId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_events_articleId_DELETE_response]: z.infer<(typeof api_publication_system_events_articleId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/publication-system/events/[articleId]";
+              export type signature = "api_publication_system_events_articleId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_events_articleId_GET_response]: z.infer<(typeof api_publication_system_events_articleId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/publication-system/events/[articleId]";
+              export type signature = "api_publication_system_events_articleId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+              export type body = z.infer<typeof api_publication_system_events_articleId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_events_articleId_PATCH_response]: z.infer<(typeof api_publication_system_events_articleId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/publication-system/events/[articleId]";
+              export type signature = "api_publication_system_events_articleId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace highlights {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_publication_system_highlights_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_publication_system_highlights_GET_response]: z.infer<(typeof api_publication_system_highlights_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/publication-system/highlights";
+            export type signature = "api_publication_system_highlights_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_publication_system_highlights_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_publication_system_highlights_POST_response]: z.infer<(typeof api_publication_system_highlights_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/publication-system/highlights";
+            export type signature = "api_publication_system_highlights_POST";
+          }
+        }
+        export namespace articleId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_highlights_articleId_DELETE_response]: z.infer<(typeof api_publication_system_highlights_articleId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/publication-system/highlights/[articleId]";
+              export type signature = "api_publication_system_highlights_articleId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_highlights_articleId_GET_response]: z.infer<(typeof api_publication_system_highlights_articleId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/publication-system/highlights/[articleId]";
+              export type signature = "api_publication_system_highlights_articleId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{articleId: z.ZodString}>>;
+              export type body = z.infer<typeof api_publication_system_highlights_articleId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_publication_system_highlights_articleId_PATCH_response]: z.infer<(typeof api_publication_system_highlights_articleId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/publication-system/highlights/[articleId]";
+              export type signature = "api_publication_system_highlights_articleId_PATCH";
+            }
+          }
+        }
+      }
+    }
+    export namespace rbac_system {
+      export namespace roles {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_rbac_system_roles_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_rbac_system_roles_GET_response]: z.infer<(typeof api_rbac_system_roles_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/rbac-system/roles";
+            export type signature = "api_rbac_system_roles_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_rbac_system_roles_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_rbac_system_roles_POST_response]: z.infer<(typeof api_rbac_system_roles_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/rbac-system/roles";
+            export type signature = "api_rbac_system_roles_POST";
+          }
+        }
+        export namespace roleId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{roleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_rbac_system_roles_roleId_DELETE_response]: z.infer<(typeof api_rbac_system_roles_roleId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/rbac-system/roles/[roleId]";
+              export type signature = "api_rbac_system_roles_roleId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{roleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_rbac_system_roles_roleId_GET_response]: z.infer<(typeof api_rbac_system_roles_roleId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/rbac-system/roles/[roleId]";
+              export type signature = "api_rbac_system_roles_roleId_GET";
+            }
+          }
+          export namespace parent {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{roleId: z.ZodString}>>;
+              }
+              export type response = { [K in keyof typeof api_rbac_system_roles_roleId_parent_GET_response]: z.infer<(typeof api_rbac_system_roles_roleId_parent_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/rbac-system/roles/[roleId]/parent";
+                export type signature = "api_rbac_system_roles_roleId_parent_GET";
+              }
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{roleId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_rbac_system_roles_roleId_PATCH_response]: z.infer<(typeof api_rbac_system_roles_roleId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/rbac-system/roles/[roleId]";
+              export type signature = "api_rbac_system_roles_roleId_PATCH";
+            }
+          }
+          export namespace permissions {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{roleId: z.ZodString}>>;
+                export type description = z.infer<typeof api_rbac_system_roles_roleId_permissions_GET_description>;
+                export type query = z.infer<typeof api_rbac_system_roles_roleId_permissions_GET_query>;
+              }
+              export type response = { [K in keyof typeof api_rbac_system_roles_roleId_permissions_GET_response]: z.infer<(typeof api_rbac_system_roles_roleId_permissions_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/rbac-system/roles/[roleId]/permissions";
+                export type signature = "api_rbac_system_roles_roleId_permissions_GET";
+              }
+            }
+            export namespace POST {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{roleId: z.ZodString}>>;
+                export type body = z.infer<typeof api_rbac_system_roles_roleId_permissions_POST_body>;
+              }
+              export type response = { [K in keyof typeof api_rbac_system_roles_roleId_permissions_POST_response]: z.infer<(typeof api_rbac_system_roles_roleId_permissions_POST_response)[K]> };
+              export namespace metadata {
+                export type method = "POST";
+                export type path = "/api/rbac-system/roles/[roleId]/permissions";
+                export type signature = "api_rbac_system_roles_roleId_permissions_POST";
+              }
+            }
+            export namespace permissionId {
+              export namespace DELETE {
+                export namespace request {
+                  export type params = z.infer<z.ZodObject<{roleId: z.ZodString,permissionId: z.ZodString}>>;
+                }
+                export type response = { [K in keyof typeof api_rbac_system_roles_roleId_permissions_permissionId_DELETE_response]: z.infer<(typeof api_rbac_system_roles_roleId_permissions_permissionId_DELETE_response)[K]> };
+                export namespace metadata {
+                  export type method = "DELETE";
+                  export type path = "/api/rbac-system/roles/[roleId]/permissions/[permissionId]";
+                  export type signature = "api_rbac_system_roles_roleId_permissions_permissionId_DELETE";
+                }
+              }
+              export namespace PATCH {
+                export namespace request {
+                  export type params = z.infer<z.ZodObject<{roleId: z.ZodString,permissionId: z.ZodString}>>;
+                }
+                export type response = { [K in keyof typeof api_rbac_system_roles_roleId_permissions_permissionId_PATCH_response]: z.infer<(typeof api_rbac_system_roles_roleId_permissions_permissionId_PATCH_response)[K]> };
+                export namespace metadata {
+                  export type method = "PATCH";
+                  export type path = "/api/rbac-system/roles/[roleId]/permissions/[permissionId]";
+                  export type signature = "api_rbac_system_roles_roleId_permissions_permissionId_PATCH";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    export namespace team_system {
+      export namespace members {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_team_system_members_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_team_system_members_GET_response]: z.infer<(typeof api_team_system_members_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/team-system/members";
+            export type signature = "api_team_system_members_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_team_system_members_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_team_system_members_POST_response]: z.infer<(typeof api_team_system_members_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/team-system/members";
+            export type signature = "api_team_system_members_POST";
+          }
+        }
+        export namespace memberId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{memberId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_team_system_members_memberId_DELETE_response]: z.infer<(typeof api_team_system_members_memberId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/team-system/members/[memberId]";
+              export type signature = "api_team_system_members_memberId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{memberId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_team_system_members_memberId_GET_response]: z.infer<(typeof api_team_system_members_memberId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/team-system/members/[memberId]";
+              export type signature = "api_team_system_members_memberId_GET";
+            }
+          }
+        }
+      }
+      export namespace teams {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_team_system_teams_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_team_system_teams_GET_response]: z.infer<(typeof api_team_system_teams_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/team-system/teams";
+            export type signature = "api_team_system_teams_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_team_system_teams_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_team_system_teams_POST_response]: z.infer<(typeof api_team_system_teams_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/team-system/teams";
+            export type signature = "api_team_system_teams_POST";
+          }
+        }
+        export namespace teamId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{teamId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_team_system_teams_teamId_DELETE_response]: z.infer<(typeof api_team_system_teams_teamId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/team-system/teams/[teamId]";
+              export type signature = "api_team_system_teams_teamId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{teamId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_team_system_teams_teamId_GET_response]: z.infer<(typeof api_team_system_teams_teamId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/team-system/teams/[teamId]";
+              export type signature = "api_team_system_teams_teamId_GET";
+            }
+          }
+          export namespace members {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{teamId: z.ZodString}>>;
+                export type description = z.infer<typeof api_team_system_teams_teamId_members_GET_description>;
+                export type query = z.infer<typeof api_team_system_teams_teamId_members_GET_query>;
+              }
+              export type response = { [K in keyof typeof api_team_system_teams_teamId_members_GET_response]: z.infer<(typeof api_team_system_teams_teamId_members_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/team-system/teams/[teamId]/members";
+                export type signature = "api_team_system_teams_teamId_members_GET";
+              }
+            }
+            export namespace POST {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{teamId: z.ZodString}>>;
+                export type description = z.infer<typeof api_team_system_teams_teamId_members_POST_description>;
+                export type body = z.infer<typeof api_team_system_teams_teamId_members_POST_body>;
+              }
+              export type response = { [K in keyof typeof api_team_system_teams_teamId_members_POST_response]: z.infer<(typeof api_team_system_teams_teamId_members_POST_response)[K]> };
+              export namespace metadata {
+                export type method = "POST";
+                export type path = "/api/team-system/teams/[teamId]/members";
+                export type signature = "api_team_system_teams_teamId_members_POST";
+              }
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{teamId: z.ZodString}>>;
+              export type body = z.infer<typeof api_team_system_teams_teamId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_team_system_teams_teamId_PATCH_response]: z.infer<(typeof api_team_system_teams_teamId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/team-system/teams/[teamId]";
+              export type signature = "api_team_system_teams_teamId_PATCH";
+            }
+          }
+        }
+      }
+    }
+    export namespace user_resource_system {
+      export namespace achivements {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_user_resource_system_achivements_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_achivements_GET_response]: z.infer<(typeof api_user_resource_system_achivements_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/user-resource-system/achivements";
+            export type signature = "api_user_resource_system_achivements_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_user_resource_system_achivements_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_achivements_POST_response]: z.infer<(typeof api_user_resource_system_achivements_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/user-resource-system/achivements";
+            export type signature = "api_user_resource_system_achivements_POST";
+          }
+        }
+        export namespace projectId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_achivements_projectId_DELETE_response]: z.infer<(typeof api_user_resource_system_achivements_projectId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/user-resource-system/achivements/[projectId]";
+              export type signature = "api_user_resource_system_achivements_projectId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type query = z.infer<typeof api_user_resource_system_achivements_projectId_GET_query>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_achivements_projectId_GET_response]: z.infer<(typeof api_user_resource_system_achivements_projectId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/user-resource-system/achivements/[projectId]";
+              export type signature = "api_user_resource_system_achivements_projectId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type body = z.infer<typeof api_user_resource_system_achivements_projectId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_achivements_projectId_PATCH_response]: z.infer<(typeof api_user_resource_system_achivements_projectId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/user-resource-system/achivements/[projectId]";
+              export type signature = "api_user_resource_system_achivements_projectId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace certificates {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_user_resource_system_certificates_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_certificates_GET_response]: z.infer<(typeof api_user_resource_system_certificates_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/user-resource-system/certificates";
+            export type signature = "api_user_resource_system_certificates_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_user_resource_system_certificates_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_certificates_POST_response]: z.infer<(typeof api_user_resource_system_certificates_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/user-resource-system/certificates";
+            export type signature = "api_user_resource_system_certificates_POST";
+          }
+        }
+        export namespace projectId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_certificates_projectId_DELETE_response]: z.infer<(typeof api_user_resource_system_certificates_projectId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/user-resource-system/certificates/[projectId]";
+              export type signature = "api_user_resource_system_certificates_projectId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type query = z.infer<typeof api_user_resource_system_certificates_projectId_GET_query>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_certificates_projectId_GET_response]: z.infer<(typeof api_user_resource_system_certificates_projectId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/user-resource-system/certificates/[projectId]";
+              export type signature = "api_user_resource_system_certificates_projectId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type body = z.infer<typeof api_user_resource_system_certificates_projectId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_certificates_projectId_PATCH_response]: z.infer<(typeof api_user_resource_system_certificates_projectId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/user-resource-system/certificates/[projectId]";
+              export type signature = "api_user_resource_system_certificates_projectId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace profiles {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_user_resource_system_profiles_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_profiles_GET_response]: z.infer<(typeof api_user_resource_system_profiles_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/user-resource-system/profiles";
+            export type signature = "api_user_resource_system_profiles_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_user_resource_system_profiles_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_profiles_POST_response]: z.infer<(typeof api_user_resource_system_profiles_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/user-resource-system/profiles";
+            export type signature = "api_user_resource_system_profiles_POST";
+          }
+        }
+        export namespace projectId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_profiles_projectId_DELETE_response]: z.infer<(typeof api_user_resource_system_profiles_projectId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/user-resource-system/profiles/[projectId]";
+              export type signature = "api_user_resource_system_profiles_projectId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type query = z.infer<typeof api_user_resource_system_profiles_projectId_GET_query>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_profiles_projectId_GET_response]: z.infer<(typeof api_user_resource_system_profiles_projectId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/user-resource-system/profiles/[projectId]";
+              export type signature = "api_user_resource_system_profiles_projectId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type body = z.infer<typeof api_user_resource_system_profiles_projectId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_profiles_projectId_PATCH_response]: z.infer<(typeof api_user_resource_system_profiles_projectId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/user-resource-system/profiles/[projectId]";
+              export type signature = "api_user_resource_system_profiles_projectId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace projects {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_user_resource_system_projects_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_projects_GET_response]: z.infer<(typeof api_user_resource_system_projects_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/user-resource-system/projects";
+            export type signature = "api_user_resource_system_projects_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_user_resource_system_projects_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_projects_POST_response]: z.infer<(typeof api_user_resource_system_projects_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/user-resource-system/projects";
+            export type signature = "api_user_resource_system_projects_POST";
+          }
+        }
+        export namespace projectId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_projects_projectId_DELETE_response]: z.infer<(typeof api_user_resource_system_projects_projectId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/user-resource-system/projects/[projectId]";
+              export type signature = "api_user_resource_system_projects_projectId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type query = z.infer<typeof api_user_resource_system_projects_projectId_GET_query>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_projects_projectId_GET_response]: z.infer<(typeof api_user_resource_system_projects_projectId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/user-resource-system/projects/[projectId]";
+              export type signature = "api_user_resource_system_projects_projectId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type body = z.infer<typeof api_user_resource_system_projects_projectId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_projects_projectId_PATCH_response]: z.infer<(typeof api_user_resource_system_projects_projectId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/user-resource-system/projects/[projectId]";
+              export type signature = "api_user_resource_system_projects_projectId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace settings {
+        export namespace GET {
+          export namespace request {
+            export type query = z.infer<typeof api_user_resource_system_settings_GET_query>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_settings_GET_response]: z.infer<(typeof api_user_resource_system_settings_GET_response)[K]> };
+          export namespace metadata {
+            export type method = "GET";
+            export type path = "/api/user-resource-system/settings";
+            export type signature = "api_user_resource_system_settings_GET";
+          }
+        }
+        export namespace POST {
+          export namespace request {
+            export type body = z.infer<typeof api_user_resource_system_settings_POST_body>;
+          }
+          export type response = { [K in keyof typeof api_user_resource_system_settings_POST_response]: z.infer<(typeof api_user_resource_system_settings_POST_response)[K]> };
+          export namespace metadata {
+            export type method = "POST";
+            export type path = "/api/user-resource-system/settings";
+            export type signature = "api_user_resource_system_settings_POST";
+          }
+        }
+        export namespace projectId {
+          export namespace DELETE {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_settings_projectId_DELETE_response]: z.infer<(typeof api_user_resource_system_settings_projectId_DELETE_response)[K]> };
+            export namespace metadata {
+              export type method = "DELETE";
+              export type path = "/api/user-resource-system/settings/[projectId]";
+              export type signature = "api_user_resource_system_settings_projectId_DELETE";
+            }
+          }
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type query = z.infer<typeof api_user_resource_system_settings_projectId_GET_query>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_settings_projectId_GET_response]: z.infer<(typeof api_user_resource_system_settings_projectId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/user-resource-system/settings/[projectId]";
+              export type signature = "api_user_resource_system_settings_projectId_GET";
+            }
+          }
+          export namespace PATCH {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{projectId: z.ZodString}>>;
+              export type body = z.infer<typeof api_user_resource_system_settings_projectId_PATCH_body>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_settings_projectId_PATCH_response]: z.infer<(typeof api_user_resource_system_settings_projectId_PATCH_response)[K]> };
+            export namespace metadata {
+              export type method = "PATCH";
+              export type path = "/api/user-resource-system/settings/[projectId]";
+              export type signature = "api_user_resource_system_settings_projectId_PATCH";
+            }
+          }
+        }
+      }
+      export namespace users {
+        export namespace userId {
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_user_resource_system_users_userId_GET_response]: z.infer<(typeof api_user_resource_system_users_userId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/user-resource-system/users/[userId]";
+              export type signature = "api_user_resource_system_users_userId_GET";
+            }
+          }
+          export namespace profile {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+              }
+              export type response = { [K in keyof typeof api_user_resource_system_users_userId_profile_GET_response]: z.infer<(typeof api_user_resource_system_users_userId_profile_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-resource-system/users/[userId]/profile";
+                export type signature = "api_user_resource_system_users_userId_profile_GET";
+              }
+            }
+          }
+          export namespace projects {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+                export type query = z.infer<typeof api_user_resource_system_users_userId_projects_GET_query>;
+              }
+              export type response = { [K in keyof typeof api_user_resource_system_users_userId_projects_GET_response]: z.infer<(typeof api_user_resource_system_users_userId_projects_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-resource-system/users/[userId]/projects";
+                export type signature = "api_user_resource_system_users_userId_projects_GET";
+              }
+            }
+          }
+          export namespace roles {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+              }
+              export type response = { [K in keyof typeof api_user_resource_system_users_userId_roles_GET_response]: z.infer<(typeof api_user_resource_system_users_userId_roles_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-resource-system/users/[userId]/roles";
+                export type signature = "api_user_resource_system_users_userId_roles_GET";
+              }
+            }
+          }
+          export namespace wallet {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+              }
+              export type response = { [K in keyof typeof api_user_resource_system_users_userId_wallet_GET_response]: z.infer<(typeof api_user_resource_system_users_userId_wallet_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-resource-system/users/[userId]/wallet";
+                export type signature = "api_user_resource_system_users_userId_wallet_GET";
+              }
+            }
+            export namespace transactions {
+              export namespace GET {
+                export namespace request {
+                  export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+                  export type query = z.infer<typeof api_user_resource_system_users_userId_wallet_transactions_GET_query>;
+                }
+                export type response = { [K in keyof typeof api_user_resource_system_users_userId_wallet_transactions_GET_response]: z.infer<(typeof api_user_resource_system_users_userId_wallet_transactions_GET_response)[K]> };
+                export namespace metadata {
+                  export type method = "GET";
+                  export type path = "/api/user-resource-system/users/[userId]/wallet/transactions";
+                  export type signature = "api_user_resource_system_users_userId_wallet_transactions_GET";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    export namespace user_system {
+      export namespace users {
+        export namespace userId {
+          export namespace GET {
+            export namespace request {
+              export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+            }
+            export type response = { [K in keyof typeof api_user_system_users_userId_GET_response]: z.infer<(typeof api_user_system_users_userId_GET_response)[K]> };
+            export namespace metadata {
+              export type method = "GET";
+              export type path = "/api/user-system/users/[userId]";
+              export type signature = "api_user_system_users_userId_GET";
+            }
+          }
+          export namespace profile {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+              }
+              export type response = { [K in keyof typeof api_user_system_users_userId_profile_GET_response]: z.infer<(typeof api_user_system_users_userId_profile_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-system/users/[userId]/profile";
+                export type signature = "api_user_system_users_userId_profile_GET";
+              }
+            }
+          }
+          export namespace projects {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+                export type query = z.infer<typeof api_user_system_users_userId_projects_GET_query>;
+              }
+              export type response = { [K in keyof typeof api_user_system_users_userId_projects_GET_response]: z.infer<(typeof api_user_system_users_userId_projects_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-system/users/[userId]/projects";
+                export type signature = "api_user_system_users_userId_projects_GET";
+              }
+            }
+          }
+          export namespace roles {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+              }
+              export type response = { [K in keyof typeof api_user_system_users_userId_roles_GET_response]: z.infer<(typeof api_user_system_users_userId_roles_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-system/users/[userId]/roles";
+                export type signature = "api_user_system_users_userId_roles_GET";
+              }
+            }
+          }
+          export namespace wallet {
+            export namespace GET {
+              export namespace request {
+                export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+              }
+              export type response = { [K in keyof typeof api_user_system_users_userId_wallet_GET_response]: z.infer<(typeof api_user_system_users_userId_wallet_GET_response)[K]> };
+              export namespace metadata {
+                export type method = "GET";
+                export type path = "/api/user-system/users/[userId]/wallet";
+                export type signature = "api_user_system_users_userId_wallet_GET";
+              }
+            }
+            export namespace transactions {
+              export namespace GET {
+                export namespace request {
+                  export type params = z.infer<z.ZodObject<{userId: z.ZodString}>>;
+                  export type query = z.infer<typeof api_user_system_users_userId_wallet_transactions_GET_query>;
+                }
+                export type response = { [K in keyof typeof api_user_system_users_userId_wallet_transactions_GET_response]: z.infer<(typeof api_user_system_users_userId_wallet_transactions_GET_response)[K]> };
+                export namespace metadata {
+                  export type method = "GET";
+                  export type path = "/api/user-system/users/[userId]/wallet/transactions";
+                  export type signature = "api_user_system_users_userId_wallet_transactions_GET";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
