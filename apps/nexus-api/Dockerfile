@@ -35,6 +35,7 @@ COPY --from=builder /app/pnpm-workspace.yaml ./
 # Copy the API app (only package.json and compiled dist)
 COPY --from=builder /app/apps/nexus-api/package.json ./apps/nexus-api/package.json
 COPY --from=builder /app/apps/nexus-api/dist ./apps/nexus-api/dist
+COPY --from=builder /app/apps/nexus-api/src ./apps/nexus-api/src
 
 # Copy workspace dependencies (only package.json and dist)
 COPY --from=builder /app/packages/nexus-api-contracts/package.json ./packages/nexus-api-contracts/package.json
