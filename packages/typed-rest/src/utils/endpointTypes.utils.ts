@@ -3,7 +3,7 @@ import path from "path";
 import { z } from "zod";
 import { listExportsSync } from "./utils";
 
-type Tree = {
+export type Tree = {
   [key: string]: string | Tree;
 };
 /**
@@ -143,7 +143,7 @@ export const scanContractModels = async (root: string) => {
   //   return { imports, tree };
 };
 
-export const convertTreeToNamespaceString = (tree: Tree): string => {
+export const convertTreeToNamespaceString = (tree: Tree, rootname: string = "contract"): string => {
   const indent = (level: number) => "  ".repeat(level);
 
   const recurse = (node: Tree, level: number): string => {
@@ -165,7 +165,7 @@ export const convertTreeToNamespaceString = (tree: Tree): string => {
   };
 
   // Wrapping the entire output in the top-level 'models' namespace
-  return `export namespace contract {\n${recurse(tree, 1)}\n}`;
+  return `export namespace ${rootname} {\n${recurse(tree, 1)}\n}`;
 };
 
 // "

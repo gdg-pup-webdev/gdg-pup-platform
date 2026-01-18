@@ -227,1147 +227,6 @@ import { row as model_userSystem_user_row } from "./models/userSystem/user";
 import { insertDTO as model_userSystem_user_insertDTO } from "./models/userSystem/user";
 import { updateDTO as model_userSystem_user_updateDTO } from "./models/userSystem/user";
 
-export const EndpointSchemas = {
-  "api_article_system_articles_articleId_comments_GET": {
-    "request": {
-      "params": z.object({articleId: z.string()}),
-      "query": api_article_system_articles_articleId_comments_GET_query
-    },
-    "response": api_article_system_articles_articleId_comments_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/article-system/articles/[articleId]/comments",
-      "signature": "api_article_system_articles_articleId_comments_GET"
-    }
-  },
-  "api_article_system_articles_articleId_comments_POST": {
-    "request": {
-      "params": z.object({articleId: z.string()}),
-      "body": api_article_system_articles_articleId_comments_POST_body
-    },
-    "response": api_article_system_articles_articleId_comments_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/article-system/articles/[articleId]/comments",
-      "signature": "api_article_system_articles_articleId_comments_POST"
-    }
-  },
-  "api_article_system_articles_articleId_comments_commentId_DELETE": {
-    "request": {
-      "params": z.object({articleId: z.string(),commentId: z.string()})
-    },
-    "response": api_article_system_articles_articleId_comments_commentId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/article-system/articles/[articleId]/comments/[commentId]",
-      "signature": "api_article_system_articles_articleId_comments_commentId_DELETE"
-    }
-  },
-  "api_event_system_checkin_POST": {
-    "request": {
-      "body": api_event_system_checkin_POST_body
-    },
-    "response": api_event_system_checkin_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/event-system/checkin",
-      "signature": "api_event_system_checkin_POST"
-    }
-  },
-  "api_event_system_events_GET": {
-    "request": {
-      "query": api_event_system_events_GET_query
-    },
-    "response": api_event_system_events_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/event-system/events",
-      "signature": "api_event_system_events_GET"
-    }
-  },
-  "api_event_system_events_POST": {
-    "request": {
-      "body": api_event_system_events_POST_body
-    },
-    "response": api_event_system_events_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/event-system/events",
-      "signature": "api_event_system_events_POST"
-    }
-  },
-  "api_event_system_events_eventId_attendees_GET": {
-    "request": {
-      "params": z.object({eventId: z.string()}),
-      "query": api_event_system_events_eventId_attendees_GET_query
-    },
-    "response": api_event_system_events_eventId_attendees_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/event-system/events/[eventId]/attendees",
-      "signature": "api_event_system_events_eventId_attendees_GET"
-    }
-  },
-  "api_event_system_events_eventId_DELETE": {
-    "request": {
-      "params": z.object({eventId: z.string()})
-    },
-    "response": api_event_system_events_eventId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/event-system/events/[eventId]",
-      "signature": "api_event_system_events_eventId_DELETE"
-    }
-  },
-  "api_event_system_events_eventId_GET": {
-    "request": {
-      "params": z.object({eventId: z.string()})
-    },
-    "response": api_event_system_events_eventId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/event-system/events/[eventId]",
-      "signature": "api_event_system_events_eventId_GET"
-    }
-  },
-  "api_event_system_events_eventId_PATCH": {
-    "request": {
-      "params": z.object({eventId: z.string()}),
-      "body": api_event_system_events_eventId_PATCH_body
-    },
-    "response": api_event_system_events_eventId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/event-system/events/[eventId]",
-      "signature": "api_event_system_events_eventId_PATCH"
-    }
-  },
-  "api_file_system_files_GET": {
-    "request": {
-      "query": api_file_system_files_GET_query
-    },
-    "response": api_file_system_files_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/file-system/files",
-      "signature": "api_file_system_files_GET"
-    }
-  },
-  "api_file_system_files_POST": {
-    "request": {
-      "body": api_file_system_files_POST_body
-    },
-    "response": api_file_system_files_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/file-system/files",
-      "signature": "api_file_system_files_POST"
-    }
-  },
-  "api_file_system_files_fileId_DELETE": {
-    "request": {
-      "params": z.object({fileId: z.string()})
-    },
-    "response": api_file_system_files_fileId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/file-system/files/[fileId]",
-      "signature": "api_file_system_files_fileId_DELETE"
-    }
-  },
-  "api_file_system_files_fileId_GET": {
-    "request": {
-      "params": z.object({fileId: z.string()})
-    },
-    "response": api_file_system_files_fileId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/file-system/files/[fileId]",
-      "signature": "api_file_system_files_fileId_GET"
-    }
-  },
-  "api_file_system_files_fileId_PATCH": {
-    "request": {
-      "params": z.object({fileId: z.string()}),
-      "body": api_file_system_files_fileId_PATCH_body
-    },
-    "response": api_file_system_files_fileId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/file-system/files/[fileId]",
-      "signature": "api_file_system_files_fileId_PATCH"
-    }
-  },
-  "api_health_GET": {
-    "request": {},
-    "response": api_health_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/health",
-      "signature": "api_health_GET"
-    }
-  },
-  "api_leaderboard_system_GET": {
-    "request": {},
-    "response": api_leaderboard_system_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/leaderboard-system",
-      "signature": "api_leaderboard_system_GET"
-    }
-  },
-  "api_learning_resource_system_externalResources_GET": {
-    "request": {
-      "query": api_learning_resource_system_externalResources_GET_query
-    },
-    "response": api_learning_resource_system_externalResources_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/learning-resource-system/externalResources",
-      "signature": "api_learning_resource_system_externalResources_GET"
-    }
-  },
-  "api_learning_resource_system_externalResources_POST": {
-    "request": {
-      "body": api_learning_resource_system_externalResources_POST_body
-    },
-    "response": api_learning_resource_system_externalResources_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/learning-resource-system/externalResources",
-      "signature": "api_learning_resource_system_externalResources_POST"
-    }
-  },
-  "api_learning_resource_system_externalResources_externalResourceId_DELETE": {
-    "request": {
-      "params": z.object({externalResourceId: z.string()})
-    },
-    "response": api_learning_resource_system_externalResources_externalResourceId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/learning-resource-system/externalResources/[externalResourceId]",
-      "signature": "api_learning_resource_system_externalResources_externalResourceId_DELETE"
-    }
-  },
-  "api_learning_resource_system_externalResources_externalResourceId_GET": {
-    "request": {
-      "params": z.object({externalResourceId: z.string()})
-    },
-    "response": api_learning_resource_system_externalResources_externalResourceId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/learning-resource-system/externalResources/[externalResourceId]",
-      "signature": "api_learning_resource_system_externalResources_externalResourceId_GET"
-    }
-  },
-  "api_learning_resource_system_externalResources_externalResourceId_PATCH": {
-    "request": {
-      "params": z.object({externalResourceId: z.string()}),
-      "body": api_learning_resource_system_externalResources_externalResourceId_PATCH_body
-    },
-    "response": api_learning_resource_system_externalResources_externalResourceId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/learning-resource-system/externalResources/[externalResourceId]",
-      "signature": "api_learning_resource_system_externalResources_externalResourceId_PATCH"
-    }
-  },
-  "api_learning_resource_system_GET": {
-    "request": {
-      "query": api_learning_resource_system_GET_query
-    },
-    "response": api_learning_resource_system_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/learning-resource-system",
-      "signature": "api_learning_resource_system_GET"
-    }
-  },
-  "api_learning_resource_system_study_jams_GET": {
-    "request": {
-      "query": api_learning_resource_system_study_jams_GET_query
-    },
-    "response": api_learning_resource_system_study_jams_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/learning-resource-system/study-jams",
-      "signature": "api_learning_resource_system_study_jams_GET"
-    }
-  },
-  "api_learning_resource_system_study_jams_POST": {
-    "request": {
-      "body": api_learning_resource_system_study_jams_POST_body
-    },
-    "response": api_learning_resource_system_study_jams_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/learning-resource-system/study-jams",
-      "signature": "api_learning_resource_system_study_jams_POST"
-    }
-  },
-  "api_learning_resource_system_study_jams_studyJamId_DELETE": {
-    "request": {
-      "params": z.object({studyJamId: z.string()})
-    },
-    "response": api_learning_resource_system_study_jams_studyJamId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/learning-resource-system/study-jams/[studyJamId]",
-      "signature": "api_learning_resource_system_study_jams_studyJamId_DELETE"
-    }
-  },
-  "api_learning_resource_system_study_jams_studyJamId_GET": {
-    "request": {
-      "params": z.object({studyJamId: z.string()})
-    },
-    "response": api_learning_resource_system_study_jams_studyJamId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/learning-resource-system/study-jams/[studyJamId]",
-      "signature": "api_learning_resource_system_study_jams_studyJamId_GET"
-    }
-  },
-  "api_learning_resource_system_study_jams_studyJamId_PATCH": {
-    "request": {
-      "params": z.object({studyJamId: z.string()}),
-      "body": api_learning_resource_system_study_jams_studyJamId_PATCH_body
-    },
-    "response": api_learning_resource_system_study_jams_studyJamId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/learning-resource-system/study-jams/[studyJamId]",
-      "signature": "api_learning_resource_system_study_jams_studyJamId_PATCH"
-    }
-  },
-  "api_publication_system_articles_GET": {
-    "request": {
-      "query": api_publication_system_articles_GET_query
-    },
-    "response": api_publication_system_articles_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/publication-system/articles",
-      "signature": "api_publication_system_articles_GET"
-    }
-  },
-  "api_publication_system_articles_POST": {
-    "request": {
-      "body": api_publication_system_articles_POST_body
-    },
-    "response": api_publication_system_articles_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/publication-system/articles",
-      "signature": "api_publication_system_articles_POST"
-    }
-  },
-  "api_publication_system_articles_articleId_DELETE": {
-    "request": {
-      "params": z.object({articleId: z.string()})
-    },
-    "response": api_publication_system_articles_articleId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/publication-system/articles/[articleId]",
-      "signature": "api_publication_system_articles_articleId_DELETE"
-    }
-  },
-  "api_publication_system_articles_articleId_GET": {
-    "request": {
-      "params": z.object({articleId: z.string()})
-    },
-    "response": api_publication_system_articles_articleId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/publication-system/articles/[articleId]",
-      "signature": "api_publication_system_articles_articleId_GET"
-    }
-  },
-  "api_publication_system_articles_articleId_PATCH": {
-    "request": {
-      "params": z.object({articleId: z.string()}),
-      "body": api_publication_system_articles_articleId_PATCH_body
-    },
-    "response": api_publication_system_articles_articleId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/publication-system/articles/[articleId]",
-      "signature": "api_publication_system_articles_articleId_PATCH"
-    }
-  },
-  "api_publication_system_events_GET": {
-    "request": {
-      "query": api_publication_system_events_GET_query
-    },
-    "response": api_publication_system_events_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/publication-system/events",
-      "signature": "api_publication_system_events_GET"
-    }
-  },
-  "api_publication_system_events_POST": {
-    "request": {
-      "body": api_publication_system_events_POST_body
-    },
-    "response": api_publication_system_events_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/publication-system/events",
-      "signature": "api_publication_system_events_POST"
-    }
-  },
-  "api_publication_system_events_articleId_DELETE": {
-    "request": {
-      "params": z.object({articleId: z.string()})
-    },
-    "response": api_publication_system_events_articleId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/publication-system/events/[articleId]",
-      "signature": "api_publication_system_events_articleId_DELETE"
-    }
-  },
-  "api_publication_system_events_articleId_GET": {
-    "request": {
-      "params": z.object({articleId: z.string()})
-    },
-    "response": api_publication_system_events_articleId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/publication-system/events/[articleId]",
-      "signature": "api_publication_system_events_articleId_GET"
-    }
-  },
-  "api_publication_system_events_articleId_PATCH": {
-    "request": {
-      "params": z.object({articleId: z.string()}),
-      "body": api_publication_system_events_articleId_PATCH_body
-    },
-    "response": api_publication_system_events_articleId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/publication-system/events/[articleId]",
-      "signature": "api_publication_system_events_articleId_PATCH"
-    }
-  },
-  "api_publication_system_highlights_GET": {
-    "request": {
-      "query": api_publication_system_highlights_GET_query
-    },
-    "response": api_publication_system_highlights_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/publication-system/highlights",
-      "signature": "api_publication_system_highlights_GET"
-    }
-  },
-  "api_publication_system_highlights_POST": {
-    "request": {
-      "body": api_publication_system_highlights_POST_body
-    },
-    "response": api_publication_system_highlights_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/publication-system/highlights",
-      "signature": "api_publication_system_highlights_POST"
-    }
-  },
-  "api_publication_system_highlights_articleId_DELETE": {
-    "request": {
-      "params": z.object({articleId: z.string()})
-    },
-    "response": api_publication_system_highlights_articleId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/publication-system/highlights/[articleId]",
-      "signature": "api_publication_system_highlights_articleId_DELETE"
-    }
-  },
-  "api_publication_system_highlights_articleId_GET": {
-    "request": {
-      "params": z.object({articleId: z.string()})
-    },
-    "response": api_publication_system_highlights_articleId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/publication-system/highlights/[articleId]",
-      "signature": "api_publication_system_highlights_articleId_GET"
-    }
-  },
-  "api_publication_system_highlights_articleId_PATCH": {
-    "request": {
-      "params": z.object({articleId: z.string()}),
-      "body": api_publication_system_highlights_articleId_PATCH_body
-    },
-    "response": api_publication_system_highlights_articleId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/publication-system/highlights/[articleId]",
-      "signature": "api_publication_system_highlights_articleId_PATCH"
-    }
-  },
-  "api_rbac_system_roles_GET": {
-    "request": {
-      "query": api_rbac_system_roles_GET_query
-    },
-    "response": api_rbac_system_roles_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/rbac-system/roles",
-      "signature": "api_rbac_system_roles_GET"
-    }
-  },
-  "api_rbac_system_roles_POST": {
-    "request": {
-      "body": api_rbac_system_roles_POST_body
-    },
-    "response": api_rbac_system_roles_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/rbac-system/roles",
-      "signature": "api_rbac_system_roles_POST"
-    }
-  },
-  "api_rbac_system_roles_roleId_DELETE": {
-    "request": {
-      "params": z.object({roleId: z.string()})
-    },
-    "response": api_rbac_system_roles_roleId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/rbac-system/roles/[roleId]",
-      "signature": "api_rbac_system_roles_roleId_DELETE"
-    }
-  },
-  "api_rbac_system_roles_roleId_GET": {
-    "request": {
-      "params": z.object({roleId: z.string()})
-    },
-    "response": api_rbac_system_roles_roleId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/rbac-system/roles/[roleId]",
-      "signature": "api_rbac_system_roles_roleId_GET"
-    }
-  },
-  "api_rbac_system_roles_roleId_parent_GET": {
-    "request": {
-      "params": z.object({roleId: z.string()})
-    },
-    "response": api_rbac_system_roles_roleId_parent_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/rbac-system/roles/[roleId]/parent",
-      "signature": "api_rbac_system_roles_roleId_parent_GET"
-    }
-  },
-  "api_rbac_system_roles_roleId_PATCH": {
-    "request": {
-      "params": z.object({roleId: z.string()})
-    },
-    "response": api_rbac_system_roles_roleId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/rbac-system/roles/[roleId]",
-      "signature": "api_rbac_system_roles_roleId_PATCH"
-    }
-  },
-  "api_rbac_system_roles_roleId_permissions_GET": {
-    "request": {
-      "params": z.object({roleId: z.string()}),
-      "description": api_rbac_system_roles_roleId_permissions_GET_description,
-      "query": api_rbac_system_roles_roleId_permissions_GET_query
-    },
-    "response": api_rbac_system_roles_roleId_permissions_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/rbac-system/roles/[roleId]/permissions",
-      "signature": "api_rbac_system_roles_roleId_permissions_GET"
-    }
-  },
-  "api_rbac_system_roles_roleId_permissions_POST": {
-    "request": {
-      "params": z.object({roleId: z.string()}),
-      "body": api_rbac_system_roles_roleId_permissions_POST_body
-    },
-    "response": api_rbac_system_roles_roleId_permissions_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/rbac-system/roles/[roleId]/permissions",
-      "signature": "api_rbac_system_roles_roleId_permissions_POST"
-    }
-  },
-  "api_rbac_system_roles_roleId_permissions_permissionId_DELETE": {
-    "request": {
-      "params": z.object({roleId: z.string(),permissionId: z.string()})
-    },
-    "response": api_rbac_system_roles_roleId_permissions_permissionId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/rbac-system/roles/[roleId]/permissions/[permissionId]",
-      "signature": "api_rbac_system_roles_roleId_permissions_permissionId_DELETE"
-    }
-  },
-  "api_rbac_system_roles_roleId_permissions_permissionId_PATCH": {
-    "request": {
-      "params": z.object({roleId: z.string(),permissionId: z.string()})
-    },
-    "response": api_rbac_system_roles_roleId_permissions_permissionId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/rbac-system/roles/[roleId]/permissions/[permissionId]",
-      "signature": "api_rbac_system_roles_roleId_permissions_permissionId_PATCH"
-    }
-  },
-  "api_team_system_members_GET": {
-    "request": {
-      "query": api_team_system_members_GET_query
-    },
-    "response": api_team_system_members_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/team-system/members",
-      "signature": "api_team_system_members_GET"
-    }
-  },
-  "api_team_system_members_POST": {
-    "request": {
-      "body": api_team_system_members_POST_body
-    },
-    "response": api_team_system_members_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/team-system/members",
-      "signature": "api_team_system_members_POST"
-    }
-  },
-  "api_team_system_members_memberId_DELETE": {
-    "request": {
-      "params": z.object({memberId: z.string()})
-    },
-    "response": api_team_system_members_memberId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/team-system/members/[memberId]",
-      "signature": "api_team_system_members_memberId_DELETE"
-    }
-  },
-  "api_team_system_members_memberId_GET": {
-    "request": {
-      "params": z.object({memberId: z.string()})
-    },
-    "response": api_team_system_members_memberId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/team-system/members/[memberId]",
-      "signature": "api_team_system_members_memberId_GET"
-    }
-  },
-  "api_team_system_teams_GET": {
-    "request": {
-      "query": api_team_system_teams_GET_query
-    },
-    "response": api_team_system_teams_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/team-system/teams",
-      "signature": "api_team_system_teams_GET"
-    }
-  },
-  "api_team_system_teams_POST": {
-    "request": {
-      "body": api_team_system_teams_POST_body
-    },
-    "response": api_team_system_teams_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/team-system/teams",
-      "signature": "api_team_system_teams_POST"
-    }
-  },
-  "api_team_system_teams_teamId_DELETE": {
-    "request": {
-      "params": z.object({teamId: z.string()})
-    },
-    "response": api_team_system_teams_teamId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/team-system/teams/[teamId]",
-      "signature": "api_team_system_teams_teamId_DELETE"
-    }
-  },
-  "api_team_system_teams_teamId_GET": {
-    "request": {
-      "params": z.object({teamId: z.string()})
-    },
-    "response": api_team_system_teams_teamId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/team-system/teams/[teamId]",
-      "signature": "api_team_system_teams_teamId_GET"
-    }
-  },
-  "api_team_system_teams_teamId_members_GET": {
-    "request": {
-      "params": z.object({teamId: z.string()}),
-      "description": api_team_system_teams_teamId_members_GET_description,
-      "query": api_team_system_teams_teamId_members_GET_query
-    },
-    "response": api_team_system_teams_teamId_members_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/team-system/teams/[teamId]/members",
-      "signature": "api_team_system_teams_teamId_members_GET"
-    }
-  },
-  "api_team_system_teams_teamId_members_POST": {
-    "request": {
-      "params": z.object({teamId: z.string()}),
-      "description": api_team_system_teams_teamId_members_POST_description,
-      "body": api_team_system_teams_teamId_members_POST_body
-    },
-    "response": api_team_system_teams_teamId_members_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/team-system/teams/[teamId]/members",
-      "signature": "api_team_system_teams_teamId_members_POST"
-    }
-  },
-  "api_team_system_teams_teamId_PATCH": {
-    "request": {
-      "params": z.object({teamId: z.string()}),
-      "body": api_team_system_teams_teamId_PATCH_body
-    },
-    "response": api_team_system_teams_teamId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/team-system/teams/[teamId]",
-      "signature": "api_team_system_teams_teamId_PATCH"
-    }
-  },
-  "api_user_resource_system_achivements_GET": {
-    "request": {
-      "query": api_user_resource_system_achivements_GET_query
-    },
-    "response": api_user_resource_system_achivements_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/achivements",
-      "signature": "api_user_resource_system_achivements_GET"
-    }
-  },
-  "api_user_resource_system_achivements_POST": {
-    "request": {
-      "body": api_user_resource_system_achivements_POST_body
-    },
-    "response": api_user_resource_system_achivements_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/user-resource-system/achivements",
-      "signature": "api_user_resource_system_achivements_POST"
-    }
-  },
-  "api_user_resource_system_achivements_projectId_DELETE": {
-    "request": {
-      "params": z.object({projectId: z.string()})
-    },
-    "response": api_user_resource_system_achivements_projectId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/user-resource-system/achivements/[projectId]",
-      "signature": "api_user_resource_system_achivements_projectId_DELETE"
-    }
-  },
-  "api_user_resource_system_achivements_projectId_GET": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "query": api_user_resource_system_achivements_projectId_GET_query
-    },
-    "response": api_user_resource_system_achivements_projectId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/achivements/[projectId]",
-      "signature": "api_user_resource_system_achivements_projectId_GET"
-    }
-  },
-  "api_user_resource_system_achivements_projectId_PATCH": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "body": api_user_resource_system_achivements_projectId_PATCH_body
-    },
-    "response": api_user_resource_system_achivements_projectId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/user-resource-system/achivements/[projectId]",
-      "signature": "api_user_resource_system_achivements_projectId_PATCH"
-    }
-  },
-  "api_user_resource_system_certificates_GET": {
-    "request": {
-      "query": api_user_resource_system_certificates_GET_query
-    },
-    "response": api_user_resource_system_certificates_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/certificates",
-      "signature": "api_user_resource_system_certificates_GET"
-    }
-  },
-  "api_user_resource_system_certificates_POST": {
-    "request": {
-      "body": api_user_resource_system_certificates_POST_body
-    },
-    "response": api_user_resource_system_certificates_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/user-resource-system/certificates",
-      "signature": "api_user_resource_system_certificates_POST"
-    }
-  },
-  "api_user_resource_system_certificates_projectId_DELETE": {
-    "request": {
-      "params": z.object({projectId: z.string()})
-    },
-    "response": api_user_resource_system_certificates_projectId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/user-resource-system/certificates/[projectId]",
-      "signature": "api_user_resource_system_certificates_projectId_DELETE"
-    }
-  },
-  "api_user_resource_system_certificates_projectId_GET": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "query": api_user_resource_system_certificates_projectId_GET_query
-    },
-    "response": api_user_resource_system_certificates_projectId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/certificates/[projectId]",
-      "signature": "api_user_resource_system_certificates_projectId_GET"
-    }
-  },
-  "api_user_resource_system_certificates_projectId_PATCH": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "body": api_user_resource_system_certificates_projectId_PATCH_body
-    },
-    "response": api_user_resource_system_certificates_projectId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/user-resource-system/certificates/[projectId]",
-      "signature": "api_user_resource_system_certificates_projectId_PATCH"
-    }
-  },
-  "api_user_resource_system_profiles_GET": {
-    "request": {
-      "query": api_user_resource_system_profiles_GET_query
-    },
-    "response": api_user_resource_system_profiles_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/profiles",
-      "signature": "api_user_resource_system_profiles_GET"
-    }
-  },
-  "api_user_resource_system_profiles_POST": {
-    "request": {
-      "body": api_user_resource_system_profiles_POST_body
-    },
-    "response": api_user_resource_system_profiles_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/user-resource-system/profiles",
-      "signature": "api_user_resource_system_profiles_POST"
-    }
-  },
-  "api_user_resource_system_profiles_projectId_DELETE": {
-    "request": {
-      "params": z.object({projectId: z.string()})
-    },
-    "response": api_user_resource_system_profiles_projectId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/user-resource-system/profiles/[projectId]",
-      "signature": "api_user_resource_system_profiles_projectId_DELETE"
-    }
-  },
-  "api_user_resource_system_profiles_projectId_GET": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "query": api_user_resource_system_profiles_projectId_GET_query
-    },
-    "response": api_user_resource_system_profiles_projectId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/profiles/[projectId]",
-      "signature": "api_user_resource_system_profiles_projectId_GET"
-    }
-  },
-  "api_user_resource_system_profiles_projectId_PATCH": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "body": api_user_resource_system_profiles_projectId_PATCH_body
-    },
-    "response": api_user_resource_system_profiles_projectId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/user-resource-system/profiles/[projectId]",
-      "signature": "api_user_resource_system_profiles_projectId_PATCH"
-    }
-  },
-  "api_user_resource_system_projects_GET": {
-    "request": {
-      "query": api_user_resource_system_projects_GET_query
-    },
-    "response": api_user_resource_system_projects_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/projects",
-      "signature": "api_user_resource_system_projects_GET"
-    }
-  },
-  "api_user_resource_system_projects_POST": {
-    "request": {
-      "body": api_user_resource_system_projects_POST_body
-    },
-    "response": api_user_resource_system_projects_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/user-resource-system/projects",
-      "signature": "api_user_resource_system_projects_POST"
-    }
-  },
-  "api_user_resource_system_projects_projectId_DELETE": {
-    "request": {
-      "params": z.object({projectId: z.string()})
-    },
-    "response": api_user_resource_system_projects_projectId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/user-resource-system/projects/[projectId]",
-      "signature": "api_user_resource_system_projects_projectId_DELETE"
-    }
-  },
-  "api_user_resource_system_projects_projectId_GET": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "query": api_user_resource_system_projects_projectId_GET_query
-    },
-    "response": api_user_resource_system_projects_projectId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/projects/[projectId]",
-      "signature": "api_user_resource_system_projects_projectId_GET"
-    }
-  },
-  "api_user_resource_system_projects_projectId_PATCH": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "body": api_user_resource_system_projects_projectId_PATCH_body
-    },
-    "response": api_user_resource_system_projects_projectId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/user-resource-system/projects/[projectId]",
-      "signature": "api_user_resource_system_projects_projectId_PATCH"
-    }
-  },
-  "api_user_resource_system_settings_GET": {
-    "request": {
-      "query": api_user_resource_system_settings_GET_query
-    },
-    "response": api_user_resource_system_settings_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/settings",
-      "signature": "api_user_resource_system_settings_GET"
-    }
-  },
-  "api_user_resource_system_settings_POST": {
-    "request": {
-      "body": api_user_resource_system_settings_POST_body
-    },
-    "response": api_user_resource_system_settings_POST_response,
-    "metadata": {
-      "method": "POST",
-      "path": "/api/user-resource-system/settings",
-      "signature": "api_user_resource_system_settings_POST"
-    }
-  },
-  "api_user_resource_system_settings_projectId_DELETE": {
-    "request": {
-      "params": z.object({projectId: z.string()})
-    },
-    "response": api_user_resource_system_settings_projectId_DELETE_response,
-    "metadata": {
-      "method": "DELETE",
-      "path": "/api/user-resource-system/settings/[projectId]",
-      "signature": "api_user_resource_system_settings_projectId_DELETE"
-    }
-  },
-  "api_user_resource_system_settings_projectId_GET": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "query": api_user_resource_system_settings_projectId_GET_query
-    },
-    "response": api_user_resource_system_settings_projectId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/settings/[projectId]",
-      "signature": "api_user_resource_system_settings_projectId_GET"
-    }
-  },
-  "api_user_resource_system_settings_projectId_PATCH": {
-    "request": {
-      "params": z.object({projectId: z.string()}),
-      "body": api_user_resource_system_settings_projectId_PATCH_body
-    },
-    "response": api_user_resource_system_settings_projectId_PATCH_response,
-    "metadata": {
-      "method": "PATCH",
-      "path": "/api/user-resource-system/settings/[projectId]",
-      "signature": "api_user_resource_system_settings_projectId_PATCH"
-    }
-  },
-  "api_user_resource_system_users_userId_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_resource_system_users_userId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/users/[userId]",
-      "signature": "api_user_resource_system_users_userId_GET"
-    }
-  },
-  "api_user_resource_system_users_userId_profile_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_resource_system_users_userId_profile_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/users/[userId]/profile",
-      "signature": "api_user_resource_system_users_userId_profile_GET"
-    }
-  },
-  "api_user_resource_system_users_userId_projects_GET": {
-    "request": {
-      "params": z.object({userId: z.string()}),
-      "query": api_user_resource_system_users_userId_projects_GET_query
-    },
-    "response": api_user_resource_system_users_userId_projects_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/users/[userId]/projects",
-      "signature": "api_user_resource_system_users_userId_projects_GET"
-    }
-  },
-  "api_user_resource_system_users_userId_roles_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_resource_system_users_userId_roles_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/users/[userId]/roles",
-      "signature": "api_user_resource_system_users_userId_roles_GET"
-    }
-  },
-  "api_user_resource_system_users_userId_wallet_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_resource_system_users_userId_wallet_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/users/[userId]/wallet",
-      "signature": "api_user_resource_system_users_userId_wallet_GET"
-    }
-  },
-  "api_user_resource_system_users_userId_wallet_transactions_GET": {
-    "request": {
-      "params": z.object({userId: z.string()}),
-      "query": api_user_resource_system_users_userId_wallet_transactions_GET_query
-    },
-    "response": api_user_resource_system_users_userId_wallet_transactions_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-resource-system/users/[userId]/wallet/transactions",
-      "signature": "api_user_resource_system_users_userId_wallet_transactions_GET"
-    }
-  },
-  "api_user_system_users_userId_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_system_users_userId_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-system/users/[userId]",
-      "signature": "api_user_system_users_userId_GET"
-    }
-  },
-  "api_user_system_users_userId_profile_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_system_users_userId_profile_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-system/users/[userId]/profile",
-      "signature": "api_user_system_users_userId_profile_GET"
-    }
-  },
-  "api_user_system_users_userId_projects_GET": {
-    "request": {
-      "params": z.object({userId: z.string()}),
-      "query": api_user_system_users_userId_projects_GET_query
-    },
-    "response": api_user_system_users_userId_projects_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-system/users/[userId]/projects",
-      "signature": "api_user_system_users_userId_projects_GET"
-    }
-  },
-  "api_user_system_users_userId_roles_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_system_users_userId_roles_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-system/users/[userId]/roles",
-      "signature": "api_user_system_users_userId_roles_GET"
-    }
-  },
-  "api_user_system_users_userId_wallet_GET": {
-    "request": {
-      "params": z.object({userId: z.string()})
-    },
-    "response": api_user_system_users_userId_wallet_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-system/users/[userId]/wallet",
-      "signature": "api_user_system_users_userId_wallet_GET"
-    }
-  },
-  "api_user_system_users_userId_wallet_transactions_GET": {
-    "request": {
-      "params": z.object({userId: z.string()}),
-      "query": api_user_system_users_userId_wallet_transactions_GET_query
-    },
-    "response": api_user_system_users_userId_wallet_transactions_GET_response,
-    "metadata": {
-      "method": "GET",
-      "path": "/api/user-system/users/[userId]/wallet/transactions",
-      "signature": "api_user_system_users_userId_wallet_transactions_GET"
-    }
-  }
-}
 
 export const contract = {
   "api": {
@@ -2643,681 +1502,6 @@ export const contract = {
   }
 }
 
-export const models = {
-  ".vscode": {},
-  "articleSystem": {
-    "article.model_model": model_articleSystem_article_model_ArticleModels,
-    "comment.model_model": model_articleSystem_comment_model_ArticleCommentModels,
-    "index_model": model_articleSystem_index_ArticleSystemModels
-  },
-  "economySystem": {
-    "index_model": model_economySystem_index_EconomySystemModels,
-    "transaction_model": model_economySystem_transaction_TransactionModels,
-    "wallet_model": model_economySystem_wallet_WalletModels
-  },
-  "eventSystem": {
-    "attendance.model_model": model_eventSystem_attendance_model_AttendanceModels,
-    "attendee.model_model": model_eventSystem_attendee_model_AttendeeModels,
-    "checkin.model_model": model_eventSystem_checkin_model_CheckinModels,
-    "event.model_model": model_eventSystem_event_model_EventModels,
-    "index_model": model_eventSystem_index_EventSystemModels
-  },
-  "fileSystem": {
-    "file_model": model_fileSystem_file_update
-  },
-  "index_model": model_index_Models,
-  "learningResourceSystem": {
-    "externalResource_model": model_learningResourceSystem_externalResource_update,
-    "learningResource_model": model_learningResourceSystem_learningResource_shape,
-    "studyJam_model": model_learningResourceSystem_studyJam_update
-  },
-  "publicationSystem": {
-    "article_model": model_publicationSystem_article_update,
-    "event_model": model_publicationSystem_event_update,
-    "highlight_model": model_publicationSystem_highlight_update
-  },
-  "rbacSystem": {
-    "permission_model": model_rbacSystem_permission_update,
-    "roles_model": model_rbacSystem_roles_update
-  },
-  "resourceSystem": {
-    "resource_model": model_resourceSystem_resource_updateDTO
-  },
-  "roleSystem": {
-    "role_model": model_roleSystem_role_updateDTO
-  },
-  "teamSystem": {
-    "member_model": model_teamSystem_member_insert,
-    "team_model": model_teamSystem_team_teamUpdateDTO
-  },
-  "userResourceSystem": {
-    "project_model": model_userResourceSystem_project_updateDTO
-  },
-  "userSystem": {
-    "profile_model": model_userSystem_profile_updateDTO,
-    "user_model": model_userSystem_user_updateDTO
-  }
-}
-
-export type ResponseTypes = {
-  api_article_system_articles_articleId_comments_GET : { [K in keyof typeof api_article_system_articles_articleId_comments_GET_response]: z.infer<typeof api_article_system_articles_articleId_comments_GET_response[K]> },
-  api_article_system_articles_articleId_comments_POST : { [K in keyof typeof api_article_system_articles_articleId_comments_POST_response]: z.infer<typeof api_article_system_articles_articleId_comments_POST_response[K]> },
-  api_article_system_articles_articleId_comments_commentId_DELETE : { [K in keyof typeof api_article_system_articles_articleId_comments_commentId_DELETE_response]: z.infer<typeof api_article_system_articles_articleId_comments_commentId_DELETE_response[K]> },
-  api_event_system_checkin_POST : { [K in keyof typeof api_event_system_checkin_POST_response]: z.infer<typeof api_event_system_checkin_POST_response[K]> },
-  api_event_system_events_GET : { [K in keyof typeof api_event_system_events_GET_response]: z.infer<typeof api_event_system_events_GET_response[K]> },
-  api_event_system_events_POST : { [K in keyof typeof api_event_system_events_POST_response]: z.infer<typeof api_event_system_events_POST_response[K]> },
-  api_event_system_events_eventId_attendees_GET : { [K in keyof typeof api_event_system_events_eventId_attendees_GET_response]: z.infer<typeof api_event_system_events_eventId_attendees_GET_response[K]> },
-  api_event_system_events_eventId_DELETE : { [K in keyof typeof api_event_system_events_eventId_DELETE_response]: z.infer<typeof api_event_system_events_eventId_DELETE_response[K]> },
-  api_event_system_events_eventId_GET : { [K in keyof typeof api_event_system_events_eventId_GET_response]: z.infer<typeof api_event_system_events_eventId_GET_response[K]> },
-  api_event_system_events_eventId_PATCH : { [K in keyof typeof api_event_system_events_eventId_PATCH_response]: z.infer<typeof api_event_system_events_eventId_PATCH_response[K]> },
-  api_file_system_files_GET : { [K in keyof typeof api_file_system_files_GET_response]: z.infer<typeof api_file_system_files_GET_response[K]> },
-  api_file_system_files_POST : { [K in keyof typeof api_file_system_files_POST_response]: z.infer<typeof api_file_system_files_POST_response[K]> },
-  api_file_system_files_fileId_DELETE : { [K in keyof typeof api_file_system_files_fileId_DELETE_response]: z.infer<typeof api_file_system_files_fileId_DELETE_response[K]> },
-  api_file_system_files_fileId_GET : { [K in keyof typeof api_file_system_files_fileId_GET_response]: z.infer<typeof api_file_system_files_fileId_GET_response[K]> },
-  api_file_system_files_fileId_PATCH : { [K in keyof typeof api_file_system_files_fileId_PATCH_response]: z.infer<typeof api_file_system_files_fileId_PATCH_response[K]> },
-  api_health_GET : { [K in keyof typeof api_health_GET_response]: z.infer<typeof api_health_GET_response[K]> },
-  api_leaderboard_system_GET : { [K in keyof typeof api_leaderboard_system_GET_response]: z.infer<typeof api_leaderboard_system_GET_response[K]> },
-  api_learning_resource_system_externalResources_GET : { [K in keyof typeof api_learning_resource_system_externalResources_GET_response]: z.infer<typeof api_learning_resource_system_externalResources_GET_response[K]> },
-  api_learning_resource_system_externalResources_POST : { [K in keyof typeof api_learning_resource_system_externalResources_POST_response]: z.infer<typeof api_learning_resource_system_externalResources_POST_response[K]> },
-  api_learning_resource_system_externalResources_externalResourceId_DELETE : { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_DELETE_response]: z.infer<typeof api_learning_resource_system_externalResources_externalResourceId_DELETE_response[K]> },
-  api_learning_resource_system_externalResources_externalResourceId_GET : { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_GET_response]: z.infer<typeof api_learning_resource_system_externalResources_externalResourceId_GET_response[K]> },
-  api_learning_resource_system_externalResources_externalResourceId_PATCH : { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_PATCH_response]: z.infer<typeof api_learning_resource_system_externalResources_externalResourceId_PATCH_response[K]> },
-  api_learning_resource_system_GET : { [K in keyof typeof api_learning_resource_system_GET_response]: z.infer<typeof api_learning_resource_system_GET_response[K]> },
-  api_learning_resource_system_study_jams_GET : { [K in keyof typeof api_learning_resource_system_study_jams_GET_response]: z.infer<typeof api_learning_resource_system_study_jams_GET_response[K]> },
-  api_learning_resource_system_study_jams_POST : { [K in keyof typeof api_learning_resource_system_study_jams_POST_response]: z.infer<typeof api_learning_resource_system_study_jams_POST_response[K]> },
-  api_learning_resource_system_study_jams_studyJamId_DELETE : { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_DELETE_response]: z.infer<typeof api_learning_resource_system_study_jams_studyJamId_DELETE_response[K]> },
-  api_learning_resource_system_study_jams_studyJamId_GET : { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_GET_response]: z.infer<typeof api_learning_resource_system_study_jams_studyJamId_GET_response[K]> },
-  api_learning_resource_system_study_jams_studyJamId_PATCH : { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_PATCH_response]: z.infer<typeof api_learning_resource_system_study_jams_studyJamId_PATCH_response[K]> },
-  api_publication_system_articles_GET : { [K in keyof typeof api_publication_system_articles_GET_response]: z.infer<typeof api_publication_system_articles_GET_response[K]> },
-  api_publication_system_articles_POST : { [K in keyof typeof api_publication_system_articles_POST_response]: z.infer<typeof api_publication_system_articles_POST_response[K]> },
-  api_publication_system_articles_articleId_DELETE : { [K in keyof typeof api_publication_system_articles_articleId_DELETE_response]: z.infer<typeof api_publication_system_articles_articleId_DELETE_response[K]> },
-  api_publication_system_articles_articleId_GET : { [K in keyof typeof api_publication_system_articles_articleId_GET_response]: z.infer<typeof api_publication_system_articles_articleId_GET_response[K]> },
-  api_publication_system_articles_articleId_PATCH : { [K in keyof typeof api_publication_system_articles_articleId_PATCH_response]: z.infer<typeof api_publication_system_articles_articleId_PATCH_response[K]> },
-  api_publication_system_events_GET : { [K in keyof typeof api_publication_system_events_GET_response]: z.infer<typeof api_publication_system_events_GET_response[K]> },
-  api_publication_system_events_POST : { [K in keyof typeof api_publication_system_events_POST_response]: z.infer<typeof api_publication_system_events_POST_response[K]> },
-  api_publication_system_events_articleId_DELETE : { [K in keyof typeof api_publication_system_events_articleId_DELETE_response]: z.infer<typeof api_publication_system_events_articleId_DELETE_response[K]> },
-  api_publication_system_events_articleId_GET : { [K in keyof typeof api_publication_system_events_articleId_GET_response]: z.infer<typeof api_publication_system_events_articleId_GET_response[K]> },
-  api_publication_system_events_articleId_PATCH : { [K in keyof typeof api_publication_system_events_articleId_PATCH_response]: z.infer<typeof api_publication_system_events_articleId_PATCH_response[K]> },
-  api_publication_system_highlights_GET : { [K in keyof typeof api_publication_system_highlights_GET_response]: z.infer<typeof api_publication_system_highlights_GET_response[K]> },
-  api_publication_system_highlights_POST : { [K in keyof typeof api_publication_system_highlights_POST_response]: z.infer<typeof api_publication_system_highlights_POST_response[K]> },
-  api_publication_system_highlights_articleId_DELETE : { [K in keyof typeof api_publication_system_highlights_articleId_DELETE_response]: z.infer<typeof api_publication_system_highlights_articleId_DELETE_response[K]> },
-  api_publication_system_highlights_articleId_GET : { [K in keyof typeof api_publication_system_highlights_articleId_GET_response]: z.infer<typeof api_publication_system_highlights_articleId_GET_response[K]> },
-  api_publication_system_highlights_articleId_PATCH : { [K in keyof typeof api_publication_system_highlights_articleId_PATCH_response]: z.infer<typeof api_publication_system_highlights_articleId_PATCH_response[K]> },
-  api_rbac_system_roles_GET : { [K in keyof typeof api_rbac_system_roles_GET_response]: z.infer<typeof api_rbac_system_roles_GET_response[K]> },
-  api_rbac_system_roles_POST : { [K in keyof typeof api_rbac_system_roles_POST_response]: z.infer<typeof api_rbac_system_roles_POST_response[K]> },
-  api_rbac_system_roles_roleId_DELETE : { [K in keyof typeof api_rbac_system_roles_roleId_DELETE_response]: z.infer<typeof api_rbac_system_roles_roleId_DELETE_response[K]> },
-  api_rbac_system_roles_roleId_GET : { [K in keyof typeof api_rbac_system_roles_roleId_GET_response]: z.infer<typeof api_rbac_system_roles_roleId_GET_response[K]> },
-  api_rbac_system_roles_roleId_parent_GET : { [K in keyof typeof api_rbac_system_roles_roleId_parent_GET_response]: z.infer<typeof api_rbac_system_roles_roleId_parent_GET_response[K]> },
-  api_rbac_system_roles_roleId_PATCH : { [K in keyof typeof api_rbac_system_roles_roleId_PATCH_response]: z.infer<typeof api_rbac_system_roles_roleId_PATCH_response[K]> },
-  api_rbac_system_roles_roleId_permissions_GET : { [K in keyof typeof api_rbac_system_roles_roleId_permissions_GET_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_GET_response[K]> },
-  api_rbac_system_roles_roleId_permissions_POST : { [K in keyof typeof api_rbac_system_roles_roleId_permissions_POST_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_POST_response[K]> },
-  api_rbac_system_roles_roleId_permissions_permissionId_DELETE : { [K in keyof typeof api_rbac_system_roles_roleId_permissions_permissionId_DELETE_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_permissionId_DELETE_response[K]> },
-  api_rbac_system_roles_roleId_permissions_permissionId_PATCH : { [K in keyof typeof api_rbac_system_roles_roleId_permissions_permissionId_PATCH_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_permissionId_PATCH_response[K]> },
-  api_team_system_members_GET : { [K in keyof typeof api_team_system_members_GET_response]: z.infer<typeof api_team_system_members_GET_response[K]> },
-  api_team_system_members_POST : { [K in keyof typeof api_team_system_members_POST_response]: z.infer<typeof api_team_system_members_POST_response[K]> },
-  api_team_system_members_memberId_DELETE : { [K in keyof typeof api_team_system_members_memberId_DELETE_response]: z.infer<typeof api_team_system_members_memberId_DELETE_response[K]> },
-  api_team_system_members_memberId_GET : { [K in keyof typeof api_team_system_members_memberId_GET_response]: z.infer<typeof api_team_system_members_memberId_GET_response[K]> },
-  api_team_system_teams_GET : { [K in keyof typeof api_team_system_teams_GET_response]: z.infer<typeof api_team_system_teams_GET_response[K]> },
-  api_team_system_teams_POST : { [K in keyof typeof api_team_system_teams_POST_response]: z.infer<typeof api_team_system_teams_POST_response[K]> },
-  api_team_system_teams_teamId_DELETE : { [K in keyof typeof api_team_system_teams_teamId_DELETE_response]: z.infer<typeof api_team_system_teams_teamId_DELETE_response[K]> },
-  api_team_system_teams_teamId_GET : { [K in keyof typeof api_team_system_teams_teamId_GET_response]: z.infer<typeof api_team_system_teams_teamId_GET_response[K]> },
-  api_team_system_teams_teamId_members_GET : { [K in keyof typeof api_team_system_teams_teamId_members_GET_response]: z.infer<typeof api_team_system_teams_teamId_members_GET_response[K]> },
-  api_team_system_teams_teamId_members_POST : { [K in keyof typeof api_team_system_teams_teamId_members_POST_response]: z.infer<typeof api_team_system_teams_teamId_members_POST_response[K]> },
-  api_team_system_teams_teamId_PATCH : { [K in keyof typeof api_team_system_teams_teamId_PATCH_response]: z.infer<typeof api_team_system_teams_teamId_PATCH_response[K]> },
-  api_user_resource_system_achivements_GET : { [K in keyof typeof api_user_resource_system_achivements_GET_response]: z.infer<typeof api_user_resource_system_achivements_GET_response[K]> },
-  api_user_resource_system_achivements_POST : { [K in keyof typeof api_user_resource_system_achivements_POST_response]: z.infer<typeof api_user_resource_system_achivements_POST_response[K]> },
-  api_user_resource_system_achivements_projectId_DELETE : { [K in keyof typeof api_user_resource_system_achivements_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_achivements_projectId_DELETE_response[K]> },
-  api_user_resource_system_achivements_projectId_GET : { [K in keyof typeof api_user_resource_system_achivements_projectId_GET_response]: z.infer<typeof api_user_resource_system_achivements_projectId_GET_response[K]> },
-  api_user_resource_system_achivements_projectId_PATCH : { [K in keyof typeof api_user_resource_system_achivements_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_achivements_projectId_PATCH_response[K]> },
-  api_user_resource_system_certificates_GET : { [K in keyof typeof api_user_resource_system_certificates_GET_response]: z.infer<typeof api_user_resource_system_certificates_GET_response[K]> },
-  api_user_resource_system_certificates_POST : { [K in keyof typeof api_user_resource_system_certificates_POST_response]: z.infer<typeof api_user_resource_system_certificates_POST_response[K]> },
-  api_user_resource_system_certificates_projectId_DELETE : { [K in keyof typeof api_user_resource_system_certificates_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_certificates_projectId_DELETE_response[K]> },
-  api_user_resource_system_certificates_projectId_GET : { [K in keyof typeof api_user_resource_system_certificates_projectId_GET_response]: z.infer<typeof api_user_resource_system_certificates_projectId_GET_response[K]> },
-  api_user_resource_system_certificates_projectId_PATCH : { [K in keyof typeof api_user_resource_system_certificates_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_certificates_projectId_PATCH_response[K]> },
-  api_user_resource_system_profiles_GET : { [K in keyof typeof api_user_resource_system_profiles_GET_response]: z.infer<typeof api_user_resource_system_profiles_GET_response[K]> },
-  api_user_resource_system_profiles_POST : { [K in keyof typeof api_user_resource_system_profiles_POST_response]: z.infer<typeof api_user_resource_system_profiles_POST_response[K]> },
-  api_user_resource_system_profiles_projectId_DELETE : { [K in keyof typeof api_user_resource_system_profiles_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_profiles_projectId_DELETE_response[K]> },
-  api_user_resource_system_profiles_projectId_GET : { [K in keyof typeof api_user_resource_system_profiles_projectId_GET_response]: z.infer<typeof api_user_resource_system_profiles_projectId_GET_response[K]> },
-  api_user_resource_system_profiles_projectId_PATCH : { [K in keyof typeof api_user_resource_system_profiles_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_profiles_projectId_PATCH_response[K]> },
-  api_user_resource_system_projects_GET : { [K in keyof typeof api_user_resource_system_projects_GET_response]: z.infer<typeof api_user_resource_system_projects_GET_response[K]> },
-  api_user_resource_system_projects_POST : { [K in keyof typeof api_user_resource_system_projects_POST_response]: z.infer<typeof api_user_resource_system_projects_POST_response[K]> },
-  api_user_resource_system_projects_projectId_DELETE : { [K in keyof typeof api_user_resource_system_projects_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_projects_projectId_DELETE_response[K]> },
-  api_user_resource_system_projects_projectId_GET : { [K in keyof typeof api_user_resource_system_projects_projectId_GET_response]: z.infer<typeof api_user_resource_system_projects_projectId_GET_response[K]> },
-  api_user_resource_system_projects_projectId_PATCH : { [K in keyof typeof api_user_resource_system_projects_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_projects_projectId_PATCH_response[K]> },
-  api_user_resource_system_settings_GET : { [K in keyof typeof api_user_resource_system_settings_GET_response]: z.infer<typeof api_user_resource_system_settings_GET_response[K]> },
-  api_user_resource_system_settings_POST : { [K in keyof typeof api_user_resource_system_settings_POST_response]: z.infer<typeof api_user_resource_system_settings_POST_response[K]> },
-  api_user_resource_system_settings_projectId_DELETE : { [K in keyof typeof api_user_resource_system_settings_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_settings_projectId_DELETE_response[K]> },
-  api_user_resource_system_settings_projectId_GET : { [K in keyof typeof api_user_resource_system_settings_projectId_GET_response]: z.infer<typeof api_user_resource_system_settings_projectId_GET_response[K]> },
-  api_user_resource_system_settings_projectId_PATCH : { [K in keyof typeof api_user_resource_system_settings_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_settings_projectId_PATCH_response[K]> },
-  api_user_resource_system_users_userId_GET : { [K in keyof typeof api_user_resource_system_users_userId_GET_response]: z.infer<typeof api_user_resource_system_users_userId_GET_response[K]> },
-  api_user_resource_system_users_userId_profile_GET : { [K in keyof typeof api_user_resource_system_users_userId_profile_GET_response]: z.infer<typeof api_user_resource_system_users_userId_profile_GET_response[K]> },
-  api_user_resource_system_users_userId_projects_GET : { [K in keyof typeof api_user_resource_system_users_userId_projects_GET_response]: z.infer<typeof api_user_resource_system_users_userId_projects_GET_response[K]> },
-  api_user_resource_system_users_userId_roles_GET : { [K in keyof typeof api_user_resource_system_users_userId_roles_GET_response]: z.infer<typeof api_user_resource_system_users_userId_roles_GET_response[K]> },
-  api_user_resource_system_users_userId_wallet_GET : { [K in keyof typeof api_user_resource_system_users_userId_wallet_GET_response]: z.infer<typeof api_user_resource_system_users_userId_wallet_GET_response[K]> },
-  api_user_resource_system_users_userId_wallet_transactions_GET : { [K in keyof typeof api_user_resource_system_users_userId_wallet_transactions_GET_response]: z.infer<typeof api_user_resource_system_users_userId_wallet_transactions_GET_response[K]> },
-  api_user_system_users_userId_GET : { [K in keyof typeof api_user_system_users_userId_GET_response]: z.infer<typeof api_user_system_users_userId_GET_response[K]> },
-  api_user_system_users_userId_profile_GET : { [K in keyof typeof api_user_system_users_userId_profile_GET_response]: z.infer<typeof api_user_system_users_userId_profile_GET_response[K]> },
-  api_user_system_users_userId_projects_GET : { [K in keyof typeof api_user_system_users_userId_projects_GET_response]: z.infer<typeof api_user_system_users_userId_projects_GET_response[K]> },
-  api_user_system_users_userId_roles_GET : { [K in keyof typeof api_user_system_users_userId_roles_GET_response]: z.infer<typeof api_user_system_users_userId_roles_GET_response[K]> },
-  api_user_system_users_userId_wallet_GET : { [K in keyof typeof api_user_system_users_userId_wallet_GET_response]: z.infer<typeof api_user_system_users_userId_wallet_GET_response[K]> },
-  api_user_system_users_userId_wallet_transactions_GET : { [K in keyof typeof api_user_system_users_userId_wallet_transactions_GET_response]: z.infer<typeof api_user_system_users_userId_wallet_transactions_GET_response[K]> }
-}
-  
-export type RequestTypes = {
-  api_article_system_articles_articleId_comments_GET : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"][K]> },
-  api_article_system_articles_articleId_comments_POST : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"][K]> },
-  api_article_system_articles_articleId_comments_commentId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"][K]> },
-  api_event_system_checkin_POST : { [K in keyof typeof EndpointSchemas[ "api_event_system_checkin_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_checkin_POST" ]["request"][K]> },
-  api_event_system_events_GET : { [K in keyof typeof EndpointSchemas[ "api_event_system_events_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_GET" ]["request"][K]> },
-  api_event_system_events_POST : { [K in keyof typeof EndpointSchemas[ "api_event_system_events_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_POST" ]["request"][K]> },
-  api_event_system_events_eventId_attendees_GET : { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_attendees_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_attendees_GET" ]["request"][K]> },
-  api_event_system_events_eventId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_DELETE" ]["request"][K]> },
-  api_event_system_events_eventId_GET : { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_GET" ]["request"][K]> },
-  api_event_system_events_eventId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_PATCH" ]["request"][K]> },
-  api_file_system_files_GET : { [K in keyof typeof EndpointSchemas[ "api_file_system_files_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_GET" ]["request"][K]> },
-  api_file_system_files_POST : { [K in keyof typeof EndpointSchemas[ "api_file_system_files_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_POST" ]["request"][K]> },
-  api_file_system_files_fileId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_file_system_files_fileId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_fileId_DELETE" ]["request"][K]> },
-  api_file_system_files_fileId_GET : { [K in keyof typeof EndpointSchemas[ "api_file_system_files_fileId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_fileId_GET" ]["request"][K]> },
-  api_file_system_files_fileId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_file_system_files_fileId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_fileId_PATCH" ]["request"][K]> },
-  api_health_GET : { [K in keyof typeof EndpointSchemas[ "api_health_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_health_GET" ]["request"][K]> },
-  api_leaderboard_system_GET : { [K in keyof typeof EndpointSchemas[ "api_leaderboard_system_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_leaderboard_system_GET" ]["request"][K]> },
-  api_learning_resource_system_externalResources_GET : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_GET" ]["request"][K]> },
-  api_learning_resource_system_externalResources_POST : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_POST" ]["request"][K]> },
-  api_learning_resource_system_externalResources_externalResourceId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_DELETE" ]["request"][K]> },
-  api_learning_resource_system_externalResources_externalResourceId_GET : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_GET" ]["request"][K]> },
-  api_learning_resource_system_externalResources_externalResourceId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_PATCH" ]["request"][K]> },
-  api_learning_resource_system_GET : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_GET" ]["request"][K]> },
-  api_learning_resource_system_study_jams_GET : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_GET" ]["request"][K]> },
-  api_learning_resource_system_study_jams_POST : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_POST" ]["request"][K]> },
-  api_learning_resource_system_study_jams_studyJamId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_DELETE" ]["request"][K]> },
-  api_learning_resource_system_study_jams_studyJamId_GET : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_GET" ]["request"][K]> },
-  api_learning_resource_system_study_jams_studyJamId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_PATCH" ]["request"][K]> },
-  api_publication_system_articles_GET : { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_GET" ]["request"][K]> },
-  api_publication_system_articles_POST : { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_POST" ]["request"][K]> },
-  api_publication_system_articles_articleId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_articleId_DELETE" ]["request"][K]> },
-  api_publication_system_articles_articleId_GET : { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_articleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_articleId_GET" ]["request"][K]> },
-  api_publication_system_articles_articleId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_articleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_articleId_PATCH" ]["request"][K]> },
-  api_publication_system_events_GET : { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_GET" ]["request"][K]> },
-  api_publication_system_events_POST : { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_POST" ]["request"][K]> },
-  api_publication_system_events_articleId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_articleId_DELETE" ]["request"][K]> },
-  api_publication_system_events_articleId_GET : { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_articleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_articleId_GET" ]["request"][K]> },
-  api_publication_system_events_articleId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_articleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_articleId_PATCH" ]["request"][K]> },
-  api_publication_system_highlights_GET : { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_GET" ]["request"][K]> },
-  api_publication_system_highlights_POST : { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_POST" ]["request"][K]> },
-  api_publication_system_highlights_articleId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_articleId_DELETE" ]["request"][K]> },
-  api_publication_system_highlights_articleId_GET : { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_articleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_articleId_GET" ]["request"][K]> },
-  api_publication_system_highlights_articleId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_articleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_articleId_PATCH" ]["request"][K]> },
-  api_rbac_system_roles_GET : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_GET" ]["request"][K]> },
-  api_rbac_system_roles_POST : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_POST" ]["request"][K]> },
-  api_rbac_system_roles_roleId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_DELETE" ]["request"][K]> },
-  api_rbac_system_roles_roleId_GET : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_GET" ]["request"][K]> },
-  api_rbac_system_roles_roleId_parent_GET : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_parent_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_parent_GET" ]["request"][K]> },
-  api_rbac_system_roles_roleId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_PATCH" ]["request"][K]> },
-  api_rbac_system_roles_roleId_permissions_GET : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_GET" ]["request"][K]> },
-  api_rbac_system_roles_roleId_permissions_POST : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_POST" ]["request"][K]> },
-  api_rbac_system_roles_roleId_permissions_permissionId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_DELETE" ]["request"][K]> },
-  api_rbac_system_roles_roleId_permissions_permissionId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_PATCH" ]["request"][K]> },
-  api_team_system_members_GET : { [K in keyof typeof EndpointSchemas[ "api_team_system_members_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_GET" ]["request"][K]> },
-  api_team_system_members_POST : { [K in keyof typeof EndpointSchemas[ "api_team_system_members_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_POST" ]["request"][K]> },
-  api_team_system_members_memberId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_team_system_members_memberId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_memberId_DELETE" ]["request"][K]> },
-  api_team_system_members_memberId_GET : { [K in keyof typeof EndpointSchemas[ "api_team_system_members_memberId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_memberId_GET" ]["request"][K]> },
-  api_team_system_teams_GET : { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_GET" ]["request"][K]> },
-  api_team_system_teams_POST : { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_POST" ]["request"][K]> },
-  api_team_system_teams_teamId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_DELETE" ]["request"][K]> },
-  api_team_system_teams_teamId_GET : { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_GET" ]["request"][K]> },
-  api_team_system_teams_teamId_members_GET : { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_members_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_members_GET" ]["request"][K]> },
-  api_team_system_teams_teamId_members_POST : { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_members_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_members_POST" ]["request"][K]> },
-  api_team_system_teams_teamId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_PATCH" ]["request"][K]> },
-  api_user_resource_system_achivements_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_GET" ]["request"][K]> },
-  api_user_resource_system_achivements_POST : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_POST" ]["request"][K]> },
-  api_user_resource_system_achivements_projectId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_DELETE" ]["request"][K]> },
-  api_user_resource_system_achivements_projectId_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_GET" ]["request"][K]> },
-  api_user_resource_system_achivements_projectId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_PATCH" ]["request"][K]> },
-  api_user_resource_system_certificates_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_GET" ]["request"][K]> },
-  api_user_resource_system_certificates_POST : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_POST" ]["request"][K]> },
-  api_user_resource_system_certificates_projectId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_DELETE" ]["request"][K]> },
-  api_user_resource_system_certificates_projectId_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_GET" ]["request"][K]> },
-  api_user_resource_system_certificates_projectId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_PATCH" ]["request"][K]> },
-  api_user_resource_system_profiles_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_GET" ]["request"][K]> },
-  api_user_resource_system_profiles_POST : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_POST" ]["request"][K]> },
-  api_user_resource_system_profiles_projectId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_DELETE" ]["request"][K]> },
-  api_user_resource_system_profiles_projectId_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_GET" ]["request"][K]> },
-  api_user_resource_system_profiles_projectId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_PATCH" ]["request"][K]> },
-  api_user_resource_system_projects_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_GET" ]["request"][K]> },
-  api_user_resource_system_projects_POST : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_POST" ]["request"][K]> },
-  api_user_resource_system_projects_projectId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_DELETE" ]["request"][K]> },
-  api_user_resource_system_projects_projectId_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_GET" ]["request"][K]> },
-  api_user_resource_system_projects_projectId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_PATCH" ]["request"][K]> },
-  api_user_resource_system_settings_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_GET" ]["request"][K]> },
-  api_user_resource_system_settings_POST : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_POST" ]["request"][K]> },
-  api_user_resource_system_settings_projectId_DELETE : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_DELETE" ]["request"][K]> },
-  api_user_resource_system_settings_projectId_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_GET" ]["request"][K]> },
-  api_user_resource_system_settings_projectId_PATCH : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_PATCH" ]["request"][K]> },
-  api_user_resource_system_users_userId_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_GET" ]["request"][K]> },
-  api_user_resource_system_users_userId_profile_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_profile_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_profile_GET" ]["request"][K]> },
-  api_user_resource_system_users_userId_projects_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_projects_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_projects_GET" ]["request"][K]> },
-  api_user_resource_system_users_userId_roles_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_roles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_roles_GET" ]["request"][K]> },
-  api_user_resource_system_users_userId_wallet_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_GET" ]["request"][K]> },
-  api_user_resource_system_users_userId_wallet_transactions_GET : { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_transactions_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_transactions_GET" ]["request"][K]> },
-  api_user_system_users_userId_GET : { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_GET" ]["request"][K]> },
-  api_user_system_users_userId_profile_GET : { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_profile_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_profile_GET" ]["request"][K]> },
-  api_user_system_users_userId_projects_GET : { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_projects_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_projects_GET" ]["request"][K]> },
-  api_user_system_users_userId_roles_GET : { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_roles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_roles_GET" ]["request"][K]> },
-  api_user_system_users_userId_wallet_GET : { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_wallet_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_wallet_GET" ]["request"][K]> },
-  api_user_system_users_userId_wallet_transactions_GET : { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_wallet_transactions_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_wallet_transactions_GET" ]["request"][K]> }
-}
-
-export type EndpointTypes = {
-    "api_article_system_articles_articleId_comments_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_article_system_articles_articleId_comments_GET_response]: z.infer<typeof api_article_system_articles_articleId_comments_GET_response[K]> };
-       },
-    "api_article_system_articles_articleId_comments_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_article_system_articles_articleId_comments_POST_response]: z.infer<typeof api_article_system_articles_articleId_comments_POST_response[K]> };
-       },
-    "api_article_system_articles_articleId_comments_commentId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_commentId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_article_system_articles_articleId_comments_commentId_DELETE_response]: z.infer<typeof api_article_system_articles_articleId_comments_commentId_DELETE_response[K]> };
-       },
-    "api_event_system_checkin_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_event_system_checkin_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_checkin_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_event_system_checkin_POST_response]: z.infer<typeof api_event_system_checkin_POST_response[K]> };
-       },
-    "api_event_system_events_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_event_system_events_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_event_system_events_GET_response]: z.infer<typeof api_event_system_events_GET_response[K]> };
-       },
-    "api_event_system_events_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_event_system_events_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_event_system_events_POST_response]: z.infer<typeof api_event_system_events_POST_response[K]> };
-       },
-    "api_event_system_events_eventId_attendees_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_attendees_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_attendees_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_event_system_events_eventId_attendees_GET_response]: z.infer<typeof api_event_system_events_eventId_attendees_GET_response[K]> };
-       },
-    "api_event_system_events_eventId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_event_system_events_eventId_DELETE_response]: z.infer<typeof api_event_system_events_eventId_DELETE_response[K]> };
-       },
-    "api_event_system_events_eventId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_event_system_events_eventId_GET_response]: z.infer<typeof api_event_system_events_eventId_GET_response[K]> };
-       },
-    "api_event_system_events_eventId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_event_system_events_eventId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_event_system_events_eventId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_event_system_events_eventId_PATCH_response]: z.infer<typeof api_event_system_events_eventId_PATCH_response[K]> };
-       },
-    "api_file_system_files_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_file_system_files_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_file_system_files_GET_response]: z.infer<typeof api_file_system_files_GET_response[K]> };
-       },
-    "api_file_system_files_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_file_system_files_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_file_system_files_POST_response]: z.infer<typeof api_file_system_files_POST_response[K]> };
-       },
-    "api_file_system_files_fileId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_file_system_files_fileId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_fileId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_file_system_files_fileId_DELETE_response]: z.infer<typeof api_file_system_files_fileId_DELETE_response[K]> };
-       },
-    "api_file_system_files_fileId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_file_system_files_fileId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_fileId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_file_system_files_fileId_GET_response]: z.infer<typeof api_file_system_files_fileId_GET_response[K]> };
-       },
-    "api_file_system_files_fileId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_file_system_files_fileId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_file_system_files_fileId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_file_system_files_fileId_PATCH_response]: z.infer<typeof api_file_system_files_fileId_PATCH_response[K]> };
-       },
-    "api_health_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_health_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_health_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_health_GET_response]: z.infer<typeof api_health_GET_response[K]> };
-       },
-    "api_leaderboard_system_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_leaderboard_system_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_leaderboard_system_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_leaderboard_system_GET_response]: z.infer<typeof api_leaderboard_system_GET_response[K]> };
-       },
-    "api_learning_resource_system_externalResources_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_externalResources_GET_response]: z.infer<typeof api_learning_resource_system_externalResources_GET_response[K]> };
-       },
-    "api_learning_resource_system_externalResources_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_externalResources_POST_response]: z.infer<typeof api_learning_resource_system_externalResources_POST_response[K]> };
-       },
-    "api_learning_resource_system_externalResources_externalResourceId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_DELETE_response]: z.infer<typeof api_learning_resource_system_externalResources_externalResourceId_DELETE_response[K]> };
-       },
-    "api_learning_resource_system_externalResources_externalResourceId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_GET_response]: z.infer<typeof api_learning_resource_system_externalResources_externalResourceId_GET_response[K]> };
-       },
-    "api_learning_resource_system_externalResources_externalResourceId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_externalResources_externalResourceId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_externalResources_externalResourceId_PATCH_response]: z.infer<typeof api_learning_resource_system_externalResources_externalResourceId_PATCH_response[K]> };
-       },
-    "api_learning_resource_system_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_GET_response]: z.infer<typeof api_learning_resource_system_GET_response[K]> };
-       },
-    "api_learning_resource_system_study_jams_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_study_jams_GET_response]: z.infer<typeof api_learning_resource_system_study_jams_GET_response[K]> };
-       },
-    "api_learning_resource_system_study_jams_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_study_jams_POST_response]: z.infer<typeof api_learning_resource_system_study_jams_POST_response[K]> };
-       },
-    "api_learning_resource_system_study_jams_studyJamId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_DELETE_response]: z.infer<typeof api_learning_resource_system_study_jams_studyJamId_DELETE_response[K]> };
-       },
-    "api_learning_resource_system_study_jams_studyJamId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_GET_response]: z.infer<typeof api_learning_resource_system_study_jams_studyJamId_GET_response[K]> };
-       },
-    "api_learning_resource_system_study_jams_studyJamId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_learning_resource_system_study_jams_studyJamId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_learning_resource_system_study_jams_studyJamId_PATCH_response]: z.infer<typeof api_learning_resource_system_study_jams_studyJamId_PATCH_response[K]> };
-       },
-    "api_publication_system_articles_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_articles_GET_response]: z.infer<typeof api_publication_system_articles_GET_response[K]> };
-       },
-    "api_publication_system_articles_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_articles_POST_response]: z.infer<typeof api_publication_system_articles_POST_response[K]> };
-       },
-    "api_publication_system_articles_articleId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_articleId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_articles_articleId_DELETE_response]: z.infer<typeof api_publication_system_articles_articleId_DELETE_response[K]> };
-       },
-    "api_publication_system_articles_articleId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_articleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_articleId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_articles_articleId_GET_response]: z.infer<typeof api_publication_system_articles_articleId_GET_response[K]> };
-       },
-    "api_publication_system_articles_articleId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_articles_articleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_articles_articleId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_articles_articleId_PATCH_response]: z.infer<typeof api_publication_system_articles_articleId_PATCH_response[K]> };
-       },
-    "api_publication_system_events_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_events_GET_response]: z.infer<typeof api_publication_system_events_GET_response[K]> };
-       },
-    "api_publication_system_events_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_events_POST_response]: z.infer<typeof api_publication_system_events_POST_response[K]> };
-       },
-    "api_publication_system_events_articleId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_articleId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_events_articleId_DELETE_response]: z.infer<typeof api_publication_system_events_articleId_DELETE_response[K]> };
-       },
-    "api_publication_system_events_articleId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_articleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_articleId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_events_articleId_GET_response]: z.infer<typeof api_publication_system_events_articleId_GET_response[K]> };
-       },
-    "api_publication_system_events_articleId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_events_articleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_events_articleId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_events_articleId_PATCH_response]: z.infer<typeof api_publication_system_events_articleId_PATCH_response[K]> };
-       },
-    "api_publication_system_highlights_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_highlights_GET_response]: z.infer<typeof api_publication_system_highlights_GET_response[K]> };
-       },
-    "api_publication_system_highlights_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_highlights_POST_response]: z.infer<typeof api_publication_system_highlights_POST_response[K]> };
-       },
-    "api_publication_system_highlights_articleId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_articleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_articleId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_highlights_articleId_DELETE_response]: z.infer<typeof api_publication_system_highlights_articleId_DELETE_response[K]> };
-       },
-    "api_publication_system_highlights_articleId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_articleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_articleId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_highlights_articleId_GET_response]: z.infer<typeof api_publication_system_highlights_articleId_GET_response[K]> };
-       },
-    "api_publication_system_highlights_articleId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_publication_system_highlights_articleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_publication_system_highlights_articleId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_publication_system_highlights_articleId_PATCH_response]: z.infer<typeof api_publication_system_highlights_articleId_PATCH_response[K]> };
-       },
-    "api_rbac_system_roles_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_GET_response]: z.infer<typeof api_rbac_system_roles_GET_response[K]> };
-       },
-    "api_rbac_system_roles_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_POST_response]: z.infer<typeof api_rbac_system_roles_POST_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_DELETE_response]: z.infer<typeof api_rbac_system_roles_roleId_DELETE_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_GET_response]: z.infer<typeof api_rbac_system_roles_roleId_GET_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_parent_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_parent_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_parent_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_parent_GET_response]: z.infer<typeof api_rbac_system_roles_roleId_parent_GET_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_PATCH_response]: z.infer<typeof api_rbac_system_roles_roleId_PATCH_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_permissions_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_permissions_GET_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_GET_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_permissions_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_permissions_POST_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_POST_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_permissions_permissionId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_permissions_permissionId_DELETE_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_permissionId_DELETE_response[K]> };
-       },
-    "api_rbac_system_roles_roleId_permissions_permissionId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_rbac_system_roles_roleId_permissions_permissionId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_rbac_system_roles_roleId_permissions_permissionId_PATCH_response]: z.infer<typeof api_rbac_system_roles_roleId_permissions_permissionId_PATCH_response[K]> };
-       },
-    "api_team_system_members_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_members_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_members_GET_response]: z.infer<typeof api_team_system_members_GET_response[K]> };
-       },
-    "api_team_system_members_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_members_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_members_POST_response]: z.infer<typeof api_team_system_members_POST_response[K]> };
-       },
-    "api_team_system_members_memberId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_members_memberId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_memberId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_members_memberId_DELETE_response]: z.infer<typeof api_team_system_members_memberId_DELETE_response[K]> };
-       },
-    "api_team_system_members_memberId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_members_memberId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_members_memberId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_members_memberId_GET_response]: z.infer<typeof api_team_system_members_memberId_GET_response[K]> };
-       },
-    "api_team_system_teams_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_teams_GET_response]: z.infer<typeof api_team_system_teams_GET_response[K]> };
-       },
-    "api_team_system_teams_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_teams_POST_response]: z.infer<typeof api_team_system_teams_POST_response[K]> };
-       },
-    "api_team_system_teams_teamId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_teams_teamId_DELETE_response]: z.infer<typeof api_team_system_teams_teamId_DELETE_response[K]> };
-       },
-    "api_team_system_teams_teamId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_teams_teamId_GET_response]: z.infer<typeof api_team_system_teams_teamId_GET_response[K]> };
-       },
-    "api_team_system_teams_teamId_members_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_members_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_members_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_teams_teamId_members_GET_response]: z.infer<typeof api_team_system_teams_teamId_members_GET_response[K]> };
-       },
-    "api_team_system_teams_teamId_members_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_members_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_members_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_teams_teamId_members_POST_response]: z.infer<typeof api_team_system_teams_teamId_members_POST_response[K]> };
-       },
-    "api_team_system_teams_teamId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_team_system_teams_teamId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_team_system_teams_teamId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_team_system_teams_teamId_PATCH_response]: z.infer<typeof api_team_system_teams_teamId_PATCH_response[K]> };
-       },
-    "api_user_resource_system_achivements_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_achivements_GET_response]: z.infer<typeof api_user_resource_system_achivements_GET_response[K]> };
-       },
-    "api_user_resource_system_achivements_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_achivements_POST_response]: z.infer<typeof api_user_resource_system_achivements_POST_response[K]> };
-       },
-    "api_user_resource_system_achivements_projectId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_achivements_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_achivements_projectId_DELETE_response[K]> };
-       },
-    "api_user_resource_system_achivements_projectId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_achivements_projectId_GET_response]: z.infer<typeof api_user_resource_system_achivements_projectId_GET_response[K]> };
-       },
-    "api_user_resource_system_achivements_projectId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_achivements_projectId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_achivements_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_achivements_projectId_PATCH_response[K]> };
-       },
-    "api_user_resource_system_certificates_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_certificates_GET_response]: z.infer<typeof api_user_resource_system_certificates_GET_response[K]> };
-       },
-    "api_user_resource_system_certificates_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_certificates_POST_response]: z.infer<typeof api_user_resource_system_certificates_POST_response[K]> };
-       },
-    "api_user_resource_system_certificates_projectId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_certificates_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_certificates_projectId_DELETE_response[K]> };
-       },
-    "api_user_resource_system_certificates_projectId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_certificates_projectId_GET_response]: z.infer<typeof api_user_resource_system_certificates_projectId_GET_response[K]> };
-       },
-    "api_user_resource_system_certificates_projectId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_certificates_projectId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_certificates_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_certificates_projectId_PATCH_response[K]> };
-       },
-    "api_user_resource_system_profiles_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_profiles_GET_response]: z.infer<typeof api_user_resource_system_profiles_GET_response[K]> };
-       },
-    "api_user_resource_system_profiles_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_profiles_POST_response]: z.infer<typeof api_user_resource_system_profiles_POST_response[K]> };
-       },
-    "api_user_resource_system_profiles_projectId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_profiles_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_profiles_projectId_DELETE_response[K]> };
-       },
-    "api_user_resource_system_profiles_projectId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_profiles_projectId_GET_response]: z.infer<typeof api_user_resource_system_profiles_projectId_GET_response[K]> };
-       },
-    "api_user_resource_system_profiles_projectId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_profiles_projectId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_profiles_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_profiles_projectId_PATCH_response[K]> };
-       },
-    "api_user_resource_system_projects_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_projects_GET_response]: z.infer<typeof api_user_resource_system_projects_GET_response[K]> };
-       },
-    "api_user_resource_system_projects_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_projects_POST_response]: z.infer<typeof api_user_resource_system_projects_POST_response[K]> };
-       },
-    "api_user_resource_system_projects_projectId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_projects_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_projects_projectId_DELETE_response[K]> };
-       },
-    "api_user_resource_system_projects_projectId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_projects_projectId_GET_response]: z.infer<typeof api_user_resource_system_projects_projectId_GET_response[K]> };
-       },
-    "api_user_resource_system_projects_projectId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_projects_projectId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_projects_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_projects_projectId_PATCH_response[K]> };
-       },
-    "api_user_resource_system_settings_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_settings_GET_response]: z.infer<typeof api_user_resource_system_settings_GET_response[K]> };
-       },
-    "api_user_resource_system_settings_POST": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_POST" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_POST" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_settings_POST_response]: z.infer<typeof api_user_resource_system_settings_POST_response[K]> };
-       },
-    "api_user_resource_system_settings_projectId_DELETE": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_DELETE" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_DELETE" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_settings_projectId_DELETE_response]: z.infer<typeof api_user_resource_system_settings_projectId_DELETE_response[K]> };
-       },
-    "api_user_resource_system_settings_projectId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_settings_projectId_GET_response]: z.infer<typeof api_user_resource_system_settings_projectId_GET_response[K]> };
-       },
-    "api_user_resource_system_settings_projectId_PATCH": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_PATCH" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_settings_projectId_PATCH" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_settings_projectId_PATCH_response]: z.infer<typeof api_user_resource_system_settings_projectId_PATCH_response[K]> };
-       },
-    "api_user_resource_system_users_userId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_users_userId_GET_response]: z.infer<typeof api_user_resource_system_users_userId_GET_response[K]> };
-       },
-    "api_user_resource_system_users_userId_profile_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_profile_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_profile_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_users_userId_profile_GET_response]: z.infer<typeof api_user_resource_system_users_userId_profile_GET_response[K]> };
-       },
-    "api_user_resource_system_users_userId_projects_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_projects_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_projects_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_users_userId_projects_GET_response]: z.infer<typeof api_user_resource_system_users_userId_projects_GET_response[K]> };
-       },
-    "api_user_resource_system_users_userId_roles_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_roles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_roles_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_users_userId_roles_GET_response]: z.infer<typeof api_user_resource_system_users_userId_roles_GET_response[K]> };
-       },
-    "api_user_resource_system_users_userId_wallet_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_users_userId_wallet_GET_response]: z.infer<typeof api_user_resource_system_users_userId_wallet_GET_response[K]> };
-       },
-    "api_user_resource_system_users_userId_wallet_transactions_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_transactions_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_resource_system_users_userId_wallet_transactions_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_resource_system_users_userId_wallet_transactions_GET_response]: z.infer<typeof api_user_resource_system_users_userId_wallet_transactions_GET_response[K]> };
-       },
-    "api_user_system_users_userId_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_system_users_userId_GET_response]: z.infer<typeof api_user_system_users_userId_GET_response[K]> };
-       },
-    "api_user_system_users_userId_profile_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_profile_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_profile_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_system_users_userId_profile_GET_response]: z.infer<typeof api_user_system_users_userId_profile_GET_response[K]> };
-       },
-    "api_user_system_users_userId_projects_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_projects_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_projects_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_system_users_userId_projects_GET_response]: z.infer<typeof api_user_system_users_userId_projects_GET_response[K]> };
-       },
-    "api_user_system_users_userId_roles_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_roles_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_roles_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_system_users_userId_roles_GET_response]: z.infer<typeof api_user_system_users_userId_roles_GET_response[K]> };
-       },
-    "api_user_system_users_userId_wallet_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_wallet_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_wallet_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_system_users_userId_wallet_GET_response]: z.infer<typeof api_user_system_users_userId_wallet_GET_response[K]> };
-       },
-    "api_user_system_users_userId_wallet_transactions_GET": {
-          request: { [K in keyof typeof EndpointSchemas[ "api_user_system_users_userId_wallet_transactions_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_user_system_users_userId_wallet_transactions_GET" ]["request"][K]> };
-        response: { [K in keyof typeof api_user_system_users_userId_wallet_transactions_GET_response]: z.infer<typeof api_user_system_users_userId_wallet_transactions_GET_response[K]> };
-       }
-}
-  
-export type Responses<T extends keyof ResponseTypes> = ResponseTypes[T];
-export type Requests<T extends keyof RequestTypes> = RequestTypes[T];
-export type Endpoints<T extends keyof EndpointTypes> = EndpointTypes[T];
-
 export namespace contract {
   export namespace api {
     export namespace article_system {
@@ -4592,6 +2776,354 @@ export namespace contract {
           }
         }
       }
+    }
+  }
+}
+
+export const models = {
+  ".vscode": {},
+  "articleSystem": {
+    "article.model": {
+      "ArticleModels": model_articleSystem_article_model_ArticleModels
+    },
+    "article.model_model": model_articleSystem_article_model_ArticleModels,
+    "comment.model": {
+      "ArticleCommentModels": model_articleSystem_comment_model_ArticleCommentModels
+    },
+    "comment.model_model": model_articleSystem_comment_model_ArticleCommentModels,
+    "index": {
+      "ArticleSystemModels": model_articleSystem_index_ArticleSystemModels
+    },
+    "index_model": model_articleSystem_index_ArticleSystemModels
+  },
+  "economySystem": {
+    "index": {
+      "EconomySystemModels": model_economySystem_index_EconomySystemModels
+    },
+    "index_model": model_economySystem_index_EconomySystemModels,
+    "transaction": {
+      "TransactionModels": model_economySystem_transaction_TransactionModels
+    },
+    "transaction_model": model_economySystem_transaction_TransactionModels,
+    "wallet": {
+      "WalletModels": model_economySystem_wallet_WalletModels
+    },
+    "wallet_model": model_economySystem_wallet_WalletModels
+  },
+  "eventSystem": {
+    "attendance.model": {
+      "AttendanceModels": model_eventSystem_attendance_model_AttendanceModels
+    },
+    "attendance.model_model": model_eventSystem_attendance_model_AttendanceModels,
+    "attendee.model": {
+      "AttendeeModels": model_eventSystem_attendee_model_AttendeeModels
+    },
+    "attendee.model_model": model_eventSystem_attendee_model_AttendeeModels,
+    "checkin.model": {
+      "CheckinModels": model_eventSystem_checkin_model_CheckinModels
+    },
+    "checkin.model_model": model_eventSystem_checkin_model_CheckinModels,
+    "event.model": {
+      "EventModels": model_eventSystem_event_model_EventModels
+    },
+    "event.model_model": model_eventSystem_event_model_EventModels,
+    "index": {
+      "EventSystemModels": model_eventSystem_index_EventSystemModels
+    },
+    "index_model": model_eventSystem_index_EventSystemModels
+  },
+  "fileSystem": {
+    "file": {
+      "row": model_fileSystem_file_row,
+      "insert": model_fileSystem_file_insert,
+      "update": model_fileSystem_file_update
+    },
+    "file_model": model_fileSystem_file_update,
+    "index": {}
+  },
+  "index": {
+    "Models": model_index_Models
+  },
+  "index_model": model_index_Models,
+  "learningResourceSystem": {
+    "externalResource": {
+      "row": model_learningResourceSystem_externalResource_row,
+      "insert": model_learningResourceSystem_externalResource_insert,
+      "update": model_learningResourceSystem_externalResource_update
+    },
+    "externalResource_model": model_learningResourceSystem_externalResource_update,
+    "index": {},
+    "learningResource": {
+      "shape": model_learningResourceSystem_learningResource_shape
+    },
+    "learningResource_model": model_learningResourceSystem_learningResource_shape,
+    "studyJam": {
+      "row": model_learningResourceSystem_studyJam_row,
+      "insert": model_learningResourceSystem_studyJam_insert,
+      "update": model_learningResourceSystem_studyJam_update
+    },
+    "studyJam_model": model_learningResourceSystem_studyJam_update
+  },
+  "publicationSystem": {
+    "article": {
+      "row": model_publicationSystem_article_row,
+      "insert": model_publicationSystem_article_insert,
+      "update": model_publicationSystem_article_update
+    },
+    "article_model": model_publicationSystem_article_update,
+    "event": {
+      "row": model_publicationSystem_event_row,
+      "insert": model_publicationSystem_event_insert,
+      "update": model_publicationSystem_event_update
+    },
+    "event_model": model_publicationSystem_event_update,
+    "highlight": {
+      "row": model_publicationSystem_highlight_row,
+      "insert": model_publicationSystem_highlight_insert,
+      "update": model_publicationSystem_highlight_update
+    },
+    "highlight_model": model_publicationSystem_highlight_update,
+    "index": {}
+  },
+  "rbacSystem": {
+    "index": {},
+    "permission": {
+      "row": model_rbacSystem_permission_row,
+      "insert": model_rbacSystem_permission_insert,
+      "update": model_rbacSystem_permission_update
+    },
+    "permission_model": model_rbacSystem_permission_update,
+    "roles": {
+      "row": model_rbacSystem_roles_row,
+      "insert": model_rbacSystem_roles_insert,
+      "update": model_rbacSystem_roles_update
+    },
+    "roles_model": model_rbacSystem_roles_update
+  },
+  "resourceSystem": {
+    "index": {},
+    "resource": {
+      "row": model_resourceSystem_resource_row,
+      "insertDTO": model_resourceSystem_resource_insertDTO,
+      "updateDTO": model_resourceSystem_resource_updateDTO
+    },
+    "resource_model": model_resourceSystem_resource_updateDTO
+  },
+  "roleSystem": {
+    "index": {},
+    "role": {
+      "row": model_roleSystem_role_row,
+      "insertDTO": model_roleSystem_role_insertDTO,
+      "updateDTO": model_roleSystem_role_updateDTO
+    },
+    "role_model": model_roleSystem_role_updateDTO
+  },
+  "teamSystem": {
+    "index": {},
+    "member": {
+      "row": model_teamSystem_member_row,
+      "insert": model_teamSystem_member_insert
+    },
+    "member_model": model_teamSystem_member_insert,
+    "team": {
+      "team": model_teamSystem_team_team,
+      "teamInsertDTO": model_teamSystem_team_teamInsertDTO,
+      "teamUpdateDTO": model_teamSystem_team_teamUpdateDTO
+    },
+    "team_model": model_teamSystem_team_teamUpdateDTO
+  },
+  "userResourceSystem": {
+    "index": {},
+    "project": {
+      "row": model_userResourceSystem_project_row,
+      "insertDTO": model_userResourceSystem_project_insertDTO,
+      "updateDTO": model_userResourceSystem_project_updateDTO
+    },
+    "project_model": model_userResourceSystem_project_updateDTO
+  },
+  "userSystem": {
+    "index": {},
+    "profile": {
+      "row": model_userSystem_profile_row,
+      "insertDTO": model_userSystem_profile_insertDTO,
+      "updateDTO": model_userSystem_profile_updateDTO
+    },
+    "profile_model": model_userSystem_profile_updateDTO,
+    "user": {
+      "row": model_userSystem_user_row,
+      "insertDTO": model_userSystem_user_insertDTO,
+      "updateDTO": model_userSystem_user_updateDTO
+    },
+    "user_model": model_userSystem_user_updateDTO
+  }
+}
+
+export namespace models {
+  export namespace _vscode {
+
+  }
+  export namespace articleSystem {
+    export namespace article_model {
+      export type ArticleModels = z.infer<typeof model_articleSystem_article_model_ArticleModels>;
+    }
+    export namespace comment_model {
+      export type ArticleCommentModels = z.infer<typeof model_articleSystem_comment_model_ArticleCommentModels>;
+    }
+    export namespace index {
+      export type ArticleSystemModels = z.infer<typeof model_articleSystem_index_ArticleSystemModels>;
+    }
+  }
+  export namespace economySystem {
+    export namespace index {
+      export type EconomySystemModels = z.infer<typeof model_economySystem_index_EconomySystemModels>;
+    }
+    export namespace transaction {
+      export type TransactionModels = z.infer<typeof model_economySystem_transaction_TransactionModels>;
+    }
+    export namespace wallet {
+      export type WalletModels = z.infer<typeof model_economySystem_wallet_WalletModels>;
+    }
+  }
+  export namespace eventSystem {
+    export namespace attendance_model {
+      export type AttendanceModels = z.infer<typeof model_eventSystem_attendance_model_AttendanceModels>;
+    }
+    export namespace attendee_model {
+      export type AttendeeModels = z.infer<typeof model_eventSystem_attendee_model_AttendeeModels>;
+    }
+    export namespace checkin_model {
+      export type CheckinModels = z.infer<typeof model_eventSystem_checkin_model_CheckinModels>;
+    }
+    export namespace event_model {
+      export type EventModels = z.infer<typeof model_eventSystem_event_model_EventModels>;
+    }
+    export namespace index {
+      export type EventSystemModels = z.infer<typeof model_eventSystem_index_EventSystemModels>;
+    }
+  }
+  export namespace fileSystem {
+    export namespace file {
+      export type row = z.infer<typeof model_fileSystem_file_row>;
+      export type insert = z.infer<typeof model_fileSystem_file_insert>;
+      export type update = z.infer<typeof model_fileSystem_file_update>;
+    }
+    export namespace index {
+
+    }
+  }
+  export namespace index {
+    export type Models = z.infer<typeof model_index_Models>;
+  }
+  export namespace learningResourceSystem {
+    export namespace externalResource {
+      export type row = z.infer<typeof model_learningResourceSystem_externalResource_row>;
+      export type insert = z.infer<typeof model_learningResourceSystem_externalResource_insert>;
+      export type update = z.infer<typeof model_learningResourceSystem_externalResource_update>;
+    }
+    export namespace index {
+
+    }
+    export namespace learningResource {
+      export type shape = z.infer<typeof model_learningResourceSystem_learningResource_shape>;
+    }
+    export namespace studyJam {
+      export type row = z.infer<typeof model_learningResourceSystem_studyJam_row>;
+      export type insert = z.infer<typeof model_learningResourceSystem_studyJam_insert>;
+      export type update = z.infer<typeof model_learningResourceSystem_studyJam_update>;
+    }
+  }
+  export namespace publicationSystem {
+    export namespace article {
+      export type row = z.infer<typeof model_publicationSystem_article_row>;
+      export type insert = z.infer<typeof model_publicationSystem_article_insert>;
+      export type update = z.infer<typeof model_publicationSystem_article_update>;
+    }
+    export namespace event {
+      export type row = z.infer<typeof model_publicationSystem_event_row>;
+      export type insert = z.infer<typeof model_publicationSystem_event_insert>;
+      export type update = z.infer<typeof model_publicationSystem_event_update>;
+    }
+    export namespace highlight {
+      export type row = z.infer<typeof model_publicationSystem_highlight_row>;
+      export type insert = z.infer<typeof model_publicationSystem_highlight_insert>;
+      export type update = z.infer<typeof model_publicationSystem_highlight_update>;
+    }
+    export namespace index {
+
+    }
+  }
+  export namespace rbacSystem {
+    export namespace index {
+
+    }
+    export namespace permission {
+      export type row = z.infer<typeof model_rbacSystem_permission_row>;
+      export type insert = z.infer<typeof model_rbacSystem_permission_insert>;
+      export type update = z.infer<typeof model_rbacSystem_permission_update>;
+    }
+    export namespace roles {
+      export type row = z.infer<typeof model_rbacSystem_roles_row>;
+      export type insert = z.infer<typeof model_rbacSystem_roles_insert>;
+      export type update = z.infer<typeof model_rbacSystem_roles_update>;
+    }
+  }
+  export namespace resourceSystem {
+    export namespace index {
+
+    }
+    export namespace resource {
+      export type row = z.infer<typeof model_resourceSystem_resource_row>;
+      export type insertDTO = z.infer<typeof model_resourceSystem_resource_insertDTO>;
+      export type updateDTO = z.infer<typeof model_resourceSystem_resource_updateDTO>;
+    }
+  }
+  export namespace roleSystem {
+    export namespace index {
+
+    }
+    export namespace role {
+      export type row = z.infer<typeof model_roleSystem_role_row>;
+      export type insertDTO = z.infer<typeof model_roleSystem_role_insertDTO>;
+      export type updateDTO = z.infer<typeof model_roleSystem_role_updateDTO>;
+    }
+  }
+  export namespace teamSystem {
+    export namespace index {
+
+    }
+    export namespace member {
+      export type row = z.infer<typeof model_teamSystem_member_row>;
+      export type insert = z.infer<typeof model_teamSystem_member_insert>;
+    }
+    export namespace team {
+      export type team = z.infer<typeof model_teamSystem_team_team>;
+      export type teamInsertDTO = z.infer<typeof model_teamSystem_team_teamInsertDTO>;
+      export type teamUpdateDTO = z.infer<typeof model_teamSystem_team_teamUpdateDTO>;
+    }
+  }
+  export namespace userResourceSystem {
+    export namespace index {
+
+    }
+    export namespace project {
+      export type row = z.infer<typeof model_userResourceSystem_project_row>;
+      export type insertDTO = z.infer<typeof model_userResourceSystem_project_insertDTO>;
+      export type updateDTO = z.infer<typeof model_userResourceSystem_project_updateDTO>;
+    }
+  }
+  export namespace userSystem {
+    export namespace index {
+
+    }
+    export namespace profile {
+      export type row = z.infer<typeof model_userSystem_profile_row>;
+      export type insertDTO = z.infer<typeof model_userSystem_profile_insertDTO>;
+      export type updateDTO = z.infer<typeof model_userSystem_profile_updateDTO>;
+    }
+    export namespace user {
+      export type row = z.infer<typeof model_userSystem_user_row>;
+      export type insertDTO = z.infer<typeof model_userSystem_user_insertDTO>;
+      export type updateDTO = z.infer<typeof model_userSystem_user_updateDTO>;
     }
   }
 }

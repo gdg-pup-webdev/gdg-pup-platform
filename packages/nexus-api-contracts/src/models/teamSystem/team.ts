@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { ResponseTypes } from "#contract.js";
+import { z } from "zod"; 
 
 export const team = z.object({
   id: z.string(),

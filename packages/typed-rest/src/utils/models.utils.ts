@@ -3,6 +3,9 @@ import path from "path";
 import { listExportsAsync, listExportsSync } from "./utils";
 import { logger } from "./logging.utils";
 
+type Tree = {
+  [key: string]: string | Tree;
+};
 export const scanModels = async (modelDir: string) => {
   const imports: {
     name: string;
@@ -10,9 +13,7 @@ export const scanModels = async (modelDir: string) => {
     path: string;
   }[] = [];
 
-  const modelTree: {
-    [key: string]: unknown | { [key: string]: unknown };
-  } = {};
+  const modelTree:Tree = {};
 
   const modelTypes: {
     signature: string;
@@ -22,7 +23,7 @@ export const scanModels = async (modelDir: string) => {
   async function iterateModels(
     currentDirectory: string,
     tree: any,
-    pathStack: string[]
+    pathStack: string[],
   ) {
     const dirItems = fs.readdirSync(currentDirectory);
 
@@ -47,11 +48,11 @@ export const scanModels = async (modelDir: string) => {
           .replace(/\//g, "")
           .replace(/\./g, "_");
 
-        const actualFilePath =
-          "./src/models/" + pathStack.join("/") + "/" + raw_model_name + ".ts";
+        const actualFilePath = path.join(currentDirectory, dirItem);
 
         // CHECK FILE EXPORTS
         const exports = listExportsSync(actualFilePath);
+        tree[raw_model_name] = {};
         for (const exportedVariable of exports) {
           const importAlias = `${fileSignature}_${exportedVariable}`;
 
@@ -63,6 +64,8 @@ export const scanModels = async (modelDir: string) => {
 
           tree[edited_model_name] = `__CODE_START__${importAlias}__CODE_END__`;
 
+          tree[raw_model_name][exportedVariable] =
+            `__CODE_START__${importAlias}__CODE_END__`;
           modelTypes.push({
             signature: importAlias,
             typeDef: importAlias,
@@ -77,8 +80,6 @@ export const scanModels = async (modelDir: string) => {
   return { imports, modelTree };
 };
 
-
-
 /**
  *
  * make models namespace string  
@@ -89,13 +90,3 @@ export namespace models {
   export type something = string; 
 }
  */
-
-export const makeModelsNamespaceString = (
-  modelTree: {
-    [key: string]: unknown | { [key: string]: unknown };
-  },
-  modelTypes: {
-    signature: string;
-    typeDef: string;
-  }[]
-) => {}

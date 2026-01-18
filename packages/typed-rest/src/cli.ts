@@ -8,7 +8,8 @@ import { listExportsSync } from "./utils/utils";
 import z from "zod";
 import { scanModels } from "#utils/models.utils.js";
 import { logger } from "#utils/logging.utils.js";
-import { scanContractModels } from "#utils/endpointTypes.utils.js";
+import { convertTreeToNamespaceString, scanContractModels } from "#utils/endpointTypes.utils.js";
+import { scanPlainModels } from "#utils/modelNamespace.util.js";
 
 const program = new Command();
 program
@@ -33,17 +34,17 @@ async function generate() {
   // hold import statements at the top of the generated file
   const imports: string[] = [];
 
-  let endpoints: {
-    [key: string]: {
-      request: any;
-      response: any;
-      metadata: any;
-    };
-  } = {};
+  // let endpoints: {
+  //   [key: string]: {
+  //     request: any;
+  //     response: any;
+  //     metadata: any;
+  //   };
+  // } = {};
 
-  const requestTypes: string[] = [];
-  const responseTypes: string[] = [];
-  const endpointTypes: string[] = [];
+  // const requestTypes: string[] = [];
+  // const responseTypes: string[] = [];
+  // const endpointTypes: string[] = [];
 
   let route_tree: any = {};
   let model_tree: Record<string, any> = {};
@@ -95,13 +96,13 @@ async function generate() {
           .replace(/-/g, "_");
 
         // raw code for use in model_tree
-        let requestRaw: any = {};
-        let responseRaw: any = {};
-        let metadataRaw: any = {
-          method: endpointMethod,
-          path: endpointRoute,
-          signature: endpoint_signature,
-        };
+        // let requestRaw: any = {};
+        // let responseRaw: any = {};
+        // let metadataRaw: any = {
+        //   method: endpointMethod,
+        //   path: endpointRoute,
+        //   signature: endpoint_signature,
+        // };
 
         // code wrapped in __CODE_START__ and __CODE_END__ to preserve variable names during JSON serialization
         let request: any = {};
@@ -119,9 +120,9 @@ async function generate() {
         if (pathParams.length > 0) {
           request["params"] =
             `__CODE_START__z.object({${pathParams.map((p) => `${p}: z.string()`).join(",")}})__CODE_END__`;
-          requestRaw["params"] = z.object(Object.fromEntries(
-            pathParams.map((p) => [p, z.string()]),
-          ));
+          // requestRaw["params"] = z.object(Object.fromEntries(
+          //   pathParams.map((p) => [p, z.string()]),
+          // ));
         }
 
         // CHECK FILE EXPORTS
@@ -135,7 +136,7 @@ async function generate() {
             );
 
             response = `__CODE_START__${schemaImportName}__CODE_END__`;
-            responseRaw = schemaImportName;
+            // responseRaw = schemaImportName;
           } else {
             const schemaImportName = `${endpoint_signature}_${exportedVariable}`;
 
@@ -146,16 +147,16 @@ async function generate() {
 
             request[exportedVariable] =
               `__CODE_START__${schemaImportName}__CODE_END__`;
-            requestRaw[exportedVariable] = schemaImportName;
+            // requestRaw[exportedVariable] = schemaImportName;
           }
         }
 
         // ADD TO ENDPOINTS MAP
-        endpoints[endpoint_signature] = {
-          request: request,
-          response: response,
-          metadata: metadata,
-        };
+        // endpoints[endpoint_signature] = {
+        //   request: request,
+        //   response: response,
+        //   metadata: metadata,
+        // };
 
         // Also add to route tree
         const route_key = endpointMethod
@@ -166,25 +167,25 @@ async function generate() {
           response: response,
           metadata: metadata,
         };
-        model_tree[route_key] = {
-          request: requestRaw,
-          response: responseRaw,
-          metadata: metadataRaw,
-        };
+        // model_tree[route_key] = {
+        //   request: requestRaw,
+        //   response: responseRaw,
+        //   metadata: metadataRaw,
+        // };
 
         // add to types
-        requestTypes.push(
-          `${endpoint_signature} : { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> }`,
-        );
+      //   requestTypes.push(
+      //     `${endpoint_signature} : { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> }`,
+      //   );
 
-        responseTypes.push(
-          `${endpoint_signature} : { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> }`,
-        );
+      //   responseTypes.push(
+      //     `${endpoint_signature} : { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> }`,
+      //   );
 
-        endpointTypes.push(`  ${'"' + endpoint_signature + '"'}: {
-          request: { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> };
-        response: { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> };
-       }`);
+      //   endpointTypes.push(`  ${'"' + endpoint_signature + '"'}: {
+      //     request: { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> };
+      //   response: { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> };
+      //  }`);
 
         // ${"\"" + "hello world" + "\""}
 
@@ -207,6 +208,8 @@ async function generate() {
     /"__CODE_START__(.*?)__CODE_END__"/g,
     "$1",
   );
+
+  const modelNamespaceString = await scanPlainModels(MODEL_DIR);
 
   /**
    * 
@@ -236,11 +239,11 @@ export namespace model {
 
 
   // Serialize the map to a string, but preserve the variable names
-  let jsonString = JSON.stringify(endpoints, null, 2);
+  // let jsonString = JSON.stringify(endpoints, null, 2);
 
   // Unwrap the variable names (remove quotes around them)
   // This turns "api_users_GET" string back into the actual object reference
-  jsonString = jsonString.replace(/"__CODE_START__(.*?)__CODE_END__"/g, "$1");
+  // jsonString = jsonString.replace(/"__CODE_START__(.*?)__CODE_END__"/g, "$1");
 
   let route_tree_string = JSON.stringify(route_tree, null, 2).replace(
     /"__CODE_START__(.*?)__CODE_END__"/g,
@@ -258,10 +261,11 @@ ${imports.join("\n")}
 
 export const contract = ${route_tree_string}
 
+${contractModelTree}
+
 export const models = ${modelTreeString}
 
-
-${contractModelTree}
+${modelNamespaceString}
 
 `;
 
