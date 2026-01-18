@@ -4,20 +4,27 @@ import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/lea
 import { userSystemRouterInstance } from "@/modules/userSystem/userSystem.route.js";
 import { articleRouterInstance } from "@/modules/articleSystem/articleSystem.route.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/eventSystem.route.js";
-import { resourceSystemRouterInstance } from "@/modules/learningResourceSystem/learningResourceSystem.route.js";
+import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/learningResourceSystem.route.js";
 import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js";
 import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
+import { learningResourceRepositoryInstance } from "@/modules/learningResourceSystem/externalResource.repository.js";
+import { learningResourceSystemControllerInstance } from "@/modules/learningResourceSystem/learningResourceSystem.controller.js";
 
 export const routesLoader = (app: Express) => {
-  app.use("/api/article-system", articleRouterInstance.getRouter());
-  app.use("/api/event-system", eventSystemRouterInstance.getRouter());
   app.use("/api/health", healthCheckRouterInstance.getRouter());
-  app.use("/api/leaderboard-system", leaderboardSystemRouterInstance.getRouter());
-  app.use("/api/resource-system", resourceSystemRouterInstance.getRouter());
-  app.use("/api/user-system", userSystemRouterInstance.getRouter());
+  // app.use("/api/article-system", articleRouterInstance.getRouter());
+  // app.use("/api/event-system", eventSystemRouterInstance.getRouter());
+  // app.use("/api/leaderboard-system", leaderboardSystemRouterInstance.getRouter());
+  // app.use("/api/resource-system", resourceSystemRouterInstance.getRouter());
+  // app.use("/api/user-system", userSystemRouterInstance.getRouter());
+  // app.use(
+  //   "/api/user-resource-system",
+  //   userResourceSystemRouterInstance.getRouter()
+  // );
+
   app.use(
-    "/api/user-resource-system",
-    userResourceSystemRouterInstance.getRouter()
+    "/api/learning-resource-system",
+    learningResourceSystemRouterInstance.getRouter(),
   );
 
   /**

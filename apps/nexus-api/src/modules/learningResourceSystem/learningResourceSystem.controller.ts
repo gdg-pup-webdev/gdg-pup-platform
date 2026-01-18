@@ -29,7 +29,7 @@ export class LearningResourceSystemController {
         throw new ControllerError(
           "LearningResourceSystemController",
           "create",
-          `Something went wrong: ${error.message}`,
+          error.message,
         );
 
       return output(200, {
@@ -54,7 +54,7 @@ export class LearningResourceSystemController {
         throw new ControllerError(
           "LearningResourceSystemController",
           "delete",
-          `Something went wrong: ${error.message}`,
+          error.message,
         );
       }
 
@@ -66,18 +66,21 @@ export class LearningResourceSystemController {
   );
 
   updateExternalResource: RequestHandler = createExpressController(
-    contract.api.resource_system.resources.resourceId.PATCH,
+    contract.api.learning_resource_system.externalResources.externalResourceId
+      .PATCH,
     async ({ input, output, ctx }) => {
-      const resourceId = input.params.resourceId as string;
-      const { data, error } = await this.resourceService.update(
-        resourceId,
-        input.body.data,
+      const resourceId = input.params.externalResourceId;
+      const { data, error } = await tryCatchHandled(
+        async () =>
+          await this.resourceService.update(resourceId, input.body.data),
+        { onServerError: rethrowServerError("updating external resource") },
       );
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`,
+      if (error)
+        throw new ControllerError(
+          "LearningResourceSystemController",
+          "update",
+          error.message,
         );
-      }
 
       return output(200, {
         status: "success",
@@ -87,20 +90,25 @@ export class LearningResourceSystemController {
     },
   );
 
-  list: RequestHandler = createExpressController(
-    contract.api.resource_system.resources.GET,
+  listExternalResources: RequestHandler = createExpressController(
+    contract.api.learning_resource_system.externalResources.GET,
     async ({ input, output, ctx }) => {
-      const { data, error } = await this.resourceService.list();
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`,
+      const { data, error } = await tryCatchHandled(
+        async () => await this.resourceService.list(),
+        { onServerError: rethrowServerError("listing external resources") },
+      );
+
+      if (error)
+        throw new ControllerError(
+          "LearningResourceSystemController",
+          "list",
+          error.message,
         );
-      }
 
       return output(200, {
         status: "success",
         message: "Resources fetched successfully",
-        data: data.listData,
+        data: data.list,
         meta: {
           totalRecords: data.count,
           currentPage: input.query.page.number,
@@ -111,16 +119,24 @@ export class LearningResourceSystemController {
     },
   );
 
-  getOne: RequestHandler = createExpressController(
-    contract.api.resource_system.resources.resourceId.GET,
+  getOneExternalResource: RequestHandler = createExpressController(
+    contract.api.learning_resource_system.externalResources.externalResourceId
+      .GET,
     async ({ input, output, ctx }) => {
-      const resourceId = input.params.resourceId as string;
-      const { data, error } = await this.resourceService.getOne(resourceId);
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`,
+      const resourceId = input.params.externalResourceId as string;
+      const { data, error } = await tryCatchHandled(
+        async () => await this.resourceService.getOne(resourceId),
+        {
+          onServerError: rethrowServerError("getting external resource"),
+        },
+      );
+
+      if (error)
+        throw new ControllerError(
+          "LearningResourceSystemController",
+          "getOne",
+          error.message,
         );
-      }
 
       return output(200, {
         status: "success",
@@ -131,5 +147,5 @@ export class LearningResourceSystemController {
   );
 }
 
-export const resourceSystemControllerInstance =
+export const learningResourceSystemControllerInstance =
   new LearningResourceSystemController();

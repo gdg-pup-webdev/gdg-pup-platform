@@ -1,21 +1,21 @@
 import { Router } from "express";
 import {
   LearningResourceSystemController,
-  resourceSystemControllerInstance,
+  learningResourceSystemControllerInstance,
 } from "./learningResourceSystem.controller.js";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
 } from "../../middlewares/auth.middleware.js";
 
-export class ResourceSystemRouter {
+export class LearningResourceSystemRouter {
   constructor(
-    private readonly resourceSystemController: LearningResourceSystemController = resourceSystemControllerInstance,
-    private readonly authMiddleware: AuthMiddleware = authMiddlewareInstance
+    private readonly resourceSystemController: LearningResourceSystemController = learningResourceSystemControllerInstance,
+    private readonly authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter() {
-    const router : Router = Router();
+    const router: Router = Router();
 
     /**
      * @openapi
@@ -30,7 +30,10 @@ export class ResourceSystemRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/resources", this.resourceSystemController.list);
+    router.get(
+      "/resources",
+      this.resourceSystemController.listExternalResources,
+    );
 
     /**
      * @openapi
@@ -60,7 +63,7 @@ export class ResourceSystemRouter {
     router.post(
       "/resources",
       this.authMiddleware.requireAuth(),
-      this.resourceSystemController.createExternalResource
+      this.resourceSystemController.createExternalResource,
     );
 
     /**
@@ -91,7 +94,7 @@ export class ResourceSystemRouter {
     router.delete(
       "/resources/:resourceId",
       this.authMiddleware.requireAuth(),
-      this.resourceSystemController.deleteExternalResource
+      this.resourceSystemController.deleteExternalResource,
     );
 
     /**
@@ -128,7 +131,7 @@ export class ResourceSystemRouter {
     router.patch(
       "/resources/:resourceId",
       this.authMiddleware.requireAuth(),
-      this.resourceSystemController.update
+      this.resourceSystemController.updateExternalResource,
     );
 
     /**
@@ -152,7 +155,10 @@ export class ResourceSystemRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/resources/:resourceId", this.resourceSystemController.getOne);
+    router.get(
+      "/resources/:resourceId",
+      this.resourceSystemController.getOneExternalResource,
+    );
 
     /**
      * @openapi
@@ -179,4 +185,4 @@ export class ResourceSystemRouter {
   }
 }
 
-export const resourceSystemRouterInstance = new ResourceSystemRouter();
+export const learningResourceSystemRouterInstance = new LearningResourceSystemRouter();

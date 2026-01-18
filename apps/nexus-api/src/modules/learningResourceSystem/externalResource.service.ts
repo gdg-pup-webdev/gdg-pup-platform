@@ -58,7 +58,7 @@ export class ExternalResourceService {
     if (error)
       throw new ServiceError("ResourceService", "update", error.message);
 
-    return { data };
+    return data;
   };
 
   list = async () => {
@@ -68,6 +68,7 @@ export class ExternalResourceService {
         onServerError: rethrowServerError("listing external resources"),
       },
     );
+
     if (error) throw new ServiceError("ResourceService", "list", error.message);
 
     return data;
@@ -80,6 +81,7 @@ export class ExternalResourceService {
         onServerError: rethrowServerError("getting external resource"),
       },
     );
+
     if (error)
       throw new ServiceError("ResourceService", "getOne", error.message);
 
