@@ -1,5 +1,4 @@
-import { models } from "#contract.js";
-import { file } from "#models/fileSystem/index.js";
+ import { file } from "#models/fileSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const body = SchemaFactory.Request.withPayload(file.update);

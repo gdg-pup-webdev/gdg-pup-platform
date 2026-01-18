@@ -23,7 +23,7 @@ program
 const options = program.opts();
 const MODEL_DIR = path.resolve(process.cwd(), "./src/models");
 const SRC_DIR = path.resolve(process.cwd(), "./src/routes");
-const OUTPUT_FILE = path.resolve(process.cwd(), "./src/contract.ts");
+const OUTPUT_FILE = path.resolve(process.cwd(), "./src/.contract.ts");
 
 // Helper: Check if folder is a param (e.g. [userId])
 const segmentIsPathParameter = (segment: string) =>
