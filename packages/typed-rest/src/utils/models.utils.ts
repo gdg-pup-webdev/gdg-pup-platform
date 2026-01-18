@@ -76,3 +76,26 @@ export const scanModels = async (modelDir: string) => {
 
   return { imports, modelTree };
 };
+
+
+
+/**
+ *
+ * make models namespace string  
+export namespace models {
+  export namespace another {
+    
+  }
+  export type something = string; 
+}
+ */
+
+export const makeModelsNamespaceString = (
+  modelTree: {
+    [key: string]: unknown | { [key: string]: unknown };
+  },
+  modelTypes: {
+    signature: string;
+    typeDef: string;
+  }[]
+) => {}

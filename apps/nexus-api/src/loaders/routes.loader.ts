@@ -4,7 +4,7 @@ import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/lea
 import { userSystemRouterInstance } from "@/modules/userSystem/userSystem.route.js";
 import { articleRouterInstance } from "@/modules/articleSystem/articleSystem.route.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/eventSystem.route.js";
-import { resourceSystemRouterInstance } from "@/modules/resourceSystem/resourceSystem.route.js";
+import { resourceSystemRouterInstance } from "@/modules/learningResourceSystem/learningResourceSystem.route.js";
 import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js";
 import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
 

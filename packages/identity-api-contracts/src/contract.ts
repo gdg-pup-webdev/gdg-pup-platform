@@ -36,7 +36,9 @@ export const contract = {
 }
 
 export const models = {
-  "response.model_model": model_response_model_getResponseModel
+  "response_model": {
+    "getResponseModel": model_response_model_getResponseModel
+  }
 }
 
 export type ResponseTypes = {
