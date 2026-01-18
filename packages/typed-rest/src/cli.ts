@@ -255,11 +255,22 @@ import {z} from "zod";
 
 ${imports.join("\n")}
 
-export const EndpointSchemas = ${jsonString}
 
 export const contract = ${route_tree_string}
 
 export const models = ${modelTreeString}
+
+
+${contractModelTree}
+
+`;
+
+
+/**
+ * 
+ REMOVED PARTS BELOW FOR NOW - MAYBE RE-ADD LATER
+
+export const EndpointSchemas = ${jsonString}
 
 export type ResponseTypes = {
   ${responseTypes.join(",\n  ")}
@@ -276,10 +287,7 @@ export type EndpointTypes = {
 export type Responses<T extends keyof ResponseTypes> = ResponseTypes[T];
 export type Requests<T extends keyof RequestTypes> = RequestTypes[T];
 export type Endpoints<T extends keyof EndpointTypes> = EndpointTypes[T];
-
-${contractModelTree}
-
-`;
+ */
 
   fs.writeFileSync(OUTPUT_FILE, fileContent);
   logger.log("API Contract generated at src/contract.ts");
