@@ -5,9 +5,9 @@ import { TablesInsert } from "@packages/nexus-api-contracts/types";
 export class ResourceResponsitory {
   constructor() {}
 
-  create = async (dto: TablesInsert<"resource">) => {
+  create = async (dto: TablesInsert<"external_resource">) => {
     const { data, error } = await supabase
-      .from("resource")
+      .from("external_resource")
       .insert(dto)
       .select("*")
       .single();
@@ -19,7 +19,7 @@ export class ResourceResponsitory {
 
   delete = async (resourceId: string) => {
     const { data, error } = await supabase
-      .from("resource")
+      .from("external_resource")
       .delete()
       .eq("id", resourceId)
       .select("*")
@@ -35,7 +35,7 @@ export class ResourceResponsitory {
     dto: Models.resourceSystem.resource.updateDTO
   ) => {
     const { data, error } = await supabase
-      .from("resource")
+      .from("external_resource")
       .update(dto)
       .eq("id", resourceId)
       .select("*")
@@ -48,7 +48,7 @@ export class ResourceResponsitory {
 
   list = async () => {
     const { data, error } = await supabase
-      .from("resource")
+      .from("external_resource")
       .select("*")
       .order("created_at", { ascending: false });
     if (error) {
@@ -56,7 +56,7 @@ export class ResourceResponsitory {
     }
 
     const { count, error: countError } = await supabase
-      .from("resource")
+      .from("external_resource")
       .select("*", { count: "exact", head: true });
     if (countError) {
       return { error: countError };
@@ -72,7 +72,7 @@ export class ResourceResponsitory {
 
   getOne = async (resourceId: string) => {
     const { data, error } = await supabase
-      .from("resource")
+      .from("external_resource")
       .select("*")
       .eq("id", resourceId)
       .single();
