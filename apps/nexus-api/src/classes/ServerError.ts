@@ -87,3 +87,34 @@ export class DatabaseError extends ServerError {
     });
   }
 }
+
+
+export class ServiceError extends ServerError {
+  constructor(
+    serviceName: string,
+    action: string,
+    message: string,
+  ) {
+    super({
+      statusCode: 500,
+      title: `Service Error on ${serviceName}`,
+      message: `Failed to ${action}. ${message ? message : ""}`,
+      type: "ServiceError",
+    });
+  }
+}
+
+export class ControllerError extends ServerError {
+  constructor(
+    controllerName: string,
+    action: string,
+    message: string,
+  ) {
+    super({
+      statusCode: 500,
+      title: `Controller Error on ${controllerName}`,
+      message: `Failed to ${action}. ${message ? message : ""}`,
+      type: "ControllerError",
+    });
+  }
+}

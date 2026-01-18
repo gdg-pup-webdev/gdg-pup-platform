@@ -60,7 +60,7 @@ export class ResourceSystemRouter {
     router.post(
       "/resources",
       this.authMiddleware.requireAuth(),
-      this.resourceSystemController.create
+      this.resourceSystemController.createExternalResource
     );
 
     /**
@@ -91,7 +91,7 @@ export class ResourceSystemRouter {
     router.delete(
       "/resources/:resourceId",
       this.authMiddleware.requireAuth(),
-      this.resourceSystemController.delete
+      this.resourceSystemController.deleteExternalResource
     );
 
     /**

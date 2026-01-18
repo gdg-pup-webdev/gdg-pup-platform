@@ -1,17 +1,8 @@
+import { publicExternalResourceRowSchema } from "#types/supabase.schema.js";
 import z from "zod";
 
-export const row = z.object({
-  // event data
-  id: z.string(),
-  createdAt: z.string(),
-  title: z.string(),
-  description: z.string(),
-  startDate: z.string(),
-  endDate: z.string(),
-  location: z.string(),
-  teamId: z.string(),
-});
+export const row = publicExternalResourceRowSchema;
 
-export const insert = row.omit({ id: true, createdAt: true });
+export const insert = row.omit({ id: true, created_at: true, updated_at: true, uploader_id: true });
 
 export const update = insert.partial();

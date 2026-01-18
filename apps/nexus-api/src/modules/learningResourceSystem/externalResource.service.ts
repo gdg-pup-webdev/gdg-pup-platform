@@ -3,16 +3,10 @@ import {
   learningResourceRepositoryInstance,
   ExternalResourceRepository,
 } from "./externalResource.repository.js";
-import {
-  tryCatch,
-  rethrowServerError,
-  tryCatchHandled,
-} from "@/utils/tryCatch.util.js";
-import { PostgrestError } from "@supabase/supabase-js";
-import { ServerError } from "@/classes/ServerError.js";
-import { Server } from "http";
+import { rethrowServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
+import { ServiceError } from "@/classes/ServerError.js";
 
-export class ResourceService {
+export class ExternalResourceService {
   constructor(
     private readonly resourceRepository: ExternalResourceRepository = learningResourceRepositoryInstance,
   ) {}
@@ -21,7 +15,7 @@ export class ResourceService {
     dto: Omit<Models.resourceSystem.resource.insertDTO, "uploader_id">,
     uploaderId: string,
   ) => {
-    const data = await tryCatchHandled(
+    const { data, error } = await tryCatchHandled(
       async () =>
         await this.resourceRepository.create({
           ...dto,
@@ -29,56 +23,68 @@ export class ResourceService {
         }),
       {
         onServerError: rethrowServerError("creating external resource"),
-        onUnknownError: (error) => {
-          throw ServerError.internalError("Unknown error");
-        }
       },
-    );  
+    );
 
-    return { data };
+    if (error)
+      throw new ServiceError("ResourceService", "create", error.message);
+
+    return data;
   };
 
   delete = async (resourceId: string) => {
-    const { data, error } = await catchUnknownErrors(
+    const { data, error } = await tryCatchHandled(
       async () => await this.resourceRepository.delete(resourceId),
-      "deleting external resource",
+      { onServerError: rethrowServerError("deleting external resource") },
     );
-    if (error) {
-      return { error };
-    }
 
-    return { data };
+    if (error)
+      throw new ServiceError("ResourceService", "delete", error.message);
+
+    return data;
   };
 
   update = async (
     resourceId: string,
     dto: Models.resourceSystem.resource.updateDTO,
   ) => {
-    const { data, error } = await this.resourceRepository.update(
-      resourceId,
-      dto,
+    const { data, error } = await tryCatchHandled(
+      async () => await this.resourceRepository.update(resourceId, dto),
+      {
+        onServerError: rethrowServerError("updating external resource"),
+      },
     );
-    if (error) {
-      return { error };
-    }
+
+    if (error)
+      throw new ServiceError("ResourceService", "update", error.message);
+
     return { data };
   };
 
   list = async () => {
-    const { data, error } = await this.resourceRepository.list();
-    if (error) {
-      return { error };
-    }
-    return { data };
+    const { data, error } = await tryCatchHandled(
+      async () => await this.resourceRepository.list(),
+      {
+        onServerError: rethrowServerError("listing external resources"),
+      },
+    );
+    if (error) throw new ServiceError("ResourceService", "list", error.message);
+
+    return data;
   };
 
   getOne = async (resourceId: string) => {
-    const { data, error } = await this.resourceRepository.getOne(resourceId);
-    if (error) {
-      return { error };
-    }
-    return { data };
+    const { data, error } = await tryCatchHandled(
+      async () => await this.resourceRepository.getOne(resourceId),
+      {
+        onServerError: rethrowServerError("getting external resource"),
+      },
+    );
+    if (error)
+      throw new ServiceError("ResourceService", "getOne", error.message);
+
+    return data;
   };
 }
 
-export const resourceServiceInstance = new ResourceService();
+export const resourceServiceInstance = new ExternalResourceService();

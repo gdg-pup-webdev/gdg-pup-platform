@@ -1,10 +1,10 @@
 import { ServerError } from "@/classes/ServerError.js";
 
-export type SyncResult<T = any, E = any> =
-  | { data: T; error: null }
-  | { data: null; error: E };
+export type SyncResult<T, E = Error> =
+  | { data: T; error: undefined }
+  | { data: undefined; error: E };
 
-export type AsyncResult<T = any, E = any> = Promise<SyncResult<T, E>>;
+export type AsyncResult<T, E = Error> = Promise<SyncResult<T, E>>;
 
 /**
  * Error handling utility the converts throwed errors into returned variables
@@ -16,9 +16,10 @@ export type AsyncResult<T = any, E = any> = Promise<SyncResult<T, E>>;
 export const tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
   try {
     const data = await fn();
-    return { data, error: null };
-  } catch (error) {
-    return { error, data: null };
+    return { data, error: undefined };
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    return { error, data: undefined };
   }
 };
 
@@ -36,20 +37,18 @@ export const tryCatchHandled = async <T>(
   const { data, error } = await tryCatch(fn);
 
   if (error) {
-    const err = error;
-
-    if (err instanceof ServerError) {
-      if (handlers?.onServerError) handlers.onServerError(err);
+    if (error instanceof ServerError) {
+      if (handlers?.onServerError) handlers.onServerError(error);
     }
 
     // handle other error types here if needed
     // ...
     // ...
 
-    return { error: err, data: null };
+    return { error, data: undefined };
   }
 
-  return { data: data as T, error: null };
+  return { data, error: undefined };
 };
 
 /**
@@ -63,6 +62,21 @@ export const rethrowServerError = <T extends ServerError>(context: string) => {
     throw error;
   };
 };
+
+/**
+ * Utility function to assert the type of result
+ */
+export function assertResult<T, E>(
+  result: SyncResult<T, E>,
+): asserts result is { data: T; error: undefined } {
+  if (result.error) {
+    // If it's a ServerError, we can add context here if we wanted
+    throw result.error;
+  }
+  if (result.data === undefined) {
+    throw new Error("Data is unexpectedly undefined");
+  }
+}
 
 // export const tryCatchHandled = async <T>(
 //   fn: () => Promise<T>,
