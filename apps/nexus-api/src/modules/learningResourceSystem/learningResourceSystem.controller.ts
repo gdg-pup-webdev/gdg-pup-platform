@@ -22,7 +22,7 @@ export class LearningResourceSystemController {
 
       const { data, error } = await tryCatchHandled(
         async () => await this.resourceService.create(input.body.data, userId),
-        { onServerError: rethrowServerError("creating external resource") },
+        { onServerError: rethrowServerError("calling service.create") },
       );
 
       if (error)

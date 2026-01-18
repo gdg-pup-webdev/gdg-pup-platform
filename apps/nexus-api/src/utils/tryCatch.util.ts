@@ -38,6 +38,7 @@ export const tryCatchHandled = async <T>(
 
   if (error) {
     if (error instanceof ServerError) {
+      console.log("Handling ServerError in tryCatchHandled:");
       if (handlers?.onServerError) handlers.onServerError(error);
     }
 
@@ -58,6 +59,7 @@ export const tryCatchHandled = async <T>(
  */
 export const rethrowServerError = <T extends ServerError>(context: string) => {
   return (error: T) => {
+    console.log("Rethrowing ServerError with context:", error, context);
     error.addContext(context);
     throw error;
   };

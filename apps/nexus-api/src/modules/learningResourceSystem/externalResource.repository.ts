@@ -35,12 +35,13 @@ export class ExternalResourceRepository {
   constructor() {}
 
   create = async (dto: tableInsert): RepositoryResult<tableRow> => {
+    
     const { data, error } = await supabase
       .from(tableName)
       .insert(dto)
       .select("*")
       .single();
-
+      
     if (error)
       throw new DatabaseError(
         repositoryName,

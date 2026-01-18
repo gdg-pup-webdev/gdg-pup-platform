@@ -7,21 +7,23 @@ export class ServerError extends Error {
   public title: string;
   public type: string;
 
-  public context: string[] = [];
+  public context: string[] ;
 
   constructor(props: {
     statusCode: number;
     title: string;
     message?: string;
     type?: string;
+    context?: string[];
   }) {
     super(props.message);
     this.statusCode = props.statusCode;
     this.status = `${props.statusCode}`.startsWith("4") ? "fail" : "error";
     this.title = props.title;
-    // vs. a programming bug (e.g., ReferenceError)
     this.isOperational = true;
     this.type = props.type || "Unknown";
+ 
+    this.context = props.context || [];
 
     Error.captureStackTrace(this, this.constructor);
   }
@@ -82,8 +84,9 @@ export class DatabaseError extends ServerError {
     super({
       statusCode: 500,
       title: `Database Error on ${repository}`,
-      message: `Failed to ${action} on ${tableName}. ${message ? message : ""}`,
+      message: `Failed while ${action} on ${tableName}. ${message ? message : ""}`,
       type: "DatabaseError",
+      context: [action]
     });
   }
 }
@@ -98,8 +101,9 @@ export class ServiceError extends ServerError {
     super({
       statusCode: 500,
       title: `Service Error on ${serviceName}`,
-      message: `Failed to ${action}. ${message ? message : ""}`,
+      message: `Failed while ${action}. ${message ? message : ""}`,
       type: "ServiceError",
+      context: [action]
     });
   }
 }
@@ -113,8 +117,9 @@ export class ControllerError extends ServerError {
     super({
       statusCode: 500,
       title: `Controller Error on ${controllerName}`,
-      message: `Failed to ${action}. ${message ? message : ""}`,
+      message: `Failed while ${action}. ${message ? message : ""}`,
       type: "ControllerError",
+      context: [action]
     });
   }
 }

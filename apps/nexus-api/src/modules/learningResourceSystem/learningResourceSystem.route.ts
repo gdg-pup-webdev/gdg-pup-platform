@@ -31,7 +31,7 @@ export class LearningResourceSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.get(
-      "/resources",
+      "/external-resources",
       this.resourceSystemController.listExternalResources,
     );
 
@@ -61,7 +61,7 @@ export class LearningResourceSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.post(
-      "/resources",
+      "/external-resources",
       this.authMiddleware.requireAuth(),
       this.resourceSystemController.createExternalResource,
     );
@@ -92,7 +92,7 @@ export class LearningResourceSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.delete(
-      "/resources/:resourceId",
+      "/external-resources/:externalResourceId",
       this.authMiddleware.requireAuth(),
       this.resourceSystemController.deleteExternalResource,
     );
@@ -129,7 +129,7 @@ export class LearningResourceSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.patch(
-      "/resources/:resourceId",
+      "/external-resources/:externalResourceId",
       this.authMiddleware.requireAuth(),
       this.resourceSystemController.updateExternalResource,
     );
@@ -156,7 +156,7 @@ export class LearningResourceSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.get(
-      "/resources/:resourceId",
+      "/external-resources/:externalResourceId",
       this.resourceSystemController.getOneExternalResource,
     );
 
@@ -179,7 +179,7 @@ export class LearningResourceSystemRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/resources/:resourceId/tags", (req, res) => {});
+    router.get("/external-resources/:externalResourceId/tags", (req, res) => {});
 
     return router;
   }

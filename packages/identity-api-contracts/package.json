@@ -1,7 +1,7 @@
 {
   "name": "@packages/identity-api-contracts",
   "exports": {
-    ".": "./dist/.contract.js",
+    ".": "./dist/contract.js",
     "./models": "./dist/models/index.js",
     "./types": "./dist/types/index.js"
   },

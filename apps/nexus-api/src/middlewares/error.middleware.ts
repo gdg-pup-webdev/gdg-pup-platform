@@ -1,4 +1,5 @@
  
+import { ServerError } from "@/classes/ServerError.js";
 import { ContractError } from "@packages/typed-rest";
 import { Request, Response, NextFunction } from "express"; 
 import z, { ZodError } from "zod";  
@@ -70,6 +71,21 @@ export const globalErrorHandler = (
 
     }
   } 
+
+  if (err instanceof ServerError) {
+    return res.status(err.statusCode).json({
+      status: "fail",
+      message: "Internal Server Error",
+      errors: [
+        {
+          title: err.title,
+          detail: err.message,
+          moreDetails:  "An error occured while " + err.context.join(" while "), 
+          // moreDetails: err.context,
+        }
+      ],
+    })
+  }
 
   // 3. Handle Operational Errors (AppError)
   if (err.isOperational) {

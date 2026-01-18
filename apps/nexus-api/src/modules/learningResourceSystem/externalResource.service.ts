@@ -27,7 +27,7 @@ export class ExternalResourceService {
     );
 
     if (error)
-      throw new ServiceError("ResourceService", "create", error.message);
+      throw new ServiceError("ResourceService", "calling repository.create", error.message);
 
     return data;
   };
