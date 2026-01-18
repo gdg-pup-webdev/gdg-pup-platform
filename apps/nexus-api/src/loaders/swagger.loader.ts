@@ -192,6 +192,94 @@ export const swaggerLoader = (app: Express) => {
               },
             },
           },
+          ArticleInput: {
+            type: "object",
+            required: ["title"],
+            properties: {
+              title: {
+                type: "string",
+                description: "Title of the article",
+              },
+              body: {
+                type: "string",
+                nullable: true,
+                description: "Content of the article",
+              },
+              is_published: {
+                type: "boolean",
+                description: "Whether the article is published",
+              },
+              related_event_id: {
+                type: "string",
+                nullable: true,
+                description: "ID of the related event",
+              },
+            },
+          },
+          ArticleRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/ArticleInput",
+              },
+            },
+          },
+          ArticleUpdateInput: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              body: { type: "string", nullable: true },
+              is_published: { type: "boolean" },
+              related_event_id: { type: "string", nullable: true },
+            },
+          },
+          ArticleUpdateRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/ArticleUpdateInput",
+              },
+            },
+          },
+          CommentInput: {
+            type: "object",
+            required: ["body"],
+            properties: {
+              body: {
+                type: "string",
+                description: "The comment content",
+              },
+            },
+          },
+          CommentRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/CommentInput",
+              },
+            },
+          },
+          CommentUpdateInput: {
+            type: "object",
+            properties: {
+              body: {
+                type: "string",
+                description: "The comment content",
+              },
+            },
+          },
+          CommentUpdateRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/CommentUpdateInput",
+              },
+            },
+          },
         },
         responses: {
           UnauthorizedError: {
