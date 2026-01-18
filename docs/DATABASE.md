@@ -128,7 +128,7 @@ Content/Blog posts.
 | `author_id` | `uuid` | FK to `user.id`. |
 | `is_published` | `boolean` | Draft/Published state. |
 | `published_at` | `timestamp` | |
-| `releated_event_id` | `uuid` | FK to `event.id` (Optional). |
+| `related_event_id` | `uuid` | FK to `event.id` (Optional). |
 
 ---
 
