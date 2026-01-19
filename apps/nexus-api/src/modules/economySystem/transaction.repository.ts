@@ -1,24 +1,30 @@
+import { DatabaseError, RepositoryError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import { Models } from "@packages/nexus-api-contracts/models";
 
+
 export class TransactionRepository {
+  tableName = "wallet_transaction";
+
   constructor() {}
 
   listTransactionsByWalletId = async (walletId: string) => {
     const { data: listData, error: listError } = await supabase
-      .from("wallet_transaction")
+      .from(this.tableName)
       .select("*")
       .eq("wallet_id", walletId);
+
     if (listError) {
-      return { error: listError };
+      // throw new RepositoryError()
     }
 
     const { count, error } = await supabase
-      .from("wallet_transaction")
+      .from(this.tableName)
       .select("*", { count: "exact", head: true }) // head: true means "don't return rows"
       .eq("wallet_id", walletId);
+
     if (error) {
-      return { error };
+      throw new DatabaseError(error.message);
     }
 
     return {
@@ -34,7 +40,7 @@ export class TransactionRepository {
   ) => {
     // insert transaction into database
     const { data, error } = await supabase
-      .from("wallet_transaction")
+      .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();

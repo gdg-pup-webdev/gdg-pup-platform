@@ -1,11 +1,9 @@
-import { Models } from "#models/index.js";
+import { attendance, checkin } from "#models/eventSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
-export const body = SchemaFactory.Request.withPayload(
-  Models.eventSystem.checkin.insertDTO
-);
+export const body = SchemaFactory.Request.withPayload(checkin.insertDTO);
 
 export const response = {
-  200: SchemaFactory.Response.single(Models.eventSystem.attendance.row),
+  200: SchemaFactory.Response.single(attendance.row),
   ...SchemaFactory.Response.standardErrors(),
 };

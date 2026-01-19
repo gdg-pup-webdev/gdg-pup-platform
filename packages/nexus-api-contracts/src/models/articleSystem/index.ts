@@ -1,8 +1,3 @@
-import { ArticleModels } from "./article.model.js";
-import { ArticleCommentModels } from "./comment.model.js";
 
-export namespace ArticleSystemModels {
-  export import article = ArticleModels;
-  export import comment = ArticleCommentModels;
-}
-
+export * as article from "./article";
+export * as comment from "./comment";

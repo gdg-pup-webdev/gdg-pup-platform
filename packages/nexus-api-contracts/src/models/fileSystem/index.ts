@@ -1,1 +1,1 @@
-export * as file from "./file.js";
+export * as file from "./file"

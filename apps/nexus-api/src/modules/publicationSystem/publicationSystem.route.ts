@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   ArticleSystemController,
   articleSystemControllerInstance,
-} from "./articleSystem.controller.js";
+} from "./publicationSystem.controller.js";
 import {
   AuthMiddleware,
   authMiddlewareInstance,

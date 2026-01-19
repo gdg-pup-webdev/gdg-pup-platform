@@ -12,7 +12,7 @@ import {
 import {
   RoleService,
   roleServiceInstance,
-} from "../roleSystem/role.service.js";
+} from "../rbacSystem/role.service.js";
 import {
   ProjectService,
   projectServiceInstance,

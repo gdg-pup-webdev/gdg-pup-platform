@@ -1,12 +1,12 @@
-import { Models } from "#models/index.js";
+import { highlight } from "#models/publicationSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import z from "zod";
 
 export const body = SchemaFactory.Request.withPayload(
-  Models.articleSystem.article.updateDTO
+  highlight.update
 );
 
 export const response = {
-  200: SchemaFactory.Response.single(Models.articleSystem.article.row),
+  200: SchemaFactory.Response.single(highlight.row),
   ...SchemaFactory.Response.standardErrors(),
 };

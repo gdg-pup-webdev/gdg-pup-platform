@@ -1,9 +1,9 @@
-import { Models } from "#models/index.js";
+ import { project } from "#models/userResourceSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const query = SchemaFactory.Request.Paginated.query();
 
 export const response = {
-  200: SchemaFactory.Response.single(Models.userResourceSystem.project.row),
+  200: SchemaFactory.Response.single(project.row),
   ...SchemaFactory.Response.standardErrors(),
 };

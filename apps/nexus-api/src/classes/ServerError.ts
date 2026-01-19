@@ -98,6 +98,12 @@ export class ServerError extends Error {
   }
 }
 
+export class DatabaseError extends ServerError {
+  constructor(detail: string = "Database Error") {
+    super({ statusCode: 500, title: "Database Error", detail: detail });
+  }
+} 
+
 type LayerErrorProps = ServerErrorProps & { layerName: string };
 export class LayerError extends ServerError {
   public layerName: string;

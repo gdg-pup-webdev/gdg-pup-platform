@@ -2,6 +2,8 @@ import { supabase } from "@/lib/supabase.js";
 import { Models } from "@packages/nexus-api-contracts/models";
 
 export class WalletRepository {
+  tableName = "wallet";
+  
   construtor() {}
 
   getWalletByUserId = async (userId: string) => {

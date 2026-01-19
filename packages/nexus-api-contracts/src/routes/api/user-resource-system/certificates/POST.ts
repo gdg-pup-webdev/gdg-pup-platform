@@ -1,11 +1,11 @@
-import { Models } from "#models/index.js";
+ import { project } from "#models/userResourceSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const body = SchemaFactory.Request.withPayload(
-  Models.userResourceSystem.project.insertDTO
+  project.insertDTO
 );
 
 export const response = {
-  201: SchemaFactory.Response.single(Models.userResourceSystem.project.row),
+  201: SchemaFactory.Response.single(project.row),
   ...SchemaFactory.Response.standardErrors(),
 };
