@@ -102,7 +102,31 @@ export class DatabaseError extends ServerError {
   constructor(detail: string = "Database Error") {
     super({ statusCode: 500, title: "Database Error", detail: detail });
   }
-} 
+}
+
+export class NotFoundError extends ServerError {
+  constructor(detail: string = "Resource not found") {
+    super({ statusCode: 404, title: "Not Found", detail: detail });
+  }
+}
+
+
+export class RepositoryError extends ServerError  {
+  constructor(detail: string = "Database Error") {
+    super({ statusCode: 500, title: "Database Error", detail: detail });
+  }
+}
+
+export class CantCreateError extends ServerError {
+  constructor(detail: string = "Cant create resource") {
+    super({ statusCode: 500, title: "Cant create resource", detail: detail });
+  }
+}
+
+
+
+
+
 
 type LayerErrorProps = ServerErrorProps & { layerName: string };
 export class LayerError extends ServerError {
@@ -113,22 +137,6 @@ export class LayerError extends ServerError {
   }
 }
 
-export class RepositoryError extends LayerError {
-  constructor(
-    repository: string,
-    tableName: string,
-    detail: string,
-    context: string,
-  ) {
-    super({
-      layerName: "repository",
-      statusCode: 500,
-      title: `Database Error on repostory: ${repository} table: ${tableName}`,
-      detail: detail,
-      context: [context],
-    });
-  }
-}
 
 export class ServiceError extends LayerError {
   constructor(serviceName: string, detail: string, context: string) {

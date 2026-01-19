@@ -1,9 +1,5 @@
 import { Express, RequestHandler } from "express";
-import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.route.js";
-import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
-import { userSystemRouterInstance } from "@/modules/userSystem/userSystem.route.js";
-import { articleRouterInstance } from "@/modules/articleSystem/articleSystem.route.js";
-import { eventSystemRouterInstance } from "@/modules/eventSystem/eventSystem.route.js";
+import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.route.js"; ;
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/learningResourceSystem.route.js";
 import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js";
 import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
@@ -21,6 +17,7 @@ export const routesLoader = (app: Express) => {
   //   "/api/user-resource-system",
   //   userResourceSystemRouterInstance.getRouter()
   // );
+
 
   app.use(
     "/api/learning-resource-system",

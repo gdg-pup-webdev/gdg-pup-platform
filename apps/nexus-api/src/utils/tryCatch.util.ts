@@ -31,6 +31,30 @@ export const _tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
  */
 export const tryCatch = async <T>(
   fn: () => Promise<T>,
+  context: string,
+): AsyncResult<T> => {
+  const { data, error } = await _tryCatch(fn);
+
+  if (error) {
+    if (error instanceof ServerError) {
+      error.addContext(context);
+      throw error; // propagate error outwards
+    }
+
+    // handle other error types here if needed
+    // ...
+    // ...
+
+    // unknown errors. let the caller handle it
+    return { error, data: undefined };
+  }
+
+  // no error
+  return { data, error: undefined };
+};
+
+export const tryCatchHandled = async <T>(
+  fn: () => Promise<T>,
   handlers?: {
     onServerError?: (error: ServerError) => void;
   },
@@ -38,8 +62,7 @@ export const tryCatch = async <T>(
   const { data, error } = await _tryCatch(fn);
 
   if (error) {
-    if (error instanceof ServerError) {
-      console.log("Handling ServerError in tryCatchHandled:");
+    if (error instanceof ServerError) { 
       if (handlers?.onServerError) handlers.onServerError(error);
     }
 
@@ -52,6 +75,7 @@ export const tryCatch = async <T>(
 
   return { data, error: undefined };
 };
+
 
 /**
  * Utility builder function to rethrow ServerErrors with added context.

@@ -1,26 +1,31 @@
 import { DatabaseError, RepositoryError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts/models";
-
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
+import { models } from "@packages/nexus-api-contracts";
 
 export class TransactionRepository {
   tableName = "wallet_transaction";
 
   constructor() {}
 
-  listTransactionsByWalletId = async (walletId: string) => {
+  listTransactionsByWalletId = async (
+    walletId: string,
+  ): RespositoryResultList<models.economySystem.transaction.row> => {
     const { data: listData, error: listError } = await supabase
       .from(this.tableName)
       .select("*")
       .eq("wallet_id", walletId);
 
     if (listError) {
-      // throw new RepositoryError()
+      throw new DatabaseError(listError.message);
     }
 
     const { count, error } = await supabase
       .from(this.tableName)
-      .select("*", { count: "exact", head: true }) // head: true means "don't return rows"
+      .select("*", { count: "exact", head: true })
       .eq("wallet_id", walletId);
 
     if (error) {
@@ -28,16 +33,14 @@ export class TransactionRepository {
     }
 
     return {
-      data: {
-        listData: listData as Models.economySystem.transaction.row[],
-        count: (count || 0) as number,
-      },
+      list: listData || [],
+      count: count || 0,
     };
   };
 
   createTransaction = async (
-    dto: Models.economySystem.transaction.insertDTO
-  ) => {
+    dto: models.economySystem.transaction.insertDTO,
+  ): Promise<models.economySystem.transaction.row[]> => {
     // insert transaction into database
     const { data, error } = await supabase
       .from(this.tableName)
@@ -45,9 +48,9 @@ export class TransactionRepository {
       .select("*")
       .single();
 
-    if (error) return { error };
+    if (error) throw new DatabaseError(error.message);
 
-    return { data: data as Models.economySystem.transaction.row };
+    return data;
   };
 }
 
