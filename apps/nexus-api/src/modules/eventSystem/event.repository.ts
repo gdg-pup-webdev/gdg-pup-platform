@@ -1,79 +1,85 @@
+import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts/models";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
+import { models } from "@packages/nexus-api-contracts";
 
 export class EventRepository {
+  tableName = "event";
+
   constructor() {}
 
-  listEvents = async () => {
-    const { data, error } = await supabase.from("event").select("*");
-    if (error) {
-      return { error };
-    }
+  listEvents =
+    async (): RespositoryResultList<models.eventSystem.event.row> => {
+      const { data, error } = await supabase.from(this.tableName).select("*");
+      if (error) throw new DatabaseError(error.message);
 
-    const {count, error: countError } = await supabase
-      .from("event")
-      .select("*", { count: "exact", head: true });
+      const { count, error: countError } = await supabase
+        .from(this.tableName)
+        .select("*", { count: "exact", head: true });
+      if (countError) throw new DatabaseError(countError.message);
 
-    if (countError) {
-      return { error: countError };
-    }
+      return {
+        list: data,
+        count: count || 0,
+      };
+    };
 
-
-    
-    return { data : {
-      listData: data as Models.eventSystem.event.row[], 
-      count: (count || 0) as number
-    } };
-  };
-
-  createEvent = async (dto: Models.eventSystem.event.insertDTO) => {
+  createEvent = async (
+    dto: models.eventSystem.event.insertDTO,
+  ): RepositoryResult<models.eventSystem.event.row> => {
     const { data, error } = await supabase
-      .from("event")
+      .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
-    if (error) {
-      return { error };
-    }
-    return { data : data as Models.eventSystem.event.row };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
-  getEventById = async (id: string) => {
+  getEventById = async (
+    id: string,
+  ): RepositoryResult<models.eventSystem.event.row> => {
     const { data, error } = await supabase
-      .from("event")
+      .from(this.tableName)
       .select("*")
       .eq("id", id)
       .single();
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.eventSystem.event.row };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
-  deleteEvent = async (id: string) => {
+  deleteEvent = async (
+    id: string,
+  ): RepositoryResult<models.eventSystem.event.row> => {
     const { data, error } = await supabase
-      .from("event")
+      .from(this.tableName)
       .delete()
       .eq("id", id)
       .select("*")
       .single();
-    if (error) {
-      return { error };
-    }
-    return { data };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
-  updateEvent = async (id: string, dto: Models.eventSystem.event.updateDTO) => {
+  updateEvent = async (
+    id: string,
+    dto: models.eventSystem.event.updateDTO,
+  ): RepositoryResult<models.eventSystem.event.row> => {
     const { data, error } = await supabase
-      .from("event")
+      .from(this.tableName)
       .update(dto)
       .eq("id", id)
       .select("*")
       .single();
-    if (error) {
-      return { error };
-    }
-    return { data : data as Models.eventSystem.event.row };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 }
 

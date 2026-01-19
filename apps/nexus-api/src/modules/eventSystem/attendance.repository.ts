@@ -1,45 +1,45 @@
+import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts/models";
+import { RespositoryResultList } from "@/types/repository.types.js";
+import { models } from "@packages/nexus-api-contracts";
 
 export class AttendanceRepository {
+  tableName = "event_attendance";
+
   constructor() {}
 
-  create = async (dto: Models.eventSystem.attendance.insertDTO) => {
+  create = async (
+    dto: models.eventSystem.attendance.insertDTO,
+  ): Promise<models.eventSystem.attendance.row> => {
     const { data, error } = await supabase
-      .from("event_attendance")
+      .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
-    if (error) {
-      return { error };
-    }
-    return { data };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
-  listEventAttendees = async (eventId: string) => {
+  listEventAttendees = async (
+    eventId: string,
+  ): RespositoryResultList<models.eventSystem.attendance.row> => {
     const { data, error } = await supabase
-      .from("event_attendance")
+      .from(this.tableName)
       .select("*, user(*)")
       .eq("event_id", eventId);
-    if (error) {
-      return { error };
-    }
+    if (error) throw new DatabaseError(error.message);
 
     const { count, error: countError } = await supabase
-      .from("event_attendance")
+      .from(this.tableName)
       .select("*", { count: "exact", head: true })
-
       .eq("event_id", eventId);
 
-    if (countError) {
-      return { error: countError };
-    }
+    if (countError) throw new DatabaseError(countError.message);
 
     return {
-      data: {
-        listData: data.map((row) => row.user) as Models.userSystem.user.row[],
-        count: (count || 0) as number,
-      },
+      list: data.map((row) => row.user),
+      count: count || 0,
     };
   };
 }

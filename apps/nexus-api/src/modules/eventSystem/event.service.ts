@@ -1,4 +1,4 @@
-import { Models } from "@packages/nexus-api-contracts/models";
+import { models } from "@packages/nexus-api-contracts";
 import {
   EventRepository,
   eventRepositoryInstance,
@@ -17,7 +17,7 @@ export class EventService {
   constructor(
     private eventRepository: EventRepository = eventRepositoryInstance,
     private attendanceService: AttendanceService = attendanceServiceInstance,
-    private walletService: WalletService = walletServiceInstance
+    private walletService: WalletService = walletServiceInstance,
   ) {}
 
   list = async () => {
@@ -40,7 +40,7 @@ export class EventService {
       Models.eventSystem.event.insertDTO,
       "id" | "created_at" | "updated_at" | "creator_id"
     >,
-    creatorId: string
+    creatorId: string,
   ) => {
     const { data, error } = await this.eventRepository.createEvent({
       ...dto,
@@ -57,7 +57,7 @@ export class EventService {
     if (error) {
       return { error };
     }
-    return { data  };
+    return { data };
   };
 
   delete = async (id: string) => {
@@ -73,13 +73,13 @@ export class EventService {
     if (error) {
       return { error };
     }
-    return { data  };
+    return { data };
   };
 
   checkInToEvent = async (
     eventId: string,
     userId: string,
-    checkinMethod: string
+    checkinMethod: string,
   ) => {
     // no need since di naman optional si userId sa params
     // if (!userId) {
@@ -98,23 +98,19 @@ export class EventService {
     // TODO: check if user has already checked in to this event
 
     // create new attendance record
-    const { data, error: attendanceError } = await this.attendanceService.create(
-      eventId,
-      userId,
-      checkinMethod
-    );
+    const { data, error: attendanceError } =
+      await this.attendanceService.create(eventId, userId, checkinMethod);
 
     if (attendanceError) {
       return { error: attendanceError };
     }
-
 
     // increment attendees count in event record
     const { data: updatedEventData, error: updateError } = await this.update(
       eventId,
       {
         attendees_count: eventData.attendees_count + 1,
-      }
+      },
     );
 
     if (updateError) {
@@ -127,7 +123,7 @@ export class EventService {
         userId,
         eventData.attendance_points || 0,
         "event",
-        eventId
+        eventId,
       );
     if (walletError) {
       return { error: walletError };
