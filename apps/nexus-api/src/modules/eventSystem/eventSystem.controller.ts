@@ -4,33 +4,37 @@ import {
   AttendanceService,
   attendanceServiceInstance,
 } from "./attendance.service.js";
-import { ServerError } from "../../classes/ServerError.js";
+import {
+  RepositoryError,
+  ServerError,
+  ServiceError,
+} from "../../classes/ServerError.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
+import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class EventSystemController {
   constructor(
     private eventService: EventService = eventServiceInstance,
-    private attendanceService: AttendanceService = attendanceServiceInstance
+    private attendanceService: AttendanceService = attendanceServiceInstance,
   ) {}
 
   /**
    * Vanilla express example
    */
-  list: RequestHandler = createExpressController(
+  listEvents: RequestHandler = createExpressController(
     contract.api.event_system.events.GET,
-    async ({ input, output, ctx }) => {
-      const { data, error } = await this.eventService.list();
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
-        );
-      }
+    async ({ input, output }) => {
+      const { data, error } = await tryCatch(
+        async () => await this.eventService.list(),
+        "listing events",
+      );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Events fetched successfully",
-        data: data.listData,
+        data: data.list,
         meta: {
           totalRecords: data.count,
           currentPage: input.query.page.number,
@@ -38,7 +42,7 @@ export class EventSystemController {
           totalPages: Math.ceil(data.count / input.query.page.size),
         },
       });
-    }
+    },
   );
 
   /**
@@ -54,19 +58,18 @@ export class EventSystemController {
 
       const dto = input.body.data;
 
-      const { data, error } = await this.eventService.create(dto, userId);
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
-        );
-      }
+      const { data, error } = await tryCatch(
+        async () => await this.eventService.create(dto, userId),
+        "creating event",
+      );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Event created successfully",
         data,
       });
-    }
+    },
   );
 
   /**
@@ -80,18 +83,18 @@ export class EventSystemController {
       const eventId = input.params.eventId;
       const dto = input.body.data;
 
-      const { data, error } = await this.eventService.update(eventId, dto);
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
-        );
-      }
+      const { data, error } = await tryCatch(
+        async () => await this.eventService.update(eventId, dto),
+        "updating event",
+      );
+      if (error) throw new ServiceError(error.message);
+
       return output(200, {
         status: "success",
         message: "Event updated successfully",
         data,
       });
-    }
+    },
   );
 
   delete: RequestHandler = createExpressController(
@@ -99,19 +102,18 @@ export class EventSystemController {
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId;
 
-      const { data, error } = await this.eventService.delete(eventId);
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
-        );
-      }
+      const { data, error } = await tryCatch(
+        async () => await this.eventService.delete(eventId),
+        "deleting event",
+      );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Event deleted successfully",
         data,
       });
-    }
+    },
   );
 
   getOne: RequestHandler = createExpressController(
@@ -119,19 +121,18 @@ export class EventSystemController {
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId;
 
-      const { data, error } = await this.eventService.getById(eventId);
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
-        );
-      }
+      const { data, error } = await tryCatch(
+        async () => await this.eventService.getById(eventId),
+        "getting event by id",
+      );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Event fetched successfully",
         data,
       });
-    }
+    },
   );
 
   checkin: RequestHandler = createExpressController(
@@ -144,41 +145,39 @@ export class EventSystemController {
       const body = input.body;
       const { eventId, checkinMethod, attendeeId } = body.data;
 
-      const { data, error } = await this.eventService.checkInToEvent(
-        eventId,
-        attendeeId,
-        checkinMethod
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.eventService.checkInToEvent(
+            eventId,
+            attendeeId,
+            checkinMethod,
+          ),
+        "checking in to event",
       );
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
-        );
-      }
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Attendee checked in successfully",
         data: data.attendance,
       });
-    }
+    },
   );
 
   listEventAttendees: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.attendees.GET,
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId as string;
-      const { data, error } =
-        await this.attendanceService.listEventAttendees(eventId);
-      if (error) {
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
-        );
-      }
+      const { data, error } = await tryCatch(
+        async () => await this.attendanceService.listEventAttendees(eventId),
+        "listing event attendees",
+      );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Attendees fetched successfully",
-        data: data.listData,
+        data: data.list,
         meta: {
           totalRecords: data.count,
           currentPage: input.query.page.number,
@@ -186,7 +185,7 @@ export class EventSystemController {
           totalPages: Math.ceil(data.count / input.query.page.size),
         },
       });
-    }
+    },
   );
 }
 

@@ -23,7 +23,7 @@ export class AttendanceRepository {
 
   listEventAttendees = async (
     eventId: string,
-  ): RespositoryResultList<models.eventSystem.attendance.row> => {
+  ): RespositoryResultList<models.eventSystem.attendee.row> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*, user(*)")

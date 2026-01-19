@@ -30,7 +30,7 @@ export class EventSystemRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError' 
      */
-    router.get("/events", this.eventSystemController.list);
+    router.get("/events", this.eventSystemController.listEvents);
 
     /**
      * @openapi
