@@ -3,7 +3,7 @@ import {
   learningResourceRepositoryInstance,
   ExternalResourceRepository,
 } from "./externalResource.repository.js";
-import { handleServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
+import { handleServerError, tryCatch } from "@/utils/tryCatch.util.js";
 import { ServiceError } from "@/classes/ServerError.js";
 
 export class ExternalResourceService {
@@ -15,7 +15,7 @@ export class ExternalResourceService {
     dto: Omit<Models.resourceSystem.resource.insertDTO, "uploader_id">,
     uploaderId: string,
   ) => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () =>
         await this.resourceRepository.create({
           ...dto,
@@ -37,7 +37,7 @@ export class ExternalResourceService {
   };
 
   delete = async (resourceId: string) => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.delete(resourceId),
       { onServerError: handleServerError("deleting external resource") },
     );
@@ -56,7 +56,7 @@ export class ExternalResourceService {
     resourceId: string,
     dto: Models.resourceSystem.resource.updateDTO,
   ) => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.update(resourceId, dto),
       {
         onServerError: handleServerError("updating external resource"),
@@ -74,7 +74,7 @@ export class ExternalResourceService {
   };
 
   list = async () => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.list(),
       {
         onServerError: handleServerError("listing external resources"),
@@ -92,7 +92,7 @@ export class ExternalResourceService {
   };
 
   getOne = async (resourceId: string) => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.getOne(resourceId),
       {
         onServerError: handleServerError("getting external resource"),

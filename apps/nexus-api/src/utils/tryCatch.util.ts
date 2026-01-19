@@ -13,7 +13,7 @@ export type AsyncResult<T, E = Error> = Promise<SyncResult<T, E>>;
  * - Return the result if successful
  * - Return the error on error
  */
-export const tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
+export const _tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
   try {
     const data = await fn();
     return { data, error: undefined };
@@ -25,16 +25,17 @@ export const tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
 
 /**
  * Extends the tryCatch utility by adding custom error handlers
+ * - converts errors into returned variables
  * - takes a function and optional error handlers
  * - runs the error handlers on error and returns their result instead
  */
-export const tryCatchHandled = async <T>(
+export const tryCatch = async <T>(
   fn: () => Promise<T>,
   handlers?: {
     onServerError?: (error: ServerError) => void;
   },
 ): AsyncResult<T> => {
-  const { data, error } = await tryCatch(fn);
+  const { data, error } = await _tryCatch(fn);
 
   if (error) {
     if (error instanceof ServerError) {
