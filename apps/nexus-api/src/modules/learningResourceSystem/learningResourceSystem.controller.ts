@@ -6,7 +6,7 @@ import {
 import { contract } from "@packages/nexus-api-contracts";
 import { ControllerError, ServerError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { rethrowServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
+import { handleServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
 
 export class LearningResourceSystemController {
   constructor(
@@ -22,14 +22,14 @@ export class LearningResourceSystemController {
 
       const { data, error } = await tryCatchHandled(
         async () => await this.resourceService.create(input.body.data, userId),
-        { onServerError: rethrowServerError("calling service.create") },
+        { onServerError: handleServerError("on controller, calling service.create") },
       );
 
       if (error)
         throw new ControllerError(
           "LearningResourceSystemController",
-          "create",
           error.message,
+          "Controller create external resource",
         );
 
       return output(200, {
@@ -47,14 +47,14 @@ export class LearningResourceSystemController {
       const resourceId = input.params.externalResourceId;
       const { error } = await tryCatchHandled(
         async () => await this.resourceService.delete(resourceId),
-        { onServerError: rethrowServerError("deleting external resource") },
+        { onServerError: handleServerError("deleting external resource") },
       );
 
       if (error) {
         throw new ControllerError(
           "LearningResourceSystemController",
-          "delete",
           error.message,
+          "Controller delete external resource",
         );
       }
 
@@ -73,13 +73,13 @@ export class LearningResourceSystemController {
       const { data, error } = await tryCatchHandled(
         async () =>
           await this.resourceService.update(resourceId, input.body.data),
-        { onServerError: rethrowServerError("updating external resource") },
+        { onServerError: handleServerError("updating external resource") },
       );
       if (error)
         throw new ControllerError(
           "LearningResourceSystemController",
-          "update",
           error.message,
+          "Controller update external resource",
         );
 
       return output(200, {
@@ -95,14 +95,14 @@ export class LearningResourceSystemController {
     async ({ input, output, ctx }) => {
       const { data, error } = await tryCatchHandled(
         async () => await this.resourceService.list(),
-        { onServerError: rethrowServerError("listing external resources") },
+        { onServerError: handleServerError("listing external resources") },
       );
 
       if (error)
         throw new ControllerError(
           "LearningResourceSystemController",
-          "list",
           error.message,
+          "Controller list external resource",
         );
 
       return output(200, {
@@ -127,15 +127,15 @@ export class LearningResourceSystemController {
       const { data, error } = await tryCatchHandled(
         async () => await this.resourceService.getOne(resourceId),
         {
-          onServerError: rethrowServerError("getting external resource"),
+          onServerError: handleServerError("getting external resource"),
         },
       );
 
       if (error)
         throw new ControllerError(
           "LearningResourceSystemController",
-          "getOne",
           error.message,
+          "Controller get one external resource",
         );
 
       return output(200, {

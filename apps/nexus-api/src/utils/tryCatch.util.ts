@@ -57,7 +57,7 @@ export const tryCatchHandled = async <T>(
  * - This function returns a function
  * - The function takes a ServerError, adds context to it, and rethrows it.
  */
-export const rethrowServerError = <T extends ServerError>(context: string) => {
+export const handleServerError = <T extends ServerError>(context: string) => {
   return (error: T) => {
     console.log("Rethrowing ServerError with context:", error, context);
     error.addContext(context);

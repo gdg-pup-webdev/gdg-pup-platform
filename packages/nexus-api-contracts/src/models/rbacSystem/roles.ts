@@ -1,11 +1,7 @@
+import { publicUserRoleRowSchema } from "#types/supabase.schema.js";
 import z from "zod";
 
-export const row = z.object({
-  id: z.string(),
-  name: z.string(),
-  parentRoleId: z.string().optional(),
-  description: z.string(),
-});
+export const row = publicUserRoleRowSchema
 
 export const insert = row.omit({
   id: true,

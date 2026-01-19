@@ -3,7 +3,7 @@ import {
   learningResourceRepositoryInstance,
   ExternalResourceRepository,
 } from "./externalResource.repository.js";
-import { rethrowServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
+import { handleServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
 import { ServiceError } from "@/classes/ServerError.js";
 
 export class ExternalResourceService {
@@ -22,12 +22,16 @@ export class ExternalResourceService {
           uploader_id: uploaderId,
         }),
       {
-        onServerError: rethrowServerError("creating external resource"),
+        onServerError: handleServerError("creating external resource"),
       },
     );
 
     if (error)
-      throw new ServiceError("ResourceService", "calling repository.create", error.message);
+      throw new ServiceError(
+        "ResourceService",
+        error.message,
+        "Error while calling repository.create",
+      );
 
     return data;
   };
@@ -35,11 +39,15 @@ export class ExternalResourceService {
   delete = async (resourceId: string) => {
     const { data, error } = await tryCatchHandled(
       async () => await this.resourceRepository.delete(resourceId),
-      { onServerError: rethrowServerError("deleting external resource") },
+      { onServerError: handleServerError("deleting external resource") },
     );
 
     if (error)
-      throw new ServiceError("ResourceService", "delete", error.message);
+      throw new ServiceError(
+        "ResourceService",
+        error.message,
+        "Error while calling repository.delete",
+      );
 
     return data;
   };
@@ -51,12 +59,16 @@ export class ExternalResourceService {
     const { data, error } = await tryCatchHandled(
       async () => await this.resourceRepository.update(resourceId, dto),
       {
-        onServerError: rethrowServerError("updating external resource"),
+        onServerError: handleServerError("updating external resource"),
       },
     );
 
     if (error)
-      throw new ServiceError("ResourceService", "update", error.message);
+      throw new ServiceError(
+        "ResourceService",
+        error.message,
+        "Error while calling repository.update",
+      );
 
     return data;
   };
@@ -65,11 +77,16 @@ export class ExternalResourceService {
     const { data, error } = await tryCatchHandled(
       async () => await this.resourceRepository.list(),
       {
-        onServerError: rethrowServerError("listing external resources"),
+        onServerError: handleServerError("listing external resources"),
       },
     );
 
-    if (error) throw new ServiceError("ResourceService", "list", error.message);
+    if (error)
+      throw new ServiceError(
+        "ResourceService",
+        error.message,
+        "Error while calling repository.list",
+      );
 
     return data;
   };
@@ -78,12 +95,16 @@ export class ExternalResourceService {
     const { data, error } = await tryCatchHandled(
       async () => await this.resourceRepository.getOne(resourceId),
       {
-        onServerError: rethrowServerError("getting external resource"),
+        onServerError: handleServerError("getting external resource"),
       },
     );
 
     if (error)
-      throw new ServiceError("ResourceService", "getOne", error.message);
+      throw new ServiceError(
+        "ResourceService",
+        error.message,
+        "Error while calling repository.getOne",
+      );
 
     return data;
   };

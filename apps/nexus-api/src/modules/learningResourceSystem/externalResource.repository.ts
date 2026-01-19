@@ -1,4 +1,4 @@
-import { DatabaseError, ServerError } from "@/classes/ServerError.js";
+import { RepositoryError, ServerError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
@@ -35,19 +35,18 @@ export class ExternalResourceRepository {
   constructor() {}
 
   create = async (dto: tableInsert): RepositoryResult<tableRow> => {
-    
     const { data, error } = await supabase
       .from(tableName)
       .insert(dto)
       .select("*")
       .single();
-      
+ 
     if (error)
-      throw new DatabaseError(
+      throw new RepositoryError(
         repositoryName,
         tableName,
-        "create",
         error.message,
+        "Error while creating external resource",
       );
 
     return data;
@@ -62,11 +61,11 @@ export class ExternalResourceRepository {
       .single();
 
     if (error)
-      throw new DatabaseError(
+      throw new RepositoryError(
         repositoryName,
         tableName,
-        "delete",
         error.message,
+        "Error while deleting external resource",
       );
 
     return data;
@@ -84,11 +83,11 @@ export class ExternalResourceRepository {
       .single();
 
     if (error)
-      throw new DatabaseError(
+      throw new RepositoryError(
         repositoryName,
         tableName,
-        "update",
         error.message,
+        "Error while updating external resource",
       );
 
     return data;
@@ -101,18 +100,23 @@ export class ExternalResourceRepository {
       .order("created_at", { ascending: false });
 
     if (error)
-      throw new DatabaseError(repositoryName, tableName, "list", error.message);
+      throw new RepositoryError(
+        repositoryName,
+        tableName,
+        error.message,
+        "Error while listing external resources",
+      );
 
     const { count, error: countError } = await supabase
       .from(tableName)
       .select("*", { count: "exact", head: true });
 
     if (countError)
-      throw new DatabaseError(
+      throw new RepositoryError(
         repositoryName,
         tableName,
-        "count",
         countError.message,
+        "Error while counting external resources",
       );
 
     return {
@@ -129,11 +133,11 @@ export class ExternalResourceRepository {
       .single();
 
     if (error)
-      throw new DatabaseError(
+      throw new RepositoryError(
         repositoryName,
         tableName,
-        "getOne",
         error.message,
+        "Error while getting external resource",
       );
     return data;
   };

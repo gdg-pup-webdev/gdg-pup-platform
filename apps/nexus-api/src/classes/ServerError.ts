@@ -1,29 +1,57 @@
 import { extend } from "zod/mini";
 
+/**
+ *  export const error = () => {
+       return z.object({
+         status: z.string(),
+         message: z.string(),
+         errors: z
+           .array(
+             z.object({
+               title: z.string(),
+               detail: z.string(),
+               moreDetails: z.unknown().optional(),
+               source: z.string().optional(),
+             })
+           )
+           .optional(),
+       });
+     };
+ */
+
+type ServerErrorProps = {
+  statusCode: number;
+  status?: "fail" | "error";
+  message?: string;
+  title?: string;
+  detail?: string;
+  context?: string[];
+};
+
 export class ServerError extends Error {
   public statusCode: number;
-  public status: string;
-  public isOperational: boolean;
+  public status: "fail" | "error";
+
   public title: string;
-  public type: string;
+  public detail: string;
+  public context: string[];
 
-  public context: string[] ;
+  constructor({
+    statusCode = 500,
+    status = "error",
+    message = "Internal Server Error",
+    title = "Internal Server Error",
+    detail = "Internal Server Error",
+    context = [],
+  }: ServerErrorProps) {
+    super(message);
+    this.statusCode = statusCode;
+    this.message = message;
+    this.status = status || `${statusCode}`.startsWith("4") ? "fail" : "error";
+    this.title = title;
+    this.detail = detail;
 
-  constructor(props: {
-    statusCode: number;
-    title: string;
-    message?: string;
-    type?: string;
-    context?: string[];
-  }) {
-    super(props.message);
-    this.statusCode = props.statusCode;
-    this.status = `${props.statusCode}`.startsWith("4") ? "fail" : "error";
-    this.title = props.title;
-    this.isOperational = true;
-    this.type = props.type || "Unknown";
- 
-    this.context = props.context || [];
+    this.context = context || [];
 
     Error.captureStackTrace(this, this.constructor);
   }
@@ -40,7 +68,6 @@ export class ServerError extends Error {
       statusCode: 401,
       title: "Unauthenticated",
       message,
-      type: "Unauthorized",
     });
   }
 
@@ -51,7 +78,6 @@ export class ServerError extends Error {
       statusCode: 403,
       title: "Forbidden",
       message,
-      type: "Forbidden",
     });
   }
 
@@ -60,7 +86,6 @@ export class ServerError extends Error {
       statusCode: 404,
       title: "Not Found",
       message,
-      type: "NotFound",
     });
   }
 
@@ -69,57 +94,56 @@ export class ServerError extends Error {
       statusCode: 500,
       title: "Internal Server Error",
       message,
-      type: "InternalError",
     });
   }
 }
 
-export class DatabaseError extends ServerError {
+type LayerErrorProps = ServerErrorProps & { layerName: string };
+export class LayerError extends ServerError {
+  public layerName: string;
+  constructor({ layerName, ...props }: LayerErrorProps) {
+    super(props);
+    this.layerName = layerName;
+  }
+}
+
+export class RepositoryError extends LayerError {
   constructor(
     repository: string,
     tableName: string,
-    action: string,
-    message: string,
+    detail: string,
+    context: string,
   ) {
     super({
+      layerName: "repository",
       statusCode: 500,
-      title: `Database Error on ${repository}`,
-      message: `Failed while ${action} on ${tableName}. ${message ? message : ""}`,
-      type: "DatabaseError",
-      context: [action]
+      title: `Database Error on repostory: ${repository} table: ${tableName}`,
+      detail: detail,
+      context: [context],
     });
   }
 }
 
-
-export class ServiceError extends ServerError {
-  constructor(
-    serviceName: string,
-    action: string,
-    message: string,
-  ) {
+export class ServiceError extends LayerError {
+  constructor(serviceName: string, detail: string, context: string) {
     super({
+      layerName: "service",
       statusCode: 500,
       title: `Service Error on ${serviceName}`,
-      message: `Failed while ${action}. ${message ? message : ""}`,
-      type: "ServiceError",
-      context: [action]
+      message: detail,
+      context: [context],
     });
   }
 }
 
-export class ControllerError extends ServerError {
-  constructor(
-    controllerName: string,
-    action: string,
-    message: string,
-  ) {
+export class ControllerError extends LayerError {
+  constructor(controllerName: string, detail: string, context: string) {
     super({
+      layerName: "controller",
       statusCode: 500,
       title: `Controller Error on ${controllerName}`,
-      message: `Failed while ${action}. ${message ? message : ""}`,
-      type: "ControllerError",
-      context: [action]
+      message: detail,
+      context: [context],
     });
   }
 }
