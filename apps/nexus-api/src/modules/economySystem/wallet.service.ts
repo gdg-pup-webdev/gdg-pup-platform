@@ -80,7 +80,7 @@ export class WalletService {
       throw new RepositoryError("Failed to create transaction record.");
 
     // build response
-    return { data: { transaction: data, newBalance } };
+    return {transaction: data, updatedWallet: wallet};
   };
 
   decrementPoints = async (
@@ -129,7 +129,7 @@ export class WalletService {
       throw new RepositoryError("Failed to create transaction record.");
 
     // build response
-    return { data: { transaction: data, newBalance } };
+    return { transaction: data,  updatedWallet: wallet };
   };
 }
 

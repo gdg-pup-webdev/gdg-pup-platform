@@ -298,6 +298,46 @@ export const publicResourceTagJunctionRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicRewardRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string(),
+  id: z.string(),
+  is_claimed: z.boolean(),
+  title: z.string(),
+  user_id: z.string(),
+  value: z.number(),
+});
+
+export const publicRewardInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string(),
+  id: z.string().optional(),
+  is_claimed: z.boolean().optional(),
+  title: z.string(),
+  user_id: z.string(),
+  value: z.number().optional(),
+});
+
+export const publicRewardUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  is_claimed: z.boolean().optional(),
+  title: z.string().optional(),
+  user_id: z.string().optional(),
+  value: z.number().optional(),
+});
+
+export const publicRewardRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("reward_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicStudyJamRowSchema = z.object({
   created_at: z.string(),
   description: z.string(),

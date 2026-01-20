@@ -104,6 +104,13 @@ export class DatabaseError extends ServerError {
   }
 }
 
+export class InvalidOperationError extends ServerError {
+  constructor(detail: string = "Invalid Operation") {
+    super({ statusCode: 400, title: "Invalid Operation", detail: detail });
+  }
+}
+
+
 export class NotFoundError extends ServerError {
   constructor(detail: string = "Resource not found") {
     super({ statusCode: 404, title: "Not Found", detail: detail });

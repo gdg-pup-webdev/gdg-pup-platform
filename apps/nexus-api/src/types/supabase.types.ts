@@ -281,6 +281,44 @@ export type Database = {
           },
         ]
       }
+      reward: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          is_claimed: boolean
+          title: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          is_claimed?: boolean
+          title: string
+          user_id: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_claimed?: boolean
+          title?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       study_jam: {
         Row: {
           created_at: string

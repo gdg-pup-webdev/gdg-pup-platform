@@ -40,7 +40,7 @@ export class TransactionRepository {
 
   createTransaction = async (
     dto: models.economySystem.transaction.insertDTO,
-  ): Promise<models.economySystem.transaction.row[]> => {
+  ): RepositoryResult<models.economySystem.transaction.row> => {
     // insert transaction into database
     const { data, error } = await supabase
       .from(this.tableName)

@@ -1,116 +1,141 @@
+import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts/models";
-import { TablesInsert } from "@packages/nexus-api-contracts/types";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+
+type tableRow = Tables<"article">;
+type tableInsert = TablesInsert<"article">;
+type tableUpdate = TablesUpdate<"article">;
+
+type commentRow = Tables<"article_comment">;
+type commentInsert = TablesInsert<"article_comment">;
+type commentUpdate = TablesUpdate<"article_comment">;
 
 export class ArticleRepository {
+  tableName = "article";
+  commentTableName = "article_comment";
+
   constructor() {}
 
-  create = async (dto: TablesInsert<"article">) => {
+  create = async (dto: TablesInsert<"article">): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
-      .from("article")
+      .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.article.row };
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
-  list = async () => {
+  list = async (): RespositoryResultList<tableRow> => {
     const { data, error } = await supabase
-      .from("article")
+      .from(this.tableName)
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.article.row[] };
+    if (error) throw new DatabaseError(error.message);
+
+    const { count, error: countError } = await supabase
+      .from(this.tableName)
+      .select("*", { count: "exact", head: true });
+
+    if (countError) throw new DatabaseError(countError.message);
+
+    return {
+      list: data,
+      count: count || 0,
+    };
   };
 
-  getOne = async (articleId: string) => {
+  getOne = async (articleId: string): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
-      .from("article")
+      .from(this.tableName)
       .select("*")
       .eq("id", articleId)
       .single();
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.article.row };
+    if (error) throw new DatabaseError(error.message);
+    return data;
   };
 
   update = async (
     articleId: string,
-    dto: Models.articleSystem.article.updateDTO
-  ) => {
+    dto: tableUpdate,
+  ): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
-      .from("article")
+      .from(this.tableName)
       .update(dto)
       .eq("id", articleId)
       .select("*")
       .single();
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.article.row };
+    if (error) throw new DatabaseError(error.message);
+    return data;
   };
 
-  delete = async (articleId: string) => {
+  delete = async (articleId: string): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
-      .from("article")
+      .from(this.tableName)
       .delete()
       .eq("id", articleId)
       .select("*")
       .single();
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.article.row };
+    if (error) throw new DatabaseError(error.message);
+    return data;
   };
 
-  listComments = async (articleId: string) => {
+  listComments = async (
+    articleId: string,
+  ): RespositoryResultList<commentRow> => {
     const { data, error } = await supabase
-      .from("article_comment")
+      .from(this.commentTableName)
       .select("*")
       .eq("article_id", articleId)
       .order("created_at", { ascending: true });
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.comment.row[] };
+    if (error) throw new DatabaseError(error.message);
+
+    const { count, error: countError } = await supabase
+      .from(this.commentTableName)
+      .select("*", { count: "exact", head: true })
+      .eq("article_id", articleId);
+
+    if (countError) throw new DatabaseError(countError.message);
+
+    return {
+      list: data,
+      count: count || 0,
+    };
   };
 
-  createComment = async (dto: Models.articleSystem.comment.insertDTO) => {
+  createComment = async (dto: commentInsert): RepositoryResult<commentRow> => {
     const { data, error } = await supabase
-      .from("article_comment")
+      .from(this.commentTableName)
       .insert(dto)
       .select("*")
       .single();
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.comment.row };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
-  deleteComment = async (commentId: string) => {
+  deleteComment = async (commentId: string): RepositoryResult<commentRow> => {
     const { data, error } = await supabase
-      .from("article_comment")
+      .from(this.commentTableName)
       .delete()
       .eq("id", commentId)
       .select("*")
       .single();
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.articleSystem.comment.row };
+    if (error) throw new DatabaseError(error.message);
+    return data;
   };
 }
 
