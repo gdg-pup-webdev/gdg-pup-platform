@@ -1,16 +1,11 @@
-import z from "zod";
+import {
+  publicStudyJamInsertSchema,
+  publicStudyJamRowSchema,
+  publicStudyJamUpdateSchema,
+} from "#types/supabase.schema.js"; 
 
-export const row = z.object({
-  // event data
-  id: z.string(),
-  createdAt: z.string(),
-  title: z.string(),
-  description: z.string(),
-  recordingLink: z.string(),
-  summary: z.string(),
-  teamId: z.string(),
-});
+export const row = publicStudyJamRowSchema;
 
-export const insert = row.omit({ id: true, createdAt: true });
+export const insert = publicStudyJamInsertSchema;
 
-export const update = insert.partial();
+export const update = publicStudyJamUpdateSchema;

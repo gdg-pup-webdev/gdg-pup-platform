@@ -20,37 +20,37 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
 );
 
 export const publicArticleRowSchema = z.object({
-  author_id: z.string(),
+  author_id: z.string().nullable(),
   body: z.string().nullable(),
   created_at: z.string(),
   id: z.string(),
   is_published: z.boolean(),
   published_at: z.string().nullable(),
-  releated_event_id: z.string().nullable(),
+  related_event_id: z.string().nullable(),
   title: z.string(),
   updated_at: z.string(),
 });
 
 export const publicArticleInsertSchema = z.object({
-  author_id: z.string(),
+  author_id: z.string().optional().nullable(),
   body: z.string().optional().nullable(),
   created_at: z.string().optional(),
   id: z.string().optional(),
   is_published: z.boolean().optional(),
   published_at: z.string().optional().nullable(),
-  releated_event_id: z.string().optional().nullable(),
+  related_event_id: z.string().optional().nullable(),
   title: z.string(),
   updated_at: z.string().optional(),
 });
 
 export const publicArticleUpdateSchema = z.object({
-  author_id: z.string().optional(),
+  author_id: z.string().optional().nullable(),
   body: z.string().optional().nullable(),
   created_at: z.string().optional(),
   id: z.string().optional(),
   is_published: z.boolean().optional(),
   published_at: z.string().optional().nullable(),
-  releated_event_id: z.string().optional().nullable(),
+  related_event_id: z.string().optional().nullable(),
   title: z.string().optional(),
   updated_at: z.string().optional(),
 });
@@ -64,8 +64,8 @@ export const publicArticleRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
   z.object({
-    foreignKeyName: z.literal("article_releated_event_id_fkey"),
-    columns: z.tuple([z.literal("releated_event_id")]),
+    foreignKeyName: z.literal("article_related_event_id_fkey"),
+    columns: z.tuple([z.literal("related_event_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("event"),
     referencedColumns: z.tuple([z.literal("id")]),
@@ -73,30 +73,30 @@ export const publicArticleRelationshipsSchema = z.tuple([
 ]);
 
 export const publicArticleCommentRowSchema = z.object({
-  article_id: z.string(),
+  article_id: z.string().nullable(),
   body: z.string(),
   created_at: z.string(),
   id: z.string(),
   updated_at: z.string(),
-  user_id: z.string(),
+  user_id: z.string().nullable(),
 });
 
 export const publicArticleCommentInsertSchema = z.object({
-  article_id: z.string(),
+  article_id: z.string().optional().nullable(),
   body: z.string(),
   created_at: z.string().optional(),
   id: z.string().optional(),
   updated_at: z.string().optional(),
-  user_id: z.string(),
+  user_id: z.string().optional().nullable(),
 });
 
 export const publicArticleCommentUpdateSchema = z.object({
-  article_id: z.string().optional(),
+  article_id: z.string().optional().nullable(),
   body: z.string().optional(),
   created_at: z.string().optional(),
   id: z.string().optional(),
   updated_at: z.string().optional(),
-  user_id: z.string().optional(),
+  user_id: z.string().optional().nullable(),
 });
 
 export const publicArticleCommentRelationshipsSchema = z.tuple([
@@ -297,6 +297,33 @@ export const publicResourceTagJunctionRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
+
+export const publicStudyJamRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string(),
+  id: z.string(),
+  recording_url: z.string(),
+  summary: z.string(),
+  title: z.string(),
+});
+
+export const publicStudyJamInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string(),
+  id: z.string().optional(),
+  recording_url: z.string(),
+  summary: z.string(),
+  title: z.string(),
+});
+
+export const publicStudyJamUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  recording_url: z.string().optional(),
+  summary: z.string().optional(),
+  title: z.string().optional(),
+});
 
 export const publicUserRowSchema = z.object({
   avatar_url: z.string().nullable(),

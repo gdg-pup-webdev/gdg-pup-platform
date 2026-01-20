@@ -3,38 +3,33 @@ import {
   ExternalResourceService,
   resourceServiceInstance,
 } from "./externalResource.service.js";
-import { contract } from "@packages/nexus-api-contracts";
-import { ControllerError, ServerError } from "@/classes/ServerError.js";
+import { contract, models } from "@packages/nexus-api-contracts";
+import {
+  ControllerError,
+  ServerError,
+  ServiceError,
+} from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { handleServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
+import { handleServerError, tryCatch } from "@/utils/tryCatch.util.js";
 
-export class LearningResourceSystemController {
+export class ExternalResourceController {
   constructor(
     private readonly resourceService: ExternalResourceService = resourceServiceInstance,
   ) {}
 
   createExternalResource: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.externalResources.POST,
+    contract.api.learning_resource_system.external_resources.POST,
     async ({ input, output, ctx }) => {
       const { res, req } = ctx;
       const user = req.user!;
       const userId = user.id;
 
-      const { data, error } = await tryCatchHandled(
+      const { data, error } = await tryCatch(
         async () => await this.resourceService.create(input.body.data, userId),
-        {
-          onServerError: handleServerError(
-            "on controller, calling service.create",
-          ),
-        },
+        "creating external resource",
       );
 
-      if (error)
-        throw new ControllerError(
-          "LearningResourceSystemController",
-          error.message,
-          "Controller create external resource",
-        );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -45,22 +40,15 @@ export class LearningResourceSystemController {
   );
 
   deleteExternalResource: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.externalResources.externalResourceId
-      .DELETE,
+    contract.api.learning_resource_system.external_resources.externalResourceId.DELETE,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId;
-      const { error } = await tryCatchHandled(
+      const { error } = await tryCatch(
         async () => await this.resourceService.delete(resourceId),
-        { onServerError: handleServerError("deleting external resource") },
+        "deleting external resource",
       );
 
-      if (error) {
-        throw new ControllerError(
-          "LearningResourceSystemController",
-          error.message,
-          "Controller delete external resource",
-        );
-      }
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -70,21 +58,16 @@ export class LearningResourceSystemController {
   );
 
   updateExternalResource: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.externalResources.externalResourceId
-      .PATCH,
+    contract.api.learning_resource_system.external_resources.externalResourceId.PATCH,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId;
-      const { data, error } = await tryCatchHandled(
+      const { data, error } = await tryCatch(
         async () =>
           await this.resourceService.update(resourceId, input.body.data),
-        { onServerError: handleServerError("updating external resource") },
+        "updating external resource",
       );
-      if (error)
-        throw new ControllerError(
-          "LearningResourceSystemController",
-          error.message,
-          "Controller update external resource",
-        );
+
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -95,19 +78,14 @@ export class LearningResourceSystemController {
   );
 
   listExternalResources: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.externalResources.GET,
+    contract.api.learning_resource_system.external_resources.GET,
     async ({ input, output, ctx }) => {
-      const { data, error } = await tryCatchHandled(
+      const { data, error } = await tryCatch(
         async () => await this.resourceService.list(),
-        { onServerError: handleServerError("listing external resources") },
+        "listing external resources",
       );
 
-      if (error)
-        throw new ControllerError(
-          "LearningResourceSystemController",
-          error.message,
-          "Controller list external resource",
-        );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -124,23 +102,15 @@ export class LearningResourceSystemController {
   );
 
   getOneExternalResource: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.externalResources.externalResourceId
-      .GET,
+    contract.api.learning_resource_system.external_resources.externalResourceId.GET,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId as string;
-      const { data, error } = await tryCatchHandled(
+      const { data, error } = await tryCatch(
         async () => await this.resourceService.getOne(resourceId),
-        {
-          onServerError: handleServerError("getting external resource"),
-        },
+        "getting one external resource",
       );
 
-      if (error)
-        throw new ControllerError(
-          "LearningResourceSystemController",
-          error.message,
-          "Controller get one external resource",
-        );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -151,5 +121,4 @@ export class LearningResourceSystemController {
   );
 }
 
-export const learningResourceSystemControllerInstance =
-  new LearningResourceSystemController();
+export const externalResourceControllerInstance = new ExternalResourceController();

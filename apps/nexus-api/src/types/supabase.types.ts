@@ -16,35 +16,35 @@ export type Database = {
     Tables: {
       article: {
         Row: {
-          author_id: string
+          author_id: string | null
           body: string | null
           created_at: string
           id: string
           is_published: boolean
           published_at: string | null
-          releated_event_id: string | null
+          related_event_id: string | null
           title: string
           updated_at: string
         }
         Insert: {
-          author_id: string
+          author_id?: string | null
           body?: string | null
           created_at?: string
           id?: string
           is_published?: boolean
           published_at?: string | null
-          releated_event_id?: string | null
+          related_event_id?: string | null
           title: string
           updated_at?: string
         }
         Update: {
-          author_id?: string
+          author_id?: string | null
           body?: string | null
           created_at?: string
           id?: string
           is_published?: boolean
           published_at?: string | null
-          releated_event_id?: string | null
+          related_event_id?: string | null
           title?: string
           updated_at?: string
         }
@@ -57,8 +57,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "article_releated_event_id_fkey"
-            columns: ["releated_event_id"]
+            foreignKeyName: "article_related_event_id_fkey"
+            columns: ["related_event_id"]
             isOneToOne: false
             referencedRelation: "event"
             referencedColumns: ["id"]
@@ -67,28 +67,28 @@ export type Database = {
       }
       article_comment: {
         Row: {
-          article_id: string
+          article_id: string | null
           body: string
           created_at: string
           id: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
-          article_id: string
+          article_id?: string | null
           body: string
           created_at?: string
           id?: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
-          article_id?: string
+          article_id?: string | null
           body?: string
           created_at?: string
           id?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -280,6 +280,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      study_jam: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          recording_url: string
+          summary: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          recording_url: string
+          summary: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          recording_url?: string
+          summary?: string
+          title?: string
+        }
+        Relationships: []
       }
       user: {
         Row: {

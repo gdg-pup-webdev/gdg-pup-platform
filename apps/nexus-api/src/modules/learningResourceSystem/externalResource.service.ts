@@ -1,110 +1,74 @@
-import { Models } from "@packages/nexus-api-contracts/models";
 import {
-  learningResourceRepositoryInstance,
+  externalResourceRepositoryInstance,
   ExternalResourceRepository,
 } from "./externalResource.repository.js";
-import { handleServerError, tryCatchHandled } from "@/utils/tryCatch.util.js";
-import { ServiceError } from "@/classes/ServerError.js";
+import { tryCatch } from "@/utils/tryCatch.util.js";
+import { RepositoryError } from "@/classes/ServerError.js";
+import { models } from "@packages/nexus-api-contracts";
+
+type updateDTO = models.learningResourceSystem.externalResource.update;
+type insertDTO = models.learningResourceSystem.externalResource.insert;
 
 export class ExternalResourceService {
   constructor(
-    private readonly resourceRepository: ExternalResourceRepository = learningResourceRepositoryInstance,
+    private readonly resourceRepository: ExternalResourceRepository = externalResourceRepositoryInstance,
   ) {}
 
-  create = async (
-    dto: Omit<Models.resourceSystem.resource.insertDTO, "uploader_id">,
-    uploaderId: string,
-  ) => {
-    const { data, error } = await tryCatchHandled(
+  create = async (dto: insertDTO, uploaderId: string) => {
+    const { data, error } = await tryCatch(
       async () =>
         await this.resourceRepository.create({
           ...dto,
           uploader_id: uploaderId,
         }),
-      {
-        onServerError: handleServerError("creating external resource"),
-      },
+      "creating external resource",
     );
 
-    if (error)
-      throw new ServiceError(
-        "ResourceService",
-        error.message,
-        "Error while calling repository.create",
-      );
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };
 
   delete = async (resourceId: string) => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.delete(resourceId),
-      { onServerError: handleServerError("deleting external resource") },
+      "deleting external resource",
     );
 
-    if (error)
-      throw new ServiceError(
-        "ResourceService",
-        error.message,
-        "Error while calling repository.delete",
-      );
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };
 
-  update = async (
-    resourceId: string,
-    dto: Models.resourceSystem.resource.updateDTO,
-  ) => {
-    const { data, error } = await tryCatchHandled(
+  update = async (resourceId: string, dto: updateDTO) => {
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.update(resourceId, dto),
-      {
-        onServerError: handleServerError("updating external resource"),
-      },
+      "updating external resource",
     );
 
-    if (error)
-      throw new ServiceError(
-        "ResourceService",
-        error.message,
-        "Error while calling repository.update",
-      );
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };
 
   list = async () => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.list(),
-      {
-        onServerError: handleServerError("listing external resources"),
-      },
+      "listing external resources",
     );
 
-    if (error)
-      throw new ServiceError(
-        "ResourceService",
-        error.message,
-        "Error while calling repository.list",
-      );
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };
 
   getOne = async (resourceId: string) => {
-    const { data, error } = await tryCatchHandled(
+    const { data, error } = await tryCatch(
       async () => await this.resourceRepository.getOne(resourceId),
-      {
-        onServerError: handleServerError("getting external resource"),
-      },
+      "getting external resource",
     );
 
-    if (error)
-      throw new ServiceError(
-        "ResourceService",
-        error.message,
-        "Error while calling repository.getOne",
-      );
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };

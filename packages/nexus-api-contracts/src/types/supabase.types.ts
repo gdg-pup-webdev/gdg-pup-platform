@@ -281,6 +281,33 @@ export type Database = {
           },
         ]
       }
+      study_jam: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          recording_url: string
+          summary: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          recording_url: string
+          summary: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          recording_url?: string
+          summary?: string
+          title?: string
+        }
+        Relationships: []
+      }
       user: {
         Row: {
           avatar_url: string | null

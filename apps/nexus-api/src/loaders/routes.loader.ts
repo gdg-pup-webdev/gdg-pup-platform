@@ -3,7 +3,7 @@ import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.ro
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/learningResourceSystem.route.js";
 import { walletServiceInstance } from "@/modules/economySystem/wallet.service.js";
 import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
-import { learningResourceRepositoryInstance } from "@/modules/learningResourceSystem/externalResource.repository.js";
+import { externalResourceRepositoryInstance } from "@/modules/learningResourceSystem/externalResource.repository.js";
 import { learningResourceSystemControllerInstance } from "@/modules/learningResourceSystem/learningResourceSystem.controller.js";
 
 export const routesLoader = (app: Express) => {

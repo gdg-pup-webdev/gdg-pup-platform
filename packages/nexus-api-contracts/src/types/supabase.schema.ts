@@ -298,6 +298,33 @@ export const publicResourceTagJunctionRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicStudyJamRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string(),
+  id: z.string(),
+  recording_url: z.string(),
+  summary: z.string(),
+  title: z.string(),
+});
+
+export const publicStudyJamInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string(),
+  id: z.string().optional(),
+  recording_url: z.string(),
+  summary: z.string(),
+  title: z.string(),
+});
+
+export const publicStudyJamUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  recording_url: z.string().optional(),
+  summary: z.string().optional(),
+  title: z.string().optional(),
+});
+
 export const publicUserRowSchema = z.object({
   avatar_url: z.string().nullable(),
   created_at: z.string(),
