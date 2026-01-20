@@ -5,7 +5,7 @@ import { ServerError, ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
-export class UserResourceSystemController {
+export class ProjectController {
   constructor(
     private projectService: ProjectService = projectServiceInstance,
   ) {}
@@ -87,5 +87,5 @@ export class UserResourceSystemController {
   );
 }
 
-export const userResourceSystemControllerInstance =
-  new UserResourceSystemController();
+export const projectControllerInstance =
+  new ProjectController();
