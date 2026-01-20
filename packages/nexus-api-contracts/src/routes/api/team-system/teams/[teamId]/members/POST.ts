@@ -1,5 +1,5 @@
 import { member } from "#models/teamSystem/index.js";
-import { team, teamInsertDTO } from "#models/teamSystem/team.js";
+import { row, insert } from "#models/teamSystem/team.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const description = "Add a new member to a specific team.";

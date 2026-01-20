@@ -365,6 +365,62 @@ export const publicStudyJamUpdateSchema = z.object({
   title: z.string().optional(),
 });
 
+export const publicTeamRowSchema = z.object({
+  description: z.string(),
+  id: z.string(),
+  name: z.string(),
+});
+
+export const publicTeamInsertSchema = z.object({
+  description: z.string(),
+  id: z.string().optional(),
+  name: z.string(),
+});
+
+export const publicTeamUpdateSchema = z.object({
+  description: z.string().optional(),
+  id: z.string().optional(),
+  name: z.string().optional(),
+});
+
+export const publicTeamMemberRowSchema = z.object({
+  id: z.number(),
+  role: z.string(),
+  team_id: z.string(),
+  user_id: z.string(),
+});
+
+export const publicTeamMemberInsertSchema = z.object({
+  id: z.number().optional(),
+  role: z.string(),
+  team_id: z.string(),
+  user_id: z.string(),
+});
+
+export const publicTeamMemberUpdateSchema = z.object({
+  id: z.number().optional(),
+  role: z.string().optional(),
+  team_id: z.string().optional(),
+  user_id: z.string().optional(),
+});
+
+export const publicTeamMemberRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("team_member_team_id_fkey"),
+    columns: z.tuple([z.literal("team_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("team"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("team_member_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicUserRowSchema = z.object({
   avatar_url: z.string().nullable(),
   created_at: z.string(),

@@ -346,6 +346,60 @@ export type Database = {
         }
         Relationships: []
       }
+      team: {
+        Row: {
+          description: string
+          id: string
+          name: string
+        }
+        Insert: {
+          description: string
+          id?: string
+          name: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      team_member: {
+        Row: {
+          id: number
+          role: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: number
+          role: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          id?: number
+          role?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_member_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_member_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user: {
         Row: {
           avatar_url: string | null
