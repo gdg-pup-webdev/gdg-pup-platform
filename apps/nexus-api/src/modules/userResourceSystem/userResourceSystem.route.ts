@@ -1,9 +1,5 @@
 import { Router } from "express";
 import {
-  ProjectController,
-  projectControllerInstance,
-} from "./project.controller.js";
-import {
   AuthMiddleware,
   authMiddlewareInstance,
 } from "../../middlewares/auth.middleware.js";

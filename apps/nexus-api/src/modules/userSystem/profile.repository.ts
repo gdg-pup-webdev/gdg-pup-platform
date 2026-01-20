@@ -1,19 +1,25 @@
+import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts/models";
+import { RepositoryResult } from "@/types/repository.types.js";
+import { models } from "@packages/nexus-api-contracts";
+
+type profileRow = models.userSystem.profile.row;
 
 export class ProfileRepository {
+  tableName = "user_profile";
+
   constructor() {}
 
-  getProfileByUserId = async (userId: string) => {
+  getProfileByUserId = async (userId: string): RepositoryResult<profileRow> => {
     const { data, error } = await supabase
-      .from("user_profile")
+      .from(this.tableName)
       .select("*")
       .eq("user_id", userId)
       .single();
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.userSystem.profile.row };
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 }
 

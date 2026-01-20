@@ -1,20 +1,24 @@
-import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts/models";
+import { DatabaseError } from "@/classes/ServerError.js";
+import { supabase } from "@/lib/supabase.js"; 
+import { contract, models } from "@packages/nexus-api-contracts";
+
+type userRow = models.userSystem.user.row;
 
 export class UserRepository {
+  tableName = "user";
+
   constructor() {}
 
-  getUserById = async (userId: string) => {
+  getUserById = async (userId: string)  : Promise<userRow>  => {
     const { data, error } = await supabase
-      .from("user")
+      .from(this.tableName)
       .select("*")
       .eq("id", userId)
       .single();
 
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.userSystem.user.row };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 }
 
