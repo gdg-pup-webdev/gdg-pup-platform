@@ -152,7 +152,7 @@ export class UserSystemController {
     async ({ input, output, ctx }) => {
       const userId = input.params.userId;
       const { data, error } =
-        await this.projectService.listProjectsOfUser(userId);
+        await this.projectService.listProjects(userId);
       if (error) {
         throw new ServerError(
           500,

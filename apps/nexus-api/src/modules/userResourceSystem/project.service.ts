@@ -3,66 +3,67 @@ import {
   ProjectRepository,
   projectRepositoryInstance,
 } from "./project.repository.js";
-import { Models } from "@packages/nexus-api-contracts/models";
+import { tryCatch } from "@/utils/tryCatch.util.js";
+import { RepositoryError } from "@/classes/ServerError.js";
+import { models } from "@packages/nexus-api-contracts";
+
+type projectInsertDTO = models.userResourceSystem.project.insertDTO;
+type projectUpdateDTO = models.userResourceSystem.project.updateDTO;
 
 export class ProjectService {
   constructor(
-    private projectRepository: ProjectRepository = projectRepositoryInstance
+    private projectRepository: ProjectRepository = projectRepositoryInstance,
   ) {}
 
-  listProjectsOfUser = async (userId: string) => {
-    const { data, error } =
-      await this.projectRepository.listProjectsOfUser(userId);
-    if (error) {
-      return { error };
-    }
-    return { data };
+  listProjects = async (userId: string) => {
+    const { data, error } = await tryCatch(
+      async () => await this.projectRepository.listProjects(userId),
+      "listing projects",
+    );
+    if (error) throw new RepositoryError(error.message);
+    return data;
   };
 
-  getOne = async (id: string) => {
-    const { data, error } = await this.projectRepository.getOne(id);
-    if (error) {
-      return { error };
-    }
-    return { data };
+  getOneProject = async (id: string) => {
+    const { data, error } = await tryCatch(
+      async () => await this.projectRepository.getOneProject(id),
+      "getting project",
+    );
+    if (error) throw new RepositoryError(error.message);
+    return data;
   };
 
+  createProject = async (dto: projectInsertDTO, userId: string) => {
+    const { data, error } = await tryCatch(
+      async () =>
+        await this.projectRepository.createProject({
+          ...dto,
+          user_id: userId,
+        }),
+      "creating project",
+    );
 
-  create = async (
-    dto: Omit<
-      Models.userResourceSystem.project.insertDTO,
-      "created_at" | "updated_at" | "id" | "user_id"
-    >,
-    userId: string
-  ) => {
-    const { data, error } = await this.projectRepository.create({
-      ...dto,
-      user_id: userId,
-    });
-
-    if (error) {
-      return { error };
-    }
-    return { data: data as Models.userResourceSystem.project.row };
+    if (error) throw new RepositoryError(error.message);
+    return data;
   };
 
-  delete = async (id: string) => {
-    const { data, error } = await this.projectRepository.delete(id);
-    if (error) {
-      return { error };
-    }
-    return { data };
+  deleteProject = async (id: string) => {
+    const { data, error } = await tryCatch(
+      async () => await this.projectRepository.deleteProject(id),
+      "deleting project",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+    return data;
   };
 
-  update = async (
-    id: string,
-    dto: Models.userResourceSystem.project.updateDTO
-  ) => {
-    const { data, error } = await this.projectRepository.update(id, dto);
-    if (error) {
-      return { error };
-    }
-    return { data };
+  updateProject = async (id: string, dto: projectUpdateDTO) => {
+    const { data, error } = await tryCatch(
+      async () => await this.projectRepository.updateProject(id, dto),
+      "updating project",
+    );
+    if (error) throw new RepositoryError(error.message);
+    return data;
   };
 }
 
