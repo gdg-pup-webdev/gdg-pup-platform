@@ -11,7 +11,7 @@ export class ArticleController {
   ) {}
 
   list: RequestHandler = createExpressController(
-    contract.api.article_system.articles.GET,
+    contract.api.publication_system.articles.GET,
     async ({ input, output }) => {
       const { data, error } = await tryCatch(
         async () => await this.articleService.list(),
@@ -34,7 +34,7 @@ export class ArticleController {
   );
 
   create: RequestHandler = createExpressController(
-    contract.api.article_system.articles.POST,
+    contract.api.publication_system.articles.POST,
     async ({ input, output, ctx }) => {
       const { req } = ctx;
       const user = req.user!;
@@ -55,7 +55,7 @@ export class ArticleController {
   );
 
   getOne: RequestHandler = createExpressController(
-    contract.api.article_system.articles.articleId.GET,
+    contract.api.publication_system.articles.articleId.GET,
     async ({ input, output }) => {
       const { articleId } = input.params;
       const { data, error } = await tryCatch(
@@ -73,7 +73,7 @@ export class ArticleController {
   );
 
   update: RequestHandler = createExpressController(
-    contract.api.article_system.articles.articleId.PATCH,
+    contract.api.publication_system.articles.articleId.PATCH,
     async ({ input, output }) => {
       const { articleId } = input.params;
       const dto = input.body.data;
@@ -92,7 +92,7 @@ export class ArticleController {
   );
 
   delete: RequestHandler = createExpressController(
-    contract.api.article_system.articles.articleId.DELETE,
+    contract.api.publication_system.articles.articleId.DELETE,
     async ({ input, output }) => {
       const { articleId } = input.params;
       const { data, error } = await tryCatch(
@@ -109,7 +109,7 @@ export class ArticleController {
   );
 
   listComments: RequestHandler = createExpressController(
-    contract.api.article_system.articles.articleId.comments.GET,
+    contract.api.publication_system.articles.articleId.comments.GET,
     async ({ input, output }) => {
       const { articleId } = input.params;
       const { data, error } = await tryCatch(
@@ -133,7 +133,7 @@ export class ArticleController {
   );
 
   createComment: RequestHandler = createExpressController(
-    contract.api.article_system.articles.articleId.comments.POST,
+    contract.api.publication_system.articles.articleId.comments.POST,
     async ({ input, output, ctx }) => {
       const { articleId } = input.params;
       const { req } = ctx;
@@ -161,7 +161,8 @@ export class ArticleController {
   );
 
   deleteComment: RequestHandler = createExpressController(
-    contract.api.article_system.articles.articleId.comments.commentId.DELETE,
+    contract.api.publication_system.articles.articleId.comments.commentId
+      .DELETE,
     async ({ input, output }) => {
       const { commentId } = input.params;
       const { data, error } = await tryCatch(

@@ -6,10 +6,10 @@ import {
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { RepositoryError } from "@/classes/ServerError.js";
 
-type insertDTO = models.articleSystem.article.insertDTO;
-type updateDTO = models.articleSystem.article.updateDTO;
-type commentInserDTO = models.articleSystem.comment.insertDTO;
-type commentUpdateDTO = models.articleSystem.comment.updateDTO;
+type insertDTO = models.publicationSystem.article.insert;
+type updateDTO = models.publicationSystem.article.update;
+type commentInserDTO = models.publicationSystem.articleComment.insertDTO;
+type commentUpdateDTO = models.publicationSystem.articleComment.updateDTO;
 
 export class ArticleService {
   constructor(
