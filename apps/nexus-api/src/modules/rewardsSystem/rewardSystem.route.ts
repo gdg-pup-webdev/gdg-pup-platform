@@ -22,4 +22,4 @@ export class RewardSystemRouter {
   };
 }
 
-export const rewardSystemRouter = new RewardSystemRouter();
+export const rewardSystemRouterInstance = new RewardSystemRouter();

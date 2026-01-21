@@ -1,7 +1,12 @@
+import { Router } from "express";
+
 export class FileSystemRouter {
   constructor() {}
 
-  getRouter() {} 
+  getRouter() : Router {
+    const router = Router();
+    return router;
+  } 
 }
 
-export const fileRepositoryInstance = new FileSystemRouter();
+export const fileSystemRouterInstance = new FileSystemRouter();

@@ -1,4 +1,4 @@
-import { LayerError, ServerError } from "@/classes/ServerError.js";
+import { ServerError } from "@/classes/ServerError.js";
 import { ContractError } from "@packages/typed-rest";
 import { Request, Response, NextFunction } from "express";
 import z, { ZodError } from "zod";
@@ -75,7 +75,7 @@ export const globalErrorHandler = (
    * 
    * HANDLING KNOWN ERRORS FROM LAYERS
    */
-  if (err instanceof LayerError) {
+  if (err instanceof ServerError) {
     return res.status(err.statusCode).json({
       status: err.status,
       message: err.message,

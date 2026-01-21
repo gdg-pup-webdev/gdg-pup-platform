@@ -98,6 +98,13 @@ export class ServerError extends Error {
   }
 }
 
+export class TooManyRequestError extends ServerError {
+  constructor(detail: string = "Too Many Requests") {
+    super({ statusCode: 429, title: "Too Many Requests", detail: detail });
+  }
+}
+
+
 export class DatabaseError extends ServerError {
   constructor(detail: string = "Database Error") {
     super({ statusCode: 500, title: "Database Error", detail: detail });

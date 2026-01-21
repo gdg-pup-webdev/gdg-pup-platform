@@ -13,6 +13,7 @@ export const setupLoader = (app: Express) => {
     })
   );
 
+  // logger
   app.use(loggerMiddleware.pino);
 
   // Rate limiting

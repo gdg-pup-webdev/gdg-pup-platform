@@ -4,11 +4,15 @@ import {
 } from "@/middlewares/tokenParser.js";
 import { Express } from "express";
 import express from "express";
+
 export const parsersLoader = (app: Express) => {
+  // parse body
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  // parse query with extended param to parse object queries
   app.set("query parser", "extended");
 
-  // app.use(tokenParser);
+  // parse authentication token
   app.use(tokenParserFromHeaders);
 };

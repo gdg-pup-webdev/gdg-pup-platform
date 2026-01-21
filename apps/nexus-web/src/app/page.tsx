@@ -1,10 +1,16 @@
 "use client";
 
-import { Responses as identityApiResponseTypes, contract as identityApiContract } from "@packages/identity-api-contracts";
-import { Responses as nexusApiResponseTypes, contract as nexusApiContract } from "@packages/nexus-api-contracts";
+import {
+  contract as identityApiContract,
+  models as identityApiModels,
+} from "@packages/identity-api-contracts";
+import {
+  contract as nexusApiContract,
+  models as nexusApiModels,
+} from "@packages/nexus-api-contracts";
 import { callEndpoint } from "@packages/typed-rest";
 
-import { configs } from "@/configs/servers.config"; 
+import { configs } from "@/configs/servers.config";
 import Link from "next/link";
 import React from "react";
 
@@ -23,9 +29,8 @@ const HomePage = () => {
 };
 
 const NexusApiHealthCheckCard = () => {
- 
   const [res, setRes] = React.useState<
-    nexusApiResponseTypes<"api_health_GET">[200] | null
+    nexusApiContract.api.health.GET.response[200] | null
   >(null);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -37,8 +42,8 @@ const NexusApiHealthCheckCard = () => {
 
       const result = await callEndpoint(
         configs.nexusApiBaseUrl,
-       nexusApiContract.api.health.GET,
-        {}
+        nexusApiContract.api.health.GET,
+        {},
       );
 
       // await Promise.resolve(
@@ -95,7 +100,7 @@ const NexusApiHealthCheckCard = () => {
 
 const IdentityApiHealthCheckCard = () => {
   const [res, setRes] = React.useState<
-    identityApiResponseTypes<"api_health_GET">[200] | null
+    identityApiContract.api.health.GET.response[200] | null
   >(null);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -107,7 +112,7 @@ const IdentityApiHealthCheckCard = () => {
       const result = await callEndpoint(
         configs.identityApiBaseUrl,
         identityApiContract.api.health.GET,
-        {}
+        {},
       );
 
       // await Promise.resolve(

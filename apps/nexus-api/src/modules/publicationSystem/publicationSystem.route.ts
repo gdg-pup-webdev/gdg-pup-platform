@@ -8,7 +8,7 @@ import {
   authMiddlewareInstance,
 } from "../../middlewares/auth.middleware.js";
 
-export class ArticleSystemRouter {
+export class PublicationSystemRouter {
   constructor(
     private articleSystemController: ArticleSystemController = articleSystemControllerInstance,
     private authMiddleware: AuthMiddleware = authMiddlewareInstance
@@ -243,4 +243,4 @@ export class ArticleSystemRouter {
   }
 }
 
-export const articleRouterInstance = new ArticleSystemRouter();
+export const publicationSystemRouterInstance = new PublicationSystemRouter();

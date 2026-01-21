@@ -8,8 +8,8 @@ import {
   RepositoryResult,
   RespositoryResultList,
 } from "@/types/repository.types.js";
-import { models } from "@packages/nexus-api-contracts";
-import { Tables, TablesInsert, TablesUpdate } from "@packages/nexus-api-contracts/types";
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+import { models } from "@packages/nexus-api-contracts"; 
 
 type tableRow = Tables<"external_resource">;
 type tableUpdate = TablesUpdate<"external_resource">;
