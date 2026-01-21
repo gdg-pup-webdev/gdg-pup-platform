@@ -6,7 +6,7 @@ import { fileSystemRouterInstance } from "@/modules/filesSystem/fileSystem.route
 import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
 import { articleRouterInstance } from "@/modules/publicationSystem/article.route.js";
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/rbacSystem.router.js";
-import { rewardSystemRouterInstance } from "@/modules/rewardsSystem/rewardSystem.route.js";
+import { rewardRouterInstance } from "@/modules/rewardsSystem/reward.route.js";
 import { teamRouterInstance } from "@/modules/teamsSystem/team.router.js";
 import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js";
 import { economySystemRouterInstance } from "@/modules/economySystem/index.js";
@@ -14,12 +14,16 @@ import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
 import { publicationSystemRouterInstance } from "@/modules/publicationSystem/index.js";
 import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
+import {
+  RewardSystemRouter,
+  rewardSystemRouterInstance,
+} from "@/modules/rewardsSystem/index.js";
+import { rewardRepositoryInstance } from "@/modules/rewardsSystem/reward.repository.js";
 
 export const routesLoader = (app: Express) => {
   app.use("/api/health", healthCheckRouterInstance.getRouter());
 
   app.use("/api/file-system", fileSystemRouterInstance.getRouter());
-
 
   app.use(
     "/api/leaderboard-system",
@@ -32,8 +36,6 @@ export const routesLoader = (app: Express) => {
   );
 
   app.use("/api/rbac-system", rbacSystemRouterInstance.getRouter());
-
-  app.use("/api/reward-system", rewardSystemRouterInstance.getRouter());
 
   /**
    * refactored
@@ -53,4 +55,6 @@ export const routesLoader = (app: Express) => {
   app.use("/api/event-system", eventSystemRouterInstance.getRouter());
 
   app.use("/api/team-system", teamSystemRouterInstance.getRouter());
+
+  app.use("/api/reward-system", rewardSystemRouterInstance.getRouter());
 };

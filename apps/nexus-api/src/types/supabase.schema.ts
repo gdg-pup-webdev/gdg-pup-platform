@@ -393,7 +393,7 @@ export const publicRewardInsertSchema = z.object({
   is_claimed: z.boolean().optional(),
   title: z.string(),
   user_id: z.string(),
-  value: z.number().optional(),
+  value: z.number(),
 });
 
 export const publicRewardUpdateSchema = z.object({

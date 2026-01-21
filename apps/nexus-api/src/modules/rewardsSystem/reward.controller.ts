@@ -5,7 +5,7 @@ import { contract, models } from "@packages/nexus-api-contracts";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { ServiceError } from "@/classes/ServerError.js";
 
-export class RewardSystemController {
+export class RewardController {
   constructor(private rewardService: RewardService = rewardServiceInstance) {}
 
   createReward: RequestHandler = createExpressController(
@@ -91,4 +91,4 @@ export class RewardSystemController {
   );
 }
 
-export const rewardSystemControllerInstance = new RewardSystemController();
+export const rewardControllerInstance = new RewardController();

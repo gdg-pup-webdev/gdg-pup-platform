@@ -372,7 +372,7 @@ export type Database = {
           is_claimed?: boolean
           title: string
           user_id: string
-          value?: number
+          value: number
         }
         Update: {
           created_at?: string
