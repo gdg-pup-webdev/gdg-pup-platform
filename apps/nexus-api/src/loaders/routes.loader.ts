@@ -23,24 +23,6 @@ import { rewardRepositoryInstance } from "@/modules/rewardsSystem/reward.reposit
 export const routesLoader = (app: Express) => {
   app.use("/api/health", healthCheckRouterInstance.getRouter());
 
-  app.use("/api/file-system", fileSystemRouterInstance.getRouter());
-
-  app.use(
-    "/api/leaderboard-system",
-    leaderboardSystemRouterInstance.getRouter(),
-  );
-
-  app.use(
-    "/api/learning-resource-system",
-    learningResourceSystemRouterInstance.getRouter(),
-  );
-
-  app.use("/api/rbac-system", rbacSystemRouterInstance.getRouter());
-
-  /**
-   * refactored
-   */
-
   app.use("/api/user-resource-system", userResourceSystemRouter.getRouter());
 
   app.use("/api/economy-system", economySystemRouterInstance.getRouter());
@@ -57,4 +39,25 @@ export const routesLoader = (app: Express) => {
   app.use("/api/team-system", teamSystemRouterInstance.getRouter());
 
   app.use("/api/reward-system", rewardSystemRouterInstance.getRouter());
+
+  app.use(
+    "/api/learning-resource-system",
+    learningResourceSystemRouterInstance.getRouter(),
+  );
+
+  /**
+   * TODO
+   * - file system
+   * - leaderboard system
+   * - rbac system
+   */
+
+  app.use("/api/file-system", fileSystemRouterInstance.getRouter());
+
+  app.use(
+    "/api/leaderboard-system",
+    leaderboardSystemRouterInstance.getRouter(),
+  );
+
+  app.use("/api/rbac-system", rbacSystemRouterInstance.getRouter());
 };
