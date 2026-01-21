@@ -233,6 +233,80 @@ export type Database = {
           },
         ]
       }
+      nfc_card: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          id: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          id: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nfc_card_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nfc_card_transaction: {
+        Row: {
+          card_id: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          scanner_id: string | null
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          scanner_id?: string | null
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          scanner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nfc_card_transaction_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "nfc_card"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "nfc_card_transaction_scanner_id_fkey"
+            columns: ["scanner_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resource_tag: {
         Row: {
           id: string
@@ -366,19 +440,19 @@ export type Database = {
       }
       team_member: {
         Row: {
-          id: number
+          id: string
           role: string
           team_id: string
           user_id: string
         }
         Insert: {
-          id?: number
+          id?: string
           role: string
           team_id: string
           user_id: string
         }
         Update: {
-          id?: number
+          id?: string
           role?: string
           team_id?: string
           user_id?: string
@@ -438,6 +512,38 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      user_certificate: {
+        Row: {
+          description: string
+          id: string
+          image_url: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          description: string
+          id?: string
+          image_url: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          image_url?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_certificate_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_profile: {
         Row: {
@@ -621,6 +727,32 @@ export type Database = {
             columns: ["user_role_id"]
             isOneToOne: false
             referencedRelation: "user_role"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_settings: {
+        Row: {
+          color_theme: boolean
+          id: string
+          user_id: string
+        }
+        Insert: {
+          color_theme: boolean
+          id?: string
+          user_id: string
+        }
+        Update: {
+          color_theme?: boolean
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_settings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]

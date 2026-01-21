@@ -36,7 +36,7 @@ export class TeamRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("name", { ascending: false });
 
     if (error) throw new DatabaseError(error.message);
 
@@ -83,52 +83,6 @@ export class TeamRepository {
       .from(this.tableName)
       .delete()
       .eq("id", teamId)
-      .select("*")
-      .single();
-
-    if (error) throw new DatabaseError(error.message);
-    return data;
-  };
-
-  listMembers = async (teamId: string): RespositoryResultList<memberRow> => {
-    const { data, error } = await supabase
-      .from(this.memberTableName)
-      .select("*")
-      .eq("team_id", teamId)
-      .order("created_at", { ascending: true });
-
-    if (error) throw new DatabaseError(error.message);
-
-    const { count, error: countError } = await supabase
-      .from(this.memberTableName)
-      .select("*", { count: "exact", head: true })
-      .eq("team_id", teamId);
-
-    if (countError) throw new DatabaseError(countError.message);
-
-    return {
-      list: data,
-      count: count || 0,
-    };
-  };
-
-  createMember = async (dto: memberInsert): RepositoryResult<memberRow> => {
-    const { data, error } = await supabase
-      .from(this.memberTableName)
-      .insert(dto)
-      .select("*")
-      .single();
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
-  };
-
-  deleteMember = async (memberId: string): RepositoryResult<memberRow> => {
-    const { data, error } = await supabase
-      .from(this.memberTableName)
-      .delete()
-      .eq("id", memberId)
       .select("*")
       .single();
 

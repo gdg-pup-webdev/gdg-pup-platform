@@ -33,7 +33,7 @@ export class TeamService {
   listTeams = async () => {
     const { data, error } = await tryCatch(
       async () => await this.teamRepository.listTeams(),
-      "listing teams",
+      "In service, listing teams",
     );
     if (error) throw new RepositoryError(error.message);
 
@@ -66,33 +66,7 @@ export class TeamService {
     if (error) throw new RepositoryError(error.message);
     return data;
   };
-
-  listMembers = async (teamId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.teamRepository.listMembers(teamId),
-      "listing members",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
-  };
-
-  createMember = async (dto: memberInserDTO) => {
-    const { data, error } = await tryCatch(
-      async () => await this.teamRepository.createMember(dto),
-      "creating member",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
-  };
-
-  deleteMember = async (memberId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.teamRepository.deleteMember(memberId),
-      "deleting member",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
-  };
+ 
 }
 
 export const teamServiceInstance = new TeamService();

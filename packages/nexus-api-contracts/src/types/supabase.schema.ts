@@ -248,6 +248,84 @@ export const publicExternalResourceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicNfcCardRowSchema = z.object({
+  activated_at: z.string().nullable(),
+  created_at: z.string(),
+  id: z.string(),
+  status: z.string(),
+  user_id: z.string().nullable(),
+});
+
+export const publicNfcCardInsertSchema = z.object({
+  activated_at: z.string().optional().nullable(),
+  created_at: z.string().optional(),
+  id: z.string(),
+  status: z.string().optional(),
+  user_id: z.string().optional().nullable(),
+});
+
+export const publicNfcCardUpdateSchema = z.object({
+  activated_at: z.string().optional().nullable(),
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  status: z.string().optional(),
+  user_id: z.string().optional().nullable(),
+});
+
+export const publicNfcCardRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("nfc_card_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicNfcCardTransactionRowSchema = z.object({
+  card_id: z.string(),
+  created_at: z.string(),
+  event_type: z.string(),
+  id: z.string(),
+  metadata: jsonSchema.nullable(),
+  scanner_id: z.string().nullable(),
+});
+
+export const publicNfcCardTransactionInsertSchema = z.object({
+  card_id: z.string(),
+  created_at: z.string().optional(),
+  event_type: z.string(),
+  id: z.string().optional(),
+  metadata: jsonSchema.optional().nullable(),
+  scanner_id: z.string().optional().nullable(),
+});
+
+export const publicNfcCardTransactionUpdateSchema = z.object({
+  card_id: z.string().optional(),
+  created_at: z.string().optional(),
+  event_type: z.string().optional(),
+  id: z.string().optional(),
+  metadata: jsonSchema.optional().nullable(),
+  scanner_id: z.string().optional().nullable(),
+});
+
+export const publicNfcCardTransactionRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("nfc_card_transaction_card_id_fkey"),
+    columns: z.tuple([z.literal("card_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("nfc_card"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("nfc_card_transaction_scanner_id_fkey"),
+    columns: z.tuple([z.literal("scanner_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicResourceTagRowSchema = z.object({
   id: z.string(),
   tag_name: z.string(),
@@ -384,21 +462,21 @@ export const publicTeamUpdateSchema = z.object({
 });
 
 export const publicTeamMemberRowSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   role: z.string(),
   team_id: z.string(),
   user_id: z.string(),
 });
 
 export const publicTeamMemberInsertSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   role: z.string(),
   team_id: z.string(),
   user_id: z.string(),
 });
 
 export const publicTeamMemberUpdateSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   role: z.string().optional(),
   team_id: z.string().optional(),
   user_id: z.string().optional(),
@@ -459,6 +537,40 @@ export const publicUserUpdateSchema = z.object({
   status: z.string().optional(),
   updated_at: z.string().optional(),
 });
+
+export const publicUserCertificateRowSchema = z.object({
+  description: z.string(),
+  id: z.string(),
+  image_url: z.string(),
+  title: z.string(),
+  user_id: z.string(),
+});
+
+export const publicUserCertificateInsertSchema = z.object({
+  description: z.string(),
+  id: z.string().optional(),
+  image_url: z.string(),
+  title: z.string(),
+  user_id: z.string(),
+});
+
+export const publicUserCertificateUpdateSchema = z.object({
+  description: z.string().optional(),
+  id: z.string().optional(),
+  image_url: z.string().optional(),
+  title: z.string().optional(),
+  user_id: z.string().optional(),
+});
+
+export const publicUserCertificateRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("user_certificate_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicUserProfileRowSchema = z.object({
   bio: z.string().nullable(),
@@ -650,6 +762,34 @@ export const publicUserRolePermissionRelationshipsSchema = z.tuple([
     columns: z.tuple([z.literal("user_role_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("user_role"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicUserSettingsRowSchema = z.object({
+  color_theme: z.boolean(),
+  id: z.string(),
+  user_id: z.string(),
+});
+
+export const publicUserSettingsInsertSchema = z.object({
+  color_theme: z.boolean(),
+  id: z.string().optional(),
+  user_id: z.string(),
+});
+
+export const publicUserSettingsUpdateSchema = z.object({
+  color_theme: z.boolean().optional(),
+  id: z.string().optional(),
+  user_id: z.string().optional(),
+});
+
+export const publicUserSettingsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("user_settings_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
