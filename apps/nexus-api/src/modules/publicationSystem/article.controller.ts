@@ -5,7 +5,7 @@ import { ServerError, ServiceError } from "../../classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
-export class ArticleSystemController {
+export class ArticleController {
   constructor(
     private articleService: ArticleService = articleServiceInstance,
   ) {}
@@ -178,4 +178,4 @@ export class ArticleSystemController {
   );
 }
 
-export const articleSystemControllerInstance = new ArticleSystemController();
+export const articleControllerInstance = new ArticleController();

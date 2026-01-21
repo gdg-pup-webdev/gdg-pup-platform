@@ -1,16 +1,16 @@
 import { Router } from "express";
 import {
-  ArticleSystemController,
-  articleSystemControllerInstance,
-} from "./publicationSystem.controller.js";
+  ArticleController,
+  articleControllerInstance,
+} from "./article.controller.js";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
 } from "../../middlewares/auth.middleware.js";
 
-export class PublicationSystemRouter {
+export class ArticleRouter {
   constructor(
-    private articleSystemController: ArticleSystemController = articleSystemControllerInstance,
+    private articleSystemController: ArticleController = articleControllerInstance,
     private authMiddleware: AuthMiddleware = authMiddlewareInstance
   ) {}
 
@@ -30,7 +30,7 @@ export class PublicationSystemRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/articles", this.articleSystemController.list);
+    router.get("/", this.articleSystemController.list);
 
     /**
      * @openapi
@@ -56,7 +56,7 @@ export class PublicationSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.post(
-      "/articles",
+      "/",
       this.authMiddleware.requireAuth(),
       this.articleSystemController.create
     );
@@ -85,7 +85,7 @@ export class PublicationSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.delete(
-      "/articles/:articleId",
+      "/:articleId",
       this.authMiddleware.requireAuth(),
       this.articleSystemController.delete
     );
@@ -120,7 +120,7 @@ export class PublicationSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.patch(
-      "/articles/:articleId",
+      "/:articleId",
       this.authMiddleware.requireAuth(),
       this.articleSystemController.update
     );
@@ -144,7 +144,7 @@ export class PublicationSystemRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/articles/:articleId", this.articleSystemController.getOne);
+    router.get("/:articleId", this.articleSystemController.getOne);
 
     /**
      * @openapi
@@ -166,7 +166,7 @@ export class PublicationSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.get(
-      "/articles/:articleId/comments",
+      "/:articleId/comments",
       this.articleSystemController.listComments
     );
 
@@ -200,7 +200,7 @@ export class PublicationSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.post(
-      "/articles/:articleId/comments",
+      "/:articleId/comments",
       this.authMiddleware.requireAuth(),
       this.articleSystemController.createComment
     );
@@ -234,7 +234,7 @@ export class PublicationSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.delete(
-      "/articles/:articleId/comments/:commentId",
+      "/:articleId/comments/:commentId",
       this.authMiddleware.requireAuth(),
       this.articleSystemController.deleteComment
     );
@@ -243,4 +243,4 @@ export class PublicationSystemRouter {
   }
 }
 
-export const publicationSystemRouterInstance = new PublicationSystemRouter();
+export const articleRouterInstance = new ArticleRouter();

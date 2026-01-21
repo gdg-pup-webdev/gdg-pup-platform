@@ -1,16 +1,4 @@
-import { Router } from "express";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "../../middlewares/auth.middleware.js";
-import {
-  ExternalResourceController,
-  externalResourceControllerInstance,
-} from "./externalResource.controller.js";
-import {
-  StudyJamController,
-  studyJamControllerInstance,
-} from "./studyJam.controller.js";
+import { Router } from "express"; 
 import {
   ExternalResourceRouter,
   externalResourceRouterInstance,

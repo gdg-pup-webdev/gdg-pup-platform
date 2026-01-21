@@ -1,16 +1,13 @@
-import { Router } from "express";
-import {
-  EventSystemController,
-  eventSystemControllerInstance,
-} from "./eventSystem.controller.js";
+import { Router } from "express"; 
 import {
   AuthMiddleware,
   authMiddlewareInstance,
 } from "../../middlewares/auth.middleware.js";
+import { EventController, eventControllerInstance } from "./event.controller.js";
 
-export class EventSystemRouter {
+export class EventRouter {
   constructor(
-    private eventSystemController: EventSystemController = eventSystemControllerInstance,
+    private eventSystemController: EventController = eventControllerInstance,
     private authMiddleware: AuthMiddleware = authMiddlewareInstance
   ) {}
 
@@ -30,7 +27,7 @@ export class EventSystemRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError' 
      */
-    router.get("/events", this.eventSystemController.listEvents);
+    router.get("/", this.eventSystemController.listEvents);
 
     /**
      * @openapi
@@ -58,9 +55,9 @@ export class EventSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.post(
-      "/events",
+      "/",
       this.authMiddleware.requireAuth(),
-      this.eventSystemController.create
+      this.eventSystemController.createEvent
     );
 
     /**
@@ -89,8 +86,8 @@ export class EventSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.get(
-      "/events/:eventId",
-      this.eventSystemController.getOne
+      "/:eventId",
+      this.eventSystemController.getOneEvent
     );
 
     /**
@@ -119,7 +116,7 @@ export class EventSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.delete(
-      "/events/:eventId",
+      "/:eventId",
       this.authMiddleware.requireAuth(),
       this.eventSystemController.delete
     );
@@ -156,9 +153,9 @@ export class EventSystemRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.put(
-      "/events/:eventId",
+      "/:eventId",
       this.authMiddleware.requireAuth(),
-      this.eventSystemController.update
+      this.eventSystemController.updateEvent
     );
 
     /**
@@ -179,7 +176,7 @@ export class EventSystemRouter {
      *         description: Success
      */
     router.get(
-      "/events/:eventId/attendees",
+      "/:eventId/attendees",
       this.eventSystemController.listEventAttendees
     );
 
@@ -211,11 +208,11 @@ export class EventSystemRouter {
     router.post(
       "/checkin",
       this.authMiddleware.requireAuth(),
-      this.eventSystemController.checkin
+      this.eventSystemController.checkinToAnEvent
     );
 
     return router;
   }
 }
 
-export const eventSystemRouterInstance = new EventSystemRouter();
+export const eventRouterInstance = new EventRouter();

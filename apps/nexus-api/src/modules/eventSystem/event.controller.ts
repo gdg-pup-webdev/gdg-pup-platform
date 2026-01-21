@@ -13,7 +13,7 @@ import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
-export class EventSystemController {
+export class EventController {
   constructor(
     private eventService: EventService = eventServiceInstance,
     private attendanceService: AttendanceService = attendanceServiceInstance,
@@ -49,7 +49,7 @@ export class EventSystemController {
    * EXAMPLE USING createExpressController when creating event
    * no need to validate and parse input manually
    */
-  create: RequestHandler = createExpressController(
+  createEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.POST,
     async ({ input, output, ctx }) => {
       const { req, res } = ctx;
@@ -77,7 +77,7 @@ export class EventSystemController {
    * fully typed input object contaning params, query, body
    * fully typed output function to send response
    */
-  update: RequestHandler = createExpressController(
+  updateEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.PATCH,
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId;
@@ -116,7 +116,7 @@ export class EventSystemController {
     },
   );
 
-  getOne: RequestHandler = createExpressController(
+  getOneEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.GET,
     async ({ input, output, ctx }) => {
       const eventId = input.params.eventId;
@@ -135,7 +135,7 @@ export class EventSystemController {
     },
   );
 
-  checkin: RequestHandler = createExpressController(
+  checkinToAnEvent: RequestHandler = createExpressController(
     contract.api.event_system.checkin.POST,
     async ({ input, output, ctx }) => {
       const { req, res } = ctx;
@@ -189,4 +189,4 @@ export class EventSystemController {
   );
 }
 
-export const eventSystemControllerInstance = new EventSystemController();
+export const eventControllerInstance = new EventController();
