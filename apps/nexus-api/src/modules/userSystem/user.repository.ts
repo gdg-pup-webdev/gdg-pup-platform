@@ -1,8 +1,16 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
+import { RepositoryResult } from "@/types/repository.types";
+import { Tables } from "@/types/supabase.types";
 import { contract, models } from "@packages/nexus-api-contracts";
 
-type userRow = models.userSystem.user.row;
+type userRow = Tables<"user">;
+type userAggregate = Tables<"user"> & {
+  wallet: Tables<"wallet">[];
+  user_profile: Tables<"user_profile">[];
+  user_project: Tables<"user_project">[];
+}
+
 
 export class UserRepository {
   tableName = "user";
@@ -20,6 +28,18 @@ export class UserRepository {
 
     return data;
   };
+
+  getUserAggregate = async (userId: string) : RepositoryResult<userAggregate> => {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*, wallet(*), user_profile(*), user_project(*)").eq("id", userId)
+      .single();
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+
+  }
 
   listUsers = async () => {
     const { data, error } = await supabase.from(this.tableName).select("*");

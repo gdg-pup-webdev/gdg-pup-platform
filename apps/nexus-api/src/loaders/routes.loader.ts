@@ -1,7 +1,7 @@
 import { Express } from "express";
 import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.route.js";
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
-import { userSystemRouterInstance } from "@/modules/userSystem/userSystem.route.js";
+import { userRouterInstance } from "@/modules/userSystem/user.route.js";
 import { fileSystemRouterInstance } from "@/modules/filesSystem/fileSystem.route.js";
 import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
 import { articleRouterInstance } from "@/modules/publicationSystem/article.route.js";
@@ -12,15 +12,15 @@ import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js"
 import { economySystemRouterInstance } from "@/modules/economySystem/index.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
 import { publicationSystemRouterInstance } from "@/modules/publicationSystem/index.js";
+import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 
 export const routesLoader = (app: Express) => {
   app.use("/api/health", healthCheckRouterInstance.getRouter());
 
-  app.use("/api/event-system", eventSystemRouterInstance.getRouter());
 
   app.use("/api/file-system", fileSystemRouterInstance.getRouter());
 
-  app.use("/api/user-system", userSystemRouterInstance.getRouter());
+  app.use("/api/user-system", userRouterInstance.getRouter());
 
   app.use(
     "/api/leaderboard-system",
@@ -52,4 +52,7 @@ export const routesLoader = (app: Express) => {
     "/api/publication-system",
     publicationSystemRouterInstance.getRouter(),
   );
+
+  
+  app.use("/api/event-system", eventSystemRouterInstance.getRouter());
 };

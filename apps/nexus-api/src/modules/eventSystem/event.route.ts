@@ -58,6 +58,7 @@ export class EventRouter {
       "/",
       this.authMiddleware.requireAuth(),
       this.eventSystemController.createEvent
+      // (req, res) => res.status(200).json({ message: "not implemented" })
     );
 
     /**
@@ -152,7 +153,7 @@ export class EventRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.put(
+    router.patch(
       "/:eventId",
       this.authMiddleware.requireAuth(),
       this.eventSystemController.updateEvent

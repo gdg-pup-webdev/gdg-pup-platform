@@ -27,6 +27,16 @@ export class UserService {
     
     return data
   }
+
+  getUserAggregate = async (userId: string) => {
+    const { data, error } = await tryCatch(
+      async () => await this.userRepository.getUserAggregate(userId), "getting user aggregate"
+    );
+
+    if (error) throw new RepositoryError(error.message);
+    
+    return data
+  }
 }
 
 export const userServiceInstance = new UserService();

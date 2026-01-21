@@ -6,6 +6,9 @@ export class EventSystemRouter {
 
   getRouter = (): Router => {
     const router = Router();
+
+    router.use("/events", this.eventRouter.getRouter());
+
     return router;
   };
 }

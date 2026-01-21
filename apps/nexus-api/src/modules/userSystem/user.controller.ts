@@ -37,7 +37,7 @@ export class UserSystemController {
   listUsers: RequestHandler = async (req, res) => {
     const { data, error } = await tryCatch(
       async () => await this.userService.listUsers(),
-      "listing users",
+      "listing usersssss",
     );
 
     if (error) throw new ServiceError(error.message);
@@ -56,7 +56,7 @@ export class UserSystemController {
       const userId = input.params.userId;
       const { data, error } = await tryCatch(
         async () => await this.userService.getUserById(userId),
-        "getting user",
+        "getting useradfasd",
       );
 
       if (error) throw new ServiceError(error.message);
@@ -69,6 +69,37 @@ export class UserSystemController {
     },
   );
 
+  getUserAggregate: RequestHandler = createExpressController(
+    contract.api.user_system.users.userId.aggregate.GET,
+    async ({ input, output, ctx }) => {
+      const userId = input.params.userId;
+
+      const { data, error } = await tryCatch(
+        async () => await this.userService.getUserAggregate(userId),
+        "getting user aggregate",
+      );
+
+      if (error) throw new ServiceError(error.message);
+
+      const {
+        wallet: wallets,
+        user_profile: profiles,
+        user_project: projects,
+        ...userData
+      } = data;
+
+      return output(200, {
+        status: "success",
+        message: "User aggregate fetched successfully",
+        data: {
+          ...userData,
+          wallets: data.wallet,
+          profiles: data.user_profile,
+          projects: data.user_project,
+        },
+      });
+    },
+  );
 }
 
 export const userSystemControllerInstance = new UserSystemController();
