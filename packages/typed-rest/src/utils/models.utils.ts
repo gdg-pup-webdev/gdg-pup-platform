@@ -13,7 +13,7 @@ export const scanModels = async (modelDir: string) => {
     path: string;
   }[] = [];
 
-  const modelTree:Tree = {};
+  const modelTree: Tree = {};
 
   const modelTypes: {
     signature: string;

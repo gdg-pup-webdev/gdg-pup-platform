@@ -11,7 +11,7 @@ import { supabase } from "../lib/supabase.js";
 export const tokenParserFromHeaders: RequestHandler = async (
   req,
   res,
-  next
+  next,
 ) => {
   try {
     // 1. Extract Supabase token from "Authorization: Bearer <token>"

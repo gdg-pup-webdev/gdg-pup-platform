@@ -21,7 +21,7 @@ export const createExpressController = <T extends EndpointDef>(
     input: inferRequest<T>;
     ctx: inferContext<T>;
     output: inferOutputFunction<T>;
-  }) => Promise<InferHandlerResult<T>>
+  }) => Promise<InferHandlerResult<T>>,
 ): RequestHandler => {
   return async (req, res, next) => {
     try {
@@ -52,7 +52,7 @@ export const createExpressController = <T extends EndpointDef>(
         }
         if (err instanceof ContractError) {
           throw new Error(
-            "[@packages/contract-gen:src/server/index.ts/createExpressController] an unknown error occured while validating request."
+            "[@packages/contract-gen:src/server/index.ts/createExpressController] an unknown error occured while validating request.",
           );
         }
         throw err; // Rethrow unknown errors
@@ -63,7 +63,7 @@ export const createExpressController = <T extends EndpointDef>(
       // -------------------------------------------------
       const output = <S extends keyof T["response"]>(
         status: S,
-        body: inferResponse<T>[S]
+        body: inferResponse<T>[S],
       ) => {
         return { status, body };
       };
@@ -96,7 +96,7 @@ export const createExpressController = <T extends EndpointDef>(
         }
       } else {
         console.warn(
-          `[Contract Warning] No response schema defined for status ${statusCode as string}`
+          `[Contract Warning] No response schema defined for status ${statusCode as string}`,
         );
       }
 

@@ -27,7 +27,6 @@ export class TeamRouter {
     router.patch("/:teamId", this.teamController.updateTeam);
 
     router.delete("/:teamId", this.teamController.deleteTeam);
- 
 
     return router;
   };

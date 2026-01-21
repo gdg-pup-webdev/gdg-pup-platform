@@ -363,6 +363,6 @@ export const swaggerLoader = (app: Express) => {
   // });
 
   console.log(
-    `Swagger docs available at http://localhost:${configs.port}/docs`
+    `Swagger docs available at http://localhost:${configs.port}/docs`,
   );
 };

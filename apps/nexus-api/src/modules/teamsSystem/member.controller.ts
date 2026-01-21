@@ -7,10 +7,8 @@ import { tryCatch } from "@/utils/tryCatch.util.js";
 import { MemberService, memberServiceInstance } from "./member.service.js";
 
 export class MemberController {
-  constructor(
-    private memberService: MemberService = memberServiceInstance,
-  ) {}
- 
+  constructor(private memberService: MemberService = memberServiceInstance) {}
+
   listMembersWithFilter: RequestHandler = createExpressController(
     contract.api.team_system.members.GET,
     async ({ input, output }) => {

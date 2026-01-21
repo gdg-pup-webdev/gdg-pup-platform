@@ -14,7 +14,7 @@ export const insertDTO = publicUserInsertSchema;
 
 export const updateDTO = publicUserUpdateSchema;
 
-export const aggregate = row.extend({ 
+export const aggregate = row.extend({
   profiles: profileRow.array(),
   projects: project.row.array(),
   wallets: wallet.row.array(),

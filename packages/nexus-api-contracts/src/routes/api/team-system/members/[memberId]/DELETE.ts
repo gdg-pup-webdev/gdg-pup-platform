@@ -1,5 +1,4 @@
- 
-import { SchemaFactory } from "#utils/schemaFactory.utils.js"; 
+import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const response = {
   200: SchemaFactory.Response.empty(),

@@ -151,7 +151,10 @@ export class ExternalResourceRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/:externalResourceId", this.resourceSystemController.getOneExternalResource);
+    router.get(
+      "/:externalResourceId",
+      this.resourceSystemController.getOneExternalResource,
+    );
 
     /**
      * @openapi

@@ -30,7 +30,6 @@ export class RoleRepository {
       count: count || 0,
     };
   };
-
 }
 
 export const roleRepositoryInstance = new RoleRepository();

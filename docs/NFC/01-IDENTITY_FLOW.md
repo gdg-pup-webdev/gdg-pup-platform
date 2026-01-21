@@ -10,7 +10,7 @@ The physical NFC card stores a unique User ID. The system validates this ID diff
 graph TD
     %% Nodes
     Card[("NFC Card <br/> Stores Card UUID")]
-    
+
     %% Context A: Public Networking
     subgraph "Scenario A: Networking (Public)"
         UserPhone["Friend's Phone"]
@@ -43,13 +43,14 @@ graph TD
 
 ## 2. Scenario A: Public Profile (The "Linktree")
 
-*   **Context:** A user meets someone new and lets them tap their card.
-*   **Trigger:** Phone opens `https://gdg-pup.com/tap/:card_uid`.
-*   **Redirect Logic:** Website checks card status -> Redirects to Profile (e.g., `/id/janedoe`).
-*   **API Used:** `GET /api/identity/cards/:card_uid/status`
+- **Context:** A user meets someone new and lets them tap their card.
+- **Trigger:** Phone opens `https://gdg-pup.com/tap/:card_uid`.
+- **Redirect Logic:** Website checks card status -> Redirects to Profile (e.g., `/id/janedoe`).
+- **API Used:** `GET /api/identity/cards/:card_uid/status`
 
 ### Profile Payload (JSON)
-The endpoint returns aggregated data for the "Linktree" view. 
+
+The endpoint returns aggregated data for the "Linktree" view.
 
 ```json
 // GET /api/identity/users/:handle
@@ -75,9 +76,9 @@ The endpoint returns aggregated data for the "Linktree" view.
 
 ## 3. Scenario B: Event Attendance (The Check-in)
 
-*   **Context:** An attendee arrives at a GDG event. The organizer is holding a phone/scanner running the **Admin App**.
-*   **Trigger:** The organizer actively scans the card's UUID into the attendance system.
-*   **Endpoint:** `POST /api/event-system/checkin`
+- **Context:** An attendee arrives at a GDG event. The organizer is holding a phone/scanner running the **Admin App**.
+- **Trigger:** The organizer actively scans the card's UUID into the attendance system.
+- **Endpoint:** `POST /api/event-system/checkin`
 
 ### Attendance Sequence Diagram
 
@@ -89,15 +90,15 @@ sequenceDiagram
     participant DB as 🗄️ Database
 
     Note over Organizer: Event: "Tech Talk 2025"
-    
+
     Organizer->>Card: Scans Card
     Card-->>Organizer: Returns UUID (e.g., f47ac10...)
-    
+
     Organizer->>API: POST /checkin
     Note right of Organizer: Payload: { eventId: "123", userId: "f47ac10...", method: "NFC" }
-    
+
     API->>DB: Check if User exists & Not checked in
-    
+
     alt Success
         API-->>Organizer: 200 OK "Checked In"
         DB->>DB: Record Timestamp
@@ -109,15 +110,16 @@ sequenceDiagram
 ```
 
 ### Attendance API Payload
+
 When the Admin App scans the card, it sends this JSON to the server:
 
 ```json
 // POST /api/event-system/checkin
 {
   "data": {
-    "eventId": "evt_abc12345",       // Selected by Organizer
-    "userId": "f47ac10b-58cc-...",   // Scanned from NFC Card
-    "checkinMethod": "NFC"           // vs "OR_CODE" or "MANUAL"
+    "eventId": "evt_abc12345", // Selected by Organizer
+    "userId": "f47ac10b-58cc-...", // Scanned from NFC Card
+    "checkinMethod": "NFC" // vs "OR_CODE" or "MANUAL"
   }
 }
 ```

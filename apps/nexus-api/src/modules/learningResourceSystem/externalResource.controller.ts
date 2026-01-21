@@ -40,7 +40,8 @@ export class ExternalResourceController {
   );
 
   deleteExternalResource: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.external_resources.externalResourceId.DELETE,
+    contract.api.learning_resource_system.external_resources.externalResourceId
+      .DELETE,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId;
       const { error } = await tryCatch(
@@ -58,7 +59,8 @@ export class ExternalResourceController {
   );
 
   updateExternalResource: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.external_resources.externalResourceId.PATCH,
+    contract.api.learning_resource_system.external_resources.externalResourceId
+      .PATCH,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId;
       const { data, error } = await tryCatch(
@@ -102,7 +104,8 @@ export class ExternalResourceController {
   );
 
   getOneExternalResource: RequestHandler = createExpressController(
-    contract.api.learning_resource_system.external_resources.externalResourceId.GET,
+    contract.api.learning_resource_system.external_resources.externalResourceId
+      .GET,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId as string;
       const { data, error } = await tryCatch(
@@ -121,4 +124,5 @@ export class ExternalResourceController {
   );
 }
 
-export const externalResourceControllerInstance = new ExternalResourceController();
+export const externalResourceControllerInstance =
+  new ExternalResourceController();

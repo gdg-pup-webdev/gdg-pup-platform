@@ -1,9 +1,4 @@
 import { Router } from "express";
-import { TeamController, teamControllerInstance } from "./team.controller";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "@/middlewares/auth.middleware";
 import {
   MemberController,
   memberControllerInstance,
@@ -12,7 +7,6 @@ import {
 export class MemberRouter {
   constructor(
     private memberController: MemberController = memberControllerInstance,
-    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter = (): Router => {

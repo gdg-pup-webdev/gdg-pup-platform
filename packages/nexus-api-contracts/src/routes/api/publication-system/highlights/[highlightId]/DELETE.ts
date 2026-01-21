@@ -1,4 +1,4 @@
- import { SchemaFactory } from "#utils/schemaFactory.utils.js";
+import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import z from "zod";
 
 export const response = {

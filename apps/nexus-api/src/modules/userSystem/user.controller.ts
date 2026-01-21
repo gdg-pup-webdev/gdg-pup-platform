@@ -1,38 +1,12 @@
 import { RequestHandler } from "express";
 import { UserService, userServiceInstance } from "./user.service.js";
-import {
-  WalletService,
-  walletServiceInstance,
-} from "../economySystem/wallet.service.js";
-import {
-  TransactionService,
-  transactionServiceInstance,
-} from "../economySystem/transaction.service.js";
-import {
-  RoleService,
-  roleServiceInstance,
-} from "../rbacSystem/role.service.js";
-import {
-  ProjectService,
-  projectServiceInstance,
-} from "../userResourceSystem/project.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServerError, ServiceError } from "@/classes/ServerError.js";
+import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import {
-  ProfileService,
-  profileServiceInstance,
-} from "../userResourceSystem/profile.service.js";
 
 export class UserSystemController {
-  constructor(
-    private userService: UserService = userServiceInstance,
-    private walletService: WalletService = walletServiceInstance,
-    private transactionService: TransactionService = transactionServiceInstance,
-    private roleService: RoleService = roleServiceInstance,
-    private projectService: ProjectService = projectServiceInstance,
-  ) {}
+  constructor(private userService: UserService = userServiceInstance) {}
 
   listUsers: RequestHandler = async (req, res) => {
     const { data, error } = await tryCatch(

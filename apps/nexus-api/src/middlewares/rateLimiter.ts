@@ -9,6 +9,8 @@ export const rateLimiter = rateLimit({
 
   // Custom handler to return JSON:API error format
   handler: (req, res, next, options) => {
-    throw new TooManyRequestError("You have sent too many requests in a given amount of time. Please try again later.");
+    throw new TooManyRequestError(
+      "You have sent too many requests in a given amount of time. Please try again later.",
+    );
   },
 });

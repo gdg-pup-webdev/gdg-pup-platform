@@ -9,14 +9,14 @@ import {
   RespositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-import { models } from "@packages/nexus-api-contracts"; 
+import { models } from "@packages/nexus-api-contracts";
 
 type tableRow = Tables<"external_resource">;
 type tableUpdate = TablesUpdate<"external_resource">;
 type tableInsert = TablesInsert<"external_resource">;
 
 export class ExternalResourceRepository {
-  tableName = "external_resource"; 
+  tableName = "external_resource";
 
   constructor() {}
 

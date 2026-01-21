@@ -8,7 +8,10 @@ import { listExportsSync } from "./utils/utils";
 import z from "zod";
 import { scanModels } from "#utils/models.utils.js";
 import { logger } from "#utils/logging.utils.js";
-import { convertTreeToNamespaceString, scanContractModels } from "#utils/endpointTypes.utils.js";
+import {
+  convertTreeToNamespaceString,
+  scanContractModels,
+} from "#utils/endpointTypes.utils.js";
 import { scanPlainModels } from "#utils/modelNamespace.util.js";
 
 const program = new Command();
@@ -174,18 +177,18 @@ async function generate() {
         // };
 
         // add to types
-      //   requestTypes.push(
-      //     `${endpoint_signature} : { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> }`,
-      //   );
+        //   requestTypes.push(
+        //     `${endpoint_signature} : { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> }`,
+        //   );
 
-      //   responseTypes.push(
-      //     `${endpoint_signature} : { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> }`,
-      //   );
+        //   responseTypes.push(
+        //     `${endpoint_signature} : { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> }`,
+        //   );
 
-      //   endpointTypes.push(`  ${'"' + endpoint_signature + '"'}: {
-      //     request: { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> };
-      //   response: { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> };
-      //  }`);
+        //   endpointTypes.push(`  ${'"' + endpoint_signature + '"'}: {
+        //     request: { [K in keyof typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}]]: z.infer<typeof EndpointSchemas[ ${'"' + endpoint_signature + '"'} ][${'"' + "request" + '"'}][K]> };
+        //   response: { [K in keyof typeof ${endpoint_signature}_response]: z.infer<typeof ${endpoint_signature}_response[K]> };
+        //  }`);
 
         // ${"\"" + "hello world" + "\""}
 
@@ -218,12 +221,12 @@ export namespace model {
 }
    */
 
-/** 
+  /** 
  infer type of response 
  { [K in keyof typeof api_event_system_checkin_POST_response]: z.infer<typeof api_event_system_checkin_POST_response[K]> }
  */
 
- /** 
+  /** 
   * infer type of request 
   { [K in keyof typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"]]: z.infer<typeof EndpointSchemas[ "api_article_system_articles_articleId_comments_GET" ]["request"][K]> }
   */
@@ -231,12 +234,6 @@ export namespace model {
 
   const contractModelTree = await scanContractModels(SRC_DIR);
   // console.log("this is the contract model tree", JSON.stringify(contractModelTree, null, 2));
-
-
-
-
-
-
 
   // Serialize the map to a string, but preserve the variable names
   // let jsonString = JSON.stringify(endpoints, null, 2);
@@ -269,8 +266,7 @@ ${modelNamespaceString}
 
 `;
 
-
-/**
+  /**
  * 
  REMOVED PARTS BELOW FOR NOW - MAYBE RE-ADD LATER
 

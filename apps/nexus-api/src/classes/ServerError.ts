@@ -104,7 +104,6 @@ export class TooManyRequestError extends ServerError {
   }
 }
 
-
 export class DatabaseError extends ServerError {
   constructor(detail: string = "Database Error") {
     super({ statusCode: 500, title: "Database Error", detail: detail });
@@ -116,7 +115,6 @@ export class InvalidOperationError extends ServerError {
     super({ statusCode: 400, title: "Invalid Operation", detail: detail });
   }
 }
-
 
 export class NotFoundError extends ServerError {
   constructor(detail: string = "Resource not found") {

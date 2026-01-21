@@ -12,7 +12,7 @@ export const rateLimiter = rateLimit({
     return new ServerError(
       options.statusCode,
       "Too Many Requests",
-      "You have sent too many requests in a given amount of time. Please try again later."
+      "You have sent too many requests in a given amount of time. Please try again later.",
     );
   },
 });

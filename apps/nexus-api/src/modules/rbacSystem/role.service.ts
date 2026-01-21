@@ -4,12 +4,13 @@ import { RepositoryError } from "@/classes/ServerError.js";
 
 export class RoleService {
   constructor(
-    private roleRepository: RoleRepository = roleRepositoryInstance
+    private roleRepository: RoleRepository = roleRepositoryInstance,
   ) {}
 
   getRolesOfUser = async (userId: string) => {
     const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getRolesOfUser(userId), "getting roles of user"
+      async () => await this.roleRepository.getRolesOfUser(userId),
+      "getting roles of user",
     );
     if (error) throw new RepositoryError(error.message);
 

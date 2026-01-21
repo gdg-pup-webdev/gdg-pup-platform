@@ -1,8 +1,5 @@
 import { models } from "@packages/nexus-api-contracts";
-import {
-  TeamRepository,
-  teamRepositoryInstance,
-} from "./team.repository.js";
+import { TeamRepository, teamRepositoryInstance } from "./team.repository.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { RepositoryError } from "@/classes/ServerError.js";
 
@@ -20,7 +17,7 @@ export class TeamService {
     const { data, error } = await tryCatch(
       async () =>
         await this.teamRepository.createTeam({
-          ...dto, 
+          ...dto,
         }),
       "creating team",
     );
@@ -66,7 +63,6 @@ export class TeamService {
     if (error) throw new RepositoryError(error.message);
     return data;
   };
- 
 }
 
 export const teamServiceInstance = new TeamService();

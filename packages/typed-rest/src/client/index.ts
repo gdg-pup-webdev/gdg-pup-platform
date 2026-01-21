@@ -18,7 +18,7 @@ type ClientArgs<T extends EndpointDef> = keyof inferRequest<T> extends never
 export const callEndpoint = async <T extends EndpointDef>(
   baseUrl: string,
   endpoint: T,
-  args: ClientArgs<T>
+  args: ClientArgs<T>,
 ): Promise<InferHandlerResult<T>> => {
   // 1. Destructure args. We use 'any' safely here because the generic 'ClientArgs<T>'
   //    has already enforced the shape at the call-site.
@@ -33,7 +33,7 @@ export const callEndpoint = async <T extends EndpointDef>(
   if (!urlPath) {
     // Fallback: If path isn't injected, try to find it (rare case) or throw
     throw new Error(
-      `Endpoint path is missing for method ${endpoint.metadata.signature}. Ensure you are using the 'Contract' object, not the raw route definition.`
+      `Endpoint path is missing for method ${endpoint.metadata.signature}. Ensure you are using the 'Contract' object, not the raw route definition.`,
     );
   }
 

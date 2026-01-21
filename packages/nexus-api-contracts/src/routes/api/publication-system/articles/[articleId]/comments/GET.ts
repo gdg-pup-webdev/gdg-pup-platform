@@ -1,4 +1,4 @@
- import { articleComment } from "#models/publicationSystem/index.js";
+import { articleComment } from "#models/publicationSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const query = SchemaFactory.Request.Paginated.query();

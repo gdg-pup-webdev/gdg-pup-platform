@@ -4,7 +4,7 @@ import z from "zod";
 export const row = publicUserRolePermissionRowSchema;
 
 export const insert = row.omit({
-  id: true, 
+  id: true,
 });
 
 export const update = insert.partial();

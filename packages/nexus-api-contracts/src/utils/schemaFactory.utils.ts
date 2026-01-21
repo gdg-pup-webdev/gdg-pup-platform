@@ -50,7 +50,7 @@ export namespace SchemaFactory {
               detail: z.string(),
               moreDetails: z.unknown().optional(),
               source: z.string().optional(),
-            })
+            }),
           )
           .optional(),
       });
@@ -80,7 +80,7 @@ export namespace SchemaFactory {
               number: z.coerce.number().int().positive().default(1),
               size: z.coerce.number().int().positive().default(10),
             })
-            .default({ number: 1, size: 10 }), 
+            .default({ number: 1, size: 10 }),
         });
       };
     }

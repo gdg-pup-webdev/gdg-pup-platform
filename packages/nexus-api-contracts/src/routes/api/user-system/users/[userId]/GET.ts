@@ -1,4 +1,4 @@
- import { user } from "#models/userSystem/index.js";
+import { user } from "#models/userSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const response = {

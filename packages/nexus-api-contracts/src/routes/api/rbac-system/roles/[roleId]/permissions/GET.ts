@@ -1,5 +1,4 @@
- 
- import { permission, role } from "#models/rbacSystem/index.js";
+import { permission, role } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const description = "List the permissions of a role";

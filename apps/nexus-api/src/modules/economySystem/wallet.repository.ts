@@ -1,6 +1,9 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RepositoryResult, RespositoryResultList } from "@/types/repository.types.js";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
 export class WalletRepository {
@@ -26,7 +29,7 @@ export class WalletRepository {
     const { data, error } = await supabase.from(this.tableName).select("*");
     if (error) throw new DatabaseError(error.message);
 
-    const {count, error: countError} = await supabase
+    const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
 
@@ -37,7 +40,6 @@ export class WalletRepository {
       count: count || 0,
     };
   };
-
 
   updateWalletBalance = async (
     userId: string,

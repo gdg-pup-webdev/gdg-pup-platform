@@ -9,7 +9,7 @@ export class Logger extends console.Console {
   }
 
   modelScanner(...data: any[]) {
-    // Note: Console doesn't have a 'modelScanner', 
+    // Note: Console doesn't have a 'modelScanner',
     // so we use super.log to output the text
     super.log("[MODEL-SCANNER]", ...data);
   }

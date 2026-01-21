@@ -1,22 +1,17 @@
-
-
-
-import {
-  DatabaseError, 
-} from "@/classes/ServerError.js";
+import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
   RespositoryResultList,
 } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js"; 
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
 type tableRow = Tables<"study_jam">;
 type tableUpdate = TablesUpdate<"study_jam">;
 type tableInsert = TablesInsert<"study_jam">;
 
 export class StudyJamRepository {
-  tableName = "study_jam"; 
+  tableName = "study_jam";
 
   constructor() {}
 
@@ -94,5 +89,4 @@ export class StudyJamRepository {
   };
 }
 
-export const studyJamRepositoryInstance =
-  new StudyJamRepository();
+export const studyJamRepositoryInstance = new StudyJamRepository();

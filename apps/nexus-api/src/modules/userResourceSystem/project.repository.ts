@@ -15,7 +15,9 @@ export class ProjectRepository {
 
   constructor() {}
 
-  listProjectsOfUser = async (userId: string): RespositoryResultList<projectRow> => {
+  listProjectsOfUser = async (
+    userId: string,
+  ): RespositoryResultList<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")

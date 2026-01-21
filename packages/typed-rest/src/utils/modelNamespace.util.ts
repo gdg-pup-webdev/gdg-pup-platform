@@ -11,7 +11,7 @@ export const scanPlainModels = async (root: string) => {
   async function iterateDirectory(
     currentDirectory: string,
     currentTree: any,
-    pathStack: string[]
+    pathStack: string[],
   ) {
     const dirItems = fs.readdirSync(currentDirectory);
 
@@ -27,10 +27,16 @@ export const scanPlainModels = async (root: string) => {
 
       if (pathStats.isDirectory()) {
         currentTree[cleanName] = currentTree[cleanName] || {};
-        await iterateDirectory(fullPath, currentTree[cleanName], [...pathStack, dirItem]);
-      } 
-      else if (dirItem.endsWith(".ts")) {
-        const fileSignature = ["model", ...pathStack, dirItem.replace(".ts", "")]
+        await iterateDirectory(fullPath, currentTree[cleanName], [
+          ...pathStack,
+          dirItem,
+        ]);
+      } else if (dirItem.endsWith(".ts")) {
+        const fileSignature = [
+          "model",
+          ...pathStack,
+          dirItem.replace(".ts", ""),
+        ]
           .join("_")
           .replace(/\[|\]/g, "")
           .replace(/[-.]/g, "_");
@@ -43,15 +49,20 @@ export const scanPlainModels = async (root: string) => {
 
         for (const exportedVariable of exports) {
           const importAlias = `${fileSignature}_${exportedVariable}`;
-          const relativeImportPath = "./" + path.relative(process.cwd(), actualFilePath)
-            .replace(/\\/g, "/")
-            .replace(/\.ts$/, "");
+          const relativeImportPath =
+            "./" +
+            path
+              .relative(process.cwd(), actualFilePath)
+              .replace(/\\/g, "/")
+              .replace(/\.ts$/, "");
 
           // 1. Add to top-level imports
-          imports.push(`import { ${exportedVariable} as ${importAlias} } from "${relativeImportPath}";`);
+          imports.push(
+            `import { ${exportedVariable} as ${importAlias} } from "${relativeImportPath}";`,
+          );
 
           // 2. Add to tree with Zod inference
-          currentTree[cleanName][exportedVariable] = 
+          currentTree[cleanName][exportedVariable] =
             `__CODE_START__z.infer<typeof ${importAlias}>__CODE_END__`;
         }
       }
@@ -61,7 +72,7 @@ export const scanPlainModels = async (root: string) => {
   await iterateDirectory(root, tree, []);
 
   const namespaceContent = convertTreeToNamespaceString(tree, "models");
-  
+
   // Combine imports and the namespace
-  return namespaceContent
+  return namespaceContent;
 };

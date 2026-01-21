@@ -2,7 +2,7 @@ import {
   publicStudyJamInsertSchema,
   publicStudyJamRowSchema,
   publicStudyJamUpdateSchema,
-} from "#types/supabase.schema.js"; 
+} from "#types/supabase.schema.js";
 
 export const row = publicStudyJamRowSchema;
 

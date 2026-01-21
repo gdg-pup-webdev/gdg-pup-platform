@@ -1,4 +1,4 @@
- import { project } from "#models/userResourceSystem/index.js";
+import { project } from "#models/userResourceSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const query = SchemaFactory.Request.Paginated.query();

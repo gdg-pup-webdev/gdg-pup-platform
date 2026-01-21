@@ -113,7 +113,7 @@ export const scanContractModels = async (root: string) => {
   [K in keyof typeof ${schemaImportName}]: z.infer<(typeof ${schemaImportName})[K]> 
 }
              */
-            response = `__CODE_START__{ [K in keyof typeof ${schemaImportName}]: z.infer<(typeof ${schemaImportName})[K]> }__CODE_END__`;;
+            response = `__CODE_START__{ [K in keyof typeof ${schemaImportName}]: z.infer<(typeof ${schemaImportName})[K]> }__CODE_END__`;
           } else {
             const schemaImportName = `${endpoint_signature}_${exportedVariable}`;
 
@@ -143,7 +143,10 @@ export const scanContractModels = async (root: string) => {
   //   return { imports, tree };
 };
 
-export const convertTreeToNamespaceString = (tree: Tree, rootname: string = "contract"): string => {
+export const convertTreeToNamespaceString = (
+  tree: Tree,
+  rootname: string = "contract",
+): string => {
   const indent = (level: number) => "  ".repeat(level);
 
   const recurse = (node: Tree, level: number): string => {

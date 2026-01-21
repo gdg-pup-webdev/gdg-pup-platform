@@ -41,7 +41,7 @@ export namespace SchemaFactory {
               title: z.string(),
               detail: z.string(),
               source: z.string().optional(),
-            })
+            }),
           )
           .optional(),
       });

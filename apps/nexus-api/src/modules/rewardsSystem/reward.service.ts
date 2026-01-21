@@ -81,8 +81,7 @@ export class RewardService {
       data: markRewardAsClaimedData,
       error: markRewardAsClaimedDataError,
     } = await tryCatch(
-      async () =>
-        await this.rewardRepository.markRewardAsClaimed(reward_id ),
+      async () => await this.rewardRepository.markRewardAsClaimed(reward_id),
       "marking reward as claimed",
     );
     if (markRewardAsClaimedDataError)

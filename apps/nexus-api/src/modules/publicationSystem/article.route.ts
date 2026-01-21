@@ -11,7 +11,7 @@ import {
 export class ArticleRouter {
   constructor(
     private articleSystemController: ArticleController = articleControllerInstance,
-    private authMiddleware: AuthMiddleware = authMiddlewareInstance
+    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter() {
@@ -46,7 +46,7 @@ export class ArticleRouter {
      *       content:
      *         application/json:
      *           schema:
-     *             $ref: '#/components/schemas/ArticleRequestBody' 
+     *             $ref: '#/components/schemas/ArticleRequestBody'
      *     responses:
      *       201:
      *         description: Created
@@ -58,7 +58,7 @@ export class ArticleRouter {
     router.post(
       "/",
       this.authMiddleware.requireAuth(),
-      this.articleSystemController.create
+      this.articleSystemController.create,
     );
 
     /**
@@ -87,7 +87,7 @@ export class ArticleRouter {
     router.delete(
       "/:articleId",
       this.authMiddleware.requireAuth(),
-      this.articleSystemController.delete
+      this.articleSystemController.delete,
     );
 
     /**
@@ -122,7 +122,7 @@ export class ArticleRouter {
     router.patch(
       "/:articleId",
       this.authMiddleware.requireAuth(),
-      this.articleSystemController.update
+      this.articleSystemController.update,
     );
 
     /**
@@ -167,7 +167,7 @@ export class ArticleRouter {
      */
     router.get(
       "/:articleId/comments",
-      this.articleSystemController.listComments
+      this.articleSystemController.listComments,
     );
 
     /**
@@ -202,7 +202,7 @@ export class ArticleRouter {
     router.post(
       "/:articleId/comments",
       this.authMiddleware.requireAuth(),
-      this.articleSystemController.createComment
+      this.articleSystemController.createComment,
     );
 
     /**
@@ -236,7 +236,7 @@ export class ArticleRouter {
     router.delete(
       "/:articleId/comments/:commentId",
       this.authMiddleware.requireAuth(),
-      this.articleSystemController.deleteComment
+      this.articleSystemController.deleteComment,
     );
 
     return router;

@@ -10,7 +10,7 @@ export const setupLoader = (app: Express) => {
     cors({
       origin: [configs.clientBaseUrl || "http://localhost:3000"],
       credentials: true,
-    })
+    }),
   );
 
   // logger

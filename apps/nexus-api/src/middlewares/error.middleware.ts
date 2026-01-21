@@ -17,9 +17,9 @@ export const globalErrorHandler = (
   console.error("ERROR", err); // Log the real error for the dev
 
   /**
-   * 
+   *
    * HANDLING CONTRACT VIOLATIONS
-   * 
+   *
    */
   if (err instanceof ContractError) {
     console.error("🚨 CONTRACT VIOLATION 🚨", {
@@ -72,7 +72,7 @@ export const globalErrorHandler = (
   }
 
   /**
-   * 
+   *
    * HANDLING KNOWN ERRORS FROM LAYERS
    */
   if (err instanceof ServerError) {
@@ -83,7 +83,7 @@ export const globalErrorHandler = (
         {
           title: err.title,
           detail: err.detail,
-          moreDetails: { 
+          moreDetails: {
             context: err.context.reverse().join(" -> "),
           },
           // moreDetails: err.context,
@@ -93,9 +93,9 @@ export const globalErrorHandler = (
   }
 
   /**
-   * 
+   *
    * HANDLING KNOWN ERROR ACROSS THE SERVER
-   * 
+   *
    */
   if (err instanceof ServerError) {
     return res.status(err.statusCode).json({
@@ -111,12 +111,11 @@ export const globalErrorHandler = (
       ],
     });
   }
- 
 
   /**
-   * 
+   *
    * HANDLING UNKNOWN ERRORS
-   * 
+   *
    */
   return res.status(500).json({
     errors: [
@@ -126,9 +125,9 @@ export const globalErrorHandler = (
         errors: [
           {
             title: "Unknown Error",
-            detail: "An unknown error occurred."
-          }
-        ]
+            detail: "An unknown error occurred.",
+          },
+        ],
       },
     ],
   });

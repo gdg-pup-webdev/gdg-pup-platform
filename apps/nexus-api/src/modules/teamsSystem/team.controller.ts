@@ -105,8 +105,6 @@ export class TeamController {
       });
     },
   );
- 
- 
 }
 
 export const teamControllerInstance = new TeamController();

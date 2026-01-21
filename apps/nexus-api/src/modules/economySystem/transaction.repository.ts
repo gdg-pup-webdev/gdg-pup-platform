@@ -69,15 +69,17 @@ export class TransactionRepository {
     };
   };
 
-  getTransactionById = async (id: string): RepositoryResult<models.economySystem.transaction.row> => {
+  getTransactionById = async (
+    id: string,
+  ): RepositoryResult<models.economySystem.transaction.row> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
       .eq("id", id)
       .single();
-    
+
     if (error) throw new DatabaseError(error.message);
-    
+
     return data;
   };
 

@@ -48,5 +48,4 @@ export class LoggerMiddleware {
   });
 }
 
-
 export const loggerMiddleware = new LoggerMiddleware();

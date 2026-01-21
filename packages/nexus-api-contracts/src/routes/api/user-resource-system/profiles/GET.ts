@@ -1,4 +1,4 @@
- import { project } from "#models/userResourceSystem/index.js";
+import { project } from "#models/userResourceSystem/index.js";
 import { profile } from "#models/userSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import z from "zod";

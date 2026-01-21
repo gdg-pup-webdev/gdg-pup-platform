@@ -1,5 +1,3 @@
-
-
 export class FileService {
   constructor() {}
 

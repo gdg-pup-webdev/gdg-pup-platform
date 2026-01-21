@@ -1,18 +1,21 @@
-import { Router } from "express"; 
+import { Router } from "express";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
 } from "../../middlewares/auth.middleware.js";
-import { EventController, eventControllerInstance } from "./event.controller.js";
+import {
+  EventController,
+  eventControllerInstance,
+} from "./event.controller.js";
 
 export class EventRouter {
   constructor(
     private eventSystemController: EventController = eventControllerInstance,
-    private authMiddleware: AuthMiddleware = authMiddlewareInstance
+    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter() {
-    const router : Router = Router();
+    const router: Router = Router();
 
     /**
      * @openapi
@@ -25,7 +28,7 @@ export class EventRouter {
      *       200:
      *         description: Success
      *       500:
-     *         $ref: '#/components/responses/InternalServerError' 
+     *         $ref: '#/components/responses/InternalServerError'
      */
     router.get("/", this.eventSystemController.listEvents);
 
@@ -57,7 +60,7 @@ export class EventRouter {
     router.post(
       "/",
       this.authMiddleware.requireAuth(),
-      this.eventSystemController.createEvent
+      this.eventSystemController.createEvent,
       // (req, res) => res.status(200).json({ message: "not implemented" })
     );
 
@@ -86,10 +89,7 @@ export class EventRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get(
-      "/:eventId",
-      this.eventSystemController.getOneEvent
-    );
+    router.get("/:eventId", this.eventSystemController.getOneEvent);
 
     /**
      * @openapi
@@ -119,7 +119,7 @@ export class EventRouter {
     router.delete(
       "/:eventId",
       this.authMiddleware.requireAuth(),
-      this.eventSystemController.delete
+      this.eventSystemController.delete,
     );
 
     /**
@@ -156,7 +156,7 @@ export class EventRouter {
     router.patch(
       "/:eventId",
       this.authMiddleware.requireAuth(),
-      this.eventSystemController.updateEvent
+      this.eventSystemController.updateEvent,
     );
 
     /**
@@ -178,7 +178,7 @@ export class EventRouter {
      */
     router.get(
       "/:eventId/attendees",
-      this.eventSystemController.listEventAttendees
+      this.eventSystemController.listEventAttendees,
     );
 
     /**
@@ -209,7 +209,7 @@ export class EventRouter {
     router.post(
       "/checkin",
       this.authMiddleware.requireAuth(),
-      this.eventSystemController.checkinToAnEvent
+      this.eventSystemController.checkinToAnEvent,
     );
 
     return router;

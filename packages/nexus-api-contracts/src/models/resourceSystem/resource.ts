@@ -2,9 +2,9 @@ import {
   publicExternalResourceInsertSchema,
   publicExternalResourceRowSchema,
   publicExternalResourceUpdateSchema,
-} from "#types/supabase.schema.js"; 
+} from "#types/supabase.schema.js";
 
-export const row = publicExternalResourceRowSchema; 
+export const row = publicExternalResourceRowSchema;
 
 export const insertDTO = publicExternalResourceInsertSchema.omit({
   id: true,
@@ -12,6 +12,5 @@ export const insertDTO = publicExternalResourceInsertSchema.omit({
   updated_at: true,
   uploader_id: true,
 });
- 
 
-export const updateDTO = publicExternalResourceUpdateSchema; 
+export const updateDTO = publicExternalResourceUpdateSchema;

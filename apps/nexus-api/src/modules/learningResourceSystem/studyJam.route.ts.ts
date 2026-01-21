@@ -17,10 +17,7 @@ export class StudyJamRouter {
   getRouter() {
     const router: Router = Router();
 
-    router.get(
-      "/",
-      this.resourceSystemController.listStudyJams,
-    );
+    router.get("/", this.resourceSystemController.listStudyJams);
 
     router.post(
       "/",
@@ -40,19 +37,12 @@ export class StudyJamRouter {
       this.resourceSystemController.updateStudyJam,
     );
 
-    router.get(
-      "/:studyJamId",
-      this.resourceSystemController.getOneStudyJam,
-    );
+    router.get("/:studyJamId", this.resourceSystemController.getOneStudyJam);
 
-    router.get(
-      "/:studyJamId/tags",
-      (req, res) => {},
-    );
+    router.get("/:studyJamId/tags", (req, res) => {});
 
     return router;
   }
 }
 
-export const studyJamRouterInstance =
-  new StudyJamRouter();
+export const studyJamRouterInstance = new StudyJamRouter();

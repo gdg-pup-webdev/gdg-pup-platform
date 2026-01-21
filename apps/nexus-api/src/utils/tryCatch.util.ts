@@ -62,7 +62,7 @@ export const tryCatchHandled = async <T>(
   const { data, error } = await _tryCatch(fn);
 
   if (error) {
-    if (error instanceof ServerError) { 
+    if (error instanceof ServerError) {
       if (handlers?.onServerError) handlers.onServerError(error);
     }
 
@@ -75,7 +75,6 @@ export const tryCatchHandled = async <T>(
 
   return { data, error: undefined };
 };
-
 
 /**
  * Utility builder function to rethrow ServerErrors with added context.

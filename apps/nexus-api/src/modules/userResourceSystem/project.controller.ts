@@ -1,6 +1,6 @@
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServerError, ServiceError } from "@/classes/ServerError.js";
+import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { ProjectService, projectServiceInstance } from "./project.service";
@@ -10,18 +10,17 @@ export class ProjectController {
     private projectService: ProjectService = projectServiceInstance,
   ) {}
 
-  
   listUserProjects: RequestHandler = createExpressController(
     contract.api.user_resource_system.projects.GET,
     async ({ input, output, ctx }) => {
-      // pagination options 
+      // pagination options
       const pageNumber = input.query.page.number;
       const pageSize = input.query.page.size;
 
-      // getting filters 
+      // getting filters
       const userId = input.query.userId;
 
-      let list, count; 
+      let list, count;
       if (userId) {
         const { data, error } = await tryCatch(
           async () => await this.projectService.listProjectsOfUser(userId),
@@ -41,9 +40,8 @@ export class ProjectController {
         if (error) throw new ServiceError(error.message);
 
         list = data.list;
-        count = data.count; 
+        count = data.count;
       }
-   
 
       return output(200, {
         status: "success",
@@ -136,5 +134,4 @@ export class ProjectController {
   );
 }
 
-export const projectControllerInstance =
-  new ProjectController();
+export const projectControllerInstance = new ProjectController();

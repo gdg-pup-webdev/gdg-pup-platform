@@ -1,4 +1,3 @@
-
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const response = {

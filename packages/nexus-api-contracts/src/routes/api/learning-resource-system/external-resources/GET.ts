@@ -1,6 +1,6 @@
 // list study jams
 // list study jams
- import { externalResource } from "#models/learningResourceSystem/index.js";
+import { externalResource } from "#models/learningResourceSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const query = SchemaFactory.Request.Paginated.query();
