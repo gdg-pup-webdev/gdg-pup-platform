@@ -2,12 +2,9 @@ import {
   publicExternalResourceInsertSchema,
   publicExternalResourceRowSchema,
   publicExternalResourceUpdateSchema,
-} from "#types/supabase.schema.js";
-import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
-import z from "zod";
+} from "#types/supabase.schema.js"; 
 
-export const row = publicExternalResourceRowSchema;
-export type row = Tables<"external_resource">;
+export const row = publicExternalResourceRowSchema; 
 
 export const insertDTO = publicExternalResourceInsertSchema.omit({
   id: true,
@@ -15,8 +12,6 @@ export const insertDTO = publicExternalResourceInsertSchema.omit({
   updated_at: true,
   uploader_id: true,
 });
+ 
 
-export type insertDTO = z.infer<typeof insertDTO>;
-
-export const updateDTO = publicExternalResourceUpdateSchema;
-export type updateDTO = TablesUpdate<"external_resource">;
+export const updateDTO = publicExternalResourceUpdateSchema; 

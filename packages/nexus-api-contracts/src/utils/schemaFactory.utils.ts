@@ -80,7 +80,7 @@ export namespace SchemaFactory {
               number: z.coerce.number().int().positive().default(1),
               size: z.coerce.number().int().positive().default(10),
             })
-            .default({ number: 1, size: 10 }), // 👈 THIS IS THE MAGIC FIX
+            .default({ number: 1, size: 10 }), 
         });
       };
     }

@@ -42,6 +42,8 @@ export const createExpressController = <T extends EndpointDef>(
           input.params = await request.params.parseAsync(req.params);
         }
         if (request?.body) {
+          // console.log("validating body");
+          // console.log(req.body);
           input.body = await request.body.parseAsync(req.body);
         }
       } catch (err) {
