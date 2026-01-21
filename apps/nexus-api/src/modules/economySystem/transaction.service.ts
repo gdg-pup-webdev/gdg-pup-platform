@@ -42,6 +42,42 @@ export class TransactionService {
     return walletTransactions;
   };
 
+  listTransactionsOfWallet = async (walletId: string) => {
+    const { data: walletTransactions, error: transactionsError } =
+      await tryCatch(
+        async () =>
+          await this.transactionRepository.listTransactionsByWalletId(walletId),
+        "listing transactions of wallet",
+      );
+    if (transactionsError) throw new RepositoryError(transactionsError.message);
+    if (!walletTransactions) throw new NotFoundError("Transactions not found.");
+
+    return walletTransactions;
+  };
+
+  listTransactionsByPage = async (pageNumber: number, pageSize: number) => {
+    const { data, error } = await tryCatch(
+      async () =>
+        await this.transactionRepository.listTransactions(pageNumber, pageSize),
+      "listing transactions",
+    );
+    if (error) throw new RepositoryError(error.message);
+    if (!data) throw new NotFoundError("Transactions not found.");
+
+    return data;
+  };
+
+  getTransaction = async (id: string) => {
+    const { data, error } = await tryCatch(
+      async () => await this.transactionRepository.getTransactionById(id),
+      "fetching transaction",
+    );
+    if (error) throw new RepositoryError(error.message);
+    if (!data) throw new NotFoundError("Transaction not found.");
+
+    return data;
+  };
+
   create = async (dto: models.economySystem.transaction.insertDTO) => {
     const { data, error } = await tryCatch(
       async () => await this.transactionRepository.createTransaction(dto),

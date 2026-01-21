@@ -10,12 +10,12 @@ import {
 
 export class ProjectRouter {
   constructor(
-    private userResourceSystemController: ProjectController = projectControllerInstance,
-    private authMiddleware: AuthMiddleware = authMiddlewareInstance
+    private projectController: ProjectController = projectControllerInstance,
+    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter() {
-    const router : Router= Router();
+    const router: Router = Router();
 
     /**
      * @openapi
@@ -30,7 +30,7 @@ export class ProjectRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/", (req, res) => {});
+    router.get("/", this.projectController.listUserProjects);
 
     /**
      * @openapi
@@ -60,7 +60,7 @@ export class ProjectRouter {
     router.post(
       "/",
       this.authMiddleware.requireAuth(),
-      this.userResourceSystemController.createProject
+      this.projectController.createProject,
     );
 
     /**
@@ -84,10 +84,7 @@ export class ProjectRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get(
-      "/:projectId",
-      this.userResourceSystemController.getOneProject
-    );
+    router.get("/:projectId", this.projectController.getOneProject);
 
     /**
      * @openapi
@@ -119,7 +116,7 @@ export class ProjectRouter {
     router.delete(
       "/:projectId",
       this.authMiddleware.requireAuth(),
-      this.userResourceSystemController.deleteProject
+      this.projectController.deleteProject,
     );
 
     /**
@@ -158,7 +155,7 @@ export class ProjectRouter {
     router.patch(
       "/:projectId",
       this.authMiddleware.requireAuth(),
-      this.userResourceSystemController.updateProject
+      this.projectController.updateProject,
     );
 
     return router;

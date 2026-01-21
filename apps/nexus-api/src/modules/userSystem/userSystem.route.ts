@@ -3,38 +3,47 @@ import {
   UserSystemController,
   userSystemControllerInstance,
 } from "./userSystem.controller.js";
+import {
+  projectRotuerInstance,
+  ProjectRouter,
+} from "../userResourceSystem/project.route.js";
+import {
+  WalletRouter,
+  walletRouterInstance,
+} from "../economySystem/wallet.route.js";
+import {
+  ProfileRouter,
+  profileRouterInstance,
+} from "../userResourceSystem/profile.router.js";
+import {
+  RoleRouter,
+  roleRouterInstance,
+} from "../rbacSystem/role.route.js";
 
 export class UserSystemRouter {
   constructor(
-    private userSystemController: UserSystemController = userSystemControllerInstance
+    private userSystemController: UserSystemController = userSystemControllerInstance,
+    private userProjectRouter: ProjectRouter = projectRotuerInstance,
+    private walletRouter: WalletRouter = walletRouterInstance,
+    private profileRouter: ProfileRouter = profileRouterInstance,
+    private roleRouter: RoleRouter = roleRouterInstance,
   ) {}
 
   getRouter() {
     const router: Router = Router();
 
+    router.get("/users", this.userSystemController.listUsers);
+
     router.get("/users/:userId", this.userSystemController.getUserById);
 
-    router.get(
-      "/users/:userId/wallet",
-      this.userSystemController.getUserWallet
-    );
+     
+    // router.get("/users/:userId/wallet", this.walletRouter.getRouter());
 
-    router.get(
-      "/users/:userId/wallet/transactions",
-      this.userSystemController.listUserWalletTransactions
-    );
+    // router.use("/users/:userId/roles", this.roleRouter.getRouter());
 
-    router.get("/users/:userId/roles", this.userSystemController.listUserRoles);
+    // router.use("/users/:userId/projects", this.userProjectRouter.getRouter());
 
-    router.get(
-      "/users/:userId/profile",
-      this.userSystemController.getUserProfile
-    );
-
-    router.get(
-      "/users/:userId/projects",
-      this.userSystemController.listUserProjects
-    );
+    // router.use("/users/:userId/profile", this.profileRouter.getRouter());
 
     return router;
   }

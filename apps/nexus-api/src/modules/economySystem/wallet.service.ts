@@ -23,13 +23,26 @@ export class WalletService {
 
   getWalletByUserId = async (userId: string) => {
     const { data, error } = await tryCatch(
-      async () => await this.walletRepository.getWalletByUserId(userId),
+      async () => await this.walletRepository.listWalletsOfUser(userId),
       "calling repository to fetch wallet using user id",
     );
 
     if (error) throw new RepositoryError(error.message);
 
     if (!data) throw new NotFoundError("Wallet not found.");
+
+    return data;
+  };
+
+  listWallets = async () => {
+    const { data, error } = await tryCatch(
+      async () => await this.walletRepository.list(),
+      "calling repository to list wallets",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    if (!data) throw new NotFoundError("Wallets not found.");
 
     return data;
   };
@@ -45,7 +58,7 @@ export class WalletService {
      */
     // get wallet of the user
     const { data: wallet, error: walletFetchError } = await tryCatch(
-      async () => await this.walletRepository.getWalletByUserId(userId),
+      async () => await this.walletRepository.listWalletsOfUser(userId),
       "calling repository to fetch wallet using user id",
     );
     if (walletFetchError) throw new RepositoryError(walletFetchError.message);
@@ -94,7 +107,7 @@ export class WalletService {
      */
     // get wallet of the user
     const { data: wallet, error: walletFetchError } = await tryCatch(
-      async () => await this.walletRepository.getWalletByUserId(userId),
+      async () => await this.walletRepository.listWalletsOfUser(userId),
       "calling repository to fetch wallet using user id",
     );
     if (walletFetchError) throw new RepositoryError(walletFetchError.message);

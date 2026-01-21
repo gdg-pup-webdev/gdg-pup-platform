@@ -15,9 +15,18 @@ export class ProjectService {
     private projectRepository: ProjectRepository = projectRepositoryInstance,
   ) {}
 
-  listProjects = async (userId: string) => {
+  listProjectsOfUser = async (userId: string) => {
     const { data, error } = await tryCatch(
-      async () => await this.projectRepository.listProjects(userId),
+      async () => await this.projectRepository.listProjectsOfUser(userId),
+      "listing projects",
+    );
+    if (error) throw new RepositoryError(error.message);
+    return data;
+  };
+
+  listProjects = async () => {
+    const { data, error } = await tryCatch(
+      async () => await this.projectRepository.listProjects(),
       "listing projects",
     );
     if (error) throw new RepositoryError(error.message);

@@ -15,7 +15,7 @@ export class ProjectRepository {
 
   constructor() {}
 
-  listProjects = async (userId: string): RespositoryResultList<projectRow> => {
+  listProjectsOfUser = async (userId: string): RespositoryResultList<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
@@ -26,6 +26,21 @@ export class ProjectRepository {
       .from(this.tableName)
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
+    if (countError) throw new DatabaseError(countError.message);
+
+    return {
+      list: data,
+      count: count || 0,
+    };
+  };
+
+  listProjects = async (): RespositoryResultList<projectRow> => {
+    const { data, error } = await supabase.from(this.tableName).select("*");
+    if (error) throw new DatabaseError(error.message);
+
+    const { count, error: countError } = await supabase
+      .from(this.tableName)
+      .select("*", { count: "exact", head: true });
     if (countError) throw new DatabaseError(countError.message);
 
     return {

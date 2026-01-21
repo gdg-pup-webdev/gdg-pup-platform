@@ -19,6 +19,18 @@ export class ProfileService {
 
     return data;
   };
+
+  listProfilesPaginated = async (pageNumber: number, pageSize: number) => {
+    const { data, error } = await tryCatch(
+      async () => await this.profileRespository.listProfilesPaginated(pageNumber, pageSize),
+      "listing profiles",
+    );
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+
 }
 
 export const profileServiceInstance = new ProfileService();

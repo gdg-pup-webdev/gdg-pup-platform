@@ -8,8 +8,8 @@ import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/lea
 import { publicationSystemRouterInstance } from "@/modules/publicationSystem/publicationSystem.route.js";
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/rbacSystem.router.js";
 import { rewardSystemRouterInstance } from "@/modules/rewardsSystem/rewardSystem.route.js";
-import { teamSystemRouterInstance } from "@/modules/teamsSystem/teamSystem.router.js";
-import { userResourceSystemRouterInstance } from "@/modules/userResourceSystem/userResourceSystem.route.js";
+import { teamSystemRouterInstance } from "@/modules/teamsSystem/teamSystem.router.js"; 
+import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js";
 
 export const routesLoader = (app: Express) => {
   app.use("/api/health", healthCheckRouterInstance.getRouter());
@@ -43,7 +43,7 @@ export const routesLoader = (app: Express) => {
 
   app.use(
     "/api/user-resource-system",
-    userResourceSystemRouterInstance.getRouter(),
+    userResourceSystemRouter.getRouter(),
   );
 
   app.use("/api/user-system", userSystemRouterInstance.getRouter());

@@ -1,14 +1,63 @@
-import { RequestHandler } from "express";
-import { ProjectService, projectServiceInstance } from "./project.service.js";
+import { RequestHandler } from "express"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { ServerError, ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
+import { ProjectService, projectServiceInstance } from "./project.service";
 
 export class ProjectController {
   constructor(
     private projectService: ProjectService = projectServiceInstance,
   ) {}
+
+  
+  listUserProjects: RequestHandler = createExpressController(
+    contract.api.user_resource_system.projects.GET,
+    async ({ input, output, ctx }) => {
+      // pagination options 
+      const pageNumber = input.query.page.number;
+      const pageSize = input.query.page.size;
+
+      // getting filters 
+      const userId = input.query.userId;
+
+      let list, count; 
+      if (userId) {
+        const { data, error } = await tryCatch(
+          async () => await this.projectService.listProjectsOfUser(userId),
+          "getting user projects",
+        );
+
+        if (error) throw new ServiceError(error.message);
+
+        list = data.list;
+        count = data.count;
+      } else {
+        const { data, error } = await tryCatch(
+          async () => await this.projectService.listProjects(),
+          "getting all projects",
+        );
+
+        if (error) throw new ServiceError(error.message);
+
+        list = data.list;
+        count = data.count; 
+      }
+   
+
+      return output(200, {
+        status: "success",
+        message: "User projects fetched successfully",
+        data: list,
+        meta: {
+          totalRecords: count,
+          totalPages: Math.ceil(count / pageSize),
+          currentPage: pageNumber,
+          pageSize,
+        },
+      });
+    },
+  );
 
   getOneProject: RequestHandler = createExpressController(
     contract.api.user_resource_system.projects.projectId.GET,

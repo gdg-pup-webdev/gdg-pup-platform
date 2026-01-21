@@ -38,6 +38,49 @@ export class TransactionRepository {
     };
   };
 
+  listTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+  ): RespositoryResultList<models.economySystem.transaction.row> => {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data: listData, error: listError } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (listError) {
+      throw new DatabaseError(listError.message);
+    }
+
+    const { count, error } = await supabase
+      .from(this.tableName)
+      .select("*", { count: "exact", head: true });
+
+    if (error) {
+      throw new DatabaseError(error.message);
+    }
+
+    return {
+      list: listData || [],
+      count: count || 0,
+    };
+  };
+
+  getTransactionById = async (id: string): RepositoryResult<models.economySystem.transaction.row> => {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .eq("id", id)
+      .single();
+    
+    if (error) throw new DatabaseError(error.message);
+    
+    return data;
+  };
+
   createTransaction = async (
     dto: models.economySystem.transaction.insertDTO,
   ): RepositoryResult<models.economySystem.transaction.row> => {
