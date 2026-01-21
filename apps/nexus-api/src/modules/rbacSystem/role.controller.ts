@@ -13,10 +13,10 @@ export class RoleController {
     ) {}
 
 
-  listUserRoles: RequestHandler = createExpressController(
-    contract.api.user_system.users.userId.roles.GET,
+  getRolesOrUser: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.GET,
     async ({ input, output, ctx }) => {
-      const userId = input.params.userId;
+      const userId = input.query.userId;
       const { data, error } = await tryCatch(
         async () => await this.roleService.getRolesOfUser(userId),
         "getting user roles",
