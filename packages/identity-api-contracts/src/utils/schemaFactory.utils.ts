@@ -50,7 +50,7 @@ export namespace SchemaFactory {
               detail: z.string(),
               moreDetails: z.unknown().optional(),
               source: z.string().optional(),
-            })
+            }),
           )
           .optional(),
       });

@@ -1,1 +1,1 @@
-export * as resource from "./resource.js"
+export * as resource from "./resource.js";

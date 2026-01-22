@@ -3,13 +3,19 @@ import {
   publicUserRowSchema,
   publicUserUpdateSchema,
 } from "#types/supabase.schema.js";
-import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
+import { z } from "zod";
+import { row as profileRow } from "./profile.js";
+import { project } from "../userResourceSystem";
+import { wallet } from "../economySystem";
 
 export const row = publicUserRowSchema;
-export type row = Tables<"user">;
 
 export const insertDTO = publicUserInsertSchema;
-export type insertDTO = TablesInsert<"user">;
 
 export const updateDTO = publicUserUpdateSchema;
-export type updateDTO = TablesUpdate<"user">;
+
+export const aggregate = row.extend({
+  profiles: profileRow.array(),
+  projects: project.row.array(),
+  wallets: wallet.row.array(),
+});

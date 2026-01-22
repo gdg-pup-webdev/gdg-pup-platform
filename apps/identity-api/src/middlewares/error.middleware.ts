@@ -5,7 +5,7 @@ export const globalErrorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // 1. Default values
   let statusCode = err.statusCode || 500;
@@ -28,7 +28,6 @@ export const globalErrorHandler = (
   }
 
   // 4. Handle Unknown/Programming Errors (Don't leak details to client)
-  
 
   return res.status(500).json({
     errors: [

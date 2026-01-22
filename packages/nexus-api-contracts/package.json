@@ -1,9 +1,7 @@
 {
   "name": "@packages/nexus-api-contracts",
   "exports": {
-    ".": "./dist/contract.js",
-    "./models": "./dist/models/index.js",
-    "./types": "./dist/types/index.js"
+    ".": "./dist/typedrest.contract.js"
   },
   "imports": {
     "#*": "./dist/*"

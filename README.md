@@ -35,6 +35,7 @@ pnpm run dev
 ```
 
 If you want to know more about the tools that we use, follow the links below:
+
 - [pnpm](https://pnpm.io/pnpm-cli)
 - [turborepo](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
 - [turborepo_guide_youtube](https://www.youtube.com/watch?v=gpWDZir8dAA&list=WL&index=11&t=137s)
@@ -67,8 +68,6 @@ root/
 └── ARCHITECTURE.md              # Detailed Architecture Docs
 ```
 
-
-
 ## 💻 Tech Stack
 
 - **Frontend**: Next.js, TailwindCSS, shadcn/ui
@@ -89,6 +88,7 @@ Run the entire platform locally using Docker containers.
 ### Quick Start with Docker
 
 1. **Create environment file** (copy from example or create new):
+
    ```bash
    # Root .env for docker-compose
    NEXT_PUBLIC_NEXUS_API_URL=http://nexus-api:8000
@@ -98,6 +98,7 @@ Run the entire platform locally using Docker containers.
    ```
 
 2. **Build and start all services**:
+
    ```bash
    docker compose up -d --build
    ```
@@ -111,15 +112,15 @@ Run the entire platform locally using Docker containers.
 
 ### Docker Commands
 
-| Command | Description |
-|---------|-------------|
-| `docker compose up -d` | Start all services (detached) |
-| `docker compose up -d --build` | Rebuild and start all services |
-| `docker compose down` | Stop and remove all containers |
-| `docker compose logs -f` | View logs from all services |
+| Command                            | Description                    |
+| ---------------------------------- | ------------------------------ |
+| `docker compose up -d`             | Start all services (detached)  |
+| `docker compose up -d --build`     | Rebuild and start all services |
+| `docker compose down`              | Stop and remove all containers |
+| `docker compose logs -f`           | View logs from all services    |
 | `docker compose logs -f nexus-web` | View logs for specific service |
-| `docker compose ps` | List running containers |
-| `docker compose restart` | Restart all services |
+| `docker compose ps`                | List running containers        |
+| `docker compose restart`           | Restart all services           |
 
 ---
 

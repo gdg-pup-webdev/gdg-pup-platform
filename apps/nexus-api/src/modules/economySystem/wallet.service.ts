@@ -6,124 +6,143 @@ import {
   WalletRepository,
   walletRepositoryInstance,
 } from "./wallet.repository.js";
-import { ServerError } from "../../classes/ServerError.js";
+import {
+  CantCreateError,
+  DatabaseError,
+  NotFoundError,
+  RepositoryError,
+  ServerError,
+} from "../../classes/ServerError.js";
+import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class WalletService {
   constructor(
     private walletRepository: WalletRepository = walletRepositoryInstance,
-    private transactionRepository: TransactionRepository = transactionRepositoryInstance
+    private transactionRepository: TransactionRepository = transactionRepositoryInstance,
   ) {}
 
   getWalletByUserId = async (userId: string) => {
-    const { data, error } =
-      await this.walletRepository.getWalletByUserId(userId);
-    if (error) {
-      return { error };
-    }
-    if (!data) {
-      throw ServerError.notFound("Wallet not found.");
-    }
-    return { data };
+    const { data, error } = await tryCatch(
+      async () => await this.walletRepository.listWalletsOfUser(userId),
+      "calling repository to fetch wallet using user id",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    if (!data) throw new NotFoundError("Wallet not found.");
+
+    return data;
+  };
+
+  listWallets = async () => {
+    const { data, error } = await tryCatch(
+      async () => await this.walletRepository.list(),
+      "calling repository to list wallets",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    if (!data) throw new NotFoundError("Wallets not found.");
+
+    return data;
   };
 
   incrementPoints = async (
     userId: string,
     amount: number,
     sourceType: string,
-    sourceId: string
+    sourceId: string,
   ) => {
+    /**
+     * MAIN BUSINESS LOGIC
+     */
     // get wallet of the user
-    const { data: wallet, error: walletFetchError } =
-      await this.walletRepository.getWalletByUserId(userId);
-    if (walletFetchError) {
-      return { error: walletFetchError };
-    }
-    if (!wallet) {
-      throw ServerError.notFound("Wallet not found.");
-    }
+    const { data: wallet, error: walletFetchError } = await tryCatch(
+      async () => await this.walletRepository.listWalletsOfUser(userId),
+      "calling repository to fetch wallet using user id",
+    );
+    if (walletFetchError) throw new RepositoryError(walletFetchError.message);
+    if (!wallet) throw new NotFoundError("Wallet not found.");
+
+    // calculate new balance
+    const newBalance = wallet.balance + amount;
+    // update wallet balance
+    const { error: updateWalletError } = await tryCatch(
+      async () =>
+        await this.walletRepository.updateWalletBalance(userId, newBalance),
+      "calling repository to update wallet balance",
+    );
+    if (updateWalletError) throw new RepositoryError(updateWalletError.message);
 
     /**
      * SIDE EFFECTS
      */
     // create new transaction to increment points
-    const { data, error } = await this.transactionRepository.createTransaction({
-      wallet_id: wallet.id,
-      amount: amount,
-      source_type: sourceType,
-      source_id: sourceId,
-    });
-    if (error) {
-      return {error}
-    }
-    if (!data) {
-      throw ServerError.internalError("Failed to create transaction record.");
-    }
-
-    /**
-     * MAIN BUSINESS LOGIC
-     */
-    // calculate new balance
-    const newBalance = wallet.balance + amount;
-    // update wallet balance
-    const { error: updateError } =
-      await this.walletRepository.updateWalletBalance(userId, newBalance);
-    if (updateError) {
-      throw ServerError.internalError(updateError.message);
-    }
+    const { data, error } = await tryCatch(
+      async () =>
+        await this.transactionRepository.createTransaction({
+          wallet_id: wallet.id,
+          amount: amount,
+          source_type: sourceType,
+          source_id: sourceId,
+        }),
+      "calling repository to create transaction record",
+    );
+    if (error) throw new RepositoryError(error.message);
+    if (!data)
+      throw new RepositoryError("Failed to create transaction record.");
 
     // build response
-
-    return { data: { transaction: data, newBalance } };
+    return { transaction: data, updatedWallet: wallet };
   };
 
   decrementPoints = async (
     userId: string,
     amount: number,
     sourceType: string,
-    sourceId: string
+    sourceId: string,
   ) => {
+    /**
+     * MAIN BUSINESS LOGIC
+     */
     // get wallet of the user
-    const { data: wallet, error: walletFetchError } =
-      await this.walletRepository.getWalletByUserId(userId);
-    if (walletFetchError) {
-      throw ServerError.internalError(walletFetchError.message);
-    }
-    if (!wallet) {
-      throw ServerError.notFound("Wallet not found.");
-    }
+    const { data: wallet, error: walletFetchError } = await tryCatch(
+      async () => await this.walletRepository.listWalletsOfUser(userId),
+      "calling repository to fetch wallet using user id",
+    );
+    if (walletFetchError) throw new RepositoryError(walletFetchError.message);
+    if (!wallet) throw new NotFoundError("Wallet not found.");
+
+    // calculate new balance
+    const newBalance = wallet.balance - amount;
+    // update wallet balance
+    const { error: updateWalletError } = await tryCatch(
+      async () =>
+        await this.walletRepository.updateWalletBalance(userId, newBalance),
+      "calling repository to update wallet balance",
+    );
+    if (updateWalletError) throw new RepositoryError(updateWalletError.message);
 
     /**
      * SIDE EFFECTS
      */
-    // create new transaction to decrement points by 1
-    const { data, error } = await this.transactionRepository.createTransaction({
-      wallet_id: wallet.id,
-      amount: -amount,
-      source_type: sourceType,
-      source_id: sourceId,
-    });
-    if (error) {
-      throw ServerError.internalError(error.message);
-    }
-    if (!data) {
-      throw ServerError.internalError("Failed to create transaction record.");
-    }
-
-    /**
-     * MAIN BUSINESS LOGIC
-     */
-    // calculate new balance
-    const newBalance = wallet.balance - amount;
-    // update wallet balance
-    const { error: updateError } =
-      await this.walletRepository.updateWalletBalance(userId, newBalance);
-    if (updateError) {
-      throw ServerError.internalError(updateError.message);
-    }
+    // create new transaction to increment points
+    const { data, error } = await tryCatch(
+      async () =>
+        await this.transactionRepository.createTransaction({
+          wallet_id: wallet.id,
+          amount: -amount,
+          source_type: sourceType,
+          source_id: sourceId,
+        }),
+      "calling repository to create transaction record",
+    );
+    if (error) throw new RepositoryError(error.message);
+    if (!data)
+      throw new RepositoryError("Failed to create transaction record.");
 
     // build response
-
-    return { data: { transaction: data, newBalance } };
+    return { transaction: data, updatedWallet: wallet };
   };
 }
 

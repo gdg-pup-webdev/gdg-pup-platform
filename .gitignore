@@ -1,4 +1,8 @@
 # --- System Files ---
+
+.contract.ts
+typedrest.contract.ts
+
 .DS_Store
 Thumbs.db
 *.log

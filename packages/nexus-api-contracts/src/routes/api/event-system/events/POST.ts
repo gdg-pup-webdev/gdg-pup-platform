@@ -1,11 +1,10 @@
-import { Models } from "#models/index.js";
+import { event } from "#models/eventSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
+import z from "zod";
 
-export const body = SchemaFactory.Request.withPayload(
-  Models.eventSystem.event.insertDTO
-);
+export const body = SchemaFactory.Request.withPayload(event.insertDTO);
 
 export const response = {
-  200: SchemaFactory.Response.single(Models.eventSystem.event.row),
+  200: SchemaFactory.Response.single(event.row),
   ...SchemaFactory.Response.standardErrors(),
 };

@@ -5,10 +5,10 @@ import { RequestHandler } from "express";
  * USAGE:
  * - insert into dependencies of the router
  * constructor(private authMiddleware: AuthMiddleware) {}
- * 
- * - use in router 
+ *
+ * - use in router
  * router.use(this.authMiddleware.requireAuth());
- * 
+ *
  * - use in specific route
  * router.get('/admin', this.authMiddleware.requireAdminRole(), this.adminController.getAdminData);
  */
@@ -29,7 +29,9 @@ export class AuthMiddleware {
     const role = req.role;
 
     if (!role || role !== "admin") {
-      throw ServerError.forbidden("You must be an admin to perform this action.");
+      throw ServerError.forbidden(
+        "You must be an admin to perform this action.",
+      );
     }
 
     next();
@@ -42,7 +44,7 @@ export class AuthMiddleware {
 
       if (!userRole || !allowedRoles.includes(userRole)) {
         throw ServerError.forbidden(
-          "You do not have permission to perform this action."
+          "You do not have permission to perform this action.",
         );
       }
 
