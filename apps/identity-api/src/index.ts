@@ -4,6 +4,7 @@ import { parsersLoader } from "@/loaders/parser.loader.js";
 import { errorHandlerLoader } from "@/loaders/errorHandlers.loader.js";
 import { configs } from "@/configs/configs.js";
 import { routesLoader } from "@/loaders/routes.loader.js";
+import { swaggerLoader } from "@/loaders/swagger.loader.js";
 
 const app = express();
 const port = configs.port;
@@ -13,6 +14,9 @@ setupLoader(app);
 
 // Parsing body
 parsersLoader(app);
+
+// setup swagger
+swaggerLoader(app);
 
 // load routes
 routesLoader(app);

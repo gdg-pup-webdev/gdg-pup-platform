@@ -15,4 +15,28 @@ export class ServerError extends Error {
 
     Error.captureStackTrace(this, this.constructor);
   }
+
+  static badRequest(message: string = "Bad request") {
+    return new ServerError(400, "Bad Request", message);
+  }
+
+  static unauthorized(
+    message: string = "You must be logged in to access this resource."
+  ) {
+    return new ServerError(401, "Unauthenticated", message);
+  }
+
+  static forbidden(
+    message: string = "You do not have permission to perform this action."
+  ) {
+    return new ServerError(403, "Forbidden", message);
+  }
+
+  static notFound(message: string = "Resource not found") {
+    return new ServerError(404, "Not Found", message);
+  }
+
+  static internalError(message: string) {
+    return new ServerError(500, "Internal Server Error", message);
+  }
 }
