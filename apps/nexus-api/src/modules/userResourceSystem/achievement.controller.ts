@@ -1,3 +1,9 @@
+/**
+ * @file achievement.controller.ts
+ * @description Controller for managing user achievements. Handles HTTP request parsing, 
+ * contract validation via typed-rest, and response generation for achievement-related operations.
+ */
+
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError } from "@/classes/ServerError.js";
@@ -5,11 +11,23 @@ import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { AchievementService, achievementServiceInstance } from "./achievement.service.js";
 
+/**
+ * AchievementController
+ * Exposes API endpoints for listing, fetching, creating, updating, and deleting achievements.
+ */
 export class AchievementController {
+  /**
+   * @param achievementService - Service layer for achievement business logic.
+   */
   constructor(
-    private achievementService: AchievementService = achievementServiceInstance,
+    private readonly achievementService: AchievementService = achievementServiceInstance,
   ) {}
 
+  /**
+   * listUserAchievements
+   * GET /api/user-resource-system/achievements
+   * Lists achievements with optional filtering by userId and pagination.
+   */
   listUserAchievements: RequestHandler = createExpressController(
     contract.api.user_resource_system.achievements.GET,
     async ({ input, output }) => {
@@ -57,6 +75,11 @@ export class AchievementController {
     },
   );
 
+  /**
+   * getOneAchievement
+   * GET /api/user-resource-system/achievements/:achievementId
+   * Retrieves a single achievement by its ID.
+   */
   getOneAchievement: RequestHandler = createExpressController(
     contract.api.user_resource_system.achievements.achievementId.GET,
     async ({ input, output }) => {
@@ -75,6 +98,11 @@ export class AchievementController {
     },
   );
 
+  /**
+   * createAchievement
+   * POST /api/user-resource-system/achievements
+   * Creates a new achievement record for the authenticated user.
+   */
   createAchievement: RequestHandler = createExpressController(
     contract.api.user_resource_system.achievements.POST,
     async ({ input, output, ctx }) => {
@@ -96,10 +124,15 @@ export class AchievementController {
     },
   );
 
+  /**
+   * updateAchievement
+   * PATCH /api/user-resource-system/achievements/:achievementId
+   * Updates an existing achievement record.
+   */
   updateAchievement: RequestHandler = createExpressController(
     contract.api.user_resource_system.achievements.achievementId.PATCH,
     async ({ input, output }) => {
-      const achievementId = input.params.achievementId as string;
+      const achievementId = input.params.achievementId;
       const dto = input.body.data;
 
       const { data, error } = await tryCatch(
@@ -116,11 +149,16 @@ export class AchievementController {
     },
   );
 
+  /**
+   * deleteAchievement
+   * DELETE /api/user-resource-system/achievements/:achievementId
+   * Deletes an achievement record by ID.
+   */
   deleteAchievement: RequestHandler = createExpressController(
     contract.api.user_resource_system.achievements.achievementId.DELETE,
     async ({ input, output }) => {
       const achievementId = input.params.achievementId;
-      const { data, error } = await tryCatch(
+      const { error } = await tryCatch(
         async () => await this.achievementService.deleteAchievement(achievementId),
         "deleting achievement",
       );
@@ -134,4 +172,7 @@ export class AchievementController {
   );
 }
 
+/**
+ * Exported singleton instance of AchievementController.
+ */
 export const achievementControllerInstance = new AchievementController();

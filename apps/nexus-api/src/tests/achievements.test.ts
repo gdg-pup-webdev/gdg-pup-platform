@@ -1,0 +1,118 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import request from 'supertest';
+
+// Mock Auth Middleware
+vi.mock('@/middlewares/auth.middleware.js', () => ({
+  authMiddlewareInstance: {
+    requireAuth: () => (req: any, res: any, next: any) => {
+      req.user = { id: 'test-user-id', email: 'test@example.com' };
+      next();
+    },
+  },
+  AuthMiddleware: class {},
+}));
+
+// Mock Service
+const mockListAchievementsOfUser = vi.fn();
+const mockListAchievements = vi.fn();
+const mockGetOneAchievement = vi.fn();
+const mockCreateAchievement = vi.fn();
+const mockUpdateAchievement = vi.fn();
+const mockDeleteAchievement = vi.fn();
+
+vi.mock('../modules/userResourceSystem/achievement.service.js', () => ({
+  achievementServiceInstance: {
+    listAchievementsOfUser: (...args: any[]) => mockListAchievementsOfUser(...args),
+    listAchievements: (...args: any[]) => mockListAchievements(...args),
+    getOneAchievement: (...args: any[]) => mockGetOneAchievement(...args),
+    createAchievement: (...args: any[]) => mockCreateAchievement(...args),
+    updateAchievement: (...args: any[]) => mockUpdateAchievement(...args),
+    deleteAchievement: (...args: any[]) => mockDeleteAchievement(...args),
+  },
+  AchievementService: class {},
+}));
+
+// Import app AFTER mocks
+import app from '../app.js';
+
+describe('Achievements API Integration', () => {
+  const mockAchievement = {
+    id: 'ach-1',
+    title: 'First Achievement',
+    description: 'You did it!',
+    user_id: 'test-user-id',
+    achieved_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    image_url: 'http://example.com/img.png'
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('GET /api/user-resource-system/achievements - should return a list of achievements', async () => {
+    mockListAchievementsOfUser.mockResolvedValue({
+      list: [mockAchievement],
+      count: 1
+    });
+
+    const response = await request(app)
+      .get('/api/user-resource-system/achievements')
+      .query({ userId: 'test-user-id' });
+    
+    expect(response.status).toBe(200);
+    expect(response.body.status).toBe('success');
+    expect(response.body.data).toHaveLength(1);
+    expect(response.body.data[0]).toEqual(mockAchievement);
+  });
+
+  it('POST /api/user-resource-system/achievements - should create an achievement', async () => {
+    mockCreateAchievement.mockResolvedValue(mockAchievement);
+
+    const newAchievement = {
+      title: 'First Achievement',
+      description: 'You did it!',
+      image_url: 'http://example.com/img.png',
+      user_id: 'test-user-id'
+    };
+
+    const response = await request(app)
+      .post('/api/user-resource-system/achievements')
+      .send({ data: newAchievement });
+
+    expect(response.status).toBe(201);
+    expect(response.body.data).toEqual(mockAchievement);
+  });
+
+  it('GET /api/user-resource-system/achievements/:id - should get one achievement', async () => {
+    mockGetOneAchievement.mockResolvedValue(mockAchievement);
+
+    const response = await request(app)
+      .get('/api/user-resource-system/achievements/ach-1');
+
+    expect(response.status).toBe(200);
+    expect(response.body.data).toEqual(mockAchievement);
+  });
+
+  it('PATCH /api/user-resource-system/achievements/:id - should update achievement', async () => {
+    mockUpdateAchievement.mockResolvedValue({ ...mockAchievement, title: 'Updated' });
+
+    const response = await request(app)
+      .patch('/api/user-resource-system/achievements/ach-1')
+      .send({ data: { title: 'Updated' } });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.title).toBe('Updated');
+  });
+
+  it('DELETE /api/user-resource-system/achievements/:id - should delete achievement', async () => {
+    mockDeleteAchievement.mockResolvedValue(mockAchievement);
+
+    const response = await request(app)
+      .delete('/api/user-resource-system/achievements/ach-1');
+
+    expect(response.status).toBe(200);
+    expect(mockDeleteAchievement).toHaveBeenCalledWith('ach-1');
+  });
+});
