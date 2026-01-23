@@ -12,8 +12,14 @@ export const response = {
   ...SchemaFactory.Response.standardErrors(),
 };
 
+export const docs_query = {
+  pageNumber: "which page", 
+  pageSize: "how many items per page",
+  userId: "optional ID of the user",
+  walletId: "wallet id, required if userId is not provided",
+}
 export const docs_summary = "List transactions of a user";
 export const docs_description =
   "List transactions filtered by walletId or userId"; 
-export const docs_response_200 = "Success";
+export const docs_response_200 = "Goodssss lupetttt";
 export const docs_response_400 = "Bad request";

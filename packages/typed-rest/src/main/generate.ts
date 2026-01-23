@@ -96,7 +96,7 @@ ${modelTypesTree}
   
 export const openapiendpoints = ${listedFilesString}
  
-${openApiGenerationScriptString}
+${generateOpenApiOptionsString}
 
 `;
 
@@ -111,6 +111,23 @@ const extractPathParams = (path: string): string[] => {
   const regex = /\\{([^}]+)\\}/g;
   const matches = path.matchAll(regex);
   return Array.from(matches).map((match) => match[1]!);
+};
+
+const addDescriptions = (schema: z.ZodObject<any>, descriptions: Record<string, string>) => {
+  const shape = schema.shape;
+  
+  const newShape = Object.fromEntries(
+    Object.entries(shape).map(([key, fieldSchema]) => {
+      const description = descriptions[key];
+      // If a description exists for this key, apply it using .openapi()
+      return [
+        key,
+        description ? (fieldSchema as z.ZodTypeAny).openapi({ description }) : fieldSchema
+      ];
+    })
+  );
+
+  return z.object(newShape);
 };
 
 openapiendpoints.forEach((endpoint: any) => {
@@ -138,7 +155,7 @@ openapiendpoints.forEach((endpoint: any) => {
   }
 
   const requestConfig: any = {};
-  if (endpoint.query) requestConfig.query = endpoint.query;
+  if (endpoint.query) requestConfig.query = addDescriptions(endpoint.query, endpoint.docs_query || {});
   if (endpoint.body) {
     requestConfig.body = {
       description: endpoint.docs_body || \`Payload for \${endpoint.path}\`,
@@ -148,12 +165,14 @@ openapiendpoints.forEach((endpoint: any) => {
 
   const pathParams = extractPathParams(endpoint.path);
   if (pathParams.length > 0) {
-    requestConfig.params = z.object(
+     const paramsSchema = z.object(
       pathParams.reduce((acc, param) => {
         acc[param] = z.string();
         return acc;
       }, {} as Record<string, z.ZodString>)
     );
+
+    requestConfig.params = addDescriptions(paramsSchema, endpoint.docs_params || {})
   }
 
   registry.registerPath({
@@ -194,3 +213,118 @@ export const options = {
   definition: openApiObject as any,
   apis: [],
 };`;
+
+
+export const generateOpenApiOptionsString = `
+export const generateOpenApiOptions = ({
+  info = { title: "API Documentation", version: "1.0.0", description: "Generated Documentation" },
+  servers = [{ url: "http://localhost:8000", description: "Development server" }],
+  security = [{ bearerAuth: [] }],
+}: {
+  info?: { title: string; version: string; description?: string };
+  servers?: { url: string; description?: string }[];
+  security?: Record<string, string[]>[];
+}) => {
+  const registry = new OpenAPIRegistry();
+
+  const extractPathParams = (path: string): string[] => {
+    const regex = /\\{([^}]+)\\}/g;
+    const matches = path.matchAll(regex);
+    return Array.from(matches).map((match) => match[1]!);
+  };
+
+  const addDescriptions = (schema: z.ZodObject<any>, descriptions: Record<string, string>) => {
+    const shape = schema.shape;
+    const newShape = Object.fromEntries(
+      Object.entries(shape).map(([key, fieldSchema]) => {
+        const description = descriptions[key];
+        return [
+          key,
+          description ? (fieldSchema as z.ZodTypeAny).openapi({ description }) : fieldSchema
+        ];
+      })
+    );
+    return z.object(newShape);
+  };
+
+  // Iterating through the global openapiendpoints variable
+  openapiendpoints.forEach((endpoint: any) => {
+    let formattedResponses: any = {};
+
+    if (endpoint.response) {
+      formattedResponses = Object.fromEntries(
+        Object.entries(endpoint.response).map(([code, schema]) => [
+          code,
+          {
+            description: endpoint[\`docs_response_\${code}\`] || (parseInt(code) < 400 ? "Successful response" : "Error response"),
+            content: { "application/json": { schema } },
+          },
+        ])
+      );
+    } else {
+      formattedResponses = {
+        "200": {
+          description: "OK",
+          content: { "application/json": { schema: z.any() } },
+        },
+      };
+    }
+
+    const requestConfig: any = {};
+    
+    if (endpoint.query) {
+      requestConfig.query = endpoint.query instanceof z.ZodObject 
+        ? addDescriptions(endpoint.query, endpoint.docs_query || {})
+        : endpoint.query;
+    }
+
+    if (endpoint.body) {
+      requestConfig.body = {
+        description: endpoint.docs_body || \`Payload for \${endpoint.path}\`,
+        content: { "application/json": { schema: endpoint.body } },
+      };
+    }
+
+    const pathParams = extractPathParams(endpoint.path);
+    if (pathParams.length > 0) {
+      const paramsSchema = z.object(
+        pathParams.reduce((acc, param) => {
+          acc[param] = z.string();
+          return acc;
+        }, {} as Record<string, z.ZodString>)
+      );
+      requestConfig.params = addDescriptions(paramsSchema, endpoint.docs_params || {});
+    }
+
+    registry.registerPath({
+      method: endpoint.method.replace(".ts", "").toLowerCase() as any,
+      path: endpoint.path,
+      tags: [endpoint.path.split("/").filter(Boolean).slice(0, 2).join("/")],
+      summary: endpoint.docs_summary || \`Endpoint for \${endpoint.path}\`,
+      description: endpoint.docs_description || \`Endpoint for \${endpoint.path}\`,
+      request: requestConfig,
+      responses: formattedResponses,
+    });
+  });
+
+  registry.registerComponent("securitySchemes", "bearerAuth", {
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "JWT",
+  });
+
+  const generator = new OpenApiGeneratorV3(registry.definitions);
+  
+  const openApiObject = generator.generateDocument({
+    openapi: "3.0.0",
+    info,
+    servers,
+    security,
+  });
+
+  return {
+    definition: openApiObject as any,
+    apis: [],
+  };
+};
+`;
