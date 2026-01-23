@@ -1,6 +1,6 @@
 import { ZodAny, ZodObject, ZodRawShape } from "zod";
 
-import { z } from "@packages/typed-rest";
+import { z } from "zod";
 import { omit } from "zod/mini";
 import { AnyZodObject } from "zod/v3";
 

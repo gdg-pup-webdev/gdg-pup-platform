@@ -2,7 +2,7 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
-import { openapiendpoints } from "@packages/nexus-api-contracts";
+import { openapiendpoints, options } from "@packages/nexus-api-contracts";
 
 import {
   OpenAPIRegistry,
@@ -12,10 +12,11 @@ import {
 
 import { z } from "zod";
 
-extendZodWithOpenApi(z);
+// extendZodWithOpenApi(z);
 
 export const swaggerLoader = (app: Express) => {
-  const options = createSwaggerOptions([openapiendpoints[0]]);
+  
+  // const options = createSwaggerOptions([openapiendpoints[0]]);
 
   const swaggerSpec = swaggerJsdoc(options);
 
@@ -35,122 +36,136 @@ export const swaggerLoader = (app: Express) => {
   );
 };
 
-export const createSwaggerOptions = (endpoints: any): any => {
-  const registry = new OpenAPIRegistry();
+// export const createSwaggerOptions = (endpoints: any): any => {
+//   const registry = new OpenAPIRegistry();
 
-  endpoints.forEach((endpoint: any) => {
-    // 1. Prepare the Responses object safely
+//   endpoints.forEach((endpoint: any) => {
+//     // 1. Prepare the Responses object safely
 
-    // console.log("endpoint", endpoint);
-    let formattedResponses: any = {};
+//     // console.log("endpoint", endpoint);
+//     let formattedResponses: any = {};
 
-    if (endpoint.response) {
-      formattedResponses = Object.fromEntries(
-        Object.entries(endpoint.response).map(([code, schema]) => [
-          code,
-          {
-            description:
-              parseInt(code) < 400 ? "Successful response" : "Error response",
-            content: {
-              "application/json": {
-                schema: schema,
-              },
-            },
-          },
-        ]),
-      );
-    } else {
-      // OpenAPI requires at least one response
-      formattedResponses = {
-        "200": {
-          description: "OK",
-          content: { "application/json": { schema: z.any() } },
-        },
-      };
-    }
+//     if (endpoint.response) {
+//       formattedResponses = Object.fromEntries(
+//         Object.entries(endpoint.response).map(([code, schema]) => [
+//           code,
+//           {
+//             description:
+//               parseInt(code) < 400 ? "Successful response" : "Error response",
+//             content: {
+//               "application/json": {
+//                 schema: schema,
+//               },
+//             },
+//           },
+//         ]),
+//       );
+//     } else {
+//       // OpenAPI requires at least one response
+//       formattedResponses = {
+//         "200": {
+//           description: "OK",
+//           content: { "application/json": { schema: z.any() } },
+//         },
+//       };
+//     }
 
-    // 2. Prepare the Request object safely
-    const requestConfig: any = {};
-    if (endpoint.query) {
-      console.log("has query");
-      console.log(z.toJSONSchema(endpoint.query));
-      requestConfig.query = z.object({
-        userId: z.string().optional(),
-        walletId: z.string().optional(),
-      });
-    }
-    if (endpoint.body) {
-      console.log("has body");
-      requestConfig.body = {
-        content: { "application/json": { schema: endpoint.body } },
-      };
-    }
+//     // 2. Prepare the Request object safely
+//     const requestConfig: any = {};
+//     if (endpoint.query) {
+//       const querySchema = endpoint.query as z.ZodObject<any, any, any>;
+//       const queryParameters = Object.keys(querySchema.shape).map((key) => {
+//         const schema = querySchema.shape[key] as z.ZodTypeAny;
+//         return schema.openapi({
+//           param: {
+//             name: key,
+//             in: "query",
+//           },
+//         });
+//       });
+//       requestConfig.query = z.object(
+//         Object.fromEntries(
+//           Object.entries(querySchema.shape).map(([key]) => [
+//             key,
+//             queryParameters.find(
+//               (p) => (p._def as any).openapi.param.name === key,
+//             ),
+//           ]),
+//         ),
+//       );
+//     }
+//     if (endpoint.body) {
+//       console.log("has body");
+//       requestConfig.body = {
+//         content: { "application/json": { schema: endpoint.body } },
+//       };
+//     }
 
-    // const pathParams = extractPathParams(endpoint.path);
+//     // const pathParams = extractPathParams(endpoint.path);
 
-    // if (pathParams.length > 0) {
-    //   requestConfig.params = z.object({
-    //     ...pathParams.reduce(
-    //       (acc, param) => {
-    //         acc[param] = z.string();
-    //         return acc;
-    //       },
-    //       {} as Record<string, z.ZodString>,
-    //     ), // Type the initial {} here
-    //   });
-    // }
+//     // if (pathParams.length > 0) {
+//     //   requestConfig.params = z.object({
+//     //     ...pathParams.reduce(
+//     //       (acc, param) => {
+//     //         acc[param] = z.string();
+//     //         return acc;
+//     //       },
+//     //       {} as Record<string, z.ZodString>,
+//     //     ), // Type the initial {} here
+//     //   });
+//     // }
 
-    // 3. Register the path
-    registry.registerPath({
-      method: endpoint.method.replace(".ts", "").toLowerCase() as any,
-      path: endpoint.path,
-      summary: `Endpoint for ${endpoint.path}`,
-      request: requestConfig,
-      responses: formattedResponses,
-    });
-  });
+//     // 3. Register the path
+//     registry.registerPath({
+//       method: endpoint.method.replace(".ts", "").toLowerCase() as any,
+//       path: endpoint.path,
+//       summary: `Endpoint for ${endpoint.path}`,
+//       request: requestConfig,
+//       responses: formattedResponses,
+//     });
+//   });
 
-  registry.registerComponent("securitySchemes", "bearerAuth", {
-    type: "http",
-    scheme: "bearer",
-    bearerFormat: "JWT",
-  });
+//   registry.registerComponent("securitySchemes", "bearerAuth", {
+//     type: "http",
+//     scheme: "bearer",
+//     bearerFormat: "JWT",
+//   });
 
-  const generator = new OpenApiGeneratorV3(registry.definitions);
+//   const generator = new OpenApiGeneratorV3(registry.definitions);
 
-  const openApiObject = generator.generateDocument({
-    openapi: "3.0.0",
-    info: {
-      title: "Nexus API",
-      version: "1.0.0",
-      description: "Generated from openapiendpoints object",
-    },
-    servers: [
-      {
-        url: `http://localhost:8000`,
-        description: "Development server",
-      },
-    ],
-    // 3. Apply the security globally here
-    security: [{ bearerAuth: [] }],
-  });
+//   const openApiObject = generator.generateDocument({
+//     openapi: "3.0.0",
+//     info: {
+//       title: "Nexus API",
+//       version: "1.0.0",
+//       description: "Generated from openapiendpoints object",
+//     },
+//     servers: [
+//       {
+//         url: `http://localhost:8000`,
+//         description: "Development server",
+//       },
+//     ],
+//     // 3. Apply the security globally here
+//     security: [{ bearerAuth: [] }],
+//   });
 
-  const options = {
-    definition: openApiObject,
-    apis: [],
-  };
+//   const options = {
+//     definition: openApiObject,
+//     apis: [],
+//   };
 
-  return options;
-};
+//   return options;
+// };
 
-const extractPathParams = (path: string): string[] => {
-  // Regex: matches anything between { and }
-  const regex = /\{([^}]+)\}/g;
-  const matches = path.matchAll(regex);
+// const extractPathParams = (path: string): string[] => {
+//   // Regex: matches anything between { and }
+//   const regex = /\{([^}]+)\}/g;
+//   const matches = path.matchAll(regex);
 
-  // Extract the first capturing group from each match
-  return Array.from(matches).map((match) => match[1]!);
-};
+//   // Extract the first capturing group from each match
+//   return Array.from(matches).map((match) => match[1]!);
+// };
 
 // const options = {
 //   definition: {

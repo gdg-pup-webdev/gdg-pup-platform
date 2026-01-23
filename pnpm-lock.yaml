@@ -364,6 +364,9 @@ importers:
 
   packages/identity-api-contracts:
     dependencies:
+      '@asteasolutions/zod-to-openapi':
+        specifier: ^8.4.0
+        version: 8.4.0(zod@4.3.2)
       '@packages/typed-rest':
         specifier: workspace:*
         version: link:../typed-rest
@@ -8158,8 +8161,8 @@ snapshots:
       '@babel/parser': 7.28.6
       eslint: 9.39.1(jiti@2.6.1)
       hermes-parser: 0.25.1
-      zod: 4.3.2
-      zod-validation-error: 4.0.2(zod@4.3.2)
+      zod: 4.3.5
+      zod-validation-error: 4.0.2(zod@4.3.5)
     transitivePeerDependencies:
       - supports-color
 
@@ -11428,9 +11431,9 @@ snapshots:
     dependencies:
       zod: 4.3.5
 
-  zod-validation-error@4.0.2(zod@4.3.2):
+  zod-validation-error@4.0.2(zod@4.3.5):
     dependencies:
-      zod: 4.3.2
+      zod: 4.3.5
 
   zod@3.25.76: {}
 

@@ -14,9 +14,7 @@ import {
   OpenApiGeneratorV3,
 } from "@asteasolutions/zod-to-openapi";
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'; 
-
-// 1. Extend Zod once here
-extendZodWithOpenApi(z);
+ 
 
 // --- Controller Factory ---
 export const createExpressController = <T extends EndpointDef>(
@@ -227,6 +225,4 @@ export const createSwaggerOptions = (endpoints: any): any => {
 };
 
 
-
-// 2. Export this specific instance
-export { z };
+ 

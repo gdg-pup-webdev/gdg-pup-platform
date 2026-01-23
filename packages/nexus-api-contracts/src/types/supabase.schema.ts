@@ -5,7 +5,7 @@
  */
 
 
-import { z } from "@packages/typed-rest";
+import { z } from "zod";
 import { type Json } from "./supabase.types";
 
 export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
