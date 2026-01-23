@@ -102,7 +102,7 @@ export const scanContractModels = async (root: string) => {
         }
 
         // CHECK FILE EXPORTS
-        const exports = listExportsSync(actualFilePath);
+        const exports = listExportsSync(actualFilePath).filter(item => !/^docs_/i.test(item));;
         for (const exportedVariable of exports) {
           if (exportedVariable === "response") {
             const schemaImportName = `${endpoint_signature}_response`;
