@@ -1,4 +1,4 @@
-import { ServerError } from "@/classes/ServerError.js";
+import { ServerError, TooManyRequestError } from "../classes/ServerError.js";
 import { rateLimit } from "express-rate-limit";
 
 export const rateLimiter = rateLimit({
@@ -9,9 +9,7 @@ export const rateLimiter = rateLimit({
 
   // Custom handler to return JSON:API error format
   handler: (req, res, next, options) => {
-    return new ServerError(
-      options.statusCode,
-      "Too Many Requests",
+    throw new TooManyRequestError(
       "You have sent too many requests in a given amount of time. Please try again later.",
     );
   },
