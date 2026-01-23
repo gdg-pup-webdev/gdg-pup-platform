@@ -129,8 +129,7 @@ export async function ListExportOfFilesInDirectory(dir: string) {
       ?.replace(".ts", "")
       .toLowerCase();
 
-    const fileExports = listExportsSync(file.path);
-    console.log("exports", file.path, fileExports);
+    const fileExports = listExportsSync(file.path); 
 
     const exportObjects: any = {
       method: method,

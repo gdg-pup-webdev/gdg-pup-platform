@@ -13,8 +13,8 @@ export class MemberController {
     contract.api.team_system.members.GET,
     async ({ input, output }) => {
       // pagination stuff
-      const pageNumber = input.query.page.number;
-      const pageSize = input.query.page.size;
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
 
       // filter stuff
       const teamId = input.query.teamId;

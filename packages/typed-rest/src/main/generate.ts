@@ -49,6 +49,10 @@ export async function generate(
   );
   const modelTypesTree = await scanPlainModels(modelsDir);
 
+  /**
+   * SCAN OPENAPI ENDPOINTS
+   */
+  logger.log("Creating openapi endpoints in:", routesDir);
   const { listedFiles, imports: listingImports } =
     await ListExportOfFilesInDirectory(routesDir);
   imports.push(...listingImports);
@@ -182,115 +186,6 @@ const openApiObject = generator.generateDocument({
       url: "http://localhost:8000",
       description: "Development server",
     },
-  ],
-  security: [{ bearerAuth: [] }],
-});
-
-export const options = {
-  definition: openApiObject as any,
-  apis: [],
-};`;
-
-
-
-export const openApiGenerationScriptStringV2 = `
-const registry = new OpenAPIRegistry();
-
-const extractPathParams = (path: string): string[] => {
-  const regex = /\\\\{([^}]+)\\\\}/g;
-  const matches = path.matchAll(regex);
-  return Array.from(matches).map((match) => match[1]!);
-};
-
-openapiendpoints.forEach((endpoint: any) => {
-  let formattedResponses: any = {};
-
-  if (endpoint.response) {
-    formattedResponses = Object.fromEntries(
-      Object.entries(endpoint.response).map(([code, schema]) => [
-        code,
-        {
-          description: parseInt(code) < 400 ? "Successful response" : "Error response",
-          content: {
-            "application/json": { 
-              schema,
-              // Add example if provided in your endpoint object
-              example: endpoint.examples?.[code] || undefined 
-            },
-          },
-        },
-      ])
-    );
-  } else {
-    formattedResponses = {
-      "200": {
-        description: "OK",
-        content: { "application/json": { schema: z.any() } },
-      },
-    };
-  }
-
-  const requestConfig: any = {};
-  if (endpoint.query) requestConfig.query = endpoint.query;
-  if (endpoint.body) {
-    requestConfig.body = {
-      description: \`Payload for \${endpoint.path}\`,
-      content: { 
-        "application/json": { 
-          schema: endpoint.body,
-          example: endpoint.bodyExample // Custom field for request body examples
-        } 
-      },
-    };
-  }
-
-  const pathParams = extractPathParams(endpoint.path);
-  if (pathParams.length > 0) {
-    requestConfig.params = z.object(
-      pathParams.reduce((acc, param) => {
-        acc[param] = z.string();
-        return acc;
-      }, {} as Record<string, z.ZodString>)
-    );
-  } 
-
-  registry.registerPath({ 
-    method: endpoint.method.replace(".ts", "").toLowerCase() as any,
-    path: endpoint.path,
-    tags: [endpoint.path.split("/").filter(Boolean)[0] || "General"],
-    summary: endpoint.description || \`Endpoint for \${endpoint.path}\`,
-    // description: endpoint.longDescription, // Use for detailed Markdown explanations
-    request: requestConfig,
-    responses: formattedResponses,
-  });
-});
-
-registry.registerComponent("securitySchemes", "bearerAuth", {
-  type: "http",
-  scheme: "bearer",
-  bearerFormat: "JWT",
-});
-
-const generator = new OpenApiGeneratorV3(registry.definitions);
-const openApiObject = generator.generateDocument({
-  openapi: "3.0.0",
-  info: {
-    title: "Nexus API",
-    version: "1.0.0",
-    description: "## Nexus API Documentation\\nWelcome to the official API. Use the Bearer token for authorized requests.",
-    contact: {
-      name: "API Support",
-      email: "support@example.com"
-    }
-  },
-  // Adding tag metadata makes the UI headers look much better
-  tags: [
-    { name: "users", description: "User profile and management operations" },
-    { name: "auth", description: "Authentication and Session handling" }
-  ],
-  servers: [
-    { url: "http://localhost:8000", description: "Development" },
-    { url: "https://api.production.com", description: "Production" }
   ],
   security: [{ bearerAuth: [] }],
 });

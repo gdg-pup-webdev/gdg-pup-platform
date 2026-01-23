@@ -82,6 +82,8 @@ export class ExternalResourceController {
   listExternalResources: RequestHandler = createExpressController(
     contract.api.learning_resource_system.external_resources.GET,
     async ({ input, output, ctx }) => {
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
       const { data, error } = await tryCatch(
         async () => await this.resourceService.list(),
         "listing external resources",
@@ -95,9 +97,9 @@ export class ExternalResourceController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
-          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },

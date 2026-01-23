@@ -14,6 +14,8 @@ export class RoleController {
   getRolesOrUser: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.GET,
     async ({ input, output, ctx }) => {
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
       const userId = input.query.userId;
       const { data, error } = await tryCatch(
         async () => await this.roleService.getRolesOfUser(userId),
@@ -27,9 +29,9 @@ export class RoleController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          totalPages: Math.ceil(data.count / input.query.page.size),
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },

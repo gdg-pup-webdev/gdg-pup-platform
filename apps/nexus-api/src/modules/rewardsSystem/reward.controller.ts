@@ -30,11 +30,13 @@ export class RewardController {
   listRewards: RequestHandler = createExpressController(
     contract.api.reward_system.rewards.GET,
     async ({ input, output, ctx }) => {
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
       const { data, error } = await tryCatch(
         async () =>
           await this.rewardService.listRewardsByPage(
-            input.query.page.number,
-            input.query.page.size,
+            pageNumber,
+            pageSize,
           ),
         "listing rewards",
       );
@@ -47,9 +49,9 @@ export class RewardController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
-          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },

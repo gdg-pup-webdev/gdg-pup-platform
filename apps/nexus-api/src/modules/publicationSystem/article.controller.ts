@@ -13,6 +13,8 @@ export class ArticleController {
   list: RequestHandler = createExpressController(
     contract.api.publication_system.articles.GET,
     async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
       const { data, error } = await tryCatch(
         async () => await this.articleService.list(),
         "listing articles",
@@ -25,9 +27,9 @@ export class ArticleController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
-          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },
