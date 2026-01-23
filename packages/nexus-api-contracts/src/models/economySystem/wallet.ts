@@ -5,13 +5,8 @@ import {
 } from "#types/supabase.schema.js";
 import { Tables, TablesInsert, TablesUpdate } from "#types/supabase.types.js";
 
-export namespace WalletModels {
-  export const row = publicWalletRowSchema;
-  export type row = Tables<"wallet">;
+export const row = publicWalletRowSchema;
 
-  export const insertDTO = publicWalletInsertSchema;
-  export type insertDTO = TablesInsert<"wallet">;
+export const insertDTO = publicWalletInsertSchema;
 
-  export const updateDTO = publicWalletUpdateSchema;
-  export type updateDTO = TablesUpdate<"wallet">;
-}
+export const updateDTO = publicWalletUpdateSchema;

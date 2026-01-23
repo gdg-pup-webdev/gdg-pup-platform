@@ -36,7 +36,7 @@ export class ContractError extends Error {
   public blame: "client" | "server";
   constructor(
     public error: ZodError,
-    blame: "client" | "server"
+    blame: "client" | "server",
   ) {
     super("Request validation failed");
     this.name = "Contract validation error";
@@ -63,7 +63,7 @@ export type inferOutputFunction<T extends EndpointDef> = <
   S extends keyof T["response"],
 >(
   status: S,
-  body: inferResponse<T>[S]
+  body: inferResponse<T>[S],
 ) => { status: S; body: inferResponse<T>[S] };
 
 export type inferContext<T extends EndpointDef> = {

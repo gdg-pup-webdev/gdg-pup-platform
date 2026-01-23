@@ -1,3 +1,5 @@
+## This guide has been deprecated. Please read **[Guide Index](./README.md)** 
+
 # GDG PUP Platform - Complete Architecture Guide
 
 > **Complete guide to understanding and developing in the GDG PUP Platform monorepo**
@@ -49,6 +51,7 @@ gdg-pup-platform/
 ### 📋 What Are Contracts?
 
 Contracts are **type-safe API definitions** that:
+
 - Define request/response schemas using Zod
 - Provide automatic validation
 - Generate TypeScript types
@@ -112,17 +115,17 @@ export const publicUserSchema = createSupabaseSelect({
 
 // Insert DTO (for creating new records)
 export const publicUserInsertSchema = createInsert(publicUserSchema, {
-  email: true,        // Required
-  username: true,     // Required
-  id: false,          // Auto-generated
-  created_at: false,  // Auto-generated
-  updated_at: false,  // Auto-generated
+  email: true, // Required
+  username: true, // Required
+  id: false, // Auto-generated
+  created_at: false, // Auto-generated
+  updated_at: false, // Auto-generated
 });
 
 // Update DTO (for updating records)
 export const publicUserUpdateSchema = createUpdate(publicUserSchema, {
-  email: true,        // Optional update
-  username: true,     // Optional update
+  email: true, // Optional update
+  username: true, // Optional update
 });
 
 // Export as a model group
@@ -163,7 +166,7 @@ export const userSystem = createRoute({
       method: "POST",
       request: {
         body: SchemaFactory.Request.withPayload(
-          Models.userSystem.user.insertDTO
+          Models.userSystem.user.insertDTO,
         ),
       },
       response: {
@@ -267,6 +270,7 @@ export { Models, Contract, type ContractTypes };
 ```
 
 The `createContract` function:
+
 1. ✅ **Recursively walks** the route tree
 2. ✅ **Computes full paths** (e.g., `/users/:userId`)
 3. ✅ **Preserves Zod schemas** for validation
@@ -330,38 +334,39 @@ import { UserService, userServiceInstance } from "./user.service.js";
 import { ServerError } from "@/classes/ServerError.js";
 
 export class UserController {
-  constructor(
-    private userService: UserService = userServiceInstance
-  ) {}
+  constructor(private userService: UserService = userServiceInstance) {}
 
   // GET /users/:userId
   getUser: RequestHandler = createExpressController(
-    Contract.userSystem.users.user.get,  // ← Contract reference
+    Contract.userSystem.users.user.get, // ← Contract reference
     async ({ input, output, ctx }) => {
-      const userId = input.params.userId;  // ← Typed params
+      const userId = input.params.userId; // ← Typed params
 
       const { data, error } = await this.userService.getById(userId);
-      
+
       if (error) {
-        throw ServerError.internalError(`Failed to fetch user: ${error.message}`);
+        throw ServerError.internalError(
+          `Failed to fetch user: ${error.message}`,
+        );
       }
 
-      return output(200, {              // ← Typed output
+      return output(200, {
+        // ← Typed output
         status: "success",
         message: "User fetched successfully",
         data,
       });
-    }
+    },
   );
 
   // POST /users
   createUser: RequestHandler = createExpressController(
     Contract.userSystem.users.post,
     async ({ input, output, ctx }) => {
-      const dto = input.body.data;      // ← Typed body
+      const dto = input.body.data; // ← Typed body
 
       const { data, error } = await this.userService.create(dto);
-      
+
       if (error) {
         throw ServerError.badRequest(`Validation failed: ${error.message}`);
       }
@@ -371,7 +376,7 @@ export class UserController {
         message: "User created successfully",
         data,
       });
-    }
+    },
   );
 }
 
@@ -392,13 +397,13 @@ type UserRow = z.infer<typeof Models.userSystem.user.row>;
 
 export class UserService {
   constructor(
-    private userRepository: UserRepository = userRepositoryInstance
+    private userRepository: UserRepository = userRepositoryInstance,
   ) {}
 
   async getById(userId: string) {
     try {
       const user = await this.userRepository.findById(userId);
-      
+
       if (!user) {
         return { data: null, error: new Error("User not found") };
       }
@@ -491,7 +496,7 @@ import { authMiddleware } from "@/middlewares/auth.js";
 
 export class UserRouter {
   constructor(
-    private userController: UserController = userControllerInstance
+    private userController: UserController = userControllerInstance,
   ) {}
 
   getRouter() {
@@ -503,8 +508,8 @@ export class UserRouter {
     // Protected routes
     router.get(
       "/users/:userId",
-      authMiddleware,                        // ← Auth middleware
-      this.userController.getUser
+      authMiddleware, // ← Auth middleware
+      this.userController.getUser,
     );
 
     return router;
@@ -533,7 +538,7 @@ export const authMiddleware: RequestHandler = async (req, res, next) => {
     }
 
     const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken;  // Attach user to request
+    req.user = decodedToken; // Attach user to request
 
     next();
   } catch (error) {
@@ -598,13 +603,9 @@ export async function apiCall<T extends keyof typeof Contract>(
     query?: any;
     body?: any;
     token?: string;
-  }
+  },
 ) {
-  return await callEndpoint(
-    API_BASE_URL,
-    endpoint as any,
-    options
-  );
+  return await callEndpoint(API_BASE_URL, endpoint as any, options);
 }
 
 // Example: Fetch user
@@ -615,12 +616,12 @@ export async function getUser(userId: string, token: string) {
     {
       params: { userId },
       token,
-    }
+    },
   );
 
   // Type-safe response handling
   if (result.status === 200) {
-    return result.body.data;  // ← Fully typed!
+    return result.body.data; // ← Fully typed!
   }
 
   throw new Error(result.body.message);
@@ -634,10 +635,7 @@ export async function getUser(userId: string, token: string) {
 import { useState, useEffect } from "react";
 import { callEndpoint } from "@packages/api-typing";
 
-export function useApi<T>(
-  fetcher: () => Promise<T>,
-  deps: any[] = []
-) {
+export function useApi<T>(fetcher: () => Promise<T>, deps: any[] = []) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -814,15 +812,15 @@ export const publicEventSchema = createSupabaseSelect({
 
 // 2. Create Insert DTO (specify required fields)
 export const publicEventInsertSchema = createInsert(publicEventSchema, {
-  title: true,              // Required
-  description: true,        // Required
-  start_date: true,         // Required
-  end_date: true,           // Required
-  location: true,           // Required
-  created_by: true,         // Required
-  id: false,                // Auto-generated
-  created_at: false,        // Auto-generated
-  updated_at: false,        // Auto-generated
+  title: true, // Required
+  description: true, // Required
+  start_date: true, // Required
+  end_date: true, // Required
+  location: true, // Required
+  created_by: true, // Required
+  id: false, // Auto-generated
+  created_at: false, // Auto-generated
+  updated_at: false, // Auto-generated
 });
 
 // 3. Create Update DTO (all fields optional)
@@ -985,7 +983,7 @@ export const postSystem = createRoute({
       method: "POST",
       request: {
         body: SchemaFactory.Request.withPayload(
-          Models.postSystem.post.insertDTO
+          Models.postSystem.post.insertDTO,
         ),
       },
       response: {
@@ -1065,7 +1063,7 @@ export class PostController {
         message: "Post fetched",
         data: post,
       });
-    }
+    },
   );
 }
 ```
@@ -1137,18 +1135,22 @@ export default function PostPage({ params }: { params: { postId: string } }) {
 ### ❌ Common Issues
 
 **Issue: "Property 'X' does not exist on Contract"**
+
 - **Cause**: Endpoint not wrapped with `createEndpoint()`
 - **Fix**: Wrap the endpoint definition with `createEndpoint()`
 
 **Issue: "Type 'number' is not assignable to type 'string'"**
+
 - **Cause**: Status code returned as number instead of literal
 - **Fix**: Use `createEndpoint()` for proper type inference
 
 **Issue: "Module not found"**
+
 - **Cause**: Package not installed or linked
 - **Fix**: Run `run install -all` to reinstall packages
 
 **Issue: "Supabase RLS blocking requests"**
+
 - **Cause**: Row-Level Security policies not configured
 - **Fix**: Add policies in Supabase Dashboard or disable RLS for testing
 

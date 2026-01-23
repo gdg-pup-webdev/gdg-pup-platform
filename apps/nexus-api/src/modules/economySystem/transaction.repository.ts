@@ -1,47 +1,101 @@
+import { DatabaseError, RepositoryError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/nexus-api-contracts/models";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
+import { models } from "@packages/nexus-api-contracts";
 
 export class TransactionRepository {
+  tableName = "wallet_transaction";
+
   constructor() {}
 
-  listTransactionsByWalletId = async (walletId: string) => {
+  listTransactionsByWalletId = async (
+    walletId: string,
+  ): RespositoryResultList<models.economySystem.transaction.row> => {
     const { data: listData, error: listError } = await supabase
-      .from("wallet_transaction")
+      .from(this.tableName)
       .select("*")
       .eq("wallet_id", walletId);
+
     if (listError) {
-      return { error: listError };
+      throw new DatabaseError(listError.message);
     }
 
     const { count, error } = await supabase
-      .from("wallet_transaction")
-      .select("*", { count: "exact", head: true }) // head: true means "don't return rows"
+      .from(this.tableName)
+      .select("*", { count: "exact", head: true })
       .eq("wallet_id", walletId);
+
     if (error) {
-      return { error };
+      throw new DatabaseError(error.message);
     }
 
     return {
-      data: {
-        listData: listData as Models.economySystem.transaction.row[],
-        count: (count || 0) as number,
-      },
+      list: listData || [],
+      count: count || 0,
     };
   };
 
+  listTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+  ): RespositoryResultList<models.economySystem.transaction.row> => {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data: listData, error: listError } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (listError) {
+      throw new DatabaseError(listError.message);
+    }
+
+    const { count, error } = await supabase
+      .from(this.tableName)
+      .select("*", { count: "exact", head: true });
+
+    if (error) {
+      throw new DatabaseError(error.message);
+    }
+
+    return {
+      list: listData || [],
+      count: count || 0,
+    };
+  };
+
+  getTransactionById = async (
+    id: string,
+  ): RepositoryResult<models.economySystem.transaction.row> => {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
+
   createTransaction = async (
-    dto: Models.economySystem.transaction.insertDTO
-  ) => {
+    dto: models.economySystem.transaction.insertDTO,
+  ): RepositoryResult<models.economySystem.transaction.row> => {
     // insert transaction into database
     const { data, error } = await supabase
-      .from("wallet_transaction")
+      .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
 
-    if (error) return { error };
+    if (error) throw new DatabaseError(error.message);
 
-    return { data: data as Models.economySystem.transaction.row };
+    return data;
   };
 }
 

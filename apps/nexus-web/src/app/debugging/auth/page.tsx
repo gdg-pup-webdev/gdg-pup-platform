@@ -17,13 +17,11 @@ const page = () => {
         headers: {
           Authorization: `Bearer ${authContext.googleAccessToken}`,
         },
-      }
+      },
     );
     const data = await response.json();
     console.log(data);
   };
-  
-
 
   const handleCopyToken = () => {
     if (authContext.token) {
@@ -47,7 +45,9 @@ const page = () => {
     <>
       <div className="flex flex-col gap-2 items-start">
         <div>Authentication Debugging Page</div>
-        <Link href="/debugging/" className="underline text-blue-500">Debug Page</Link>
+        <Link href="/debugging/" className="underline text-blue-500">
+          Debug Page
+        </Link>
         <button
           className="p-2 border rounded-2xl bg-greenn-200"
           onClick={authContext.loginWithGoogle}

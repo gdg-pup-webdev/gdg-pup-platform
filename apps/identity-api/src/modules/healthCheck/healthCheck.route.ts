@@ -6,11 +6,11 @@ import {
 
 export class HealthCheckRouter {
   constructor(
-    private controller: HealthCheckController = healthCheckControllerImport
+    private controller: HealthCheckController = healthCheckControllerImport,
   ) {}
 
   getRouter() {
-    const router :Router= Router();
+    const router: Router = Router();
     router.get("/", this.controller.getHealthCheck);
     return router;
   }

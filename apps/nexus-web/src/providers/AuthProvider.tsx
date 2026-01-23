@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           (_event, session) => {
             if (!isMounted) return;
             syncSessionToState(session);
-          }
+          },
         );
 
         subscription = listener.subscription;

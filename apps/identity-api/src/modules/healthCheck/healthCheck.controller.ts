@@ -12,7 +12,7 @@ export class HealthCheckController {
         status: "success",
         message: "Identity API: Health check successful",
       });
-    }
+    },
   );
 }
 

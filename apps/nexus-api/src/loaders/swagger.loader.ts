@@ -2,8 +2,38 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
-
+import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
 export const swaggerLoader = (app: Express) => {
+  const options = generateOpenApiOptions({
+    info: {
+      title: "Nexus API",
+      version: "2.1.0",
+      description: "Documentation for the GDG PUP Platform Nexus API",
+    },
+    servers: [ 
+      { url: "http://localhost:8000", description: "Local Dev" },
+    ],
+  });
+
+  const swaggerSpec = swaggerJsdoc(options);
+
+  const assetOptions = {
+    customCssUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
+    customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
+    ],
+  };
+
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
+
+  console.log(
+    `Swagger docs available at http://localhost:${configs.port}/docs`,
+  );
+};
+
+export const swaggerLoaderManual = (app: Express) => {
   const options = {
     definition: {
       openapi: "3.0.0",
@@ -192,6 +222,94 @@ export const swaggerLoader = (app: Express) => {
               },
             },
           },
+          ArticleInput: {
+            type: "object",
+            required: ["title"],
+            properties: {
+              title: {
+                type: "string",
+                description: "Title of the article",
+              },
+              body: {
+                type: "string",
+                nullable: true,
+                description: "Content of the article",
+              },
+              is_published: {
+                type: "boolean",
+                description: "Whether the article is published",
+              },
+              related_event_id: {
+                type: "string",
+                nullable: true,
+                description: "ID of the related event",
+              },
+            },
+          },
+          ArticleRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/ArticleInput",
+              },
+            },
+          },
+          ArticleUpdateInput: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              body: { type: "string", nullable: true },
+              is_published: { type: "boolean" },
+              related_event_id: { type: "string", nullable: true },
+            },
+          },
+          ArticleUpdateRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/ArticleUpdateInput",
+              },
+            },
+          },
+          CommentInput: {
+            type: "object",
+            required: ["body"],
+            properties: {
+              body: {
+                type: "string",
+                description: "The comment content",
+              },
+            },
+          },
+          CommentRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/CommentInput",
+              },
+            },
+          },
+          CommentUpdateInput: {
+            type: "object",
+            properties: {
+              body: {
+                type: "string",
+                description: "The comment content",
+              },
+            },
+          },
+          CommentUpdateRequestBody: {
+            type: "object",
+            required: ["data"],
+            properties: {
+              data: {
+                $ref: "#/components/schemas/CommentUpdateInput",
+              },
+            },
+          },
         },
         responses: {
           UnauthorizedError: {
@@ -262,19 +380,7 @@ export const swaggerLoader = (app: Express) => {
 
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
 
-  // WORKS LOCALLY BUT FAILS WHEN DEPLOYED WITH VERCEL DUE TO STATIC ASSET LOADING ISSUE
-  // const swaggerSpec = swaggerJsdoc(options);
-
-  // // Serve Swagger UI
-  // app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-  // // Expose swagger.json
-  // app.get("/docs.json", (req, res) => {
-  //   res.setHeader("Content-Type", "application/json");
-  //   res.send(swaggerSpec);
-  // });
-
   console.log(
-    `Swagger docs available at http://localhost:${configs.port}/docs`
+    `Swagger docs available at http://localhost:${configs.port}/docs`,
   );
 };

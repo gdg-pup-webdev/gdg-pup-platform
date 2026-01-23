@@ -2,18 +2,20 @@
   "name": "nexus-api",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc && tsc-alias",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/types/supabase.types.ts",
+    "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
+    "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@packages/nexus-api-contracts": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.86.0",
@@ -23,6 +25,7 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.2.1",
     "firebase-admin": "^13.6.0",
+    "js-yaml": "^4.1.1",
     "module-alias": "^2.2.3",
     "nanoid": "^5.1.6",
     "pino": "^10.1.0",
@@ -31,13 +34,15 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "tsc-alias": "^1.8.16",
-    "zod": "^4.1.12"
+    "zod": "^4.3.5",
+    "zod-to-json-schema": "^3.25.1"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jest": "^29.5.14",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.4",
     "@types/pino-http": "^5.8.4",
     "@types/supertest": "^6.0.3",

@@ -1,11 +1,13 @@
+import { ServerError } from "@/classes/ServerError.js";
+import { ContractError } from "@packages/typed-rest";
 import { Request, Response, NextFunction } from "express";
-import { ZodError } from "zod";
+import z, { ZodError } from "zod";
 
 export const globalErrorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   // 1. Default values
   let statusCode = err.statusCode || 500;
@@ -14,28 +16,118 @@ export const globalErrorHandler = (
 
   console.error("ERROR", err); // Log the real error for the dev
 
-  // 3. Handle Operational Errors (AppError)
-  if (err.isOperational) {
-    return res.status(statusCode).json({
+  /**
+   *
+   * HANDLING CONTRACT VIOLATIONS
+   *
+   */
+  if (err instanceof ContractError) {
+    console.error("🚨 CONTRACT VIOLATION 🚨", {
+      path: req.path,
+      method: req.method,
+      validationErrors: err.error.issues,
+    });
+
+    if (err.blame === "client") {
+      return res.status(400).json({
+        title: "Bad Request",
+        message: `Request validation failed. `,
+        errors: err.error.issues.map((issue) => {
+          let detail = ``;
+          if (issue.code === "invalid_type") {
+            detail += ` ${z.prettifyError(err.error)}`;
+          } else {
+            detail = issue.code;
+          }
+
+          return {
+            title: issue.message,
+            detail: detail,
+            // moreDetails: z.treeifyError(err.error),
+            path: `${issue.path.join(" -> ")}`,
+          };
+        }),
+      });
+    } else if (err.blame === "server") {
+      return res.status(500).json({
+        title: "Internal Server Error",
+        message: "Response validation failed. Contract violated.",
+        errors: err.error.issues.map((issue) => {
+          let detail = ``;
+          if (issue.code === "invalid_type") {
+            detail += ` ${z.prettifyError(err.error)}`;
+          } else {
+            detail = issue.code;
+          }
+
+          return {
+            title: issue.message,
+            detail: detail,
+            // moreDetails: z.treeifyError(err.error),
+            path: `${issue.path.join(" -> ")}`,
+          };
+        }),
+      });
+    }
+  }
+
+  /**
+   *
+   * HANDLING KNOWN ERRORS FROM LAYERS
+   */
+  if (err instanceof ServerError) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
       errors: [
         {
-          status: statusCode.toString(),
-          title: title,
-          detail: message,
+          title: err.title,
+          detail: err.detail,
+          moreDetails: {
+            context: err.context.reverse().join(" -> "),
+          },
+          // moreDetails: err.context,
         },
       ],
     });
   }
 
-  // 4. Handle Unknown/Programming Errors (Don't leak details to client)
-  
+  /**
+   *
+   * HANDLING KNOWN ERROR ACROSS THE SERVER
+   *
+   */
+  if (err instanceof ServerError) {
+    return res.status(err.statusCode).json({
+      status: "fail",
+      message: "Internal Server Error",
+      errors: [
+        {
+          title: err.title,
+          detail: err.message,
+          // moreDetails: "An error occured while " + err.context.join(" while "),
+          // moreDetails: err.context,
+        },
+      ],
+    });
+  }
 
+  /**
+   *
+   * HANDLING UNKNOWN ERRORS
+   *
+   */
   return res.status(500).json({
     errors: [
       {
         status: "500",
         title: "Internal Server Error",
-        detail: `Something went wrong on our end. ${JSON.stringify(err)}`,
+        errors: [
+          {
+            title: "Unknown Error",
+            detail: "An unknown error occurred.",
+          },
+        ],
       },
     ],
   });

@@ -1,14 +1,16 @@
 {
   "name": "@packages/identity-api-contracts",
   "exports": {
-    ".": "./dist/contract.js",
-    "./models": "./dist/models/index.js",
-    "./types": "./dist/types/index.js"
+    ".": "./dist/typedrest.contract.js"
   },
   "imports": {
     "#*": "./dist/*"
   },
   "scripts": {
+    "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/types/supabase.types.ts",
+    "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
+    "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod",
+    "gen-contract": "typed-rest",
     "dev": "concurrently \"typed-rest --watch\" \"tsc --watch\"",
     "build": "typed-rest && tsc"
   },
@@ -16,6 +18,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@packages/typed-rest": "workspace:*",
     "concurrently": "9.2.1",
     "supazod": "^4.5.0",
