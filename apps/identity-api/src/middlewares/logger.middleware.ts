@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 export class LoggerMiddleware {
   constructor() {}
 
-  pino = pinoHttp.pinoHttp({
+  pino = pinoHttp({
     // Define a custom logger level (optional)
     // 'info' is standard for request logging
     useLevel: "info",

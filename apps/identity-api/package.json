@@ -1,8 +1,7 @@
 {
   "name": "identity-api",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "type": "module",
+  "main": "dist/index.js", 
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc && tsc-alias",
