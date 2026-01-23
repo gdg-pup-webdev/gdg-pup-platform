@@ -112,3 +112,12 @@ export function listExportsSync(filePath: string): string[] {
 
   return [...new Set(exportNames)]; // Remove duplicates
 }
+export const segmentIsPathParameter = (segment: string) =>
+  segment.startsWith("[") && segment.endsWith("]");
+export function debounce(func: Function, wait: number) {
+  let timeout: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}

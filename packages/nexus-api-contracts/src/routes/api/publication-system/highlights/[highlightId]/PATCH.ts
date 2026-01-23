@@ -1,7 +1,6 @@
 import { highlight } from "#models/publicationSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
-import z from "zod";
-
+ 
 export const body = SchemaFactory.Request.withPayload(highlight.update);
 
 export const response = {

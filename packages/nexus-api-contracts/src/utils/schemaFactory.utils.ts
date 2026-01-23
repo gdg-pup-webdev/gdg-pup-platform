@@ -1,5 +1,5 @@
-import { z } from "zod";
 
+import { z } from "@packages/typed-rest";
 export namespace SchemaFactory {
   export namespace Response {
     export const empty = () => {

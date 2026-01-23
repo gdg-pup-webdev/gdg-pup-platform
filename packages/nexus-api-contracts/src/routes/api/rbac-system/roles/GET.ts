@@ -1,7 +1,7 @@
 import { role } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
-import z from "zod";
 
+import { z } from "@packages/typed-rest";
 export const query = SchemaFactory.Request.Paginated.query().extend({
   userId: z.string(),
 });
