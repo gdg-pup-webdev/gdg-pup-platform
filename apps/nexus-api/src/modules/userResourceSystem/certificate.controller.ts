@@ -1,3 +1,9 @@
+/**
+ * @file certificate.controller.ts
+ * @description Controller for managing user certificates. Handles HTTP request parsing, 
+ * contract validation via typed-rest, and response generation.
+ */
+
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError } from "@/classes/ServerError.js";
@@ -7,17 +13,18 @@ import { CertificateService, certificateServiceInstance } from "./certificate.se
 
 export class CertificateController {
   constructor(
-    private certificateService: CertificateService = certificateServiceInstance,
+    private readonly certificateService: CertificateService = certificateServiceInstance,
   ) {}
 
+  /**
+   * listUserCertificates
+   * GET /api/user-resource-system/certificates
+   */
   listUserCertificates: RequestHandler = createExpressController(
     contract.api.user_resource_system.certificates.GET,
     async ({ input, output }) => {
-      // pagination options
       const pageNumber = input.query.page.number;
       const pageSize = input.query.page.size;
-
-      // getting filters
       const userId = input.query.userId;
 
       let list, count;
@@ -26,9 +33,7 @@ export class CertificateController {
           async () => await this.certificateService.listCertificatesOfUser(userId),
           "getting user certificates",
         );
-
         if (error) throw new ServiceError(error.message);
-
         list = data.list;
         count = data.count;
       } else {
@@ -36,9 +41,7 @@ export class CertificateController {
           async () => await this.certificateService.listCertificates(),
           "getting all certificates",
         );
-
         if (error) throw new ServiceError(error.message);
-
         list = data.list;
         count = data.count;
       }
@@ -57,6 +60,10 @@ export class CertificateController {
     },
   );
 
+  /**
+   * getOneCertificate
+   * GET /api/user-resource-system/certificates/:certificateId
+   */
   getOneCertificate: RequestHandler = createExpressController(
     contract.api.user_resource_system.certificates.certificateId.GET,
     async ({ input, output }) => {
@@ -75,13 +82,17 @@ export class CertificateController {
     },
   );
 
+  /**
+   * createCertificate
+   * POST /api/user-resource-system/certificates
+   */
   createCertificate: RequestHandler = createExpressController(
     contract.api.user_resource_system.certificates.POST,
     async ({ input, output, ctx }) => {
       const { req } = ctx;
-      const userId = req.user!.id; // user id from token parser
-
+      const userId = req.user!.id; 
       const dto = input.body.data;
+      
       const { data, error } = await tryCatch(
         async () => await this.certificateService.createCertificate(dto, userId),
         "creating certificate",
@@ -96,10 +107,14 @@ export class CertificateController {
     },
   );
 
+  /**
+   * updateCertificate
+   * PATCH /api/user-resource-system/certificates/:certificateId
+   */
   updateCertificate: RequestHandler = createExpressController(
     contract.api.user_resource_system.certificates.certificateId.PATCH,
     async ({ input, output }) => {
-      const certificateId = input.params.certificateId as string;
+      const certificateId = input.params.certificateId;
       const dto = input.body.data;
 
       const { data, error } = await tryCatch(
@@ -116,11 +131,15 @@ export class CertificateController {
     },
   );
 
+  /**
+   * deleteCertificate
+   * DELETE /api/user-resource-system/certificates/:certificateId
+   */
   deleteCertificate: RequestHandler = createExpressController(
     contract.api.user_resource_system.certificates.certificateId.DELETE,
     async ({ input, output }) => {
       const certificateId = input.params.certificateId;
-      const { data, error } = await tryCatch(
+      const { error } = await tryCatch(
         async () => await this.certificateService.deleteCertificate(certificateId),
         "deleting certificate",
       );

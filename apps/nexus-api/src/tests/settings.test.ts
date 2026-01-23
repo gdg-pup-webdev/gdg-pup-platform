@@ -1,3 +1,8 @@
+/**
+ * @file settings.test.ts
+ * @description Integration tests for the User Settings API.
+ */
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 
@@ -12,7 +17,7 @@ vi.mock('@/middlewares/auth.middleware.js', () => ({
   AuthMiddleware: class {},
 }));
 
-// Mock Service
+// Mock Service methods
 const mockListSettingsOfUser = vi.fn();
 const mockListSettings = vi.fn();
 const mockGetOneSettings = vi.fn();

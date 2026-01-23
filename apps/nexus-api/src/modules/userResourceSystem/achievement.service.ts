@@ -1,3 +1,9 @@
+/**
+ * @file achievement.service.ts
+ * @description Business logic layer for User Achievements. Handles data 
+ * orchestration and error mapping between the controller and repository.
+ */
+
 import {
   AchievementRepository,
   achievementRepositoryInstance,
@@ -11,9 +17,13 @@ type achievementUpdateDTO = models.userResourceSystem.achievement.updateDTO;
 
 export class AchievementService {
   constructor(
-    private achievementRepository: AchievementRepository = achievementRepositoryInstance,
+    private readonly achievementRepository: AchievementRepository = achievementRepositoryInstance,
   ) {}
 
+  /**
+   * listAchievementsOfUser
+   * Retrieves all achievements for a specific user.
+   */
   listAchievementsOfUser = async (userId: string) => {
     const { data, error } = await tryCatch(
       async () => await this.achievementRepository.listAchievementsOfUser(userId),
@@ -23,6 +33,10 @@ export class AchievementService {
     return data;
   };
 
+  /**
+   * listAchievements
+   * Retrieves all achievements across all users.
+   */
   listAchievements = async () => {
     const { data, error } = await tryCatch(
       async () => await this.achievementRepository.listAchievements(),
@@ -32,6 +46,10 @@ export class AchievementService {
     return data;
   };
 
+  /**
+   * getOneAchievement
+   * Retrieves a single achievement by its ID.
+   */
   getOneAchievement = async (id: string) => {
     const { data, error } = await tryCatch(
       async () => await this.achievementRepository.getOneAchievement(id),
@@ -41,6 +59,10 @@ export class AchievementService {
     return data;
   };
 
+  /**
+   * createAchievement
+   * Grants a new achievement to a user.
+   */
   createAchievement = async (dto: achievementInsertDTO, userId: string) => {
     const { data, error } = await tryCatch(
       async () =>
@@ -55,6 +77,10 @@ export class AchievementService {
     return data;
   };
 
+  /**
+   * deleteAchievement
+   * Removes an achievement record.
+   */
   deleteAchievement = async (id: string) => {
     const { data, error } = await tryCatch(
       async () => await this.achievementRepository.deleteAchievement(id),
@@ -65,6 +91,10 @@ export class AchievementService {
     return data;
   };
 
+  /**
+   * updateAchievement
+   * Updates an existing achievement's metadata.
+   */
   updateAchievement = async (id: string, dto: achievementUpdateDTO) => {
     const { data, error } = await tryCatch(
       async () => await this.achievementRepository.updateAchievement(id, dto),

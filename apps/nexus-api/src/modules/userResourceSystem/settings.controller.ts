@@ -1,3 +1,8 @@
+/**
+ * @file settings.controller.ts
+ * @description Controller for managing user settings (e.g., UI theme).
+ */
+
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError } from "@/classes/ServerError.js";
@@ -7,17 +12,18 @@ import { SettingsService, settingsServiceInstance } from "./settings.service.js"
 
 export class SettingsController {
   constructor(
-    private settingsService: SettingsService = settingsServiceInstance,
+    private readonly settingsService: SettingsService = settingsServiceInstance,
   ) {}
 
+  /**
+   * listUserSettings
+   * GET /api/user-resource-system/settings
+   */
   listUserSettings: RequestHandler = createExpressController(
     contract.api.user_resource_system.settings.GET,
     async ({ input, output }) => {
-      // pagination options
       const pageNumber = input.query.page.number;
       const pageSize = input.query.page.size;
-
-      // getting filters
       const userId = input.query.userId;
 
       let list, count;
@@ -26,9 +32,7 @@ export class SettingsController {
           async () => await this.settingsService.listSettingsOfUser(userId),
           "getting user settings",
         );
-
         if (error) throw new ServiceError(error.message);
-
         list = data.list;
         count = data.count;
       } else {
@@ -36,9 +40,7 @@ export class SettingsController {
           async () => await this.settingsService.listSettings(),
           "getting all settings",
         );
-
         if (error) throw new ServiceError(error.message);
-
         list = data.list;
         count = data.count;
       }
@@ -57,6 +59,10 @@ export class SettingsController {
     },
   );
 
+  /**
+   * getOneSettings
+   * GET /api/user-resource-system/settings/:settingsId
+   */
   getOneSettings: RequestHandler = createExpressController(
     contract.api.user_resource_system.settings.settingsId.GET,
     async ({ input, output }) => {
@@ -75,11 +81,15 @@ export class SettingsController {
     },
   );
 
+  /**
+   * createSettings
+   * POST /api/user-resource-system/settings
+   */
   createSettings: RequestHandler = createExpressController(
     contract.api.user_resource_system.settings.POST,
     async ({ input, output, ctx }) => {
       const { req } = ctx;
-      const userId = req.user!.id; // user id from token parser
+      const userId = req.user!.id; 
 
       const dto = input.body.data;
       const { data, error } = await tryCatch(
@@ -96,10 +106,14 @@ export class SettingsController {
     },
   );
 
+  /**
+   * updateSettings
+   * PATCH /api/user-resource-system/settings/:settingsId
+   */
   updateSettings: RequestHandler = createExpressController(
     contract.api.user_resource_system.settings.settingsId.PATCH,
     async ({ input, output }) => {
-      const settingsId = input.params.settingsId as string;
+      const settingsId = input.params.settingsId;
       const dto = input.body.data;
 
       const { data, error } = await tryCatch(
@@ -116,11 +130,15 @@ export class SettingsController {
     },
   );
 
+  /**
+   * deleteSettings
+   * DELETE /api/user-resource-system/settings/:settingsId
+   */
   deleteSettings: RequestHandler = createExpressController(
     contract.api.user_resource_system.settings.settingsId.DELETE,
     async ({ input, output }) => {
       const settingsId = input.params.settingsId;
-      const { data, error } = await tryCatch(
+      const { error } = await tryCatch(
         async () => await this.settingsService.deleteSettings(settingsId),
         "deleting settings",
       );

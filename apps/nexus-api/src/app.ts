@@ -1,25 +1,45 @@
-import express from "express";
+/**
+ * @file app.ts
+ * @description Core Express application setup. This file configures the middleware, 
+ * loaders, and global settings for the Nexus API. It is separated from the server 
+ * listener (index.ts) to facilitate integration testing using supertest.
+ */
+
+import express, { Express } from "express";
+import { swaggerLoader } from "./loaders/swagger.loader.js";
 import { setupLoader } from "./loaders/setup.loader.js";
 import { parsersLoader } from "./loaders/parsers.loader.js";
 import { routesLoader } from "./loaders/routes.loader.js";
 import { errorHandlerLoader } from "./loaders/errorHandlers.loader.js";
-import { swaggerLoader } from "./loaders/swagger.loader.js";
 
-const app = express();
+/**
+ * Initialize the Express application.
+ */
+const app: Express = express();
 
-// setup api
+/**
+ * setupLoader: Configures security headers, CORS, and other essential application settings.
+ */
 setupLoader(app);
 
-// Parsing body
+/**
+ * parsersLoader: Configures body-parsing middleware for JSON and URL-encoded data.
+ */
 parsersLoader(app);
 
-// setup swagger
+/**
+ * swaggerLoader: Initializes OpenAPI/Swagger documentation endpoints.
+ */
 swaggerLoader(app);
 
-// load routes
+/**
+ * routesLoader: Registers all application routers and API endpoints.
+ */
 routesLoader(app);
 
-// error handlers
+/**
+ * errorHandlerLoader: Sets up global error-handling middleware for centralized exception management.
+ */
 errorHandlerLoader(app);
 
 export default app;

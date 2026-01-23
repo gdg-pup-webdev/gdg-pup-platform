@@ -1,21 +1,25 @@
+/**
+ * @file vitest.config.ts
+ * @description Configuration for the Vitest test runner. 
+ * Configures path aliases to match the application's tsconfig and 
+ * sets up the environment for integration testing.
+ */
+
 import { defineConfig } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
   test: {
-    globals: true,
+    /** Run tests in a Node.js environment */
     environment: 'node',
-    env: {
-      SUPABASE_URL: 'https://example.supabase.co',
-      SUPABASE_SECRET_KEY: 'test-key',
-    }
-  },
-  resolve: {
+    /** Path aliases for clean imports during testing */
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '#models': path.resolve(__dirname, '../../packages/nexus-api-contracts/src/models'),
-      '#utils': path.resolve(__dirname, '../../packages/nexus-api-contracts/src/utils'),
-      '#types': path.resolve(__dirname, '../../packages/nexus-api-contracts/src/types'),
+    },
+    /** Load environment variables before running tests */
+    env: {
+      SUPABASE_URL: 'http://localhost:54321',
+      SUPABASE_SECRET_KEY: 'test-key',
     },
   },
 });

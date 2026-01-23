@@ -1,3 +1,8 @@
+/**
+ * @file settings.route.ts
+ * @description HTTP Routing configuration for User Settings.
+ */
+
 import { Router } from "express";
 import {
   SettingsController,

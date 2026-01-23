@@ -1,3 +1,8 @@
+/**
+ * @file settings.service.ts
+ * @description Service layer for managing user settings.
+ */
+
 import {
   SettingsRepository,
   settingsRepositoryInstance,
@@ -11,7 +16,7 @@ type settingsUpdateDTO = models.userResourceSystem.settings.updateDTO;
 
 export class SettingsService {
   constructor(
-    private settingsRepository: SettingsRepository = settingsRepositoryInstance,
+    private readonly settingsRepository: SettingsRepository = settingsRepositoryInstance,
   ) {}
 
   listSettingsOfUser = async (userId: string) => {
