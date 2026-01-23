@@ -133,7 +133,7 @@ export async function ListExportOfFilesInDirectory(dir: string) {
 
     const exportObjects: any = {
       method: method,
-      path: routePath,
+      path: "/" + routePath,
     };
 
     fileExports.forEach((exportedVar) => {
