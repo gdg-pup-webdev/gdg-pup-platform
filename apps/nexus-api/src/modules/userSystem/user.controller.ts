@@ -44,7 +44,7 @@ export class UserSystemController {
 
   getUserAggregate: RequestHandler = createExpressController(
     contract.api.user_system.users.userId.aggregate.GET,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       const userId = input.params.userId;
 
       const { data, error } = await tryCatch(
