@@ -86,8 +86,16 @@ export class CardRouter {
     /**
      * create new card
      */
-    router.post("/",
-      this.authMiddleware.requireAuth(), this.cardController.createCard);
+    router.post(
+      "/",
+      this.authMiddleware.requireAuth(),
+      this.cardController.createCard,
+    );
+
+    /**
+     * list cards
+     */
+    router.get("/", this.cardController.listCards);
 
     return router;
   }

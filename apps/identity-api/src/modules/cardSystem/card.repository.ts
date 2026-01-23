@@ -1,8 +1,10 @@
 import { DatabaseError } from "@/classes/ServerError.js";
-import { supabase } from "@/lib/supabase.js"; 
-import { RepositoryResult } from "@/types/repository.types.js";
+import { supabase } from "@/lib/supabase.js";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-
 
 type cardRow = Tables<"nfc_card">;
 type cardInsertDTO = TablesInsert<"nfc_card">;
@@ -15,7 +17,7 @@ export class CardRepository {
 
   constructor() {}
 
-  create = async (dto: cardInsertDTO) : RepositoryResult<cardRow> => {
+  create = async (dto: cardInsertDTO): RepositoryResult<cardRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .insert(dto)
@@ -38,7 +40,6 @@ export class CardRepository {
     }
     return { data };
   };
-  
 
   activateCard = async (cardUid: string, userId: string) => {
     const { data, error } = await supabase
@@ -61,7 +62,7 @@ export class CardRepository {
   logTransaction = async (
     cardId: string,
     eventType: "ACTIVATION" | "TAP_PROFILE" | "TAP_CHECKIN",
-    meta: any = {}
+    meta: any = {},
   ) => {
     const transaction: transactionInsertDTO = {
       card_id: cardId,
@@ -77,6 +78,30 @@ export class CardRepository {
       return { error };
     }
     return { data };
+  };
+
+  listCards = async (
+    pageNumber: number,
+    pageSize: number,
+  ): RespositoryResultList<cardRow> => {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*", { count: "exact" })
+      .range((pageNumber - 1) * pageSize, pageNumber * pageSize - 1);
+
+    if (error) throw new DatabaseError(error.message);
+
+    const { count, error: countError } = await supabase
+      .from(this.tableName)
+      .select("id", { count: "exact", head: true })
+      .range((pageNumber - 1) * pageSize, pageNumber * pageSize - 1);
+
+    if (countError) throw new DatabaseError(countError.message);
+
+    return {
+      list: data || [],
+      count: count || 0,
+    };
   };
 }
 

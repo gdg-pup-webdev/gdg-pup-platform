@@ -82,6 +82,15 @@ export class CardService {
     if (error)  throw new RepositoryError(error.message);
     return data;
   };
+
+  listCards = async (pageNumber: number, pageSize: number) => {
+    const { data, error } = await tryCatch(
+      async () => await this.cardRepository.listCards(pageNumber, pageSize),
+      "listing cards",
+    );
+    if (error) throw new RepositoryError(error.message);
+    return data;
+  };
 }
 
 export const cardServiceInstance = new CardService();

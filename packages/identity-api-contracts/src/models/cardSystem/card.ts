@@ -12,8 +12,7 @@ export const insertDTO = publicNfcCardInsertSchema;
 export const updateDTO = publicNfcCardUpdateSchema;
 
 // Body Schema for POST /cards/activate
-export const activateCardDTO = z.object({
-  cardUid: z.string(),
+export const activateCardDTO = z.object({ 
   userId: z.string(),
 });
 

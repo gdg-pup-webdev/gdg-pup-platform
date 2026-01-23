@@ -23,7 +23,7 @@ export class CardController {
           throw ServerError.notFound(error.message);
         }
         throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
+          `Something went wrong: ${error.message}`,
         );
       }
 
@@ -32,26 +32,21 @@ export class CardController {
         message: "Card status retrieved successfully",
         data,
       });
-    }
+    },
   );
 
   /**
    * Activate a card for the authenticated user
    */
   activateCard: RequestHandler = createExpressController(
-    contract.api.card_system.activate.cardUid.POST,
+    contract.api.card_system.cards.cardUid.activate.POST,
     async ({ input, output, ctx }) => {
       const { cardUid } = input.params;
-      const { req } = ctx;
-      const user = req.user!;
-      
-      if (!user) {
-        throw ServerError.unauthorized("User must be authenticated to activate a card");
-      }
+      const { userId } = input.body.data;
 
       const { data, error } = await this.cardService.activateCard(
         cardUid,
-        user.id
+        userId,
       );
 
       if (error) {
@@ -63,7 +58,7 @@ export class CardController {
           throw ServerError.badRequest(error.message);
         }
         throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
+          `Something went wrong: ${error.message}`,
         );
       }
 
@@ -71,9 +66,8 @@ export class CardController {
         status: "success",
         message: "Card activated successfully",
       });
-    }
+    },
   );
-
 
   /**
    * create a new card
@@ -85,30 +79,75 @@ export class CardController {
       const user = req.user!;
 
       if (!user) {
-        throw ServerError.unauthorized("User must be authenticated to create a card");
+        throw ServerError.unauthorized(
+          "User must be authenticated to create a card",
+        );
       }
 
       const { data, error } = await tryCatch(
-        async () => await this.cardService.createCard(input.body.data), 
-        "creating card"
+        async () => await this.cardService.createCard(input.body.data),
+        "creating card",
       );
 
       if (error) {
         // Handle specific error codes
         throw ServerError.internalError(
-          `Something went wrong: ${error.message}`
+          `Something went wrong: ${error.message}`,
         );
-      } 
+      }
 
       return output(201, {
         status: "success",
         message: "Card created successfully",
         data,
       });
-    }  
+    },
   );
 
+  /**
+   * list cards
+   */
+  listCards: RequestHandler = createExpressController(
+    contract.api.card_system.cards.GET,
+    async ({ input, output, ctx }) => {
+      // pagination parameters
+      const pageNumber = input.query.page.number;
+      const pageSize = input.query.page.size;
 
+      const { req } = ctx;
+      const user = req.user!;
+
+      if (!user) {
+        throw ServerError.unauthorized(
+          "User must be authenticated to list cards",
+        );
+      }
+
+      const { data, error } = await tryCatch(
+        async () => await this.cardService.listCards(pageNumber, pageSize),
+        "listing cards",
+      );
+
+      if (error) {
+        // Handle specific error codes
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`,
+        );
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Cards listed successfully",
+        data: data.list,
+        meta: {
+          totalRecords: data.count,
+          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: input.query.page.number,
+          pageSize: input.query.page.size,
+        },
+      });
+    },
+  );
 }
 
 export const cardControllerInstance = new CardController();
