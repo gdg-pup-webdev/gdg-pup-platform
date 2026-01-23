@@ -25,6 +25,9 @@ export class EventController {
   listEvents: RequestHandler = createExpressController(
     contract.api.event_system.events.GET,
     async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
+
       const { data, error } = await tryCatch(
         async () => await this.eventService.list(),
         "listing events",
@@ -37,9 +40,9 @@ export class EventController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
-          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },
@@ -167,6 +170,8 @@ export class EventController {
   listEventAttendees: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.attendees.GET,
     async ({ input, output, ctx }) => {
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
       const eventId = input.params.eventId as string;
       const { data, error } = await tryCatch(
         async () => await this.attendanceService.listEventAttendees(eventId),
@@ -180,9 +185,9 @@ export class EventController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
-          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },

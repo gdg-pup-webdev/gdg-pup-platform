@@ -69,8 +69,8 @@ export const scanRoutes =async (routesDir: string) => {
             `__CODE_START__z.object({${pathParams.map((p) => `${p}: z.string()`).join(",")}})__CODE_END__`;
         }
 
-        // CHECK FILE EXPORTS not including docs_ exports
-        const exports = listExportsSync(actualFilePath).filter(item => !/^docs_/i.test(item));
+        // CHECK FILE EXPORTS
+        const exports = listExportsSync(actualFilePath);
         for (const exportedVariable of exports) {
           if (exportedVariable === "response") {
             const schemaImportName = `${endpoint_signature}_response`;
