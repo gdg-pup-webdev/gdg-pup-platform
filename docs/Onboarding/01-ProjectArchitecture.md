@@ -1,58 +1,53 @@
+# Project Architecture
 
-## 📚 Documentation
+This document provides a high-level overview of the project's architecture, technology stack, and core principles. For a more detailed explanation, please refer to the **[Architecture Guide](../../ARCHITECTURE.md)**.
 
-For a deep dive into the system architecture, contracts, backend, frontend, and database, please read the **[Architecture Guide](./docs/ARCHITECTURE.md)**.
+## Technology Stack
 
+The project is built with the following technologies:
 
+-   **Frontend**: Next.js, Tailwind CSS, shadcn/ui
+-   **Backend**: Express.js, TypeScript
+-   **Database**: Supabase (PostgreSQL)
+-   **API Contracts**: Zod
+-   **Monorepo**: pnpm, Turborepo
+-   **Containerization**: Docker, Docker Compose
 
-## 💻 Tech Stack
+## Monorepo Structure
 
-- **Frontend**: Next.js, TailwindCSS, shadcn/ui
-- **Backend**: Express.js, TypeScript
-- **Database**: Supabase (PostgreSQL)
-- **Contracts**: Zod, Supazod
-- **Monorepo**: pnpm (package management) and turborepo (workspace management)
-- **Containerization**: Docker, Docker Compose
-
-
-
-```
-gdg-pup-platform/
-├── run.bat                           # CLI tool for managing workspace
-├── apps/                             # Runnable applications
-│   ├── nexus-api/                    # Express.js Backend API
-│   ├── nexus-web/                    # Next.js Frontend
-│   └── identity-api/                 # Authentication Service
-├── packages/                         # Shared packages
-│   ├── api-typing/                   # Type-safe API client/server helpers
-│   ├── nexus-api-contracts/          # Contract definitions & schemas
-│   └── identity-api-contracts/       # Identity service contracts
-├── configs/                         # Config packages
-│   ├── eslint-config/                   # package containing base config for eslint
-│   ├── typescript-config/          # package containing base config for ts
-└── package.json                      # Root workspace configuration
-└── pnpm-workspace.yaml                      #  
-└── turbo.json                      #  
+The repository is organized as a monorepo with the following structure:
 
 ```
-directories under apps, packages, and configs are ts packages which has their own package.json. 
+gdgnexussecondclone/
+├── apps/
+│   ├── nexus-api/              # Express.js Backend API
+│   ├── nexus-web/              # Next.js Frontend
+│   └── identity-api/           # Authentication Service
+│
+├── packages/
+│   ├── typed-rest/             # Type-safe API client/server helpers
+│   ├── nexus-api-contracts/    # API contract definitions & schemas
+│   └── identity-api-contracts/ # Identity service API contracts
+│
+├── configs/
+│   ├── eslint-config/          # Shared ESLint configuration
+│   └── typescript-config/      # Shared TypeScript configuration
+│
+├── .gitignore
+├── package.json                # Root workspace configuration
+├── pnpm-workspace.yaml         # pnpm workspace definition
+└── turbo.json                  # Turborepo configuration
+```
 
-configs are used as base configs to be consumed across the application 
+-   **`apps/`**: Contains deployable applications, such as backend servers and frontend web apps.
+-   **`packages/`**: Contains shared libraries and modules consumed by applications or other packages.
+-   **`configs/`**: Contains shared configurations for tools like ESLint and TypeScript, ensuring consistency across the monorepo.
 
-packages are packages that are used in apps or in other packages.
+## Key Principles
 
-apps are deployed applications which could be servers or web apps or mobile apps. 
+The development process is guided by these core principles:
 
-within projects, we highly recommended ko ang folder by feature as much as possible 
-
-### 🎯 Key Principles
-
-1. **Contract-First Development**: Define API contracts before implementation
-2. **Type Safety**: End-to-end type safety from DB → Backend → Frontend
-3. **Shared Contracts**: Single source of truth for API schemas
-4. **Modular Architecture**: Each feature is a self-contained module
-
----
-
-
-
+1.  **Contract-First Development**: API contracts are defined before implementation to ensure a clear and stable interface between the frontend and backend.
+2.  **End-to-End Type Safety**: We enforce type safety from the database to the frontend, catching errors at build time and improving developer experience.
+3.  **Shared API Contracts**: A single source of truth for API schemas prevents inconsistencies and ensures frontend and backend are always in sync.
+4.  **Modular Architecture**: Features are developed in self-contained modules to promote separation of concerns and improve maintainability. We encourage organizing code by feature within each project.

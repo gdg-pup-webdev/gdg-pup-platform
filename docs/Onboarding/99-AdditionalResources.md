@@ -1,13 +1,15 @@
- 
+# Additional Resources
 
+Here are links to the official documentation for the key technologies and tools used in this project.
 
+## Core Technologies
 
+-   **[Next.js](https://nextjs.org/docs)**: The React framework for building the frontend application.
+-   **[Express.js](https://expressjs.com/)**: The web framework for building the backend API.
+-   **[Supabase](https://supabase.com/docs)**: Our database and backend-as-a-service provider.
+-   **[Zod](https://zod.dev/)**: The schema declaration and validation library for API contracts.
 
+## Monorepo Tooling
 
-
-## Additional Resources
-
-- [Zod Documentation](https://zod.dev/)
-- [Supabase Documentation](https://supabase.com/docs)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Express.js Documentation](https://expressjs.com/)
+-   **[pnpm](https://pnpm.io/pnpm-cli)**: The package manager used in our monorepo.
+-   **[Turborepo](https://turborepo.dev/docs)**: The high-performance build system for managing the monorepo.

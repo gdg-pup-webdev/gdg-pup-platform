@@ -1,86 +1,86 @@
- 
+# Development Workflow
 
+This guide outlines the typical workflows for developing and testing new features in this project.
 
-## Developer Workflows
+## Daily Development
 
-### 🚀 Getting Started
+The following commands are your entry point for daily development tasks.
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/your-org/gdg-pup-platform.git
-cd gdg-pup-platform
+### 1. Starting the Development Environment
 
-# 2. Install dependencies for all projects
-run install -all
-
-# 3. Set up environment variables
-# Copy .env.example to .env in each app and fill in values
-
-# 4. Start all development servers
-run dev -all
-```
-
-### 🔄 Daily Development Flow
+To start the development servers for all applications simultaneously, run the following command from the root of the project:
 
 ```bash
-# Start specific apps
-run dev nexus-api              # Backend only
-run dev nexus-web              # Frontend only
-run dev nexus-api nexus-web    # Both
-
-# Build for production
-run build nexus-api
-run build nexus-web
-
-# Run only one service
-cd apps/nexus-api
-npm run dev
+pnpm run dev
 ```
 
-### 🧪 Testing Changes
+If you only need to work on a specific application, you can start it individually:
 
-```typescript
-// 1. Update a contract
-// packages/nexus-api-contracts/src/routes/...
+```bash
+# Start only the backend API
+pnpm --filter nexus-api dev
 
-// 2. The backend and frontend will auto-reload
-// Type errors will show immediately if contracts don't match
+# Start only the frontend web app
+pnpm --filter nexus-web dev
+```
 
-// 3. Test the endpoint
-curl http://localhost:3000/api/users/123 \
+### 2. Building for Production
+
+To create a production-ready build of one or more applications, use the `build` command:
+
+```bash
+# Build all applications
+pnpm run build
+
+# Build a specific application
+pnpm --filter nexus-api build
+```
+
+## Testing Changes
+
+Our contract-first approach provides a tight feedback loop for testing changes.
+
+1.  **Update an API Contract**: Modify a model or route in the `packages/nexus-api-contracts` directory.
+2.  **Automatic Reloading**: Turborepo will detect the change and automatically rebuild the necessary packages. The backend and frontend development servers will hot-reload.
+3.  **Instant Feedback**: If your changes introduce a mismatch between the frontend and backend, TypeScript errors will appear immediately in your console.
+4.  **Test the Endpoint**: Manually test the endpoint using a tool like `curl` or an API client like Postman to verify its behavior.
+
+```bash
+curl http://localhost:8080/api/users/your-user-id \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ---
 
-## Adding New Features
+## Guide: Adding a New Feature
 
-### 📘 Step-by-Step Guide
+This section walks you through the end-to-end process of adding a new "Posts" feature.
 
-#### **Example: Adding a "Posts" Feature**
+### Step 1: Create the Database Table
 
-**Step 1: Create Database Table** (Supabase Dashboard)
+First, define the database schema for the new resource. In Supabase, you can run the following SQL to create a `posts` table:
 
 ```sql
 CREATE TABLE posts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id),
+  user_id UUID REFERENCES auth.users(id),
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   published BOOLEAN DEFAULT false,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 ```
 
-**Step 2: Define Models** (Contract Package)
+### Step 2: Define the Model Contract
+
+Next, create the Zod schemas for the `post` resource in the `nexus-api-contracts` package.
 
 ```typescript
 // packages/nexus-api-contracts/src/models/postSystem/post.ts
-import { createSupabaseSelect, createInsert, createUpdate } from "supazod";
 import { z } from "zod";
 
-export const publicPostSchema = createSupabaseSelect({
+export const postSchema = z.object({
   id: z.string().uuid(),
   user_id: z.string().uuid(),
   title: z.string(),
@@ -90,86 +90,58 @@ export const publicPostSchema = createSupabaseSelect({
   updated_at: z.string().datetime(),
 });
 
-export const publicPostInsertSchema = createInsert(publicPostSchema, {
-  user_id: true,
-  title: true,
-  content: true,
-  published: true,
+export const postInsertSchema = postSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
 });
 
-export const publicPostUpdateSchema = createUpdate(publicPostSchema, {
-  title: true,
-  content: true,
-  published: true,
-});
+export const postUpdateSchema = postInsertSchema.partial();
+```
 
-export const post = {
-  row: publicPostSchema,
-  insertDTO: publicPostInsertSchema,
-  updateDTO: publicPostUpdateSchema,
+### Step 3: Define the Route Contract
+
+Now, define the API endpoints for the `posts` resource. This example creates endpoints for listing posts and retrieving a single post.
+
+```typescript
+// packages/nexus-api-contracts/src/routes/post-system/posts.ts
+import { z } from "zod";
+import { postSchema } from "../../models/postSystem/post";
+
+export const GET = {
+  response: {
+    200: z.object({
+      status: z.string(),
+      message: z.string(),
+      data: z.array(postSchema),
+    }),
+  },
+};
+
+export const _postId = {
+  GET: {
+    params: z.object({ postId: z.string().uuid() }),
+    response: {
+      200: z.object({
+        status: z.string(),
+        message: z.string(),
+        data: postSchema,
+      }),
+    },
+  },
 };
 ```
 
-**Step 3: Create Route Contract**
+### Step 4: Implement the Backend
 
-```typescript
-// packages/nexus-api-contracts/src/routes/post-system/route.ts
-import { createRoute, createEndpoint } from "@packages/api-typing";
-import { SchemaFactory } from "@/utils/schemaFactory.utils.js";
-import { Models } from "@/models/index.js";
-import z from "zod";
+With the contracts in place, implement the backend logic.
 
-export const postSystem = createRoute({
-  path: "/posts",
-  routes: {
-    get: createEndpoint({
-      method: "GET",
-      request: {
-        query: SchemaFactory.Request.Paginated.query(),
-      },
-      response: {
-        200: SchemaFactory.Response.paginated(Models.postSystem.post.row),
-        ...SchemaFactory.Response.standardErrors(),
-      },
-    }),
-
-    post: createEndpoint({
-      method: "POST",
-      request: {
-        body: SchemaFactory.Request.withPayload(
-          Models.postSystem.post.insertDTO,
-        ),
-      },
-      response: {
-        201: SchemaFactory.Response.single(Models.postSystem.post.row),
-        ...SchemaFactory.Response.standardErrors(),
-      },
-    }),
-
-    post: createRoute({
-      path: "/:postId",
-      routes: {
-        get: createEndpoint({
-          method: "GET",
-          request: {
-            params: z.object({ postId: z.string().uuid() }),
-          },
-          response: {
-            200: SchemaFactory.Response.single(Models.postSystem.post.row),
-            ...SchemaFactory.Response.standardErrors(),
-          },
-        }),
-      },
-    }),
-  },
-});
-```
-
-**Step 4: Implement Backend**
+**Repository (`post.repository.ts`)**
 
 ```typescript
 // apps/nexus-api/src/modules/postSystem/post.repository.ts
 import { supabase } from "@/lib/supabase.js";
+import { DatabaseError } from "@/classes/ServerError.js";
 
 export class PostRepository {
   private table = "posts";
@@ -181,67 +153,73 @@ export class PostRepository {
       .eq("id", postId)
       .single();
 
-    if (error) throw error;
-    return data;
-  }
-
-  async create(dto: any) {
-    const { data, error } = await supabase
-      .from(this.table)
-      .insert(dto)
-      .select()
-      .single();
-
-    if (error) throw error;
+    if (error) throw new DatabaseError(error.message);
     return data;
   }
 }
-
-export const postRepositoryInstance = new PostRepository();
+export const postRepository = new PostRepository();
 ```
+
+**Controller (`post.controller.ts`)**
 
 ```typescript
 // apps/nexus-api/src/modules/postSystem/post.controller.ts
-import { RequestHandler } from "express";
-import { createExpressController } from "@packages/api-typing";
-import { Contract } from "@packages/nexus-api-contracts";
+import { createExpressController } from "@packages/typed-rest";
+import { contract } from "@packages/nexus-api-contracts";
+import { postRepository } from "./post.repository";
 
 export class PostController {
-  getPost: RequestHandler = createExpressController(
-    Contract.postSystem.posts.post.get,
+  getPostById = createExpressController(
+    contract.api.post_system.posts._postId.GET,
     async ({ input, output }) => {
       const post = await postRepository.findById(input.params.postId);
-
       return output(200, {
         status: "success",
-        message: "Post fetched",
+        message: "Post fetched successfully",
         data: post,
       });
-    },
+    }
   );
 }
 ```
 
-**Step 5: Use in Frontend**
+### Step 5: Consume the API in the Frontend
+
+Finally, use the new endpoint in the `nexus-web` application.
 
 ```typescript
-// apps/nexus-web/app/posts/[postId]/page.tsx
+// apps/nexus-web/src/app/posts/[postId]/page.tsx
 "use client";
 
-import { callEndpoint } from "@packages/api-typing";
-import { Contract } from "@packages/nexus-api-contracts";
+import { apiCall } from "@/lib/api";
+import { contract } from "@packages/nexus-api-contracts";
+import { useEffect, useState } from "react";
+
+type Post = typeof contract.api.post_system.posts._postId.GET.response[200]["data"];
 
 export default function PostPage({ params }: { params: { postId: string } }) {
-  const result = await callEndpoint(
-    process.env.NEXT_PUBLIC_API_URL!,
-    Contract.postSystem.posts.post.get,
-    { params: { postId: params.postId } }
+  const [post, setPost] = useState<Post | null>(null);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      const result = await apiCall(contract.api.post_system.posts._postId.GET, {
+        params: { postId: params.postId },
+      });
+
+      if (result.status === 200) {
+        setPost(result.body.data);
+      }
+    };
+    fetchPost();
+  }, [params.postId]);
+
+  if (!post) return <div>Loading...</div>;
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </article>
   );
-
-  if (result.status === 200) {
-    return <div>{result.body.data.title}</div>;
-  }
-
-  return <div>Error</div>;
 }
 ```

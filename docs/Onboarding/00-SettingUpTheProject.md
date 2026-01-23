@@ -1,41 +1,65 @@
 
-## SETUP
+# Project Setup
 
-This repository uses a monorepo setup using **pnpm** as the package manager and **turborepo** as the workspace manager.
+This guide will walk you through setting up your local development environment. This repository utilizes a monorepo structure managed by **pnpm** and **Turborepo**.
 
-Follow all the steps below in order to setup your local workspace.
+## Prerequisites
 
-1. **Clone the reponsitory**
+Before you begin, ensure you have the following installed:
 
-```cmd
-git clone https://github.com/gdg-pup-webdev/gdg-pup-platform.git
-cd gdg-pup-webdev
+-   [Node.js](https://nodejs.org/) (v18 or higher recommended)
+-   [Git](https://git-scm.com/)
+
+## Setup Steps
+
+Follow these steps to get the project running on your local machine.
+
+### 1. Clone the Repository
+
+First, clone the project repository to your local machine.
+
+```bash
+git clone https://github.com/gdg-pup-webdev/gdgnexussecondclone.git
+cd gdgnexussecondclone
 ```
 
-2. **Add the .env files**
-Ask the project organizers for the .env files and put then in the appropriate folders.
+### 2. Environment Variables
 
-3. **Install pnpm and dependencies**
+The project requires environment variables for configuration.
 
-```cmd
+-   Obtain the necessary `.env` files from the project organizers.
+-   Place them in the corresponding folders as instructed.
+
+### 3. Install Dependencies
+
+This project uses `pnpm` for package management. Install it globally if you haven't already, then install the project dependencies.
+
+```bash
 npm install -g pnpm@latest
-pnpm i
+pnpm install
 ```
 
-4. **Build the project**
+### 4. Build the Project
 
-```cmd
+Build all the packages and applications in the monorepo.
+
+```bash
 pnpm run build
 ```
 
-5. **Start development mode**
+### 5. Run in Development Mode
 
-```cmd
+Start the development servers for all applications.
+
+```bash
 pnpm run dev
 ```
 
-If you want to know more about the tools that we use, follow the links below:
+You are now ready to start developing!
 
-- [pnpm](https://pnpm.io/pnpm-cli)
-- [turborepo](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [turborepo_guide_youtube](https://www.youtube.com/watch?v=gpWDZir8dAA&list=WL&index=11&t=137s)
+## Additional Resources
+
+To learn more about the tools used in this project, refer to the following resources:
+
+-   [pnpm Documentation](https://pnpm.io/pnpm-cli)
+-   [Turborepo Documentation](https://turborepo.dev/docs)

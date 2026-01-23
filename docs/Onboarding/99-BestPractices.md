@@ -1,36 +1,36 @@
+# Best Practices
 
-## Best Practices
+This document outlines the best practices we adhere to across the project. Following these guidelines helps us maintain a high-quality, consistent, and maintainable codebase.
 
-### ✅ Contract Best Practices
+## API Contract Best Practices
 
-1. **Always use `createEndpoint()`** for endpoints
-2. **Use `SchemaFactory`** for consistent response formats
-3. **Include standard errors** (400, 500) in all endpoints
-4. **Define DTOs** for insert and update operations
-5. **Use Zod refinements** for complex validation
+-   **Provide Documentation Details**: Always export `docs_*` variables (`docs_summary`, `docs_description`, etc.) in your route contracts to ensure the OpenAPI documentation is clear and comprehensive.
+-   **Standardize Error Responses**: Include standard error schemas (e.g., for 400, 401, 500 status codes) in all endpoints to ensure consistent error handling.
+-   **Use Data Transfer Objects (DTOs)**: Define separate Zod schemas for `insert` and `update` operations, excluding fields that are managed by the database (like `id` and `created_at`).
+-   **Use Zod Refinements**: For complex validation rules that cannot be expressed with simple types, use [Zod's refinement API](https://zod.dev/?id=refine).
+-   **Keep Models DRY**: Avoid duplicating schema definitions. Reuse and extend schemas where possible.
 
-### ✅ Backend Best Practices
+## Backend Best Practices
 
-1. **Follow the 3-layer architecture**: Controller → Service → Repository
-2. **Use dependency injection** in constructors
-3. **Return `{ data, error }` tuples** from services
-4. **Throw `ServerError`** for HTTP errors
-5. **Use middleware** for cross-cutting concerns (auth, logging)
+-   **Adhere to Layered Architecture**: Strictly follow the Controller → Service → Repository pattern to maintain a clear separation of concerns.
+-   **Use Dependency Injection**: Inject dependencies (like services and repositories) through class constructors to promote decoupling and improve testability.
+-   **Centralize Error Handling**: Use the `tryCatch` utility for all function calls that may fail, and throw instances of `ServerError` for application-specific errors.
+-   **Use Middleware for Cross-Cutting Concerns**: Implement middleware for functionalities that apply to multiple routes, such as authentication, logging, and rate limiting.
+-   **Organize by Feature**: Group related files (controllers, services, repositories, routes) for a single feature into a dedicated module directory.
 
-### ✅ Frontend Best Practices
+## Frontend Best Practices
 
-1. **Use the type-safe API client** (`callEndpoint`)
-2. **Create custom hooks** for reusable API logic
-3. **Handle loading and error states** properly
-4. **Use environment variables** for API URLs
-5. **Implement optimistic updates** for better UX
+-   **Use the Type-Safe API Client**: Always interact with the backend via the generated `apiCall` helper to ensure end-to-end type safety.
+-   **Abstract Logic with Custom Hooks**: Encapsulate reusable logic, especially for API calls and state management, into custom hooks (e.g., `useUser`, `useEvents`).
+-   **Leverage React Query**: Use [TanStack React Query](https://tanstack.com/query/latest) for server state management, including data fetching, caching, and synchronization.
+-   **Manage Loading and Error States**: Gracefully handle loading and error states in the UI to provide a smooth user experience.
+-   **Use Environment Variables**: Store environment-specific configurations, such as API URLs, in environment variables.
+-   **Consider Optimistic Updates**: For a more responsive feel, implement optimistic updates for mutations that are likely to succeed.
 
-### ✅ Database Best Practices
+## Database Best Practices
 
-1. **Use UUID** for primary keys
-2. **Add timestamps** (`created_at`, `updated_at`)
-3. **Define foreign key constraints** for data integrity
-4. **Use Row-Level Security (RLS)** in Supabase
-5. **Index frequently queried columns**
-
----
+-   **Use UUIDs for Primary Keys**: Use `UUID` types for primary keys to avoid issues with integer sequencing and improve security.
+-   **Use Timestamps**: Include `created_at` and `updated_at` timestamps in all tables to track data changes.
+-   **Enforce Data Integrity**: Use foreign key constraints to maintain relational integrity between tables.
+-   **Implement Row-Level Security (RLS)**: Leverage Supabase's Row-Level Security to enforce data access policies at the database level.
+-   **Index Frequently Queried Columns**: Add indexes to columns that are frequently used in `WHERE` clauses, `JOIN` conditions, or `ORDER BY` statements to improve query performance.

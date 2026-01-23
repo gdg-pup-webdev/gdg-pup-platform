@@ -1,255 +1,203 @@
- 
+# Backend Architecture: Layered Design
 
-services and repositories: hindi sila aware sa api.
+Our backend follows a layered architecture to ensure a clean separation of concerns, making the codebase more modular, maintainable, and testable. This guide details the structure and responsibilities of each layer.
 
-- huhugutin nyo yung types directly sa types within the project. hindi sa models na nasa contract
-- di nila alam na nasa api sila, so wag magimport ng types and contracts and models from contract packages
+## Guiding Principles
 
-routes and controllers: sila lang ang aware sa api
+-   **Services and Repositories**: These layers are API-agnostic. They should not have any knowledge of the API contracts. Types should be imported directly from the project's `types` directory, not from the `*-api-contracts` packages.
+-   **Routes and Controllers**: These layers are API-aware and act as the bridge between the API contracts and the application's core logic. They are responsible for translating data between the API schema and the internal database types.
+-   **External Services**: When integrating with external services (e.g., GCP, AWS), use dependency injection to ensure that implementations can be easily swapped out.
 
-- sila ang magaact as bridge between database types and api contract types.
+## Backend Structure
 
-and kapag gagamit ng external services like gcp, make sure na madaling palitan yung service. follow nyo yung dependency injection pattern natin
-
-## Backend (Nexus API)
-
-### 🚀 Backend Architecture
+The `nexus-api` application is organized as follows:
 
 ```
-apps/nexus-api/
-├── src/
-│   ├── index.ts                      # App entry point
-│   ├── configs/                      # Configuration files
-│   │   └── config.ts         # config file
-│   ├── lib/                          # External service clients
-│   │   ├── supabase.ts               # Supabase client
-│   ├── loaders/                      # App initialization
-│   │   ├── parsers.loader.ts         # loads the parsers
-│   │   ├── routes.loader.ts      # loads the routes
-│   │   └── swagger.loader.ts          # loads swagger ui docs
-│   ├── middlewares/                  # Express middlewares
-│   │   ├── auth.middleware.ts                   # JWT authentication
-│   │   ├── error.middleware.ts           # Global error handling
-│   │   └── rateLimiter.middleware.ts            # Rate limiting
-│   ├── modules/                      # Feature modules
-│   │   ├── userSystem/               # domain
-│   │   │   ├── user.controller.ts    # Request handlers
-│   │   │   ├── user.service.ts       # Business logic
-│   │   │   ├── user.repository.ts    # Database access
-│   │   │   └── user.route.ts         # Route registration
-│   │   │   └── index.ts         # entry point of the domain
-│   │   ├── eventSystem/
-│   │   │   ├── event.controller.ts
-│   │   │   ├── event.service.ts
-│   │   │   ├── event.repository.ts
-│   │   │   └── eventSystem.route.ts
-│   │   │   └── index.ts         
-│   ├── classes/                      # Custom classes
-│   │   └── ServerError.ts            # Error handling class
-│   └── types/                        # TypeScript types
-│       └── express.d.ts              # Express type extensions
-└── package.json
+apps/nexus-api/src/
+├── index.ts              # Application entry point
+├── classes/              # Custom classes (e.g., ServerError)
+├── configs/              # Project configuration
+├── lib/                  # External service clients (e.g., Supabase)
+├── loaders/              # Application initialization logic
+├── middlewares/          # Express middlewares (e.g., auth, error handling)
+├── modules/              # Feature modules organized by domain
+│   └── userSystem/
+│       ├── user.controller.ts  # Handles HTTP requests and responses
+│       ├── user.service.ts     # Contains business logic
+│       ├── user.repository.ts  # Manages database interactions
+│       ├── user.route.ts       # Defines API routes for the module
+│       └── index.ts            # Entry point for the feature module
+└── types/                # Global TypeScript types and interfaces
 ```
- 
 
-### 💾 Repository Layer (Database Access)
+## 1. Repository Layer (Data Access)
 
-- repository layer: interface between the application and the database. no business logic. only does basic operations with the database and the resource it manages. repositories can only manage only one resource as much as possible. it doesnt know the api exists. it doesnt know the schema of the api and such. it only knows about the database 
+The repository layer is the lowest level, responsible for all direct interactions with the database.
 
-Repositories handle direct database interactions:
+-   **Responsibilities**:
+    -   Perform basic CRUD (Create, Read, Update, Delete) operations.
+    -   Abstract away the database implementation details.
+    -   Manage a single database resource (e.g., a `user` table).
+-   **Constraints**:
+    -   Contains no business logic.
+    -   Is unaware of the API and its schemas.
+
+**Example: `UserRepository`**
 
 ```typescript
 // apps/nexus-api/src/modules/userSystem/user.repository.ts
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RepositoryResult } from "@/types/repository.types";
 import { Tables } from "@/types/supabase.types";
 
-type userRow = Tables<"user">; 
+type UserRow = Tables<"user">;
 
 export class UserRepository {
-  tableName = "user";
+  private tableName = "user";
 
-  constructor() {}
-
-  getUserById = async (userId: string): Promise<userRow> => {
+  async getUserById(userId: string): Promise<UserRow> {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
       .eq("id", userId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) {
+      throw new DatabaseError(error.message);
+    }
 
     return data;
-  };
- 
- //.... 
+  }
 }
 
-export const userRepositoryInstance = new UserRepository();
+export const userRepository = new UserRepository();
 ```
 
+## 2. Service Layer (Business Logic)
 
+The service layer contains the core business logic of the application.
 
+-   **Responsibilities**:
+    -   Orchestrate data flow by calling repository methods.
+    -   Implement complex business rules and operations.
+    -   Coordinate between different services to handle side effects (e.g., logging a transaction, sending a notification).
+-   **Constraints**:
+    -   Is unaware of the API and its schemas.
 
-### 🧠 Service Layer (Business Logic)
-
-- service layer : contains majority of the business logic of the entire application. still not aware of the existence of the api. doesnt know the schema of the api. it only knows other services and its own repository. the function of service layer is to do one major business logic (incrementing wallet balance of user) and enforce side effects (logging the transaction using transactions service and sending notification using notification service). 
-Services contain business logic and orchestrate repository calls:
+**Example: `UserService`**
 
 ```typescript
 // apps/nexus-api/src/modules/userSystem/user.service.ts
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { UserRepository, userRepositoryInstance } from "./user.repository.js";
+import { UserRepository, userRepository } from "./user.repository.js";
 import { RepositoryError } from "@/classes/ServerError.js";
 
 export class UserService {
-  constructor(
-    private userRepository: UserRepository = userRepositoryInstance,
-  ) {}
+  constructor(private userRepository: UserRepository = userRepository) {}
 
-  getUserById = async (userId: string) => {
+  async getUserById(userId: string) {
     const { data, error } = await tryCatch(
-      async () => await this.userRepository.getUserById(userId),
-      "getting user",
+      () => this.userRepository.getUserById(userId),
+      "An error occurred while getting the user."
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      throw new RepositoryError(error.message);
+    }
 
     return data;
-  };
-
-// ...
+  }
 }
 
-export const userServiceInstance = new UserService();
-
+export const userService = new UserService();
 ```
 
+## 3. Controller Layer (Request Handling)
 
-### 🎮 Controller Layer (Request Handling)
+The controller layer acts as the bridge between the API endpoints and the application's services.
 
-controllers act as a bridge between the api endpoint and the application. it transalates the api schema into the schema that services and repositories understand. it is also responsible for translating the return values of services and repositories back into a form that is acceptable based on the defined api schema. 
+-   **Responsibilities**:
+    -   Handle incoming HTTP requests.
+    -   Validate and sanitize request data (delegated to `typed-rest`).
+    -   Call service methods to execute business logic.
+    -   Translate data from services into a format that conforms to the API contract.
+    -   Return a structured HTTP response.
 
-Controllers handle HTTP requests using the contract-based approach:
+We use the `createExpressController` utility from `@packages/typed-rest` to enforce our API contract, providing fully typed and validated inputs.
 
-steps: 
-- define the class and put dependencies on the constructor 
-- export a default instance 
-- make methods which are mapped to an endpoint 
-- use the createexpress controlelr from @packages/typed-rest to be able to enforce contract 
-- by enforcing the contract, you gain access to fully validated and typed input and output objects 
-- input object is the mirror of the traditional req object. it contains information abotu the request
-- the output object allows you to return a response to the caller. 
-- the ctx object contains the raw and untouched req and res object incase you need them. 
+**Example: `UserSystemController`**
 
 ```typescript
 // apps/nexus-api/src/modules/userSystem/user.controller.ts
-import { RequestHandler } from "express";
-import { UserService, userServiceInstance } from "./user.service.js";
+import { UserService, userService } from "./user.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class UserSystemController {
-  constructor(private userService: UserService = userServiceInstance) {}
- 
-  getUserById: RequestHandler = createExpressController(
+  constructor(private userService: UserService = userService) {}
+
+  getUserById = createExpressController(
     contract.api.user_system.users.userId.GET,
-    async ({ input, output, ctx }) => {
-      const { res, req } = ctx;
-      const userId = input.params.userId;
+    async ({ input, output }) => {
+      const { userId } = input.params;
+
       const { data, error } = await tryCatch(
-        async () => await this.userService.getUserById(userId),
-        "getting useradfasd",
+        () => this.userService.getUserById(userId)
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) {
+        throw new ServiceError(error.message);
+      }
 
       return output(200, {
         status: "success",
         message: "User fetched successfully",
         data,
       });
-    },
+    }
   );
- 
- // ...
 }
 
-export const userSystemControllerInstance = new UserSystemController();
-
+export const userController = new UserSystemController();
 ```
 
-### 🛣️ Router layer
+## 4. Router Layer (Route Registration)
 
-map the routes to their controllers 
+The router layer maps API routes to their corresponding controller methods and applies any necessary middleware.
+
+**Example: `UserRouter`**
 
 ```typescript
 // apps/nexus-api/src/modules/userSystem/user.route.ts
 import { Router } from "express";
-import { UserController, userControllerInstance } from "./user.controller.js";
-import { authMiddleware } from "@/middlewares/auth.js";
+import { userController } from "./user.controller.js";
+import { authMiddleware } from "@/middlewares/auth.middleware.js";
 
-export class UserRouter {
-  constructor(
-    private userController: UserController = userControllerInstance,
-  ) {}
+const router = Router();
 
-  getRouter() {
-    const router = Router();
+// Public route
+router.post("/users", userController.createUser);
 
-    // Public routes
-    router.post("/users", this.userController.createUser);
+// Protected route with authentication middleware
+router.get(
+  "/users/:userId",
+  authMiddleware,
+  userController.getUserById,
+);
 
-    // Protected routes
-    router.get(
-      "/users/:userId",
-      authMiddleware, // ← Auth middleware
-      this.userController.getUser,
-    );
-
-    return router;
-  }
-}
-
-export const userRouterInstance = new UserRouter();
+export const userRouter = router;
 ```
 
-### embed the rotuer in the domain's barrel file 
+Finally, the module's router is registered in the main routes loader to be included in the application.
 
 ```typescript
-// apps/nexus-api/src/modules/userSystem/index.ts
-import { Router } from "express";
-import { UserRouter, userRouterInstance } from "./user.route";
-
-export class UserSystemRouter {
-  constructor(private userRouter: UserRouter = userRouterInstance) {}
-
-  getRouter(): Router {
-    const router = Router();
-    router.use("/users", this.userRouter.getRouter());
-    return router;
-  }
-}
-
-export const userSystemRouterInstance = new UserSystemRouter();
-
-```
-
-
-### load the domain in routes loader 
-
-```typescript
-
 // apps/nexus-api/src/loaders/routes.loader.ts
-import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
+import { userRouter } from "@/modules/userSystem/user.route.js";
 
-export const routesLoader = (app: Express) => { 
-  app.use("/api/user-system", userSystemRouterInstance.getRouter());
- 
+export const routesLoader = (app: Express) => {
+  app.use("/api/user-system", userRouter);
+  // ... other module routers
 };
-
 ```

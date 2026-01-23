@@ -1,77 +1,102 @@
+# Frontend Development
 
-## Frontend (Nexus Web)
+This guide provides an overview of the frontend architecture for the `nexus-web` application, including the project structure and how to interact with the backend using our type-safe API client.
 
-### 🎨 Frontend Architecture
+## Frontend Architecture
+
+The `nexus-web` application is built with Next.js and uses the App Router. The project is structured to promote separation of concerns and maintainability.
 
 ```
-apps/nexus-web/
-├── app/                              # Next.js App Router
-│   ├── page.tsx                      # Homepage
-│   ├── layout.tsx                    # Root layout
+apps/nexus-web/src/
+├── app/
+│   ├── layout.tsx              # Root application layout
+│   ├── page.tsx                # Homepage
 │   ├── events/
-│   │   ├── page.tsx                  # Events list page
+│   │   ├── page.tsx            # Events list page
 │   │   └── [eventId]/
-│   │       └── page.tsx              # Event detail page
+│   │       └── page.tsx        # Event detail page
 │   └── users/
 │       └── [userId]/
-│           └── page.tsx              # User profile page
-├── components/                       # React components
-│   ├── ui/                           # shadcn/ui components
+│           └── page.tsx        # User profile page
+│
+├── components/
+│   ├── ui/                     # Core UI components from shadcn/ui
 │   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   └── input.tsx
-│   └── features/                     # Feature-specific components
+│   │   └── card.tsx
+│   └── features/               # Components specific to application features
 │       ├── EventCard.tsx
 │       └── UserProfile.tsx
-├── lib/                              # Utilities
-│   ├── api.ts                        # API client setup
-│   └── utils.ts                      # Helper functions
-├── hooks/                            # Custom React hooks
-│   ├── useAuth.ts                    # Authentication hook
-│   └── useApi.ts                     # API calling hook
-└── styles/
-    └── globals.css                   # Global styles
+│
+├── lib/
+│   ├── api.ts                  # Type-safe API client setup
+│   └── utils.ts                # General utility functions
+│
+├── providers/                  # Global context providers (e.g., Auth, Theme)
+│
+└── hooks/
+    ├── useAuth.ts              # Hook for authentication logic
+    └── useApi.ts               # Hook for simplified API calls
 ```
 
-### 📡 Type-Safe API Client
-you can use another function from @packages/api-typing to call an api endpoint using the contract
-it allows you to receive a fully typed result
+-   **`app/`**: Follows the Next.js App Router conventions for file-based routing.
+-   **`components/`**: Contains all React components, separated into `ui` for generic, reusable elements and `features` for components tied to specific application functionality.
+-   **`lib/`**: Includes core utilities, most notably the configuration for our type-safe API client.
+-   **`providers/`**: Holds React context providers that wrap the entire application.
+-   **`hooks/`**: Contains custom React hooks for shared, reusable logic.
+
+## Type-Safe API Client 
+
+To ensure end-to-end type safety, we use a client generated from our API contracts. The `callEndpoint` function from the `@packages/typed-rest` package allows you to make API requests that are fully typed based on the contract definition. The TypeScript compiler will validate the endpoint, parameters, and response types, providing an excellent developer experience with autocompletion and error checking.
+
+**Example: Fetching a User Profile**
+
 ```typescript
-// apps/nexus-web/lib/api.ts
-import { callEndpoint } from "@packages/api-typing";
-import { Contract } from "@packages/nexus-api-contracts";
+// apps/nexus-web/src/app/users/[userId]/page.tsx
+"use client";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { apiCall } from "@/lib/api";
+import { contract } from "@packages/nexus-api-contracts";
+import { useEffect, useState } from "react";
 
-// Helper function for authenticated API calls
-export async function apiCall<T extends keyof typeof Contract>(
-  endpoint: T,
-  options: {
-    params?: any;
-    query?: any;
-    body?: any;
-    token?: string;
-  },
-) {
-  return await callEndpoint(API_BASE_URL, endpoint as any, options);
-}
+// Define the type for the user data based on the contract
+type User = typeof contract.api.user_system.users.userId.GET.response[200]["data"];
 
-// Example: Fetch user
-export async function getUser(userId: string, token: string) {
-  const result = await callEndpoint(
-    API_BASE_URL,
-    Contract.userSystem.users.userId.GET,
-    {
-      params: { userId },
-      token,
-    },
+// Set the base URL for the API from environment variables
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
+export default function UserProfilePage({ params }: { params: { userId: string } }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const result = await callEndpoint(
+        API_BASE_URL, 
+        contract.api.user_system.users.userId.GET, 
+        { params: { userId: params.userId } }
+      );
+
+      // The 'result' object is fully typed
+      if (result.status === 200) {
+        setUser(result.body.data); // 'result.body.data' is typed as 'User'
+      } else {
+        setError(result.body.message); // 'result.body.message' is typed as 'string'
+      }
+    };
+
+    fetchUser();
+  }, [params.userId]);
+
+  if (error) return <div>Error: {error}</div>;
+  if (!user) return <div>Loading...</div>;
+
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.email}</p>
+    </div>
   );
-
-  // Type-safe response handling
-  if (result.status === 200) {
-    return result.body.data; // ← Fully typed!
-  }
-
-  throw new Error(result.body.message);
 }
 ```
+
+This setup prevents common errors, reduces bugs, and makes the frontend code much easier to write and maintain.

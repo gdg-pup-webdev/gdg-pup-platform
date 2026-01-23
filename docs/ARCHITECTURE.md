@@ -1,3 +1,6 @@
+## This guide has been deprecated.
+### Please read **[Guide Index](./README.md)**.
+
 # GDG PUP Platform - Complete Architecture Guide
 
 > **Complete guide to understanding and developing in the GDG PUP Platform monorepo**
