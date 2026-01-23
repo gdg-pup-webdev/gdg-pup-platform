@@ -3,6 +3,7 @@ import { createExpressController } from "@packages/typed-rest";
 import { contract } from "@packages/identity-api-contracts";
 import { CardService, cardServiceInstance } from "./card.service.js";
 import { ServerError } from "@/classes/ServerError.js";
+import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class CardController {
   constructor(private cardService: CardService = cardServiceInstance) {}
@@ -72,6 +73,42 @@ export class CardController {
       });
     }
   );
+
+
+  /**
+   * create a new card
+   */
+  createCard: RequestHandler = createExpressController(
+    contract.api.card_system.cards.POST,
+    async ({ input, output, ctx }) => {
+      const { req } = ctx;
+      const user = req.user!;
+
+      if (!user) {
+        throw ServerError.unauthorized("User must be authenticated to create a card");
+      }
+
+      const { data, error } = await tryCatch(
+        async () => await this.cardService.createCard(input.body.data), 
+        "creating card"
+      );
+
+      if (error) {
+        // Handle specific error codes
+        throw ServerError.internalError(
+          `Something went wrong: ${error.message}`
+        );
+      } 
+
+      return output(201, {
+        status: "success",
+        message: "Card created successfully",
+        data,
+      });
+    }  
+  );
+
+
 }
 
 export const cardControllerInstance = new CardController();

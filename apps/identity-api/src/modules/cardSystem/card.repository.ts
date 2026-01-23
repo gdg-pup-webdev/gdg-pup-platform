@@ -1,5 +1,6 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js"; 
+import { RepositoryResult } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
 
@@ -14,15 +15,15 @@ export class CardRepository {
 
   constructor() {}
 
-  create = async (dto: cardInsertDTO) => {
+  create = async (dto: cardInsertDTO) : RepositoryResult<cardRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
     if (error) throw new DatabaseError(error.message);
-    
-    return { data };
+
+    return data;
   };
 
   getCardByUid = async (uid: string) => {

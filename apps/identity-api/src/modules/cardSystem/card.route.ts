@@ -78,10 +78,16 @@ export class CardRouter {
      *         $ref: '#/components/responses/InternalServerError'
      */
     router.post(
-      "/activate/:cardUid",
+      "/:cardUid/activate",
       this.authMiddleware.requireAuth(),
       this.cardController.activateCard,
     );
+
+    /**
+     * create new card
+     */
+    router.post("/",
+      this.authMiddleware.requireAuth(), this.cardController.createCard);
 
     return router;
   }

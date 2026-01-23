@@ -1,6 +1,7 @@
 import { Tables, TablesInsert } from "@/types/supabase.types.js";
 import { CardRepository, cardRepositoryInstance } from "./card.repository.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
+import { RepositoryError } from "@/classes/ServerError.js";
 
 type cardRow = Tables<"nfc_card">;
 type cardInsertDTO = TablesInsert<"nfc_card">;
@@ -78,10 +79,8 @@ export class CardService {
       async () => await this.cardRepository.create(dto),
       "creating card",
     );
-    if (error) {
-      return { error };
-    }
-    return { data };
+    if (error)  throw new RepositoryError(error.message);
+    return data;
   };
 }
 
