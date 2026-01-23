@@ -1,3 +1,8 @@
+/**
+ * @file certificates.test.ts
+ * @description Integration tests for the Certificates API.
+ */
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 
@@ -12,7 +17,7 @@ vi.mock('@/middlewares/auth.middleware.js', () => ({
   AuthMiddleware: class {},
 }));
 
-// Mock Service
+// Mock Service methods
 const mockListCertificatesOfUser = vi.fn();
 const mockListCertificates = vi.fn();
 const mockGetOneCertificate = vi.fn();

@@ -1,7 +1,14 @@
+/**
+ * @file achievements.test.ts
+ * @description Integration tests for the Achievements API. 
+ * Mocks the authentication middleware and the Achievement service to 
+ * verify routing, controller logic, and contract adherence.
+ */
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 
-// Mock Auth Middleware
+// Mock Auth Middleware to simulate a logged-in user
 vi.mock('@/middlewares/auth.middleware.js', () => ({
   authMiddlewareInstance: {
     requireAuth: () => (req: any, res: any, next: any) => {
@@ -12,7 +19,7 @@ vi.mock('@/middlewares/auth.middleware.js', () => ({
   AuthMiddleware: class {},
 }));
 
-// Mock Service
+// Mock Service methods
 const mockListAchievementsOfUser = vi.fn();
 const mockListAchievements = vi.fn();
 const mockGetOneAchievement = vi.fn();
@@ -32,7 +39,7 @@ vi.mock('../modules/userResourceSystem/achievement.service.js', () => ({
   AchievementService: class {},
 }));
 
-// Import app AFTER mocks
+// Import app AFTER mocks are established
 import app from '../app.js';
 
 describe('Achievements API Integration', () => {
