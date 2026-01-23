@@ -65,6 +65,12 @@ importers:
       supazod:
         specifier: ^4.5.0
         version: 4.5.0(@types/node@24.10.9)
+      swagger-jsdoc:
+        specifier: ^6.2.8
+        version: 6.2.8(openapi-types@12.1.3)
+      swagger-ui-express:
+        specifier: ^5.0.0
+        version: 5.0.1(express@5.2.1)
       tsc-alias:
         specifier: ^1.8.16
         version: 1.8.16

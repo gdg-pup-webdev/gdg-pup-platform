@@ -1,23 +1,5 @@
 import { extend } from "zod/mini";
 
-/**
- *  export const error = () => {
-       return z.object({
-         status: z.string(),
-         message: z.string(),
-         errors: z
-           .array(
-             z.object({
-               title: z.string(),
-               detail: z.string(),
-               moreDetails: z.unknown().optional(),
-               source: z.string().optional(),
-             })
-           )
-           .optional(),
-       });
-     };
- */
 
 type ServerErrorProps = {
   statusCode: number;

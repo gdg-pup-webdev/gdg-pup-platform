@@ -539,6 +539,49 @@ export const publicUserUpdateSchema = z.object({
   updated_at: z.string().optional(),
 });
 
+export const publicUserAchievementRowSchema = z.object({
+  achieved_at: z.string().nullable(),
+  created_at: z.string().nullable(),
+  description: z.string().nullable(),
+  id: z.string(),
+  image_url: z.string().nullable(),
+  title: z.string(),
+  updated_at: z.string().nullable(),
+  user_id: z.string(),
+});
+
+export const publicUserAchievementInsertSchema = z.object({
+  achieved_at: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  title: z.string(),
+  updated_at: z.string().optional().nullable(),
+  user_id: z.string(),
+});
+
+export const publicUserAchievementUpdateSchema = z.object({
+  achieved_at: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  title: z.string().optional(),
+  updated_at: z.string().optional().nullable(),
+  user_id: z.string().optional(),
+});
+
+export const publicUserAchievementRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("user_achievement_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicUserCertificateRowSchema = z.object({
   description: z.string(),
   id: z.string(),

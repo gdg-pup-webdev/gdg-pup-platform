@@ -1,13 +1,14 @@
 {
   "name": "identity-api",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "type": "module",
+  "main": "dist/index.js", 
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc && tsc-alias",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/types/supabase.types.ts",
+    "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
+    "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod"
   },
   "keywords": [],
   "author": "",
@@ -28,6 +29,8 @@
     "pino": "^10.1.0",
     "pino-http": "^11.0.0",
     "supazod": "^4.5.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "tsc-alias": "^1.8.16",
     "zod": "^4.1.12"
   },
