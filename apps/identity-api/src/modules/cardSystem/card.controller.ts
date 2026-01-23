@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { createExpressController } from "@packages/typed-rest";
 import { contract } from "@packages/identity-api-contracts";
 import { CardService, cardServiceInstance } from "./card.service.js";
-import { ServerError } from "@/classes/ServerError.js";
+import { ServerError, ServiceError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class CardController {
@@ -15,22 +15,17 @@ export class CardController {
     contract.api.card_system.cards.cardUid.status.GET,
     async ({ input, output, ctx }) => {
       const { cardUid } = input.params;
-      const { data, error } = await this.cardService.getCardStatus(cardUid);
+      const { data, error } = await tryCatch(
+        async () => await this.cardService.getCardStatus(cardUid), 
+        "fetching card status"
+      );
 
-      if (error) {
-        // Handle specific error codes
-        if (error.code === "CARD_NOT_FOUND") {
-          throw ServerError.notFound(error.message);
-        }
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`,
-        );
-      }
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Card status retrieved successfully",
-        data,
+        data : data,
       });
     },
   );
@@ -44,23 +39,12 @@ export class CardController {
       const { cardUid } = input.params;
       const { userId } = input.body.data;
 
-      const { data, error } = await this.cardService.activateCard(
-        cardUid,
-        userId,
+      const { data, error } = await tryCatch(
+        async () => await this.cardService.activateCard(cardUid, userId),
+        "activating card",
       );
 
-      if (error) {
-        // Handle specific error codes
-        if (error.code === "CARD_NOT_FOUND") {
-          throw ServerError.notFound(error.message);
-        }
-        if (error.code === "CARD_NOT_READY") {
-          throw ServerError.badRequest(error.message);
-        }
-        throw ServerError.internalError(
-          `Something went wrong: ${error.message}`,
-        );
-      }
+      if (error) throw new ServiceError(error.message);
 
       return output(201, {
         status: "success",
@@ -75,14 +59,7 @@ export class CardController {
   createCard: RequestHandler = createExpressController(
     contract.api.card_system.cards.POST,
     async ({ input, output, ctx }) => {
-      const { req } = ctx;
-      const user = req.user!;
-
-      if (!user) {
-        throw ServerError.unauthorized(
-          "User must be authenticated to create a card",
-        );
-      }
+      const { req } = ctx; 
 
       const { data, error } = await tryCatch(
         async () => await this.cardService.createCard(input.body.data),

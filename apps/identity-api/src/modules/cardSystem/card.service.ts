@@ -1,7 +1,11 @@
 import { Tables, TablesInsert } from "@/types/supabase.types.js";
 import { CardRepository, cardRepositoryInstance } from "./card.repository.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  RepositoryError,
+} from "@/classes/ServerError.js";
 
 type cardRow = Tables<"nfc_card">;
 type cardInsertDTO = TablesInsert<"nfc_card">;
@@ -13,65 +17,64 @@ export class CardService {
   ) {}
 
   getCardStatus = async (cardUid: string) => {
-    const { data: card, error } =
-      await this.cardRepository.getCardByUid(cardUid);
+    const { data: card, error } = await tryCatch(
+      async () => await this.cardRepository.getCardByUid(cardUid),
+      "fetching card status",
+    );
 
-    if (error) {
-      return { error };
-    }
+    if (error) throw new RepositoryError(error.message);
 
-    if (!card) {
-      return { error: { message: "Card not found", code: "CARD_NOT_FOUND" } };
-    }
+    if (!card) throw new NotFoundError("Card not found");
 
     // TODO: Fetch user if card.user_id exists
     // For now, return null for user
     return {
-      data: {
-        card,
-        user: null,
-      },
+      card,
+      user: null,
     };
   };
 
   activateCard = async (cardUid: string, userId: string) => {
     // 1. Verify card exists and is READY
-    const { data: card, error: fetchError } =
-      await this.cardRepository.getCardByUid(cardUid);
+    const { data: card, error: fetchError } = await tryCatch(
+      async () => await this.cardRepository.getCardByUid(cardUid),
+      "fetching card",
+    );
 
-    if (fetchError) {
-      return { error: fetchError };
-    }
+    if (fetchError) throw new RepositoryError(fetchError.message);
 
-    if (!card) {
-      return { error: { message: "Card not found", code: "CARD_NOT_FOUND" } };
+    if (!card) throw new NotFoundError("Card not found");
+
+    if (card.status === "ACTIVATED") {
+      throw new BadRequestError("Card is already activated");
     }
 
     if (card.status !== "READY") {
-      return {
-        error: {
-          message: `Card is not ready for activation (Status: ${card.status})`,
-          code: "CARD_NOT_READY",
-        },
-      };
+      throw new BadRequestError(
+        `Card is not ready for activation (Status: ${card.status}`,
+      );
     }
 
     // 2. Activate the card
-    const { data, error: updateError } = await this.cardRepository.activateCard(
-      cardUid,
-      userId,
+    const { data, error: updateError } = await tryCatch(
+      async () => await this.cardRepository.activateCard(cardUid, userId),
+      "activating card",
     );
 
-    if (updateError) {
-      return { error: updateError };
-    }
+    if (updateError) throw new RepositoryError(updateError.message);
 
     // 3. Log transaction
-    await this.cardRepository.logTransaction(cardUid, "ACTIVATION", {
-      userId,
-    });
+    const { data: transaction, error: transactionError } = await tryCatch(
+      async () =>
+        await this.cardRepository.logTransaction(cardUid, "ACTIVATION", {
+          userId,
+        }),
+      "logging activation transaction",
+    );
 
-    return { data };
+    if (transactionError) throw new RepositoryError(transactionError.message);
+
+    return data;
   };
 
   createCard = async (dto: cardInsertDTO) => {
@@ -79,7 +82,7 @@ export class CardService {
       async () => await this.cardRepository.create(dto),
       "creating card",
     );
-    if (error)  throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError(error.message);
     return data;
   };
 

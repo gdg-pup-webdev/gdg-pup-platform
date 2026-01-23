@@ -87,7 +87,11 @@ export class ServerError extends Error {
 }
 
 
-
+export class BadRequestError extends ServerError {
+  constructor(detail: string = "Bad Request") {
+    super({ statusCode: 400, title: "Bad Request", detail: detail });
+  }
+}
 
 export class TooManyRequestError extends ServerError {
   constructor(detail: string = "Too Many Requests") {

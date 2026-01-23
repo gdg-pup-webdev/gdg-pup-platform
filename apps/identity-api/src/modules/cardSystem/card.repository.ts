@@ -10,10 +10,12 @@ type cardRow = Tables<"nfc_card">;
 type cardInsertDTO = TablesInsert<"nfc_card">;
 type cardUpdateDTO = TablesUpdate<"nfc_card">;
 
+type transactionRow = Tables<"nfc_card_transaction">;
 type transactionInsertDTO = TablesInsert<"nfc_card_transaction">;
 
 export class CardRepository {
   tableName = "nfc_card";
+  transactionTableName = "nfc_card_transaction";
 
   constructor() {}
 
@@ -28,22 +30,21 @@ export class CardRepository {
     return data;
   };
 
-  getCardByUid = async (uid: string) => {
+  getCardByUid = async (uid: string) : RepositoryResult<cardRow> => {
     const { data, error } = await supabase
-      .from("nfc_card")
+      .from(this.tableName)
       .select("*")
       .eq("id", uid)
       .maybeSingle();
 
-    if (error) {
-      return { error };
-    }
-    return { data };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
-  activateCard = async (cardUid: string, userId: string) => {
+  activateCard = async (cardUid: string, userId: string) : RepositoryResult<cardRow> => {
     const { data, error } = await supabase
-      .from("nfc_card")
+      .from(this.tableName)
       .update({
         status: "ACTIVE",
         user_id: userId,
@@ -53,17 +54,16 @@ export class CardRepository {
       .select()
       .single();
 
-    if (error) {
-      return { error };
-    }
-    return { data };
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
   logTransaction = async (
     cardId: string,
     eventType: "ACTIVATION" | "TAP_PROFILE" | "TAP_CHECKIN",
     meta: any = {},
-  ) => {
+  ): RepositoryResult<transactionRow> => {
     const transaction: transactionInsertDTO = {
       card_id: cardId,
       event_type: eventType,
@@ -71,13 +71,11 @@ export class CardRepository {
     };
 
     const { data, error } = await supabase
-      .from("nfc_card_transaction")
-      .insert(transaction);
+      .from(this.transactionTableName)
+      .insert(transaction).select("*").single();
 
-    if (error) {
-      return { error };
-    }
-    return { data };
+    if (error) throw new DatabaseError(error.message);
+    return data;
   };
 
   listCards = async (
