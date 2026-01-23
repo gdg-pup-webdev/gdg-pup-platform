@@ -2,7 +2,7 @@ import { DatabaseError, RepositoryError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -13,7 +13,7 @@ export class TransactionRepository {
 
   listTransactionsByWalletId = async (
     walletId: string,
-  ): RespositoryResultList<models.economySystem.transaction.row> => {
+  ): RepositoryResultList<models.economySystem.transaction.row> => {
     const { data: listData, error: listError } = await supabase
       .from(this.tableName)
       .select("*")
@@ -41,7 +41,7 @@ export class TransactionRepository {
   listTransactions = async (
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<models.economySystem.transaction.row> => {
+  ): RepositoryResultList<models.economySystem.transaction.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 

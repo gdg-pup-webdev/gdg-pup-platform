@@ -7,12 +7,12 @@ import {
 } from "./initial-roles.seed.js";
 import { configs } from "@/configs/configs.js";
 
-console.log("Supabase url:", configs.supabase_url);
-console.log("Supabase key:", configs.supabase_key);
+console.log("Supabase url:", configs.supabaseUrl);
+console.log("Supabase key:", configs.supabaseKey);
 
 const supabase = createClient<Database>(
-  configs.supabase_url,
-  configs.supabase_key,
+  configs.supabaseUrl,
+  configs.supabaseKey,
 );
 
 async function seedRBAC() {

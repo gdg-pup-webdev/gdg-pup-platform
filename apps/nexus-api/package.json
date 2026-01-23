@@ -9,7 +9,7 @@
     "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/types/supabase.types.ts",
     "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
     "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod",
-    "seed:rbac": "tsx src/modules/rbacSystem/testings/seed-rbac.ts",
+    "seed:rbac": "tsx watch --env-file=.env src/modules/rbacSystem/testings/seed-rbac.ts",
     "seed:test-users": "tsx src/modules/rbacSystem/testings/seed-test-users.ts",
     "seed:all": "npm run seed:rbac && npm run seed:test-users",
     "seed:visualize": "tsx src/modules/rbacSystem/testings/visualize-permissions.ts"

@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -25,7 +25,7 @@ export class WalletRepository {
     return data;
   };
 
-  list = async (): RespositoryResultList<models.economySystem.wallet.row> => {
+  list = async (): RepositoryResultList<models.economySystem.wallet.row> => {
     const { data, error } = await supabase.from(this.tableName).select("*");
     if (error) throw new DatabaseError(error.message);
 

@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -28,7 +28,7 @@ export class ProfileRepository {
   listProfilesPaginated = async (
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<profileRow> => {
+  ): RepositoryResultList<profileRow> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 

@@ -3,8 +3,8 @@ import { Database } from "@/types/supabase.types";
 import { configs } from "@/configs/configs";
 
 const supabase = createClient<Database>(
-  configs.supabase_url,
-  configs.supabase_key,
+  configs.supabaseUrl,
+  configs.supabaseKey,
 );
 
 /**
