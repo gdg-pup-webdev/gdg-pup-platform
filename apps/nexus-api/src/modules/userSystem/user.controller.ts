@@ -8,7 +8,7 @@ import { tryCatch } from "@/utils/tryCatch.util.js";
 export class UserSystemController {
   constructor(private userService: UserService = userServiceInstance) {}
 
-  listUsers: RequestHandler = async (req, res) => {
+  listUsers: RequestHandler = async (_req, res) => {
     const { data, error } = await tryCatch(
       async () => await this.userService.listUsers(),
       "listing usersssss",
@@ -25,8 +25,7 @@ export class UserSystemController {
 
   getUserById: RequestHandler = createExpressController(
     contract.api.user_system.users.userId.GET,
-    async ({ input, output, ctx }) => {
-      const { res, req } = ctx;
+    async ({ input, output }) => {
       const userId = input.params.userId;
       const { data, error } = await tryCatch(
         async () => await this.userService.getUserById(userId),
@@ -59,6 +58,9 @@ export class UserSystemController {
         wallet: wallets,
         user_profile: profiles,
         user_project: projects,
+        user_achievement: achievements,
+        user_certificate: certificates,
+        user_settings: settings,
         ...userData
       } = data;
 
@@ -67,9 +69,12 @@ export class UserSystemController {
         message: "User aggregate fetched successfully",
         data: {
           ...userData,
-          wallets: data.wallet,
-          profiles: data.user_profile,
-          projects: data.user_project,
+          wallets,
+          profiles,
+          projects,
+          achievements,
+          certificates,
+          settings,
         },
       });
     },
