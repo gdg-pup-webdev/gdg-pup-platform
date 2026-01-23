@@ -45,7 +45,7 @@ export class CardService {
 
     if (!card) throw new NotFoundError("Card not found");
 
-    if (card.status === "ACTIVATED") {
+    if (card.status === "ACTIVE") {
       throw new BadRequestError("Card is already activated");
     }
 
