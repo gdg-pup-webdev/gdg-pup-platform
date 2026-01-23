@@ -1,13 +1,16 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RepositoryResult } from "@/types/repository.types";
-import { Tables } from "@/types/supabase.types";
+import { RepositoryResult } from "@/types/repository.types.js";
+import { Tables } from "@/types/supabase.types.js";
 
 type userRow = Tables<"user">;
 type userAggregate = Tables<"user"> & {
   wallet: Tables<"wallet">[];
   user_profile: Tables<"user_profile">[];
   user_project: Tables<"user_project">[];
+  user_achievement: Tables<"user_achievement">[];
+  user_certificate: Tables<"user_certificate">[];
+  user_settings: Tables<"user_settings">[];
 };
 
 export class UserRepository {
@@ -32,7 +35,9 @@ export class UserRepository {
   ): RepositoryResult<userAggregate> => {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select("*, wallet(*), user_profile(*), user_project(*)")
+      .select(
+        "*, wallet(*), user_profile(*), user_project(*), user_achievement(*), user_certificate(*), user_settings(*)",
+      )
       .eq("id", userId)
       .single();
 
