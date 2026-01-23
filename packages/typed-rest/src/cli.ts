@@ -43,7 +43,7 @@ async function run() {
 
       // Watch both Routes and Models directories
       const watcher = chokidar.watch([SRC_DIR, MODEL_DIR], {
-        ignored: /(^|[\/\\])\../, // ignore dotfiles
+        ignored: /(^|[\]/\/.)/,
         persistent: true,
         ignoreInitial: true,
       });
