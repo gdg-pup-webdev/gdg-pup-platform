@@ -1,18 +1,27 @@
-import { supabase } from "@/lib/supabase.js";
-import { Models } from "@packages/identity-api-contracts/models";
+import { DatabaseError } from "@/classes/ServerError.js";
+import { supabase } from "@/lib/supabase.js"; 
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+
+
+type cardRow = Tables<"nfc_card">;
+type cardInsertDTO = TablesInsert<"nfc_card">;
+type cardUpdateDTO = TablesUpdate<"nfc_card">;
+
+type transactionInsertDTO = TablesInsert<"nfc_card_transaction">;
 
 export class CardRepository {
+  tableName = "nfc_card";
+
   constructor() {}
 
-  create = async (dto: Models.cardSystem.CardModels.insertDTO) => {
+  create = async (dto: cardInsertDTO) => {
     const { data, error } = await supabase
-      .from("nfc_card")
+      .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
-    if (error) {
-      return { error };
-    }
+    if (error) throw new DatabaseError(error.message);
+    
     return { data };
   };
 
@@ -28,6 +37,7 @@ export class CardRepository {
     }
     return { data };
   };
+  
 
   activateCard = async (cardUid: string, userId: string) => {
     const { data, error } = await supabase
@@ -52,7 +62,7 @@ export class CardRepository {
     eventType: "ACTIVATION" | "TAP_PROFILE" | "TAP_CHECKIN",
     meta: any = {}
   ) => {
-    const transaction: Models.cardSystem.CardTransactionModels.insertDTO = {
+    const transaction: transactionInsertDTO = {
       card_id: cardId,
       event_type: eventType,
       metadata: meta,

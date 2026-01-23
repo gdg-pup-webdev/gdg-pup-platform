@@ -1,15 +1,19 @@
-import { Models } from "@packages/identity-api-contracts/models";
+import { Tables, TablesInsert } from "@/types/supabase.types.js";
 import { CardRepository, cardRepositoryInstance } from "./card.repository.js";
+import { tryCatch } from "@/utils/tryCatch.util.js";
+
+type cardRow = Tables<"nfc_card">;
+type cardInsertDTO = TablesInsert<"nfc_card">;
+type cardUpdateDTO = TablesInsert<"nfc_card">;
 
 export class CardService {
   constructor(
-    private readonly cardRepository: CardRepository = cardRepositoryInstance
+    private readonly cardRepository: CardRepository = cardRepositoryInstance,
   ) {}
 
   getCardStatus = async (cardUid: string) => {
-    const { data: card, error } = await this.cardRepository.getCardByUid(
-      cardUid
-    );
+    const { data: card, error } =
+      await this.cardRepository.getCardByUid(cardUid);
 
     if (error) {
       return { error };
@@ -54,7 +58,7 @@ export class CardService {
     // 2. Activate the card
     const { data, error: updateError } = await this.cardRepository.activateCard(
       cardUid,
-      userId
+      userId,
     );
 
     if (updateError) {
@@ -69,10 +73,11 @@ export class CardService {
     return { data };
   };
 
-  createCard = async (
-    dto: Omit<Models.cardSystem.CardModels.insertDTO, "created_at">
-  ) => {
-    const { data, error } = await this.cardRepository.create(dto);
+  createCard = async (dto: cardInsertDTO) => {
+    const { data, error } = await tryCatch(
+      async () => await this.cardRepository.create(dto),
+      "creating card",
+    );
     if (error) {
       return { error };
     }

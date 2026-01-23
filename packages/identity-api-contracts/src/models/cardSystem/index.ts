@@ -1,4 +1,2 @@
-import { CardModels } from "./card.model.js";
-import { CardTransactionModels } from "./transaction.model.js";
-
-export { CardModels, CardTransactionModels };
+export * as card from "./card";
+export * as transaction from "./transaction";

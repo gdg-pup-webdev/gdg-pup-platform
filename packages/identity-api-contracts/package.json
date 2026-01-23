@@ -1,9 +1,7 @@
 {
   "name": "@packages/identity-api-contracts",
   "exports": {
-    ".": "./dist/typedrest.contract.js",
-    "./models": "./dist/models/index.js",
-    "./types": "./dist/types/index.js"
+    ".": "./dist/typedrest.contract.js"
   },
   "imports": {
     "#*": "./dist/*"

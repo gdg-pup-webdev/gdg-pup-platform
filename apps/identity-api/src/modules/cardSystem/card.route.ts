@@ -1,8 +1,5 @@
 import { Router } from "express";
-import {
-  CardController,
-  cardControllerInstance,
-} from "./card.controller.js";
+import { CardController, cardControllerInstance } from "./card.controller.js";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
@@ -11,7 +8,7 @@ import {
 export class CardRouter {
   constructor(
     private cardController: CardController = cardControllerInstance,
-    private authMiddleware: AuthMiddleware = authMiddlewareInstance
+    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter() {
@@ -39,11 +36,11 @@ export class CardRouter {
      *       500:
      *         $ref: '#/components/responses/InternalServerError'
      */
-    router.get("/cards/:cardUid/status", this.cardController.getCardStatus);
+    router.get("/:cardUid/status", this.cardController.getCardStatus);
 
     /**
      * @openapi
-     * /api/card-system/activate/{cardUid}:
+     * /api/card-system/cards/{cardUid}/activate:
      *   post:
      *     tags:
      *       - Card System
@@ -83,7 +80,7 @@ export class CardRouter {
     router.post(
       "/activate/:cardUid",
       this.authMiddleware.requireAuth(),
-      this.cardController.activateCard
+      this.cardController.activateCard,
     );
 
     return router;
