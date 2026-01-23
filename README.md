@@ -15,20 +15,23 @@ git clone https://github.com/gdg-pup-webdev/gdg-pup-platform.git
 cd gdg-pup-webdev
 ```
 
-2. **Install pnpm and dependencies**
+2. **Add the .env files**
+Ask the project organizers for the .env files and put then in the appropriate folders.
+
+3. **Install pnpm and dependencies**
 
 ```cmd
 npm install -g pnpm@latest
 pnpm i
 ```
 
-3. **Build the project**
+4. **Build the project**
 
 ```cmd
 pnpm run build
 ```
 
-4. **Start development mode**
+5. **Start development mode**
 
 ```cmd
 pnpm run dev
