@@ -74,21 +74,21 @@ Get the platform running on your local machine in under 5 minutes.
 ### 🎯 Learning Path
 
 #### **1. Getting Started**
-- **[00 - Setting Up the Project](./docs/Onboarding/00-SettingUpTheProject.md)** – Detailed setup guide with troubleshooting tips
+- **[0 - Setting Up the Project](./docs/Onboarding/0-SettingUpTheProject.md)** – Detailed setup guide with troubleshooting tips
 
 #### **2. Core Concepts** (Read in Order)
-- **[01 - Project Architecture](./docs/Onboarding/01-ProjectArchitecture.md)** – Understanding our monorepo structure and tech stack
-- **[02 - Contract-First Development](./docs/Onboarding/02-ContractFirstDevelopment.md)** – How we ensure type safety across the entire stack
-- **[03 - Layered Architecture](./docs/Onboarding/03-LayeredArchitecture.md)** – Backend design principles (controllers, services, repositories)
-- **[03.1 - Dependency Injection](./docs/Onboarding/03.1-DependencyInjection.md)** – Writing modular, testable code
-- **[03.5 - Error Handling](./docs/Onboarding/03.5-ErrorHandling.md)** – Our approach to graceful error management
-- **[04 - Frontend Development](./docs/Onboarding/04-FrontendDevelopment.md)** – Type-safe API clients and UI components
-- **[05 - Development Workflow](./docs/Onboarding/05-DevelopmentWorkflow.md)** – Daily workflows and feature development process
+- **[1 - Project Architecture](./docs/Onboarding/1-ProjectArchitecture.md)** – Understanding our monorepo structure and tech stack
+- **[2 - Contract-First Development](./docs/Onboarding/2-ContractFirstDevelopment.md)** – How we ensure type safety across the entire stack
+- **[3 - Layered Architecture](./docs/Onboarding/3-LayeredArchitecture.md)** – Backend design principles (controllers, services, repositories)
+- **[4 - Dependency Injection](./docs/Onboarding/4-DependencyInjection.md)** – Writing modular, testable code
+- **[5 - Error Handling](./docs/Onboarding/5-ErrorHandling.md)** – Our approach to graceful error management
+- **[6 - Frontend Development](./docs/Onboarding/6-FrontendDevelopment.md)** – Type-safe API clients and UI components
+- **[7 - Development Workflow](./docs/Onboarding/7-DevelopmentWorkflow.md)** – Daily workflows and feature development process
 
 #### **3. Reference Guides**
-- **[Best Practices](./docs/Onboarding/99-BestPractices.md)** – Coding standards and conventions
-- **[Troubleshooting Guide](./docs/Onboarding/99-TroubleShootingGuides.md)** – Common issues and solutions
-- **[Additional Resources](./docs/Onboarding/99-AdditionalResources.md)** – External documentation and tools
+- **[Best Practices](./docs/Onboarding/99.1-BestPractices.md)** – Coding standards and conventions
+- **[Troubleshooting Guide](./docs/Onboarding/99.2-TroubleShootingGuides.md)** – Common issues and solutions
+- **[Additional Resources](./docs/Onboarding/99.3-AdditionalResources.md)** – External documentation and tools
 
 📚 **Full Onboarding Hub**: [docs/Onboarding/README.md](./docs/Onboarding/README.md)
 
@@ -187,14 +187,14 @@ Prefer containerized development? Run the entire platform with Docker.
 We welcome contributions! Before submitting a PR, please:
 
 1. Complete the [Developer Onboarding](#-developer-onboarding) curriculum
-2. Read our [Best Practices](./docs/Onboarding/99-BestPractices.md) guide
-3. Follow the [Development Workflow](./docs/Onboarding/05-DevelopmentWorkflow.md)
+2. Read our [Best Practices](./docs/Onboarding/99.1-BestPractices.md) guide
+3. Follow the [Development Workflow](./docs/Onboarding/7-DevelopmentWorkflow.md)
 
 ---
 
 ## 💬 Need Help?
 
-- **Setup Issues?** Check the [Troubleshooting Guide](./docs/Onboarding/99-TroubleShootingGuides.md)
+- **Setup Issues?** Check the [Troubleshooting Guide](./docs/Onboarding/99.2-TroubleShootingGuides.md)
 - **Architecture Questions?** See the [Architecture Guide](./docs/ARCHITECTURE.md)
 - **Still stuck?** Reach out to the project organizers
 

@@ -1,3 +1,7 @@
+**[⬅️ Previous: Error Handling](./5-ErrorHandling.md)** | **[Back to Onboarding](./README.md)** | **[Next: Development Workflow ➡️](./7-DevelopmentWorkflow.md)**
+
+---
+
 # Frontend Development
 
 This guide provides an overview of the frontend architecture for the `nexus-web` application, including the project structure and how to interact with the backend using our type-safe API client.

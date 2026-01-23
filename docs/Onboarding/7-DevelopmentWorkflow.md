@@ -1,3 +1,7 @@
+**[⬅️ Previous: Frontend Development](./6-FrontendDevelopment.md)** | **[Back to Onboarding](./README.md)** | **[Next: Best Practices ➡️](./99.1-BestPractices.md)**
+
+---
+
 # Development Workflow
 
 This guide outlines the typical workflows for developing and testing new features in this project.

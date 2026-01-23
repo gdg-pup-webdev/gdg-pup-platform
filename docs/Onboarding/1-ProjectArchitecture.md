@@ -1,3 +1,7 @@
+**[⬅️ Previous: Setting Up the Project](./0-SettingUpTheProject.md)** | **[Back to Onboarding](./README.md)** | **[Next: Contract-First Development ➡️](./2-ContractFirstDevelopment.md)**
+
+---
+
 # Project Architecture
 
 This document provides a high-level overview of the project's architecture, technology stack, and core principles. For a more detailed explanation, please refer to the **[Architecture Guide](../../ARCHITECTURE.md)**.

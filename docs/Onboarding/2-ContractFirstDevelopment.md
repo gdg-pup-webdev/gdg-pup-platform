@@ -1,3 +1,7 @@
+**[⬅️ Previous: Project Architecture](./1-ProjectArchitecture.md)** | **[Back to Onboarding](./README.md)** | **[Next: Layered Architecture ➡️](./3-LayeredArchitecture.md)**
+
+---
+
 # Contract-First Development
 
 This document explains our contract-first development approach, where we define API specifications before writing any implementation code. This ensures clear, validated, and type-safe communication between the frontend and backend.

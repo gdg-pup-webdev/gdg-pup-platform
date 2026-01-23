@@ -1,3 +1,7 @@
+**[⬅️ Previous: Layered Architecture](./3-LayeredArchitecture.md)** | **[Back to Onboarding](./README.md)** | **[Next: Error Handling ➡️](./5-ErrorHandling.md)**
+
+---
+
 # Dependency Injection
 
 Dependency Injection (DI) is a core design pattern we use throughout the backend architecture to promote loose coupling and enhance testability. Instead of creating dependencies within a class, we "inject" them from an external source, typically through the class constructor.

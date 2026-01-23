@@ -1,3 +1,7 @@
+**[⬅️ Previous: Contract-First Development](./2-ContractFirstDevelopment.md)** | **[Back to Onboarding](./README.md)** | **[Next: Dependency Injection ➡️](./4-DependencyInjection.md)**
+
+---
+
 # Backend Architecture: Layered Design
 
 Our backend follows a layered architecture to ensure a clean separation of concerns, making the codebase more modular, maintainable, and testable. This guide details the structure and responsibilities of each layer.

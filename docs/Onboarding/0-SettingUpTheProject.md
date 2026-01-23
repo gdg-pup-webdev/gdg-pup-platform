@@ -1,5 +1,9 @@
+**[⬅️ Back to Onboarding](./README.md)** | **[Next: Project Architecture ➡️](./1-ProjectArchitecture.md)**
+
+---
 
 # Project Setup
+
 
 This guide will walk you through setting up your local development environment. This repository utilizes a monorepo structure managed by **pnpm** and **Turborepo**.
 

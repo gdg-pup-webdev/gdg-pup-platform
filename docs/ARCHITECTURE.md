@@ -1,5 +1,4 @@
-## This guide has been deprecated.
-### Please read **[Guide Index](./README.md)**.
+## This guide has been deprecated. Please read **[Guide Index](./README.md)** 
 
 # GDG PUP Platform - Complete Architecture Guide
 

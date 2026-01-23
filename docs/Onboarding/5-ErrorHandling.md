@@ -1,3 +1,7 @@
+**[⬅️ Previous: Dependency Injection](./4-DependencyInjection.md)** | **[Back to Onboarding](./README.md)** | **[Next: Frontend Development ➡️](./6-FrontendDevelopment.md)**
+
+---
+
 # Error Handling Strategy
 
 A robust error handling strategy is crucial for building a reliable application. Our approach is centered around centralized error management, custom error classes, and a utility for safely executing functions.
