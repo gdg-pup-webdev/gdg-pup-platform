@@ -11,7 +11,17 @@
 │         │                 │                  │                   │
 │         └─────────────────┴──────────────────┘                   │
 │                           │                                      │
-│                    Bearer Token (JWT)                            │
+│                    Supabase Session Token                        │
+└───────────────────────────┼──────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      SUPABASE AUTH                               │
+│  ┌────────────────────────────────────────────────────────┐     │
+│  │  • Validates JWT tokens                                │     │
+│  │  • Manages user sessions                               │     │
+│  │  • Returns authenticated user info                     │     │
+│  └────────────────────────────────────────────────────────┘     │
 └───────────────────────────┼──────────────────────────────────────┘
                             │
                             ▼
@@ -21,8 +31,8 @@
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │              Middleware Layer                            │   │
 │  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │   │
-│  │  │ Token Parser │→ │ Auth Check   │→ │ Permission   │  │   │
-│  │  │              │  │              │  │ Check        │  │   │
+│  │  │ Token Parser │→ │ requireAuth  │→ │ Role/Perm    │  │   │
+│  │  │ (Supabase)   │  │ Middleware   │  │ Check        │  │   │
 │  │  └──────────────┘  └──────────────┘  └──────────────┘  │   │
 │  └─────────────────────────────────────────────────────────┘   │
 │                            │                                     │
@@ -65,37 +75,48 @@
 
 ---
 
-## Request Flow with RBAC
+## Request Flow with RBAC (Supabase Auth)
 
 ```
 ┌─────────────┐
 │   Client    │
 │  (Browser)  │
 └──────┬──────┘
-       │ 1. HTTP Request
-       │    Authorization: Bearer <token>
+       │ 1. HTTP Request with Supabase session
+       │    (Cookie or Authorization header)
        ▼
 ┌─────────────────────────────────────────────────┐
 │         Token Parser Middleware                 │
-│  • Extract JWT from Authorization header        │
-│  • Verify token with Supabase                   │
-│  • Get user info                                │
+│  • Extract session from request                 │
+│  • Verify with Supabase Auth                    │
+│  • Supabase returns authenticated user          │
 │  • Load user roles from database                │
 │  • Load user permissions from database          │
-│  • Attach to req.user, req.roles, req.permissions│
+│  • Attach to req.user, req.role, req.roles      │
 └──────┬──────────────────────────────────────────┘
        │
        ▼
 ┌─────────────────────────────────────────────────┐
-│         Auth Check Middleware                   │
+│    authMiddleware.requireAuth()                 │
 │  if (!req.user) {                               │
-│    throw 401 Unauthorized                       │
+│    throw ServerError.unauthorized()             │
 │  }                                              │
 └──────┬──────────────────────────────────────────┘
        │
        ▼
 ┌─────────────────────────────────────────────────┐
-│      Permission Check Middleware                │
+│  authMiddleware.requireAdminRole()              │
+│  OR                                             │
+│  authMiddleware.requireAnyOfTheseRoles([...])   │
+│                                                 │
+│  if (!req.role || !allowed) {                   │
+│    throw ServerError.forbidden()                │
+│  }                                              │
+└──────┬──────────────────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────┐
+│      Permission Check (if needed)               │
 │  const hasPermission =                          │
 │    checkPermission(                             │
 │      req.userPermissions,                       │
@@ -111,7 +132,7 @@
 ┌─────────────────────────────────────────────────┐
 │      Ownership Check (if applicable)            │
 │  if (resource.user_id !== req.user.id &&       │
-│      !hasAdminRole(req.roles)) {                │
+│      req.role !== 'admin') {                    │
 │    throw 403 Forbidden                          │
 │  }                                              │
 └──────┬──────────────────────────────────────────┘
@@ -132,18 +153,237 @@
 
 ---
 
+## Authentication Flow (Supabase-First)
+
+```
+┌─────────────────┐
+│  User Login     │
+│  (Frontend)     │
+└────────┬────────┘
+         │
+         │ supabase.auth.signInWithPassword()
+         ▼
+┌─────────────────────────────────────┐
+│      SUPABASE AUTH SERVICE          │
+│  • Validates credentials            │
+│  • Creates session                  │
+│  • Returns JWT + refresh token      │
+└────────┬────────────────────────────┘
+         │
+         │ Session stored in browser
+         ▼
+┌─────────────────────────────────────┐
+│    Subsequent API Requests          │
+│  • Browser sends session cookie     │
+│  • OR Authorization: Bearer <JWT>   │
+└────────┬────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────┐
+│    NEXUS API: Token Parser          │
+│  const { data: { user } } =         │
+│    await supabase.auth.getUser()    │
+│                                     │
+│  if (user) {                        │
+│    req.user = user                  │
+│    // Load roles & permissions      │
+│  }                                  │
+└────────┬────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────┐
+│   authMiddleware.requireAuth()      │
+│  ✓ User authenticated by Supabase   │
+└─────────────────────────────────────┘
+```
+
+---
+
+## Current auth.middleware.ts Methods
+
+### 1. requireAuth()
+```typescript
+// Ensures user is authenticated (by Supabase)
+router.get('/profile', 
+  authMiddleware.requireAuth(), 
+  userController.getProfile
+);
+```
+
+**Flow**:
+```
+Request → Check req.user
+          ├─ User exists? ✓ Continue
+          └─ No user? ✗ throw 401 Unauthorized
+```
+
+### 2. requireAdminRole()
+```typescript
+// Ensures user has 'admin' role
+router.delete('/users/:id', 
+  authMiddleware.requireAuth(),
+  authMiddleware.requireAdminRole(), 
+  userController.delete
+);
+```
+
+**Flow**:
+```
+Request → Check req.role === 'admin'
+          ├─ Is admin? ✓ Continue
+          └─ Not admin? ✗ throw 403 Forbidden
+```
+
+### 3. requireAnyOfTheseRoles([...])
+```typescript
+// Ensures user has one of the specified roles
+router.post('/events', 
+  authMiddleware.requireAuth(),
+  authMiddleware.requireAnyOfTheseRoles(['admin', 'moderator']), 
+  eventController.create
+);
+```
+
+**Flow**:
+```
+Request → Check req.role in allowedRoles
+          ├─ Match found? ✓ Continue
+          └─ No match? ✗ throw 403 Forbidden
+```
+
+---
+
+## Enhanced Middleware Chain (Recommended)
+
+### Current State
+```typescript
+// What you have now
+router.post('/events',
+  authMiddleware.requireAuth(),              // ✓ Auth check
+  authMiddleware.requireAnyOfTheseRoles(['admin']), // ✓ Role check
+  eventController.create
+);
+```
+
+### What's Missing (To Add)
+```typescript
+// What you should add
+router.post('/events',
+  tokenParserFromHeaders,                    // ← ADD: Parse token & load roles/permissions
+  authMiddleware.requireAuth(),              // ✓ Already have
+  authMiddleware.requirePermission(          // ← ADD: Check granular permissions
+    'events', 
+    'write'
+  ),
+  eventController.create
+);
+```
+
+---
+
+## Middleware Execution Order
+
+```
+┌─────────────────────────────────────────────┐
+│  1. tokenParserFromHeaders                  │
+│     • Supabase validates session            │
+│     • Load user data                        │
+│     • Load roles from DB                    │
+│     • Load permissions from DB              │
+│     • Populate req.user, req.role,          │
+│       req.roles, req.userPermissions        │
+└─────────────┬───────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────────┐
+│  2. authMiddleware.requireAuth()            │
+│     • Verify req.user exists                │
+│     • Throw 401 if not                      │
+└─────────────┬───────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────────┐
+│  3. authMiddleware.requireAdminRole()       │
+│     OR                                      │
+│     authMiddleware.requireAnyOfTheseRoles() │
+│     • Check req.role                        │
+│     • Throw 403 if not allowed              │
+└─────────────┬───────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────────┐
+│  4. authMiddleware.requirePermission()      │
+│     (NEW - TO BE ADDED)                     │
+│     • Check req.userPermissions             │
+│     • Verify resource + action              │
+│     • Throw 403 if not allowed              │
+└─────────────┬───────────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────────┐
+│  5. Route Handler                           │
+│     • Execute business logic                │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+## Supabase Integration Points
+
+### Frontend (nexus-web)
+```typescript
+// User logs in
+const { data, error } = await supabase.auth.signInWithPassword({
+  email: 'user@example.com',
+  password: 'password'
+});
+
+// Supabase automatically manages session
+// Session is sent with every API request
+```
+
+### Backend (nexus-api)
+```typescript
+// Token parser extracts and validates
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+
+// Get authenticated user from Supabase
+const { data: { user }, error } = await supabase.auth.getUser(token);
+
+if (user) {
+  req.user = user;
+  // Load your custom RBAC data
+  req.role = await getUserPrimaryRole(user.id);
+  req.roles = await getUserRoles(user.id);
+  req.userPermissions = await getUserPermissions(user.id);
+}
+```
+
+---
+
 ## Database Entity Relationship
 
 ```
 ┌─────────────────────┐
-│       user          │
+│    auth.users       │  ← Supabase managed
 │─────────────────────│
 │ id (PK)             │
 │ email               │
+│ encrypted_password  │
+└──────┬──────────────┘
+       │
+       │ 1:1 (Reference)
+       ▼
+┌─────────────────────┐
+│   public.user       │  ← Your custom table
+│─────────────────────│
+│ id (PK) = auth.id   │
 │ gdg_id              │
 │ display_name        │
 │ status              │
-│ created_at          │
 └──────┬──────────────┘
        │
        │ 1:N
@@ -154,7 +394,6 @@
 │ id (PK)                     │
 │ user_id (FK) ───────────────┼──► user.id
 │ role_id (FK)                │
-│ created_at                  │
 └──────┬──────────────────────┘
        │ N:1
        ▼
@@ -182,285 +421,6 @@
 
 ---
 
-## Permission Checking Logic
-
-```
-┌───────────────────────────────────────────────────┐
-│ Function: checkUserPermission(                    │
-│   userId, resourceName, action                    │
-│ )                                                 │
-└───────────────┬───────────────────────────────────┘
-                │
-                ▼
-      ┌─────────────────────┐
-      │ Get User's Roles    │
-      │ FROM user_role      │
-      │ JOIN user_role      │
-      │ _junction           │
-      └──────┬──────────────┘
-             │
-             ▼
-      ┌─────────────────────┐
-      │ For Each Role:      │
-      │ Get Permissions     │
-      │ FROM user_role      │
-      │ _permission         │
-      └──────┬──────────────┘
-             │
-             ▼
-      ┌─────────────────────────┐
-      │ Filter by:              │
-      │ • resource_name = X     │
-      │ • can_<action> = true   │
-      └──────┬──────────────────┘
-             │
-             ▼
-      ┌─────────────────────┐
-      │ Any Match Found?    │
-      └──────┬──────────────┘
-             │
-        ┌────┴────┐
-        │         │
-       YES       NO
-        │         │
-        ▼         ▼
-   [ALLOW]   [DENY]
-```
-
----
-
-## Role Hierarchy (Optional)
-
-```
-                   ┌─────────────────┐
-                   │  super_admin    │
-                   │  (Full Access)  │
-                   └────────┬────────┘
-                            │
-              ┌─────────────┴─────────────┐
-              │                           │
-        ┌─────▼──────┐            ┌──────▼──────┐
-        │   admin    │            │  moderator  │
-        │  (Manage)  │            │  (Moderate) │
-        └─────┬──────┘            └──────┬──────┘
-              │                           │
-              └─────────────┬─────────────┘
-                            │
-                      ┌─────▼──────┐
-                      │   member   │
-                      │  (Create)  │
-                      └─────┬──────┘
-                            │
-                      ┌─────▼──────┐
-                      │   guest    │
-                      │   (Read)   │
-                      └────────────┘
-```
-
----
-
-## Middleware Chain Example
-
-### Example 1: Create Event (Requires Permission)
-
-```typescript
-router.post(
-  "/events",
-  tokenParser,                              // 1. Parse & load user
-  authMiddleware.requireAuth(),              // 2. Ensure authenticated
-  authMiddleware.requirePermission(          // 3. Check permission
-    'events',
-    'write'
-  ),
-  eventController.create                     // 4. Handle request
-);
-```
-
-**Execution Flow**:
-```
-Request → tokenParser
-          ├─ Extract JWT
-          ├─ Validate with Supabase
-          ├─ Load user roles: ['member']
-          └─ Load permissions: [
-              { resource: 'events', can_write: false }
-            ]
-          
-        → requireAuth()
-          └─ ✅ req.user exists
-          
-        → requirePermission('events', 'write')
-          └─ ❌ DENY - user lacks 'can_write' on 'events'
-          
-        → Response: 403 Forbidden
-```
-
-### Example 2: Update Own Project (Ownership Check)
-
-```typescript
-router.patch(
-  "/projects/:projectId",
-  tokenParser,
-  authMiddleware.requireAuth(),
-  authMiddleware.requireOwnershipOr(
-    async (req) => {
-      const project = await projectService.getOne(req.params.projectId);
-      return { userId: project.user_id };
-    },
-    ['admin']  // Admins can bypass ownership
-  ),
-  projectController.update
-);
-```
-
-**Execution Flow**:
-```
-Request → tokenParser
-          ├─ User ID: user-123
-          └─ Roles: ['member']
-          
-        → requireAuth()
-          └─ ✅ Authenticated
-          
-        → requireOwnershipOr(...)
-          ├─ Fetch project
-          ├─ Project owner: user-123
-          ├─ Request user: user-123
-          └─ ✅ ALLOW - user is owner
-          
-        → projectController.update
-          └─ ✅ Update successful
-```
-
----
-
-## Permission Matrix Table
-
-| Role | Events | Articles | Users | Projects | Wallets | Roles |
-|------|--------|----------|-------|----------|---------|-------|
-| **super_admin** | CRUD | CRUD | CRUD | CRUD | CRUD | CRUD |
-| **admin** | CRUD | CRUD | R-U- | CRU- | R--- | R--- |
-| **moderator** | CRU- | -RU- | R--- | ---- | ---- | R--- |
-| **member** | R--- | CRU* | R--- | CRU* | R*-- | ---- |
-| **guest** | R--- | R--- | ---- | R--- | ---- | ---- |
-
-**Legend**:
-- C = Create
-- R = Read
-- U = Update
-- D = Delete
-- \* = Own resources only
-- \- = No access
-
----
-
-## State Machine: User Role Assignment
-
-```
-┌───────────────┐
-│ User Created  │
-│ Default: guest│
-└───────┬───────┘
-        │
-        ▼
-    ┌───────────────────┐
-    │ Email Verified?   │
-    └─────┬─────────────┘
-          │
-     ┌────┴────┐
-    YES       NO
-     │         │
-     │    ┌────▼────────┐
-     │    │ Stay guest  │
-     │    └─────────────┘
-     │
-     ▼
-┌─────────────────┐
-│ Upgrade: member │
-└────────┬────────┘
-         │
-         │ [Admin Assigns Role]
-         │
-    ┌────┴─────────────────────┐
-    │                          │
-    ▼                          ▼
-┌──────────────┐      ┌─────────────┐
-│  moderator   │      │    admin    │
-└──────────────┘      └──────┬──────┘
-                             │
-                    [Super Admin Assigns]
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │  super_admin    │
-                    └─────────────────┘
-```
-
----
-
-## API Endpoint Security Levels
-
-### 🔓 Public (No Auth)
-```
-GET  /api/event-system/events
-GET  /api/publication-system/articles
-GET  /api/resource-system/resources
-```
-
-### 🔒 Authenticated (Auth Required)
-```
-POST   /api/event-system/checkin
-GET    /api/user-system/users/:userId/wallet  (own only)
-PATCH  /api/user-resource-system/projects/:id (own only)
-```
-
-### 🔐 Permission-Based (Auth + Permission)
-```
-POST   /api/event-system/events              (events.write)
-DELETE /api/event-system/events/:id          (events.delete)
-PUT    /api/publication-system/articles/:id  (articles.update)
-```
-
-### 🛡️ Admin Only (Auth + Admin Role)
-```
-POST   /api/rbac-system/roles
-PUT    /api/rbac-system/roles/:roleId
-POST   /api/rbac-system/users/:userId/roles
-DELETE /api/user-system/users/:userId  (super_admin only)
-```
-
----
-
-## Caching Strategy (Future Enhancement)
-
-```
-┌────────────────┐
-│     Redis      │
-│                │
-│ Key Pattern:   │
-│ user:{id}:     │
-│   roles        │
-│   permissions  │
-│                │
-│ TTL: 15 min    │
-└────────────────┘
-        ▲
-        │ Cache Miss
-        │
-┌───────┴────────┐
-│   PostgreSQL   │
-│   (Supabase)   │
-└────────────────┘
-
-Flow:
-1. Check Redis for user permissions
-2. If not found → Query database
-3. Store in Redis with TTL
-4. Invalidate on role/permission changes
-```
-
----
-
 ## Error Handling Flow
 
 ```
@@ -480,26 +440,152 @@ Flow:
   401       403
     │         │
     ▼         ▼
-┌─────┐   ┌─────┐
-│Auth │   │Auth-│
-│Error│   │orize│
-│     │   │Error│
-└─────┘   └─────┘
-    │         │
-    └────┬────┘
-         ▼
-┌──────────────────┐
-│  JSON Response:  │
-│  {               │
-│    error: true,  │
-│    message: "...",│
-│    code: 401/403 │
-│  }               │
-└──────────────────┘
+┌─────────┐   ┌─────────┐
+│ Server  │   │ Server  │
+│ Error.  │   │ Error.  │
+│ unauth  │   │ forbid  │
+│ orized()│   │ den()   │
+└─────────┘   └─────────┘
+    │             │
+    └──────┬──────┘
+           ▼
+┌──────────────────────────┐
+│  JSON Response:          │
+│  {                       │
+│    error: true,          │
+│    message: "...",       │
+│    statusCode: 401/403   │
+│  }                       │
+└──────────────────────────┘
 ```
 
 ---
 
-**Diagrams Version**: 1.0  
+## Middleware Chain Examples
+
+### Example 1: Admin-Only Endpoint
+```typescript
+router.delete(
+  "/users/:userId",
+  authMiddleware.requireAuth(),              // Supabase auth check
+  authMiddleware.requireAdminRole(),         // Role check
+  userController.delete
+);
+```
+
+### Example 2: Role-Based Endpoint
+```typescript
+router.post(
+  "/events",
+  authMiddleware.requireAuth(),
+  authMiddleware.requireAnyOfTheseRoles(['admin', 'moderator']),
+  eventController.create
+);
+```
+
+### Example 3: Permission-Based (Future)
+```typescript
+router.post(
+  "/events",
+  tokenParserFromHeaders,                     // ← TO ADD
+  authMiddleware.requireAuth(),
+  authMiddleware.requirePermission(           // ← TO ADD
+    'events',
+    'write'
+  ),
+  eventController.create
+);
+```
+
+---
+
+## API Endpoint Security Levels
+
+### 🔓 Public (No Auth)
+```
+GET  /api/event-system/events
+GET  /api/publication-system/articles
+GET  /api/resource-system/resources
+```
+
+### 🔒 Authenticated (Supabase Auth Required)
+```
+POST   /api/event-system/checkin
+GET    /api/user-system/users/:userId/wallet  (own only)
+PATCH  /api/user-resource-system/projects/:id (own only)
+```
+
+### 🔐 Role-Based (requireAdminRole / requireAnyOfTheseRoles)
+```
+POST   /api/event-system/events              (admin/moderator)
+DELETE /api/event-system/events/:id          (admin)
+POST   /api/rbac-system/roles                (admin)
+```
+
+### 🛡️ Permission-Based (Future - requirePermission)
+```
+POST   /api/event-system/events              (events.write)
+DELETE /api/event-system/events/:id          (events.delete)
+PUT    /api/publication-system/articles/:id  (articles.update)
+```
+
+---
+
+## Summary: Division of Responsibilities
+
+
+| Component | Responsibility |
+|-----------|----------------|
+| **Supabase Auth** |  
+``` 
+• User authentication
+• Session management 
+• Token validation 
+• Password hashing |
+```
+| **Token Parser** |  
+```   
+• Extract session/token
+• Call Supabase to verify
+• Load roles & permissions from DB
+• Populate req.user |
+```                     
+| **authMiddleware.requireAuth()** | 
+```
+• Check if req.user exists
+• Throw 401 if not authenticated |
+```
+| **authMiddleware.requireAdminRole()** | 
+```
+• Check if req.role === 'admin'
+• Throw 403 if not authorized |
+```
+| **authMiddleware.requireAnyOfTheseRoles()** | 
+```
+• Check if req.role in allowed list
+• Throw 403 if not authorized |
+```
+| **requirePermission() (Future)** | 
+```   
+• Check granular permissions
+• Verify resource + action
+• Throw 403 if not allowed |
+```
+| **Route Handlers** | 
+```
+• Business logic
+• Database operations
+• Return response |
+```
+---
+
+**Key Takeaway**: 
+- ✅ **Supabase handles ALL authentication** (login, tokens, sessions)
+- ✅ **Your middleware handles authorization** (roles, permissions, ownership)
+- ✅ **Current auth.middleware.ts works** - just needs permission methods added
+
+---
+
+**Diagrams Version**: 2.0  
 **Compatible With**: RBAC_ANALYSIS_AND_BLUEPRINT.md v1.0  
 **Last Updated**: January 23, 2026
