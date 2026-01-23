@@ -2,15 +2,51 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
+import { generateOpenApiOptions } from "@packages/identity-api-contracts";
 
 export const swaggerLoader = (app: Express) => {
+  const options = generateOpenApiOptions({
+    info: {
+      title: "Identity API",
+      version: "1.0.0",
+      description:
+        "API documentation for Identity API - NFC Card & User Profile Management",
+    },
+    servers: [
+      {
+        url: `http://localhost:${configs.port}`,
+        description: "Development server",
+      },
+    ],
+  });
+
+  const swaggerSpec = swaggerJsdoc(options);
+
+  const assetOptions = {
+    customCssUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
+    customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
+    ],
+  };
+
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
+
+  console.log(
+    `Swagger docs available at http://localhost:${configs.port}/docs`,
+  );
+};
+
+export const swaggerLoaderManual = (app: Express) => {
   const options = {
     definition: {
       openapi: "3.0.0",
       info: {
         title: "Identity API",
         version: "1.0.0",
-        description: "API documentation for Identity API - NFC Card & User Profile Management",
+        description:
+          "API documentation for Identity API - NFC Card & User Profile Management",
       },
       servers: [
         {
@@ -124,6 +160,6 @@ export const swaggerLoader = (app: Express) => {
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
 
   console.log(
-    `Swagger docs available at http://localhost:${configs.port}/docs`
+    `Swagger docs available at http://localhost:${configs.port}/docs`,
   );
 };

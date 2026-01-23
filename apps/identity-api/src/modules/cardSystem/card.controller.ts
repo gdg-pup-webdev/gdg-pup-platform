@@ -88,8 +88,9 @@ export class CardController {
     contract.api.card_system.cards.GET,
     async ({ input, output, ctx }) => {
       // pagination parameters
-      const pageNumber = input.query.page.number;
-      const pageSize = input.query.page.size;
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
+
 
       const { req } = ctx;
       const user = req.user!;
@@ -118,9 +119,9 @@ export class CardController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          totalPages: Math.ceil(data.count / input.query.page.size),
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
+          pageSize,
+          currentPage: pageNumber,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },
