@@ -4,10 +4,14 @@ import {
   profileRepositoryInstance,
 } from "./profile.repository.js";
 import { RepositoryError } from "@/classes/ServerError.js";
+import { models } from "@packages/nexus-api-contracts";
+
+type profileInsertDTO = models.userSystem.profile.insertDTO;
+type profileUpdateDTO = models.userSystem.profile.updateDTO;
 
 export class ProfileService {
   constructor(
-    private profileRespository: ProfileRepository = profileRepositoryInstance,
+    private readonly profileRespository: ProfileRepository = profileRepositoryInstance,
   ) {}
 
   getUserProfileByUserId = async (userId: string) => {
@@ -28,6 +32,26 @@ export class ProfileService {
           pageSize,
         ),
       "listing profiles",
+    );
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  createProfile = async (dto: profileInsertDTO) => {
+    const { data, error } = await tryCatch(
+      async () => await this.profileRespository.createProfile(dto),
+      "creating profile",
+    );
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  updateProfile = async (id: string, dto: profileUpdateDTO) => {
+    const { data, error } = await tryCatch(
+      async () => await this.profileRespository.updateProfile(id, dto),
+      "updating profile",
     );
     if (error) throw new RepositoryError(error.message);
 

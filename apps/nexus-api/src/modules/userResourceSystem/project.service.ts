@@ -41,13 +41,10 @@ export class ProjectService {
     return data;
   };
 
-  createProject = async (dto: projectInsertDTO, userId: string) => {
+  createProject = async (dto: projectInsertDTO) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.projectRepository.createProject({
-          ...dto,
-          user_id: userId,
-        }),
+        await this.projectRepository.createProject(dto),
       "creating project",
     );
 

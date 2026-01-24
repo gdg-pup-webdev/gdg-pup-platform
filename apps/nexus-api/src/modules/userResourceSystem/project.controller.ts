@@ -77,13 +77,10 @@ export class ProjectController {
 
   createProject: RequestHandler = createExpressController(
     contract.api.user_resource_system.projects.POST,
-    async ({ input, output, ctx }) => {
-      const { res, req } = ctx;
-      const userId = req.user!.id; // user id from token parser
-
+    async ({ input, output }) => {
       const dto = input.body.data;
       const { data, error } = await tryCatch(
-        async () => await this.projectService.createProject(dto, userId),
+        async () => await this.projectService.createProject(dto),
         "creating project",
       );
       if (error) throw new ServiceError(error.message);
