@@ -52,15 +52,19 @@ describe('Certificates API Integration', () => {
     vi.clearAllMocks();
   });
 
-  it('GET /api/user-resource-system/certificates - should list certificates', async () => {
-    mockListCertificatesOfUser.mockResolvedValue({
-      list: [mockCertificate],
-      count: 1
-    });
+      it('GET /api/user-resource-system/certificates - should list certificates', async () => {
 
-    const response = await request(app)
-      .get('/api/user-resource-system/certificates')
-      .query({ userId: 'test-user-id' });
+        mockListCertificatesOfUser.mockResolvedValue({ list: [mockCertificate], count: 1 });
+
+  
+
+        const response = await request(app)
+
+          .get('/api/user-resource-system/certificates')
+
+          .query({ userId: 'test-user-id', pageNumber: 1, pageSize: 10 });
+
+  
 
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveLength(1);

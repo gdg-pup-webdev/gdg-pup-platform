@@ -58,15 +58,19 @@ describe('Achievements API Integration', () => {
     vi.clearAllMocks();
   });
 
-  it('GET /api/user-resource-system/achievements - should return a list of achievements', async () => {
-    mockListAchievementsOfUser.mockResolvedValue({
-      list: [mockAchievement],
-      count: 1
-    });
+      it('GET /api/user-resource-system/achievements - should return a list of achievements', async () => {
 
-    const response = await request(app)
-      .get('/api/user-resource-system/achievements')
-      .query({ userId: 'test-user-id' });
+        mockListAchievementsOfUser.mockResolvedValue({ list: [mockAchievement], count: 1 });
+
+  
+
+        const response = await request(app)
+
+          .get('/api/user-resource-system/achievements')
+
+          .query({ userId: 'test-user-id', pageNumber: 1, pageSize: 10 });
+
+  
     
     expect(response.status).toBe(200);
     expect(response.body.status).toBe('success');
