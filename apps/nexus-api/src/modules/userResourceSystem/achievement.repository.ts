@@ -5,8 +5,17 @@
  */
 
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-import { SupabaseWrapper } from "../common/supabase.wrapper.js";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
+import { DatabaseError } from "@/classes/ServerError.js";
+import { tryCatch } from "@/utils/tryCatch.util";
+import { SupabaseUtils } from "@/utils/supabase.util";
 
+/**
+ * Database types
+ */
 type achievementRow = Tables<"user_achievement">;
 type achievementInsert = TablesInsert<"user_achievement">;
 type achievementUpdate = TablesUpdate<"user_achievement">;
@@ -16,48 +25,107 @@ type achievementUpdate = TablesUpdate<"user_achievement">;
  * Manages database persistence for achievements earned by users.
  */
 export class AchievementRepository {
-  private readonly db = new SupabaseWrapper<
-    achievementRow,
-    achievementInsert,
-    achievementUpdate
-  >("user_achievement");
+  tableName = "user_achievement";
 
   /**
    * listAchievementsOfUser
    * Retrieves all achievements for a specific user.
    */
-  listAchievementsOfUser = (userId: string) => this.db.listByUser(userId);
+  listAchievementsOfUser = async (
+    userId: string,
+  ): RespositoryResultList<achievementRow> => {
+    const { data, error } = await tryCatch(
+      async () =>
+        await SupabaseUtils.listRowsWithFilter(this.tableName, 1, 1000, {
+          user_id: userId,
+        }),
+      "Calling database to list achievements of user",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * listAchievements
    * Retrieves all achievements in the system.
    */
-  listAchievements = () => this.db.listAll();
+  listAchievements = async (): RespositoryResultList<achievementRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
+      "Calling database to list achievements",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * getOneAchievement
    * Fetches a single achievement by ID.
    */
-  getOneAchievement = (id: string) => this.db.getOne(id);
+  getOneAchievement = async (id: string): RepositoryResult<achievementRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.getOneRow(this.tableName, id),
+      "Calling database to get one achievement",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * createAchievement
    * Creates a new achievement record.
    */
-  createAchievement = (dto: achievementInsert) => this.db.create(dto);
+  createAchievement = async (
+    dto: achievementInsert,
+  ): RepositoryResult<achievementRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.createRow(this.tableName, dto),
+      "Calling database to create achievement",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * updateAchievement
    * Updates an existing achievement record.
    */
-  updateAchievement = (id: string, dto: achievementUpdate) =>
-    this.db.update(id, dto);
+  updateAchievement = async (
+    id: string,
+    dto: achievementUpdate,
+  ): RepositoryResult<achievementRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
+      "Calling database to update achievement",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * deleteAchievement
    * Deletes an achievement record.
    */
-  deleteAchievement = (id: string) => this.db.delete(id);
+  deleteAchievement = async (id: string): RepositoryResult<achievementRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.deleteRow(this.tableName, id),
+      "Calling database to delete achievement",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 }
 
 export const achievementRepositoryInstance = new AchievementRepository();

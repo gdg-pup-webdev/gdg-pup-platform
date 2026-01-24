@@ -7,8 +7,7 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import { RepositoryResult } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-import { SupabaseWrapper } from "../common/supabase.wrapper.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js"; 
 
 type userRow = Tables<"user">;
 type userInsert = TablesInsert<"user">;
@@ -31,24 +30,29 @@ type userAggregate = userRow & {
  * UserRepository
  * Manages database queries for the user system, including complex joins for resource aggregation.
  */
-export class UserRepository {
-  private readonly db = new SupabaseWrapper<userRow, userInsert, userUpdate>(
-    "user",
-  );
-
+export class UserRepository { 
   /**
    * getUserById
    * Fetches a single user record by their unique identifier.
    */
-  getUserById = (userId: string) => this.db.getOne(userId);
+  getUserById = async (userId: string) : RepositoryResult<userRow> => {
+    const { data, error } = await supabase
+      .from("user")
+      .select("*")
+      .eq("id", userId)
+      .single();
+    if (error) throw new DatabaseError(error.message);
+    return data
+  };
 
   /**
    * listUsers
    * Retrieves all user records from the system.
    */
   listUsers = async () => {
-    const { list } = await this.db.listAll();
-    return list;
+    const { data, error } = await supabase.from("user").select("*");
+    if (error) throw new DatabaseError(error.message);
+    return data
   };
 
   /**

@@ -5,62 +5,129 @@
  */
 
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-import { SupabaseWrapper } from "../common/supabase.wrapper.js";
-import { RepositoryResult } from "@/types/repository.types.js";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js";
+import { DatabaseError } from "@/classes/ServerError.js";
+import { tryCatch } from "@/utils/tryCatch.util";
+import { SupabaseUtils } from "@/utils/supabase.util";
 
+/**
+ * Database types
+ */
 type profileRow = Tables<"user_profile">;
 type profileInsert = TablesInsert<"user_profile">;
 type profileUpdate = TablesUpdate<"user_profile">;
 
 /**
  * ProfileRepository
- * Manages database persistence for user profiles.
+ * Manages database persistence for profiles earned by users.
  */
 export class ProfileRepository {
-  private readonly db = new SupabaseWrapper<
-    profileRow,
-    profileInsert,
-    profileUpdate
-  >("user_profile");
+  tableName = "user_profile";
 
   /**
    * getProfileByUserId
-   * Fetches a profile associated with a specific user ID.
+   * Retrieves all profiles for a specific user.
    */
-  getProfileByUserId = async (userId: string): RepositoryResult<profileRow> => {
-    return this.db.listByUser(userId).then(res => res.list[0] || null);
+  getProfileByUserId = async (
+    userId: string,
+  ): RespositoryResultList<profileRow> => {
+    const { data, error } = await tryCatch(
+      async () =>
+        await SupabaseUtils.listRowsWithFilter(this.tableName, 1, 1000, {
+          user_id: userId,
+        }),
+      "Calling database to list profiles of user",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
   /**
-   * listProfilesPaginated
-   * Retrieves a paginated list of all user profiles.
+   * listProfiles
+   * Retrieves all profiles in the system.
    */
   listProfilesPaginated = async (
-    _pageNumber: number,
-    _pageSize: number,
-  ) => {
-    // Note: SupabaseWrapper listAll uses exact count but doesn't handle range yet.
-    // For now we use listAll, but in production we'd add range to wrapper.
-    return this.db.listAll();
+    pageNumber: number,
+    pageSize: number,
+  ): RespositoryResultList<profileRow> => {
+    const { data, error } = await tryCatch(
+      async () =>
+        await SupabaseUtils.listRows(this.tableName, pageNumber, pageSize),
+      "Calling database to list profiles",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
+
+  /**
+   * getOneProfile
+   * Fetches a single profile by ID.
+   */
+  getOneProfile = async (id: string): RespositoryResultList<profileRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.getOneRow(this.tableName, id),
+      "Calling database to get one profile",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
   };
 
   /**
    * createProfile
-   * Creates a new user profile record.
+   * Creates a new profile record.
    */
-  createProfile = (dto: profileInsert) => this.db.create(dto);
+  createProfile = async (dto: profileInsert): RepositoryResult<profileRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.createRow(this.tableName, dto),
+      "Calling database to create profile",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * updateProfile
-   * Updates an existing profile by ID.
+   * Updates an existing profile record.
    */
-  updateProfile = (id: string, dto: profileUpdate) => this.db.update(id, dto);
+  updateProfile = async (
+    id: string,
+    dto: profileUpdate,
+  ): RepositoryResult<profileRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
+      "Calling database to update profile",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * deleteProfile
-   * Removes a profile record.
+   * Deletes an profile record.
    */
-  deleteProfile = (id: string) => this.db.delete(id);
+  deleteProfile = async (id: string): RepositoryResult<profileRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.deleteRow(this.tableName, id),
+      "Calling database to delete profile",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 }
 
 export const profileRepositoryInstance = new ProfileRepository();

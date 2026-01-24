@@ -36,8 +36,8 @@ export class ProfileController {
 
         if (error) throw new ServiceError(error.message);
 
-        list = data ? [data] : [];
-        count = data ? 1 : 0;
+        list = data ? data.list : [];
+        count = data ? data.count : 0;
       } else {
         /**
          * ALL PROFILES

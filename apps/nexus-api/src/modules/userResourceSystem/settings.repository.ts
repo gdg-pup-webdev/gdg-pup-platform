@@ -1,63 +1,133 @@
 /**
  * @file settings.repository.ts
- * @description Data access layer for User Settings.
+ * @description Data access layer for User Settingss.
  * Utilizes SupabaseWrapper for standard database operations.
  */
 
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-import { SupabaseWrapper } from "../common/supabase.wrapper.js";
+import {
+  RepositoryResult,
+  RespositoryResultList,
+} from "@/types/repository.types.js"; 
+import { DatabaseError } from "@/classes/ServerError.js";
+import { tryCatch } from "@/utils/tryCatch.util";
+import { SupabaseUtils } from "@/utils/supabase.util";
 
+/**
+ * Database types
+ */
 type settingsRow = Tables<"user_settings">;
 type settingsInsert = TablesInsert<"user_settings">;
 type settingsUpdate = TablesUpdate<"user_settings">;
 
 /**
  * SettingsRepository
- * Manages database persistence for user-specific settings.
+ * Manages database persistence for settingss earned by users.
  */
 export class SettingsRepository {
-  private readonly db = new SupabaseWrapper<
-    settingsRow,
-    settingsInsert,
-    settingsUpdate
-  >("user_settings");
+  tableName = "user_settings";
 
   /**
-   * listSettingsOfUser
-   * Retrieves all settings for a specific user.
+   * listSettingssOfUser
+   * Retrieves all settingss for a specific user.
    */
-  listSettingsOfUser = (userId: string) => this.db.listByUser(userId);
+  listSettingsOfUser = async (
+    userId: string,
+  ): RespositoryResultList<settingsRow> => {
+    const { data, error } = await tryCatch(
+      async () =>
+        await SupabaseUtils.listRowsWithFilter(this.tableName, 1, 1000, {
+          user_id: userId,
+        }),
+      "Calling database to list settingss of user",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
-   * listSettings
-   * Retrieves all settings records in the system.
+   * listSettingss
+   * Retrieves all settingss in the system.
    */
-  listSettings = () => this.db.listAll();
+  listSettings = async (): RespositoryResultList<settingsRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
+      "Calling database to list settingss",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * getOneSettings
-   * Fetches a single settings record by ID.
+   * Fetches a single settings by ID.
    */
-  getOneSettings = (id: string) => this.db.getOne(id);
+  getOneSettings = async (
+    id: string,
+  ): RepositoryResult<settingsRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.getOneRow(this.tableName, id),
+      "Calling database to get one settings",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * createSettings
    * Creates a new settings record.
    */
-  createSettings = (dto: settingsInsert) => this.db.create(dto);
+  createSettings = async (
+    dto: settingsInsert,
+  ): RepositoryResult<settingsRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.createRow(this.tableName, dto),
+      "Calling database to create settings",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * updateSettings
    * Updates an existing settings record.
    */
-  updateSettings = (id: string, dto: settingsUpdate) =>
-    this.db.update(id, dto);
+  updateSettings = async (
+    id: string,
+    dto: settingsUpdate,
+  ): RepositoryResult<settingsRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
+      "Calling database to update settings",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 
   /**
    * deleteSettings
-   * Deletes a settings record.
+   * Deletes an settings record.
    */
-  deleteSettings = (id: string) => this.db.delete(id);
+  deleteSettings = async (id: string): RepositoryResult<settingsRow> => {
+    const { data, error } = await tryCatch(
+      async () => await SupabaseUtils.deleteRow(this.tableName, id),
+      "Calling database to delete settings",
+    );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data;
+  };
 }
 
 export const settingsRepositoryInstance = new SettingsRepository();
