@@ -1,0 +1,23 @@
+pnpm supabase db reset
+
+supabase init
+
+supabase start
+
+// link to remote 
+pnpm supabase link --project-ref your-project-id
+
+// pull schema 
+supabase db pull
+
+
+// restart local / perform migrations 
+pnpm supabase db reset
+
+
+// dump data from remote db 
+supabase db dump --db-url "YOUR_REMOTE_DB_URL" -f data.sql --use-copy --data-only
+
+// restore data to local database 
+psql --single-transaction --variable ON_ERROR_STOP=1 --file data.sql --dbname "YOUR_LOCAL_DB_URL"
+

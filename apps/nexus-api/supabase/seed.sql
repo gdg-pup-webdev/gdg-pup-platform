@@ -1,0 +1,1 @@
+INSERT INTO "public"."team" ("name", "description" ) VALUES ('Team 1', 'Description 1');
