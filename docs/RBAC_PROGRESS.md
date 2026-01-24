@@ -22,6 +22,7 @@ export const supabase = createClient<Database>(
 );
 ```
 
+`
 **Why:** Eliminates duplicate client instantiation, ensures consistent configuration, simplifies testing.
 
 ---
@@ -317,10 +318,10 @@ export class RoleService {
 
 | ** Component **              | ** Status **   | ** Progress ** (Estimated) | ** Priority ** |
 | ---------------------------- | -------------- | -------------------------- | -------------- |
-| ** Role Repository **        | 🚧 In Progress | 40%                        | 🔴 HIGH        |
-| ** Permission Repository **  | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
-| ** Role Service **           | 🚧 In Progress | 20%                        | 🔴 HIGH        |
-| ** Permission Service **     | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
+| ** Role Repository **        | ✅ Complete    | 100%                       | ✅ HIGH        |
+| ** Permission Repository **  | ✅ Complete    | 100%                       | ✅ MEDIUM      |
+| ** Role Service **           | ✅ Complete    | 100%                       | ✅ HIGH        |
+| ** Permission Service **     | ✅ Complete    | 100%                       | ✅ MEDIUM      |
 | ** Role Controller **        | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
 | ** Permission Controller **  | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
 | ** RBAC Router **            | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
