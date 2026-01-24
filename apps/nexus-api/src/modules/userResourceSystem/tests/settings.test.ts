@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+import supertest from 'supertest';
 
 // Mock Auth Middleware
 vi.mock('@/middlewares/auth.middleware.js', () => ({
@@ -25,7 +25,7 @@ const mockCreateSettings = vi.fn();
 const mockUpdateSettings = vi.fn();
 const mockDeleteSettings = vi.fn();
 
-vi.mock('../modules/userResourceSystem/settings.service.js', () => ({
+vi.mock('../settings.service.js', () => ({
   settingsServiceInstance: {
     listSettingsOfUser: (...args: any[]) => mockListSettingsOfUser(...args),
     listSettings: (...args: any[]) => mockListSettings(...args),
@@ -37,7 +37,8 @@ vi.mock('../modules/userResourceSystem/settings.service.js', () => ({
   SettingsService: class {},
 }));
 
-import app from '../app.js';
+import app from '../../../app.js';
+import { testListResources } from './test-helpers.js';
 
 describe('Settings API Integration', () => {
   const mockSettings = {
@@ -50,28 +51,21 @@ describe('Settings API Integration', () => {
     vi.clearAllMocks();
   });
 
-    it('GET /api/user-resource-system/settings - should list settings', async () => {
-      mockListSettingsOfUser.mockResolvedValue({ list: [mockSettings], count: 1 });
-
-      const response = await request(app)
-        .get('/api/user-resource-system/settings')
-        .query({ userId: 'test-user-id', pageNumber: 1, pageSize: 10 });
-
-
-    expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(1);
-    expect(response.body.data[0]).toEqual(mockSettings);
+  it('GET /api/user-resource-system/settings - should list settings', async () => {
+    await testListResources(
+      app,
+      '/api/user-resource-system/settings',
+      mockListSettingsOfUser,
+      mockSettings
+    );
   });
 
   it('POST /api/user-resource-system/settings - should create settings', async () => {
     mockCreateSettings.mockResolvedValue(mockSettings);
 
-    const newSettings = {
-      color_theme: true,
-      user_id: 'test-user-id'
-    };
+    const { id, ...newSettings } = mockSettings;
 
-    const response = await request(app)
+    const response = await supertest(app)
       .post('/api/user-resource-system/settings')
       .send({ data: newSettings });
 
@@ -82,7 +76,7 @@ describe('Settings API Integration', () => {
   it('GET /api/user-resource-system/settings/:id - should get one settings', async () => {
     mockGetOneSettings.mockResolvedValue(mockSettings);
 
-    const response = await request(app)
+    const response = await supertest(app)
       .get('/api/user-resource-system/settings/set-1');
 
     expect(response.status).toBe(200);
@@ -92,7 +86,7 @@ describe('Settings API Integration', () => {
   it('PATCH /api/user-resource-system/settings/:id - should update settings', async () => {
     mockUpdateSettings.mockResolvedValue({ ...mockSettings, color_theme: false });
 
-    const response = await request(app)
+    const response = await supertest(app)
       .patch('/api/user-resource-system/settings/set-1')
       .send({ data: { color_theme: false } });
 
@@ -103,7 +97,7 @@ describe('Settings API Integration', () => {
   it('DELETE /api/user-resource-system/settings/:id - should delete settings', async () => {
     mockDeleteSettings.mockResolvedValue(mockSettings);
 
-    const response = await request(app)
+    const response = await supertest(app)
       .delete('/api/user-resource-system/settings/set-1');
 
     expect(response.status).toBe(200);

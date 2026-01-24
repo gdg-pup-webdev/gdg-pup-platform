@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+import supertest from 'supertest';
 
 // Mock Auth Middleware
 vi.mock('@/middlewares/auth.middleware.js', () => ({
@@ -25,7 +25,7 @@ const mockCreateCertificate = vi.fn();
 const mockUpdateCertificate = vi.fn();
 const mockDeleteCertificate = vi.fn();
 
-vi.mock('../modules/userResourceSystem/certificate.service.js', () => ({
+vi.mock('../certificate.service.js', () => ({
   certificateServiceInstance: {
     listCertificatesOfUser: (...args: any[]) => mockListCertificatesOfUser(...args),
     listCertificates: (...args: any[]) => mockListCertificates(...args),
@@ -37,7 +37,8 @@ vi.mock('../modules/userResourceSystem/certificate.service.js', () => ({
   CertificateService: class {},
 }));
 
-import app from '../app.js';
+import app from '../../../app.js';
+import { testListResources } from './test-helpers.js';
 
 describe('Certificates API Integration', () => {
   const mockCertificate = {
@@ -52,36 +53,21 @@ describe('Certificates API Integration', () => {
     vi.clearAllMocks();
   });
 
-      it('GET /api/user-resource-system/certificates - should list certificates', async () => {
-
-        mockListCertificatesOfUser.mockResolvedValue({ list: [mockCertificate], count: 1 });
-
-  
-
-        const response = await request(app)
-
-          .get('/api/user-resource-system/certificates')
-
-          .query({ userId: 'test-user-id', pageNumber: 1, pageSize: 10 });
-
-  
-
-    expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(1);
-    expect(response.body.data[0]).toEqual(mockCertificate);
+  it('GET /api/user-resource-system/certificates - should list certificates', async () => {
+    await testListResources(
+      app,
+      '/api/user-resource-system/certificates',
+      mockListCertificatesOfUser,
+      mockCertificate
+    );
   });
 
   it('POST /api/user-resource-system/certificates - should create certificate', async () => {
     mockCreateCertificate.mockResolvedValue(mockCertificate);
 
-    const newCertificate = {
-      title: 'Certified Developer',
-      description: 'Passed the exam',
-      image_url: 'http://example.com/cert.png',
-      user_id: 'test-user-id'
-    };
+    const { id, ...newCertificate } = mockCertificate;
 
-    const response = await request(app)
+    const response = await supertest(app)
       .post('/api/user-resource-system/certificates')
       .send({ data: newCertificate });
 
@@ -92,7 +78,7 @@ describe('Certificates API Integration', () => {
   it('GET /api/user-resource-system/certificates/:id - should get one certificate', async () => {
     mockGetOneCertificate.mockResolvedValue(mockCertificate);
 
-    const response = await request(app)
+    const response = await supertest(app)
       .get('/api/user-resource-system/certificates/cert-1');
 
     expect(response.status).toBe(200);
@@ -102,7 +88,7 @@ describe('Certificates API Integration', () => {
   it('PATCH /api/user-resource-system/certificates/:id - should update certificate', async () => {
     mockUpdateCertificate.mockResolvedValue({ ...mockCertificate, title: 'Updated' });
 
-    const response = await request(app)
+    const response = await supertest(app)
       .patch('/api/user-resource-system/certificates/cert-1')
       .send({ data: { title: 'Updated' } });
 
@@ -113,7 +99,7 @@ describe('Certificates API Integration', () => {
   it('DELETE /api/user-resource-system/certificates/:id - should delete certificate', async () => {
     mockDeleteCertificate.mockResolvedValue(mockCertificate);
 
-    const response = await request(app)
+    const response = await supertest(app)
       .delete('/api/user-resource-system/certificates/cert-1');
 
     expect(response.status).toBe(200);

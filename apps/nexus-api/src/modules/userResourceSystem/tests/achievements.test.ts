@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import request from 'supertest';
+import supertest from 'supertest';
 
 // Mock Auth Middleware to simulate a logged-in user
 vi.mock('@/middlewares/auth.middleware.js', () => ({
@@ -27,7 +27,7 @@ const mockCreateAchievement = vi.fn();
 const mockUpdateAchievement = vi.fn();
 const mockDeleteAchievement = vi.fn();
 
-vi.mock('../modules/userResourceSystem/achievement.service.js', () => ({
+vi.mock('../achievement.service.js', () => ({
   achievementServiceInstance: {
     listAchievementsOfUser: (...args: any[]) => mockListAchievementsOfUser(...args),
     listAchievements: (...args: any[]) => mockListAchievements(...args),
@@ -40,7 +40,8 @@ vi.mock('../modules/userResourceSystem/achievement.service.js', () => ({
 }));
 
 // Import app AFTER mocks are established
-import app from '../app.js';
+import app from '../../../app.js';
+import { testListResources } from './test-helpers.js';
 
 describe('Achievements API Integration', () => {
   const mockAchievement = {
@@ -58,37 +59,21 @@ describe('Achievements API Integration', () => {
     vi.clearAllMocks();
   });
 
-      it('GET /api/user-resource-system/achievements - should return a list of achievements', async () => {
-
-        mockListAchievementsOfUser.mockResolvedValue({ list: [mockAchievement], count: 1 });
-
-  
-
-        const response = await request(app)
-
-          .get('/api/user-resource-system/achievements')
-
-          .query({ userId: 'test-user-id', pageNumber: 1, pageSize: 10 });
-
-  
-    
-    expect(response.status).toBe(200);
-    expect(response.body.status).toBe('success');
-    expect(response.body.data).toHaveLength(1);
-    expect(response.body.data[0]).toEqual(mockAchievement);
+  it('GET /api/user-resource-system/achievements - should return a list of achievements', async () => {
+    await testListResources(
+      app,
+      '/api/user-resource-system/achievements',
+      mockListAchievementsOfUser,
+      mockAchievement
+    );
   });
 
   it('POST /api/user-resource-system/achievements - should create an achievement', async () => {
     mockCreateAchievement.mockResolvedValue(mockAchievement);
 
-    const newAchievement = {
-      title: 'First Achievement',
-      description: 'You did it!',
-      image_url: 'http://example.com/img.png',
-      user_id: 'test-user-id'
-    };
+    const { id, achieved_at, created_at, updated_at, ...newAchievement } = mockAchievement;
 
-    const response = await request(app)
+    const response = await supertest(app)
       .post('/api/user-resource-system/achievements')
       .send({ data: newAchievement });
 
@@ -99,7 +84,7 @@ describe('Achievements API Integration', () => {
   it('GET /api/user-resource-system/achievements/:id - should get one achievement', async () => {
     mockGetOneAchievement.mockResolvedValue(mockAchievement);
 
-    const response = await request(app)
+    const response = await supertest(app)
       .get('/api/user-resource-system/achievements/ach-1');
 
     expect(response.status).toBe(200);
@@ -109,7 +94,7 @@ describe('Achievements API Integration', () => {
   it('PATCH /api/user-resource-system/achievements/:id - should update achievement', async () => {
     mockUpdateAchievement.mockResolvedValue({ ...mockAchievement, title: 'Updated' });
 
-    const response = await request(app)
+    const response = await supertest(app)
       .patch('/api/user-resource-system/achievements/ach-1')
       .send({ data: { title: 'Updated' } });
 
@@ -120,7 +105,7 @@ describe('Achievements API Integration', () => {
   it('DELETE /api/user-resource-system/achievements/:id - should delete achievement', async () => {
     mockDeleteAchievement.mockResolvedValue(mockAchievement);
 
-    const response = await request(app)
+    const response = await supertest(app)
       .delete('/api/user-resource-system/achievements/ach-1');
 
     expect(response.status).toBe(200);
