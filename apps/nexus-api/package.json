@@ -19,6 +19,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@packages/nexus-api-contracts": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.86.0",

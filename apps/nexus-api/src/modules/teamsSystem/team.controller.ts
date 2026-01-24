@@ -11,6 +11,8 @@ export class TeamController {
   listTeams: RequestHandler = createExpressController(
     contract.api.team_system.teams.GET,
     async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
       const { data, error } = await tryCatch(
         async () => await this.teamService.listTeams(),
         "On controller, listing teams",
@@ -23,9 +25,9 @@ export class TeamController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
-          totalPages: Math.ceil(data.count / input.query.page.size),
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },

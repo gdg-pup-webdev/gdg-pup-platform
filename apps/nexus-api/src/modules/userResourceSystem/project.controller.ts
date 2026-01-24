@@ -14,8 +14,8 @@ export class ProjectController {
     contract.api.user_resource_system.projects.GET,
     async ({ input, output, ctx }) => {
       // pagination options
-      const pageNumber = input.query.page.number;
-      const pageSize = input.query.page.size;
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
 
       // getting filters
       const userId = input.query.userId;

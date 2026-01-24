@@ -17,8 +17,8 @@ export class ProfileController {
     contract.api.user_resource_system.profiles.GET,
     async ({ input, output, ctx }) => {
       // PAGINATION OPTIONS
-      const pageNumber = input.query.page.number;
-      const pageSize = input.query.page.size;
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
 
       // getting filters
       const userId = input.query.userId || null;

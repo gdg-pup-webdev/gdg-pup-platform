@@ -2,8 +2,38 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
-
+import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
 export const swaggerLoader = (app: Express) => {
+  const options = generateOpenApiOptions({
+    info: {
+      title: "Nexus API",
+      version: "2.1.0",
+      description: "Documentation for the GDG PUP Platform Nexus API",
+    },
+    servers: [ 
+      { url: "http://localhost:8000", description: "Local Dev" },
+    ],
+  });
+
+  const swaggerSpec = swaggerJsdoc(options);
+
+  const assetOptions = {
+    customCssUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
+    customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
+    ],
+  };
+
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
+
+  console.log(
+    `Swagger docs available at http://localhost:${configs.port}/docs`,
+  );
+};
+
+export const swaggerLoaderManual = (app: Express) => {
   const options = {
     definition: {
       openapi: "3.0.0",
@@ -349,18 +379,6 @@ export const swaggerLoader = (app: Express) => {
   };
 
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
-
-  // WORKS LOCALLY BUT FAILS WHEN DEPLOYED WITH VERCEL DUE TO STATIC ASSET LOADING ISSUE
-  // const swaggerSpec = swaggerJsdoc(options);
-
-  // // Serve Swagger UI
-  // app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-  // // Expose swagger.json
-  // app.get("/docs.json", (req, res) => {
-  //   res.setHeader("Content-Type", "application/json");
-  //   res.send(swaggerSpec);
-  // });
 
   console.log(
     `Swagger docs available at http://localhost:${configs.port}/docs`,

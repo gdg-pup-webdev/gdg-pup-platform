@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 export namespace SchemaFactory {
   export namespace Response {
     export const empty = () => {
@@ -75,12 +74,8 @@ export namespace SchemaFactory {
     export namespace Paginated {
       export const query = () => {
         return z.object({
-          page: z
-            .object({
-              number: z.coerce.number().int().positive().default(1),
-              size: z.coerce.number().int().positive().default(10),
-            })
-            .default({ number: 1, size: 10 }),
+          pageNumber: z.coerce.number().int().positive().default(1),
+          pageSize: z.coerce.number().int().positive().default(10),
         });
       };
     }

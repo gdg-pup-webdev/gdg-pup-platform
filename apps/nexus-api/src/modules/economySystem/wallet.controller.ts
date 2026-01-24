@@ -30,8 +30,8 @@ export class WalletController {
     contract.api.economy_system.wallets.GET,
     async ({ input, output, ctx }) => {
       // PAGINATION OPTIONS
-      const pageNumber = input.query.page.number;
-      const pageSize = input.query.page.size;
+      const pageNumber = input.query.pageNumber;
+      const pageSize = input.query.pageSize;
 
       // getting filters
       const userId = input.query.userId || null;
@@ -65,9 +65,9 @@ export class WalletController {
         data: list,
         meta: {
           totalRecords: count,
-          totalPages: Math.ceil(count / input.query.page.size),
-          currentPage: input.query.page.number,
-          pageSize: input.query.page.size,
+          totalPages: Math.ceil(count / input.query.pageSize),
+          currentPage: input.query.pageNumber,
+          pageSize: input.query.pageSize,
         },
       });
     },
