@@ -7,6 +7,7 @@ Welcome to the team! This onboarding guide is designed to help you get familiar 
 ## 1. Getting Started
 
 -   **[0 - Setting Up the Project](./0-SettingUpTheProject.md)**: A step-by-step guide to clone the repository and get the project running on your local machine.
+-   **[0.1 - Git & GitHub Guide](./git-gh-dev-guide.md)**: A comprehensive guide to the project's Git and GitHub workflow for contributors.
 
 ## 2. Core Concepts
 
