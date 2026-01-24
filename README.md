@@ -75,6 +75,7 @@ Get the platform running on your local machine in under 5 minutes.
 
 #### **1. Getting Started**
 - **[0 - Setting Up the Project](./docs/Onboarding/0-SettingUpTheProject.md)** – Detailed setup guide with troubleshooting tips
+- **[0.1 - Git & GitHub Guide](./docs/Onboarding/git-gh-dev-guide.md)** – Our official Git workflow and contribution standards
 
 #### **2. Core Concepts** (Read in Order)
 - **[1 - Project Architecture](./docs/Onboarding/1-ProjectArchitecture.md)** – Understanding our monorepo structure and tech stack
@@ -184,11 +185,18 @@ Prefer containerized development? Run the entire platform with Docker.
 
 ## 🤝 Contributing
 
-We welcome contributions! Before submitting a PR, please:
+We welcome contributions! All contributions must follow the official contribution guide **[GDG PUP Contribution Guide](./docs/Onboarding/git-gh-dev-guide.md)**, which covers:
 
-1. Complete the [Developer Onboarding](#-developer-onboarding) curriculum
+Follow this: **[Contribution Guide](./docs/Onboarding/git-gh-dev-guide.md)**
+- Branch naming conventions
+- Commit message formatting (Conventional Commits)
+- The Pull Request (PR) process
+- Standardized workflows
+
+Before submitting a PR, please ensure you have:
+1. Completed the [Developer Onboarding](#-developer-onboarding) curriculum
 2. Read our [Best Practices](./docs/Onboarding/99.1-BestPractices.md) guide
-3. Follow the [Development Workflow](./docs/Onboarding/7-DevelopmentWorkflow.md)
+3. Followed the [Development Workflow](./docs/Onboarding/7-DevelopmentWorkflow.md)
 
 ---
 
