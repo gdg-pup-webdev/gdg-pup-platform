@@ -31,9 +31,9 @@ export class AchievementController {
   listUserAchievements: RequestHandler = createExpressController(
     contract.api.user_resource_system.achievements.GET,
     async ({ input, output }) => {
-      // pagination options
-      const pageNumber = input.query.page.number;
-      const pageSize = input.query.page.size;
+      // pagination options with safe defaults
+      const pageNumber = input.query.page?.number ?? 1;
+      const pageSize = input.query.page?.size ?? 10;
 
       // getting filters
       const userId = input.query.userId;

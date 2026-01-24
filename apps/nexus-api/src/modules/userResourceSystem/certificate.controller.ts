@@ -23,8 +23,9 @@ export class CertificateController {
   listUserCertificates: RequestHandler = createExpressController(
     contract.api.user_resource_system.certificates.GET,
     async ({ input, output }) => {
-      const pageNumber = input.query.page.number;
-      const pageSize = input.query.page.size;
+      // pagination options with safe defaults
+      const pageNumber = input.query.page?.number ?? 1;
+      const pageSize = input.query.page?.size ?? 10;
       const userId = input.query.userId;
 
       let list, count;
