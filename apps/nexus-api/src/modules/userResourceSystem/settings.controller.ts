@@ -88,13 +88,10 @@ export class SettingsController {
    */
   createSettings: RequestHandler = createExpressController(
     contract.api.user_resource_system.settings.POST,
-    async ({ input, output, ctx }) => {
-      const { req } = ctx;
-      const userId = req.user!.id; 
-
+    async ({ input, output }) => {
       const dto = input.body.data;
       const { data, error } = await tryCatch(
-        async () => await this.settingsService.createSettings(dto, userId),
+        async () => await this.settingsService.createSettings(dto),
         "creating settings",
       );
       if (error) throw new ServiceError(error.message);

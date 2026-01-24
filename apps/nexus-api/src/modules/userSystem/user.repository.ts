@@ -7,15 +7,18 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import { RepositoryResult } from "@/types/repository.types.js";
-import { Tables } from "@/types/supabase.types.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+import { SupabaseWrapper } from "../common/supabase.wrapper.js";
 
 type userRow = Tables<"user">;
+type userInsert = TablesInsert<"user">;
+type userUpdate = TablesUpdate<"user">;
 
 /**
  * userAggregate
  * Represents a user with all their associated resources joined from related tables.
  */
-type userAggregate = Tables<"user"> & {
+type userAggregate = userRow & {
   wallet: Tables<"wallet">[];
   user_profile: Tables<"user_profile">[];
   user_project: Tables<"user_project">[];
@@ -29,24 +32,23 @@ type userAggregate = Tables<"user"> & {
  * Manages database queries for the user system, including complex joins for resource aggregation.
  */
 export class UserRepository {
-  /** The primary table name for this repository */
-  tableName = "user";
+  private readonly db = new SupabaseWrapper<userRow, userInsert, userUpdate>(
+    "user",
+  );
 
   /**
    * getUserById
    * Fetches a single user record by their unique identifier.
-   * @param userId - The ID of the user to fetch.
    */
-  getUserById = async (userId: string): Promise<userRow> => {
-    const { data, error } = await supabase
-      .from(this.tableName)
-      .select("*")
-      .eq("id", userId)
-      .single();
+  getUserById = (userId: string) => this.db.getOne(userId);
 
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+  /**
+   * listUsers
+   * Retrieves all user records from the system.
+   */
+  listUsers = async () => {
+    const { list } = await this.db.listAll();
+    return list;
   };
 
   /**
@@ -58,7 +60,7 @@ export class UserRepository {
     userId: string,
   ): RepositoryResult<userAggregate> => {
     const { data, error } = await supabase
-      .from(this.tableName)
+      .from("user")
       .select(
         "*, wallet(*), user_profile(*), user_project(*), user_achievement(*), user_certificate(*), user_settings(*)",
       )
@@ -68,17 +70,6 @@ export class UserRepository {
     if (error) throw new DatabaseError(error.message);
 
     return data as userAggregate;
-  };
-
-  /**
-   * listUsers
-   * Retrieves all user records from the system.
-   */
-  listUsers = async () => {
-    const { data, error } = await supabase.from(this.tableName).select("*");
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
   };
 }
 

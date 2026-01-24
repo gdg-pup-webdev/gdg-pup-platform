@@ -105,13 +105,10 @@ export class AchievementController {
    */
   createAchievement: RequestHandler = createExpressController(
     contract.api.user_resource_system.achievements.POST,
-    async ({ input, output, ctx }) => {
-      const { req } = ctx;
-      const userId = req.user!.id; // user id from token parser
-
+    async ({ input, output }) => {
       const dto = input.body.data;
       const { data, error } = await tryCatch(
-        async () => await this.achievementService.createAchievement(dto, userId),
+        async () => await this.achievementService.createAchievement(dto),
         "creating achievement",
       );
       if (error) throw new ServiceError(error.message);

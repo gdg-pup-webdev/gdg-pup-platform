@@ -89,13 +89,11 @@ export class CertificateController {
    */
   createCertificate: RequestHandler = createExpressController(
     contract.api.user_resource_system.certificates.POST,
-    async ({ input, output, ctx }) => {
-      const { req } = ctx;
-      const userId = req.user!.id; 
+    async ({ input, output }) => {
       const dto = input.body.data;
       
       const { data, error } = await tryCatch(
-        async () => await this.certificateService.createCertificate(dto, userId),
+        async () => await this.certificateService.createCertificate(dto),
         "creating certificate",
       );
       if (error) throw new ServiceError(error.message);

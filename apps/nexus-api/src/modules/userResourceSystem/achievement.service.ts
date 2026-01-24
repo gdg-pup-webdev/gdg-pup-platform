@@ -61,15 +61,13 @@ export class AchievementService {
 
   /**
    * createAchievement
-   * Grants a new achievement to a user.
+   * Validates and persists a new achievement for a user.
+   * @param dto - Data containing title, description, image URL, and user_id.
    */
-  createAchievement = async (dto: achievementInsertDTO, userId: string) => {
+  createAchievement = async (dto: achievementInsertDTO) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.achievementRepository.createAchievement({
-          ...dto,
-          user_id: userId,
-        }),
+        await this.achievementRepository.createAchievement(dto),
       "creating achievement",
     );
 

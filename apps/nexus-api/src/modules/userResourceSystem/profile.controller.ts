@@ -1,21 +1,21 @@
-import { ServiceError } from "@/classes/ServerError";
+import { ServiceError } from "@/classes/ServerError.js";
 import {
   ProfileService,
   profileServiceInstance,
-} from "@/modules/userResourceSystem/profile.service";
-import { tryCatch } from "@/utils/tryCatch.util";
+} from "@/modules/userResourceSystem/profile.service.js";
+import { tryCatch } from "@/utils/tryCatch.util.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
 
 export class ProfileController {
   constructor(
-    private profileService: ProfileService = profileServiceInstance,
+    private readonly profileService: ProfileService = profileServiceInstance,
   ) {}
 
   listProfiles: RequestHandler = createExpressController(
     contract.api.user_resource_system.profiles.GET,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       // PAGINATION OPTIONS
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
@@ -36,8 +36,8 @@ export class ProfileController {
 
         if (error) throw new ServiceError(error.message);
 
-        list = [data];
-        count = 1;
+        list = data ? [data] : [];
+        count = data ? 1 : 0;
       } else {
         /**
          * ALL PROFILES
@@ -67,6 +67,25 @@ export class ProfileController {
           currentPage: pageNumber,
           pageSize,
         },
+      });
+    },
+  );
+
+  createProfile: RequestHandler = createExpressController(
+    contract.api.user_resource_system.profiles.POST,
+    async ({ input, output }) => {
+      const dto = input.body.data;
+      const { data, error } = await tryCatch(
+        async () => await this.profileService.createProfile(dto),
+        "creating profile",
+      );
+
+      if (error) throw new ServiceError(error.message);
+
+      return output(201, {
+        status: "success",
+        message: "Profile created successfully",
+        data,
       });
     },
   );

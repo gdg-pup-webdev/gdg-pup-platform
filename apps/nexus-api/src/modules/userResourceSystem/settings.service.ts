@@ -46,13 +46,10 @@ export class SettingsService {
     return data;
   };
 
-  createSettings = async (dto: settingsInsertDTO, userId: string) => {
+  createSettings = async (dto: settingsInsertDTO) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.settingsRepository.createSettings({
-          ...dto,
-          user_id: userId,
-        }),
+        await this.settingsRepository.createSettings(dto),
       "creating settings",
     );
 

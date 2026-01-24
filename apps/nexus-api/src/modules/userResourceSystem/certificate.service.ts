@@ -75,16 +75,12 @@ export class CertificateService {
   /**
    * createCertificate
    * Validates and persists a new certificate for a user.
-   * @param dto - Data containing title, description, and image URL.
-   * @param userId - The ID of the user creating the certificate.
+   * @param dto - Data containing title, description, image URL, and user_id.
    */
-  createCertificate = async (dto: certificateInsertDTO, userId: string) => {
+  createCertificate = async (dto: certificateInsertDTO) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.certificateRepository.createCertificate({
-          ...dto,
-          user_id: userId,
-        }),
+        await this.certificateRepository.createCertificate(dto),
       "creating certificate",
     );
 
