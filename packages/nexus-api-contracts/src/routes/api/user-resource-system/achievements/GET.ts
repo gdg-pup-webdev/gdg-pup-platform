@@ -7,6 +7,15 @@ export const query = SchemaFactory.Request.Paginated.query().extend({
 });
 
 export const response = {
-  200: SchemaFactory.Response.paginated(achievement.row), // Controller uses metadata, so response should be paginated
+  200: SchemaFactory.Response.paginated(achievement.row),
   ...SchemaFactory.Response.standardErrors(),
 };
+
+export const docs_summary = "List Achievements";
+export const docs_description = "Retrieves a paginated list of achievements. Can be filtered by user ID.";
+export const docs_query = {
+  pageNumber: "The page number to retrieve.",
+  pageSize: "The number of items per page.",
+  userId: "Optional. The ID of the user to filter achievements for.",
+};
+export const docs_response_200 = "Successfully retrieved the list of achievements.";
