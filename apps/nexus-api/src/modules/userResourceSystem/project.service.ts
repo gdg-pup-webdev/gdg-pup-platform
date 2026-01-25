@@ -7,11 +7,11 @@ import { RepositoryError } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type projectInsertDTO = models.userResourceSystem.project.insertDTO;
-type projectUpdateDTO = models.userResourceSystem.project.updateDTO;
+type projectUpdateDTO = models.userResourceSystem.project.updateDTO; 
 
 export class ProjectService {
   constructor(
-    private projectRepository: ProjectRepository = projectRepositoryInstance,
+    private projectRepository: ProjectRepository = projectRepositoryInstance, 
   ) {}
 
   listProjectsOfUser = async (userId: string) => {
@@ -41,13 +41,10 @@ export class ProjectService {
     return data;
   };
 
-  createProject = async (dto: projectInsertDTO, userId: string) => {
+  createProject = async (dto: projectInsertDTO) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.projectRepository.createProject({
-          ...dto,
-          user_id: userId,
-        }),
+        await this.projectRepository.createProject(dto),
       "creating project",
     );
 

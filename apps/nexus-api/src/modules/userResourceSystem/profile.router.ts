@@ -13,6 +13,7 @@ export class ProfileRouter {
     const router = Router();
 
     router.get("/", this.profileController.listProfiles);
+    router.post("/", this.profileController.createProfile);
 
     return router;
   };
