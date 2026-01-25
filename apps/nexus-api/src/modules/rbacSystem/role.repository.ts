@@ -158,7 +158,7 @@ export class RoleRepository {
    * Delete role
    * Mag fi-fail to po nag delete ng role na naka assign pa sa user
    */
-  deleteRole = async (roleId: string): Promise<{ success: boolean }> => {
+  deleteRole = async (roleId: string): Promise<void> => {
     const { error } = await supabase
       .from(this.roleTable)
       .delete()
@@ -174,7 +174,7 @@ export class RoleRepository {
       throw new DatabaseError(error.message);
     }
 
-    return { success: true };
+    return;
   };
 
   /**

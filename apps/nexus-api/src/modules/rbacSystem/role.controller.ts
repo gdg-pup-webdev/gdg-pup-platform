@@ -147,6 +147,38 @@ export class RoleController {
       });
     },
   );
+
+  /**
+   * DELETE DELETE /api/rbac/roles/:roleId
+   * Delete a role (fails if role is assigned to users)
+   */
+  deleteRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.DELETE,
+    async ({ input, output }) => {
+      const { roleId } = input.params;
+
+      const { error } = await tryCatch(
+        async () => await this.roleService.deleteRole(roleId),
+        "deleting role",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Role deleted successfully",
+      });
+    },
+  );
+
+  /**
+   * POST /api/rbac/roles/:roleId/users/:userId
+   * Assign role to user
+   * Kinoment ko muna hahahah
+   */
+  // assignRoleToUser: RequestHandler = createExpressController(
+  //   contract.api.rbac_system.roles.roleId.
+  // )
 }
 
 export const roleControllerInstance = new RoleController();

@@ -106,7 +106,7 @@ export class RoleService {
   /**
    * Delete Role
    */
-  deleteRole = async (roleId: string): Promise<{ success: boolean }> => {
+  deleteRole = async (roleId: string): Promise<void> => {
     const { error } = await tryCatch(
       async () => await this.roleRepository.deleteRole(roleId),
       `Deleting role id ${roleId}`,
@@ -114,7 +114,7 @@ export class RoleService {
 
     if (error) throw new RepositoryError(error.message);
 
-    return { success: true };
+    return;
   };
 
   /**
