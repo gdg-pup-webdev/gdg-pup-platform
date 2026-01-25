@@ -127,13 +127,26 @@ export class RoleController {
    * Update an existing role
    * Body: { role_name?: string, description?: string }
    */
-  // updateRole: RequestHandler = createExpressController(
-  //   contract.api.rbac_system.roles["roleId"].PATCH,
-  //   async ({ input, output }) => {
-  //     const roleId = input.params.roleId;
-  //     const updates = input.params
-  //   }
-  // )
+  updateRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.PATCH,
+    async ({ input, output }) => {
+      const roleId = input.params.roleId;
+      const updates = input.body.data;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.updateRole(roleId, updates),
+        "updating role",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Role updated successfully",
+        data,
+      });
+    },
+  );
 }
 
 export const roleControllerInstance = new RoleController();
