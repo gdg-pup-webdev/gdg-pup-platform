@@ -31,13 +31,15 @@ type userAggregate = userRow & {
  * Manages database queries for the user system, including complex joins for resource aggregation.
  */
 export class UserRepository { 
+  tableName = "user";
+
   /**
    * getUserById
    * Fetches a single user record by their unique identifier.
    */
   getUserById = async (userId: string) : RepositoryResult<userRow> => {
     const { data, error } = await supabase
-      .from("user")
+      .from(this.tableName)
       .select("*")
       .eq("id", userId)
       .single();

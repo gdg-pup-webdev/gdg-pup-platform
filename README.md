@@ -19,6 +19,8 @@ Welcome to the **GDG PUP Platform** – a modern, full-stack monorepo built with
 
 Get the platform running on your local machine in under 5 minutes.
 
+Get the platform running on your local machine in under 5 minutes.
+
 ### Prerequisites
 
 - **Node.js** (v20+) – [Download here](https://nodejs.org/)
@@ -194,4 +196,5 @@ docker compose down
 
 ---
 
+_Maintained with ❤️ by the GDG PUP Team_
 _Maintained with ❤️ by the GDG PUP Team_
