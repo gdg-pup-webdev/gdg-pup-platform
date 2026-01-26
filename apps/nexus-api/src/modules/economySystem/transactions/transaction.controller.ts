@@ -2,11 +2,11 @@ import { ServiceError } from "@/classes/ServerError";
 import {
   TransactionService,
   transactionServiceInstance,
-} from "@/modules/economySystem/transaction.service";
+} from "@/modules/economySystem/transactions/transaction.service";
 import {
   WalletService,
   walletServiceInstance,
-} from "@/modules/economySystem/wallet.service";
+} from "@/modules/economySystem/wallets/wallet.service";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
