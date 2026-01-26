@@ -1,6 +1,14 @@
+/**
+ * @file transaction.service.test.ts
+ * @description Transaction service tests validate orchestration and error
+ * mapping with mocked repositories and wallet service dependencies.
+ */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TransactionService } from "../transaction.service.js";
-import { NotFoundError, RepositoryError } from "@/classes/ServerError.js";
+import {
+  NotFoundError,
+  RepositoryError,
+} from "../../../../classes/ServerError.js";
 
 const { mockWalletService, mockTransactionRepository } = vi.hoisted(() => ({
   mockWalletService: {

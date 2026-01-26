@@ -1,5 +1,10 @@
+/**
+ * @file transaction.controller.test.ts
+ * @description Transaction controller tests covering unit-level branch selection
+ * and HTTP integration behavior with mocked services. These tests validate
+ * response shape without touching the database.
+ */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import supertest from "supertest";
 import { TransactionController } from "../transaction.controller.js";
 
 const {
@@ -23,6 +28,7 @@ vi.mock("@/modules/economySystem/transactions/transaction.service", () => ({
 }));
 
 import app from "../../../../app.js";
+import { testListEconomyResources } from "../../__tests__/test-helpers.js";
 
 describe("TransactionController unit", () => {
   const transaction = {
@@ -152,36 +158,31 @@ describe("TransactionController integration", () => {
   });
 
   it("GET /api/economy-system/transactions returns list by page", async () => {
-    mockListTransactionsByPage.mockResolvedValue({ list: [transaction], count: 1 });
-
-    const response = await supertest(app)
-      .get("/api/economy-system/transactions")
-      .query({ pageNumber: 1, pageSize: 10 });
-
-    expect(response.status).toBe(200);
-    expect(response.body.status).toBe("success");
-    expect(response.body.data).toHaveLength(1);
+    await testListEconomyResources(
+      app,
+      "/api/economy-system/transactions",
+      mockListTransactionsByPage,
+      transaction,
+    );
   });
 
   it("GET /api/economy-system/transactions?userId= returns user list", async () => {
-    mockListTransactionsOfUser.mockResolvedValue({ list: [transaction], count: 1 });
-
-    const response = await supertest(app)
-      .get("/api/economy-system/transactions")
-      .query({ userId: "user-1", pageNumber: 1, pageSize: 10 });
-
-    expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(1);
+    await testListEconomyResources(
+      app,
+      "/api/economy-system/transactions",
+      mockListTransactionsOfUser,
+      transaction,
+      { userId: "user-1" },
+    );
   });
 
   it("GET /api/economy-system/transactions?walletId= returns wallet list", async () => {
-    mockListTransactionsOfWallet.mockResolvedValue({ list: [transaction], count: 1 });
-
-    const response = await supertest(app)
-      .get("/api/economy-system/transactions")
-      .query({ walletId: "wallet-1", pageNumber: 1, pageSize: 10 });
-
-    expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(1);
+    await testListEconomyResources(
+      app,
+      "/api/economy-system/transactions",
+      mockListTransactionsOfWallet,
+      transaction,
+      { walletId: "wallet-1" },
+    );
   });
 });

@@ -1,5 +1,10 @@
+/**
+ * @file transaction.repository.test.ts
+ * @description Repository tests verify Supabase query chains and error mapping
+ * with a mocked client to avoid real database access.
+ */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { DatabaseError } from "@/classes/ServerError.js";
+import { DatabaseError } from "../../../../classes/ServerError.js";
 
 const { supabaseMock } = vi.hoisted(() => ({
   supabaseMock: {
