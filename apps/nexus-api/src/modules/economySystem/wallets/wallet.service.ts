@@ -1,7 +1,7 @@
 import {
   TransactionRepository,
   transactionRepositoryInstance,
-} from "./transaction.repository.js";
+} from "../transactions/transaction.repository.js";
 import {
   WalletRepository,
   walletRepositoryInstance,
@@ -12,7 +12,7 @@ import {
   NotFoundError,
   RepositoryError,
   ServerError,
-} from "../../classes/ServerError.js";
+} from "../../../classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class WalletService {
