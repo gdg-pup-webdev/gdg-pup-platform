@@ -38,7 +38,7 @@ vi.mock('../settings.service.js', () => ({
 }));
 
 import app from '../../../../app.js';
-import { testListResources } from '../../tests/test-helpers.js';
+import { testListResources } from '../../__tests__/test-helpers.js';
 
 describe('Settings API Integration', () => {
   const mockSettings = {
