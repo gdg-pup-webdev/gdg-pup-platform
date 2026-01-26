@@ -37,8 +37,8 @@ vi.mock('../certificate.service.js', () => ({
   CertificateService: class {},
 }));
 
-import app from '../../../app.js';
-import { testListResources } from './test-helpers.js';
+import app from '../../../../app.js';
+import { testListResources } from '../../tests/test-helpers.js';
 
 describe('Certificates API Integration', () => {
   const mockCertificate = {

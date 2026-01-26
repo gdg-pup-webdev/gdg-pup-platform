@@ -3,7 +3,10 @@ import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { ProjectService, projectServiceInstance } from "./project.service";
+import {
+  ProjectService,
+  projectServiceInstance,
+} from "./project.service";
 
 export class ProjectController {
   constructor(

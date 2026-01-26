@@ -40,8 +40,8 @@ vi.mock('../achievement.service.js', () => ({
 }));
 
 // Import app AFTER mocks are established
-import app from '../../../app.js';
-import { testListResources } from './test-helpers.js';
+import app from '../../../../app.js';
+import { testListResources } from '../../tests/test-helpers.js';
 
 describe('Achievements API Integration', () => {
   const mockAchievement = {
