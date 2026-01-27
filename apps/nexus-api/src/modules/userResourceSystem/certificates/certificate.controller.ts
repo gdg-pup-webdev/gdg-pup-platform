@@ -9,7 +9,10 @@ import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { CertificateService, certificateServiceInstance } from "./certificate.service.js";
+import {
+  CertificateService,
+  certificateServiceInstance,
+} from "./certificate.service.js";
 
 export class CertificateController {
   constructor(

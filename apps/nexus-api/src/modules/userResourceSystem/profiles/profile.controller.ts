@@ -2,7 +2,7 @@ import { ServiceError } from "@/classes/ServerError.js";
 import {
   ProfileService,
   profileServiceInstance,
-} from "@/modules/userResourceSystem/profile.service.js";
+} from "./profile.service.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
