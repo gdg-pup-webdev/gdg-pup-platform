@@ -1,0 +1,11 @@
+{
+  "extends": "@configs/typescript-config/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "outDir": "dist",
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
+  },
+  "include": ["src"],
+  "exclude": ["dist", "build", "node_modules"]
+}
