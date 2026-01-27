@@ -2,7 +2,7 @@ import { tryCatch } from "@/utils/tryCatch.util.js";
 import {
   WalletService,
   walletServiceInstance,
-} from "../economySystem/wallet.service.js";
+} from "../economySystem/wallets/wallet.service.js";
 import {
   RewardRepository,
   rewardRepositoryInstance,

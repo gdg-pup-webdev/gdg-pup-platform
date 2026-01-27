@@ -2,13 +2,13 @@ import {
   TransactionRepository,
   transactionRepositoryInstance,
 } from "./transaction.repository.js";
-import { WalletService, walletServiceInstance } from "./wallet.service.js";
+import { WalletService, walletServiceInstance } from "../wallets/wallet.service.js";
 import {
   DatabaseError,
   NotFoundError,
   RepositoryError,
   ServerError,
-} from "../../classes/ServerError.js";
+} from "../../../classes/ServerError.js";
 import { PostgrestError } from "@supabase/supabase-js";
 import { tryCatch, tryCatchHandled } from "@/utils/tryCatch.util.js";
 import { models } from "@packages/nexus-api-contracts";
