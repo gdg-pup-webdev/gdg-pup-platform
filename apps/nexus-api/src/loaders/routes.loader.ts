@@ -14,10 +14,8 @@ import { publicationSystemRouterInstance } from "@/modules/publicationSystem/ind
 import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
 import {
-  RewardSystemRouter,
   rewardSystemRouterInstance,
 } from "@/modules/rewardsSystem/index.js";
-import { rewardRepositoryInstance } from "@/modules/rewardsSystem/reward.repository.js";
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js";
 
 export const routesLoader = (app: Express) => {
