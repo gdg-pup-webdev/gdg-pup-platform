@@ -52,5 +52,10 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["src/**/*.test.ts", "src/**/tests/**/*", "vitest.config.ts"]
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/tests/**/*",
+    "src/**/__tests__/**/*",
+    "vitest.config.ts"
+  ]
 }
