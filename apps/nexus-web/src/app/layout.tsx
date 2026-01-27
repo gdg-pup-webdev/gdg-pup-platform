@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "@packages/spark-ui/styles.css";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { DebugNavbar } from "@/components/DebugNavbar";
