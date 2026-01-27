@@ -42,7 +42,8 @@ export class FileController {
   };
 
   getFile: RequestHandler = async (req, res) => {
-    const { fileId } = req.params;
+    const fileIdParam = req.params.fileId;
+    const fileId = Array.isArray(fileIdParam) ? fileIdParam[0] : fileIdParam;
     const file = await this.fileService.getOne(fileId);
 
     res.status(200).json({
@@ -53,7 +54,8 @@ export class FileController {
   };
 
   updateFile: RequestHandler = async (req, res) => {
-    const { fileId } = req.params;
+    const fileIdParam = req.params.fileId;
+    const fileId = Array.isArray(fileIdParam) ? fileIdParam[0] : fileIdParam;
     const dto = req.body?.data ?? {};
     const updated = await this.fileService.update(fileId, dto);
 
@@ -65,7 +67,8 @@ export class FileController {
   };
 
   deleteFile: RequestHandler = async (req, res) => {
-    const { fileId } = req.params;
+    const fileIdParam = req.params.fileId;
+    const fileId = Array.isArray(fileIdParam) ? fileIdParam[0] : fileIdParam;
     const deleted = await this.fileService.delete(fileId);
 
     res.status(200).json({
