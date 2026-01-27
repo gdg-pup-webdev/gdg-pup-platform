@@ -1,5 +1,5 @@
 import { Express } from "express";
-import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.route.js";
+import { healthCheckModuleRouterInstance } from "@/modules/healthCheck/index.js";
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
 import { userRouterInstance } from "@/modules/userSystem/user.route.js";
 import { fileSystemRouterInstance } from "@/modules/filesSystem/fileSystem.route.js";
@@ -21,7 +21,7 @@ import { rewardRepositoryInstance } from "@/modules/rewardsSystem/reward.reposit
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js";
 
 export const routesLoader = (app: Express) => {
-  app.use("/api/health", healthCheckRouterInstance.getRouter());
+  app.use("/api/health", healthCheckModuleRouterInstance.getRouter());
 
   app.use("/api/user-resource-system", userResourceSystemRouter.getRouter());
 
