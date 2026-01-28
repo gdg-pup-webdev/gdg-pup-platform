@@ -1,8 +1,11 @@
 import { Router } from "express";
-import { ArticleRouter, articleRouterInstance } from "./article.route";
+import {
+  ArticleRouter,
+  articleRouterInstance,
+} from "./articles/article.route.js";
 
 export class PublicationSystemRouter {
-  constructor(private articleRouter: ArticleRouter = articleRouterInstance) {}
+  constructor(private readonly articleRouter: ArticleRouter = articleRouterInstance) {}
 
   getRouter = (): Router => {
     const router = Router();

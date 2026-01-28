@@ -2,8 +2,11 @@ import { Router } from "express";
 import {
   ExternalResourceRouter,
   externalResourceRouterInstance,
-} from "./externalResource.route.js";
-import { StudyJamRouter, studyJamRouterInstance } from "./studyJam.route.ts.js";
+} from "./externalResources/externalResource.route.js";
+import {
+  StudyJamRouter,
+  studyJamRouterInstance,
+} from "./studyJams/studyJam.route.js";
 
 export class LearningResourceSystemRouter {
   constructor(
