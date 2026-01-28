@@ -1,12 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util.js";
-import {
-  WalletService,
-  walletServiceInstance,
-<<<<<<< HEAD:apps/nexus-api/src/modules/rewardsSystem/rewards/reward.service.ts
-} from "../../economySystem/wallet.service.js";
-=======
-} from "../economySystem/wallets/wallet.service.js";
->>>>>>> d9ce6fd8b883c63b97870eb47ca644fa311cc4de:apps/nexus-api/src/modules/rewardsSystem/reward.service.ts
+import { tryCatch } from "@/utils/tryCatch.util.js"; 
 import {
   RewardRepository,
   rewardRepositoryInstance,
@@ -18,6 +10,7 @@ import {
   RepositoryError,
 } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
+import { WalletService, walletServiceInstance } from "@/modules/economySystem/wallets/wallet.service.js";
 
 type rewardInsertDTO = models.rewardSystem.reward.insert;
 type rewardUpdateDTO = models.rewardSystem.reward.update;
