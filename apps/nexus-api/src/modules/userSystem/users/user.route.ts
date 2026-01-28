@@ -6,7 +6,7 @@ import {
 
 export class UserRouter {
   constructor(
-    private userSystemController: UserSystemController = userSystemControllerInstance,
+    private readonly userSystemController: UserSystemController = userSystemControllerInstance,
   ) {}
 
   getRouter() {
