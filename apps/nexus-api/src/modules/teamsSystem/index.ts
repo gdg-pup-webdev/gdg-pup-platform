@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { TeamRouter, teamRouterInstance } from "./team.router";
-import { MemberRouter, memberRouterInstance } from "./member.route";
+import { TeamRouter, teamRouterInstance } from "./teams/team.route.js";
+import { MemberRouter, memberRouterInstance } from "./members/member.route.js";
 
 export class teamSystemRouter {
   constructor(
-    private teamRouter: TeamRouter = teamRouterInstance,
-    private memberRouter: MemberRouter = memberRouterInstance,
+    private readonly teamRouter: TeamRouter = teamRouterInstance,
+    private readonly memberRouter: MemberRouter = memberRouterInstance,
   ) {}
 
   getRouter = (): Router => {
