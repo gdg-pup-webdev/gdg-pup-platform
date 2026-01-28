@@ -6,7 +6,7 @@ import {
 
 export class HealthCheckRouter {
   constructor(
-    private controller: HealthCheckController = healthCheckControllerImport,
+    private readonly controller: HealthCheckController = healthCheckControllerImport,
   ) {}
 
   getRouter() {
