@@ -3,12 +3,12 @@ import { EventService, eventServiceInstance } from "./event.service.js";
 import {
   AttendanceService,
   attendanceServiceInstance,
-} from "./attendance.service.js";
+} from "../attendance/attendance.service.js";
 import {
   RepositoryError,
   ServerError,
   ServiceError,
-} from "../../classes/ServerError.js";
+} from "../../../classes/ServerError.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";

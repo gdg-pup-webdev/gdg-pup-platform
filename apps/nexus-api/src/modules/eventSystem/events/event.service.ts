@@ -6,16 +6,16 @@ import {
 import {
   AttendanceService,
   attendanceServiceInstance,
-} from "./attendance.service.js";
+} from "../attendance/attendance.service.js";
 import {
   WalletService,
   walletServiceInstance,
-} from "../economySystem/wallets/wallet.service.js";
+} from "@/modules/economySystem/wallets/wallet.service.js";
 import {
   RepositoryError,
   ServerError,
   ServiceError,
-} from "../../classes/ServerError.js";
+} from "../../../classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class EventService {

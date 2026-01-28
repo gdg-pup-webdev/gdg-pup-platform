@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
-} from "../../middlewares/auth.middleware.js";
+} from "../../../middlewares/auth.middleware.js";
 import {
   EventController,
   eventControllerInstance,
