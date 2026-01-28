@@ -1,7 +1,8 @@
 import { Express } from "express";
 import { healthCheckModuleRouterInstance } from "@/modules/healthCheck/index.js";
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
-import { fileSystemRouterInstance } from "@/modules/filesSystem/fileSystem.route.js";
+import { userRouterInstance } from "@/modules/userSystem/user.route.js";
+import { fileSystemRouterInstance } from "@/modules/filesSystem/index.js";
 import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
 import { rewardRouterInstance } from "@/modules/rewardsSystem/reward.route.js";
 import { teamRouterInstance } from "@/modules/teamsSystem/team.router.js";
