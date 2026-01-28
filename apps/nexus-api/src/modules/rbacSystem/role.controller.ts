@@ -177,7 +177,7 @@ export class RoleController {
    * Kinoment ko muna hahahah
    */
   // assignRoleToUser: RequestHandler = createExpressController(
-  //   contract.api.rbac_system.roles.roleId.
+  //   contract.api.rbac_system.roles.roleId.POST
   // )
 }
 

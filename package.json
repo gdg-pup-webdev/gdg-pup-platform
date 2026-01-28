@@ -11,7 +11,9 @@
     "build:nexus": "turbo build --filter=@packages/identity-api-contracts --filter=@packages/nexus-api-contracts --filter=nexus-api --filter=identity-api --filter=nexus-web",
     "dev:nexus": "turbo dev --filter=@packages/identity-api-contracts --filter=@packages/nexus-api-contracts --filter=nexus-api --filter=identity-api --filter=nexus-web",
     "gen-types": "turbo run gen-types",
-    "gen-types:debug": "turbo run gen-types --verbosity"
+    "gen-types:debug": "turbo run gen-types --verbosity",
+    "remove-typed-rest": "powershell -Command \"Remove-Item -Recurse -Force ./packages/nexus-api-contracts/src\"",
+    "gen-types:reinstall": "pnpm run gen-types && pnpm run build"
   },
   "devDependencies": {
     "prettier": "3.7.4",
