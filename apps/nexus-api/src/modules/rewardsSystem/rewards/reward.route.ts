@@ -10,8 +10,8 @@ import {
 
 export class RewardRouter {
   constructor(
-    private controller: RewardController = rewardControllerInstance,
-    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
+    private readonly controller: RewardController = rewardControllerInstance,
+    private readonly authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter = (): Router => {
@@ -24,7 +24,7 @@ export class RewardRouter {
       this.controller.createReward,
     );
     router.get("/:rewardId", this.controller.getReward);
-    router.post("/:rewardId/redeem", this.controller.claimReward);
+    router.post("/:rewardId/claim", this.controller.claimReward);
 
     return router;
   };

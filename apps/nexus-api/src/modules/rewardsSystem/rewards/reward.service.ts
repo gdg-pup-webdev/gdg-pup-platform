@@ -2,7 +2,11 @@ import { tryCatch } from "@/utils/tryCatch.util.js";
 import {
   WalletService,
   walletServiceInstance,
+<<<<<<< HEAD:apps/nexus-api/src/modules/rewardsSystem/rewards/reward.service.ts
+} from "../../economySystem/wallet.service.js";
+=======
 } from "../economySystem/wallets/wallet.service.js";
+>>>>>>> d9ce6fd8b883c63b97870eb47ca644fa311cc4de:apps/nexus-api/src/modules/rewardsSystem/reward.service.ts
 import {
   RewardRepository,
   rewardRepositoryInstance,
@@ -20,8 +24,8 @@ type rewardUpdateDTO = models.rewardSystem.reward.update;
 
 export class RewardService {
   constructor(
-    private rewardRepository: RewardRepository = rewardRepositoryInstance,
-    private walletService: WalletService = walletServiceInstance,
+    private readonly rewardRepository: RewardRepository = rewardRepositoryInstance,
+    private readonly walletService: WalletService = walletServiceInstance,
   ) {}
 
   listRewardsByPage = async (pageNumber: number, pageSize: number) => {
