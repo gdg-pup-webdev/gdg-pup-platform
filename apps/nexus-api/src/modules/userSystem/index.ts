@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { UserRouter, userRouterInstance } from "./user.route";
+import { UserRouter, userRouterInstance } from "./users/user.route.js";
 
 export class UserSystemRouter {
-  constructor(private userRouter: UserRouter = userRouterInstance) {}
+  constructor(private readonly userRouter: UserRouter = userRouterInstance) {}
 
   getRouter(): Router {
     const router = Router();

@@ -9,7 +9,7 @@ import request from 'supertest';
 // Mock User Service
 const mockGetUserAggregate = vi.fn();
 
-vi.mock('../modules/userSystem/user.service.js', () => ({
+vi.mock('../modules/userSystem/users/user.service.js', () => ({
   userServiceInstance: {
     getUserAggregate: (...args: any[]) => mockGetUserAggregate(...args),
   },

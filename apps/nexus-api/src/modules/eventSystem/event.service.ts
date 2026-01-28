@@ -10,7 +10,7 @@ import {
 import {
   WalletService,
   walletServiceInstance,
-} from "../economySystem/wallet.service.js";
+} from "../economySystem/wallets/wallet.service.js";
 import {
   RepositoryError,
   ServerError,

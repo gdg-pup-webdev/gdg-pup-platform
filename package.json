@@ -14,6 +14,8 @@
     "test": "turbo run test"
   },
   "devDependencies": {
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
     "prettier": "3.7.4",
     "syncpack": "13.0.4",
     "turbo": "2.7.4",
@@ -22,5 +24,11 @@
   "packageManager": "pnpm@10.28.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "tailwind-merge": "^3.4.0"
   }
 }
