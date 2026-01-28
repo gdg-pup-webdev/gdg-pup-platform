@@ -4,7 +4,7 @@ import { models } from "@packages/nexus-api-contracts";
 import {
   studyJamRepositoryInstance,
   StudyJamRepository,
-} from "./studyjam.repository.js";
+} from "./studyJam.repository.js";
 
 type updateDTO = models.learningResourceSystem.studyJam.update;
 type insertDTO = models.learningResourceSystem.studyJam.insert;
