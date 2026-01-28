@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { RoleRouter, roleRouterInstance } from "./role.route";
+import { RoleRouter, roleRouterInstance } from "./roles/role.route.js";
 
 export class RbacSystemRouter {
-  constructor(private roleRouter: RoleRouter = roleRouterInstance) {}
+  constructor(private readonly roleRouter: RoleRouter = roleRouterInstance) {}
 
   getRouter = (): Router => {
     const router = Router();

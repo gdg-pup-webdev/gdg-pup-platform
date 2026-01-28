@@ -1,15 +1,12 @@
 import { ServiceError } from "@/classes/ServerError";
-import {
-  RoleService,
-  roleServiceInstance,
-} from "@/modules/rbacSystem/role.service";
+import { RoleService, roleServiceInstance } from "./role.service.js";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
 
 export class RoleController {
-  constructor(private roleService: RoleService = roleServiceInstance) {}
+  constructor(private readonly roleService: RoleService = roleServiceInstance) {}
 
   getRolesOrUser: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.GET,

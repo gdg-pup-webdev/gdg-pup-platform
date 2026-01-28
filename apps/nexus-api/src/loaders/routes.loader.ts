@@ -3,6 +3,8 @@ import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.ro
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
 import { fileSystemRouterInstance } from "@/modules/filesSystem/fileSystem.route.js";
 import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
+import { rewardRouterInstance } from "@/modules/rewardsSystem/reward.route.js";
+import { teamRouterInstance } from "@/modules/teamsSystem/team.router.js";
 import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js";
 import { economySystemRouterInstance } from "@/modules/economySystem/index.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";

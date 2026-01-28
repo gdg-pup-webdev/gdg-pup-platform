@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { RoleController, roleControllerInstance } from "./role.controller";
+import { RoleController, roleControllerInstance } from "./role.controller.js";
 
 export class RoleRouter {
   constructor(
