@@ -1,13 +1,12 @@
 import { RequestHandler } from "express";
-import { TeamService, teamServiceInstance } from "./team.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServerError, ServiceError } from "../../classes/ServerError.js";
+import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { MemberService, memberServiceInstance } from "./member.service.js";
 
 export class MemberController {
-  constructor(private memberService: MemberService = memberServiceInstance) {}
+  constructor(private readonly memberService: MemberService = memberServiceInstance) {}
 
   listMembersWithFilter: RequestHandler = createExpressController(
     contract.api.team_system.members.GET,
@@ -38,9 +37,9 @@ export class MemberController {
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: 1,
-          pageSize: 100,
-          totalPages: 1,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
         },
       });
     },

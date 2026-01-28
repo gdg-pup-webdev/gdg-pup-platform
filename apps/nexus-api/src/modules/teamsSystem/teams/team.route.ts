@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { TeamController, teamControllerInstance } from "./team.controller";
+import { TeamController, teamControllerInstance } from "./team.controller.js";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
-} from "@/middlewares/auth.middleware";
+} from "@/middlewares/auth.middleware.js";
 
 export class TeamRouter {
   constructor(
-    private teamController: TeamController = teamControllerInstance,
-    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
+    private readonly teamController: TeamController = teamControllerInstance,
+    private readonly authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter = (): Router => {

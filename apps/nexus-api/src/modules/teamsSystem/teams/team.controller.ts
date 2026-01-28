@@ -1,12 +1,12 @@
 import { RequestHandler } from "express";
 import { TeamService, teamServiceInstance } from "./team.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServerError, ServiceError } from "../../classes/ServerError.js";
+import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class TeamController {
-  constructor(private teamService: TeamService = teamServiceInstance) {}
+  constructor(private readonly teamService: TeamService = teamServiceInstance) {}
 
   listTeams: RequestHandler = createExpressController(
     contract.api.team_system.teams.GET,

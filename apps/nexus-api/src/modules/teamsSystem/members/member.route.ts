@@ -2,11 +2,11 @@ import { Router } from "express";
 import {
   MemberController,
   memberControllerInstance,
-} from "./member.controller";
+} from "./member.controller.js";
 
 export class MemberRouter {
   constructor(
-    private memberController: MemberController = memberControllerInstance,
+    private readonly memberController: MemberController = memberControllerInstance,
   ) {}
 
   getRouter = (): Router => {
