@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { ArticleService, articleServiceInstance } from "./article.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServerError, ServiceError } from "../../classes/ServerError.js";
+import { ServerError, ServiceError } from "../../../classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 

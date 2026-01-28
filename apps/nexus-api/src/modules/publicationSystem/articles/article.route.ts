@@ -6,7 +6,7 @@ import {
 import {
   AuthMiddleware,
   authMiddlewareInstance,
-} from "../../middlewares/auth.middleware.js";
+} from "../../../middlewares/auth.middleware.js";
 
 export class ArticleRouter {
   constructor(
