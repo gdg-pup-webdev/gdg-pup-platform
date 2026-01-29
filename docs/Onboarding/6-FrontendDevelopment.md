@@ -24,9 +24,6 @@ apps/nexus-web/src/
 │           └── page.tsx        # User profile page
 │
 ├── components/
-│   ├── ui/                     # Core UI components from shadcn/ui
-│   │   ├── button.tsx
-│   │   └── card.tsx
 │   └── features/               # Components specific to application features
 │       ├── EventCard.tsx
 │       └── UserProfile.tsx
@@ -43,10 +40,48 @@ apps/nexus-web/src/
 ```
 
 -   **`app/`**: Follows the Next.js App Router conventions for file-based routing.
--   **`components/`**: Contains all React components, separated into `ui` for generic, reusable elements and `features` for components tied to specific application functionality.
+-   **`components/features/`**: Contains application-specific UI composed from Spark-UI components.
 -   **`lib/`**: Includes core utilities, most notably the configuration for our type-safe API client.
 -   **`providers/`**: Holds React context providers that wrap the entire application.
 -   **`hooks/`**: Contains custom React hooks for shared, reusable logic.
+
+## Internal UI Library (Spark-UI)
+
+We use **Spark-UI**, our internal component library and design system, to ensure
+visual consistency, accessibility, and reuse across all frontend applications.
+
+Spark-UI lives outside of the application code and is shared via the monorepo:
+
+```
+packages/
+└── spark-ui/
+```
+
+### Key principles
+
+- Spark-UI contains **reusable, brand-level UI components**
+- Application code should **compose**, not reimplement, Spark-UI components
+- Feature-specific UI stays inside the app (`components/features`)
+- Styling and theming are driven by shared design tokens
+
+### Documentation & Visual Testing
+
+Spark-UI components are documented and visually tested using **Storybook**.
+
+- **Source code:** `packages/spark-ui`
+- **Component documentation & usage examples:** Storybook (`apps/storybook`)
+- **Visual regression & interaction testing:** Storybook serves as the primary visual testing surface
+
+Storybook is the **source of truth** for Spark-UI component behavior, appearance, and supported variants.
+
+Before building new UI components in the application, always check Spark-UI and its Storybook documentation first.
+
+### Component Ownership
+
+We distinguish between shared UI components and application-specific components.
+
+- **Shared, reusable UI** lives in **Spark-UI** (`packages/spark-ui`)
+- **Feature-specific UI** lives inside the application (`components/features`)
 
 ## Type-Safe API Client 
 
