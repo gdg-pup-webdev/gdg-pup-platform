@@ -12,6 +12,27 @@ export class RoleController {
   constructor(private roleService: RoleService = roleServiceInstance) {}
 
   /**
+   * Get all roles of all users
+   */
+  getAllRolesOfAllUsers: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.all_users.GET,
+    async ({ output }) => {
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.getAllRolesOfAllUsers(),
+        "getting all roles for all users",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Fetched all roles of all users",
+        data,
+      });
+    },
+  );
+
+  /**
    * GET /api/rbac/roles?userId={userId}&pageNumber={n}&pageSize={n}
    * Get roles of a specific user OR all roles if no userId
    */
@@ -71,8 +92,8 @@ export class RoleController {
    * Get single role by ID with permissions
    */
   getRoleById: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles["roleId"].GET,
-    async ({ input, output }) => {
+    contract.api.rbac_system.roles.roleId.GET,
+    async ({ input, output, ctx }) => {
       const { roleId } = input.params;
 
       const { data, error } = await tryCatch(
@@ -172,12 +193,55 @@ export class RoleController {
   );
 
   /**
+   * Checks if the role is already assign
+   */
+
+  /**
    * POST /api/rbac/roles/:roleId/users/:userId
    * Assign role to user
-   * Kinoment ko muna hahahah
    */
-  // assignRoleToUser: RequestHandler = createExpressController(
-  //   contract.api.rbac_system.roles.roleId.POST
+  assignRoleToUser: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.users.userId.POST,
+    async ({ input, output }) => {
+      const { roleId, userId } = input.params;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.assignRoleToUser(userId, roleId),
+        "assigning role to user",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Role to assigned to user successfully",
+        data,
+      });
+    },
+  );
+
+  /**
+   * GET /api/rbac/roles/:roleId/users/:userId
+   * Checks if the user has specified role
+   */
+  // doUserHasThisRole: RequestHandler = createExpressController(
+  //   contract.api.rbac_system.roles.roleId.users.userId.GET,
+  //   async ({ input, output }) => {
+  //     const { roleId, userId } = input.params;
+
+  //     const { data, error } = await tryCatch(
+  //       async () => await this.roleService.doUserHasThisRole(userId, roleId),
+  //       "checking if user has the input role",
+  //     );
+
+  //     if (error) throw error;
+
+  //     return output(200, {
+  //       status: "success",
+  //       message: "",
+  //       data,
+  //     })
+  //   }
   // )
 }
 

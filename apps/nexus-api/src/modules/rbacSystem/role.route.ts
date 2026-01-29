@@ -9,7 +9,18 @@ export class RoleRouter {
   getRouter = (): Router => {
     const router = Router();
 
-    router.get("/", this.roleController.getRolesOrUser);
+    /**
+     * Get routes
+     */
+
+    router
+      .route("/")
+      .get(this.roleController.getRolesOrUser)
+      .post(this.roleController.createRole);
+
+    router.get("/all-users", this.roleController.getAllRolesOfAllUsers);
+
+    router.get("/:roleId", this.roleController.getRoleById);
 
     return router;
   };

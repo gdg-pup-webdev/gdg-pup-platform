@@ -9,13 +9,44 @@ import { Tables, TablesInsert } from "@/types/supabase.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type roleRow = Tables<"user_role">;
+type userRow = Tables<"user">;
 type userRoleJunctionRow = Tables<"user_role_junction">;
+type userRolePermission = Tables<"user_role_permission">;
 
 export class RoleRepository {
   junctionTable = "user_role_junction"; // Table for the relationship of role and user
   roleTable = "user_role"; // dito naka store yung mga created roles
 
   constructor() {}
+
+  /**
+   * Get all roles of all users
+   */
+  getAllRolesOfAllUsers = async (): Promise<
+    Array<{ user: userRow; roles: roleRow[] }>
+  > => {
+    const { data, error } = await supabase.from(this.junctionTable).select(`
+        user:user_id(*),
+        user_role (*, user_role_permission(*))
+      `);
+
+    if (error) throw new DatabaseError(error.message);
+
+    // Group by user
+    const userMap: Record<string, { user: userRow; roles: roleRow[] }> = {};
+
+    for (const row of data as any[]) {
+      const user = row.user;
+      const role = row.user_role;
+      if (!user || !role) continue;
+      if (!userMap[user.id]) {
+        userMap[user.id] = { user, roles: [] };
+      }
+      userMap[user.id].roles.push(role);
+    }
+
+    return Object.values(userMap);
+  };
 
   /**
    * Get all roles of a user
@@ -25,7 +56,7 @@ export class RoleRepository {
   ): Promise<RepositoryResultList<roleRow>> => {
     const { data, error } = await supabase
       .from(this.junctionTable)
-      .select(`*, user_role(*, user_role_permission (*))`)
+      .select(`*, user_role(*, user_role_permission(*))`)
       .eq("user_id", userId);
 
     if (error) throw new DatabaseError(error.message);
@@ -41,31 +72,6 @@ export class RoleRepository {
       list: data.map((item) => item.user_role as roleRow),
       count: count || 0,
     };
-  };
-
-  /**
-   * Create a new role
-   */
-  createRole = async (
-    roleData: TablesInsert<"user_role">,
-  ): Promise<roleRow> => {
-    const { data, error } = await supabase
-      .from(this.roleTable)
-      .insert(roleData)
-      .select()
-      .single();
-
-    if (error) {
-      // Check if there is a conflict in role (kung may kaparehas ba)
-      if (error.code === "23505") {
-        throw new RepositoryConflictError(
-          `Role "${roleData.role_name}" already exists`,
-        );
-      }
-      throw new DatabaseError(error.message);
-    }
-
-    return data;
   };
 
   /**
@@ -119,6 +125,107 @@ export class RoleRepository {
     if (error) throw new DatabaseError(error.message);
 
     return !!data;
+  };
+
+  /**
+   * Get all users with specific role
+   */
+  getUsersByRole = async (
+    roleId: string,
+  ): Promise<RepositoryResultList<userRoleJunctionRow & { user: any }>> => {
+    const { data, error } = await supabase
+      .from(this.junctionTable)
+      .select(`*`)
+      .eq("role_id", roleId);
+
+    if (error) throw new DatabaseError(error.message);
+
+    const { count, error: countError } = await supabase
+      .from(this.junctionTable)
+      .select("*", { count: "exact", head: true })
+      .eq("role_id", roleId);
+
+    if (countError) throw new DatabaseError(countError.message);
+
+    return {
+      list: data,
+      count: count || 0,
+    };
+  };
+
+  /**
+   * Get users without assigned roles
+   */
+  getUsersWithoutRoles = async (roleId: string): Promise<userRow[]> => {
+    // Get all users who do NOT have the given roleId in the junction table
+    const { data, error } = await supabase
+      .from("user")
+      .select("*")
+      .not(
+        "id",
+        "in",
+        supabase
+          .from(this.junctionTable)
+          .select("user_id")
+          .eq("role_id", roleId),
+      );
+
+    if (error) throw new DatabaseError(error.message);
+
+    return data as userRow[];
+  };
+
+  /**
+   * Get permission for a user
+   */
+  getPermissionsForUser = async (
+    userId: string,
+  ): Promise<userRolePermission[]> => {
+    // Joind user_role_jucntion to user_role and to user_role_permission
+    const { data, error } = await supabase
+      .from(this.junctionTable)
+      .select("user_role:user_role_id(user_role_permission(*))")
+      .eq("user_id", userId);
+
+    if (error) throw new DatabaseError(error.message);
+
+    // Flatten all permissions from all users
+    const permissions: userRolePermission[] = [];
+    for (const row of data as any[]) {
+      const role = row.user_role;
+      if (role && role.user_role_permission) {
+        permissions.push(...role.user_role_permission);
+      }
+    }
+
+    return permissions;
+  };
+
+  // =========================================================================================== //
+
+  /**
+   * Create a new role
+   */
+  createRole = async (
+    roleData: TablesInsert<"user_role">,
+  ): Promise<roleRow> => {
+    const { data, error } = await supabase
+      .from(this.roleTable)
+      .insert(roleData)
+      .select()
+      .single();
+
+    if (error) {
+      // Check if there is a conflict in role (kung may kaparehas ba)
+      if (error.code === "23505") {
+        throw new RepositoryConflictError(
+          `Role "${roleData.role_name}" already exists`,
+        );
+      }
+      throw new DatabaseError(error.message);
+    }
+
+    return data;
   };
 
   /**
@@ -178,22 +285,6 @@ export class RoleRepository {
   };
 
   /**
-   * Check if role is assigned to any users
-   */
-  isRoleAssigned = async (roleId: string): Promise<boolean> => {
-    const { data, error } = await supabase
-      .from(this.junctionTable)
-      .select("id")
-      .eq("role_id", roleId)
-      .limit(1)
-      .maybeSingle(); // Mag rereturn ng null pag walang mahanap
-
-    if (error) throw new DatabaseError(error.message);
-
-    return !!data;
-  };
-
-  /**
    * Assign role to user
    */
   assignRoleToUser = async (
@@ -232,19 +323,77 @@ export class RoleRepository {
   };
 
   /**
-   * Checks if the user has the specified role
+   * Assign roles to multiple users
    */
-  doUserHasRole = async (userId: string, roleId: string): Promise<boolean> => {
+  assignRolesToUsers = async (
+    userIds: string[],
+    roleId: string,
+  ): Promise<userRoleJunctionRow[]> => {
+    if (!userIds.length) return [];
+
+    const insertData = userIds.map((userId) => ({
+      user_id: userId,
+      role_id: roleId,
+    }));
+
     const { data, error } = await supabase
       .from(this.junctionTable)
-      .select("id")
-      .eq("user_id", userId)
-      .eq("role_id", roleId)
-      .maybeSingle();
+      .insert(insertData)
+      .select();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) {
+      // Error kapag yung user ay mayroon na netong role na iaassign
+      if (error.code === "23505") {
+        throw new RepositoryConflictError(
+          "One or more users already have this role assigned",
+        );
+      }
 
-    return !!data;
+      // Pag user or role ay hindi mahanap, ,mag eerror to
+      if (error.code === "23503") {
+        throw new NotFoundError("One or more users or the role not found");
+      }
+
+      throw new DatabaseError(error.message);
+    }
+
+    return data as userRoleJunctionRow[];
+  };
+
+  /**
+   * Assign roles to a user
+   */
+  assignRolesToUser = async (
+    userId: string,
+    roleIds: string[],
+  ): Promise<userRoleJunctionRow[]> => {
+    if (!roleIds.length) return [];
+
+    const insertData = roleIds.map((roleId) => ({
+      user_id: userId,
+      role_id: roleId,
+    }));
+
+    const { data, error } = await supabase
+      .from(this.junctionTable)
+      .insert(insertData)
+      .select();
+
+    if (error) {
+      if (error.code === "23505") {
+        throw new RepositoryConflictError(
+          "User already has one or more of these roles assigned",
+        );
+      }
+
+      if (error.code === "23503") {
+        throw new NotFoundError("user or one or more roles not found");
+      }
+
+      throw new DatabaseError(error.message);
+    }
+
+    return data as userRoleJunctionRow[];
   };
 
   /**
@@ -266,29 +415,43 @@ export class RoleRepository {
   };
 
   /**
-   * Get all users with specific role
+   * Remove role from multiple users
    */
-  getUsersByRole = async (
+  removeRolesFromUsers = async (
+    userIds: string[],
     roleId: string,
-  ): Promise<RepositoryResultList<userRoleJunctionRow & { user: any }>> => {
-    const { data, error } = await supabase
+  ): Promise<{ success: boolean }> => {
+    if (!userIds.length) return { success: false };
+
+    const { error } = await supabase
       .from(this.junctionTable)
-      .select(`*`)
+      .delete()
+      .in("user_id", userIds)
       .eq("role_id", roleId);
 
     if (error) throw new DatabaseError(error.message);
 
-    const { count, error: countError } = await supabase
+    return { success: true };
+  };
+
+  /**
+   * Remove roles to a user
+   */
+  removeRolesToUser = async (
+    userId: string,
+    roleIds: string[],
+  ): Promise<{ success: boolean }> => {
+    if (!roleIds.length) return { success: false };
+
+    const { error } = await supabase
       .from(this.junctionTable)
-      .select("*", { count: "exact", head: true })
-      .eq("role_id", roleId);
+      .delete()
+      .eq("user_id", userId)
+      .in("role_id", roleIds);
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (error) throw new DatabaseError(error.message);
 
-    return {
-      list: data,
-      count: count || 0,
-    };
+    return { success: true };
   };
 }
 

@@ -5,12 +5,29 @@ import { TablesInsert, Tables } from "@/types/supabase.types.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 
 type roleRow = Tables<"user_role">;
+type userRow = Tables<"user">;
 type userRoleJunctionRow = Tables<"user_role_junction">;
+type userRolePermission = Tables<"user_role_permission">;
 
 export class RoleService {
   constructor(
     private roleRepository: RoleRepository = roleRepositoryInstance,
   ) {}
+
+  /**
+   * Get all roles of all users
+   */
+  getAllRolesOfAllUsers = async (): Promise<
+    Array<{ user: userRow; roles: roleRow[] }>
+  > => {
+    const { data, error } = await tryCatch(
+      async () => await this.getAllRolesOfAllUsers(),
+      "getting all roles of all users",
+    );
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
 
   /**
    * Get all roles of a user
@@ -22,23 +39,6 @@ export class RoleService {
       async () => await this.roleRepository.getRolesOfUser(userId),
       "getting roles of user",
     );
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
-  };
-
-  /**
-   * Create a new role
-   */
-  createRole = async (
-    roleData: TablesInsert<"user_role">,
-  ): Promise<roleRow> => {
-    // Create role
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.createRole(roleData),
-      `creating role ${roleData.role_name}`,
-    );
-
     if (error) throw new RepositoryError(error.message);
 
     return data;
@@ -73,12 +73,75 @@ export class RoleService {
   };
 
   /**
+   * Get all users with specific role
+   */
+  getUsersByRole = async (
+    roleId: string,
+  ): Promise<RepositoryResultList<userRoleJunctionRow & { user: any }>> => {
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.getUsersByRole(roleId),
+      `Getting all users with the role id of ${roleId}`,
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  /**
+   * Get users without assigned roles
+   */
+  getUsersWithoutRoles = async (roleId: string): Promise<userRow[]> => {
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.getUsersWithoutRoles(roleId),
+      "Getting users without roles",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  /**
+   * Get permission for a user
+   */
+  getPermissionsForUser = async (
+    userId: string,
+  ): Promise<userRolePermission[]> => {
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.getPermissionsForUser(userId),
+      "Getting permissions of user",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  /**
    * Checks if role exists by name
    */
   roleExistsByName = async (roleName: string): Promise<boolean> => {
     const { data, error } = await tryCatch(
       async () => await this.roleRepository.roleExistsByName(roleName),
       `Checking if role ${roleName} exists`,
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  /**
+   * Create a new role
+   */
+  createRole = async (
+    roleData: TablesInsert<"user_role">,
+  ): Promise<roleRow> => {
+    // Create role
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.createRole(roleData),
+      `creating role ${roleData.role_name}`,
     );
 
     if (error) throw new RepositoryError(error.message);
@@ -118,20 +181,6 @@ export class RoleService {
   };
 
   /**
-   * Check if role is assigned to any users
-   */
-  isRoleAssigned = async (roleId: string): Promise<boolean> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.isRoleAssigned(roleId),
-      `Checking this role id ${roleId} is assigned to any users`,
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
-  };
-
-  /**
    * Assign a role to user
    */
   assignRoleToUser = async (
@@ -149,12 +198,32 @@ export class RoleService {
   };
 
   /**
-   * Checks if the user has the specified role
+   * Assign role to multiple users
    */
-  doUserHasRole = async (userId: string, roleId: string): Promise<boolean> => {
+  assignRolesToUsers = async (
+    userIds: string[],
+    roleId: string,
+  ): Promise<userRoleJunctionRow[]> => {
     const { data, error } = await tryCatch(
-      async () => await this.roleRepository.doUserHasRole(userId, roleId),
-      `Checking if user id ${userId} has the role id ${roleId}`,
+      async () => await this.roleRepository.assignRolesToUsers(userIds, roleId),
+      "Assigning role to multiple users",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  /**
+   * Assign roles to a user
+   */
+  assignRolesToUser = async (
+    userId: string,
+    roleIds: string[],
+  ): Promise<userRoleJunctionRow[]> => {
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.assignRolesToUser(userId, roleIds),
+      "Assigning roles to a user",
     );
 
     if (error) throw new RepositoryError(error.message);
@@ -180,14 +249,34 @@ export class RoleService {
   };
 
   /**
-   * Get all users with specific role
+   * Remove role to multiple users
    */
-  getUsersByRole = async (
+
+  removeRolesToUsers = async (
+    userIds: string[],
     roleId: string,
-  ): Promise<RepositoryResultList<userRoleJunctionRow & { user: any }>> => {
+  ): Promise<{ success: boolean }> => {
     const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getUsersByRole(roleId),
-      `Getting all users with the role id of ${roleId}`,
+      async () =>
+        await this.roleRepository.removeRolesFromUsers(userIds, roleId),
+      "Removing role to multiple users",
+    );
+
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
+
+  /**
+   * Remove roles to a user
+   */
+  removeRolesToUser = async (
+    userId: string,
+    roleIds: string[],
+  ): Promise<{ success: boolean }> => {
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.removeRolesToUser(userId, roleIds),
+      "Removing roles to a user",
     );
 
     if (error) throw new RepositoryError(error.message);
