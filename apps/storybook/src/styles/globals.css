@@ -1,4 +1,5 @@
-@import "tailwindcss";
+@import "../../../../configs/tailwind-config/shared-styles.css";
+@source "../../../../packages/spark-ui/src";
 
 :root {
   --background: #ffffff;

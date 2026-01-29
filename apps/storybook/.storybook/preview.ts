@@ -1,6 +1,5 @@
 import type { Preview } from "@storybook/nextjs-vite";
 import "../src/styles/globals.css";
-import "@packages/spark-ui/src/styles.css";
 
 const preview: Preview = {
   parameters: {
