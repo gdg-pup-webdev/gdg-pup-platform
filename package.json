@@ -11,12 +11,9 @@
     "build:nexus": "turbo build --filter=@packages/identity-api-contracts --filter=@packages/nexus-api-contracts --filter=nexus-api --filter=identity-api --filter=nexus-web",
     "dev:nexus": "turbo dev --filter=@packages/identity-api-contracts --filter=@packages/nexus-api-contracts --filter=nexus-api --filter=identity-api --filter=nexus-web",
     "gen-types": "turbo run gen-types",
-<<<<<<< HEAD
     "gen-types:debug": "turbo run gen-types --verbosity",
-    "gen-types:rebuild": "pnpm run gen-types && pnpm run build"
-=======
+    "gen-types:rebuild": "pnpm run gen-types && pnpm run build",
     "test": "turbo run test"
->>>>>>> 006f1bfa0fab4872bb39ba73079a15d6f2189dcf
   },
   "devDependencies": {
     "@types/react": "^19.2.8",
