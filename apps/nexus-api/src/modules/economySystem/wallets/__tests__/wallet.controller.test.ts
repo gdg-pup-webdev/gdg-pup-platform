@@ -5,15 +5,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import supertest = require("supertest");
 
-const { mockListWallets, mockGetWalletByUserId } = vi.hoisted(() => ({
-  mockListWallets: vi.fn(),
-  mockGetWalletByUserId: vi.fn(),
+const { mockListWalletsWithFilters } = vi.hoisted(() => ({
+  mockListWalletsWithFilters: vi.fn(),
 }));
 
 vi.mock("@/modules/economySystem/wallets/wallet.service", () => ({
   walletServiceInstance: {
-    listWallets: (...args: any[]) => mockListWallets(...args),
-    getWalletByUserId: (...args: any[]) => mockGetWalletByUserId(...args),
+    listWalletsWithFilters: (...args: any[]) => mockListWalletsWithFilters(...args),
   },
   WalletService: class {},
 }));
@@ -38,28 +36,36 @@ describe("WalletController integration", () => {
     vi.clearAllMocks();
   });
 
-  it("GET /api/economy-system/wallets calls listWallets", async () => {
-    mockListWallets.mockResolvedValue({ list: [wallet], count: 1 });
+  it("GET /api/economy-system/wallets calls listWalletsWithFilters", async () => {
+    mockListWalletsWithFilters.mockResolvedValue({ list: [wallet], count: 1 });
 
     const response = await supertest(app)
       .get("/api/economy-system/wallets")
       .query({ pageNumber: 1, pageSize: 10 });
 
-    expect(mockListWallets).toHaveBeenCalled();
+    expect(mockListWalletsWithFilters).toHaveBeenCalledWith({
+      userId: null,
+      pageNumber: 1,
+      pageSize: 10,
+    });
     expect(response.status).toBe(200);
     expect(response.body.status).toBe("success");
     expect(response.body.data).toHaveLength(1);
     expect(response.body.meta.totalRecords).toBe(1);
   });
 
-  it("GET /api/economy-system/wallets?userId= calls getWalletByUserId", async () => {
-    mockGetWalletByUserId.mockResolvedValue(wallet);
+  it("GET /api/economy-system/wallets?userId= calls listWalletsWithFilters", async () => {
+    mockListWalletsWithFilters.mockResolvedValue({ list: [wallet], count: 1 });
 
     const response = await supertest(app)
       .get("/api/economy-system/wallets")
       .query({ userId: "user-1", pageNumber: 1, pageSize: 10 });
 
-    expect(mockGetWalletByUserId).toHaveBeenCalledWith("user-1");
+    expect(mockListWalletsWithFilters).toHaveBeenCalledWith({
+      userId: "user-1",
+      pageNumber: 1,
+      pageSize: 10,
+    });
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveLength(1);
     expect(response.body.meta.totalRecords).toBe(1);
