@@ -35,11 +35,9 @@ export class TransactionController {
 
       const { data, error } = await tryCatch(
         async () =>
-          await this.transactionService.listTransactions({
+          await this.transactionService.listTransactions(pageNumber, pageSize, {
             userId,
             walletId,
-            pageNumber,
-            pageSize,
           }),
         "listing transactions",
       );

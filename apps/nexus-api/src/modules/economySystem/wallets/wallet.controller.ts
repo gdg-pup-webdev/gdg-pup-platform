@@ -48,11 +48,13 @@ export class WalletController {
 
       const { data, error } = await tryCatch(
         async () =>
-          await this.walletService.listWalletsWithFilters({
-            userId,
+          await this.walletService.listWalletsWithFilters(
             pageNumber,
             pageSize,
-          } satisfies WalletListFilters),
+            {
+              userId,
+            } satisfies WalletListFilters,
+          ),
         "listing wallets",
       );
       if (error) throw new ServiceError(error.message);

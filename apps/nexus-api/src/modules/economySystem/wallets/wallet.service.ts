@@ -18,8 +18,6 @@ import { tryCatch } from "@/utils/tryCatch.util.js";
  */
 export type WalletListFilters = {
   userId?: string | null;
-  pageNumber: number;
-  pageSize: number;
 };
 
 export class WalletService {
@@ -54,20 +52,29 @@ export class WalletService {
    * @returns A promise resolving to a list of wallets.
    */
   listWallets = async (pageNumber: number, pageSize: number) => {
-    return await this.listWalletsWithFilters({ pageNumber, pageSize });
+    return await this.listWalletsWithFilters(pageNumber, pageSize, {});
   };
 
   /**
    * Lists wallets based on provided filters.
    *
-   * @param filters - Filter and pagination options for listing wallets.
+   * @param filters - Filter options for listing wallets.
    * @returns A promise resolving to the list of wallets.
    * @throws {RepositoryError} If the repository operation fails.
    * @throws {NotFoundError} If no wallets are found.
    */
-  listWalletsWithFilters = async (filters: WalletListFilters) => {
+  listWalletsWithFilters = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: WalletListFilters,
+  ) => {
     const { data, error } = await tryCatch(
-      async () => await this.walletRepository.listWalletsWithFilters(filters),
+      async () =>
+        await this.walletRepository.listWalletsWithFilters(
+          pageNumber,
+          pageSize,
+          filters,
+        ),
       "calling repository to list wallets with filters",
     );
 

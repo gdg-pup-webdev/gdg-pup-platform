@@ -55,11 +55,9 @@ describe("TransactionController unit", () => {
 
     await controller.listTransactions(req as any, res as any, next);
 
-    expect(service.listTransactions).toHaveBeenCalledWith({
+    expect(service.listTransactions).toHaveBeenCalledWith(1, 10, {
       userId: "user-1",
       walletId: undefined,
-      pageNumber: 1,
-      pageSize: 10,
     });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(
@@ -90,11 +88,9 @@ describe("TransactionController unit", () => {
 
     await controller.listTransactions(req as any, res as any, next);
 
-    expect(service.listTransactions).toHaveBeenCalledWith({
+    expect(service.listTransactions).toHaveBeenCalledWith(1, 10, {
       userId: undefined,
       walletId: "wallet-1",
-      pageNumber: 1,
-      pageSize: 10,
     });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(
@@ -125,11 +121,9 @@ describe("TransactionController unit", () => {
 
     await controller.listTransactions(req as any, res as any, next);
 
-    expect(service.listTransactions).toHaveBeenCalledWith({
+    expect(service.listTransactions).toHaveBeenCalledWith(1, 10, {
       userId: undefined,
       walletId: undefined,
-      pageNumber: 1,
-      pageSize: 10,
     });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(
@@ -164,12 +158,7 @@ describe("TransactionController integration", () => {
       mockListTransactions,
       transaction,
       {},
-      {
-        userId: undefined,
-        walletId: undefined,
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      [1, 10, { userId: undefined, walletId: undefined }],
     );
   });
 
@@ -180,12 +169,7 @@ describe("TransactionController integration", () => {
       mockListTransactions,
       transaction,
       { userId: "user-1" },
-      {
-        userId: "user-1",
-        walletId: undefined,
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      [1, 10, { userId: "user-1", walletId: undefined }],
     );
   });
 
@@ -196,12 +180,7 @@ describe("TransactionController integration", () => {
       mockListTransactions,
       transaction,
       { walletId: "wallet-1" },
-      {
-        userId: undefined,
-        walletId: "wallet-1",
-        pageNumber: 1,
-        pageSize: 10,
-      },
+      [1, 10, { userId: undefined, walletId: "wallet-1" }],
     );
   });
 });

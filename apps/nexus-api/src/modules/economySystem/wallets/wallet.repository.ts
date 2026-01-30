@@ -38,14 +38,16 @@ export class WalletRepository {
    * If userId is provided, returns that user's wallet as a list.
    * Otherwise, returns all wallets.
    *
-   * @param filters - Object containing optional userId filter and pagination params.
+   * @param filters - Object containing optional userId filter.
    * @returns A promise resolving to a list of wallets and the total count.
    */
-  listWalletsWithFilters = async (filters: {
-    userId?: string | null;
-    pageNumber: number;
-    pageSize: number;
-  }): RespositoryResultList<models.economySystem.wallet.row> => {
+  listWalletsWithFilters = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: {
+      userId?: string | null;
+    },
+  ): RespositoryResultList<models.economySystem.wallet.row> => {
     if (filters.userId) {
       const wallet = await this.listWalletsOfUser(filters.userId);
 
@@ -55,7 +57,7 @@ export class WalletRepository {
       };
     }
 
-    return await this.list(filters.pageNumber, filters.pageSize);
+    return await this.list(pageNumber, pageSize);
   };
 
   /**

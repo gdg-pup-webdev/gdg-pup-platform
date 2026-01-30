@@ -142,11 +142,9 @@ describe("TransactionRepository", () => {
       .spyOn(repository, "listTransactionsByUserId")
       .mockResolvedValue({ list: [transaction], count: 1 });
 
-    const result = await repository.listTransactionsWithFilters({
+    const result = await repository.listTransactionsWithFilters(1, 10, {
       userId: "user-1",
       walletId: "wallet-1",
-      pageNumber: 1,
-      pageSize: 10,
     });
 
     expect(userSpy).toHaveBeenCalledWith("user-1", 1, 10);
@@ -160,10 +158,8 @@ describe("TransactionRepository", () => {
       .spyOn(repository, "listTransactionsByWalletId")
       .mockResolvedValue({ list: [transaction], count: 1 });
 
-    const result = await repository.listTransactionsWithFilters({
+    const result = await repository.listTransactionsWithFilters(1, 10, {
       walletId: "wallet-1",
-      pageNumber: 1,
-      pageSize: 10,
     });
 
     expect(walletSpy).toHaveBeenCalledWith("wallet-1", 1, 10);
@@ -177,10 +173,7 @@ describe("TransactionRepository", () => {
       .spyOn(repository, "listTransactions")
       .mockResolvedValue({ list: [transaction], count: 1 });
 
-    const result = await repository.listTransactionsWithFilters({
-      pageNumber: 2,
-      pageSize: 5,
-    });
+    const result = await repository.listTransactionsWithFilters(2, 5, {});
 
     expect(listSpy).toHaveBeenCalledWith(2, 5);
     expect(result).toEqual({ list: [transaction], count: 1 });

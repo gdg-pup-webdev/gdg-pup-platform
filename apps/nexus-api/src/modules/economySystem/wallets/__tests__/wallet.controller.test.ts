@@ -43,10 +43,8 @@ describe("WalletController integration", () => {
       .get("/api/economy-system/wallets")
       .query({ pageNumber: 1, pageSize: 10 });
 
-    expect(mockListWalletsWithFilters).toHaveBeenCalledWith({
+    expect(mockListWalletsWithFilters).toHaveBeenCalledWith(1, 10, {
       userId: null,
-      pageNumber: 1,
-      pageSize: 10,
     });
     expect(response.status).toBe(200);
     expect(response.body.status).toBe("success");
@@ -61,10 +59,8 @@ describe("WalletController integration", () => {
       .get("/api/economy-system/wallets")
       .query({ userId: "user-1", pageNumber: 1, pageSize: 10 });
 
-    expect(mockListWalletsWithFilters).toHaveBeenCalledWith({
+    expect(mockListWalletsWithFilters).toHaveBeenCalledWith(1, 10, {
       userId: "user-1",
-      pageNumber: 1,
-      pageSize: 10,
     });
     expect(response.status).toBe(200);
     expect(response.body.data).toHaveLength(1);

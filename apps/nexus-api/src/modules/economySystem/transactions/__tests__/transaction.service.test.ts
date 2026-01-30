@@ -40,16 +40,14 @@ describe("TransactionService", () => {
       count: 1,
     });
 
-    const result = await transactionService.listTransactions({
+    const result = await transactionService.listTransactions(1, 10, {
       walletId: "wallet-1",
-      pageNumber: 1,
-      pageSize: 10,
     });
 
-    expect(mockTransactionRepository.listTransactionsWithFilters).toHaveBeenCalledWith({
+    expect(
+      mockTransactionRepository.listTransactionsWithFilters,
+    ).toHaveBeenCalledWith(1, 10, {
       walletId: "wallet-1",
-      pageNumber: 1,
-      pageSize: 10,
     });
     expect(result.list).toHaveLength(1);
   });
@@ -60,10 +58,7 @@ describe("TransactionService", () => {
     );
 
     await expect(
-      transactionService.listTransactions({
-        pageNumber: 1,
-        pageSize: 10,
-      }),
+      transactionService.listTransactions(1, 10, {}),
     ).rejects.toBeInstanceOf(RepositoryError);
   });
 

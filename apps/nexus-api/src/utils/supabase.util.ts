@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError";
 import { supabase } from "@/lib/supabase";
 
 export namespace SupabaseUtils {
-  export const listRowsWithFilter = async (
+  export const listRowsByFilter = async (
     tableName: string,
     pageNumber: number,
     pageSize: number,
@@ -41,6 +41,17 @@ export namespace SupabaseUtils {
     if (error) throw error;
     return { list: data, count: count || 0 };
   };
+
+  export const listRowsWithFilter = async (
+    tableName: string,
+    pageNumber: number,
+    pageSize: number,
+    filters?: Record<string, any>,
+    options?: {
+      orderBy?: string;
+      orderDirection?: "asc" | "desc";
+    },
+  ) => listRowsByFilter(tableName, pageNumber, pageSize, filters, options);
 
   export const listRows = async (
     tablename: string,

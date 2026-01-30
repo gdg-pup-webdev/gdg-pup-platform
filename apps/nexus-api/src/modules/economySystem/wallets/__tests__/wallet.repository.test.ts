@@ -80,10 +80,8 @@ describe("WalletRepository", () => {
       .spyOn(repository, "listWalletsOfUser")
       .mockResolvedValue(wallet as any);
 
-    const result = await repository.listWalletsWithFilters({
+    const result = await repository.listWalletsWithFilters(1, 10, {
       userId: "user-1",
-      pageNumber: 1,
-      pageSize: 10,
     });
 
     expect(listWalletsOfUserSpy).toHaveBeenCalledWith("user-1");
@@ -97,10 +95,7 @@ describe("WalletRepository", () => {
       .spyOn(repository, "list")
       .mockResolvedValue({ list: [wallet], count: 1 });
 
-    const result = await repository.listWalletsWithFilters({
-      pageNumber: 1,
-      pageSize: 10,
-    });
+    const result = await repository.listWalletsWithFilters(1, 10, {});
 
     expect(listSpy).toHaveBeenCalledWith(1, 10);
     expect(result).toEqual({ list: [wallet], count: 1 });

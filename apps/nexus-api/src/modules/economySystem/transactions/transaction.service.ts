@@ -22,20 +22,26 @@ export class TransactionService {
    * Lists transactions based on provided filters.
    * Delegates filter logic to the repository.
    *
-   * @param filters - Object containing optional filters (userId, walletId) and pagination params.
+   * @param filters - Object containing optional filters (userId, walletId).
    * @returns A promise resolving to the list of transactions and count.
    * @throws {RepositoryError} If the repository operation fails.
    * @throws {NotFoundError} If no transactions are found (though empty list is usually valid, this depends on repo behavior).
    */
-  listTransactions = async (filters: {
-    userId?: string;
-    walletId?: string;
-    pageNumber: number;
-    pageSize: number;
-  }) => {
+  listTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: {
+      userId?: string;
+      walletId?: string;
+    },
+  ) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.transactionRepository.listTransactionsWithFilters(filters),
+        await this.transactionRepository.listTransactionsWithFilters(
+          pageNumber,
+          pageSize,
+          filters,
+        ),
       "listing transactions",
     );
     if (error) throw new RepositoryError(error.message);

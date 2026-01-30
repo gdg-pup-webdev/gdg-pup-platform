@@ -77,10 +77,7 @@ describe("WalletService", () => {
 
     const result = await walletService.listWallets(1, 10);
 
-    expect(mockWalletRepository.listWalletsWithFilters).toHaveBeenCalledWith({
-      pageNumber: 1,
-      pageSize: 10,
-    });
+    expect(mockWalletRepository.listWalletsWithFilters).toHaveBeenCalledWith(1, 10, {});
     expect(result).toEqual({ list: [wallet], count: 1 });
   });
 
@@ -90,10 +87,8 @@ describe("WalletService", () => {
       count: 0,
     });
 
-    const result = await walletService.listWalletsWithFilters({
+    const result = await walletService.listWalletsWithFilters(1, 10, {
       userId: null,
-      pageNumber: 1,
-      pageSize: 10,
     });
 
     expect(result).toEqual({ list: [], count: 0 });
@@ -103,7 +98,7 @@ describe("WalletService", () => {
     mockWalletRepository.listWalletsWithFilters.mockRejectedValue(new Error("boom"));
 
     await expect(
-      walletService.listWalletsWithFilters({ pageNumber: 1, pageSize: 10 }),
+      walletService.listWalletsWithFilters(1, 10, {}),
     ).rejects.toBeInstanceOf(RepositoryError);
   });
 

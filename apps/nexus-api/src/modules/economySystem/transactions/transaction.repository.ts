@@ -134,32 +134,34 @@ export class TransactionRepository {
    * Routes the list request to the appropriate method based on provided filters.
    * Precedence: userId -> walletId -> paginated list (all).
    *
-   * @param filters - Object containing optional filters (userId, walletId) and pagination params.
+   * @param filters - Object containing optional filters (userId, walletId).
    * @returns A promise resolving to a list of transactions and the total count.
    */
-  listTransactionsWithFilters = async (filters: {
-    userId?: string;
-    walletId?: string;
-    pageNumber: number;
-    pageSize: number;
-  }): RespositoryResultList<models.economySystem.transaction.row> => {
+  listTransactionsWithFilters = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: {
+      userId?: string;
+      walletId?: string;
+    },
+  ): RespositoryResultList<models.economySystem.transaction.row> => {
     if (filters.userId) {
       return await this.listTransactionsByUserId(
         filters.userId,
-        filters.pageNumber,
-        filters.pageSize,
+        pageNumber,
+        pageSize,
       );
     }
 
     if (filters.walletId) {
       return await this.listTransactionsByWalletId(
         filters.walletId,
-        filters.pageNumber,
-        filters.pageSize,
+        pageNumber,
+        pageSize,
       );
     }
 
-    return await this.listTransactions(filters.pageNumber, filters.pageSize);
+    return await this.listTransactions(pageNumber, pageSize);
   };
 
   /**
