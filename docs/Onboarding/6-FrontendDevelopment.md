@@ -24,9 +24,6 @@ apps/nexus-web/src/
 │           └── page.tsx        # User profile page
 │
 ├── components/
-│   ├── ui/                     # Core UI components from shadcn/ui
-│   │   ├── button.tsx
-│   │   └── card.tsx
 │   └── features/               # Components specific to application features
 │       ├── EventCard.tsx
 │       └── UserProfile.tsx
@@ -43,10 +40,25 @@ apps/nexus-web/src/
 ```
 
 -   **`app/`**: Follows the Next.js App Router conventions for file-based routing.
--   **`components/`**: Contains all React components, separated into `ui` for generic, reusable elements and `features` for components tied to specific application functionality.
+-   **`components/features/`**: Contains application-specific UI composed from Spark-UI components.
 -   **`lib/`**: Includes core utilities, most notably the configuration for our type-safe API client.
 -   **`providers/`**: Holds React context providers that wrap the entire application.
 -   **`hooks/`**: Contains custom React hooks for shared, reusable logic.
+
+### Internal UI Library (SparkUI)
+
+We use **SparkUI**, our internal component library and design system, for all shared UI across frontend applications.
+
+Spark-UI provides reusable, brand-level components and defines visual behavior, accessibility, and theming. Application code should **compose SparkUI components**, not reimplement them. Feature-specific UI remains inside the application (`components/features`).
+
+All Spark-UI components are **documented and visually tested in Storybook**, which serves as the source of truth for component usage, appearance, and supported variants.
+
+Before building new UI components in the application, always consult:
+
+- **SparkUI source & documentation:** [SparkUI/README.md](../SparkUI/README.md)
+- **Component usage & visual reference:** Storybook (`apps/storybook`)
+
+For detailed ownership rules and contribution guidelines, see: [SparkUI Documentation](../SparkUI/README.md)
 
 ## Type-Safe API Client 
 
