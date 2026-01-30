@@ -1,4 +1,4 @@
-import { ServiceError } from "@/classes/ServerError";
+import { ServiceError, NotFoundError } from "@/classes/ServerError";
 import { RoleService, roleServiceInstance } from "./role.service.js";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
@@ -48,7 +48,7 @@ export class RoleController {
    */
   getRolesOfUser: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.GET,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
       const userId = input.query.userId;
@@ -58,6 +58,7 @@ export class RoleController {
           async () => await this.roleService.getRolesOfUser(userId),
           "getting user roles",
         );
+
         if (error) throw new ServiceError(error.message);
 
         return output(200, {

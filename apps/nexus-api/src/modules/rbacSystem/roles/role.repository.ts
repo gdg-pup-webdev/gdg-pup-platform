@@ -67,8 +67,9 @@ export class RoleRepository {
   ): Promise<RepositoryResultList<roleRow>> => {
     const { data, error } = await supabase
       .from(this.junctionTable)
-      .select("*, user_role(*)")
+      .select(`*, user_role(*, user_role_permission(*))`)
       .eq("user_id", userId);
+
     if (error) throw new DatabaseError(error.message);
 
     const { count, error: countError } = await supabase
@@ -196,7 +197,7 @@ export class RoleRepository {
 
   /**
    * Creates a new role.
-   * Throws RepositoryConflictError if role already exists.
+   * Throws DatabaseError if role already exists.
    */
   createRole = async (
     roleData: TablesInsert<"user_role">,
@@ -220,7 +221,7 @@ export class RoleRepository {
 
   /**
    * Updates an existing role.
-   * Throws NotFoundError if role not found, RepositoryConflictError if duplicate name.
+   * Throws NotFoundError if role not found, DatabaseError if duplicate name.
    */
   updateRole = async (
     roleId: string,
@@ -254,7 +255,7 @@ export class RoleRepository {
 
   /**
    * Deletes a role.
-   * Throws RepositoryConflictError if role is assigned to users.
+   * Throws DatabaseError if role is assigned to users.
    */
   deleteRole = async (roleId: string): Promise<{ success: boolean }> => {
     const { error } = await supabase
@@ -277,7 +278,7 @@ export class RoleRepository {
 
   /**
    * Assigns a role to a user.
-   * Throws RepositoryConflictError if already assigned, NotFoundError if user/role not found.
+   * Throws DatabaseError if already assigned, NotFoundError if user/role not found.
    */
   assignRoleToUser = async (
     userId: string,
@@ -311,7 +312,7 @@ export class RoleRepository {
 
   /**
    * Assigns a role to multiple users (bulk).
-   * Throws RepositoryConflictError if any user already has the role.
+   * Throws DatabaseError if any user already has the role.
    */
   assignRoleToUsers = async (
     userIds: string[],
@@ -350,7 +351,7 @@ export class RoleRepository {
 
   /**
    * Assigns multiple roles to a user (bulk).
-   * Throws RepositoryConflictError if user already has any of the roles.
+   * Throws DatabaseError if user already has any of the roles.
    */
   assignRolesToUser = async (
     userId: string,
