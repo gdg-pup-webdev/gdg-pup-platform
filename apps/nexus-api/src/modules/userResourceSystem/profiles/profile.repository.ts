@@ -7,7 +7,7 @@
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { DatabaseError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util";
@@ -33,7 +33,7 @@ export class ProfileRepository {
    */
   getProfileByUserId = async (
     userId: string,
-  ): RespositoryResultList<profileRow> => {
+  ): RepositoryResultList<profileRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRowsWithFilter(this.tableName, 1, 1000, {
@@ -54,7 +54,7 @@ export class ProfileRepository {
   listProfilesPaginated = async (
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<profileRow> => {
+  ): RepositoryResultList<profileRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRows(this.tableName, pageNumber, pageSize),
@@ -70,7 +70,7 @@ export class ProfileRepository {
    * getOneProfile
    * Fetches a single profile by ID.
    */
-  getOneProfile = async (id: string): RespositoryResultList<profileRow> => {
+  getOneProfile = async (id: string): RepositoryResultList<profileRow> => {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.getOneRow(this.tableName, id),
       "Calling database to get one profile",
