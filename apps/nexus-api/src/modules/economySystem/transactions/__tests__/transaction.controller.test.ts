@@ -1,28 +1,19 @@
 /**
  * @file transaction.controller.test.ts
- * @description Transaction controller tests covering unit-level branch selection
+ * @description Transaction controller tests covering unit-level filter pass-through
  * and HTTP integration behavior with mocked services. These tests validate
  * response shape without touching the database.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TransactionController } from "../transaction.controller.js";
 
-const {
-  mockListTransactionsOfUser,
-  mockListTransactionsOfWallet,
-  mockListTransactionsByPage,
-} = vi.hoisted(() => ({
-  mockListTransactionsOfUser: vi.fn(),
-  mockListTransactionsOfWallet: vi.fn(),
-  mockListTransactionsByPage: vi.fn(),
+const { mockListTransactions } = vi.hoisted(() => ({
+  mockListTransactions: vi.fn(),
 }));
 
 vi.mock("@/modules/economySystem/transactions/transaction.service", () => ({
   transactionServiceInstance: {
-    listTransactionsOfUser: (...args: any[]) => mockListTransactionsOfUser(...args),
-    listTransactionsOfWallet: (...args: any[]) =>
-      mockListTransactionsOfWallet(...args),
-    listTransactionsByPage: (...args: any[]) => mockListTransactionsByPage(...args),
+    listTransactions: (...args: any[]) => mockListTransactions(...args),
   },
   TransactionService: class {},
 }));
@@ -45,14 +36,12 @@ describe("TransactionController unit", () => {
     vi.clearAllMocks();
   });
 
-  it("uses listTransactionsOfUser when userId exists", async () => {
+  it("uses listTransactions with userId filter", async () => {
     const service = {
-      listTransactionsOfUser: vi.fn().mockResolvedValue({
+      listTransactions: vi.fn().mockResolvedValue({
         list: [transaction],
         count: 1,
       }),
-      listTransactionsOfWallet: vi.fn(),
-      listTransactionsByPage: vi.fn(),
     };
     const controller = new TransactionController(service as any);
     const req = {
@@ -66,7 +55,12 @@ describe("TransactionController unit", () => {
 
     await controller.listTransactions(req as any, res as any, next);
 
-    expect(service.listTransactionsOfUser).toHaveBeenCalledWith("user-1");
+    expect(service.listTransactions).toHaveBeenCalledWith({
+      userId: "user-1",
+      walletId: undefined,
+      pageNumber: 1,
+      pageSize: 10,
+    });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -77,14 +71,12 @@ describe("TransactionController unit", () => {
     );
   });
 
-  it("uses listTransactionsOfWallet when walletId exists", async () => {
+  it("uses listTransactions with walletId filter", async () => {
     const service = {
-      listTransactionsOfUser: vi.fn(),
-      listTransactionsOfWallet: vi.fn().mockResolvedValue({
+      listTransactions: vi.fn().mockResolvedValue({
         list: [transaction],
         count: 1,
       }),
-      listTransactionsByPage: vi.fn(),
     };
     const controller = new TransactionController(service as any);
     const req = {
@@ -98,7 +90,12 @@ describe("TransactionController unit", () => {
 
     await controller.listTransactions(req as any, res as any, next);
 
-    expect(service.listTransactionsOfWallet).toHaveBeenCalledWith("wallet-1");
+    expect(service.listTransactions).toHaveBeenCalledWith({
+      userId: undefined,
+      walletId: "wallet-1",
+      pageNumber: 1,
+      pageSize: 10,
+    });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -109,11 +106,9 @@ describe("TransactionController unit", () => {
     );
   });
 
-  it("uses listTransactionsByPage when no filters", async () => {
+  it("uses listTransactions without filters", async () => {
     const service = {
-      listTransactionsOfUser: vi.fn(),
-      listTransactionsOfWallet: vi.fn(),
-      listTransactionsByPage: vi.fn().mockResolvedValue({
+      listTransactions: vi.fn().mockResolvedValue({
         list: [transaction],
         count: 1,
       }),
@@ -130,7 +125,12 @@ describe("TransactionController unit", () => {
 
     await controller.listTransactions(req as any, res as any, next);
 
-    expect(service.listTransactionsByPage).toHaveBeenCalledWith(1, 10);
+    expect(service.listTransactions).toHaveBeenCalledWith({
+      userId: undefined,
+      walletId: undefined,
+      pageNumber: 1,
+      pageSize: 10,
+    });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -161,8 +161,15 @@ describe("TransactionController integration", () => {
     await testListEconomyResources(
       app,
       "/api/economy-system/transactions",
-      mockListTransactionsByPage,
+      mockListTransactions,
       transaction,
+      {},
+      {
+        userId: undefined,
+        walletId: undefined,
+        pageNumber: 1,
+        pageSize: 10,
+      },
     );
   });
 
@@ -170,9 +177,15 @@ describe("TransactionController integration", () => {
     await testListEconomyResources(
       app,
       "/api/economy-system/transactions",
-      mockListTransactionsOfUser,
+      mockListTransactions,
       transaction,
       { userId: "user-1" },
+      {
+        userId: "user-1",
+        walletId: undefined,
+        pageNumber: 1,
+        pageSize: 10,
+      },
     );
   });
 
@@ -180,9 +193,15 @@ describe("TransactionController integration", () => {
     await testListEconomyResources(
       app,
       "/api/economy-system/transactions",
-      mockListTransactionsOfWallet,
+      mockListTransactions,
       transaction,
       { walletId: "wallet-1" },
+      {
+        userId: undefined,
+        walletId: "wallet-1",
+        pageNumber: 1,
+        pageSize: 10,
+      },
     );
   });
 });
