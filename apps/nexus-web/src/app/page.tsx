@@ -13,13 +13,14 @@ import { callEndpoint } from "@packages/typed-rest";
 import { configs } from "@/configs/servers.config";
 import Link from "next/link";
 import React from "react";
-import {  Header} from "@packages/spark-ui";
+import { Header, Button, Test } from "@packages/spark-ui";
 
 const HomePage = () => {
   return (
     <>
       <div className="w-full h-screen flex flex-col gap-8 justify-center items-center">
         <Header>Nexus Web</Header>
+        <Test />
         <div className="flex flex-row gap-4">
           <NexusApiHealthCheckCard />
           <IdentityApiHealthCheckCard />
