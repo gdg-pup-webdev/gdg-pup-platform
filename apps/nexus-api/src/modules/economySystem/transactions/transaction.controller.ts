@@ -3,70 +3,51 @@ import {
   TransactionService,
   transactionServiceInstance,
 } from "@/modules/economySystem/transactions/transaction.service";
-import {
-  WalletService,
-  walletServiceInstance,
-} from "@/modules/economySystem/wallets/wallet.service";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
 
+/**
+ * Controller for handling transaction-related HTTP requests.
+ * Implements endpoints defined in the economy system contract.
+ */
 export class TransactionController {
   constructor(
-    private transactionService: TransactionService = transactionServiceInstance,
+    private readonly transactionService: TransactionService = transactionServiceInstance,
   ) {}
 
+  /**
+   * Lists transactions with optional filtering and pagination.
+   *
+   * @route GET /api/economy-system/transactions
+   * @returns JSON response containing the list of transactions and pagination metadata.
+   * @throws {ServiceError} If the service layer encounters an error.
+   */
   listTransactions: RequestHandler = createExpressController(
     contract.api.economy_system.transactions.GET,
-    async ({ input, output, ctx }) => {
-      // pagination parameters
+    async ({ input, output }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
 
-      // getting filters
       const userId = input.query.userId;
       const walletId = input.query.walletId;
 
-      let list, count;
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.transactionService.listTransactions({
+            userId,
+            walletId,
+            pageNumber,
+            pageSize,
+          }),
+        "listing transactions",
+      );
 
-      if (userId) {
-        const { data, error } = await tryCatch(
-          async () =>
-            await this.transactionService.listTransactionsOfUser(userId),
-          "getting user wallet transactions",
-        );
+      if (error) throw new ServiceError(error.message);
 
-        if (error) throw new ServiceError(error.message);
-
-        list = data.list;
-        count = data.count;
-      } else if (walletId) {
-        const { data, error } = await tryCatch(
-          async () =>
-            await this.transactionService.listTransactionsOfWallet(walletId),
-          "getting wallet transactions",
-        );
-
-        if (error) throw new ServiceError(error.message);
-
-        list = data.list;
-        count = data.count;
-      } else {
-        const { data, error } = await tryCatch(
-          async () =>
-            await this.transactionService.listTransactionsByPage(
-              pageNumber,
-              pageSize,
-            ),
-          "listing transactions",
-        );
-
-        if (error) throw new ServiceError(error.message);
-
-        list = data.list;
-        count = data.count;
-      }
+      const list = data.list;
+      const count = data.count;
 
       return output(200, {
         status: "success",
