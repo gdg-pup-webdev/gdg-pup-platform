@@ -1,19 +1,17 @@
 # GDG PUP Platform
 
-Welcome to the **GDG PUP Platform** – a modern, full-stack monorepo built with end-to-end type safety, contract-first architecture, and a unified development workflow. Whether you're a new contributor or an experienced developer, this guide will help you get started quickly.
+Welcome to the **GDG PUP Platform** – a modern, full-stack monorepo built with end-to-end type safety, contract-first architecture, and a unified development workflow.
 
 ---
 
 ## 🌟 New to the Project?
 
-**Start here!** We've designed a comprehensive onboarding path to help you understand our platform and start contributing with confidence.
+**Start here!** Follow this path to get up and running:
 
-### ✅ Quick Start Checklist
-
-1. **[Get Your Environment Running](#-quick-start)** – Clone the repo and run the project locally
-2. **[Complete the Developer Onboarding](#-developer-onboarding)** – Learn our architecture and development practices
-3. **[Explore the Codebase](#-project-structure)** – Understand how the project is organized
-4. **[Start Contributing](#-documentation)** – Read our architecture guide and best practices
+1. **[Quick Start](#-quick-start)** – Get the platform running locally
+2. **[Developer Onboarding](#-developer-onboarding)** – Learn our architecture and practices
+3. **[Coding Guidelines](#-coding-guidelines)** – Understand our development standards
+4. **[Start Contributing](#-contributing)** – Begin making contributions
 
 ---
 
@@ -21,183 +19,182 @@ Welcome to the **GDG PUP Platform** – a modern, full-stack monorepo built with
 
 Get the platform running on your local machine in under 5 minutes.
 
+Get the platform running on your local machine in under 5 minutes.
+
 ### Prerequisites
 
 - **Node.js** (v20+) – [Download here](https://nodejs.org/)
 - **Postgres database** – We recommend [Supabase](https://supabase.com/)
-- **Docker Desktop** (optional, for containerized development) – [Get Docker](https://www.docker.com/products/docker-desktop/)
+- **pnpm** – Fast package manager (`npm install -g pnpm@latest`)
 
-### Installation Steps
+### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/gdg-pup-webdev/gdg-pup-platform.git
-   cd gdg-pup-platform
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/gdg-pup-webdev/gdg-pup-platform.git
+cd gdg-pup-platform
 
-2. **Get environment variables**
-   
-   Contact the project organizers to obtain the necessary `.env` files and place them in the appropriate folders.
+# 2. Install dependencies
+pnpm install
 
-3. **Install pnpm and dependencies**
-   ```bash
-   npm install -g pnpm@latest
-   pnpm install
-   ```
+# 3. Get environment variables (contact project organizers)
 
-4. **Build the project**
-   ```bash
-   pnpm run build
-   ```
+# 4. Build the project
+pnpm run build
 
-5. **Start development mode**
-   ```bash
-   pnpm run dev
-   ```
+# 5. Start development
+pnpm run dev
+```
 
-🎉 **You're all set!** The platform is now running locally.
+### Access Your Services
 
-### Access Your Local Services
-
-| Service      | URL                      | Description              |
-|--------------|--------------------------|--------------------------|
-| Nexus Web    | http://localhost:3000    | Next.js Frontend         |
-| Nexus API    | http://localhost:8000    | Express.js Backend       |
-| Identity API | http://localhost:8100    | Authentication Service   |
+| Service      | URL                      |
+|--------------|--------------------------|
+| Nexus Web    | http://localhost:3000    |
+| Nexus API    | http://localhost:8000    |
+| Identity API | http://localhost:8100    |
 
 ---
 
 ## 📖 Developer Onboarding
 
-**New to the team?** Follow our structured onboarding curriculum to get up to speed with our architecture, development practices, and workflows.
+**New to the team?** Complete our structured onboarding curriculum to understand the platform.
 
-### 🎯 Learning Path
+### Learning Path
 
-#### **1. Getting Started**
-- **[0 - Setting Up the Project](./docs/Onboarding/0-SettingUpTheProject.md)** – Detailed setup guide with troubleshooting tips
+1. **[Setting Up the Project](./docs/Onboarding/0-SettingUpTheProject.md)** – Detailed setup with troubleshooting
+2. **[Project Architecture](./docs/Onboarding/1-ProjectArchitecture.md)** – Monorepo structure and tech stack
+3. **[Contract-First Development](./docs/Onboarding/2-ContractFirstDevelopment.md)** – Type safety across the stack
+4. **[Layered Architecture](./docs/Onboarding/3-LayeredArchitecture.md)** – Backend design principles
+5. **[Dependency Injection](./docs/Onboarding/4-DependencyInjection.md)** – Modular, testable code
+6. **[Error Handling](./docs/Onboarding/5-ErrorHandling.md)** – Graceful error management
+7. **[Frontend Development](./docs/Onboarding/6-FrontendDevelopment.md)** – Type-safe clients and UI
+8. **[Development Workflow](./docs/Onboarding/7-DevelopmentWorkflow.md)** – Daily development process
 
-#### **2. Core Concepts** (Read in Order)
-- **[1 - Project Architecture](./docs/Onboarding/1-ProjectArchitecture.md)** – Understanding our monorepo structure and tech stack
-- **[2 - Contract-First Development](./docs/Onboarding/2-ContractFirstDevelopment.md)** – How we ensure type safety across the entire stack
-- **[3 - Layered Architecture](./docs/Onboarding/3-LayeredArchitecture.md)** – Backend design principles (controllers, services, repositories)
-- **[4 - Dependency Injection](./docs/Onboarding/4-DependencyInjection.md)** – Writing modular, testable code
-- **[5 - Error Handling](./docs/Onboarding/5-ErrorHandling.md)** – Our approach to graceful error management
-- **[6 - Frontend Development](./docs/Onboarding/6-FrontendDevelopment.md)** – Type-safe API clients and UI components
-- **[7 - Development Workflow](./docs/Onboarding/7-DevelopmentWorkflow.md)** – Daily workflows and feature development process
-
-#### **3. Reference Guides**
-- **[Best Practices](./docs/Onboarding/99.1-BestPractices.md)** – Coding standards and conventions
-- **[Troubleshooting Guide](./docs/Onboarding/99.2-TroubleShootingGuides.md)** – Common issues and solutions
-- **[Additional Resources](./docs/Onboarding/99.3-AdditionalResources.md)** – External documentation and tools
-
-📚 **Full Onboarding Hub**: [docs/Onboarding/README.md](./docs/Onboarding/README.md)
+**📚 Complete Guide**: [docs/Onboarding/README.md](./docs/Onboarding/README.md)
 
 ---
 
-## 🏗️ Project Structure
+## 📋 Coding Guidelines
 
-This monorepo is organized with clear separation between applications and shared packages:
+Our coding guidelines ensure code quality, scalability, and consistency across the platform.
+
+### Quick Reference
+
+**Backend Development**
+- **[101 - API Utilities](./docs/CodingGuidelines/101-ApiUtilities.md)** – Reusable utility functions
+- **[102 - Layered Architecture](./docs/CodingGuidelines/102-LayeredArchitecture.md)** – Backend structure
+- **[103 - Contract-First Development](./docs/CodingGuidelines/103-ContractFirstDevelopment.md)** – API contracts
+- **[104 - Shallow Routes Design](./docs/CodingGuidelines/104-ShallowRoutesDesign.md)** – Endpoint conventions
+- **[105 - Error Handling](./docs/CodingGuidelines/105-ErrorHandling.md)** – Error patterns
+
+**Project Structure**
+- **[401 - File Structure](./docs/CodingGuidelines/401-FileStructure.md)** – Folder organization
+
+**General Standards**
+- **[503 - Code Readability](./docs/CodingGuidelines/503-CodeReadability.md)** – Self-documenting code
+- **[504 - Documenting Your Code](./docs/CodingGuidelines/504-DocumentingYourCode.md)** – Documentation practices
+
+**Collaboration**
+- **[701 - Opening an Issue](./docs/CodingGuidelines/701-OpeningAnIssue.md)** – Issue creation
+- **[702 - Submitting a Pull Request](./docs/CodingGuidelines/702-SubmittingAPullRequest.md)** – PR standards
+- **[703 - Naming Your Branches](./docs/CodingGuidelines/703-NamingYourBranches.md)** – Branch naming
+- **[704 - Commit Conventions](./docs/CodingGuidelines/704-CommitConventions.md)** – Commit messages
+- **[705 - Contributing](./docs/CodingGuidelines/705-Contributing.md)** – Contribution workflow
+
+**� All Guidelines**: [docs/CodingGuidelines/README.md](./docs/CodingGuidelines/README.md)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Before submitting a PR:
+
+1. **Complete Onboarding** – [Developer Onboarding](#-developer-onboarding)
+2. **Read Guidelines** – [Coding Guidelines](#-coding-guidelines)
+3. **Follow Workflow** – [705 - Contributing](./docs/CodingGuidelines/705-Contributing.md)
+
+### Quick Contribution Steps
+
+1. Open or find an issue – [701 - Opening an Issue](./docs/CodingGuidelines/701-OpeningAnIssue.md)
+2. Create a branch – [703 - Naming Your Branches](./docs/CodingGuidelines/703-NamingYourBranches.md)
+3. Make changes following our [Coding Guidelines](#-coding-guidelines)
+4. Commit with proper format – [704 - Commit Conventions](./docs/CodingGuidelines/704-CommitConventions.md)
+5. Submit a PR – [702 - Submitting a Pull Request](./docs/CodingGuidelines/702-SubmittingAPullRequest.md)
+
+---
+
+## Additional Information
+
+### 🏗️ Project Structure
 
 ```text
 root/
 ├── apps/                           # Deployable applications
-│   ├── nexus-api/                 # Express.js Backend (Core API)
-│   ├── nexus-web/                 # Next.js Frontend (Web Client)
-│   └── identity-api/              # Authentication & Identity Service
-├── packages/                       # Shared internal packages
-│   ├── nexus-api-contracts/       # API Contracts (Zod Schemas & Routes)
-│   ├── typed-rest/                # Type-safe Client/Server Helpers
-│   └── identity-api-contracts/    # Identity API Contracts
-├── docs/                           # Documentation & Guides
-│   ├── Onboarding/                # Developer onboarding lessons
-│   ├── ARCHITECTURE.md            # System architecture details
-│   └── DATABASE.md                # Database schema & migrations
-└── ...workspace configs            # pnpm, turborepo, Docker configs
+│   ├── nexus-api/                 # Express.js Backend
+│   ├── nexus-web/                 # Next.js Frontend
+│   └── identity-api/              # Authentication Service
+├── packages/                       # Shared packages
+│   ├── nexus-api-contracts/       # API Contracts (Zod Schemas)
+│   ├── typed-rest/                # Type-safe Client/Server
+│   └── identity-api-contracts/    # Identity Contracts
+├── docs/                           # Documentation
+│   ├── Onboarding/                # Developer onboarding
+│   └── CodingGuidelines/          # Coding standards
+└── ...configs                      # Tooling configuration
 ```
 
 ---
 
-## 💻 Tech Stack
+### 💻 Tech Stack
 
 | Layer           | Technologies                                      |
 |-----------------|---------------------------------------------------|
 | **Frontend**    | Next.js 14, React, TailwindCSS, shadcn/ui        |
 | **Backend**     | Express.js, TypeScript, Node.js                  |
 | **Database**    | Supabase (PostgreSQL)                            |
-| **Contracts**   | Zod (validation), Supazod (Supabase integration) |
-| **Monorepo**    | pnpm (package manager), Turborepo (build system) |
+| **Contracts**   | Zod, Supazod                                     |
+| **Monorepo**    | pnpm, Turborepo                                  |
 | **DevOps**      | Docker, Docker Compose                           |
 
 ---
 
-## 🐳 Docker Development (Alternative Setup)
 
-Prefer containerized development? Run the entire platform with Docker.
+### � Docker Development (Optional)
 
-### Docker Quick Start
+Prefer containerized development? Use Docker:
 
-1. **Create environment file**
-   ```bash
-   # Create .env in root directory
-   NEXT_PUBLIC_NEXUS_API_URL=http://nexus-api:8000
-   NEXT_PUBLIC_IDENTITY_API_URL=http://identity-api:8100
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_PUB_KEY=your-supabase-key
-   ```
+```bash
+# Build and start all services
+docker compose up -d --build
 
-2. **Build and start all services**
-   ```bash
-   docker compose up -d --build
-   ```
+# View logs
+docker compose logs -f
 
-3. **Access services** at the URLs listed in the [Quick Start](#access-your-local-services) table
+# Stop services
+docker compose down
+```
 
-### Useful Docker Commands
-
-| Command                            | Description                        |
-|------------------------------------|------------------------------------|
-| `docker compose up -d`             | Start all services (background)    |
-| `docker compose up -d --build`     | Rebuild and restart all services   |
-| `docker compose down`              | Stop and remove all containers     |
-| `docker compose logs -f`           | View live logs from all services   |
-| `docker compose logs -f nexus-web` | View logs for a specific service   |
-| `docker compose ps`                | List running containers            |
-| `docker compose restart`           | Restart all services               |
+**Useful Commands**: See [Docker section](./docs/Onboarding/0-SettingUpTheProject.md#docker-setup) in setup guide.
 
 ---
 
-## 📚 Documentation
+### 📚 Additional Documentation
 
-- **[Architecture Guide](./docs/ARCHITECTURE.md)** – Deep dive into system design, contracts, and data flow
-- **[Database Guide](./docs/DATABASE.md)** – Schema design, migrations, and Supabase setup
-- **[Developer Onboarding](./docs/Onboarding/README.md)** – Comprehensive learning path for new contributors
-
----
-
-## 🛠️ Learn More About Our Tools
-
-- **[pnpm](https://pnpm.io/pnpm-cli)** – Fast, disk space efficient package manager
-- **[Turborepo](https://turborepo.dev/docs)** – High-performance build system for monorepos
-- **[Turborepo Video Guide](https://www.youtube.com/watch?v=gpWDZir8dAA)** – Visual walkthrough
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Before submitting a PR, please:
-
-1. Complete the [Developer Onboarding](#-developer-onboarding) curriculum
-2. Read our [Best Practices](./docs/Onboarding/99.1-BestPractices.md) guide
-3. Follow the [Development Workflow](./docs/Onboarding/7-DevelopmentWorkflow.md)
+- **[Architecture Guide](./docs/ARCHITECTURE.md)** – System design and data flow
+- **[Database Guide](./docs/DATABASE.md)** – Schema and migrations
+- **[Troubleshooting](./docs/Onboarding/99.2-TroubleShootingGuides.md)** – Common issues and solutions
 
 ---
 
 ## 💬 Need Help?
 
-- **Setup Issues?** Check the [Troubleshooting Guide](./docs/Onboarding/99.2-TroubleShootingGuides.md)
-- **Architecture Questions?** See the [Architecture Guide](./docs/ARCHITECTURE.md)
-- **Still stuck?** Reach out to the project organizers
+- **Setup Issues?** → [Troubleshooting Guide](./docs/Onboarding/99.2-TroubleShootingGuides.md)
+- **Architecture Questions?** → [Architecture Guide](./docs/ARCHITECTURE.md)
+- **Coding Standards?** → [Coding Guidelines](./docs/CodingGuidelines/README.md)
+- **Still Stuck?** → Reach out to project organizers
 
 ---
 
+_Maintained with ❤️ by the GDG PUP Team_
 _Maintained with ❤️ by the GDG PUP Team_

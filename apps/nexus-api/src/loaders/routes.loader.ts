@@ -1,12 +1,8 @@
 import { Express } from "express";
-import { healthCheckRouterInstance } from "../modules/healthCheck/healthCheck.route.js";
+import { healthCheckModuleRouterInstance } from "@/modules/healthCheck/index.js";
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
-import { userRouterInstance } from "@/modules/userSystem/user.route.js";
-import { fileSystemRouterInstance } from "@/modules/filesSystem/fileSystem.route.js";
+import { fileSystemRouterInstance } from "@/modules/filesSystem/index.js";
 import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
-import { articleRouterInstance } from "@/modules/publicationSystem/article.route.js";
-import { rewardRouterInstance } from "@/modules/rewardsSystem/reward.route.js";
-import { teamRouterInstance } from "@/modules/teamsSystem/team.router.js";
 import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js";
 import { economySystemRouterInstance } from "@/modules/economySystem/index.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
@@ -17,11 +13,10 @@ import {
   RewardSystemRouter,
   rewardSystemRouterInstance,
 } from "@/modules/rewardsSystem/index.js";
-import { rewardRepositoryInstance } from "@/modules/rewardsSystem/reward.repository.js";
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js";
 
 export const routesLoader = (app: Express) => {
-  app.use("/api/health", healthCheckRouterInstance.getRouter());
+  app.use("/api/health", healthCheckModuleRouterInstance.getRouter());
 
   app.use("/api/user-resource-system", userResourceSystemRouter.getRouter());
 

@@ -50,5 +50,12 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/tests/**/*",
+    "src/**/__tests__/**/*",
+    "vitest.config.ts"
+  ]
 }

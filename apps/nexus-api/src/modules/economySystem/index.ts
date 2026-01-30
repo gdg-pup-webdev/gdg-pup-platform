@@ -2,8 +2,8 @@ import { Router } from "express";
 import {
   TransactionRouter,
   transactionRouterInstance,
-} from "./transaction.route";
-import { WalletRouter, walletRouterInstance } from "./wallet.route";
+} from "./transactions/transaction.route";
+import { WalletRouter, walletRouterInstance } from "./wallets/wallet.route";
 
 export class EconomySystemRouter {
   constructor(
