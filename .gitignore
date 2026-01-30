@@ -62,6 +62,7 @@ next-env.d.ts
 coverage/
 **/coverage/
 .nyc_output
+storybook-static/
 
 # --- Database & Generated Types ---
 # Ignore Supabase local temp files but keep your actual migrations/types
