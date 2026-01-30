@@ -26,7 +26,7 @@ export class RoleController {
         "getting all roles for all users",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -142,7 +142,7 @@ export class RoleController {
         "GEtting the users without roles",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -172,7 +172,7 @@ export class RoleController {
         "Checking if the role exists by name",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -223,7 +223,7 @@ export class RoleController {
         "updating role",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -271,7 +271,7 @@ export class RoleController {
         "assigning role to user",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -296,7 +296,7 @@ export class RoleController {
         "Assigning role to multiple users",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "Success",
@@ -321,7 +321,7 @@ export class RoleController {
         "Assigning multiple roles to user",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -345,7 +345,7 @@ export class RoleController {
         "Removing role to a user",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -370,7 +370,7 @@ export class RoleController {
         "Removing role from users",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -395,7 +395,7 @@ export class RoleController {
         "Removing roles from a user",
       );
 
-      if (error) throw error;
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
