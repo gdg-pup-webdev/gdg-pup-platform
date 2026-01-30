@@ -1,33 +1,42 @@
 import { models } from "@packages/nexus-api-contracts";
-import {
-  EventRepository,
-  eventRepositoryInstance,
-} from "./event.repository.js";
-import {
-  AttendanceService,
-  attendanceServiceInstance,
-} from "../attendance/attendance.service.js";
-import {
-  WalletService,
-  walletServiceInstance,
-} from "@/modules/economySystem/wallets/wallet.service.js";
-import {
-  RepositoryError,
-  ServerError,
-  ServiceError,
-} from "../../../classes/ServerError.js";
+import { EventRepository, eventRepositoryInstance } from "./event.repository.js";
+import { AttendanceService, attendanceServiceInstance } from "../attendance/attendance.service.js";
+import { WalletService, walletServiceInstance } from "@/modules/economySystem/wallets/wallet.service.js";
+import { InvalidOperationError, RepositoryError, ServiceError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
+/**
+ * Service for managing event business logic.
+ * Orchestrates event creation, updates, deletion, and check-ins.
+ */
 export class EventService {
   constructor(
-    private eventRepository: EventRepository = eventRepositoryInstance,
-    private attendanceService: AttendanceService = attendanceServiceInstance,
-    private walletService: WalletService = walletServiceInstance,
+    private readonly eventRepository: EventRepository = eventRepositoryInstance,
+    private readonly attendanceService: AttendanceService = attendanceServiceInstance,
+    private readonly walletService: WalletService = walletServiceInstance,
   ) {}
 
-  list = async () => {
+  /**
+   * Lists events based on provided filters.
+   *
+   * @returns A promise resolving to the list of events and count.
+   * @throws {RepositoryError} If the repository operation fails.
+   */
+  list = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: {
+      creator_id?: string;
+      category?: string;
+      venue?: string;
+      start_date_gte?: string;
+      start_date_lte?: string;
+      end_date_gte?: string;
+      end_date_lte?: string;
+    },
+  ) => {
     const { data, error } = await tryCatch(
-      async () => await this.eventRepository.listEvents(),
+      async () => await this.eventRepository.listEvents(pageNumber, pageSize, filters),
       "listing events",
     );
     if (error) throw new RepositoryError(error.message);
@@ -35,6 +44,12 @@ export class EventService {
     return data;
   };
 
+  /**
+   * Creates a new event.
+   *
+   * @returns A promise resolving to the created event.
+   * @throws {RepositoryError} If the repository operation fails.
+   */
   create = async (
     dto: models.eventSystem.event.insertDTO,
     creatorId: string,
@@ -52,6 +67,12 @@ export class EventService {
     return data;
   };
 
+  /**
+   * Retrieves an event by ID.
+   *
+   * @returns A promise resolving to the event data.
+   * @throws {RepositoryError} If the repository operation fails.
+   */
   getById = async (id: string) => {
     const { data, error } = await tryCatch(
       async () => await this.eventRepository.getEventById(id),
@@ -61,6 +82,12 @@ export class EventService {
     return data;
   };
 
+  /**
+   * Deletes an event by ID.
+   *
+   * @returns A promise resolving to the deleted event data.
+   * @throws {RepositoryError} If the repository operation fails.
+   */
   delete = async (id: string) => {
     const { data, error } = await tryCatch(
       async () => await this.eventRepository.deleteEvent(id),
@@ -70,6 +97,12 @@ export class EventService {
     return data;
   };
 
+  /**
+   * Updates an event by ID.
+   *
+   * @returns A promise resolving to the updated event data.
+   * @throws {RepositoryError} If the repository operation fails.
+   */
   update = async (id: string, dto: models.eventSystem.event.updateDTO) => {
     const { data, error } = await tryCatch(
       async () => await this.eventRepository.updateEvent(id, dto),
@@ -79,24 +112,35 @@ export class EventService {
     return data;
   };
 
+  /**
+   * Checks a user into an event.
+   * Handles attendance creation, event attendee count update, and point distribution.
+   *
+   * @returns A promise resolving to the attendance record, updated wallet, and updated event.
+   * @throws {ServiceError} If any step of the process fails.
+   */
   checkInToEvent = async (
     eventId: string,
     userId: string,
     checkinMethod: string,
   ) => {
-    // no need since di naman optional si userId sa params
-    // if (!userId) {
-    //   throw ServerError.internalError("User ID is required");
-    // }
 
-    // get the event details
     const { data: eventData, error } = await tryCatch(
       async () => await this.getById(eventId),
       "getting event details",
     );
     if (error) throw new ServiceError(error.message);
 
-    // TODO: check if user has already checked in to this event
+    // ensure the user hasn't already checked in
+    const { data: existingAttendance, error: attendanceCheckError } = await tryCatch(
+      async () =>
+        await this.attendanceService.getAttendanceByEventAndUser(eventId, userId),
+      "checking existing attendance",
+    );
+    if (attendanceCheckError)
+      throw new ServiceError(attendanceCheckError.message);
+    if (existingAttendance)
+      throw new InvalidOperationError("User already checked in to this event");
 
     // create new attendance record
     const { data, error: attendanceError } = await tryCatch(
@@ -107,7 +151,6 @@ export class EventService {
 
     if (attendanceError) throw new ServiceError(attendanceError.message);
 
-    // increment attendees count in event record
     const { data: updatedEventData, error: updateError } = await tryCatch(
       async () =>
         await this.update(eventId, {
@@ -118,7 +161,6 @@ export class EventService {
 
     if (updateError) throw new ServiceError(updateError.message);
 
-    // increment points to user wallet if applicable
     const { data: walletData, error: walletError } = await tryCatch(
       async () =>
         await this.walletService.incrementPoints(
