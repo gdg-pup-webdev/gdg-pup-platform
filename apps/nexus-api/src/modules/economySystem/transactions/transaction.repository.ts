@@ -1,4 +1,4 @@
-import { DatabaseError, NotFoundError } from "@/classes/ServerError.js";
+import { DatabaseError, RepositoryError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
@@ -57,7 +57,12 @@ export class TransactionRepository {
    */
   listTransactionsByWalletId = async (
     walletId: string,
+    pageNumber: number,
+    pageSize: number,
   ): RespositoryResultList<models.economySystem.transaction.row> => {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
     const { data: listData, error: listError } = await supabase
       .from(this.tableName)
       .select("*")
