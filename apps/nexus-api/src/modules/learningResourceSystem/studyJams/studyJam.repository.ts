@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RepositoryResultList,
+  RespositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -56,7 +56,7 @@ export class StudyJamRepository {
     return data;
   };
 
-  list = async (): RepositoryResultList<tableRow> => {
+  list = async (): RespositoryResultList<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")

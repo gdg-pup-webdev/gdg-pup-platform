@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RepositoryResultList,
+  RespositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -32,7 +32,7 @@ export class ArticleRepository {
     return data;
   };
 
-  list = async (): RepositoryResultList<tableRow> => {
+  list = async (): RespositoryResultList<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
@@ -92,7 +92,7 @@ export class ArticleRepository {
 
   listComments = async (
     articleId: string,
-  ): RepositoryResultList<commentRow> => {
+  ): RespositoryResultList<commentRow> => {
     const { data, error } = await supabase
       .from(this.commentTableName)
       .select("*")

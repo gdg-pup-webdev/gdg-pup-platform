@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RepositoryResultList,
+  RespositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -18,7 +18,7 @@ export class RewardRepository {
   async list(
     pageNumber: number,
     pageSize: number,
-  ): RepositoryResultList<rewardRow> {
+  ): RespositoryResultList<rewardRow> {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
