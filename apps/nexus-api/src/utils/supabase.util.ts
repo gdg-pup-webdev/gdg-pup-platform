@@ -42,17 +42,6 @@ export namespace SupabaseUtils {
     return { list: data, count: count || 0 };
   };
 
-  export const listRowsWithFilter = async (
-    tableName: string,
-    pageNumber: number,
-    pageSize: number,
-    filters?: Record<string, any>,
-    options?: {
-      orderBy?: string;
-      orderDirection?: "asc" | "desc";
-    },
-  ) => listRowsByFilter(tableName, pageNumber, pageSize, filters, options);
-
   export const listRows = async (
     tablename: string,
     pageNumber: number,
