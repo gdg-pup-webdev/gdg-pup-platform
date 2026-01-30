@@ -1,6 +1,6 @@
 export type RepositoryResult<T> = Promise<T>;
 
-export type RespositoryResultList<T> = Promise<{
+export type RepositoryResultList<T> = Promise<{
   list: T[];
   count: number;
 }>;

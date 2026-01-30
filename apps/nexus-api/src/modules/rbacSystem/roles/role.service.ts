@@ -1,6 +1,12 @@
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
 import { RepositoryError } from "@/classes/ServerError.js";
+import { TablesInsert, Tables } from "@/types/supabase.types.js";
+import { RepositoryResultList } from "@/types/repository.types.js";
+
+type roleRow = Tables<"user_role">;
+type userRow = Tables<"user">;
+type userRoleJunctionRow = Tables<"user_role_junction">;
 
 export class RoleService {
   constructor(
@@ -13,7 +19,8 @@ export class RoleService {
     pageSize: number,
   ): Promise<RepositoryResultList<{ user: userRow; roles: roleRow[] }>> => {
     const { data, error } = await tryCatch(
-      async () => await this.getAllRolesOfAllUsers(pageNumber, pageSize),
+      async () =>
+        await this.roleRepository.getAllRolesOfAllUsers(pageNumber, pageSize),
       "getting all roles of all users",
     );
     if (error) throw new RepositoryError(error.message);
@@ -79,20 +86,6 @@ export class RoleService {
     const { data, error } = await tryCatch(
       async () => await this.roleRepository.getUsersWithoutRoles(roleId),
       "Getting users without roles",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
-  };
-
-  /** Get all permissions for a user, aggregated from their roles */
-  getPermissionsForUser = async (
-    userId: string,
-  ): Promise<userRolePermission[]> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getPermissionsForUser(userId),
-      "Getting permissions of user",
     );
 
     if (error) throw new RepositoryError(error.message);

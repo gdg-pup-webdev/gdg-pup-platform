@@ -1,13 +1,11 @@
-import { DatabaseError } from "@/classes/ServerError.js";
+import { DatabaseError, NotFoundError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RespositoryResultList } from "@/types/repository.types.js";
-import { Tables } from "@/types/supabase.types.js";
-import { models } from "@packages/nexus-api-contracts";
+import { RepositoryResultList } from "@/types/repository.types.js";
+import { Tables, TablesInsert } from "@/types/supabase.types.js";
 
 type roleRow = Tables<"user_role">;
 type userRow = Tables<"user">;
 type userRoleJunctionRow = Tables<"user_role_junction">;
-type userRolePermission = Tables<"user_role_permission">;
 
 /**
  * RoleRepository handles all database operations for roles and their assignments.
@@ -194,32 +192,6 @@ export class RoleRepository {
     };
   };
 
-  /**
-   * Returns all permissions for a user, aggregated from all their roles.
-   */
-  getPermissionsForUser = async (
-    userId: string,
-  ): Promise<userRolePermission[]> => {
-    // Joind user_role_jucntion to user_role and to user_role_permission
-    const { data, error } = await supabase
-      .from(this.junctionTable)
-      .select("user_role:user_role_id(user_role_permission(*))")
-      .eq("user_id", userId);
-
-    if (error) throw new DatabaseError(error.message);
-
-    // Flatten all permissions from all users
-    const permissions: userRolePermission[] = [];
-    for (const row of data as any[]) {
-      const role = row.user_role;
-      if (role && role.user_role_permission) {
-        permissions.push(...role.user_role_permission);
-      }
-    }
-
-    return permissions;
-  };
-
   // =========================================================================================== //
 
   /**
@@ -238,9 +210,7 @@ export class RoleRepository {
     if (error) {
       // Check if there is a conflict in role (kung may kaparehas ba)
       if (error.code === "23505") {
-        throw new RepositoryConflictError(
-          `Role "${roleData.role_name}" already exists`,
-        );
+        throw new DatabaseError(`Role "${roleData.role_name}" already exists`);
       }
       throw new DatabaseError(error.message);
     }
@@ -273,7 +243,7 @@ export class RoleRepository {
       // Pag may duplicate na role - kung magpapalit lang ng role name
       // Yung "23505" naman ay pag may duplicate row data
       if (error.code === "23505") {
-        throw new RepositoryConflictError(
+        throw new DatabaseError(
           `Role name "${updates.role_name}" already exists`,
         );
       }
@@ -295,7 +265,7 @@ export class RoleRepository {
     if (error) {
       // Kapag naka assign pa sa user yung role at dinilete mo, mag error sya
       if (error.code === "23503") {
-        throw new RepositoryConflictError(
+        throw new DatabaseError(
           "Canner delete role that is assigned to users. Remove all user assignments first.",
         );
       }
@@ -326,9 +296,7 @@ export class RoleRepository {
     if (error) {
       // gagana lang to kapag nag assign ka ulit ng parehas na role sa user na mayroon na nun
       if (error.code === "23505") {
-        throw new RepositoryConflictError(
-          "User already has this role assigned",
-        );
+        throw new DatabaseError("User already has this role assigned");
       }
       // Pag yung user id or yung role id ay wala sa database, mag e-error sya
       if (error.code === "23503") {
@@ -364,7 +332,7 @@ export class RoleRepository {
     if (error) {
       // Error kapag yung user ay mayroon na netong role na iaassign
       if (error.code === "23505") {
-        throw new RepositoryConflictError(
+        throw new DatabaseError(
           "One or more users already have this role assigned",
         );
       }
@@ -402,7 +370,7 @@ export class RoleRepository {
 
     if (error) {
       if (error.code === "23505") {
-        throw new RepositoryConflictError(
+        throw new DatabaseError(
           "User already has one or more of these roles assigned",
         );
       }
