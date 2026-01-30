@@ -1,7 +1,13 @@
-# RBAC System Implementation - Current Progress
+# 📝 RBAC System: Role Repository to Role Route – Implementation Progress
 
-**Last Updated:** January 23, 2026  
+**Last Updated:** January 30, 2026  
 **Status:** Phase 1 - Repository Layer (In Progress)
+
+---
+
+### Overview
+
+- This phase focused on building a robust, paginated, and error-safe role management system, from the repository layer up to the Express route layer. The implementation now supports all major role assignment, retrieval, and removal operations, with consistent pagination and error handling.
 
 ---
 
@@ -318,68 +324,135 @@ export class RoleService {
 
 | ** Component **              | ** Status **   | ** Progress ** (Estimated) | ** Priority ** |
 | ---------------------------- | -------------- | -------------------------- | -------------- |
-| ** Role Repository **        | ✅ Complete    | 100%                       | ✅ HIGH        |
-| ** Permission Repository **  | ✅ Complete    | 100%                       | ✅ MEDIUM      |
-| ** Role Service **           | ✅ Complete    | 100%                       | ✅ HIGH        |
-| ** Permission Service **     | ✅ Complete    | 100%                       | ✅ MEDIUM      |
-| ** Role Controller **        | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
-| ** Permission Controller **  | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
-| ** RBAC Router **            | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
+| ** Role Repository **        | ✅ Complete    | 100%                       | ✅ LOW         |
+| ** Permission Repository **  | ✅ Complete    | 100%                       | ✅ LOW         |
+| ** Role Service **           | ✅ Complete    | 100%                       | ✅ LOW         |
+| ** Permission Service **     | ✅ Complete    | 100%                       | ✅ LOW         |
+| ** Role Controller **        | ✅ Completed   | 100%                       | ✅ LOW         |
+| ** Permission Controller **  | 🚧 In Progress | 5%                         | 🔴 HIGH        |
+| ** RBAC Router **            | 🚧 In Progress | 0%                         | 🔴 HIGH        |
 | ** Middleware Enhancement ** | ❌ Not Started | 0%                         | 🟡 MEDIUM      |
 
 ---
 
----
-
-#### 2. Role Repository - Partial Implementation
+#### 1. Role Repository - Key Changes:
 
 File [role.repository.ts](../apps/nexus-api/src/modules/rbacSystem/role.repository.ts)
 
-** ✅ Methods Implemented Correctly: **
+**✅ Methods Implemented Correctly:**
 
-createRole()
+- Pagination Standardization:
+  - All functions returning lists (e.g., [getAllRolesOfAllUsers](../apps/nexus-api/src/modules/rbacSystem/role.repository.ts#L26), [getRolesOfUser](../apps/nexus-api/src/modules/rbacSystem/role.repository.ts#L65), [getAllRoles](../apps/nexus-api/src/modules/rbacSystem/role.repository.ts#L91), [getUsersByRole](../apps/nexus-api/src/modules/rbacSystem/role.repository.ts#L144), [getUsersWithoutRoles](../apps/nexus-api/src/modules/rbacSystem/role.repository.ts#L170)) now accept pageNumber and pageSize parameters and use Supabase’s .range() or count queries to return { list, count } for paginated responses.
 
-    createRole = async (roleData: TablesInsert<"user_role">): Promise<roleRow> => {
-        const { data, error } = await supabase
-            .from(this.roleTable)
-            .insert(roleData)
-            .select()
-            .single();
-        if (error) {
-            // Handle PostgreSQL unique constraint violation
-            if (error.code === "23505") {
-            throw new RepositoryConflictError(
-                `Role "${roleData.role_name}" already exists`,
-            );
-            }
-            throw new DatabaseError(error.message);
-        }
-        return data;
-    };
+- Consistent Return Types:
+  - All list-returning methods use the RepositoryResultList<T> type, ensuring every response includes both the data array and a total count.
 
-getRolesOfUser()
+- Error Handling:
+  - All database errors are caught and mapped to custom error classes (DatabaseError, RepositoryConflictError, NotFoundError) for clear, actionable error responses.
 
-    getRolesOfUser = async (userId: string): RepositoryResultList<roleRow> => {
-        const { data, error } = await supabase
-            .from(this.junctionTable)
-            .select(`*, user_role(*, user_role_permission (*))`)
-            .eq("user_id", userId);
+- Bulk Operations:
+  - Added methods for bulk assigning/removing roles to/from users, and for assigning multiple roles to a single user, all with proper error handling for unique and foreign key constraints.
 
-        if (error) throw new DatabaseError(error.message);
+- Role Existence Check:
+  - Implemented [roleExistsByName](../apps/nexus-api/src/modules/rbacSystem/role.repository.ts#L129) for efficient, error-safe existence checks.
 
-        const { count, error: countError } = await supabase
-            .from(this.junctionTable)
-            .select("*, user_role(*)", { count: "exact", head: true })
-            .eq("user_id", userId);
+**Example: Paginated Get All Roles of All Users**
 
-        if (countError) throw new DatabaseError(countError.message);
+```
+getAllRolesOfAllUsers = async (
+  pageNumber: number,
+  pageSize: number,
+): Promise<RepositoryResultList<{ user: userRow; roles: roleRow[] }>> => {
 
-        return {
-            list: data.map((item) => item.user_role as roleRow),
-            count: count || 0,
-        };
-    };
+  // ...supabase query with .range()...
+  return {
+    list: Object.values(userMap),
+    count: count || 0,
+  };
+};
+```
 
-**Status:** ✅ Working correctly with nested relations
+2. Role Service ([role.service.ts](../apps/nexus-api/src/modules/rbacSystem/role.service.ts))
 
-getRoleById()
+- Key Changes:
+  - tryCatch Pattern:
+    - All service methods wrap repository calls in a tryCatch utility for unified error handling and context propagation.
+
+  - Pagination Propagation:
+    - Service methods for list endpoints now accept and forward pageNumber and pageSize to the repository.
+
+  - Bulk and Single Operations:
+    - Service methods mirror repository methods for single and bulk role assignments/removals, ensuring business logic is centralized and reusable.
+
+  - Boolean Existence Checks:
+    - Service exposes a roleExistsByName method returning a boolean, matching REST contract expectations.
+
+**Example: Service Pagination**
+
+```
+getAllRolesOfAllUsers = async (
+  pageNumber: number,
+  pageSize: number,
+): Promise<RepositoryResultList<{ user: userRow; roles: roleRow[] }>> => {
+
+  // Calls repository with pagination
+};
+```
+
+3. Role Controller ([role.controller.ts](../apps/nexus-api/src/modules/rbacSystem/role.controller.ts))
+
+- Key Changes:
+  - Controller Methods for All Endpoints:
+    - Controller exposes methods for all role-related endpoints, including:
+      - Get all roles of all users (paginated)
+      - Get roles of a user (paginated)
+      - Get all roles (paginated)
+      - Get users by role (paginated)
+      - Get users without a role (paginated)
+      - Assign/remove roles (single and bulk)
+      - Role existence check (boolean)
+      - CRUD for roles
+      - Parameter Extraction:
+      - Pagination parameters (pageNumber, pageSize) are extracted from query params and passed to the service layer.
+
+  - Consistent Response Shape:
+    - All list endpoints return paginated responses with data and meta fields, matching the OpenAPI/contract expectations.
+
+4. Role Route ([role.route.ts](../apps/nexus-api/src/modules/rbacSystem/role.route.ts))
+
+- Key Changes:
+  - RESTful Route Structure:
+    - All role-related endpoints are mapped to clear, RESTful routes, e.g.:
+      - GET /roles/all-users
+      - GET /roles?userId=...
+      - POST /roles/:roleId/users/:userId
+      - POST /roles/:roleId/bulk/assign
+      - DELETE /roles/:roleId/bulk/remove
+      - POST /roles/users/:userId/bulk/assign
+      - DELETE /roles/users/:userId/bulk/remove
+      - etc.
+  - Bulk and Single Operations:
+    - Both single and bulk assignment/removal endpoints are supported.
+
+  - Pagination Support:
+    - All list endpoints accept pageNumber and pageSize as query parameters.
+
+  - Boolean Existence Endpoint:
+    - GET /roles/:roleName returns a boolean indicating if the role exists.
+
+5. Error Handling and Consistency
+
+- All errors are handled at the repository and service layers, ensuring the controller only needs to forward or format the error for HTTP response.
+
+- All paginated endpoints return both list and count, with controller formatting the response as per contract.
+
+**🚧 Next Steps**
+
+```
+I am working with permissions next.
+The next phase will focus on implementing and testing the permission repository, service, controller, and routes, ensuring that permission assignment, retrieval, and enforcement are robust and fully integrated with the role system.
+```
+
+---
+
+_This documentation reflects the current, complete, and consistent state of the RBAC role management system from repository to route._
