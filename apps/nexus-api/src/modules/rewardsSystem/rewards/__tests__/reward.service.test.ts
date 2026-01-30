@@ -1,5 +1,6 @@
 /**
  * Reward service unit tests.
+Reward service unit tests.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -40,7 +41,7 @@ vi.mock("../reward.repository.js", () => ({
   RewardRepository: class {},
 }));
 
-vi.mock("../../../economySystem/wallet.service.js", () => ({
+vi.mock("@/modules/economySystem/wallets/wallet.service.js", () => ({
   walletServiceInstance: {
     incrementPoints: walletIncrement,
   },
