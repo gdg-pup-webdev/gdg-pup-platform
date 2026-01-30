@@ -110,6 +110,12 @@ export class RepositoryError extends ServerError {
   }
 }
 
+export class RepositoryConflictError extends ServerError {
+  constructor(detail: string = "Resource already exists") {
+    super({ statusCode: 409, title: "Resource Error", detail: detail });
+  }
+}
+
 export class CantCreateError extends ServerError {
   constructor(detail: string = "Cant create resource") {
     super({ statusCode: 500, title: "Cant create resource", detail: detail });

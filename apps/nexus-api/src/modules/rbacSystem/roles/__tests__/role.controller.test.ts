@@ -4,7 +4,7 @@
  * These tests hit the real Express app but mock the service layer to
  * validate routing, contract shape, and pagination meta.
  */
-import request = require("supertest");
+import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import app from "../../../../app.js";
