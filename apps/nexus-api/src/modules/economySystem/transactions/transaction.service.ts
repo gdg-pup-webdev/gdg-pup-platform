@@ -2,63 +2,46 @@ import {
   TransactionRepository,
   transactionRepositoryInstance,
 } from "./transaction.repository.js";
-import { WalletService, walletServiceInstance } from "../wallets/wallet.service.js";
 import {
-  DatabaseError,
   NotFoundError,
   RepositoryError,
-  ServerError,
 } from "../../../classes/ServerError.js";
-import { PostgrestError } from "@supabase/supabase-js";
-import { tryCatch, tryCatchHandled } from "@/utils/tryCatch.util.js";
+import { tryCatch } from "@/utils/tryCatch.util.js";
 import { models } from "@packages/nexus-api-contracts";
 
+/**
+ * Service for managing transaction business logic.
+ * Orchestrates data access via the TransactionRepository and handles error mapping.
+ */
 export class TransactionService {
   constructor(
-    private walletService: WalletService = walletServiceInstance,
-    private transactionRepository: TransactionRepository = transactionRepositoryInstance,
+    private readonly transactionRepository: TransactionRepository = transactionRepositoryInstance,
   ) {}
 
-  listTransactionsOfUser = async (userId: string) => {
-    const { data: userWallet, error: walletError } = await tryCatch(
-      async () => await this.walletService.getWalletByUserId(userId),
-      "fetching wallet of user",
-    );
-
-    if (walletError) throw new DatabaseError(walletError.message);
-    if (!userWallet) throw new NotFoundError("Wallet not found.");
-
-    const { data: walletTransactions, error: transactionsError } =
-      await tryCatch(
-        async () =>
-          await this.transactionRepository.listTransactionsByWalletId(
-            userWallet.id,
-          ),
-        "listing transactions of user",
-      );
-    if (transactionsError) throw new RepositoryError(transactionsError.message);
-    if (!walletTransactions) throw new NotFoundError("Transactions not found.");
-
-    return walletTransactions;
-  };
-
-  listTransactionsOfWallet = async (walletId: string) => {
-    const { data: walletTransactions, error: transactionsError } =
-      await tryCatch(
-        async () =>
-          await this.transactionRepository.listTransactionsByWalletId(walletId),
-        "listing transactions of wallet",
-      );
-    if (transactionsError) throw new RepositoryError(transactionsError.message);
-    if (!walletTransactions) throw new NotFoundError("Transactions not found.");
-
-    return walletTransactions;
-  };
-
-  listTransactionsByPage = async (pageNumber: number, pageSize: number) => {
+  /**
+   * Lists transactions based on provided filters.
+   * Delegates filter logic to the repository.
+   *
+   * @param filters - Object containing optional filters (userId, walletId).
+   * @returns A promise resolving to the list of transactions and count.
+   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {NotFoundError} If no transactions are found (though empty list is usually valid, this depends on repo behavior).
+   */
+  listTransactions = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: {
+      userId?: string;
+      walletId?: string;
+    },
+  ) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.transactionRepository.listTransactions(pageNumber, pageSize),
+        await this.transactionRepository.listTransactionsWithFilters(
+          pageNumber,
+          pageSize,
+          filters,
+        ),
       "listing transactions",
     );
     if (error) throw new RepositoryError(error.message);
@@ -67,6 +50,13 @@ export class TransactionService {
     return data;
   };
 
+  /**
+   * Retrieves a specific transaction by ID.
+   *
+   * @returns A promise resolving to the transaction data.
+   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {NotFoundError} If the transaction does not exist.
+   */
   getTransaction = async (id: string) => {
     const { data, error } = await tryCatch(
       async () => await this.transactionRepository.getTransactionById(id),
@@ -78,6 +68,13 @@ export class TransactionService {
     return data;
   };
 
+  /**
+   * Creates a new transaction.
+   *
+   * @returns A promise resolving to the created transaction.
+   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {NotFoundError} If the created transaction is not returned.
+   */
   create = async (dto: models.economySystem.transaction.insertDTO) => {
     const { data, error } = await tryCatch(
       async () => await this.transactionRepository.createTransaction(dto),

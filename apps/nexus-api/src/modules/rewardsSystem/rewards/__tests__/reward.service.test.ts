@@ -1,5 +1,7 @@
 /**
- * Reward service unit tests.
+ * @file reward.service.test.ts
+ * @description Reward service unit tests focused on orchestration and error
+ * mapping with mocked repository and dependent services.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -40,7 +42,7 @@ vi.mock("../reward.repository.js", () => ({
   RewardRepository: class {},
 }));
 
-vi.mock("../../../economySystem/wallet.service.js", () => ({
+vi.mock("@/modules/economySystem/wallets/wallet.service.js", () => ({
   walletServiceInstance: {
     incrementPoints: walletIncrement,
   },

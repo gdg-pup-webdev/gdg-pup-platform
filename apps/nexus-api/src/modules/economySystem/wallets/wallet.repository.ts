@@ -6,11 +6,19 @@ import {
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
+/**
+ * Repository for accessing and managing wallet data in the database.
+ * Handles direct interactions with the 'wallet' table.
+ */
 export class WalletRepository {
   tableName = "wallet";
 
-  construtor() {}
-
+  /**
+   * Retrieves a wallet associated with a specific user ID.
+   *
+   * @returns A promise resolving to the wallet data.
+   * @throws {DatabaseError} If a database error occurs.
+   */
   listWalletsOfUser = async (
     userId: string,
   ): RepositoryResult<models.economySystem.wallet.row> => {
@@ -41,6 +49,12 @@ export class WalletRepository {
     };
   };
 
+  /**
+   * Updates the balance of a user's wallet.
+   *
+   * @returns A promise resolving to the updated wallet data.
+   * @throws {DatabaseError} If a database error occurs.
+   */
   updateWalletBalance = async (
     userId: string,
     newBalance: number,

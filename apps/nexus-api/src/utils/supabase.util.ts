@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError";
 import { supabase } from "@/lib/supabase";
 
 export namespace SupabaseUtils {
-  export const listRowsWithFilter = async (
+  export const listRowsByFilter = async (
     tableName: string,
     pageNumber: number,
     pageSize: number,

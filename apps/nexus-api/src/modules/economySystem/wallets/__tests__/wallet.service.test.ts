@@ -13,6 +13,7 @@ import {
 const { mockWalletRepository, mockTransactionRepository } = vi.hoisted(() => ({
   mockWalletRepository: {
     listWalletsOfUser: vi.fn(),
+    listWalletsWithFilters: vi.fn(),
     list: vi.fn(),
     updateWalletBalance: vi.fn(),
   },
@@ -69,25 +70,36 @@ describe("WalletService", () => {
   });
 
   it("listWallets returns list + count", async () => {
-    mockWalletRepository.list.mockResolvedValue({ list: [wallet], count: 1 });
+    mockWalletRepository.listWalletsWithFilters.mockResolvedValue({
+      list: [wallet],
+      count: 1,
+    });
 
-    const result = await walletService.listWallets();
+    const result = await walletService.listWallets(1, 10);
 
+    expect(mockWalletRepository.listWalletsWithFilters).toHaveBeenCalledWith(1, 10, {});
     expect(result).toEqual({ list: [wallet], count: 1 });
   });
 
-  it("listWallets returns empty list", async () => {
-    mockWalletRepository.list.mockResolvedValue({ list: [], count: 0 });
+  it("listWalletsWithFilters returns empty list", async () => {
+    mockWalletRepository.listWalletsWithFilters.mockResolvedValue({
+      list: [],
+      count: 0,
+    });
 
-    const result = await walletService.listWallets();
+    const result = await walletService.listWalletsWithFilters(1, 10, {
+      userId: null,
+    });
 
     expect(result).toEqual({ list: [], count: 0 });
   });
 
-  it("listWallets maps repo error to RepositoryError", async () => {
-    mockWalletRepository.list.mockRejectedValue(new Error("boom"));
+  it("listWalletsWithFilters maps repo error to RepositoryError", async () => {
+    mockWalletRepository.listWalletsWithFilters.mockRejectedValue(new Error("boom"));
 
-    await expect(walletService.listWallets()).rejects.toBeInstanceOf(RepositoryError);
+    await expect(
+      walletService.listWalletsWithFilters(1, 10, {}),
+    ).rejects.toBeInstanceOf(RepositoryError);
   });
 
   it("incrementPoints updates balance and creates transaction", async () => {

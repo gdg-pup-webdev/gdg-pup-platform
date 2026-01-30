@@ -35,7 +35,7 @@ vi.mock("../../attendance/attendance.service.js", () => ({
   AttendanceService: class {},
 }));
 
-vi.mock("@/modules/economySystem/wallet.service", () => ({
+vi.mock("@/modules/economySystem/wallets/wallet.service.js", () => ({
   walletServiceInstance: mockWalletService,
   WalletService: class {},
 }));
