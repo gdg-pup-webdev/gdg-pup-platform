@@ -8,6 +8,7 @@ export const testListEconomyResources = async (
   mockListFn: any,
   mockData: any,
   query: Record<string, string | number> = {},
+  expectedArgs?: unknown[],
 ) => {
   mockListFn.mockResolvedValue({ list: [mockData], count: 1 });
 
@@ -17,6 +18,9 @@ export const testListEconomyResources = async (
     ...query,
   });
 
+  if (expectedArgs) {
+    expect(mockListFn).toHaveBeenCalledWith(...expectedArgs);
+  }
   expect(response.status).toBe(200);
   expect(response.body.status).toBe("success");
   expect(response.body.data).toHaveLength(1);

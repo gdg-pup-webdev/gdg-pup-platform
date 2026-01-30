@@ -56,35 +56,66 @@ describe("WalletRepository", () => {
   });
 
   it("list returns list + count", async () => {
-    const listSelectMock = vi
-      .fn()
-      .mockResolvedValue({ data: [wallet], error: null });
+    const rangeMock = vi.fn().mockResolvedValue({ data: [wallet], error: null });
+    const orderMock = vi.fn().mockReturnValue({ range: rangeMock });
+    const selectMock = vi.fn().mockReturnValue({ order: orderMock });
     const countSelectMock = vi
       .fn()
       .mockResolvedValue({ count: 1, error: null });
 
     supabaseMock.from
-      .mockImplementationOnce(() => ({ select: listSelectMock }))
+      .mockImplementationOnce(() => ({ select: selectMock }))
       .mockImplementationOnce(() => ({ select: countSelectMock }));
 
-    const result = await repository.list();
+    const result = await repository.list(1, 10);
 
+    expect(selectMock).toHaveBeenCalledWith("*");
+    expect(orderMock).toHaveBeenCalledWith("created_at", { ascending: false });
+    expect(rangeMock).toHaveBeenCalledWith(0, 9);
     expect(result).toEqual({ list: [wallet], count: 1 });
   });
 
+  it("listWalletsWithFilters uses listWalletsOfUser when userId provided", async () => {
+    const listWalletsOfUserSpy = vi
+      .spyOn(repository, "listWalletsOfUser")
+      .mockResolvedValue(wallet as any);
+
+    const result = await repository.listWalletsWithFilters(1, 10, {
+      userId: "user-1",
+    });
+
+    expect(listWalletsOfUserSpy).toHaveBeenCalledWith("user-1");
+    expect(result).toEqual({ list: [wallet], count: 1 });
+
+    listWalletsOfUserSpy.mockRestore();
+  });
+
+  it("listWalletsWithFilters falls back to list when no userId", async () => {
+    const listSpy = vi
+      .spyOn(repository, "list")
+      .mockResolvedValue({ list: [wallet], count: 1 });
+
+    const result = await repository.listWalletsWithFilters(1, 10, {});
+
+    expect(listSpy).toHaveBeenCalledWith(1, 10);
+    expect(result).toEqual({ list: [wallet], count: 1 });
+
+    listSpy.mockRestore();
+  });
+
   it("list maps count error to DatabaseError", async () => {
-    const listSelectMock = vi
-      .fn()
-      .mockResolvedValue({ data: [wallet], error: null });
+    const rangeMock = vi.fn().mockResolvedValue({ data: [wallet], error: null });
+    const orderMock = vi.fn().mockReturnValue({ range: rangeMock });
+    const selectMock = vi.fn().mockReturnValue({ order: orderMock });
     const countSelectMock = vi
       .fn()
       .mockResolvedValue({ count: null, error: { message: "fail" } });
 
     supabaseMock.from
-      .mockImplementationOnce(() => ({ select: listSelectMock }))
+      .mockImplementationOnce(() => ({ select: selectMock }))
       .mockImplementationOnce(() => ({ select: countSelectMock }));
 
-    await expect(repository.list()).rejects.toBeInstanceOf(DatabaseError);
+    await expect(repository.list(1, 10)).rejects.toBeInstanceOf(DatabaseError);
   });
 
   it("updateWalletBalance updates balance by user_id", async () => {

@@ -1,10 +1,7 @@
 import { ServiceError } from "@/classes/ServerError";
 import {
-  TransactionService,
-  transactionServiceInstance,
-} from "@/modules/economySystem/transactions/transaction.service";
-import {
   WalletService,
+  WalletListFilters,
   walletServiceInstance,
 } from "@/modules/economySystem/wallets/wallet.service";
 import { tryCatch } from "@/utils/tryCatch.util";
@@ -12,12 +9,19 @@ import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
 
+/**
+ * Controller for handling wallet-related HTTP requests.
+ * Implements endpoints defined in the economy system contract.
+ */
 export class WalletController {
   constructor(
-    private walletService: WalletService = walletServiceInstance,
-    private transactionService: TransactionService = transactionServiceInstance,
+    private readonly walletService: WalletService = walletServiceInstance,
   ) {}
 
+  /**
+   * Retrieves a specific wallet by ID.
+   * @todo Implement this method.
+   */
   getWallet: RequestHandler = (req, res) => {
     const walletId = req.params.walletId;
 
@@ -26,38 +30,37 @@ export class WalletController {
     return res.status(500).json({ message: "not implemented" });
   };
 
+  /**
+   * Lists wallets with optional filtering and pagination.
+   *
+   * @route GET /api/economy-system/wallets
+   * @returns JSON response containing the list of wallets and pagination metadata.
+   * @throws {ServiceError} If the service layer encounters an error.
+   */
   listWallets: RequestHandler = createExpressController(
     contract.api.economy_system.wallets.GET,
-    async ({ input, output, ctx }) => {
-      // PAGINATION OPTIONS
+    async ({ input, output }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
 
       // getting filters
       const userId = input.query.userId || null;
 
-      let list;
-      let count;
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.walletService.listWalletsWithFilters(
+            pageNumber,
+            pageSize,
+            {
+              userId,
+            } satisfies WalletListFilters,
+          ),
+        "listing wallets",
+      );
+      if (error) throw new ServiceError(error.message);
 
-      if (userId) {
-        const { data, error } = await tryCatch(
-          async () => await this.walletService.getWalletByUserId(userId),
-          "getting user wallet",
-        );
-        if (error) throw new ServiceError(error.message);
-
-        list = [data];
-        count = 1;
-      } else {
-        const { data, error } = await tryCatch(
-          async () => await this.walletService.listWallets(),
-          "listing wallets",
-        );
-        if (error) throw new ServiceError(error.message);
-
-        list = data.list;
-        count = data.count;
-      }
+      const list = data.list;
+      const count = data.count;
 
       return output(200, {
         status: "success",

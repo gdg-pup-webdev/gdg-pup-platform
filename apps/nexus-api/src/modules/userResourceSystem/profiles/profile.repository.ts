@@ -36,7 +36,7 @@ export class ProfileRepository {
   ): RespositoryResultList<profileRow> => {
     const { data, error } = await tryCatch(
       async () =>
-        await SupabaseUtils.listRowsWithFilter(this.tableName, 1, 1000, {
+        await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
           user_id: userId,
         }),
       "Calling database to list profiles of user",

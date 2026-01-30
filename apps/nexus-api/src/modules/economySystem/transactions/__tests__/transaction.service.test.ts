@@ -1,30 +1,18 @@
 /**
  * @file transaction.service.test.ts
  * @description Transaction service tests validate orchestration and error
- * mapping with mocked repositories and wallet service dependencies.
+ * mapping with mocked repositories.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TransactionService } from "../transaction.service.js";
-import {
-  NotFoundError,
-  RepositoryError,
-} from "../../../../classes/ServerError.js";
+import { RepositoryError } from "../../../../classes/ServerError.js";
 
-const { mockWalletService, mockTransactionRepository } = vi.hoisted(() => ({
-  mockWalletService: {
-    getWalletByUserId: vi.fn(),
-  },
+const { mockTransactionRepository } = vi.hoisted(() => ({
   mockTransactionRepository: {
-    listTransactionsByWalletId: vi.fn(),
-    listTransactions: vi.fn(),
+    listTransactionsWithFilters: vi.fn(),
     getTransactionById: vi.fn(),
     createTransaction: vi.fn(),
   },
-}));
-
-vi.mock("../../wallets/wallet.service.js", () => ({
-  walletServiceInstance: mockWalletService,
-  WalletService: class {},
 }));
 
 vi.mock("../transaction.repository.js", () => ({
@@ -34,7 +22,6 @@ vi.mock("../transaction.repository.js", () => ({
 
 describe("TransactionService", () => {
   const transactionService = new TransactionService();
-  const wallet = { id: "wallet-1", user_id: "user-1" };
   const transaction = {
     id: "txn-1",
     wallet_id: "wallet-1",
@@ -47,60 +34,32 @@ describe("TransactionService", () => {
     vi.clearAllMocks();
   });
 
-  it("listTransactionsOfUser uses wallet lookup then repo list", async () => {
-    mockWalletService.getWalletByUserId.mockResolvedValue(wallet);
-    mockTransactionRepository.listTransactionsByWalletId.mockResolvedValue({
+  it("listTransactions passes filters to repository", async () => {
+    mockTransactionRepository.listTransactionsWithFilters.mockResolvedValue({
       list: [transaction],
       count: 1,
     });
 
-    const result = await transactionService.listTransactionsOfUser("user-1");
+    const result = await transactionService.listTransactions(1, 10, {
+      walletId: "wallet-1",
+    });
 
-    expect(mockWalletService.getWalletByUserId).toHaveBeenCalledWith("user-1");
-    expect(mockTransactionRepository.listTransactionsByWalletId).toHaveBeenCalledWith(
-      "wallet-1",
-    );
+    expect(
+      mockTransactionRepository.listTransactionsWithFilters,
+    ).toHaveBeenCalledWith(1, 10, {
+      walletId: "wallet-1",
+    });
     expect(result.list).toHaveLength(1);
   });
 
-  it("listTransactionsOfUser throws NotFoundError when wallet missing", async () => {
-    mockWalletService.getWalletByUserId.mockResolvedValue(null);
-
-    await expect(transactionService.listTransactionsOfUser("user-1")).rejects.toBeInstanceOf(
-      NotFoundError,
+  it("listTransactions maps repo errors to RepositoryError", async () => {
+    mockTransactionRepository.listTransactionsWithFilters.mockRejectedValue(
+      new Error("boom"),
     );
-  });
 
-  it("listTransactionsOfWallet returns list + count", async () => {
-    mockTransactionRepository.listTransactionsByWalletId.mockResolvedValue({
-      list: [transaction],
-      count: 1,
-    });
-
-    const result = await transactionService.listTransactionsOfWallet("wallet-1");
-
-    expect(result.list).toHaveLength(1);
-    expect(result.count).toBe(1);
-  });
-
-  it("listTransactionsByPage calls repo with page params", async () => {
-    mockTransactionRepository.listTransactions.mockResolvedValue({
-      list: [transaction],
-      count: 1,
-    });
-
-    const result = await transactionService.listTransactionsByPage(1, 10);
-
-    expect(mockTransactionRepository.listTransactions).toHaveBeenCalledWith(1, 10);
-    expect(result.count).toBe(1);
-  });
-
-  it("listTransactionsByPage maps repo errors to RepositoryError", async () => {
-    mockTransactionRepository.listTransactions.mockRejectedValue(new Error("boom"));
-
-    await expect(transactionService.listTransactionsByPage(1, 10)).rejects.toBeInstanceOf(
-      RepositoryError,
-    );
+    await expect(
+      transactionService.listTransactions(1, 10, {}),
+    ).rejects.toBeInstanceOf(RepositoryError);
   });
 
   it("getTransaction returns transaction", async () => {
