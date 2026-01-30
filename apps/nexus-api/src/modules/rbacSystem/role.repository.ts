@@ -16,19 +16,27 @@ type userRolePermission = Tables<"user_role_permission">;
 export class RoleRepository {
   junctionTable = "user_role_junction"; // Table for the relationship of role and user
   roleTable = "user_role"; // dito naka store yung mga created roles
+  userTable = "user"; // User table
 
   constructor() {}
 
   /**
    * Get all roles of all users
    */
-  getAllRolesOfAllUsers = async (): Promise<
-    Array<{ user: userRow; roles: roleRow[] }>
-  > => {
-    const { data, error } = await supabase.from(this.junctionTable).select(`
+  getAllRolesOfAllUsers = async (
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<RepositoryResultList<{ user: userRow; roles: roleRow[] }>> => {
+    const { data, error, count } = await supabase
+      .from(this.junctionTable)
+      .select(
+        `
         user:user_id(*),
         user_role (*, user_role_permission(*))
-      `);
+      `,
+        { count: "exact" },
+      )
+      .range((pageNumber - 1) * pageSize, pageNumber * pageSize - 1);
 
     if (error) throw new DatabaseError(error.message);
 
@@ -45,7 +53,10 @@ export class RoleRepository {
       userMap[user.id].roles.push(role);
     }
 
-    return Object.values(userMap);
+    return {
+      list: Object.values(userMap),
+      count: count || 0,
+    };
   };
 
   /**
@@ -156,11 +167,13 @@ export class RoleRepository {
   /**
    * Get users without assigned roles
    */
-  getUsersWithoutRoles = async (roleId: string): Promise<userRow[]> => {
+  getUsersWithoutRoles = async (
+    roleId: string,
+  ): Promise<RepositoryResultList<userRow>> => {
     // Get all users who do NOT have the given roleId in the junction table
-    const { data, error } = await supabase
-      .from("user")
-      .select("*")
+    const { data, error, count } = await supabase
+      .from(this.userTable)
+      .select("*", { count: "exact", head: true })
       .not(
         "id",
         "in",
@@ -172,7 +185,10 @@ export class RoleRepository {
 
     if (error) throw new DatabaseError(error.message);
 
-    return data as userRow[];
+    return {
+      list: data,
+      count: count || 0,
+    };
   };
 
   /**
@@ -265,7 +281,7 @@ export class RoleRepository {
    * Delete role
    * Mag fi-fail to po nag delete ng role na naka assign pa sa user
    */
-  deleteRole = async (roleId: string): Promise<void> => {
+  deleteRole = async (roleId: string): Promise<{ success: boolean }> => {
     const { error } = await supabase
       .from(this.roleTable)
       .delete()
@@ -281,7 +297,7 @@ export class RoleRepository {
       throw new DatabaseError(error.message);
     }
 
-    return;
+    return { success: true };
   };
 
   /**
@@ -325,7 +341,7 @@ export class RoleRepository {
   /**
    * Assign roles to multiple users
    */
-  assignRolesToUsers = async (
+  assignRoleToUsers = async (
     userIds: string[],
     roleId: string,
   ): Promise<userRoleJunctionRow[]> => {
@@ -361,7 +377,7 @@ export class RoleRepository {
   };
 
   /**
-   * Assign roles to a user
+   * Assign multiple roles to a user
    */
   assignRolesToUser = async (
     userId: string,
@@ -417,12 +433,10 @@ export class RoleRepository {
   /**
    * Remove role from multiple users
    */
-  removeRolesFromUsers = async (
+  removeRoleFromUsers = async (
     userIds: string[],
     roleId: string,
   ): Promise<{ success: boolean }> => {
-    if (!userIds.length) return { success: false };
-
     const { error } = await supabase
       .from(this.junctionTable)
       .delete()
@@ -437,12 +451,10 @@ export class RoleRepository {
   /**
    * Remove roles to a user
    */
-  removeRolesToUser = async (
+  removeRolesFromUser = async (
     userId: string,
     roleIds: string[],
   ): Promise<{ success: boolean }> => {
-    if (!roleIds.length) return { success: false };
-
     const { error } = await supabase
       .from(this.junctionTable)
       .delete()

@@ -1,5 +1,9 @@
-import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
+import { SchemaFactory } from "#utils/schemaFactory.utils.js";
+
+export const body = z.object({
+  userIds: z.array(z.string()),
+});
 
 export const response = {
   200: SchemaFactory.Response.single(z.boolean()),

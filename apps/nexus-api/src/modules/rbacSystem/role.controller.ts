@@ -16,9 +16,13 @@ export class RoleController {
    */
   getAllRolesOfAllUsers: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.all_users.GET,
-    async ({ output }) => {
+    async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+
       const { data, error } = await tryCatch(
-        async () => await this.roleService.getAllRolesOfAllUsers(),
+        async () =>
+          await this.roleService.getAllRolesOfAllUsers(pageNumber, pageSize),
         "getting all roles for all users",
       );
 
@@ -27,7 +31,13 @@ export class RoleController {
       return output(200, {
         status: "success",
         message: "Fetched all roles of all users",
-        data,
+        data: data.list,
+        meta: {
+          totalRecords: data.count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
+        },
       });
     },
   );
@@ -36,7 +46,7 @@ export class RoleController {
    * GET /api/rbac/roles?userId={userId}&pageNumber={n}&pageSize={n}
    * Get roles of a specific user OR all roles if no userId
    */
-  getRolesOrUser: RequestHandler = createExpressController(
+  getRolesOfUser: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.GET,
     async ({ input, output, ctx }) => {
       const pageNumber = input.query.pageNumber || 1;
@@ -119,6 +129,86 @@ export class RoleController {
   );
 
   /**
+   * GET /api/rbac/roles/:roleId/users/no-roles
+   * Get users without assigned roles
+   */
+  getUsersWithoutRoles: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.users.no_roles.GET,
+    async ({ input, output }) => {
+      const roleId = input.params.roleId;
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.getUsersWithoutRoles(roleId),
+        "GEtting the users without roles",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Successful getting the users without roles assigned",
+        data: data.list,
+        meta: {
+          totalRecords: data.count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
+        },
+      });
+    },
+  );
+
+  /**
+   * GET /api/rbac/roles/users/:userId/permissions
+   * Get permission for a user
+   */
+  getPermissionForUser: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.users.userId.permissions.GET,
+    async ({ input, output }) => {
+      const userId = input.params.userId;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.getPermissionsForUser(userId),
+        "Getting all permission of the user",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Successfully fetched all permission for the user",
+        data,
+      });
+    },
+  );
+
+  /**
+   * GET /api/rbac/roles/:roleName
+   * Checks if role exists by name
+   */
+  roleExistsByName: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleName.GET,
+    async ({ input, output }) => {
+      const { roleName } = input.params;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.roleExistsByName(roleName),
+        "Checking if the role exists by name",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Role exists",
+        data,
+      });
+    },
+  );
+
+  /**
    * POST /api/rbac/roles
    * Create a new role
    * Body: { role_name: string, description?: string }
@@ -178,7 +268,7 @@ export class RoleController {
     async ({ input, output }) => {
       const { roleId } = input.params;
 
-      const { error } = await tryCatch(
+      const { data, error } = await tryCatch(
         async () => await this.roleService.deleteRole(roleId),
         "deleting role",
       );
@@ -188,13 +278,10 @@ export class RoleController {
       return output(200, {
         status: "success",
         message: "Role deleted successfully",
+        data: data.success,
       });
     },
   );
-
-  /**
-   * Checks if the role is already assign
-   */
 
   /**
    * POST /api/rbac/roles/:roleId/users/:userId
@@ -221,28 +308,128 @@ export class RoleController {
   );
 
   /**
-   * GET /api/rbac/roles/:roleId/users/:userId
-   * Checks if the user has specified role
+   * POST /api/rbac/roles/:roleId/bulk/assign
+   * Assigns role to multiple users
    */
-  // doUserHasThisRole: RequestHandler = createExpressController(
-  //   contract.api.rbac_system.roles.roleId.users.userId.GET,
-  //   async ({ input, output }) => {
-  //     const { roleId, userId } = input.params;
+  assignRoleToUsers: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.bulk.assign.POST,
+    async ({ input, output }) => {
+      const roleId = input.params.roleId;
+      const { userIds } = input.body;
 
-  //     const { data, error } = await tryCatch(
-  //       async () => await this.roleService.doUserHasThisRole(userId, roleId),
-  //       "checking if user has the input role",
-  //     );
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.assignRoleToUsers(userIds, roleId),
+        "Assigning role to multiple users",
+      );
 
-  //     if (error) throw error;
+      if (error) throw error;
 
-  //     return output(200, {
-  //       status: "success",
-  //       message: "",
-  //       data,
-  //     })
-  //   }
-  // )
+      return output(200, {
+        status: "Success",
+        message: "Successfully assigned role to multiple users",
+        data,
+      });
+    },
+  );
+
+  /**
+   * POST /api/rbac/roles/users/:userId/bulk/assign
+   * Assigns multiple Roles to a user
+   */
+  assignRolesToUser: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.users.userId.bulk.assign.POST,
+    async ({ input, output }) => {
+      const { roleIds } = input.body;
+      const userId = input.params.userId;
+
+      const { data, error } = await tryCatch(
+        async () => this.roleService.assignRolesToUser(userId, roleIds),
+        "Assigning multiple roles to user",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Successfully assigned roles to the user",
+        data,
+      });
+    },
+  );
+
+  /**
+   * DELETE /api/rbac/roles/:roleId/users/:userId
+   * Remove role from a user
+   */
+  removeRoleFromUser: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.users.userId.DELETE,
+    async ({ input, output }) => {
+      const { roleId, userId } = input.params;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.removeRoleFromUser(userId, roleId),
+        "Removing role to a user",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Successfylly removed the role from a user",
+        data: data.success,
+      });
+    },
+  );
+
+  /**
+   * DELETE /api/rbac/roles/:roleId/bulk/remove
+   * Remove role from multiple users
+   */
+  removeRoleFromUsers: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.bulk.remove.DELETE,
+    async ({ input, output }) => {
+      const { userIds } = input.body;
+      const roleId = input.params.roleId;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.removeRoleFromUsers(userIds, roleId),
+        "Removing role from users",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Successfully removed the role from multiple users",
+        data: data.success,
+      });
+    },
+  );
+
+  /**
+   * DELETE /api/rbac/roles/users/:userId/bulk/remove
+   * Remove multiple roles from a user
+   */
+  removeRolesFromUser: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.users.userId.bulk.remove.DELETE,
+    async ({ input, output }) => {
+      const { userId } = input.params;
+      const roleIds = input.body.roleIds;
+
+      const { data, error } = await tryCatch(
+        async () => await this.roleService.removeRolesFromUser(userId, roleIds),
+        "Removing roles from a user",
+      );
+
+      if (error) throw error;
+
+      return output(200, {
+        status: "success",
+        message: "Successfully removed multiple roles from a user",
+        data: data.success,
+      });
+    },
+  );
 }
 
 export const roleControllerInstance = new RoleController();

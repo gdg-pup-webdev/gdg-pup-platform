@@ -17,11 +17,12 @@ export class RoleService {
   /**
    * Get all roles of all users
    */
-  getAllRolesOfAllUsers = async (): Promise<
-    Array<{ user: userRow; roles: roleRow[] }>
-  > => {
+  getAllRolesOfAllUsers = async (
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<RepositoryResultList<{ user: userRow; roles: roleRow[] }>> => {
     const { data, error } = await tryCatch(
-      async () => await this.getAllRolesOfAllUsers(),
+      async () => await this.getAllRolesOfAllUsers(pageNumber, pageSize),
       "getting all roles of all users",
     );
     if (error) throw new RepositoryError(error.message);
@@ -91,7 +92,9 @@ export class RoleService {
   /**
    * Get users without assigned roles
    */
-  getUsersWithoutRoles = async (roleId: string): Promise<userRow[]> => {
+  getUsersWithoutRoles = async (
+    roleId: string,
+  ): Promise<RepositoryResultList<userRow>> => {
     const { data, error } = await tryCatch(
       async () => await this.roleRepository.getUsersWithoutRoles(roleId),
       "Getting users without roles",
@@ -169,15 +172,15 @@ export class RoleService {
   /**
    * Delete Role
    */
-  deleteRole = async (roleId: string): Promise<void> => {
-    const { error } = await tryCatch(
+  deleteRole = async (roleId: string): Promise<{ success: boolean }> => {
+    const { data, error } = await tryCatch(
       async () => await this.roleRepository.deleteRole(roleId),
       `Deleting role id ${roleId}`,
     );
 
     if (error) throw new RepositoryError(error.message);
 
-    return;
+    return data;
   };
 
   /**
@@ -200,12 +203,12 @@ export class RoleService {
   /**
    * Assign role to multiple users
    */
-  assignRolesToUsers = async (
+  assignRoleToUsers = async (
     userIds: string[],
     roleId: string,
   ): Promise<userRoleJunctionRow[]> => {
     const { data, error } = await tryCatch(
-      async () => await this.roleRepository.assignRolesToUsers(userIds, roleId),
+      async () => await this.roleRepository.assignRoleToUsers(userIds, roleId),
       "Assigning role to multiple users",
     );
 
@@ -252,36 +255,37 @@ export class RoleService {
    * Remove role to multiple users
    */
 
-  removeRolesToUsers = async (
+  removeRoleFromUsers = async (
     userIds: string[],
     roleId: string,
   ): Promise<{ success: boolean }> => {
-    const { data, error } = await tryCatch(
+    const { error } = await tryCatch(
       async () =>
-        await this.roleRepository.removeRolesFromUsers(userIds, roleId),
+        await this.roleRepository.removeRoleFromUsers(userIds, roleId),
       "Removing role to multiple users",
     );
 
     if (error) throw new RepositoryError(error.message);
 
-    return data;
+    return { success: true };
   };
 
   /**
    * Remove roles to a user
    */
-  removeRolesToUser = async (
+  removeRolesFromUser = async (
     userId: string,
     roleIds: string[],
   ): Promise<{ success: boolean }> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.removeRolesToUser(userId, roleIds),
+    const { error } = await tryCatch(
+      async () =>
+        await this.roleRepository.removeRolesFromUser(userId, roleIds),
       "Removing roles to a user",
     );
 
     if (error) throw new RepositoryError(error.message);
 
-    return data;
+    return { success: true };
   };
 }
 

@@ -1,7 +1,7 @@
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
-import { z } from "zod";
+import { permission } from "#models/rbacSystem/index.js";
 
 export const response = {
-  200: SchemaFactory.Response.single(z.boolean()),
+  200: SchemaFactory.Response.list(permission.row),
   ...SchemaFactory.Response.standardErrors(),
 };
