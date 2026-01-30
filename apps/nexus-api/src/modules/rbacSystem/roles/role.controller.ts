@@ -1,4 +1,4 @@
-import { ServiceError, NotFoundError } from "@/classes/ServerError";
+import { ServiceError } from "@/classes/ServerError";
 import { RoleService, roleServiceInstance } from "./role.service.js";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
@@ -72,27 +72,27 @@ export class RoleController {
             totalPages: Math.ceil(data.count / pageSize),
           },
         });
-      } else {
-        // Pero kapag wala namang userId, kukunin yung mga roles
-        const { data, error } = await tryCatch(
-          async () => this.roleService.getAllRoles(),
-          "getting all roles",
-        );
-
-        if (error) throw new ServiceError(error.message);
-
-        return output(200, {
-          status: "success",
-          message: "All roles fetched successfully",
-          data: data.list,
-          meta: {
-            totalRecords: data.count,
-            currentPage: pageNumber,
-            pageSize,
-            totalPages: Math.ceil(data.count / pageSize),
-          },
-        });
       }
+
+      // Pero kapag wala namang userId, kukunin yung mga roles
+      const { data, error } = await tryCatch(
+        async () => this.roleService.getAllRoles(),
+        "getting all roles",
+      );
+
+      if (error) throw new ServiceError(error.message);
+
+      return output(200, {
+        status: "success",
+        message: "All roles fetched successfully",
+        data: data.list,
+        meta: {
+          totalRecords: data.count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(data.count / pageSize),
+        },
+      });
     },
   );
 
