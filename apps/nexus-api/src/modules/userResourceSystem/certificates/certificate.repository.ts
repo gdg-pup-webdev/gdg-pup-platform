@@ -7,8 +7,8 @@
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import {
   RepositoryResult,
-  RepositoryResultList,
-} from "@/types/repository.types.js";
+  RespositoryResultList,
+} from "@/types/repository.types.js"; 
 import { DatabaseError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { SupabaseUtils } from "@/utils/supabase.util";
@@ -33,7 +33,7 @@ export class CertificateRepository {
    */
   listCertificatesOfUser = async (
     userId: string,
-  ): RepositoryResultList<certificateRow> => {
+  ): RespositoryResultList<certificateRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
@@ -51,7 +51,7 @@ export class CertificateRepository {
    * listCertificates
    * Retrieves all certificates in the system.
    */
-  listCertificates = async (): RepositoryResultList<certificateRow> => {
+  listCertificates = async (): RespositoryResultList<certificateRow> => {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
       "Calling database to list certificates",
@@ -66,7 +66,9 @@ export class CertificateRepository {
    * getOneCertificate
    * Fetches a single certificate by ID.
    */
-  getOneCertificate = async (id: string): RepositoryResult<certificateRow> => {
+  getOneCertificate = async (
+    id: string,
+  ): RepositoryResult<certificateRow> => {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.getOneRow(this.tableName, id),
       "Calling database to get one certificate",

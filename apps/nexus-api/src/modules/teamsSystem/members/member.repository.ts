@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RepositoryResultList,
+  RespositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -22,7 +22,7 @@ export class MemberRepository {
 
   listMembersOfTeam = async (
     teamId: string,
-  ): RepositoryResultList<memberRow> => {
+  ): RespositoryResultList<memberRow> => {
     const { data, error } = await supabase
       .from(this.memberTableName)
       .select("*")
@@ -52,7 +52,7 @@ export class MemberRepository {
       userId,
       role,
     }: { teamId?: string; userId?: string; role?: string },
-  ): Promise<RepositoryResultList<memberRow>> => {
+  ): Promise<RespositoryResultList<memberRow>> => {
     // 1. Start the query chain and ask for the exact count immediately
     let query = supabase
       .from(this.memberTableName)

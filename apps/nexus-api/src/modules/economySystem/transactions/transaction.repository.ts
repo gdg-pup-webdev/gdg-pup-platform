@@ -1,8 +1,11 @@
-import { DatabaseError, RepositoryError } from "@/classes/ServerError.js";
+import {
+  DatabaseError,
+  NotFoundError,
+} from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RepositoryResultList,
+  RespositoryResultList,
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -99,7 +102,7 @@ export class TransactionRepository {
   listTransactions = async (
     pageNumber: number,
     pageSize: number,
-  ): RepositoryResultList<models.economySystem.transaction.row> => {
+  ): RespositoryResultList<models.economySystem.transaction.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 

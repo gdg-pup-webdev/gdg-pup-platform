@@ -6,7 +6,7 @@ import {
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RepositoryResultList,
+  RespositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import { models } from "@packages/nexus-api-contracts";
@@ -61,7 +61,7 @@ export class ExternalResourceRepository {
     return data;
   };
 
-  list = async (): RepositoryResultList<tableRow> => {
+  list = async (): RespositoryResultList<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")

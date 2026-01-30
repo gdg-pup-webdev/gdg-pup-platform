@@ -1,6 +1,6 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RepositoryResultList } from "@/types/repository.types.js";
+import { RespositoryResultList } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
 export class AttendanceRepository {
@@ -23,7 +23,7 @@ export class AttendanceRepository {
 
   listEventAttendees = async (
     eventId: string,
-  ): RepositoryResultList<models.eventSystem.attendee.row> => {
+  ): RespositoryResultList<models.eventSystem.attendee.row> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*, user(*)")
