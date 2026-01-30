@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -17,7 +17,7 @@ export class ProjectRepository {
 
   listProjectsOfUser = async (
     userId: string,
-  ): RespositoryResultList<projectRow> => {
+  ): RepositoryResultList<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
@@ -36,7 +36,7 @@ export class ProjectRepository {
     };
   };
 
-  listProjects = async (): RespositoryResultList<projectRow> => {
+  listProjects = async (): RepositoryResultList<projectRow> => {
     const { data, error } = await supabase.from(this.tableName).select("*");
     if (error) throw new DatabaseError(error.message);
 

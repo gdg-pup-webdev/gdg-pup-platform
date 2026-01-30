@@ -4,7 +4,7 @@
  * These tests hit the real Express app but mock the service layer to
  * validate routing, contract shape, and pagination meta.
  */
-import request = require("supertest");
+import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import app from "../../../../app.js";
@@ -31,7 +31,7 @@ describe("role.controller (integration)", () => {
   });
 
   it("GET /api/rbac-system/roles returns list + meta and calls service with userId", async () => {
-    roleList.mockResolvedValue(listResult(roleFixture));
+    roleList.mockResolvedValue(listResult([roleFixture]));
 
     const response = await request(app)
       .get(rolesBasePath)
@@ -50,5 +50,39 @@ describe("role.controller (integration)", () => {
         totalPages: 1,
       },
     });
+  });
+
+  it("GET /api/rbac-system/roles returns empty list if user has no roles", async () => {
+    roleList.mockResolvedValue(listResult([]));
+
+    const response = await request(app)
+      .get(rolesBasePath)
+      .query({ userId: "user-2", ...rbacPagination });
+
+    expect(response.status).toBe(200);
+    expect(roleList).toHaveBeenCalledWith("user-2");
+    expect(response.body.data).toEqual([]);
+    expect(response.body.meta.totalRecords).toBe(0);
+  });
+
+  it("GET /api/rbac-system/roles handles service errors", async () => {
+    roleList.mockRejectedValue(new Error("Service failure"));
+
+    const response = await request(app)
+      .get(rolesBasePath)
+      .query({ userId: "user-3", ...rbacPagination });
+
+    expect(response.status).toBeGreaterThanOrEqual(400);
+    expect(response.body.status).toBe("fail");
+  });
+
+  it("GET /api/rbac-system/roles returns correct pagination meta", async () => {
+    roleList.mockResolvedValue(listResult([roleFixture, roleFixture]));
+    const response = await request(app)
+      .get(rolesBasePath)
+      .query({ userId: "user-4", ...rbacPagination });
+
+    expect(response.body.meta.totalRecords).toBe(2);
+    expect(response.body.meta.pageSize).toBe(rbacPagination.pageSize);
   });
 });

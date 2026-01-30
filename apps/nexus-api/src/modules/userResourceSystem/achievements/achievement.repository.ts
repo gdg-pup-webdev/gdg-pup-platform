@@ -7,7 +7,7 @@
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { DatabaseError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util";
@@ -33,7 +33,7 @@ export class AchievementRepository {
    */
   listAchievementsOfUser = async (
     userId: string,
-  ): RespositoryResultList<achievementRow> => {
+  ): RepositoryResultList<achievementRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
@@ -51,7 +51,7 @@ export class AchievementRepository {
    * listAchievements
    * Retrieves all achievements in the system.
    */
-  listAchievements = async (): RespositoryResultList<achievementRow> => {
+  listAchievements = async (): RepositoryResultList<achievementRow> => {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
       "Calling database to list achievements",

@@ -9,7 +9,10 @@
     "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/types/supabase.types.ts",
     "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
     "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod",
-    "test": "vitest --run"
+    "test": "vitest run",
+    "test:w": "vitest",
+    "test-rbac": "vitest run src/modules/rbacSystem/",
+    "test-rbac:w": "vitest src/modules/rbacSystem"
   },
   "keywords": [],
   "author": "",
