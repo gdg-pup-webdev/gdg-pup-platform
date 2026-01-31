@@ -90,8 +90,18 @@ describe("EventController integration", () => {
   });
 
   it("GET /api/event-system/events lists events", async () => {
-    await testListEndpoint(app, "/api/event-system/events", mockListEvents, event);
-    expect(mockListEvents).toHaveBeenCalled();
+    await testListEndpoint(app, "/api/event-system/events", mockListEvents, event, {
+      creator_id: "user-1",
+      category: "workshop",
+    });
+    expect(mockListEvents).toHaveBeenCalledWith(
+      1,
+      10,
+      expect.objectContaining({
+        creator_id: "user-1",
+        category: "workshop",
+      }),
+    );
   });
 
   it("POST /api/event-system/events creates an event with user id", async () => {
@@ -155,10 +165,25 @@ describe("EventController integration", () => {
 
     const response = await supertest(app)
       .get("/api/event-system/events/event-1/attendees")
-      .query({ pageNumber: 1, pageSize: 10 });
+      .query({
+        pageNumber: 1,
+        pageSize: 10,
+        user_id: "user-2",
+        checkin_method: "NFC",
+        is_present: true,
+      });
 
     expect(response.status).toBe(200);
-    expect(mockListEventAttendees).toHaveBeenCalledWith("event-1");
+    expect(mockListEventAttendees).toHaveBeenCalledWith(
+      1,
+      10,
+      expect.objectContaining({
+        event_id: "event-1",
+        user_id: "user-2",
+        checkin_method: "NFC",
+        is_present: true,
+      }),
+    );
   });
 
   it("POST /api/event-system/checkin checks in attendee", async () => {

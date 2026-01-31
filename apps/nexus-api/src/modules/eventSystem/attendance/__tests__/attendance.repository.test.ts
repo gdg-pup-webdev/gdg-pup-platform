@@ -44,45 +44,63 @@ describe("AttendanceRepository", () => {
     expect(result).toEqual(attendanceRow);
   });
 
-  it("listEventAttendees filters by event_id and counts", async () => {
-    const listEqMock = vi.fn().mockResolvedValue({
+  it("listEventAttendees applies filters, order, and range", async () => {
+    const rangeMock = vi.fn().mockResolvedValue({
       data: [{ user: { id: "user-1" } }],
+      count: 1,
       error: null,
     });
-    const listSelectMock = vi.fn().mockReturnValue({ eq: listEqMock });
+    const query = {
+      eq: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      range: rangeMock,
+    };
+    const selectMock = vi.fn().mockReturnValue(query);
 
-    const countEqMock = vi.fn().mockResolvedValue({ count: 1, error: null });
-    const countSelectMock = vi.fn().mockReturnValue({ eq: countEqMock });
+    supabaseMock.from.mockReturnValue({ select: selectMock });
 
-    supabaseMock.from
-      .mockImplementationOnce(() => ({ select: listSelectMock }))
-      .mockImplementationOnce(() => ({ select: countSelectMock }));
+    const result = await repository.listEventAttendees(3, 5, {
+      event_id: "event-1",
+      user_id: "user-1",
+      checkin_method: "NFC",
+      is_present: true,
+      created_at_gte: "2024-01-01",
+      created_at_lte: "2024-01-31",
+    });
 
-    const result = await repository.listEventAttendees("event-1");
-
-    expect(listSelectMock).toHaveBeenCalledWith("*, user(*)");
-    expect(listEqMock).toHaveBeenCalledWith("event_id", "event-1");
+    expect(selectMock).toHaveBeenCalledWith("*, user(*)", { count: "exact" });
+    expect(query.eq).toHaveBeenCalledWith("event_id", "event-1");
+    expect(query.eq).toHaveBeenCalledWith("user_id", "user-1");
+    expect(query.eq).toHaveBeenCalledWith("checkin_method", "NFC");
+    expect(query.eq).toHaveBeenCalledWith("is_present", true);
+    expect(query.gte).toHaveBeenCalledWith("created_at", "2024-01-01");
+    expect(query.lte).toHaveBeenCalledWith("created_at", "2024-01-31");
+    expect(query.order).toHaveBeenCalledWith("created_at", { ascending: false });
+    expect(rangeMock).toHaveBeenCalledWith(10, 14);
     expect(result).toEqual({ list: [{ id: "user-1" }], count: 1 });
   });
 
-  it("listEventAttendees maps count error to DatabaseError", async () => {
-    const listEqMock = vi.fn().mockResolvedValue({
-      data: [{ user: { id: "user-1" } }],
-      error: null,
+  it("listEventAttendees maps query error to DatabaseError", async () => {
+    const rangeMock = vi.fn().mockResolvedValue({
+      data: null,
+      count: null,
+      error: { message: "fail" },
     });
-    const listSelectMock = vi.fn().mockReturnValue({ eq: listEqMock });
+    const query = {
+      eq: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      range: rangeMock,
+    };
+    const selectMock = vi.fn().mockReturnValue(query);
 
-    const countEqMock = vi
-      .fn()
-      .mockResolvedValue({ count: null, error: { message: "fail" } });
-    const countSelectMock = vi.fn().mockReturnValue({ eq: countEqMock });
+    supabaseMock.from.mockReturnValue({ select: selectMock });
 
-    supabaseMock.from
-      .mockImplementationOnce(() => ({ select: listSelectMock }))
-      .mockImplementationOnce(() => ({ select: countSelectMock }));
-
-    await expect(repository.listEventAttendees("event-1")).rejects.toBeInstanceOf(
-      DatabaseError,
-    );
+    await expect(
+      repository.listEventAttendees(1, 10, { event_id: "event-1" }),
+    ).rejects.toBeInstanceOf(DatabaseError);
   });
 });

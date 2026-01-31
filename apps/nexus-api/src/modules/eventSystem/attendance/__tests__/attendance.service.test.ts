@@ -47,9 +47,15 @@ describe("AttendanceService", () => {
       count: 1,
     });
 
-    const result = await service.listEventAttendees("event-1");
+    const result = await service.listEventAttendees(1, 10, {
+      event_id: "event-1",
+      checkin_method: "NFC",
+    });
 
-    expect(mockAttendanceRepository.listEventAttendees).toHaveBeenCalledWith("event-1");
+    expect(mockAttendanceRepository.listEventAttendees).toHaveBeenCalledWith(1, 10, {
+      event_id: "event-1",
+      checkin_method: "NFC",
+    });
     expect(result.count).toBe(1);
   });
 
