@@ -1,6 +1,7 @@
 /**
- * Reward service unit tests.
-Reward service unit tests.
+ * @file reward.service.test.ts
+ * @description Reward service unit tests focused on orchestration and error
+ * mapping with mocked repository and dependent services.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

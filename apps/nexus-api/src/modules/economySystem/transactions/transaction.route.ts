@@ -6,7 +6,7 @@ import {
 
 export class TransactionRouter {
   constructor(
-    private transactionController: TransactionController = transactionControllerInstance,
+    private readonly transactionController: TransactionController = transactionControllerInstance,
   ) {}
 
   getRouter = (): Router => {

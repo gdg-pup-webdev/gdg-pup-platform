@@ -7,20 +7,32 @@ import {
   walletRepositoryInstance,
 } from "./wallet.repository.js";
 import {
-  CantCreateError,
-  DatabaseError,
   NotFoundError,
   RepositoryError,
-  ServerError,
 } from "../../../classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
+/**
+ * Service for managing wallet business logic.
+ * Orchestrates wallet updates and transaction creation.
+ */
+export type WalletListFilters = {
+  userId?: string | null;
+};
+
 export class WalletService {
   constructor(
-    private walletRepository: WalletRepository = walletRepositoryInstance,
-    private transactionRepository: TransactionRepository = transactionRepositoryInstance,
+    private readonly walletRepository: WalletRepository = walletRepositoryInstance,
+    private readonly transactionRepository: TransactionRepository = transactionRepositoryInstance,
   ) {}
 
+  /**
+   * Retrieves a wallet by user ID.
+   *
+   * @returns A promise resolving to the wallet data.
+   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {NotFoundError} If the wallet is not found.
+   */
   getWalletByUserId = async (userId: string) => {
     const { data, error } = await tryCatch(
       async () => await this.walletRepository.listWalletsOfUser(userId),
@@ -34,10 +46,36 @@ export class WalletService {
     return data;
   };
 
-  listWallets = async () => {
+  /**
+   * Lists all wallets with pagination applied.
+   *
+   * @returns A promise resolving to a list of wallets.
+   */
+  listWallets = async (pageNumber: number, pageSize: number) => {
+    return await this.listWalletsWithFilters(pageNumber, pageSize, {});
+  };
+
+  /**
+   * Lists wallets based on provided filters.
+   *
+   * @param filters - Filter options for listing wallets.
+   * @returns A promise resolving to the list of wallets.
+   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {NotFoundError} If no wallets are found.
+   */
+  listWalletsWithFilters = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: WalletListFilters,
+  ) => {
     const { data, error } = await tryCatch(
-      async () => await this.walletRepository.list(),
-      "calling repository to list wallets",
+      async () =>
+        await this.walletRepository.listWalletsWithFilters(
+          pageNumber,
+          pageSize,
+          filters,
+        ),
+      "calling repository to list wallets with filters",
     );
 
     if (error) throw new RepositoryError(error.message);
@@ -47,16 +85,20 @@ export class WalletService {
     return data;
   };
 
+  /**
+   * Increments points in a user's wallet and records a transaction.
+   *
+   * @param sourceType - The source of the points (e.g., "event", "reward").
+   * @returns A promise resolving to the created transaction and updated wallet.
+   * @throws {RepositoryError} If any database operation fails.
+   * @throws {NotFoundError} If the user's wallet is not found.
+   */
   incrementPoints = async (
     userId: string,
     amount: number,
     sourceType: string,
     sourceId: string,
   ) => {
-    /**
-     * MAIN BUSINESS LOGIC
-     */
-    // get wallet of the user
     const { data: wallet, error: walletFetchError } = await tryCatch(
       async () => await this.walletRepository.listWalletsOfUser(userId),
       "calling repository to fetch wallet using user id",
@@ -74,10 +116,6 @@ export class WalletService {
     );
     if (updateWalletError) throw new RepositoryError(updateWalletError.message);
 
-    /**
-     * SIDE EFFECTS
-     */
-    // create new transaction to increment points
     const { data, error } = await tryCatch(
       async () =>
         await this.transactionRepository.createTransaction({
@@ -96,16 +134,20 @@ export class WalletService {
     return { transaction: data, updatedWallet: wallet };
   };
 
+  /**
+   * Decrements points from a user's wallet and records a transaction.
+   *
+   * @param sourceType - The source of the deduction.
+   * @returns A promise resolving to the created transaction and updated wallet.
+   * @throws {RepositoryError} If any database operation fails.
+   * @throws {NotFoundError} If the user's wallet is not found.
+   */
   decrementPoints = async (
     userId: string,
     amount: number,
     sourceType: string,
     sourceId: string,
   ) => {
-    /**
-     * MAIN BUSINESS LOGIC
-     */
-    // get wallet of the user
     const { data: wallet, error: walletFetchError } = await tryCatch(
       async () => await this.walletRepository.listWalletsOfUser(userId),
       "calling repository to fetch wallet using user id",
@@ -113,9 +155,7 @@ export class WalletService {
     if (walletFetchError) throw new RepositoryError(walletFetchError.message);
     if (!wallet) throw new NotFoundError("Wallet not found.");
 
-    // calculate new balance
     const newBalance = wallet.balance - amount;
-    // update wallet balance
     const { error: updateWalletError } = await tryCatch(
       async () =>
         await this.walletRepository.updateWalletBalance(userId, newBalance),
