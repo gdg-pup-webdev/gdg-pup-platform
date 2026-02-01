@@ -22,7 +22,7 @@ The project is built with the following technologies:
 The repository is organized as a monorepo with the following structure:
 
 ```
-gdgnexussecondclone/
+project-root/
 ├── apps/
 │   ├── nexus-api/              # Express.js Backend API
 │   ├── nexus-web/              # Next.js Frontend
