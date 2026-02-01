@@ -5,7 +5,7 @@
  * touching a real database.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DatabaseError } from "../../../../classes/ServerError.js";
+import { RepositoryError } from "../../../../classes/ServerError.js";
 import { roleFixture } from "../../__tests__/test-helpers.js";
 import { RoleRepository } from "../role.repository.js";
 
@@ -82,7 +82,7 @@ describe("role.repository (unit)", () => {
     expect(result.count).toBe(0);
   });
 
-  it("maps supabase errors to DatabaseError", async () => {
+  it("maps supabase errors to RepositoryError", async () => {
     const eqListMock = vi.fn().mockResolvedValue({
       data: null,
       error: { message: "db failure" },
@@ -94,7 +94,7 @@ describe("role.repository (unit)", () => {
     fromMock.mockReturnValue({ select: selectListMock });
 
     await expect(repository.getRolesOfUser("user-1")).rejects.toBeInstanceOf(
-      DatabaseError,
+      RepositoryError,
     );
   });
 });

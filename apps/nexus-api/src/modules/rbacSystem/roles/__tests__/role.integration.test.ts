@@ -27,13 +27,7 @@ describe("RoleRepository and RoleService (integration)", () => {
   repo.updateRole = async (roleId, updates) => ({ ...roleFixture, ...updates });
   repo.deleteRole = async (roleId) => ({ success: true });
   repo.assignRoleToUser = async (userId, roleId) => roleJunctionFixture;
-  repo.assignRoleToUsers = async (userIds, roleId) =>
-    userIds.map((uid) => ({ user_id: uid, role_id: roleId }));
-  repo.assignRolesToUser = async (userId, roleIds) =>
-    roleIds.map((rid) => ({ user_id: userId, role_id: rid }));
   repo.removeRoleFromUser = async (userId, roleId) => ({ success: true });
-  repo.removeRoleFromUsers = async (userIds, roleId) => ({ success: true });
-  repo.removeRolesFromUser = async (userId, roleIds) => ({ success: true });
 
   it("getAllRolesOfAllUsers returns paginated user-role list", async () => {
     const result = await service.getAllRolesOfAllUsers(
@@ -100,42 +94,8 @@ describe("RoleRepository and RoleService (integration)", () => {
     expect(result).toEqual(roleJunctionFixture);
   });
 
-  it("assignRoleToUsers assigns a role to multiple users", async () => {
-    const result = await service.assignRoleToUsers(
-      ["user-1", "user-2"],
-      "role-1",
-    );
-    expect(result.length).toBe(2);
-    expect(result[0].role_id).toBe("role-1");
-  });
-
-  it("assignRolesToUser assigns multiple roles to a user", async () => {
-    const result = await service.assignRolesToUser("user-1", [
-      "role-1",
-      "role-2",
-    ]);
-    expect(result.length).toBe(2);
-    expect(result[0].user_id).toBe("user-1");
-  });
-
   it("removeRoleFromUser removes a role from a user", async () => {
     const result = await service.removeRoleFromUser("user-1", "role-1");
-    expect(result.success).toBe(true);
-  });
-
-  it("removeRoleFromUsers removes a role from multiple users", async () => {
-    const result = await service.removeRoleFromUsers(
-      ["user-1", "user-2"],
-      "role-1",
-    );
-    expect(result.success).toBe(true);
-  });
-
-  it("removeRolesFromUser removes multiple roles from a user", async () => {
-    const result = await service.removeRolesFromUser("user-1", [
-      "role-1",
-      "role-2",
-    ]);
     expect(result.success).toBe(true);
   });
 });

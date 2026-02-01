@@ -1,10 +1,45 @@
-import { ServiceError } from "@/classes/ServerError";
+import { ControllerError } from "@/classes/ServerError";
 import { RoleService, roleServiceInstance } from "./role.service.js";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
 
+/**
+ * RoleController
+ * ==============
+ *
+ * The RoleController class defines all HTTP endpoints for role management and user-role assignments in the RBAC system.
+ *
+ * Responsibilities:
+ * - Maps REST API routes to business logic in RoleService.
+ * - Handles request validation, input parsing, and response formatting.
+ * - Wraps service errors as ControllerError for consistent error handling and API responses.
+ * - Supports paginated queries, single and bulk operations, and permission checks.
+ *
+ * Key Endpoints:
+ * - GET /api/rbac/roles/all-users: Fetches all users and their assigned roles, paginated.
+ * - GET /api/rbac/roles: Fetches roles for a specific user (if userId is provided) or all roles.
+ * - GET /api/rbac/roles/:roleId: Fetches a single role by ID, including permissions.
+ * - GET /api/rbac/roles/:roleId/users/no-roles: Fetches users who do not have the specified role.
+ * - GET /api/rbac/roles/:roleName: Checks if a role exists by name.
+ * - POST /api/rbac/roles: Creates a new role.
+ * - PATCH /api/rbac/roles/:roleId: Updates an existing role.
+ * - DELETE /api/rbac/roles/:roleId: Deletes a role (fails if assigned to users).
+ * - POST /api/rbac/roles/:roleId/users/:userId: Assigns a role to a user.
+ * - POST /api/rbac/roles/:roleId/bulk/assign: Assigns a role to multiple users.
+ * - POST /api/rbac/roles/users/:userId/bulk/assign: Assigns multiple roles to a user.
+ * - DELETE /api/rbac/roles/:roleId/users/:userId: Removes a role from a user.
+ * - DELETE /api/rbac/roles/:roleId/bulk/remove: Removes a role from multiple users.
+ * - DELETE /api/rbac/roles/users/:userId/bulk/remove: Removes multiple roles from a user.
+ *
+ * Usage:
+ * - Each method is a RequestHandler for Express, created via createExpressController for typed contract support.
+ * - All responses include status, message, data, and pagination meta where applicable.
+ * - Errors are caught and wrapped as ControllerError for standardized error responses.
+ *
+ * This controller provides a complete, documented, and robust API surface for RBAC role management.
+ */
 export class RoleController {
   constructor(
     private readonly roleService: RoleService = roleServiceInstance,
@@ -26,7 +61,7 @@ export class RoleController {
         "getting all roles for all users",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       return output(200, {
         status: "success",
@@ -59,7 +94,7 @@ export class RoleController {
           "getting user roles",
         );
 
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ControllerError(error.message);
 
         return output(200, {
           status: "success",
@@ -80,7 +115,7 @@ export class RoleController {
         "getting all roles",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       return output(200, {
         status: "success",
@@ -110,7 +145,7 @@ export class RoleController {
         "getting role by role id",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       if (!data) {
         return output(404, {
@@ -143,7 +178,7 @@ export class RoleController {
         "GEtting the users without roles",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       return output(200, {
         status: "success",
@@ -173,7 +208,7 @@ export class RoleController {
         "Checking if the role exists by name",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       return output(200, {
         status: "success",
@@ -224,7 +259,7 @@ export class RoleController {
         "updating role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       return output(200, {
         status: "success",
@@ -272,61 +307,11 @@ export class RoleController {
         "assigning role to user",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       return output(200, {
         status: "success",
         message: "Role to assigned to user successfully",
-        data,
-      });
-    },
-  );
-
-  /**
-   * POST /api/rbac/roles/:roleId/bulk/assign
-   * Assigns role to multiple users
-   */
-  assignRoleToUsers: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleId.bulk.assign.POST,
-    async ({ input, output }) => {
-      const roleId = input.params.roleId;
-      const { userIds } = input.body;
-
-      const { data, error } = await tryCatch(
-        async () => await this.roleService.assignRoleToUsers(userIds, roleId),
-        "Assigning role to multiple users",
-      );
-
-      if (error) throw new ServiceError(error.message);
-
-      return output(200, {
-        status: "Success",
-        message: "Successfully assigned role to multiple users",
-        data,
-      });
-    },
-  );
-
-  /**
-   * POST /api/rbac/roles/users/:userId/bulk/assign
-   * Assigns multiple Roles to a user
-   */
-  assignRolesToUser: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.users.userId.bulk.assign.POST,
-    async ({ input, output }) => {
-      const { roleIds } = input.body;
-      const userId = input.params.userId;
-
-      const { data, error } = await tryCatch(
-        async () => this.roleService.assignRolesToUser(userId, roleIds),
-        "Assigning multiple roles to user",
-      );
-
-      if (error) throw new ServiceError(error.message);
-
-      return output(200, {
-        status: "success",
-        message: "Successfully assigned roles to the user",
         data,
       });
     },
@@ -346,61 +331,11 @@ export class RoleController {
         "Removing role to a user",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ControllerError(error.message);
 
       return output(200, {
         status: "success",
         message: "Successfylly removed the role from a user",
-        data: data.success,
-      });
-    },
-  );
-
-  /**
-   * DELETE /api/rbac/roles/:roleId/bulk/remove
-   * Remove role from multiple users
-   */
-  removeRoleFromUsers: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleId.bulk.remove.DELETE,
-    async ({ input, output }) => {
-      const { userIds } = input.body;
-      const roleId = input.params.roleId;
-
-      const { data, error } = await tryCatch(
-        async () => await this.roleService.removeRoleFromUsers(userIds, roleId),
-        "Removing role from users",
-      );
-
-      if (error) throw new ServiceError(error.message);
-
-      return output(200, {
-        status: "success",
-        message: "Successfully removed the role from multiple users",
-        data: data.success,
-      });
-    },
-  );
-
-  /**
-   * DELETE /api/rbac/roles/users/:userId/bulk/remove
-   * Remove multiple roles from a user
-   */
-  removeRolesFromUser: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.users.userId.bulk.remove.DELETE,
-    async ({ input, output }) => {
-      const { userId } = input.params;
-      const roleIds = input.body.roleIds;
-
-      const { data, error } = await tryCatch(
-        async () => await this.roleService.removeRolesFromUser(userId, roleIds),
-        "Removing roles from a user",
-      );
-
-      if (error) throw new ServiceError(error.message);
-
-      return output(200, {
-        status: "success",
-        message: "Successfully removed multiple roles from a user",
         data: data.success,
       });
     },

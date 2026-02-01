@@ -1,6 +1,6 @@
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { ServiceError } from "@/classes/ServerError.js";
 import { TablesInsert, Tables } from "@/types/supabase.types.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 
@@ -8,6 +8,20 @@ type roleRow = Tables<"user_role">;
 type userRow = Tables<"user">;
 type userRoleJunctionRow = Tables<"user_role_junction">;
 
+/**
+ * RoleService
+ * ===========
+ *
+ * The RoleService class is the business logic layer for role management in the RBAC system.
+ *
+ * Responsibilities:
+ * - Acts as an intermediary between controllers (API layer) and the RoleRepository (database layer).
+ * - Wraps all repository calls with error handling using the tryCatch utility, adding context for debugging.
+ * - Converts repository errors into ServiceError instances for consistent error handling in higher layers.
+ * - Implements business logic for role management, user-role assignments, bulk operations, and permission checks.
+ * - Ensures all returned data is properly shaped for controllers and API responses.
+ *
+ */
 export class RoleService {
   constructor(
     private roleRepository: RoleRepository = roleRepositoryInstance,
@@ -23,7 +37,7 @@ export class RoleService {
         await this.roleRepository.getAllRolesOfAllUsers(pageNumber, pageSize),
       "getting all roles of all users",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -36,7 +50,7 @@ export class RoleService {
       async () => await this.roleRepository.getRolesOfUser(userId),
       "getting roles of user",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -48,7 +62,7 @@ export class RoleService {
       "Getting all roles",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -60,7 +74,7 @@ export class RoleService {
       `Getting role name of ${roleId}`,
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -74,7 +88,7 @@ export class RoleService {
       `Getting all users with the role id of ${roleId}`,
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -88,7 +102,7 @@ export class RoleService {
       "Getting users without roles",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -100,7 +114,7 @@ export class RoleService {
       `Checking if role ${roleName} exists`,
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -114,7 +128,7 @@ export class RoleService {
       `creating role ${roleData.role_name}`,
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -129,7 +143,7 @@ export class RoleService {
       `Updating role id ${roleId} with ${JSON.stringify(updates)}`,
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -141,7 +155,7 @@ export class RoleService {
       `Deleting role id ${roleId}`,
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -156,37 +170,7 @@ export class RoleService {
       `Assigning role id ${roleId} to user id ${userId}`,
     );
 
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
-  };
-
-  /** Assign a role to multiple users (bulk) */
-  assignRoleToUsers = async (
-    userIds: string[],
-    roleId: string,
-  ): Promise<userRoleJunctionRow[]> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.assignRoleToUsers(userIds, roleId),
-      "Assigning role to multiple users",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
-  };
-
-  /** Assign multiple roles to a user (bulk) */
-  assignRolesToUser = async (
-    userId: string,
-    roleIds: string[],
-  ): Promise<userRoleJunctionRow[]> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.assignRolesToUser(userId, roleIds),
-      "Assigning roles to a user",
-    );
-
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return data;
   };
@@ -201,39 +185,7 @@ export class RoleService {
       `Removing the role id ${roleId} from user id ${userId}`,
     );
 
-    if (error) throw new RepositoryError(error.message);
-
-    return { success: true };
-  };
-
-  /** Remove a role from multiple users (bulk) */
-  removeRoleFromUsers = async (
-    userIds: string[],
-    roleId: string,
-  ): Promise<{ success: boolean }> => {
-    const { error } = await tryCatch(
-      async () =>
-        await this.roleRepository.removeRoleFromUsers(userIds, roleId),
-      "Removing role from multiple users",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return { success: true };
-  };
-
-  /** Remove multiple roles from a user (bulk) */
-  removeRolesFromUser = async (
-    userId: string,
-    roleIds: string[],
-  ): Promise<{ success: boolean }> => {
-    const { error } = await tryCatch(
-      async () =>
-        await this.roleRepository.removeRolesFromUser(userId, roleIds),
-      "Removing roles from a user",
-    );
-
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new ServiceError(error.message);
 
     return { success: true };
   };

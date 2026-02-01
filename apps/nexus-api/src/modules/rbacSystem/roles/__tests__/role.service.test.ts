@@ -1,8 +1,8 @@
 /** Role service unit tests. */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  DatabaseError,
   RepositoryError,
+  ServiceError,
 } from "../../../../classes/ServerError.js";
 import { listResult, roleFixture } from "../../__tests__/test-helpers.js";
 import { RoleService } from "../role.service.js";
@@ -40,10 +40,10 @@ describe("role.service (unit)", () => {
     expect(result.list).toEqual([]);
   });
 
-  it("maps repository errors to RepositoryError-shaped failures", async () => {
-    repoGetRolesOfUser.mockRejectedValue(new DatabaseError("db failure"));
+  it("maps repository errors to ServiceError-shaped failures", async () => {
+    repoGetRolesOfUser.mockRejectedValue(new RepositoryError("db failure"));
     await expect(service.getRolesOfUser("user-1")).rejects.toBeInstanceOf(
-      RepositoryError,
+      ServiceError,
     );
   });
 
