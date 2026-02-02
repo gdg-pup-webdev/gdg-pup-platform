@@ -22,20 +22,23 @@ The project is built with the following technologies:
 The repository is organized as a monorepo with the following structure:
 
 ```
-gdgnexussecondclone/
+gdg-pup-platform/ 
 ├── apps/
 │   ├── nexus-api/              # Express.js Backend API
 │   ├── nexus-web/              # Next.js Frontend
-│   └── identity-api/           # Authentication Service
+│   ├── identity-api/           # Authentication Service
+│   └── storybook/              # Storybook app for UI development
 │
 ├── packages/
 │   ├── typed-rest/             # Type-safe API client/server helpers
 │   ├── nexus-api-contracts/    # API contract definitions & schemas
-│   └── identity-api-contracts/ # Identity service API contracts
+│   ├── identity-api-contracts/ # Identity service API contracts
+│   └── spark-ui/               # Internal component library (Spark UI)
 │
 ├── configs/
 │   ├── eslint-config/          # Shared ESLint configuration
-│   └── typescript-config/      # Shared TypeScript configuration
+│   ├── typescript-config/      # Shared TypeScript configuration
+│   └── tailwind-config/        # Shared Tailwind CSS configuration
 │
 ├── .gitignore
 ├── package.json                # Root workspace configuration
