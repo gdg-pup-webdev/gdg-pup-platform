@@ -5,7 +5,10 @@
  * touching a real database.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { RepositoryError } from "../../../../classes/ServerError.js";
+import {
+  DatabaseError,
+  RepositoryError,
+} from "../../../../classes/ServerError.js";
 import { roleFixture } from "../../__tests__/test-helpers.js";
 import { RoleRepository } from "../role.repository.js";
 
@@ -94,7 +97,7 @@ describe("role.repository (unit)", () => {
     fromMock.mockReturnValue({ select: selectListMock });
 
     await expect(repository.getRolesOfUser("user-1")).rejects.toBeInstanceOf(
-      RepositoryError,
+      DatabaseError,
     );
   });
 });

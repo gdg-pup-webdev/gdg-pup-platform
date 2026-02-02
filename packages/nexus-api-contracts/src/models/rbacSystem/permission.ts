@@ -8,3 +8,5 @@ export const insert = row.omit({
 });
 
 export const update = insert.partial();
+
+export const select = row;

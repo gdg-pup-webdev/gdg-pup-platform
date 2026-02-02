@@ -5,7 +5,6 @@ import {
   roleFixture,
   userFixture,
   roleJunctionFixture,
-  permissionFixture,
   listResult,
   rbacPagination,
 } from "../../__tests__/test-helpers.js";

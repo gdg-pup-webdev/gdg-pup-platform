@@ -1,4 +1,8 @@
-import { RepositoryError, NotFoundError } from "@/classes/ServerError";
+import {
+  RepositoryError,
+  NotFoundError,
+  DatabaseError,
+} from "@/classes/ServerError";
 import { supabase } from "@/lib/supabase";
 import { RepositoryResultList } from "@/types/repository.types";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types";
@@ -40,14 +44,14 @@ export class PermissionRepository {
       .select("*")
       .eq("user_role_id", roleId);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     const { count, error: countError } = await supabase
       .from(this.permissionTable)
       .select("*", { count: "exact", head: true })
       .eq("user_role_id", roleId);
 
-    if (countError) throw new RepositoryError(countError.message);
+    if (countError) throw new DatabaseError(countError.message);
 
     return {
       list: data as userRolePermission[],
@@ -73,7 +77,7 @@ export class PermissionRepository {
       .select("role_id")
       .eq("user_id", userId);
 
-    if (junctionError) throw new RepositoryError(junctionError.message);
+    if (junctionError) throw new DatabaseError(junctionError.message);
 
     const roleIds = (junctionRows ?? []).map((row) => row.role_id);
 
@@ -87,7 +91,14 @@ export class PermissionRepository {
       .select("*")
       .in("user_role_id", roleIds);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      // Notfound
+      if (error.code === "PGRST116") {
+        throw new RepositoryError(`Permission does not exist`);
+      }
+
+      throw new DatabaseError(error.message);
+    }
 
     // Get count for pagination
     const { count, error: countError } = await supabase
@@ -95,7 +106,7 @@ export class PermissionRepository {
       .select("*", { count: "exact", head: true })
       .in("user_role_in", roleIds);
 
-    if (countError) throw new RepositoryError(countError.message);
+    if (countError) throw new DatabaseError(countError.message);
 
     return {
       list: data as userRolePermission[],
@@ -117,7 +128,16 @@ export class PermissionRepository {
       .select()
       .single();
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      // Duplicate permission
+      if (error.code === "23505") {
+        throw new RepositoryError(
+          `Permission ${permissionData.resource_name} already exists`,
+        );
+      }
+
+      throw new DatabaseError(error.message);
+    }
 
     return data as userRolePermission;
   }
@@ -141,12 +161,12 @@ export class PermissionRepository {
 
     if (error) {
       // Not found error code from Supabase/PostgREST
-      if (error.code === "PGEST116") {
+      if (error.code === "PGRST116") {
         throw new NotFoundError(
           `Permission with ID "${permissionId}" not found.`,
         );
       }
-      throw new RepositoryError(error.message);
+      throw new DatabaseError(error.message);
     }
 
     return data as userRolePermission;
@@ -163,7 +183,14 @@ export class PermissionRepository {
       .delete()
       .eq("id", permissionId);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      // Permission still assigned to a role
+      if (error.code === "23503") {
+        throw new RepositoryError(`Permission still assigned to a role`);
+      }
+
+      throw new DatabaseError(error.message);
+    }
 
     return { success: true };
   }
@@ -194,7 +221,21 @@ export class PermissionRepository {
       .select()
       .single();
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      // Duplicate error
+      if (error.code === "23505") {
+        throw new RepositoryError(
+          `Same permission cannot be assigned to the same role`,
+        );
+      }
+
+      // Not found error
+      if (error.code === "PGRST116") {
+        throw new NotFoundError(`Permission or role does not exist`);
+      }
+
+      throw new DatabaseError(error.message);
+    }
 
     return data as userRolePermission;
   }
@@ -212,7 +253,7 @@ export class PermissionRepository {
    * @param permissionData The permission data to assign.
    * @returns { Promise<userRolePermission> }
    */
-  async assignMultiplePermissionsToRoleBulk(
+  async assignPermissionsToRoleInBulk(
     roleId: string,
     permissionDataList: Omit<
       TablesInsert<"user_role_permission">,
@@ -231,7 +272,21 @@ export class PermissionRepository {
       .insert(insertData)
       .select();
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      // Duplicate error
+      if (error.code === "23505") {
+        throw new RepositoryError(
+          `Same permissions cannot be assigned to the same role`,
+        );
+      }
+
+      // Not found error
+      if (error.code === "PGRST116") {
+        throw new NotFoundError(`Permissions or role does not exist`);
+      }
+
+      throw new DatabaseError(error.message);
+    }
 
     return data as userRolePermission[];
   }
@@ -258,9 +313,16 @@ export class PermissionRepository {
       .eq("id", permissionId)
       .eq("user_role_id", roleId);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      // Not found error
+      if (error.code === "PGRST116") {
+        throw new NotFoundError(`Permission does not exist`);
+      }
 
-    return { success: false };
+      throw new DatabaseError(error.message);
+    }
+
+    return { success: true };
   }
 
   /**
@@ -275,7 +337,7 @@ export class PermissionRepository {
    * @param permissionIds Array of permission Ids to remove.
    * @returns { Promise<{ success: boolean }> }
    */
-  async removePermissionFromRoleBulk(
+  async removePermissionsFromRoleInBulk(
     roleId: string,
     permissionIds: string[],
   ): Promise<{ success: boolean }> {
@@ -287,7 +349,14 @@ export class PermissionRepository {
       .eq("user_role_id", roleId)
       .in("id", permissionIds);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) {
+      // Not found error
+      if (error.code === "PGRST116") {
+        throw new NotFoundError(`Permission does not exist`);
+      }
+
+      throw new DatabaseError(error.message);
+    }
 
     return { success: true };
   }

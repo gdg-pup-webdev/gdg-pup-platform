@@ -1,3 +1,7 @@
+import { Tables } from "../../../types/supabase.types";
+
+type userRolePermission = Tables<"user_role_permission">;
+
 /**
  * Shared fixtures and helpers for RBAC role tests.
  */
@@ -25,15 +29,15 @@ export const roleJunctionFixture = {
   role_id: "role-1",
 } as const;
 
-export const permissionFixture = {
+export const permissionFixture: userRolePermission = {
   id: "perm-1",
   user_role_id: "role-1",
-  resource_name: "events",
+  resource_name: "posts",
   can_read: true,
   can_write: false,
   can_update: false,
   can_delete: false,
-} as const;
+};
 
 export const listResult = <T>(items: T[] = []) => ({
   list: items,

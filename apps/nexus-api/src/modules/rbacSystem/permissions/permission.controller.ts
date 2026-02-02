@@ -1,4 +1,10 @@
-import { ControllerError } from "@/classes/ServerError";
+import {
+  ControllerError,
+  RepositoryError,
+  ServiceError,
+  DatabaseError,
+  NotFoundError,
+} from "@/classes/ServerError";
 import {
   PermissionService,
   permissionServiceInstance,
@@ -31,8 +37,38 @@ export class PermissionController {
   ) {}
 
   /**
-   * GET /api/rbac/permissions/role/:roleId
+   * Checks if an error is a known ServerError type.
+   * Known errors are rethrown with context, unknown errors are wrapped as ServiceError.
+   */
+  private KnownErrors(
+    error: any,
+  ): error is ServiceError | NotFoundError | DatabaseError | RepositoryError {
+    return (
+      error instanceof RepositoryError ||
+      error instanceof NotFoundError ||
+      error instanceof ServiceError ||
+      error instanceof DatabaseError
+    );
+  }
+
+  /**
+   * Handles errors: known errors are rethrown, unknown errors are wrapped as ServiceError.
+   */
+  private handleControllerError(error: any, context: string): never {
+    if (this.KnownErrors(error)) {
+      throw error; // Rethrow known errors
+    }
+
+    // Wrap unknown errors as ControllerError
+    throw new ControllerError(`${context}: ${error.message}`);
+  }
+
+  /**
+   * GET /api/rbac/permissions/:roleId
    * Fetches all permissions assigned to a specific role
+   *
+   * - Finds all roles assigned to ther user via user_role_junction.
+   * - Fetches all permission for those roles from user_role_permission.
    */
   getPermissionsByRole: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roleId.GET,
@@ -46,7 +82,8 @@ export class PermissionController {
         `Getting permission for role ${roleId}`,
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(error, "Failed to get permissions by role");
 
       return output(200, {
         status: "success",
@@ -63,7 +100,7 @@ export class PermissionController {
   );
 
   /**
-   * GET /api/rbac/permissions/user/:userId
+   * GET /api/rbac/permissions/:userId
    * Fetches all permissions assigned to a specific user.
    */
   getPermissionByUserId: RequestHandler = createExpressController(
@@ -78,7 +115,11 @@ export class PermissionController {
         `Getting permissions for user ${userId}`,
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(
+          error,
+          "Failed to get Permissions by userId",
+        );
 
       return output(200, {
         status: "success",
@@ -109,7 +150,8 @@ export class PermissionController {
         "creating permission",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(error, "Failed to create permission");
 
       return output(200, {
         status: "success",
@@ -135,7 +177,8 @@ export class PermissionController {
         `Updating permission ${permissionId}`,
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(error, "Failed to update permission");
 
       return output(200, {
         status: "success",
@@ -159,11 +202,165 @@ export class PermissionController {
         `Deleting permission ${permissionId}`,
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(error, "Failed to delete permission");
 
       return output(200, {
         status: "success",
         message: "Permission deleted",
+        data: data.success,
+      });
+    },
+  );
+
+  /**
+   * POST /api/rbac/permissions/:roleId
+   * Assigns a permission to a role.
+   *
+   * Single operations
+   *
+   *    - Inserts a new permission record associated with the specified role.
+   *    - Throws error if permission already exists for the role.
+   *    - Throws error if role does not exist.
+   */
+  assignPermissionToRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.permissions.roleId.POST,
+    async ({ input, output }) => {
+      const roleId = input.params.roleId;
+      const permissionData = input.body.permissionData;
+
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.permissionService.assignPermissionToRole(
+            roleId,
+            permissionData,
+          ),
+        "Assigning permission to a role",
+      );
+
+      if (error)
+        this.handleControllerError(
+          error,
+          "Failed to assign permission to a role",
+        );
+
+      return output(200, {
+        status: "success",
+        message: "Successfully assigned permission to role",
+        data,
+      });
+    },
+  );
+
+  /**
+   * POST /api/rbac/permissions/:roleId/bulk/assign
+   * Assigns multiple permissions to a role (bulk).
+   *
+   * Bulk (prefix with "bulk" or use array parameter as indicator)
+   *
+   * - Inserts a new permission record associated with the specified role.
+   * - Throws error if permission already exists for the role.
+   * - Throws error if role does not exist.
+   */
+  assignPermissionsToRoleInBulk: RequestHandler = createExpressController(
+    contract.api.rbac_system.permissions.roleId.bulk.assign.POST,
+    async ({ input, output }) => {
+      const roleId = input.params.roleId;
+      const permissionDataList = input.body.permissionData;
+
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.permissionService.assignPermissionsToRoleInBulk(
+            roleId,
+            permissionDataList,
+          ),
+        "Assigning permissions to a role in bulk",
+      );
+
+      if (error)
+        this.handleControllerError(
+          error,
+          "Failed to assign permissions to a role in bulk",
+        );
+
+      return output(200, {
+        status: "success",
+        message: "Successfully assigned permissions to a role in bulk",
+        data,
+      });
+    },
+  );
+
+  /**
+   * DELETE /api/rbac/permissions/:roleId/:permissionId
+   * Removes a permission from a role.
+   *
+   * Single operations
+   *
+   * - Deletes the permission record associated with the specified role.
+   * - Throws error if permission does not exist.
+   */
+  removePermissionFromRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.permissions.roleId.permissionId.DELETE,
+    async ({ input, output }) => {
+      const { roleId, permissionId } = input.params;
+
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.permissionService.removePermissioFromRole(
+            roleId,
+            permissionId,
+          ),
+        "Removing permission to a role",
+      );
+
+      if (error)
+        this.handleControllerError(
+          error,
+          "Failed to remove permsssion to a role",
+        );
+
+      return output(200, {
+        status: "succcess",
+        message: "Successfully removed permission to a role",
+        data: data.success,
+      });
+    },
+  );
+
+  /**
+   * DELETE /api/rbac/permissions/:roleId/bulk/remove
+   * Removes multiple permissions from a role (bulk).
+   *
+   * Bulk (prefix with "bulk" or use array parameter as indicator)
+   *
+   * - Deletes multiple permission records associated with the specified role.
+   * - Throws error if any permission does not exist.
+   */
+  removePermissionsFromRoleInBulk: RequestHandler = createExpressController(
+    contract.api.rbac_system.permissions.roleId.bulk.remove.DELETE,
+    async ({ input, output }) => {
+      const roleId = input.params.roleId;
+      const permissionIds = input.body.permissionIds;
+
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.permissionService.removePermissionsFromRoleInBulk(
+            roleId,
+            permissionIds,
+          ),
+        "Removing permissions to a role in bulk",
+      );
+
+      if (error)
+        this.handleControllerError(
+          error,
+          "Failed to remove permissioons to a role in bulk",
+        );
+
+      return output(200, {
+        status: "success",
+        message: "Successfully removed permissions to a role in bulk",
         data: data.success,
       });
     },
