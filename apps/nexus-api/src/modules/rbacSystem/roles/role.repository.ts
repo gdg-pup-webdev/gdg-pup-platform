@@ -1,4 +1,8 @@
-import { RepositoryError, NotFoundError } from "@/classes/ServerError.js";
+import {
+  RepositoryError,
+  NotFoundError,
+  DatabaseError,
+} from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
@@ -45,7 +49,7 @@ export class RoleRepository {
       )
       .range((pageNumber - 1) * pageSize, pageNumber * pageSize - 1);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     // Group roles by user using a map keyed by user ID
     const userMap: Record<string, { user: userRow; roles: roleRow[] }> = {};
@@ -85,7 +89,7 @@ export class RoleRepository {
       .select(`*, user_role(*, user_role_permission(*))`)
       .eq("user_id", userId);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     // Fetch count for pagination
     const { count, error: countError } = await supabase
@@ -93,7 +97,7 @@ export class RoleRepository {
       .select("*, user_role(*)", { count: "exact", head: true })
       .eq("user_id", userId);
 
-    if (countError) throw new RepositoryError(countError.message);
+    if (countError) throw new DatabaseError(countError.message);
 
     // Map the junction rows to just the role objects
     return {
@@ -114,14 +118,14 @@ export class RoleRepository {
       .select(`*, user_role_permission (*)`)
       .order("created_at", { ascending: false });
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     // Fetch count for pagination
     const { count, error: countError } = await supabase
       .from(this.roleTable)
       .select("*", { count: "exact", head: true });
 
-    if (countError) throw new RepositoryError(countError.message);
+    if (countError) throw new DatabaseError(countError.message);
 
     return {
       list: data as roleRow[],
@@ -141,7 +145,7 @@ export class RoleRepository {
       .eq("id", roleId)
       .maybeSingle(); // Mag rereturn ng null pag walang mahanap
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     return data;
   };
@@ -158,7 +162,7 @@ export class RoleRepository {
       .eq("role_name", roleName)
       .maybeSingle(); // Returns null if not found
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     return !!data;
   };
@@ -176,7 +180,7 @@ export class RoleRepository {
       .select(`*`)
       .eq("role_id", roleId);
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     // Fetch count for pagination
     const { count, error: countError } = await supabase
@@ -184,7 +188,7 @@ export class RoleRepository {
       .select("*", { count: "exact", head: true })
       .eq("role_id", roleId);
 
-    if (countError) throw new RepositoryError(countError.message);
+    if (countError) throw new DatabaseError(countError.message);
 
     return {
       list: data,
@@ -214,7 +218,7 @@ export class RoleRepository {
           .eq("role_id", roleId),
       );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new DatabaseError(error.message);
 
     return {
       list: data,
@@ -245,7 +249,9 @@ export class RoleRepository {
           `Role "${roleData.role_name}" already exists`,
         );
       }
-      throw new RepositoryError(error.message);
+
+      // Unknown Error
+      throw new DatabaseError(error.message);
     }
 
     return data;
@@ -279,7 +285,9 @@ export class RoleRepository {
           `Role name "${updates.role_name}" already exists`,
         );
       }
-      throw new RepositoryError(error.message);
+
+      // Unknown error
+      throw new DatabaseError(error.message);
     }
     return data;
   };
@@ -302,7 +310,9 @@ export class RoleRepository {
           "Canner delete role that is assigned to users. Remove all user assignments first.",
         );
       }
-      throw new RepositoryError(error.message);
+
+      // Unknown database error
+      throw new DatabaseError(error.message);
     }
 
     return { success: true };
@@ -329,16 +339,18 @@ export class RoleRepository {
       .single();
 
     if (error) {
-      // Unique constraint violation: user already has this role
-      if (error.code === "23505") {
-        throw new RepositoryError("User already has this role assigned");
-      }
       // Foreign key violation: user or role not found
       if (error.code === "23503") {
         throw new NotFoundError("User or role not found");
       }
 
-      throw new RepositoryError(error.message);
+      // Unique constraint violation: user already has this role
+      if (error.code === "23505") {
+        throw new RepositoryError("User already has this role assigned");
+      }
+
+      // Unknown database error
+      throw new DatabaseError(error.message);
     }
 
     return data;

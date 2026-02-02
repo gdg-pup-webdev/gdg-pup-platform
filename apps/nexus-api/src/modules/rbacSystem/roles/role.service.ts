@@ -1,6 +1,12 @@
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
-import { ServiceError } from "@/classes/ServerError.js";
+import {
+  ServiceError,
+  RepositoryError,
+  NotFoundError,
+  DatabaseError,
+  ServerError,
+} from "@/classes/ServerError.js";
 import { TablesInsert, Tables } from "@/types/supabase.types.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 
@@ -27,6 +33,31 @@ export class RoleService {
     private roleRepository: RoleRepository = roleRepositoryInstance,
   ) {}
 
+  /**
+   * Checks if an error is a known ServerError type.
+   * Known errors are rethrown with context, unknown errors are wrapped as ServiceError.
+   */
+  private isKnownError(
+    error: any,
+  ): error is RepositoryError | NotFoundError | DatabaseError {
+    return (
+      error instanceof RepositoryError ||
+      error instanceof NotFoundError ||
+      error instanceof DatabaseError
+    );
+  }
+
+  /**
+   * Handles errors: known errors are rethrown, unknown errors are wrapped as ServiceError.
+   */
+  private handleServiceError(error: any, context: string): never {
+    if (this.isKnownError(error)) {
+      throw error; // Rethrow known errors
+    }
+    // Wrap unknown errors as ServiceError
+    throw new ServiceError(`${context}: ${error.message}`);
+  }
+
   /** Get all roles of all users */
   getAllRolesOfAllUsers = async (
     pageNumber: number,
@@ -37,7 +68,9 @@ export class RoleService {
         await this.roleRepository.getAllRolesOfAllUsers(pageNumber, pageSize),
       "getting all roles of all users",
     );
-    if (error) throw new ServiceError(error.message);
+
+    if (error)
+      this.handleServiceError(error, "Failed to get all roles of all users");
 
     return data;
   };
@@ -50,7 +83,10 @@ export class RoleService {
       async () => await this.roleRepository.getRolesOfUser(userId),
       "getting roles of user",
     );
-    if (error) throw new ServiceError(error.message);
+
+    // Known errors (RepositoryError, NotFoundError, DatabaseError) are rethrown by tryCatch
+    // Unknown errors (syntax errors, etc.) are returned here
+    if (error) this.handleServiceError(error, "Failed to get roles");
 
     return data;
   };
@@ -62,7 +98,7 @@ export class RoleService {
       "Getting all roles",
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) this.handleServiceError(error, "Failed to get all roles");
 
     return data;
   };
@@ -74,7 +110,7 @@ export class RoleService {
       `Getting role name of ${roleId}`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) this.handleServiceError(error, "Failed to get role by id");
 
     return data;
   };
@@ -88,7 +124,7 @@ export class RoleService {
       `Getting all users with the role id of ${roleId}`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) this.handleServiceError(error, "Failed to get users by role");
 
     return data;
   };
@@ -102,7 +138,8 @@ export class RoleService {
       "Getting users without roles",
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error)
+      this.handleServiceError(error, "Failed to get users without roles");
 
     return data;
   };
@@ -114,7 +151,8 @@ export class RoleService {
       `Checking if role ${roleName} exists`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error)
+      this.handleServiceError(error, "Failed to check if role exists by name");
 
     return data;
   };
@@ -128,7 +166,7 @@ export class RoleService {
       `creating role ${roleData.role_name}`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) this.handleServiceError(error, "Failed to create role");
 
     return data;
   };
@@ -143,7 +181,7 @@ export class RoleService {
       `Updating role id ${roleId} with ${JSON.stringify(updates)}`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) this.handleServiceError(error, "Failed to update role");
 
     return data;
   };
@@ -155,7 +193,7 @@ export class RoleService {
       `Deleting role id ${roleId}`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) this.handleServiceError(error, "Failed to delete role");
 
     return data;
   };
@@ -170,7 +208,7 @@ export class RoleService {
       `Assigning role id ${roleId} to user id ${userId}`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) this.handleServiceError(error, "Failed to assign role");
 
     return data;
   };
@@ -180,14 +218,15 @@ export class RoleService {
     userId: string,
     roleId: string,
   ): Promise<{ success: boolean }> => {
-    const { error } = await tryCatch(
+    const { data, error } = await tryCatch(
       async () => this.roleRepository.removeRoleFromUser(userId, roleId),
       `Removing the role id ${roleId} from user id ${userId}`,
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error)
+      this.handleServiceError(error, "Failed to remove role from user");
 
-    return { success: true };
+    return data;
   };
 }
 

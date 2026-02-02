@@ -40,12 +40,26 @@ describe("role.service (unit)", () => {
     expect(result.list).toEqual([]);
   });
 
-  it("maps repository errors to ServiceError-shaped failures", async () => {
-    repoGetRolesOfUser.mockRejectedValue(new RepositoryError("db failure"));
+  it("rethrows known repository errors with context", async () => {
+    const repoError = new RepositoryError("db failure");
+    repoGetRolesOfUser.mockRejectedValue(repoError);
+
+    await expect(service.getRolesOfUser("user-1")).rejects.toThrow(
+      RepositoryError,
+    );
+  });
+
+  it("wraps unknown errors (syntax errors, etc.) as ServiceError", async () => {
+    // Simulate a syntax error or unexpected error from repository
+    const unknownError = new Error("Cannot read property 'map' of undefined");
+    repoGetRolesOfUser.mockRejectedValue(unknownError);
+
     await expect(service.getRolesOfUser("user-1")).rejects.toBeInstanceOf(
       ServiceError,
     );
   });
 
-  it("supports pagination parameters", async () => {});
+  it("supports pagination parameters", async () => {
+    // TODO: implement pagination test
+  });
 });

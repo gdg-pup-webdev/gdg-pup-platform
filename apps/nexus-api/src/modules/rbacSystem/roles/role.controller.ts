@@ -1,4 +1,10 @@
-import { ControllerError } from "@/classes/ServerError";
+import {
+  ControllerError,
+  DatabaseError,
+  NotFoundError,
+  RepositoryError,
+  ServiceError,
+} from "@/classes/ServerError";
 import { RoleService, roleServiceInstance } from "./role.service.js";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
@@ -46,6 +52,33 @@ export class RoleController {
   ) {}
 
   /**
+   * Checks if an error is a known ServerError type.
+   * Known errors are rethrown with context, unknown errors are wrapped as ServiceError.
+   */
+  private KnownErrors(
+    error: any,
+  ): error is ServiceError | NotFoundError | DatabaseError | RepositoryError {
+    return (
+      error instanceof RepositoryError ||
+      error instanceof NotFoundError ||
+      error instanceof ServiceError ||
+      error instanceof DatabaseError
+    );
+  }
+
+  /**
+   * Handles errors: known errors are rethrown, unknown errors are wrapped as ServiceError.
+   */
+  private handleControllerError(error: any, context: string): never {
+    if (this.KnownErrors(error)) {
+      throw error; // Rethrow known errors
+    }
+
+    // Wrap unknown errors as ControllerError
+    throw new ControllerError(`${context}: ${error.message}`);
+  }
+
+  /**
    * GET /api/rbac/roles/all-users
    * Get all roles of all users
    */
@@ -61,7 +94,11 @@ export class RoleController {
         "getting all roles for all users",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(
+          error,
+          "Failed to get all users and their roles",
+        );
 
       return output(200, {
         status: "success",
@@ -94,7 +131,8 @@ export class RoleController {
           "getting user roles",
         );
 
-        if (error) throw new ControllerError(error.message);
+        if (error)
+          this.handleControllerError(error, "Failed to get roles of user");
 
         return output(200, {
           status: "success",
@@ -115,7 +153,7 @@ export class RoleController {
         "getting all roles",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error) this.handleControllerError(error, "Failed to get all roles");
 
       return output(200, {
         status: "success",
@@ -145,7 +183,7 @@ export class RoleController {
         "getting role by role id",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error) this.handleControllerError(error, "Failed to get role by id");
 
       if (!data) {
         return output(404, {
@@ -178,7 +216,8 @@ export class RoleController {
         "GEtting the users without roles",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(error, "Failed to get users without roles");
 
       return output(200, {
         status: "success",
@@ -208,7 +247,11 @@ export class RoleController {
         "Checking if the role exists by name",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(
+          error,
+          "Faield to check if the role exists by name",
+        );
 
       return output(200, {
         status: "success",
@@ -233,7 +276,7 @@ export class RoleController {
         "creating role",
       );
 
-      if (error) throw error;
+      if (error) this.handleControllerError(error, "Failed to create role");
 
       return output(200, {
         status: "success",
@@ -259,7 +302,7 @@ export class RoleController {
         "updating role",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error) this.handleControllerError(error, "Failed to update role");
 
       return output(200, {
         status: "success",
@@ -283,7 +326,7 @@ export class RoleController {
         "deleting role",
       );
 
-      if (error) throw error;
+      if (error) this.handleControllerError(error, "Failed to delete role");
 
       return output(200, {
         status: "success",
@@ -307,7 +350,8 @@ export class RoleController {
         "assigning role to user",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(error, "Failed to assign role to users");
 
       return output(200, {
         status: "success",
@@ -331,7 +375,8 @@ export class RoleController {
         "Removing role to a user",
       );
 
-      if (error) throw new ControllerError(error.message);
+      if (error)
+        this.handleControllerError(error, "Failed to remove role from users");
 
       return output(200, {
         status: "success",
