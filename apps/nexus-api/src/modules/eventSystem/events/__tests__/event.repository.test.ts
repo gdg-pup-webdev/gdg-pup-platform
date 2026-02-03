@@ -26,31 +26,63 @@ describe("EventRepository", () => {
     vi.clearAllMocks();
   });
 
-  it("listEvents selects and counts", async () => {
-    const listSelectMock = vi.fn().mockResolvedValue({ data: [event], error: null });
-    const countSelectMock = vi.fn().mockResolvedValue({ count: 1, error: null });
+  it("listEvents applies filters, order, and range", async () => {
+    const rangeMock = vi.fn().mockResolvedValue({ data: [event], count: 1, error: null });
+    const query = {
+      eq: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      range: rangeMock,
+    };
+    const selectMock = vi.fn().mockReturnValue(query);
 
-    supabaseMock.from
-      .mockImplementationOnce(() => ({ select: listSelectMock }))
-      .mockImplementationOnce(() => ({ select: countSelectMock }));
+    supabaseMock.from.mockReturnValue({ select: selectMock });
 
-    const result = await repository.listEvents();
+    const result = await repository.listEvents(2, 10, {
+      creator_id: "user-1",
+      category: "workshop",
+      venue: "room-1",
+      start_date_gte: "2024-01-01",
+      start_date_lte: "2024-01-31",
+      end_date_gte: "2024-01-01",
+      end_date_lte: "2024-01-31",
+    });
 
     expect(supabaseMock.from).toHaveBeenCalledWith("event");
+    expect(selectMock).toHaveBeenCalledWith("*", { count: "exact" });
+    expect(query.eq).toHaveBeenCalledWith("creator_id", "user-1");
+    expect(query.eq).toHaveBeenCalledWith("category", "workshop");
+    expect(query.eq).toHaveBeenCalledWith("venue", "room-1");
+    expect(query.gte).toHaveBeenCalledWith("start_date", "2024-01-01");
+    expect(query.lte).toHaveBeenCalledWith("start_date", "2024-01-31");
+    expect(query.gte).toHaveBeenCalledWith("end_date", "2024-01-01");
+    expect(query.lte).toHaveBeenCalledWith("end_date", "2024-01-31");
+    expect(query.order).toHaveBeenCalledWith("start_date", { ascending: true });
+    expect(rangeMock).toHaveBeenCalledWith(10, 19);
     expect(result).toEqual({ list: [event], count: 1 });
   });
 
-  it("listEvents maps count error to DatabaseError", async () => {
-    const listSelectMock = vi.fn().mockResolvedValue({ data: [event], error: null });
-    const countSelectMock = vi
+  it("listEvents maps query error to DatabaseError", async () => {
+    const rangeMock = vi
       .fn()
-      .mockResolvedValue({ count: null, error: { message: "fail" } });
+      .mockResolvedValue({ data: null, count: null, error: { message: "fail" } });
+    const query = {
+      eq: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      range: rangeMock,
+    };
+    const selectMock = vi.fn().mockReturnValue(query);
 
-    supabaseMock.from
-      .mockImplementationOnce(() => ({ select: listSelectMock }))
-      .mockImplementationOnce(() => ({ select: countSelectMock }));
+    supabaseMock.from.mockReturnValue({ select: selectMock });
 
-    await expect(repository.listEvents()).rejects.toBeInstanceOf(DatabaseError);
+    await expect(
+      repository.listEvents(1, 10, {
+        creator_id: "user-1",
+      }),
+    ).rejects.toBeInstanceOf(DatabaseError);
   });
 
   it("getEventById filters by id", async () => {
