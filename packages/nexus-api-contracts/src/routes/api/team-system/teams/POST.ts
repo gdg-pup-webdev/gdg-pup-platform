@@ -16,3 +16,19 @@ export const docs_description = [
   "Errors: 400, 401, 403, 404, 500.",
   "Auth: Requires Bearer token.",
 ].join("\n\n");
+
+export const docs_example_body = {
+  "data": {
+    "name": "Engineering",
+    "description": "Core engineering team"
+  }
+};
+export const docs_example_response = {
+  "status": "success",
+  "message": "Fetched successfully",
+  "data": {
+    "id": "team-1",
+    "name": "Engineering",
+    "description": "Core engineering team"
+  }
+};

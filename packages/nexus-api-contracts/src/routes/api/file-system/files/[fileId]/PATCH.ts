@@ -16,3 +16,22 @@ export const docs_description = [
   "Errors: 400, 401, 403, 404, 500.",
   "Auth: Requires Bearer token.",
 ].join("\n\n");
+
+export const docs_example_body = {
+  "data": {
+    "title": "Updated file title"
+  }
+};
+export const docs_example_response = {
+  "status": "success",
+  "message": "Fetched successfully",
+  "data": {
+    "id": "file-1",
+    "title": "Updated file title",
+    "creatorId": "user-1",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "previewUrl": "https://example.com/preview.png",
+    "downloadUrl": "https://example.com/download.png",
+    "bucketRef": "assets/banners/file-1.png"
+  }
+};

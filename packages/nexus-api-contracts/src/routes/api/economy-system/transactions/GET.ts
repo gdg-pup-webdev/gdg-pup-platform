@@ -28,3 +28,24 @@ export const docs_description = [
 ].join("\n\n");
 export const docs_response_200 = "Paginated list of transactions.";
 export const docs_response_400 = "Invalid query parameters.";
+
+export const docs_example_response = {
+  "status": "success",
+  "message": "Fetched successfully",
+  "data": [
+    {
+      "id": "txn-1",
+      "wallet_id": "wallet-1",
+      "amount": 10,
+      "source_type": "event_attendance",
+      "source_id": "event-1",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 1,
+    "pageSize": 10,
+    "currentPage": 1,
+    "totalPages": 1
+  }
+};

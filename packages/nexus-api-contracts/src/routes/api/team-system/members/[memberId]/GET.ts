@@ -15,3 +15,14 @@ export const docs_description = [
   "Errors: 400, 401, 403, 404, 500.",
   "Auth: Public.",
 ].join("\n\n");
+
+export const docs_example_response = {
+  "status": "success",
+  "message": "Fetched successfully",
+  "data": {
+    "id": "member-1",
+    "role": "member",
+    "team_id": "team-1",
+    "user_id": "user-1"
+  }
+};
