@@ -11,11 +11,17 @@ export const response = {
   ...SchemaFactory.Response.standardErrors(),
 };
 
-export const docs_summary = "List Achievements";
-export const docs_description = "Retrieves a paginated list of achievements. Can be filtered by user ID.";
+export const docs_summary = "List achievements";
+export const docs_description = [
+  "Purpose: Retrieve achievements with optional user filtering.",
+  "Inputs: Query params pageNumber, pageSize, userId.",
+  "Outputs: Paginated list of achievements with meta.",
+  "Errors: 400, 401, 403, 404, 500.",
+  "Auth: Public.",
+].join("\\n\\n");
 export const docs_query = {
-  pageNumber: "The page number to retrieve.",
-  pageSize: "The number of items per page.",
-  userId: "Optional. The ID of the user to filter achievements for.",
+  pageNumber: "Page number (default: 1).",
+  pageSize: "Page size (default: 10, max: 50).",
+  userId: "Optional. Filter by user ID.",
 };
-export const docs_response_200 = "Successfully retrieved the list of achievements.";
+export const docs_response_200 = "Paginated list of achievements.";

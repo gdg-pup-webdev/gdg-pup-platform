@@ -15,3 +15,25 @@ export const response = {
   200: SchemaFactory.Response.paginated(attendee.row),
   ...SchemaFactory.Response.standardErrors(),
 };
+
+export const docs_summary = "List event attendees";
+export const docs_description = [
+  "Purpose: Retrieve attendees for a specific event with optional filters.",
+  "Inputs: Path param eventId. Query params pageNumber, pageSize, user_id, checkin_method, is_present, created_at_gte, created_at_lte.",
+  "Outputs: Paginated list of attendees with meta.",
+  "Errors: 400, 401, 403, 404, 500.",
+  "Auth: Public.",
+].join("\n\n");
+export const docs_params = {
+  eventId: "The event ID.",
+};
+export const docs_query = {
+  pageNumber: "Page number (default: 1).",
+  pageSize: "Page size (default: 10, max: 50).",
+  user_id: "Optional. Filter by attendee user ID.",
+  checkin_method: "Optional. Filter by check-in method.",
+  is_present: "Optional. Filter by attendance status.",
+  created_at_gte: "Optional. Filter check-ins created on/after this date-time.",
+  created_at_lte: "Optional. Filter check-ins created on/before this date-time.",
+};
+export const docs_response_200 = "Paginated list of attendees.";
