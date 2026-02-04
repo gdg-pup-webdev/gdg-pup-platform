@@ -8,10 +8,60 @@ export const swaggerLoader = (app: Express) => {
     info: {
       title: "Nexus API",
       version: "2.1.0",
-      description: "Documentation for the GDG PUP Platform Nexus API",
+      description: [
+        "Documentation for the GDG PUP Platform Nexus API.",
+        "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
+        "Public endpoints are marked without a lock icon in Swagger.",
+      ].join(" "),
     },
     servers: [ 
       { url: "http://localhost:8000", description: "Local Dev" },
+    ],
+    tags: [
+      {
+        name: "event system",
+        description: "Events, attendees, and check-ins.",
+      },
+      {
+        name: "learning resource system",
+        description: "External resources and study jams.",
+      },
+      {
+        name: "user resource system",
+        description: "User profiles, projects, achievements, certificates, settings.",
+      },
+      {
+        name: "publication system",
+        description: "Articles, comments, highlights.",
+      },
+      {
+        name: "team system",
+        description: "Teams and members.",
+      },
+      {
+        name: "economy system",
+        description: "Wallets and transactions.",
+      },
+      {
+        name: "rbac system",
+        description: "Roles and permissions.",
+      },
+      {
+        name: "file system",
+        description: "File upload and metadata.",
+      },
+      {
+        name: "reward system",
+        description: "Rewards and claims.",
+      },
+      {
+        name: "leaderboard system",
+        description: "Leaderboard data.",
+      },
+      {
+        name: "health",
+        description: "Service health checks.",
+      },
     ],
   });
 

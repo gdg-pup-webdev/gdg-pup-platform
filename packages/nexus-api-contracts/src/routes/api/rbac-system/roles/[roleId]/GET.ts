@@ -6,10 +6,72 @@ export const response = {
   ...SchemaFactory.Response.standardErrors(),
 };
 
-export const docs_summary = "Get a single role by ID";
-export const docs_description =
-  "Retrieve detailed information about a specific role including its permissions.";
-export const docs_response_200 = "Successfully retrieved role details";
-export const docs_response_404 = "Role not found";
-export const docs_response_500 =
-  "Internal server error - Failed to retrieve role";
+export const docs_summary = "Get role";
+export const docs_description = [
+  "Purpose: Get role.",
+  "Inputs: Path params: see schema.",
+  "Outputs: Single role.",
+  "Errors: 400, 401, 403, 404, 500.",
+  "Auth: Public.",
+].join("\n\n");
+
+export const docs_example_response_400 = {
+  status: "error",
+  message: "Invalid request.",
+  errors: [
+    {
+      title: "Bad Request",
+      detail: "One or more request fields are invalid.",
+    },
+  ],
+};
+export const docs_example_response_401 = {
+  status: "error",
+  message: "Unauthorized.",
+  errors: [
+    {
+      title: "Unauthorized",
+      detail: "Missing or invalid authentication token.",
+    },
+  ],
+};
+export const docs_example_response_403 = {
+  status: "error",
+  message: "Forbidden.",
+  errors: [
+    {
+      title: "Forbidden",
+      detail: "You do not have permission to access this resource.",
+    },
+  ],
+};
+export const docs_example_response_404 = {
+  status: "error",
+  message: "RoleId not found.",
+  errors: [
+    {
+      title: "Not Found",
+      detail: "No roleid found for the provided identifier.",
+    },
+  ],
+};
+export const docs_example_response_500 = {
+  status: "error",
+  message: "Internal server error.",
+  errors: [
+    {
+      title: "Internal Server Error",
+      detail: "An unexpected error occurred.",
+    },
+  ],
+};
+
+export const docs_example_response = {
+  status: "success",
+  message: "Role fetched",
+  data: {
+    id: "role-1",
+    role_name: "admin",
+    description: "Administrator role",
+  },
+};

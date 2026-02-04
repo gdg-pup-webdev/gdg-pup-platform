@@ -5,7 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EventService } from "../event.service.js";
-import { RepositoryError } from "../../../../classes/ServerError.js";
+import { InvalidOperationError, RepositoryError } from "../../../../classes/ServerError.js";
 
 const { mockEventRepository, mockAttendanceService, mockWalletService } = vi.hoisted(
   () => ({
@@ -18,6 +18,7 @@ const { mockEventRepository, mockAttendanceService, mockWalletService } = vi.hoi
     },
     mockAttendanceService: {
       create: vi.fn(),
+      getAttendanceByEventAndUser: vi.fn(),
     },
     mockWalletService: {
       incrementPoints: vi.fn(),
@@ -55,9 +56,12 @@ describe("EventService", () => {
   it("list returns list + count", async () => {
     mockEventRepository.listEvents.mockResolvedValue({ list: [event], count: 1 });
 
-    const result = await service.list();
+    const result = await service.list(1, 10, { category: "workshop" });
 
     expect(result.list).toHaveLength(1);
+    expect(mockEventRepository.listEvents).toHaveBeenCalledWith(1, 10, {
+      category: "workshop",
+    });
   });
 
   it("create forwards creator id", async () => {
@@ -103,6 +107,7 @@ describe("EventService", () => {
 
   it("checkInToEvent orchestrates attendance, count update, and wallet points", async () => {
     mockEventRepository.getEventById.mockResolvedValue(event);
+    mockAttendanceService.getAttendanceByEventAndUser.mockResolvedValue(null);
     mockAttendanceService.create.mockResolvedValue({ id: "att-1" });
     mockEventRepository.updateEvent.mockResolvedValue({
       ...event,
@@ -121,9 +126,20 @@ describe("EventService", () => {
     expect(result.attendance.id).toBe("att-1");
   });
 
+  it("checkInToEvent throws when attendee already checked in", async () => {
+    mockEventRepository.getEventById.mockResolvedValue(event);
+    mockAttendanceService.getAttendanceByEventAndUser.mockResolvedValue({
+      id: "att-1",
+    });
+
+    await expect(service.checkInToEvent("event-1", "user-2", "NFC")).rejects.toBeInstanceOf(
+      InvalidOperationError,
+    );
+  });
+
   it("maps repository errors to RepositoryError", async () => {
     mockEventRepository.listEvents.mockRejectedValue(new Error("boom"));
 
-    await expect(service.list()).rejects.toBeInstanceOf(RepositoryError);
+    await expect(service.list(1, 10, {})).rejects.toBeInstanceOf(RepositoryError);
   });
 });
