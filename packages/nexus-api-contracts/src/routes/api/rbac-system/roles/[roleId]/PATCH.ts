@@ -10,75 +10,10 @@ export const response = {
   ...SchemaFactory.Response.standardErrors(),
 };
 
-export const docs_summary = "Update role";
-export const docs_description = [
-  "Purpose: Update role.",
-  "Inputs: Path params: see schema.",
-  "Outputs: Single role.",
-  "Errors: 400, 401, 403, 404, 500.",
-  "Auth: Requires Bearer token.",
-].join("\n\n");
+export const docs_summary = "Update an existing role";
 
-export const docs_example_response_400 = {
-  status: "error",
-  message: "Invalid request.",
-  errors: [
-    {
-      title: "Bad Request",
-      detail: "One or more request fields are invalid.",
-    },
-  ],
-};
-export const docs_example_response_401 = {
-  status: "error",
-  message: "Unauthorized.",
-  errors: [
-    {
-      title: "Unauthorized",
-      detail: "Missing or invalid authentication token.",
-    },
-  ],
-};
-export const docs_example_response_403 = {
-  status: "error",
-  message: "Forbidden.",
-  errors: [
-    {
-      title: "Forbidden",
-      detail: "You do not have permission to access this resource.",
-    },
-  ],
-};
-export const docs_example_response_404 = {
-  status: "error",
-  message: "RoleId not found.",
-  errors: [
-    {
-      title: "Not Found",
-      detail: "No roleid found for the provided identifier.",
-    },
-  ],
-};
-export const docs_example_response_500 = {
-  status: "error",
-  message: "Internal server error.",
-  errors: [
-    {
-      title: "Internal Server Error",
-      detail: "An unexpected error occurred.",
-    },
-  ],
-};
-
-export const docs_example_response = {
-  status: "success",
-  message: "Role updated",
-  data: {
-    id: "role-1",
-    role_name: "editor",
-    description: "Administrator role",
-  },
-};
+export const docs_description =
+  "Update the name or description of an existing role. Only provided fields will be updated. Role name must remain unique if changed. This does not affect existing role assignments or permissions.";
 
 export const docs_params = {
   roleId: "UUID of the role to update",
@@ -86,17 +21,19 @@ export const docs_params = {
 
 export const docs_body = {
   data: {
-    role_name: "New name for the role (optional)",
-    description: "New description for the role (optional)",
+    role_name: "Optional - New unique name for the role",
+    description: "Optional - New description for the role",
   },
 };
 
-export const docs_summary = "Update an existing role";
-export const docs_description =
-  "Update role name or description. Role name must remain unique.";
-export const docs_response_200 = "Successfully updated role";
+export const docs_response_200 =
+  "Successfully updated role with modified fields";
+
 export const docs_response_400 =
-  "Bad request - Role name already exists or invalid data";
-export const docs_response_404 = "Role not found";
+  "Bad request - New role name already exists or invalid data format";
+
+export const docs_response_404 =
+  "Not found - Role with specified roleId does not exist";
+
 export const docs_response_500 =
-  "Internal server error - Failed to update role";
+  "Internal server error - Failed to update role in database";

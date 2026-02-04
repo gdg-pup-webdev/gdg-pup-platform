@@ -8,72 +8,23 @@ export const response = {
   ...SchemaFactory.Response.standardErrors(),
 };
 
-export const docs_summary = "Create roles";
-export const docs_description = [
-  "Purpose: Create roles.",
-  "Inputs: Body: see schema.",
-  "Outputs: Single role.",
-  "Errors: 400, 401, 403, 404, 500.",
-  "Auth: Requires Bearer token.",
-].join("\n\n");
-
-export const docs_example_response_400 = {
-  status: "error",
-  message: "Invalid request.",
-  errors: [
-    {
-      title: "Bad Request",
-      detail: "One or more request fields are invalid.",
-    },
-  ],
-};
-export const docs_example_response_401 = {
-  status: "error",
-  message: "Unauthorized.",
-  errors: [
-    {
-      title: "Unauthorized",
-      detail: "Missing or invalid authentication token.",
-    },
-  ],
-};
-export const docs_example_response_403 = {
-  status: "error",
-  message: "Forbidden.",
-  errors: [
-    {
-      title: "Forbidden",
-      detail: "You do not have permission to access this resource.",
-    },
-  ],
-};
-export const docs_example_response_404 = {
-  status: "error",
-  message: "Role not found.",
-  errors: [
-    {
-      title: "Not Found",
-      detail: "No role found for the provided identifier.",
-    },
-  ],
-};
-export const docs_example_response_500 = {
-  status: "error",
-  message: "Internal server error.",
-  errors: [
-    {
-      title: "Internal Server Error",
-      detail: "An unexpected error occurred.",
-    },
-  ],
-};
-
-export const docs_example_response = {
-  status: "success",
-  message: "Role created",
+export const docs_body = {
   data: {
-    id: "role-1",
-    role_name: "admin",
-    description: "Administrator role",
+    role_name: "Name of the role (must be unique)",
+    description: "Optional description of the role and its purpose",
   },
 };
+
+export const docs_summary = "Create a new role";
+
+export const docs_description =
+  "Create a new role in the RBAC system. Role names must be unique across the system. After creation, permissions can be assigned to the role.";
+
+export const docs_response_200 =
+  "Successfully created role with generated UUID";
+
+export const docs_response_400 =
+  "Bad request - Role name already exists or invalid data provided";
+
+export const docs_response_500 =
+  "Internal server error - Failed to create role in database";
