@@ -26,3 +26,24 @@ export const docs_description = [
   "Errors: 400, 401, 403, 404, 500.",
   "Auth: Requires Bearer token.",
 ].join("\n\n");
+
+export const docs_example_body = {
+  "data": {
+    "title": "Intro to Web Performance",
+    "description": "Performance fundamentals",
+    "resource_url": "https://example.com/perf"
+  }
+};
+export const docs_example_response = {
+  "status": "success",
+  "message": "Fetched successfully",
+  "data": {
+    "id": "external-1",
+    "title": "Intro to Web Performance",
+    "description": "Performance fundamentals",
+    "resource_url": "https://example.com/perf",
+    "uploader_id": "user-1",
+    "created_at": "2026-01-01T00:00:00.000Z",
+    "updated_at": "2026-01-01T00:00:00.000Z"
+  }
+};

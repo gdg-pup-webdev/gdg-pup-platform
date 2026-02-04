@@ -25,3 +25,24 @@ export const docs_description = [
   "Errors: 400, 401, 403, 404, 500.",
   "Auth: Requires Bearer token.",
 ].join("\n\n");
+
+export const docs_example_body = {
+  "data": {
+    "title": "Study Jam: TypeScript",
+    "description": "Hands-on TypeScript session",
+    "summary": "Covers types, narrowing, and inference.",
+    "recording_url": "https://example.com/recording"
+  }
+};
+export const docs_example_response = {
+  "status": "success",
+  "message": "Fetched successfully",
+  "data": {
+    "id": "studyjam-1",
+    "title": "Study Jam: TypeScript",
+    "description": "Hands-on TypeScript session",
+    "summary": "Covers types, narrowing, and inference.",
+    "recording_url": "https://example.com/recording",
+    "created_at": "2026-01-02T00:00:00.000Z"
+  }
+};

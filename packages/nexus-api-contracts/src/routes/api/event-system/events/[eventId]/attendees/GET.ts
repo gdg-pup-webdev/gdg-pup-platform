@@ -37,3 +37,28 @@ export const docs_query = {
   created_at_lte: "Optional. Filter check-ins created on/before this date-time.",
 };
 export const docs_response_200 = "Paginated list of attendees.";
+
+export const docs_example_response = {
+  "status": "success",
+  "message": "Fetched successfully",
+  "data": [
+    {
+      "id": "user-1",
+      "email": "user@example.com",
+      "gdg_id": "gdg-1",
+      "display_name": "User One",
+      "first_name": null,
+      "last_name": null,
+      "avatar_url": null,
+      "status": "active",
+      "created_at": "2026-01-01T00:00:00.000Z",
+      "updated_at": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 1,
+    "pageSize": 10,
+    "currentPage": 1,
+    "totalPages": 1
+  }
+};
