@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import "@packages/spark-ui/src/styles.css";
+import "@packages/spark-ui/styles.css";
 
 import type { AppProps } from "next/app";
 

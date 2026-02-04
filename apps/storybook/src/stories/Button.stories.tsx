@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Button } from "@packages/spark-ui/src";
+import { Button } from "@packages/spark-ui";
 
 const meta = {
   title: "Example/Button",

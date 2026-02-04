@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Header } from "@packages/spark-ui/src";
+import { Header } from "@packages/spark-ui";
 
 const meta = {
   title: "Components/Header",
