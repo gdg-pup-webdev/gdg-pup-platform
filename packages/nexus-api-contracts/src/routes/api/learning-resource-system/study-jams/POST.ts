@@ -16,3 +16,12 @@ export const response = {
   200: SchemaFactory.Response.single(studyJam.row),
   ...SchemaFactory.Response.standardErrors(),
 };
+
+export const docs_summary = "Create study jams";
+export const docs_description = [
+  "Purpose: Create study jams.",
+  "Inputs: Body: see schema.",
+  "Outputs: Single study jam.",
+  "Errors: 400, 401, 403, 404, 500.",
+  "Auth: Requires Bearer token.",
+].join("\n\n");

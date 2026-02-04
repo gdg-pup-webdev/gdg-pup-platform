@@ -9,3 +9,12 @@ export const response = {
   200: SchemaFactory.Response.paginated(learningResource.shape),
   ...SchemaFactory.Response.standardErrors(),
 };
+
+export const docs_summary = "List resource";
+export const docs_description = [
+  "Purpose: List resource.",
+  "Inputs: Query params: see schema.",
+  "Outputs: Paginated list of resource with meta.",
+  "Errors: 400, 401, 403, 404, 500.",
+  "Auth: Public.",
+].join("\n\n");
