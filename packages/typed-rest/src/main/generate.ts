@@ -400,20 +400,36 @@ export const generateOpenApiOptions = ({
       \`Auth: \${authNote}\`,
     ].join("\\n\\n");
 
-    const exampleSuccessCode = Object.keys(formattedResponses).find(
-      (code) => parseInt(code) < 400,
-    );
-    if (exampleSuccessCode && endpoint.docs_example_response) {
-      formattedResponses[exampleSuccessCode] = {
-        ...formattedResponses[exampleSuccessCode],
-        content: {
-          "application/json": {
-            schema: formattedResponses[exampleSuccessCode].content["application/json"].schema,
-            example: endpoint.docs_example_response,
+    const responseCodes = Object.keys(formattedResponses);
+    responseCodes.forEach((code) => {
+      const exampleKey = \`docs_example_response_${'${'}code}\`;
+      const example = endpoint[exampleKey];
+      if (!example && parseInt(code) < 400) {
+        if (endpoint.docs_example_response) {
+          formattedResponses[code] = {
+            ...formattedResponses[code],
+            content: {
+              "application/json": {
+                schema: formattedResponses[code].content["application/json"].schema,
+                example: endpoint.docs_example_response,
+              },
+            },
+          };
+        }
+        return;
+      }
+      if (example) {
+        formattedResponses[code] = {
+          ...formattedResponses[code],
+          content: {
+            "application/json": {
+              schema: formattedResponses[code].content["application/json"].schema,
+              example,
+            },
           },
-        },
-      };
-    }
+        };
+      }
+    });
 
     registry.registerPath({
       method: endpoint.method.replace(".ts", "").toLowerCase() as any,
