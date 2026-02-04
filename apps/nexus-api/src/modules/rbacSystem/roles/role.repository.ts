@@ -2,6 +2,8 @@ import {
   RepositoryError,
   NotFoundError,
   DatabaseError,
+  DuplicateResourceError,
+  InvalidOperationError,
 } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
@@ -229,7 +231,7 @@ export class RoleRepository {
     if (error) {
       // Handle unique constraint violation (duplicate role name)
       if (error.code === "23505") {
-        throw new RepositoryError(
+        throw new DuplicateResourceError(
           `Role "${roleData.role_name}" already exists`,
         );
       }
@@ -273,7 +275,7 @@ export class RoleRepository {
 
       // Unique constraint violation (duplicate role name)
       if (error.code === "23505") {
-        throw new RepositoryError(
+        throw new DuplicateResourceError(
           `Role name "${updates.role_name}" already exists`,
         );
       }
@@ -296,7 +298,6 @@ export class RoleRepository {
    *
    * @param roleId - The ID of the role to delete
    * @returns A promise resolving to success status
-   * @throws {NotFoundError} If the role does not exist
    * @throws {RepositoryError} If the role is still assigned to users
    * @throws {DatabaseError} If a database error occurs
    */
@@ -309,7 +310,7 @@ export class RoleRepository {
     if (error) {
       // Foreign key violation: role is still assigned to users
       if (error.code === "23503") {
-        throw new RepositoryError(
+        throw new InvalidOperationError(
           "Cannot delete role that is assigned to users. Remove all user assignments first.",
         );
       }
@@ -351,7 +352,7 @@ export class RoleRepository {
 
       // Unique constraint violation: user already has this role
       if (error.code === "23505") {
-        throw new RepositoryError("User already has this role assigned");
+        throw new DuplicateResourceError("User already has this role assigned");
       }
 
       throw new DatabaseError(error.message);

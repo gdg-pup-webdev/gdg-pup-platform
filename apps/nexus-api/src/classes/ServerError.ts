@@ -1,6 +1,5 @@
 import { extend } from "zod/mini";
 
-
 type ServerErrorProps = {
   statusCode: number;
   status?: "fail" | "error";
@@ -107,6 +106,12 @@ export class NotFoundError extends ServerError {
 export class RepositoryError extends ServerError {
   constructor(detail: string = "Repository Error") {
     super({ statusCode: 500, title: "Database Error", detail: detail });
+  }
+}
+
+export class DuplicateResourceError extends ServerError {
+  constructor(detail: string = "Resource already exists") {
+    super({ statusCode: 409, title: "Duplicate Resource", detail: detail });
   }
 }
 
