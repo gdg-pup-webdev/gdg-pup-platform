@@ -5,7 +5,11 @@ import {
   RepositoryError,
   ServiceError,
 } from "@/classes/ServerError";
-import { RoleService, roleServiceInstance } from "./role.service.js";
+import {
+  RoleService,
+  roleServiceInstance,
+  RoleListFilters,
+} from "./role.service.js";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
@@ -15,36 +19,18 @@ import { RequestHandler } from "express";
  * RoleController
  * ==============
  *
- * The RoleController class defines all HTTP endpoints for role management and user-role assignments in the RBAC system.
- *
- * Responsibilities:
- * - Maps REST API routes to business logic in RoleService.
- * - Handles request validation, input parsing, and response formatting.
- * - Wraps service errors as ControllerError for consistent error handling and API responses.
- * - Supports paginated queries, single and bulk operations, and permission checks.
+ * Controller for handling role-related HTTP requests.
+ * Implements endpoints defined in the RBAC system contract.
  *
  * Key Endpoints:
- * - GET /api/rbac/roles/all-users: Fetches all users and their assigned roles, paginated.
- * - GET /api/rbac/roles: Fetches roles for a specific user (if userId is provided) or all roles.
- * - GET /api/rbac/roles/:roleId: Fetches a single role by ID, including permissions.
- * - GET /api/rbac/roles/:roleId/users/no-roles: Fetches users who do not have the specified role.
- * - GET /api/rbac/roles/:roleName: Checks if a role exists by name.
- * - POST /api/rbac/roles: Creates a new role.
- * - PATCH /api/rbac/roles/:roleId: Updates an existing role.
- * - DELETE /api/rbac/roles/:roleId: Deletes a role (fails if assigned to users).
- * - POST /api/rbac/roles/:roleId/users/:userId: Assigns a role to a user.
- * - POST /api/rbac/roles/:roleId/bulk/assign: Assigns a role to multiple users.
- * - POST /api/rbac/roles/users/:userId/bulk/assign: Assigns multiple roles to a user.
- * - DELETE /api/rbac/roles/:roleId/users/:userId: Removes a role from a user.
- * - DELETE /api/rbac/roles/:roleId/bulk/remove: Removes a role from multiple users.
- * - DELETE /api/rbac/roles/users/:userId/bulk/remove: Removes multiple roles from a user.
- *
- * Usage:
- * - Each method is a RequestHandler for Express, created via createExpressController for typed contract support.
- * - All responses include status, message, data, and pagination meta where applicable.
- * - Errors are caught and wrapped as ControllerError for standardized error responses.
- *
- * This controller provides a complete, documented, and robust API surface for RBAC role management.
+ * - GET /api/rbac-system/roles - List all roles (with optional userId filter)
+ * - GET /api/rbac-system/roles/:roleId - Get single role by ID
+ * - GET /api/rbac-system/roles/all-users - Get all users with their roles
+ * - POST /api/rbac-system/roles - Create a new role
+ * - PATCH /api/rbac-system/roles/:roleId - Update an existing role
+ * - DELETE /api/rbac-system/roles/:roleId - Delete a role
+ * - POST /api/rbac-system/roles/:roleId/users/:userId - Assign role to user
+ * - DELETE /api/rbac-system/roles/:roleId/users/:userId - Remove role from user
  */
 export class RoleController {
   constructor(
@@ -52,138 +38,108 @@ export class RoleController {
   ) {}
 
   /**
-   * Checks if an error is a known ServerError type.
-   * Known errors are rethrown with context, unknown errors are wrapped as ServiceError.
+   * GET /api/rbac-system/roles?userId={userId}&pageNumber={n}&pageSize={n}
+   * Lists roles with optional filtering by userId and pagination.
+   *
+   * @route GET /api/rbac-system/roles
+   * @query userId - Optional filter to get roles for a specific user
+   * @query pageNumber - Current page (1-indexed)
+   * @query pageSize - Number of items per page
+   * @returns JSON response containing the list of roles and pagination metadata
+   * @throws {ServiceError} If the service layer encounters an error
    */
-  private KnownErrors(
-    error: any,
-  ): error is ServiceError | NotFoundError | DatabaseError | RepositoryError {
-    return (
-      error instanceof RepositoryError ||
-      error instanceof NotFoundError ||
-      error instanceof ServiceError ||
-      error instanceof DatabaseError
-    );
-  }
-
-  /**
-   * Handles errors: known errors are rethrown, unknown errors are wrapped as ServiceError.
-   */
-  private handleControllerError(error: any, context: string): never {
-    if (this.KnownErrors(error)) {
-      throw error; // Rethrow known errors
-    }
-
-    // Wrap unknown errors as ControllerError
-    throw new ControllerError(`${context}: ${error.message}`);
-  }
-
-  /**
-   * GET /api/rbac/roles/all-users
-   * Get all roles of all users
-   */
-  getAllRolesOfAllUsers: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.all_users.GET,
+  listRoles: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.GET,
     async ({ input, output }) => {
-      const pageNumber = input.query.pageNumber || 1;
-      const pageSize = input.query.pageSize || 10;
+      const { pageNumber, pageSize, userId = null } = input.query;
 
       const { data, error } = await tryCatch(
         async () =>
-          await this.roleService.getAllRolesOfAllUsers(pageNumber, pageSize),
-        "getting all roles for all users",
+          await this.roleService.listRolesWithFilters(pageNumber, pageSize, {
+            userId,
+          }),
+        "calling service to list roles",
       );
 
-      if (error)
-        this.handleControllerError(
-          error,
-          "Failed to get all users and their roles",
-        );
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "Fetched all roles of all users",
+        message: "Roles fetched successfully",
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: pageNumber,
-          pageSize,
           totalPages: Math.ceil(data.count / pageSize),
+          currentPage: pageNumber,
+          pageSize: pageSize,
         },
       });
     },
   );
 
   /**
-   * GET /api/rbac/roles?userId={userId}&pageNumber={n}&pageSize={n}
-   * Get roles of a specific user OR all roles if no userId
+   * GET /api/rbac-system/roles/users?pageNumber={n}&pageSize={n}&withoutRoles={true}
+   * Lists all users with their assigned roles (paginated).
+   * Can filter to show only users without any roles.
+   *
+   * @route GET /api/rbac-system/roles/users
+   * @query pageNumber - Current page (1-indexed)
+   * @query pageSize - Number of items per page
+   * @query withoutRoles - Optional: If true, returns only users without any roles
+   * @returns JSON response containing grouped user-role data
+   * @throws {ServiceError} If the service layer encounters an error
    */
-  getRolesOfUser: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.GET,
+  listUsersWithRoles: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.users.GET,
     async ({ input, output }) => {
-      const pageNumber = input.query.pageNumber;
-      const pageSize = input.query.pageSize;
-      const userId = input.query.userId;
+      const { pageNumber, pageSize, roleId, withoutRoles } = input.query;
 
-      if (userId) {
-        const { data, error } = await tryCatch(
-          async () => await this.roleService.getRolesOfUser(userId),
-          "getting user roles",
-        );
-
-        if (error)
-          this.handleControllerError(error, "Failed to get roles of user");
-
-        return output(200, {
-          status: "success",
-          message: "User roles fetched successfully",
-          data: data.list,
-          meta: {
-            totalRecords: data.count,
-            currentPage: pageNumber,
-            pageSize,
-            totalPages: Math.ceil(data.count / pageSize),
-          },
-        });
-      }
-
-      // Pero kapag wala namang userId, kukunin yung mga roles
       const { data, error } = await tryCatch(
-        async () => this.roleService.getAllRoles(),
-        "getting all roles",
+        async () =>
+          await this.roleService.listUsersWithRoles(pageNumber, pageSize, {
+            roleId: roleId || undefined,
+            withoutRoles: withoutRoles || false,
+          }),
+        "calling service to list users with roles",
       );
 
-      if (error) this.handleControllerError(error, "Failed to get all roles");
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "All roles fetched successfully",
+        message: "Users with roles fetched successfully",
         data: data.list,
         meta: {
           totalRecords: data.count,
-          currentPage: pageNumber,
-          pageSize,
           totalPages: Math.ceil(data.count / pageSize),
+          currentPage: pageNumber,
+          pageSize: pageSize,
         },
       });
     },
   );
 
   /**
-   * GET /api/rbac/roles/:roleId
-   * Get single role by ID with permissions
+   * GET /api/rbac-system/roles/:roleId
+   * Retrieves a single role by its ID.
+   *
+   * @route GET /api/rbac-system/roles/:roleId
+   * @param roleId - The ID of the role to retrieve
+   * @returns JSON response containing the role data
+   * @throws {NotFoundError} If the role does not exist
+   * @throws {ServiceError} If the service layer encounters an error
    */
-  getRoleById: RequestHandler = createExpressController(
+  getRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.GET,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       const { roleId } = input.params;
 
       const { data, error } = await tryCatch(
-        async () => await this.roleService.getRoleById(roleId),
-        "getting role by role id",
+        async () => await this.roleService.getRole(roleId),
+        "calling service to get role",
       );
 
-      if (error) this.handleControllerError(error, "Failed to get role by id");
+      if (error) throw new ServiceError(error.message);
 
       if (!data) {
         return output(404, {
@@ -201,70 +157,14 @@ export class RoleController {
   );
 
   /**
-   * GET /api/rbac/roles/:roleId/users/no-roles
-   * Get users without assigned roles
-   */
-  getUsersWithoutRoles: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleId.users.no_roles.GET,
-    async ({ input, output }) => {
-      const roleId = input.params.roleId;
-      const pageNumber = input.query.pageNumber || 1;
-      const pageSize = input.query.pageSize || 10;
-
-      const { data, error } = await tryCatch(
-        async () => await this.roleService.getUsersWithoutRoles(roleId),
-        "GEtting the users without roles",
-      );
-
-      if (error)
-        this.handleControllerError(error, "Failed to get users without roles");
-
-      return output(200, {
-        status: "success",
-        message: "Successful getting the users without roles assigned",
-        data: data.list,
-        meta: {
-          totalRecords: data.count,
-          currentPage: pageNumber,
-          pageSize,
-          totalPages: Math.ceil(data.count / pageSize),
-        },
-      });
-    },
-  );
-
-  /**
-   * GET /api/rbac/roles/:roleName
-   * Checks if role exists by name
-   */
-  roleExistsByName: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleName.GET,
-    async ({ input, output }) => {
-      const { roleName } = input.params;
-
-      const { data, error } = await tryCatch(
-        async () => await this.roleService.roleExistsByName(roleName),
-        "Checking if the role exists by name",
-      );
-
-      if (error)
-        this.handleControllerError(
-          error,
-          "Faield to check if the role exists by name",
-        );
-
-      return output(200, {
-        status: "success",
-        message: "Role exists",
-        data,
-      });
-    },
-  );
-
-  /**
-   * POST /api/rbac/roles
-   * Create a new role
-   * Body: { role_name: string, description?: string }
+   * POST /api/rbac-system/roles
+   * Creates a new role.
+   *
+   * @route POST /api/rbac-system/roles
+   * @body data - Role data (role_name, description)
+   * @returns JSON response containing the created role
+   * @throws {RepositoryError} If role name already exists
+   * @throws {ServiceError} If the service layer encounters an error
    */
   createRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.POST,
@@ -273,10 +173,10 @@ export class RoleController {
 
       const { data, error } = await tryCatch(
         async () => await this.roleService.createRole(roleData),
-        "creating role",
+        "calling service to create role",
       );
 
-      if (error) this.handleControllerError(error, "Failed to create role");
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -287,22 +187,28 @@ export class RoleController {
   );
 
   /**
-   * PATCH /api/rbac/roles/:roleId
-   * Update an existing role
-   * Body: { role_name?: string, description?: string }
+   * PATCH /api/rbac-system/roles/:roleId
+   * Updates an existing role.
+   *
+   * @route PATCH /api/rbac-system/roles/:roleId
+   * @param roleId - The ID of the role to update
+   * @body data - Partial role data to update
+   * @returns JSON response containing the updated role
+   * @throws {NotFoundError} If the role does not exist
+   * @throws {ServiceError} If the service layer encounters an error
    */
   updateRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.PATCH,
     async ({ input, output }) => {
-      const roleId = input.params.roleId;
+      const { roleId } = input.params;
       const updates = input.body.data;
 
       const { data, error } = await tryCatch(
         async () => await this.roleService.updateRole(roleId, updates),
-        "updating role",
+        "calling service to update role",
       );
 
-      if (error) this.handleControllerError(error, "Failed to update role");
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -313,8 +219,15 @@ export class RoleController {
   );
 
   /**
-   * DELETE DELETE /api/rbac/roles/:roleId
-   * Delete a role (fails if role is assigned to users)
+   * DELETE /api/rbac-system/roles/:roleId
+   * Deletes a role.
+   *
+   * @route DELETE /api/rbac-system/roles/:roleId
+   * @param roleId - The ID of the role to delete
+   * @returns JSON response confirming deletion
+   * @throws {RepositoryError} If role is still assigned to users
+   * @throws {NotFoundError} If the role does not exist
+   * @throws {ServiceError} If the service layer encounters an error
    */
   deleteRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.DELETE,
@@ -323,65 +236,77 @@ export class RoleController {
 
       const { data, error } = await tryCatch(
         async () => await this.roleService.deleteRole(roleId),
-        "deleting role",
+        "calling service to delete role",
       );
 
-      if (error) this.handleControllerError(error, "Failed to delete role");
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
         message: "Role deleted successfully",
-        data: data.success,
       });
     },
   );
 
   /**
-   * POST /api/rbac/roles/:roleId/users/:userId
-   * Assign role to user
+   * POST /api/rbac-system/roles/:roleId/users/:userId
+   * Assigns a role to a user.
+   *
+   * @route POST /api/rbac-system/roles/:roleId/users/:userId
+   * @param roleId - The ID of the role to assign
+   * @param userId - The ID of the user to receive the role
+   * @returns JSON response containing the assignment data
+   * @throws {NotFoundError} If role or user does not exist
+   * @throws {RepositoryError} If user already has the role
+   * @throws {ServiceError} If the service layer encounters an error
    */
-  assignRoleToUser: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleId.users.userId.POST,
+  assignRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.users.POST,
     async ({ input, output }) => {
-      const { roleId, userId } = input.params;
+      const roleId = input.params.roleId;
+      const userId = input.body.userId;
 
       const { data, error } = await tryCatch(
-        async () => await this.roleService.assignRoleToUser(userId, roleId),
-        "assigning role to user",
+        async () => await this.roleService.assignRole(userId, roleId),
+        "calling service to assign role",
       );
 
-      if (error)
-        this.handleControllerError(error, "Failed to assign role to users");
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "Role to assigned to user successfully",
+        message: "Role assigned to user successfully",
         data,
       });
     },
   );
 
   /**
-   * DELETE /api/rbac/roles/:roleId/users/:userId
-   * Remove role from a user
+   * DELETE /api/rbac-system/roles/:roleId/users/:userId
+   * Removes a role from a user.
+   *
+   * @route DELETE /api/rbac-system/roles/:roleId/users/:userId
+   * @param roleId - The ID of the role to remove
+   * @param userId - The ID of the user to remove the role from
+   * @returns JSON response confirming removal
+   * @throws {ServiceError} If the service layer encounters an error
    */
-  removeRoleFromUser: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleId.users.userId.DELETE,
+  removeRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.users.DELETE,
     async ({ input, output }) => {
-      const { roleId, userId } = input.params;
+      const roleId = input.params.roleId;
+      const userId = input.body.userId;
 
-      const { data, error } = await tryCatch(
-        async () => await this.roleService.removeRoleFromUser(userId, roleId),
-        "Removing role to a user",
+      const { error } = await tryCatch(
+        async () => await this.roleService.removeRole(userId, roleId),
+        "calling service to remove role",
       );
 
-      if (error)
-        this.handleControllerError(error, "Failed to remove role from users");
+      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "Successfylly removed the role from a user",
-        data: data.success,
+        message: "Role removed from user successfully",
       });
     },
   );

@@ -7,12 +7,16 @@ import {
   DatabaseError,
   ServerError,
 } from "@/classes/ServerError.js";
-import { TablesInsert, Tables } from "@/types/supabase.types.js";
+import { TablesInsert, Tables, TablesUpdate } from "@/types/supabase.types.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 
 type roleRow = Tables<"user_role">;
 type userRow = Tables<"user">;
 type userRoleJunctionRow = Tables<"user_role_junction">;
+
+export type RoleListFilters = {
+  userId?: string | null;
+};
 
 /**
  * RoleService
@@ -34,199 +38,220 @@ export class RoleService {
   ) {}
 
   /**
-   * Checks if an error is a known ServerError type.
-   * Known errors are rethrown with context, unknown errors are wrapped as ServiceError.
+   * Retrieves a single role by its ID.
+   *
+   * @param roleId - The ID of the role
+   * @returns A promise resolving to the role data
+   * @throws {RepositoryError} If the repository operation fails
+   * @throws {NotFoundError} If the role is not found
    */
-  private isKnownError(
-    error: any,
-  ): error is RepositoryError | NotFoundError | DatabaseError {
-    return (
-      error instanceof RepositoryError ||
-      error instanceof NotFoundError ||
-      error instanceof DatabaseError
+  getRole = async (roleId: string) => {
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.getRole(roleId),
+      "calling repository to fetch role by id",
     );
-  }
+
+    if (error) throw new RepositoryError(error.message);
+
+    return data;
+  };
 
   /**
-   * Handles errors: known errors are rethrown, unknown errors are wrapped as ServiceError.
+   * Lists all roles with pagination applied.
+   *
+   * @param pageNumber - Current page number (1-indexed)
+   * @param pageSize - Number of items per page
+   * @returns A promise resolving to a list of roles
+   * @throws {RepositoryError} If the repository operation fails
    */
-  private handleServiceError(error: any, context: string): never {
-    if (this.isKnownError(error)) {
-      throw error; // Rethrow known errors
-    }
-    // Wrap unknown errors as ServiceError
-    throw new ServiceError(`${context}: ${error.message}`);
-  }
+  listRoles = async (pageNumber: number, pageSize: number) => {
+    return await this.listRolesWithFilters(pageNumber, pageSize, {});
+  };
 
-  /** Get all roles of all users */
-  getAllRolesOfAllUsers = async (
+  /**
+   * Fetches a paginated list of users and their assigned roles.
+   * Can optionally filter by specific role.
+   *
+   * @param pageNumber - Current page number (1-indexed)
+   * @param pageSize - Number of items per page
+   * @param filters - Optional filters (roleId, withoutRoles)
+   * @returns A promise resolving to grouped user-role data and count
+   * @throws {RepositoryError} If the repository operation fails
+   * @throws {NotFoundError} If no roles are found
+   */
+  listRolesWithFilters = async (
     pageNumber: number,
     pageSize: number,
-  ): Promise<RepositoryResultList<{ user: userRow; roles: roleRow[] }>> => {
+    filters: RoleListFilters,
+  ) => {
     const { data, error } = await tryCatch(
       async () =>
-        await this.roleRepository.getAllRolesOfAllUsers(pageNumber, pageSize),
-      "getting all roles of all users",
+        await this.roleRepository.listRolesWithFilters(
+          pageNumber,
+          pageSize,
+          filters,
+        ),
+      "calling repository to list roles with filters",
     );
 
-    if (error)
-      this.handleServiceError(error, "Failed to get all roles of all users");
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };
-
-  /** Get all roles assigned to a specific user */
-  getRolesOfUser = async (
-    userId: string,
-  ): Promise<RepositoryResultList<roleRow>> => {
+  /**
+   * Retrieves all users with their assigned roles (paginated).
+   *
+   * @param pageNumber - Current page number (1-indexed)
+   * @param pageSize - Number of items per page
+   * @returns A promise resolving to grouped user-role data
+   * @throws {RepositoryError} If the repository operation fails
+   * @throws {NotFoundError} If no data is found
+   */
+  listUsersWithRoles = async (
+    pageNumber: number,
+    pageSize: number,
+    filters?: {
+      roleId?: string;
+      withoutRoles?: boolean;
+    },
+  ) => {
     const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getRolesOfUser(userId),
-      "getting roles of user",
+      async () =>
+        await this.roleRepository.listUsersWithRoles(
+          pageNumber,
+          pageSize,
+          filters,
+        ),
+      "calling repository to list users with roles",
     );
 
-    // Known errors (RepositoryError, NotFoundError, DatabaseError) are rethrown by tryCatch
-    // Unknown errors (syntax errors, etc.) are returned here
-    if (error) this.handleServiceError(error, "Failed to get roles");
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };
 
-  /** Get all roles in the system, with permissions */
-  getAllRoles = async (): Promise<RepositoryResultList<roleRow>> => {
+  /**
+   * Creates a new role.
+   *
+   * @param roleData - The role data to insert
+   * @returns A promise resolving to the created role
+   * @throws {RepositoryError} If the repository operation fails or role name already exists
+   */
+  createRole = async (roleData: TablesInsert<"user_role">) => {
     const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getAllRoles(),
-      "Getting all roles",
+      async () => await this.roleRepository.create(roleData),
+      "calling repository to create role",
     );
 
-    if (error) this.handleServiceError(error, "Failed to get all roles");
+    if (error) {
+      // Repository already throws RepositoryError for duplicate names
+      throw new RepositoryError(error.message);
+    }
 
     return data;
   };
 
-  /** Get a single role by ID */
-  getRoleById = async (roleId: string): Promise<roleRow | null> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getRoleById(roleId),
-      `Getting role name of ${roleId}`,
-    );
-
-    if (error) this.handleServiceError(error, "Failed to get role by id");
-
-    return data;
-  };
-
-  /** Get all users assigned to a specific role */
-  getUsersByRole = async (
-    roleId: string,
-  ): Promise<RepositoryResultList<userRoleJunctionRow & { user: any }>> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getUsersByRole(roleId),
-      `Getting all users with the role id of ${roleId}`,
-    );
-
-    if (error) this.handleServiceError(error, "Failed to get users by role");
-
-    return data;
-  };
-
-  /** Get users who do NOT have a specific role */
-  getUsersWithoutRoles = async (
-    roleId: string,
-  ): Promise<RepositoryResultList<userRow>> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.getUsersWithoutRoles(roleId),
-      "Getting users without roles",
-    );
-
-    if (error)
-      this.handleServiceError(error, "Failed to get users without roles");
-
-    return data;
-  };
-
-  /** Check if a role exists by name */
-  roleExistsByName = async (roleName: string): Promise<boolean> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.roleExistsByName(roleName),
-      `Checking if role ${roleName} exists`,
-    );
-
-    if (error)
-      this.handleServiceError(error, "Failed to check if role exists by name");
-
-    return data;
-  };
-
-  /** Create a new role */
-  createRole = async (
-    roleData: TablesInsert<"user_role">,
-  ): Promise<roleRow> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.createRole(roleData),
-      `creating role ${roleData.role_name}`,
-    );
-
-    if (error) this.handleServiceError(error, "Failed to create role");
-
-    return data;
-  };
-
-  /** Update an existing role */
+  /**
+   * Updates an existing role.
+   *
+   * @param roleId - The ID of the role to update
+   * @param updates - Partial role data to update
+   * @returns A promise resolving to the updated role
+   * @throws {RepositoryError} If the repository operation fails
+   * @throws {NotFoundError} If the role does not exist
+   */
   updateRole = async (
     roleId: string,
-    updates: Partial<Tables<"user_role">>,
-  ): Promise<roleRow> => {
+    updates: Partial<TablesUpdate<"user_role">>,
+  ) => {
     const { data, error } = await tryCatch(
-      async () => await this.roleRepository.updateRole(roleId, updates),
-      `Updating role id ${roleId} with ${JSON.stringify(updates)}`,
+      async () => await this.roleRepository.update(roleId, updates),
+      "calling repository to update role",
     );
 
-    if (error) this.handleServiceError(error, "Failed to update role");
+    if (error) {
+      // Repository handles both NotFoundError and duplicate name RepositoryError
+      throw new RepositoryError(error.message);
+    }
 
     return data;
   };
 
-  /** Delete a role */
-  deleteRole = async (roleId: string): Promise<{ success: boolean }> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.deleteRole(roleId),
-      `Deleting role id ${roleId}`,
+  /**
+   * Deletes a role.
+   *
+   * @param roleId - The ID of the role to delete
+   * @returns A promise resolving to success status
+   * @throws {RepositoryError} If the repository operation fails or role is still assigned
+   * @throws {NotFoundError} If the role does not exist
+   */
+  deleteRole = async (roleId: string) => {
+    const { error } = await tryCatch(
+      async () => await this.roleRepository.delete(roleId),
+      "calling repository to delete role",
     );
 
-    if (error) this.handleServiceError(error, "Failed to delete role");
+    if (error) throw new RepositoryError(error.message);
+
+    return;
+  };
+
+  /**
+   * Assigns a role to a user.
+   * First checks if the user already has the role to prevent duplicates.
+   *
+   * @param userId - The ID of the user
+   * @param roleId - The ID of the role
+   * @returns A promise resolving to the created junction row
+   * @throws {RepositoryError} If user already has the role or repository operation fails
+   * @throws {NotFoundError} If user or role does not exist
+   */
+  assignRole = async (userId: string, roleId: string) => {
+    // First, check if user already has this role
+    const { data: existingRoles, error: checkError } = await tryCatch(
+      async () =>
+        await this.roleRepository.listRolesWithFilters(1, 999, {
+          userId,
+        }),
+      "calling repository to list user roles for validation",
+    );
+
+    if (checkError) throw new RepositoryError(checkError.message);
+
+    // Check if the role is already assigned
+    const hasRole = existingRoles.list.some((role) => role.id === roleId);
+    if (hasRole) {
+      throw new RepositoryError("User already has this role assigned");
+    }
+
+    // Proceed with assignment
+    const { data, error } = await tryCatch(
+      async () => await this.roleRepository.assignRole(userId, roleId),
+      "calling repository to assign role to user",
+    );
+
+    if (error) throw new RepositoryError(error.message);
 
     return data;
   };
 
-  /** Assign a role to a user */
-  assignRoleToUser = async (
-    userId: string,
-    roleId: string,
-  ): Promise<userRoleJunctionRow> => {
-    const { data, error } = await tryCatch(
-      async () => await this.roleRepository.assignRoleToUser(userId, roleId),
-      `Assigning role id ${roleId} to user id ${userId}`,
+  /**
+   * Removes a role from a user.
+   *
+   * @param userId - The ID of the user
+   * @param roleId - The ID of the role
+   * @returns A promise resolving to success status
+   * @throws {RepositoryError} If the repository operation fails
+   */
+  removeRole = async (userId: string, roleId: string) => {
+    const { error } = await tryCatch(
+      async () => await this.roleRepository.removeRole(userId, roleId),
+      "calling repository to remove role from user",
     );
 
-    if (error) this.handleServiceError(error, "Failed to assign role");
+    if (error) throw new RepositoryError(error.message);
 
-    return data;
-  };
-
-  /** Remove a role from a user */
-  removeRoleFromUser = async (
-    userId: string,
-    roleId: string,
-  ): Promise<{ success: boolean }> => {
-    const { data, error } = await tryCatch(
-      async () => this.roleRepository.removeRoleFromUser(userId, roleId),
-      `Removing the role id ${roleId} from user id ${userId}`,
-    );
-
-    if (error)
-      this.handleServiceError(error, "Failed to remove role from user");
-
-    return data;
+    return;
   };
 }
 

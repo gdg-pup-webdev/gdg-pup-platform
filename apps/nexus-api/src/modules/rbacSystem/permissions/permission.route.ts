@@ -12,14 +12,12 @@ export class PermissionRouter {
   getRouter = (): Router => {
     const router = Router();
 
-    router.post("/", this.permissionController.createPermission);
-
     router
-      .route("/:roleId")
-      .get(this.permissionController.getPermissionsByRole)
-      .post(this.permissionController.assignPermissionToRole);
+      .route("/")
+      .get(this.permissionController.listPermissions)
+      .post(this.permissionController.createPermission);
 
-    router.get("/:userId", this.permissionController.getPermissionByUserId);
+    router.post("/roles", this.permissionController.assignPermissionToRole);
 
     router
       .route("/:permissionId")
@@ -27,17 +25,17 @@ export class PermissionRouter {
       .delete(this.permissionController.deletePermission);
 
     router.post(
-      "/:roleId/bulk/assign",
+      "/roles/bulk-assign",
       this.permissionController.assignPermissionsToRoleInBulk,
     );
 
     router.delete(
-      "/:roleId/:permissionId",
+      "/:permissionId/roles",
       this.permissionController.removePermissionFromRole,
     );
 
     router.delete(
-      "/:roleId/bulk/remove",
+      "/roles/bulk-remove",
       this.permissionController.removePermissionsFromRoleInBulk,
     );
 

@@ -105,7 +105,7 @@ export class NotFoundError extends ServerError {
 }
 
 export class RepositoryError extends ServerError {
-  constructor(detail: string = "Database Error") {
+  constructor(detail: string = "Repository Error") {
     super({ statusCode: 500, title: "Database Error", detail: detail });
   }
 }

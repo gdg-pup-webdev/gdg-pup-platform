@@ -2,15 +2,14 @@ import { tryCatch } from "@/utils/tryCatch.util";
 import {
   PermissionRepository,
   permissionRepositoryInstance,
+  PermissionListFilters,
 } from "./permission.repository";
-import {
-  ServiceError,
-  RepositoryError,
-  DatabaseError,
-  NotFoundError,
-} from "@/classes/ServerError";
+import { RepositoryError } from "@/classes/ServerError";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types";
-import { RepositoryResultList } from "@/types/repository.types";
+import {
+  RepositoryResultList,
+  RepositoryResult,
+} from "@/types/repository.types";
 
 type userRolePermission = Tables<"user_role_permission">;
 
@@ -33,275 +32,197 @@ export class PermissionService {
   ) {}
 
   /**
-   * Checks if an error is a known ServerError type.
-   * Known errors are rethrown with context, unknown errors are wrapped as ServiceError.
+   * Fetches permissions with optional filters.
+   * Can filter by roleId or userId.
+   *
+   * @param filters - Optional filters (roleId or userId)
+   * @returns A promise resolving to a list of permissions
+   * @throws {RepositoryError} If the repository operation fails
    */
-  private isKnownError(
-    error: any,
-  ): error is RepositoryError | NotFoundError | DatabaseError {
-    return (
-      error instanceof RepositoryError ||
-      error instanceof NotFoundError ||
-      error instanceof DatabaseError
-    );
-  }
-
-  /**
-   * Handles errors: known errors are rethrown, unknown errors are wrapped as ServiceError.
-   */
-  private handleServiceError(error: any, context: string): never {
-    if (this.isKnownError(error)) {
-      throw error; // Rethrow known errors
-    }
-    // Wrap unknown errors as ServiceError
-    throw new ServiceError(`${context}: ${error.message}`);
-  }
-
-  /**
-   * Fetches all permissions assigned to a specific role.
-   * @param roleId The Id of the role.
-   * @returns { Promise<userRolePermission> }
-   */
-  async getPermissionsByRole(
-    roleId: string,
-  ): Promise<RepositoryResultList<userRolePermission>> {
+  listPermissionsWithFilters = async (
+    filters: PermissionListFilters = {},
+  ): RepositoryResultList<userRolePermission> => {
     const { data, error } = await tryCatch(
-      async () => await this.permissionRepository.getPermissionsByRole(roleId),
-      `Getting permission for user ${roleId}`,
+      async () =>
+        await this.permissionRepository.listPermissionsWithFilters(filters),
+      "calling repository to list permissions with filters",
     );
 
-    if (error)
-      this.handleServiceError(error, "Failed to get permissions by role");
+    if (error) throw new RepositoryError(error.message);
 
     return data;
-  }
-
-  /**
-   * Fetches all permissions assigned to a specific user.
-   *
-   * - Finds all roles assigned to ther user via user_role_junction.
-   * - Fetches all permission for those roles from user_role_permission.
-   *
-   * @param userId The Id of the user.
-   * @returns { Promise<userRolePermission[]> }
-   */
-  async getPermissionByUserId(
-    userId: string,
-  ): Promise<RepositoryResultList<userRolePermission>> {
-    const { data, error } = await tryCatch(
-      async () => await this.permissionRepository.getPermissionByUserId(userId),
-      `Getting permission for user ${userId}`,
-    );
-
-    if (error)
-      this.handleServiceError(error, "Failed to get permissions by userId");
-
-    return data;
-  }
+  };
 
   /**
    * Creates a new permission.
-   * @param permissionData The permission data to insert.
-   * @returns { Promise<userRolePermission> }
+   *
+   * @param permissionData - The permission data to insert
+   * @returns A promise resolving to the created permission
+   * @throws {RepositoryError} If the repository operation fails or duplicate permission exists
    */
-  async createPermission(
+  createPermission = async (
     permissionData: TablesInsert<"user_role_permission">,
-  ): Promise<userRolePermission> {
+  ): RepositoryResult<userRolePermission> => {
     const { data, error } = await tryCatch(
-      async () =>
-        await this.permissionRepository.createPermission(permissionData),
-      `Creating permission for role ${permissionData.user_role_id}`,
+      async () => await this.permissionRepository.create(permissionData),
+      "calling repository to create permission",
     );
 
-    if (error)
-      this.handleServiceError(error, "Failed to get create permission");
+    if (error) throw new RepositoryError(error.message);
 
     return data;
-  }
+  };
 
   /**
-   * Updates an existing permission
-   * @param permissionId The Id of the permission to update.
-   * @param updates The fields to update.
-   * @returns { userRolePermission }
+   * Updates an existing permission.
+   *
+   * @param permissionId - The ID of the permission to update
+   * @param updates - The fields to update
+   * @returns A promise resolving to the updated permission
+   * @throws {RepositoryError} If the repository operation fails
    */
-  async updatePermission(
+  updatePermission = async (
     permissionId: string,
     updates: Partial<TablesUpdate<"user_role_permission">>,
-  ): Promise<userRolePermission> {
+  ): RepositoryResult<userRolePermission> => {
     const { data, error } = await tryCatch(
-      async () =>
-        await this.permissionRepository.updatePermission(permissionId, updates),
-      `updating permission ${permissionId}`,
+      async () => await this.permissionRepository.update(permissionId, updates),
+      "calling repository to update permission",
     );
 
-    if (error) this.handleServiceError(error, "Failed to update permission");
+    if (error) throw new RepositoryError(error.message);
 
     return data;
-  }
+  };
 
   /**
-   * Deletes a permission by its Id
-   * @param permissionId The Id of the permissio to delete.
-   * @returns { success: boolean }
+   * Deletes a permission by its ID.
+   *
+   * @param permissionId - The ID of the permission to delete
+   * @returns A promise resolving to void
+   * @throws {RepositoryError} If the repository operation fails
    */
-  async deletePermission(permissionId: string): Promise<{ success: boolean }> {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.permissionRepository.deletePermission(permissionId),
-      `deleting permission ${permissionId}`,
+  deletePermission = async (permissionId: string): RepositoryResult<void> => {
+    const { error } = await tryCatch(
+      async () => await this.permissionRepository.delete(permissionId),
+      "calling repository to delete permission",
     );
 
-    if (error) this.handleServiceError(error, "Failed to delete permission");
+    if (error) throw new RepositoryError(error.message);
 
-    return data;
-  }
+    return;
+  };
 
   /**
    * Assigns a permission to a role.
    *
-   * Single operations
-   *
-   *    - Inserts a new permission record associated with the specified role.
-   *    - Throws error if permission already exists for the role.
-   *    - Throws error if role does not exist.
-   *
-   * @param roleId The Id of the role.
-   * @param permissionData The permission data to assign
-   * @returns { Promise<userRolePermission> }
+   * @param roleId - The ID of the role
+   * @param permissionData - The permission data to assign
+   * @returns A promise resolving to the created permission
+   * @throws {RepositoryError} If the repository operation fails or duplicate exists
    */
-  async assignPermissionToRole(
+  assignPermissionToRole = async (
     roleId: string,
     permissionData: Omit<TablesInsert<"user_role_permission">, "user_role_id">,
-  ): Promise<userRolePermission> {
+  ): RepositoryResult<userRolePermission> => {
     const { data, error } = await tryCatch(
       async () =>
         await this.permissionRepository.assignPermissionToRole(
           roleId,
           permissionData,
         ),
-      "Assigning a permission to a role",
+      "calling repository to assign permission to role",
     );
 
-    if (error)
-      this.handleServiceError(error, "Failed to assign a permission to a role");
+    if (error) throw new RepositoryError(error.message);
 
     return data;
-  }
+  };
 
   /**
-   * Assigns multiple permissions to a role (bulk).
+   * Assigns multiple permissions to a role in bulk.
    *
-   * Bulk (prefix with "bulk" or use array parameter as indicator)
-   *
-   * - Inserts a new permission record associated with the specified role.
-   * - Throws error if permission already exists for the role.
-   * - Throws error if role does not exist.
-   *
-   * @param roleId The Id of the role.
-   * @param permissionData The permission data to assign.
-   * @returns { Promise<userRolePermission> }
+   * @param roleId - The ID of the role
+   * @param permissionDataList - Array of permission data to assign
+   * @returns A promise resolving to an array of created permissions
+   * @throws {RepositoryError} If the repository operation fails
    */
-  async assignPermissionsToRoleInBulk(
+  assignPermissionsToRoleInBulk = async (
     roleId: string,
     permissionDataList: Omit<
       TablesInsert<"user_role_permission">,
       "user_role_id"
     >[],
-  ): Promise<userRolePermission[]> {
+  ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
     const { data, error } = await tryCatch(
       async () =>
-        this.permissionRepository.assignPermissionsToRoleInBulk(
+        await this.permissionRepository.assignPermissionsToRoleInBulk(
           roleId,
           permissionDataList,
         ),
-      "Assigning Multiple permissions to a role",
+      "calling repository to assign permissions to role in bulk",
     );
 
-    if (error)
-      this.handleServiceError(
-        error,
-        "Failed to assign multiple permissions to role",
-      );
+    if (error) throw new RepositoryError(error.message);
 
     return data;
-  }
+  };
 
   /**
    * Removes a permission from a role.
    *
-   * Single operations
-   *
-   * - Deletes the permission record associated with the specified role.
-   * - Throws error if permission does not exist.
-   *
-   * @param roleId The Id of the role.
-   * @param permissionId The Id of the permission to remove.
-   * @returns { Promise<{ success: boolean }> }
+   * @param roleId - The ID of the role
+   * @param permissionId - The ID of the permission to remove
+   * @returns A promise resolving to void
+   * @throws {RepositoryError} If the repository operation fails
    */
-  async removePermissioFromRole(
+  removePermissionFromRole = async (
     roleId: string,
     permissionId: string,
-  ): Promise<{ success: boolean }> {
-    if (!roleId || !permissionId) {
-      return { success: false };
-    }
-
-    const { data, error } = await tryCatch(
+  ): RepositoryResult<void> => {
+    const { error } = await tryCatch(
       async () =>
-        this.permissionRepository.removePermissionFromRole(
+        await this.permissionRepository.removePermissionFromRole(
           roleId,
           permissionId,
         ),
-      "Removing permission from a role",
+      "calling repository to remove permission from role",
     );
 
-    if (error)
-      this.handleServiceError(
-        error,
-        "Failed to remove a permission from a role",
-      );
+    if (error) throw new RepositoryError(error.message);
 
-    return data;
-  }
+    return;
+  };
 
   /**
-   * Removes multiple permissions from a role (bulk).
+   * Removes multiple permissions from a role in bulk.
    *
-   * Bulk (prefix with "bulk" or use array parameter as indicator)
-   *
-   * - Deletes multiple permission records associated with the specified role.
-   * - Throws error if any permission does not exist.
-   *
-   * @param roleId The Id of the role.
-   * @param permissionIds Array of permission Ids to remove.
-   * @returns { Promise<{ success: boolean }> }
+   * @param roleId - The ID of the role
+   * @param permissionIds - Array of permission IDs to remove
+   * @returns A promise resolving to void
+   * @throws {RepositoryError} If the repository operation fails
    */
-  async removePermissionsFromRoleInBulk(
+  removePermissionsFromRoleInBulk = async (
     roleId: string,
     permissionIds: string[],
-  ): Promise<{ success: boolean }> {
-    if (!roleId || !permissionIds.length) return { success: false };
+  ): RepositoryResult<void> => {
+    if (!permissionIds.length) return;
 
-    const { data, error } = await tryCatch(
+    const { error } = await tryCatch(
       async () =>
-        this.permissionRepository.removePermissionsFromRoleInBulk(
+        await this.permissionRepository.removePermissionsFromRoleInBulk(
           roleId,
           permissionIds,
         ),
-      "Removing multiple permissions to a role",
+      "calling repository to remove permissions from role in bulk",
     );
 
-    if (error)
-      this.handleServiceError(
-        error,
-        "Failed to remove multiple permissions to a role",
-      );
+    if (error) throw new RepositoryError(error.message);
 
-    return data;
-  }
+    return;
+  };
 }
 
 export const permissionServiceInstance = new PermissionService();

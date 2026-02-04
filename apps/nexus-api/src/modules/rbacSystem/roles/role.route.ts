@@ -50,11 +50,11 @@ export class RoleRouter {
      */
     router
       .route("/")
-      .get(this.roleController.getRolesOfUser)
+      .get(this.roleController.listRoles)
       .post(this.roleController.createRole);
 
     // Route to fetch all roles of all users
-    router.get("/all-users", this.roleController.getAllRolesOfAllUsers);
+    router.get("/users", this.roleController.listUsersWithRoles);
 
     /**
      * Route to get the role by id
@@ -63,27 +63,18 @@ export class RoleRouter {
      */
     router
       .route("/:roleId")
-      .get(this.roleController.getRoleById)
-      .post(this.roleController.updateRole)
+      .get(this.roleController.getRole)
+      .patch(this.roleController.updateRole)
       .delete(this.roleController.deleteRole);
-
-    // Route to fetch the users that have no roles
-    router.get(
-      "/:roleId/users/no-roles",
-      this.roleController.getUsersWithoutRoles,
-    );
-
-    // Route to check if the role exists (will return a boolean)
-    router.get("/:roleName", this.roleController.roleExistsByName);
 
     /**
      * Route to assign role to user
      * and also remove role from a user
      */
     router
-      .route("/:roleId/users/:userId")
-      .post(this.roleController.assignRoleToUser)
-      .delete(this.roleController.removeRoleFromUser);
+      .route("/:roleId/users")
+      .post(this.roleController.assignRole)
+      .delete(this.roleController.removeRole);
 
     return router;
   };
