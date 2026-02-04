@@ -63,6 +63,7 @@ export namespace SchemaFactory {
     export const standardErrors = () => {
       return {
         400: SchemaFactory.Response.error(),
+        401: SchemaFactory.Response.error(),
         403: SchemaFactory.Response.error(),
         404: SchemaFactory.Response.error(),
         500: SchemaFactory.Response.error(),
@@ -75,7 +76,7 @@ export namespace SchemaFactory {
       export const query = () => {
         return z.object({
           pageNumber: z.coerce.number().int().positive().default(1),
-          pageSize: z.coerce.number().int().positive().default(10),
+          pageSize: z.coerce.number().int().positive().max(50).default(10),
         });
       };
     }

@@ -220,10 +220,12 @@ export const generateOpenApiOptions = ({
   info = { title: "API Documentation", version: "1.0.0", description: "Generated Documentation" },
   servers = [{ url: "http://localhost:8000", description: "Development server" }],
   security = [{ bearerAuth: [] }],
+  tags = [],
 }: {
   info?: { title: string; version: string; description?: string };
   servers?: { url: string; description?: string }[];
   security?: Record<string, string[]>[];
+  tags?: { name: string; description?: string }[];
 }) => {
   const registry = new OpenAPIRegistry();
 
@@ -245,6 +247,83 @@ export const generateOpenApiOptions = ({
       })
     );
     return z.object(newShape);
+  };
+
+  const formatTagFromPath = (path: string) => {
+    const segments = path.split("/").filter(Boolean);
+    const domainIndex = segments[0] === "api" ? 1 : 0;
+    const tag = segments[domainIndex] || "api";
+    return tag.replace(/-/g, " ");
+  };
+
+  const extractResourceName = (path: string) => {
+    const segments = path.split("/").filter(Boolean);
+    const domainIndex = segments[0] === "api" ? 1 : 0;
+    const resourceSegments = segments.slice(domainIndex + 1);
+    const lastStatic = [...resourceSegments].reverse().find((segment) => !segment.startsWith("{"));
+    const base = (lastStatic || segments[domainIndex] || "resource").replace(/-/g, " ");
+    if (base.endsWith("s") && !base.endsWith("ss")) {
+      return base.slice(0, -1);
+    }
+    return base;
+  };
+
+  const methodToVerb = (method: string, isList: boolean) => {
+    const normalized = method.toLowerCase();
+    if (normalized === "get") return isList ? "List" : "Get";
+    if (normalized === "post") return "Create";
+    if (normalized === "patch") return "Update";
+    if (normalized === "delete") return "Delete";
+    return "Handle";
+  };
+
+  const buildDefaultQueryDescriptions = (querySchema: z.ZodObject<any>) => {
+    const shape = querySchema.shape;
+    const defaults: Record<string, string> = {};
+    if ("pageNumber" in shape) {
+      defaults.pageNumber = "Page number (default: 1).";
+    }
+    if ("pageSize" in shape) {
+      defaults.pageSize = "Page size (default: 10, max: 50).";
+    }
+    return defaults;
+  };
+
+  const buildInputsDescription = ({
+    pathParams,
+    queryKeys,
+    hasBody,
+  }: {
+    pathParams: string[];
+    queryKeys: string[];
+    hasBody: boolean;
+  }) => {
+    const parts: string[] = [];
+    if (pathParams.length > 0) {
+      parts.push(\`Path params: \${pathParams.join(", ")}.\`);
+    }
+    if (queryKeys.length > 0) {
+      parts.push(\`Query params: \${queryKeys.join(", ")}.\`);
+    }
+    if (hasBody) {
+      parts.push("Body: JSON payload (see schema).");
+    }
+    if (parts.length === 0) return "None.";
+    return parts.join(" ");
+  };
+
+  const buildOutputsDescription = (responses: Record<string, unknown>) => {
+    const successCodes = Object.keys(responses).filter((code) => parseInt(code) < 400);
+    if (successCodes.length === 0) return "See response schema.";
+    return \`Success responses: \${successCodes.join(", ")}.\`;
+  };
+
+  const buildErrorsDescription = (responses: Record<string, unknown>) => {
+    const errorCodes = Object.keys(responses).filter((code) => parseInt(code) >= 400);
+    if (errorCodes.length === 0) {
+      return "Standard errors: 400, 401, 403, 404, 500.";
+    }
+    return \`Error responses: \${errorCodes.join(", ")}.\`;
   };
 
   // Iterating through the global openapiendpoints variable
@@ -273,15 +352,25 @@ export const generateOpenApiOptions = ({
     const requestConfig: any = {};
     
     if (endpoint.query) {
+      const defaultQueryDocs = endpoint.query instanceof z.ZodObject
+        ? buildDefaultQueryDescriptions(endpoint.query)
+        : {};
       requestConfig.query = endpoint.query instanceof z.ZodObject 
-        ? addDescriptions(endpoint.query, endpoint.docs_query || {})
+        ? addDescriptions(endpoint.query, { ...defaultQueryDocs, ...(endpoint.docs_query || {}) })
         : endpoint.query;
     }
 
     if (endpoint.body) {
       requestConfig.body = {
         description: endpoint.docs_body || \`Payload for \${endpoint.path}\`,
-        content: { "application/json": { schema: endpoint.body } },
+        content: {
+          "application/json": {
+            schema: endpoint.body,
+            ...(endpoint.docs_example_body
+              ? { example: endpoint.docs_example_body }
+              : {}),
+          },
+        },
       };
     }
 
@@ -296,14 +385,47 @@ export const generateOpenApiOptions = ({
       requestConfig.params = addDescriptions(paramsSchema, endpoint.docs_params || {});
     }
 
+    const queryKeys = endpoint.query instanceof z.ZodObject
+      ? Object.keys(endpoint.query.shape)
+      : [];
+    const isList = endpoint.method.toLowerCase() === "get" && pathParams.length === 0;
+    const resourceName = extractResourceName(endpoint.path);
+    const summary = endpoint.docs_summary || \`\${methodToVerb(endpoint.method, isList)} \${resourceName}\`;
+    const authNote = endpoint.docs_auth || (endpoint.method.toLowerCase() === "get" ? "Public." : "Requires Bearer token.");
+    const description = [
+      \`Purpose: \${endpoint.docs_description || summary}.\`,
+      \`Inputs: \${buildInputsDescription({ pathParams, queryKeys, hasBody: !!endpoint.body })}\`,
+      \`Outputs: \${buildOutputsDescription(formattedResponses)}\`,
+      \`Errors: \${buildErrorsDescription(formattedResponses)}\`,
+      \`Auth: \${authNote}\`,
+    ].join("\\n\\n");
+
+    const exampleSuccessCode = Object.keys(formattedResponses).find(
+      (code) => parseInt(code) < 400,
+    );
+    if (exampleSuccessCode && endpoint.docs_example_response) {
+      formattedResponses[exampleSuccessCode] = {
+        ...formattedResponses[exampleSuccessCode],
+        content: {
+          "application/json": {
+            schema: formattedResponses[exampleSuccessCode].content["application/json"].schema,
+            example: endpoint.docs_example_response,
+          },
+        },
+      };
+    }
+
     registry.registerPath({
       method: endpoint.method.replace(".ts", "").toLowerCase() as any,
       path: endpoint.path,
-      tags: [endpoint.path.split("/").filter(Boolean).slice(0, 2).join("/")],
-      summary: endpoint.docs_summary || \`Endpoint for \${endpoint.path}\`,
-      description: endpoint.docs_description || \`Endpoint for \${endpoint.path}\`,
+      tags: [formatTagFromPath(endpoint.path)],
+      summary,
+      description,
       request: requestConfig,
       responses: formattedResponses,
+      ...(endpoint.docs_auth === "Public" || endpoint.method.toLowerCase() === "get"
+        ? { security: [] }
+        : {}),
     });
   });
 
@@ -320,6 +442,7 @@ export const generateOpenApiOptions = ({
     info,
     servers,
     security,
+    tags,
   });
 
   return {
