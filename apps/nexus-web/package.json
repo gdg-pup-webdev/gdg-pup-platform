@@ -9,10 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@configs/tailwind-config": "workspace:*",
+    "@packages/frontend-utils": "workspace:*",
     "@packages/identity-api-contracts": "workspace:*",
     "@packages/nexus-api-contracts": "workspace:*",
     "@packages/spark-ui": "workspace:*",
-    "@configs/tailwind-config": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.90.1",
     "cookies-next": "^6.1.1",
@@ -30,6 +31,7 @@
     "eslint-config-next": "16.1.1",
     "postcss-import": "^16.1.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   }
 }
