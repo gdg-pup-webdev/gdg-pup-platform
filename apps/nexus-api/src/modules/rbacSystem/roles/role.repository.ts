@@ -298,17 +298,46 @@ export class RoleRepository {
    *
    * @param roleId - The ID of the role to delete
    * @returns A promise resolving to success status
-   * @throws {RepositoryError} If the role is still assigned to users
+   * @throws {NotFoundError} If the role does not exist
+   * @throws {InvalidOperationError} If the role is still assigned to users
    * @throws {DatabaseError} If a database error occurs
    */
   delete = async (roleId: string): RepositoryResult<void> => {
-    const { error } = await supabase
+    // ✅ First check if role exists
+    const { data: existingRole, error: checkError } = await supabase
       .from(this.roleTable)
-      .delete()
+      .select("id")
+      .eq("id", roleId)
+      .maybeSingle();
+
+    if (checkError) throw new DatabaseError(checkError.message);
+
+    if (!existingRole) {
+      throw new NotFoundError(`Role with ID "${roleId}" not found`);
+    }
+
+    // ✅ Check if role is assigned to any users
+    const { count: assignmentCount, error: countError } = await supabase
+      .from(this.junctionTable)
+      .select("*", { count: "exact", head: true })
+      .eq("role_id", roleId);
+
+    if (countError) throw new DatabaseError(countError.message);
+
+    if (assignmentCount && assignmentCount > 0) {
+      throw new InvalidOperationError(
+        `Cannot delete role that is assigned to ${assignmentCount} user(s). Remove all user assignments first.`,
+      );
+    }
+
+    // ✅ Proceed with deletion and verify it succeeded
+    const { error, count } = await supabase
+      .from(this.roleTable)
+      .delete({ count: "exact" })
       .eq("id", roleId);
 
     if (error) {
-      // Foreign key violation: role is still assigned to users
+      // Foreign key violation: role is still assigned to users (backup safety check)
       if (error.code === "23503") {
         throw new InvalidOperationError(
           "Cannot delete role that is assigned to users. Remove all user assignments first.",
@@ -316,6 +345,11 @@ export class RoleRepository {
       }
 
       throw new DatabaseError(error.message);
+    }
+
+    // ✅ Verify that a row was actually deleted
+    if (count === 0) {
+      throw new NotFoundError(`Role with ID "${roleId}" not found`);
     }
 
     return;

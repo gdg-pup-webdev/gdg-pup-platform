@@ -57,6 +57,15 @@ export class RoleRouter {
     router.get("/users", this.roleController.listUsersWithRoles);
 
     /**
+     * Route to assign role to user
+     * and also remove role from a user
+     */
+    router
+      .route("/:roleId/users")
+      .post(this.roleController.assignRole)
+      .delete(this.roleController.removeRole);
+
+    /**
      * Route to get the role by id
      * then update a role information
      * and delete a role
@@ -66,15 +75,6 @@ export class RoleRouter {
       .get(this.roleController.getRole)
       .patch(this.roleController.updateRole)
       .delete(this.roleController.deleteRole);
-
-    /**
-     * Route to assign role to user
-     * and also remove role from a user
-     */
-    router
-      .route("/:roleId/users")
-      .post(this.roleController.assignRole)
-      .delete(this.roleController.removeRole);
 
     return router;
   };

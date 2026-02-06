@@ -4,8 +4,11 @@ import { z } from "zod";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 export const query = SchemaFactory.Request.Paginated.query().extend({
-  roleId: z.string(),
-  withoutRoles: z.boolean(),
+  roleId: z.string().optional(),
+  withoutRoles: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((val) => val === "true"),
 });
 
 export const response = {
@@ -29,7 +32,7 @@ export const docs_query = {
   roleId:
     "Optional - UUID of specific role to filter by (returns only users who have this role)",
   withoutRoles:
-    "Optional - Set to 'true' to return only users who have no roles assigned",
+    "Optional - Set to 'true' to return only users who have no roles assigned (use string 'true' or 'false')",
 };
 
 export const docs_response_200 =

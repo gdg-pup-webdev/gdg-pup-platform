@@ -1,12 +1,6 @@
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
-import {
-  ServiceError,
-  RepositoryError,
-  NotFoundError,
-  DatabaseError,
-  ServerError,
-} from "@/classes/ServerError.js";
+import { RepositoryError } from "@/classes/ServerError.js";
 import { TablesInsert, Tables, TablesUpdate } from "@/types/supabase.types.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 
@@ -179,13 +173,32 @@ export class RoleService {
 
   /**
    * Deletes a role.
+   * First checks if the role is assigned to any users.
    *
    * @param roleId - The ID of the role to delete
    * @returns A promise resolving to success status
-   * @throws {RepositoryError} If the repository operation fails or role is still assigned
+   * @throws {RepositoryError} If the role is still assigned to users
    * @throws {NotFoundError} If the role does not exist
    */
   deleteRole = async (roleId: string) => {
+    // ✅ Check if role is assigned to any users first
+    const { data: usersWithRole, error: checkError } = await tryCatch(
+      async () =>
+        await this.roleRepository.listUsersWithRoles(1, 1, {
+          roleId,
+        }),
+      "calling repository to check if role is assigned",
+    );
+
+    if (checkError) throw new RepositoryError(checkError.message);
+
+    if (usersWithRole.count > 0) {
+      throw new RepositoryError(
+        `Cannot delete role that is assigned to ${usersWithRole.count} user(s). Remove all user assignments first.`,
+      );
+    }
+
+    // Proceed with deletion
     const { error } = await tryCatch(
       async () => await this.roleRepository.delete(roleId),
       "calling repository to delete role",
