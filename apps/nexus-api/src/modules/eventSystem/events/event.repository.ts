@@ -15,17 +15,67 @@ export class EventRepository {
 
   constructor() {}
 
-  listEvents = async (): RepositoryResultList<models.eventSystem.event.row> => {
-    const { data, error } = await supabase.from(this.tableName).select("*");
+  /**
+   * Lists events with optional filtering and pagination.
+   *
+   * @returns A promise resolving to a list of events and the total count.
+   * @throws {DatabaseError} If a database error occurs.
+   */
+  listEvents = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: {
+      creator_id?: string;
+      category?: string;
+      venue?: string;
+      start_date_gte?: string;
+      start_date_lte?: string;
+      end_date_gte?: string;
+      end_date_lte?: string;
+    },
+    options?: {
+      orderBy?: { column: string; ascending?: boolean };
+    },
+  ): RepositoryResultList<models.eventSystem.event.row> => {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase.from(this.tableName).select("*", { count: "exact" });
+
+    if (filters.creator_id) {
+      query = query.eq("creator_id", filters.creator_id);
+    }
+    if (filters.category) {
+      query = query.eq("category", filters.category);
+    }
+    if (filters.venue) {
+      query = query.eq("venue", filters.venue);
+    }
+    if (filters.start_date_gte) {
+      query = query.gte("start_date", filters.start_date_gte);
+    }
+    if (filters.start_date_lte) {
+      query = query.lte("start_date", filters.start_date_lte);
+    }
+    if (filters.end_date_gte) {
+      query = query.gte("end_date", filters.end_date_gte);
+    }
+    if (filters.end_date_lte) {
+      query = query.lte("end_date", filters.end_date_lte);
+    }
+
+    const orderBy = options?.orderBy ?? {
+      column: "start_date",
+      ascending: true,
+    };
+    const { data, count, error } = await query
+      .order(orderBy.column, { ascending: orderBy.ascending })
+      .range(from, to);
+
     if (error) throw new DatabaseError(error.message);
 
-    const { count, error: countError } = await supabase
-      .from(this.tableName)
-      .select("*", { count: "exact", head: true });
-    if (countError) throw new DatabaseError(countError.message);
-
     return {
-      list: data,
+      list: data || [],
       count: count || 0,
     };
   };

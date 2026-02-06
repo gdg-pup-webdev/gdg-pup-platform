@@ -49,7 +49,8 @@ export class EventService {
     },
   ) => {
     const { data, error } = await tryCatch(
-      async () => await this.eventRepository.listEvents(),
+      async () =>
+        await this.eventRepository.listEvents(pageNumber, pageSize, filters),
       "listing events",
     );
     if (error) throw new RepositoryError(error.message);
