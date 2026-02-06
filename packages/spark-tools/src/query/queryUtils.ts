@@ -131,42 +131,8 @@ export function useQueryUtils() {
   };
 }
 
-/**
- * Prefetch a query for better UX
- * 
- * @example
- * ```typescript
- * const prefetch = usePrefetch();
- * 
- * // Prefetch on hover
- * <Link 
- *   href={`/users/${userId}`}
- *   onMouseEnter={() => prefetch.user(userId)}
- * >
- *   View User
- * </Link>
- * ```
- */
-export function usePrefetch() {
-  const queryClient = useQueryClient();
-
-  return {
-    /**
-     * Generic prefetch
-     */
-    prefetch: <TData>(
-      queryKey: unknown[],
-      queryFn: () => Promise<TData>,
-      staleTime?: number
-    ) => {
-      return queryClient.prefetchQuery({
-        queryKey,
-        queryFn,
-        staleTime,
-      });
-    },
-  };
-}
+// Note: usePrefetch has been moved to ./usePrefetch.ts for better organization
+// Import from '@packages/spark-tools/query' to use it
 
 /**
  * Optimistic update helper
