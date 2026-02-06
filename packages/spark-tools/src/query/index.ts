@@ -50,8 +50,12 @@ export type { UseQueryOptions, UseQueryReturn } from './useQuery';
 export { useMutation } from './useMutation';
 export type { UseMutationOptions, UseMutationReturn } from './useMutation';
 
+// Prefetch hooks
+export { usePrefetch, usePrefetchOnHover } from './usePrefetch';
+export type { PrefetchOptions } from './usePrefetch';
+
 // Utilities
-export { useQueryUtils, usePrefetch, createOptimisticUpdate } from './queryUtils';
+export { useQueryUtils, createOptimisticUpdate } from './queryUtils';
 
 // Re-export useful TanStack Query utilities
 export {

@@ -14,6 +14,9 @@
  * 
  * // Import TanStack Query integration
  * import { QueryProvider, useQuery, useMutation, queryKeys } from '@packages/spark-tools/query';
+ * 
+ * // Import utility hooks
+ * import { usePagination, useDebounce, useLocalStorage } from '@packages/spark-tools/hooks';
  * ```
  */
 
@@ -21,3 +24,4 @@
 export * from './errors';
 export * from './services';
 export * from './query';
+export * from './hooks';
