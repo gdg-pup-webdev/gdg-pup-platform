@@ -15,21 +15,20 @@ export class EventRepository {
 
   constructor() {}
 
-  listEvents =
-    async (): RespositoryResultList<models.eventSystem.event.row> => {
-      const { data, error } = await supabase.from(this.tableName).select("*");
-      if (error) throw new DatabaseError(error.message);
+  listEvents = async (): RepositoryResultList<models.eventSystem.event.row> => {
+    const { data, error } = await supabase.from(this.tableName).select("*");
+    if (error) throw new DatabaseError(error.message);
 
-      const { count, error: countError } = await supabase
-        .from(this.tableName)
-        .select("*", { count: "exact", head: true });
-      if (countError) throw new DatabaseError(countError.message);
+    const { count, error: countError } = await supabase
+      .from(this.tableName)
+      .select("*", { count: "exact", head: true });
+    if (countError) throw new DatabaseError(countError.message);
 
-      return {
-        list: data,
-        count: count || 0,
-      };
+    return {
+      list: data,
+      count: count || 0,
     };
+  };
 
   /**
    * Creates a new event record.
