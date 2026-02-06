@@ -1,4 +1,9 @@
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
+import { z } from "zod";
+
+export const body = z.object({
+  permissionId: z.string().uuid(),
+});
 
 export const response = {
   200: SchemaFactory.Response.empty(),

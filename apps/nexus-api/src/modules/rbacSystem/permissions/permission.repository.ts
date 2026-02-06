@@ -136,11 +136,11 @@ export class PermissionRepository {
 
   /**
    * Creates a new permission.
-   * Checks for duplicates before inserting.
+   * Checks for duplicates before inserting to prevent duplicate role-resource combinations.
    *
    * @param permissionData - The permission data to insert
    * @returns A promise resolving to the created permission
-   * @throws {RepositoryError} If a duplicate permission exists
+   * @throws {DuplicateResourceError} If a duplicate permission exists (same role + resource)
    * @throws {DatabaseError} If a database error occurs
    */
   create = async (
@@ -157,7 +157,7 @@ export class PermissionRepository {
     if (checkError) throw new DatabaseError(checkError.message);
 
     if (existing) {
-      throw new RepositoryError(
+      throw new DuplicateResourceError(
         `Permission for resource "${permissionData.resource_name}" already exists for this role`,
       );
     }
@@ -172,7 +172,7 @@ export class PermissionRepository {
     if (error) {
       // Duplicate permission (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new RepositoryError(
+        throw new DuplicateResourceError(
           `Permission for resource "${permissionData.resource_name}" already exists for this role`,
         );
       }
@@ -189,10 +189,11 @@ export class PermissionRepository {
 
   /**
    * Creates multiple permissions in bulk.
+   * Validates against duplicates both within the request array and existing database records.
    *
    * @param permissionDataList - Array of complete permission data to insert
    * @returns A promise resolving to an array of created permissions
-   * @throws {DuplicateResourceError} If any permission already exists
+   * @throws {DuplicateResourceError} If any permission already exists or duplicates within request
    * @throws {DatabaseError} If a database error occurs
    */
   createBulk = async (
@@ -200,16 +201,73 @@ export class PermissionRepository {
   ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
+    // ✅ Check for duplicates within the request array itself
+    const combinations = new Set<string>();
+    const duplicatesInRequest: string[] = [];
+
+    for (const perm of permissionDataList) {
+      const key = `${perm.user_role_id}:${perm.resource_name}`;
+      if (combinations.has(key)) {
+        duplicatesInRequest.push(
+          `"${perm.resource_name}" for role ${perm.user_role_id}`,
+        );
+      }
+      combinations.add(key);
+    }
+
+    if (duplicatesInRequest.length > 0) {
+      throw new DuplicateResourceError(
+        `Duplicate permissions in request: ${duplicatesInRequest.join(", ")}`,
+      );
+    }
+
+    // ✅ Check for existing permissions in database
+    // Get all unique role IDs from the request
+    const roleIds = [...new Set(permissionDataList.map((p) => p.user_role_id))];
+
+    // Fetch all existing permissions for these roles
+    const { data: existingPermissions, error: fetchError } = await supabase
+      .from(this.permissionTable)
+      .select("user_role_id, resource_name")
+      .in("user_role_id", roleIds);
+
+    if (fetchError) throw new DatabaseError(fetchError.message);
+
+    // Build a set of existing combinations
+    const existingCombinations = new Set(
+      (existingPermissions || []).map(
+        (p) => `${p.user_role_id}:${p.resource_name}`,
+      ),
+    );
+
+    // Check if any requested permission already exists
+    const conflictingPermissions: string[] = [];
+    for (const perm of permissionDataList) {
+      const key = `${perm.user_role_id}:${perm.resource_name}`;
+      if (existingCombinations.has(key)) {
+        conflictingPermissions.push(
+          `"${perm.resource_name}" for role ${perm.user_role_id}`,
+        );
+      }
+    }
+
+    if (conflictingPermissions.length > 0) {
+      throw new DuplicateResourceError(
+        `The following permissions already exist: ${conflictingPermissions.join(", ")}`,
+      );
+    }
+
+    // ✅ All validations passed, proceed with bulk insert
     const { data, error } = await supabase
       .from(this.permissionTable)
       .insert(permissionDataList)
       .select();
 
     if (error) {
-      // Duplicate error
+      // Duplicate error (last resort catch)
       if (error.code === "23505") {
         throw new DuplicateResourceError(
-          "One or more permissions already exist for this role",
+          "One or more permissions already exist in the database",
         );
       }
 
@@ -227,17 +285,53 @@ export class PermissionRepository {
 
   /**
    * Updates an existing permission.
+   * Prevents updating to a resource_name that would create a duplicate.
    *
    * @param permissionId - The ID of the permission to update
    * @param updates - The fields to update
    * @returns A promise resolving to the updated permission
    * @throws {NotFoundError} If the permission does not exist
+   * @throws {DuplicateResourceError} If update would create duplicate
    * @throws {DatabaseError} If a database error occurs
    */
   update = async (
     permissionId: string,
     updates: Partial<TablesUpdate<"user_role_permission">>,
   ): RepositoryResult<userRolePermission> => {
+    // ✅ If updating resource_name, check for duplicates
+    if (updates.resource_name) {
+      // First, get the current permission to know which role it belongs to
+      const { data: currentPermission, error: fetchError } = await supabase
+        .from(this.permissionTable)
+        .select("user_role_id")
+        .eq("id", permissionId)
+        .maybeSingle();
+
+      if (fetchError) throw new DatabaseError(fetchError.message);
+      if (!currentPermission)
+        throw new NotFoundError(
+          `Permission with ID "${permissionId}" not found`,
+        );
+
+      // Check if another permission with same role + new resource_name exists
+      const { data: existing, error: checkError } = await supabase
+        .from(this.permissionTable)
+        .select("id")
+        .eq("user_role_id", currentPermission.user_role_id)
+        .eq("resource_name", updates.resource_name)
+        .neq("id", permissionId) // Exclude current permission
+        .maybeSingle();
+
+      if (checkError) throw new DatabaseError(checkError.message);
+
+      if (existing) {
+        throw new DuplicateResourceError(
+          `Permission for resource "${updates.resource_name}" already exists for this role`,
+        );
+      }
+    }
+
+    // Proceed with update
     const { data, error } = await supabase
       .from(this.permissionTable)
       .update(updates)
@@ -250,6 +344,12 @@ export class PermissionRepository {
       if (error.code === "PGRST116") {
         throw new NotFoundError(
           `Permission with ID "${permissionId}" not found`,
+        );
+      }
+      // Duplicate error (shouldn't happen due to check above)
+      if (error.code === "23505") {
+        throw new DuplicateResourceError(
+          `Permission for resource "${updates.resource_name}" already exists for this role`,
         );
       }
       throw new DatabaseError(error.message);
@@ -312,7 +412,7 @@ export class PermissionRepository {
 
   /**
    * Assigns a permission to a role.
-   * Checks for duplicates before inserting.
+   * Checks for duplicates before inserting to prevent duplicate role-resource combinations.
    *
    * @param permissionData - The complete permission data to assign (including user_role_id)
    * @returns A promise resolving to the created permission
@@ -322,7 +422,7 @@ export class PermissionRepository {
   assignToRole = async (
     permissionData: TablesInsert<"user_role_permission">,
   ): RepositoryResult<userRolePermission> => {
-    // Check if permission already exists for this role
+    // ✅ Check if permission already exists for this role
     const { data: existing, error: checkError } = await supabase
       .from(this.permissionTable)
       .select("*")
@@ -365,10 +465,11 @@ export class PermissionRepository {
 
   /**
    * Assigns multiple permissions to a role in bulk.
+   * Validates against duplicates both within the request array and existing database records.
    *
    * @param permissionDataList - Array of complete permission data to assign
    * @returns A promise resolving to an array of created permissions
-   * @throws {DuplicateResourceError} If any permission already exists for the role
+   * @throws {DuplicateResourceError} If any permission already exists or duplicates within request
    * @throws {DatabaseError} If a database error occurs
    */
   assignToRoleInBulk = async (
@@ -376,13 +477,65 @@ export class PermissionRepository {
   ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
+    // ✅ Check for duplicates within the request array itself
+    const combinations = new Set<string>();
+    const duplicatesInRequest: string[] = [];
+
+    for (const perm of permissionDataList) {
+      const key = `${perm.user_role_id}:${perm.resource_name}`;
+      if (combinations.has(key)) {
+        duplicatesInRequest.push(
+          `"${perm.resource_name}" for role ${perm.user_role_id}`,
+        );
+      }
+      combinations.add(key);
+    }
+
+    if (duplicatesInRequest.length > 0) {
+      throw new DuplicateResourceError(
+        `Duplicate permissions in request: ${duplicatesInRequest.join(", ")}`,
+      );
+    }
+
+    // ✅ Check for existing permissions in database
+    const roleIds = [...new Set(permissionDataList.map((p) => p.user_role_id))];
+
+    const { data: existingPermissions, error: fetchError } = await supabase
+      .from(this.permissionTable)
+      .select("user_role_id, resource_name")
+      .in("user_role_id", roleIds);
+
+    if (fetchError) throw new DatabaseError(fetchError.message);
+
+    const existingCombinations = new Set(
+      (existingPermissions || []).map(
+        (p) => `${p.user_role_id}:${p.resource_name}`,
+      ),
+    );
+
+    const conflictingPermissions: string[] = [];
+    for (const perm of permissionDataList) {
+      const key = `${perm.user_role_id}:${perm.resource_name}`;
+      if (existingCombinations.has(key)) {
+        conflictingPermissions.push(
+          `"${perm.resource_name}" for role ${perm.user_role_id}`,
+        );
+      }
+    }
+
+    if (conflictingPermissions.length > 0) {
+      throw new DuplicateResourceError(
+        `The following permissions already exist: ${conflictingPermissions.join(", ")}`,
+      );
+    }
+
+    // ✅ All validations passed, proceed with bulk insert
     const { data, error } = await supabase
       .from(this.permissionTable)
       .insert(permissionDataList)
       .select();
 
     if (error) {
-      // Duplicate error
       if (error.code === "23505") {
         throw new DuplicateResourceError(
           "One or more permissions already exist for this role",

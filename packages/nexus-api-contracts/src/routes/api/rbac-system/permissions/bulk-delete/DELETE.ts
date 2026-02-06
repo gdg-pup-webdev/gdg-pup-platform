@@ -2,7 +2,7 @@ import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
 
 export const body = z.object({
-  permissionIds: z.array(z.string().uuid()).min(1),
+  permissionIds: z.array(z.string()).min(1),
 });
 
 export const response = {

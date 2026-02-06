@@ -258,17 +258,17 @@ export class PermissionController {
   );
 
   /**
-   * POST /api/rbac-system/permissions/:roleId/assign
+   * POST /api/rbac-system/permissions/roles/assign
    * Assigns a permission to a role.
    *
-   * @route POST /api/rbac-system/permissions/:roleId/assign
+   * @route POST /api/rbac-system/permissions/roles/assign
    * @param roleId - The ID of the role
    * @body permissionData - Permission data to assign (without user_role_id)
    * @returns JSON response containing the assigned permission
    * @throws {ServiceError} If the service layer encounters an error
    */
   assignToRole: RequestHandler = createExpressController(
-    contract.api.rbac_system.permissions.roles.POST,
+    contract.api.rbac_system.permissions.roles.assign.POST,
     async ({ input, output }) => {
       const permissionData = input.body.permissionData;
 
@@ -322,19 +322,19 @@ export class PermissionController {
   );
 
   /**
-   * DELETE /api/rbac-system/permissions/:roleId/:permissionId
+   * DELETE /api/rbac-system/permissions/:permissionId
    * Removes a permission from a role.
    *
-   * @route DELETE /api/rbac-system/permissions/:roleId/:permissionId
+   * @route DELETE /api/rbac-system/permissions/:permissionId
    * @param roleId - The ID of the role
    * @param permissionId - The ID of the permission to remove
    * @returns JSON response confirming removal
    * @throws {ServiceError} If the service layer encounters an error
    */
   removeFromRole: RequestHandler = createExpressController(
-    contract.api.rbac_system.permissions.permissionId.roles.DELETE,
+    contract.api.rbac_system.permissions.roles.remove.DELETE,
     async ({ input, output }) => {
-      const permissionId = input.params.permissionId;
+      const permissionId = input.body.permissionId;
 
       const { error } = await tryCatch(
         async () =>
