@@ -1,0 +1,14 @@
+{
+  "extends": "../../configs/typescript-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "skipLibCheck": true,
+    "paths": {
+      "@packages/typed-rest": ["../typed-rest/src"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+}
