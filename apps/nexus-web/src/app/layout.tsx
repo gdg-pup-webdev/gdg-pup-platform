@@ -4,6 +4,7 @@ import "@packages/spark-ui/styles.css";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { DebugNavbar } from "@/components/DebugNavbar";
+import { QueryProvider } from "@packages/spark-tools/query";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,10 +32,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <DebugNavbar />
-          {children}
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <DebugNavbar />
+            {children}
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
