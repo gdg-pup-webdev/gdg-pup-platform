@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./errors": "./src/errors/index.ts",
     "./services": "./src/services/index.ts",
-    "./query": "./src/query/index.ts"
+    "./query": "./src/query/index.ts",
+    "./hooks": "./src/hooks/index.ts"
   },
   "scripts": {
     "test": "vitest",
