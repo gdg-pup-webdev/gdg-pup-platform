@@ -1,4 +1,3 @@
 export * as permission from "./permission";
 export * as role from "./roles";
-export * as userRoleJunction from "./userRoleJunction";
-export * as user from "./user";
+export * as user from "./user"; // Re-exported from User System

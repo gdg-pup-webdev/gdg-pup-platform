@@ -2,6 +2,7 @@ import {
   RepositoryError,
   NotFoundError,
   DatabaseError,
+  DuplicateResourceError,
 } from "@/classes/ServerError";
 import { supabase } from "@/lib/supabase";
 import {
@@ -109,6 +110,31 @@ export class PermissionRepository {
   };
 
   /**
+   * Fetches a single permission by its ID.
+   *
+   * @param permissionId - The ID of the permission
+   * @returns A promise resolving to the permission data
+   * @throws {NotFoundError} If permission is not found
+   * @throws {DatabaseError} If a database error occurs
+   */
+  getPermission = async (
+    permissionId: string,
+  ): RepositoryResult<userRolePermission> => {
+    const { data, error } = await supabase
+      .from(this.permissionTable)
+      .select("*")
+      .eq("id", permissionId)
+      .maybeSingle();
+
+    if (error) throw new DatabaseError(error.message);
+
+    if (!data)
+      throw new NotFoundError(`Permission with ID "${permissionId}" not found`);
+
+    return data;
+  };
+
+  /**
    * Creates a new permission.
    * Checks for duplicates before inserting.
    *
@@ -156,6 +182,44 @@ export class PermissionRepository {
 
     if (!data) {
       throw new DatabaseError("Failed to create permission - no data returned");
+    }
+
+    return data;
+  };
+
+  /**
+   * Creates multiple permissions in bulk.
+   *
+   * @param permissionDataList - Array of complete permission data to insert
+   * @returns A promise resolving to an array of created permissions
+   * @throws {DuplicateResourceError} If any permission already exists
+   * @throws {DatabaseError} If a database error occurs
+   */
+  createBulk = async (
+    permissionDataList: Array<TablesInsert<"user_role_permission">>,
+  ): RepositoryResult<userRolePermission[]> => {
+    if (!permissionDataList.length) return [];
+
+    const { data, error } = await supabase
+      .from(this.permissionTable)
+      .insert(permissionDataList)
+      .select();
+
+    if (error) {
+      // Duplicate error
+      if (error.code === "23505") {
+        throw new DuplicateResourceError(
+          "One or more permissions already exist for this role",
+        );
+      }
+
+      throw new DatabaseError(error.message);
+    }
+
+    if (!data || data.length === 0) {
+      throw new DatabaseError(
+        "Failed to create permissions - no data returned",
+      );
     }
 
     return data;
@@ -222,32 +286,54 @@ export class PermissionRepository {
   };
 
   /**
+   * Deletes multiple permissions by their IDs.
+   *
+   * @param permissionIds - Array of permission IDs to delete
+   * @returns A promise resolving to void
+   * @throws {NotFoundError} If no permissions found with provided IDs
+   * @throws {DatabaseError} If a database error occurs
+   */
+  deleteBulk = async (permissionIds: string[]): RepositoryResult<void> => {
+    if (!permissionIds.length) return;
+
+    const { error, count } = await supabase
+      .from(this.permissionTable)
+      .delete({ count: "exact" })
+      .in("id", permissionIds);
+
+    if (error) throw new DatabaseError(error.message);
+
+    if (count === 0) {
+      throw new NotFoundError("No permissions found with the provided IDs");
+    }
+
+    return;
+  };
+
+  /**
    * Assigns a permission to a role.
    * Checks for duplicates before inserting.
    *
-   * @param roleId - The ID of the role
-   * @param permissionData - The permission data to assign
+   * @param permissionData - The complete permission data to assign (including user_role_id)
    * @returns A promise resolving to the created permission
-   * @throws {RepositoryError} If permission already exists for the role
-   * @throws {NotFoundError} If role does not exist
+   * @throws {DuplicateResourceError} If permission already exists for the role
    * @throws {DatabaseError} If a database error occurs
    */
-  assignPermissionToRole = async (
-    roleId: string,
-    permissionData: Omit<TablesInsert<"user_role_permission">, "user_role_id">,
+  assignToRole = async (
+    permissionData: TablesInsert<"user_role_permission">,
   ): RepositoryResult<userRolePermission> => {
     // Check if permission already exists for this role
     const { data: existing, error: checkError } = await supabase
       .from(this.permissionTable)
       .select("*")
-      .eq("user_role_id", roleId)
+      .eq("user_role_id", permissionData.user_role_id)
       .eq("resource_name", permissionData.resource_name)
       .maybeSingle();
 
     if (checkError) throw new DatabaseError(checkError.message);
 
     if (existing) {
-      throw new RepositoryError(
+      throw new DuplicateResourceError(
         `Permission for resource "${permissionData.resource_name}" already exists for this role`,
       );
     }
@@ -255,22 +341,14 @@ export class PermissionRepository {
     // Proceed with assignment
     const { data, error } = await supabase
       .from(this.permissionTable)
-      .insert({
-        ...permissionData,
-        user_role_id: roleId,
-      })
+      .insert(permissionData)
       .select()
       .single();
 
     if (error) {
-      // Foreign key violation - role doesn't exist
-      if (error.code === "23503") {
-        throw new NotFoundError(`Role with ID "${roleId}" not found`);
-      }
-
       // Duplicate (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new RepositoryError(
+        throw new DuplicateResourceError(
           `Permission for resource "${permissionData.resource_name}" already exists for this role`,
         );
       }
@@ -288,43 +366,27 @@ export class PermissionRepository {
   /**
    * Assigns multiple permissions to a role in bulk.
    *
-   * @param roleId - The ID of the role
-   * @param permissionDataList - Array of permission data to assign
+   * @param permissionDataList - Array of complete permission data to assign
    * @returns A promise resolving to an array of created permissions
-   * @throws {RepositoryError} If any permission already exists for the role
-   * @throws {NotFoundError} If role does not exist
+   * @throws {DuplicateResourceError} If any permission already exists for the role
    * @throws {DatabaseError} If a database error occurs
    */
-  assignPermissionsToRoleInBulk = async (
-    roleId: string,
-    permissionDataList: Omit<
-      TablesInsert<"user_role_permission">,
-      "user_role_id"
-    >[],
+  assignToRoleInBulk = async (
+    permissionDataList: TablesInsert<"user_role_permission">[],
   ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
-    const insertData = permissionDataList.map((permission) => ({
-      ...permission,
-      user_role_id: roleId,
-    }));
-
     const { data, error } = await supabase
       .from(this.permissionTable)
-      .insert(insertData)
+      .insert(permissionDataList)
       .select();
 
     if (error) {
       // Duplicate error
       if (error.code === "23505") {
-        throw new RepositoryError(
+        throw new DuplicateResourceError(
           "One or more permissions already exist for this role",
         );
-      }
-
-      // Foreign key violation - role doesn't exist
-      if (error.code === "23503") {
-        throw new NotFoundError(`Role with ID "${roleId}" not found`);
       }
 
       throw new DatabaseError(error.message);
@@ -340,30 +402,23 @@ export class PermissionRepository {
   };
 
   /**
-   * Removes a permission from a role.
+   * Removes a permission by its ID.
    *
-   * @param roleId - The ID of the role
    * @param permissionId - The ID of the permission to remove
    * @returns A promise resolving to void
    * @throws {NotFoundError} If the permission does not exist
    * @throws {DatabaseError} If a database error occurs
    */
-  removePermissionFromRole = async (
-    roleId: string,
-    permissionId: string,
-  ): RepositoryResult<void> => {
+  removeFromRole = async (permissionId: string): RepositoryResult<void> => {
     const { error, count } = await supabase
       .from(this.permissionTable)
       .delete({ count: "exact" })
-      .eq("id", permissionId)
-      .eq("user_role_id", roleId);
+      .eq("id", permissionId);
 
     if (error) throw new DatabaseError(error.message);
 
     if (count === 0) {
-      throw new NotFoundError(
-        `Permission with ID "${permissionId}" not found for role "${roleId}"`,
-      );
+      throw new NotFoundError(`Permission with ID "${permissionId}" not found`);
     }
 
     return;
@@ -378,8 +433,7 @@ export class PermissionRepository {
    * @throws {NotFoundError} If any permission does not exist
    * @throws {DatabaseError} If a database error occurs
    */
-  removePermissionsFromRoleInBulk = async (
-    roleId: string,
+  removeFromRoleInBulk = async (
     permissionIds: string[],
   ): RepositoryResult<void> => {
     if (!permissionIds.length) return;
@@ -387,15 +441,12 @@ export class PermissionRepository {
     const { error, count } = await supabase
       .from(this.permissionTable)
       .delete({ count: "exact" })
-      .eq("user_role_id", roleId)
       .in("id", permissionIds);
 
     if (error) throw new DatabaseError(error.message);
 
     if (count === 0) {
-      throw new NotFoundError(
-        `No permissions found for role "${roleId}" with the provided IDs`,
-      );
+      throw new NotFoundError(`No permissions found with the provided IDs`);
     }
 
     return;

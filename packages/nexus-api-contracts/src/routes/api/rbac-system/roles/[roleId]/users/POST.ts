@@ -1,4 +1,3 @@
-import { userRoleJunction } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
 
@@ -7,7 +6,13 @@ export const body = z.object({
 });
 
 export const response = {
-  200: SchemaFactory.Response.single(userRoleJunction.row),
+  200: SchemaFactory.Response.single(
+    z.object({
+      id: z.string(),
+      role_id: z.string(),
+      user_id: z.string(),
+    }),
+  ),
   ...SchemaFactory.Response.standardErrors(),
 };
 

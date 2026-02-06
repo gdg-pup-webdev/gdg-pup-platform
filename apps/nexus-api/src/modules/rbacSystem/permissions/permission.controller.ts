@@ -80,6 +80,35 @@ export class PermissionController {
   );
 
   /**
+   * GET /api/rbac-system/permissions/:permissionId
+   * Fetches a single permission by ID.
+   *
+   * @route GET /api/rbac-system/permissions/:permissionId
+   * @param permissionId - The ID of the permission to fetch
+   * @returns JSON response containing the permission
+   * @throws {ServiceError} If the service layer encounters an error
+   */
+  getPermission: RequestHandler = createExpressController(
+    contract.api.rbac_system.permissions.permissionId.GET,
+    async ({ input, output }) => {
+      const { permissionId } = input.params;
+
+      const { data, error } = await tryCatch(
+        async () => await this.permissionService.getPermission(permissionId),
+        "calling service to get permission",
+      );
+
+      if (error) throw new ServiceError(error.message);
+
+      return output(200, {
+        status: "success",
+        message: "Permission fetched successfully",
+        data,
+      });
+    },
+  );
+
+  /**
    * POST /api/rbac-system/permissions
    * Creates a new permission.
    *
@@ -104,6 +133,36 @@ export class PermissionController {
       return output(200, {
         status: "success",
         message: "Permission created successfully",
+        data,
+      });
+    },
+  );
+
+  /**
+   * POST /api/rbac-system/permissions/bulk-create
+   * Creates a new permission but in bulk
+   *
+   * @route POST /api/rbac-system/permissions/bulk-create
+   * @body data - Array of Permission data (resource_name, can_create, can_read, can_update, can_delete, user_role_id)
+   * @returns JSON response containing array of created permission
+   * @throws {ServiceError} If the service layer encounters an error
+   */
+  createPermissionsInBulk: RequestHandler = createExpressController(
+    contract.api.rbac_system.permissions.bulk_create.POST,
+    async ({ input, output }) => {
+      const permissionData = input.body.data;
+
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.permissionService.createPermissionsInBulk(permissionData),
+        "calling service to create permission in bulk",
+      );
+
+      if (error) throw new ServiceError(error.message);
+
+      return output(200, {
+        status: "success",
+        message: "Successfully created permissions",
         data,
       });
     },
@@ -170,6 +229,35 @@ export class PermissionController {
   );
 
   /**
+   * DELETE /api/rbac-system/permissions/:permissionId/bulk-delete
+   * Deletes a permission by ID in bulk
+   *
+   * @route DELETE /api/rbac-system/permissions/:permissionId/bulk-delete
+   * @param permissionId - Array of ID of the permission to delete
+   * @returns JSON response confirming deletion
+   * @throws {ServiceError} If the service layer encounters an error
+   */
+  deletePermissionsInBulk: RequestHandler = createExpressController(
+    contract.api.rbac_system.permissions.bulk_delete.DELETE,
+    async ({ input, output }) => {
+      const permissionIds = input.body.permissionIds;
+
+      const { data, error } = await tryCatch(
+        async () =>
+          await this.permissionService.deletePermissionsInBulk(permissionIds),
+        "calling service to delete permissions in bulk",
+      );
+
+      if (error) throw new ServiceError(error.message);
+
+      return output(200, {
+        status: "success",
+        message: "Successfully deleted permissions",
+      });
+    },
+  );
+
+  /**
    * POST /api/rbac-system/permissions/:roleId/assign
    * Assigns a permission to a role.
    *
@@ -179,18 +267,14 @@ export class PermissionController {
    * @returns JSON response containing the assigned permission
    * @throws {ServiceError} If the service layer encounters an error
    */
-  assignPermissionToRole: RequestHandler = createExpressController(
+  assignToRole: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roles.POST,
     async ({ input, output }) => {
-      const roleId = input.body.roleId;
       const permissionData = input.body.permissionData;
 
       const { data, error } = await tryCatch(
         async () =>
-          await this.permissionService.assignPermissionToRole(
-            roleId,
-            permissionData,
-          ),
+          await this.permissionService.assignPermissionToRole(permissionData),
         "calling service to assign permission to role",
       );
 
@@ -214,16 +298,14 @@ export class PermissionController {
    * @returns JSON response containing the assigned permissions
    * @throws {ServiceError} If the service layer encounters an error
    */
-  assignPermissionsToRoleInBulk: RequestHandler = createExpressController(
+  assignToRoleInBulk: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roles.bulk_assign.POST,
     async ({ input, output }) => {
-      const roleId = input.body.roleId;
       const permissionDataList = input.body.permissionData;
 
       const { data, error } = await tryCatch(
         async () =>
           await this.permissionService.assignPermissionsToRoleInBulk(
-            roleId,
             permissionDataList,
           ),
         "calling service to assign permissions to role in bulk",
@@ -249,18 +331,14 @@ export class PermissionController {
    * @returns JSON response confirming removal
    * @throws {ServiceError} If the service layer encounters an error
    */
-  removePermissionFromRole: RequestHandler = createExpressController(
+  removeFromRole: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.permissionId.roles.DELETE,
     async ({ input, output }) => {
       const permissionId = input.params.permissionId;
-      const roleId = input.body.roleId;
 
       const { error } = await tryCatch(
         async () =>
-          await this.permissionService.removePermissionFromRole(
-            roleId,
-            permissionId,
-          ),
+          await this.permissionService.removePermissionFromRole(permissionId),
         "calling service to remove permission from role",
       );
 
@@ -283,16 +361,14 @@ export class PermissionController {
    * @returns JSON response confirming removal
    * @throws {ServiceError} If the service layer encounters an error
    */
-  removePermissionsFromRoleInBulk: RequestHandler = createExpressController(
+  removeFromRoleInBulk: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roles.bulk_remove.DELETE,
     async ({ input, output }) => {
-      const roleId = input.body.roleId;
       const permissionIds = input.body.permissionIds;
 
       const { error } = await tryCatch(
         async () =>
           await this.permissionService.removePermissionsFromRoleInBulk(
-            roleId,
             permissionIds,
           ),
         "calling service to remove permissions from role in bulk",

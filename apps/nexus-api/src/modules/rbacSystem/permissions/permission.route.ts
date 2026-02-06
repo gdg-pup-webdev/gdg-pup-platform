@@ -17,7 +17,7 @@ export class PermissionRouter {
       .get(this.permissionController.listPermissions)
       .post(this.permissionController.createPermission);
 
-    router.post("/roles", this.permissionController.assignPermissionToRole);
+    router.post("/roles", this.permissionController.assignToRole);
 
     router
       .route("/:permissionId")
@@ -25,18 +25,28 @@ export class PermissionRouter {
       .delete(this.permissionController.deletePermission);
 
     router.post(
+      "/bulk-create",
+      this.permissionController.createPermissionsInBulk,
+    );
+
+    router.delete(
+      "/:permissionId/bulk-delete",
+      this.permissionController.deletePermissionsInBulk,
+    );
+
+    router.post(
       "/roles/bulk-assign",
-      this.permissionController.assignPermissionsToRoleInBulk,
+      this.permissionController.assignToRoleInBulk,
     );
 
     router.delete(
       "/:permissionId/roles",
-      this.permissionController.removePermissionFromRole,
+      this.permissionController.removeFromRole,
     );
 
     router.delete(
       "/roles/bulk-remove",
-      this.permissionController.removePermissionsFromRoleInBulk,
+      this.permissionController.removeFromRoleInBulk,
     );
 
     return router;

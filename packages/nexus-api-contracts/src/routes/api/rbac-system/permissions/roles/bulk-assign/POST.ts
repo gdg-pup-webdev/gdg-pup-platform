@@ -3,12 +3,7 @@ import { permission } from "#models/rbacSystem/index.js";
 import { z } from "zod";
 
 export const body = z.object({
-  permissionData: z.array(
-    permission.insert.omit({
-      user_role_id: true,
-    }),
-  ),
-  roleId: z.string(),
+  permissionData: z.array(permission.insert),
 });
 
 export const response = {

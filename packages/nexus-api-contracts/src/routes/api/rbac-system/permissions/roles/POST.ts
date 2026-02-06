@@ -3,10 +3,7 @@ import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
 
 export const body = z.object({
-  permissionData: permission.insert.omit({
-    user_role_id: true,
-  }),
-  roleId: z.string(),
+  permissionData: permission.insert,
 });
 
 export const response = {

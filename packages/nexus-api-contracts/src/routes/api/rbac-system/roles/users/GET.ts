@@ -1,5 +1,5 @@
 import { role } from "#models/rbacSystem/index.js";
-import { user } from "#models/rbacSystem/index.js";
+import { user } from "#models/userSystem/index.js";
 import { z } from "zod";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 

@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const body = z.object({
   permissionIds: z.array(z.string()),
-  roleId: z.string(),
 });
 
 export const response = {
