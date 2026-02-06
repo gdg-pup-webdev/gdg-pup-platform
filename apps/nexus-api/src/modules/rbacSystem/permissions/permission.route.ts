@@ -21,6 +21,7 @@ export class PermissionRouter {
 
     router
       .route("/:permissionId")
+      .get(this.permissionController.getPermission)
       .patch(this.permissionController.updatePermission)
       .delete(this.permissionController.deletePermission);
 
