@@ -1,0 +1,117 @@
+# Auto-labeler configuration for GDG PUP Platform
+# Automatically labels PRs based on changed files
+
+# ============================================
+# PROJECT LABELS (Based on file paths)
+# ============================================
+
+"Project: Nexus-Web":
+  - changed-files:
+      - any-glob-to-any-file: "apps/nexus-web/**/*"
+
+"Project: Nexus-API":
+  - changed-files:
+      - any-glob-to-any-file: "apps/nexus-api/**/*"
+
+"Project: Nexus-API-Contracts":
+  - changed-files:
+      - any-glob-to-any-file: "packages/nexus-api-contracts/**/*"
+
+"Project: Identity-API":
+  - changed-files:
+      - any-glob-to-any-file: "apps/identity-api/**/*"
+
+"Project: Identity-API-Contracts":
+  - changed-files:
+      - any-glob-to-any-file: "packages/identity-api-contracts/**/*"
+
+"Project: SparkUI":
+  - changed-files:
+      - any-glob-to-any-file: "packages/spark-ui/**/*"
+
+"Project: Typed-REST":
+  - changed-files:
+      - any-glob-to-any-file: "packages/typed-rest/**/*"
+
+"Project: Storybook":
+  - changed-files:
+      - any-glob-to-any-file: "apps/storybook/**/*"
+
+"Project: Repository":
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**/*"
+          - "*.json"
+          - "*.yaml"
+          - "*.yml"
+          - ".gitignore"
+          - "turbo.json"
+          - "pnpm-workspace.yaml"
+          - "configs/**/*"
+
+# ============================================
+# TYPE LABELS (Based on file types/patterns)
+# ============================================
+
+"Type: Documentation":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "docs/**/*"
+          - "**/README*"
+
+"Type: Bug":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.test.ts"
+          - "**/*.test.tsx"
+          - "**/*.spec.ts"
+          - "**/tests/**/*"
+  - head-branch:
+      - "^fix/.*"
+      - "^bugfix/.*"
+      - "^hotfix/.*"
+
+"Type: Feature":
+  - head-branch:
+      - "^feat/.*"
+      - "^feature/.*"
+
+"Type: Enhance":
+  - head-branch:
+      - "^enhance/.*"
+      - "^improvement/.*"
+      - "^chore/.*"
+
+"Type: Refactor":
+  - head-branch:
+      - "^refactor/.*"
+
+"Type: Hotfix":
+  - head-branch:
+      - "^hotfix/.*"
+
+# ============================================
+# SEVERITY LABELS (Based on keywords in title/body)
+# ============================================
+
+# Note: Severity labels are harder to auto-detect
+# These are based on keywords in PR/issue titles
+# Manual labeling is recommended for severity
+
+# ============================================
+# SPECIAL LABELS
+# ============================================
+
+"help wanted":
+  - body-contains:
+      - "help wanted"
+      - "looking for help"
+      - "need assistance"
+
+"question":
+  - title-contains:
+      - "?"
+      - "question"
+      - "how to"
+      - "how do i"
