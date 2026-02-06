@@ -93,6 +93,7 @@ Git workflows, issue tracking, and pull request conventions.
 - **[703 - Naming Your Branches](./703-NamingYourBranches.md)** – Branch naming conventions
 - **[704 - Commit Conventions](./704-CommitConventions.md)** – Conventional commit standards
 - **[705 - Contributing](./705-Contributing.md)** – Complete contribution workflow
+- **[706 - Agile & Kanban Board](./706-AgileKanbanBoard.md)** – Agile & Kanban board standards
 
 ---
 
