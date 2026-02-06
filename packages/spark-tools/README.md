@@ -1,4 +1,4 @@
-# @packages/frontend-utils
+# @packages/spark-tools
 
 Shared frontend infrastructure for GDG PUP Platform applications.
 
@@ -8,8 +8,8 @@ This package contains reusable frontend utilities that can be shared across mult
 
 - **Error Handling** - Custom error classes and error processing utilities
 - **Base Services** - Abstract base service class with retry logic and error handling
-- **React Hooks** - Common hooks for data fetching, mutations, pagination, and debouncing
 - **TanStack Query Integration** - Modern data fetching with automatic caching and background refetching
+- **Utility Hooks** - Common hooks for pagination, debouncing, and local storage
 
 ## Installation
 
@@ -18,7 +18,7 @@ This is an internal workspace package. Add it to your app's dependencies:
 ```json
 {
   "dependencies": {
-    "@packages/frontend-utils": "workspace:*"
+    "@packages/spark-tools": "workspace:*"
   }
 }
 ```
@@ -29,7 +29,7 @@ This is an internal workspace package. Add it to your app's dependencies:
 
 ```typescript
 // app/layout.tsx or _app.tsx
-import { QueryProvider } from '@packages/frontend-utils/query';
+import { QueryProvider } from '@packages/spark-tools/query';
 
 export default function RootLayout({ children }) {
   return (
@@ -48,19 +48,19 @@ export default function RootLayout({ children }) {
 
 ### TanStack Query (Recommended)
 
-The new TanStack Query integration provides better caching, automatic refetching, and optimistic updates.
+The TanStack Query integration provides better caching, automatic refetching, and optimistic updates.
 
 ```typescript
 import { 
-  useApiQuery, 
-  useApiMutation, 
+  useQuery, 
+  useMutation, 
   queryKeys,
   useQueryUtils 
-} from '@packages/frontend-utils/query';
+} from '@packages/spark-tools/query';
 
 // Fetch data with automatic caching
 function UserProfile({ userId }) {
-  const { data, loading, error } = useApiQuery({
+  const { data, loading, error } = useQuery({
     queryKey: queryKeys.users.detail(userId),
     queryFn: () => userService.getUser(userId),
   });
@@ -74,7 +74,7 @@ function UserProfile({ userId }) {
 function UpdateUserButton({ userId }) {
   const utils = useQueryUtils();
   
-  const { mutate, loading } = useApiMutation({
+  const { mutate, loading } = useMutation({
     mutationFn: (data) => userService.updateUser(userId, data),
     onSuccess: () => {
       utils.invalidateUserDetail(userId);
@@ -90,12 +90,105 @@ function UpdateUserButton({ userId }) {
 }
 ```
 
+### Utility Hooks
+
+Common hooks for pagination, debouncing, and local storage:
+
+```typescript
+import { 
+  usePagination, 
+  useDebounce, 
+  useLocalStorage 
+} from '@packages/spark-tools/hooks';
+
+// Pagination
+function UsersList() {
+  const { page, pageSize, nextPage, prevPage, hasNextPage, hasPrevPage } = usePagination({
+    initialPage: 1,
+    initialPageSize: 10,
+    totalItems: 100,
+  });
+  
+  return (
+    <div>
+      <UserTable page={page} pageSize={pageSize} />
+      <button onClick={prevPage} disabled={!hasPrevPage}>Previous</button>
+      <button onClick={nextPage} disabled={!hasNextPage}>Next</button>
+    </div>
+  );
+}
+
+// Debounced search
+function SearchInput() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      searchResults(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm]);
+  
+  return <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />;
+}
+
+// Persistent state
+function ThemeToggle() {
+  const [theme, setTheme] = useLocalStorage('theme', 'light');
+  
+  return (
+    <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+      Toggle Theme ({theme})
+    </button>
+  );
+}
+```
+
+### Prefetching
+
+Prefetch data for better UX:
+
+```typescript
+import { usePrefetch, usePrefetchOnHover } from '@packages/spark-tools/query';
+
+// Manual prefetch
+function UserLink({ userId }) {
+  const { prefetch } = usePrefetch();
+  
+  return (
+    <Link
+      href={`/users/${userId}`}
+      onMouseEnter={() => prefetch(
+        queryKeys.users.detail(userId),
+        () => userService.getUser(userId)
+      )}
+    >
+      View Profile
+    </Link>
+  );
+}
+
+// Automatic prefetch on hover
+function UserLinkAuto({ userId }) {
+  const prefetchProps = usePrefetchOnHover(
+    queryKeys.users.detail(userId),
+    () => userService.getUser(userId)
+  );
+  
+  return (
+    <Link {...prefetchProps} href={`/users/${userId}`}>
+      View Profile
+    </Link>
+  );
+}
+```
+
 ### Query Keys
 
 Centralized query key management for consistent caching:
 
 ```typescript
-import { queryKeys } from '@packages/frontend-utils/query';
+import { queryKeys } from '@packages/spark-tools/query';
 
 // Users
 queryKeys.users.all           // ['users']
