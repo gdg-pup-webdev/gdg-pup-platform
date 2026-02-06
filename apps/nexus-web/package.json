@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@configs/tailwind-config": "workspace:*",
-    "@packages/frontend-utils": "workspace:*",
     "@packages/identity-api-contracts": "workspace:*",
     "@packages/nexus-api-contracts": "workspace:*",
+    "@packages/spark-tools": "workspace:*",
     "@packages/spark-ui": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.90.1",
