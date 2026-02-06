@@ -1,0 +1,36 @@
+name: Thank Contributors
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  thank:
+    # Only run if the PR was merged (not just closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Thank Contributor for Merged PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prAuthor = context.payload.pull_request.user.login;
+            const prNumber = context.payload.pull_request.number;
+            const prTitle = context.payload.pull_request.title;
+
+            const message = `🎉 **Thank you, @${prAuthor}!**
+
+            Your pull request **"${prTitle}"** has been merged! 🚀
+
+            We truly appreciate your contribution to GDG PUP Platform. Your work helps make our project better for everyone in the community! 💙
+
+            Keep up the amazing work! We look forward to your future contributions! 🙌`;
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: message
+            });

@@ -1,0 +1,192 @@
+# Dependabot configuration for GDG PUP Platform
+# Automatically creates PRs to update dependencies and security patches
+
+version: 2
+updates:
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Repository"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+
+  # Root workspace (pnpm)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels:
+      - "Type: Enhance"
+      - "Project: Repository"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      # Group all production dependencies together
+      production-dependencies:
+        dependency-type: "production"
+      # Group all development dependencies together
+      development-dependencies:
+        dependency-type: "development"
+
+  # Nexus Web App
+  - package-ecosystem: "npm"
+    directory: "/apps/nexus-web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Nexus-Web"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(nexus-web)"
+      include: "scope"
+    groups:
+      next-dependencies:
+        patterns:
+          - "next*"
+          - "react*"
+          - "@types/react*"
+
+  # Nexus API
+  - package-ecosystem: "npm"
+    directory: "/apps/nexus-api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Nexus-API"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(nexus-api)"
+      include: "scope"
+    groups:
+      express-dependencies:
+        patterns:
+          - "express*"
+          - "@types/express*"
+
+  # Identity API
+  - package-ecosystem: "npm"
+    directory: "/apps/identity-api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Identity-API"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(identity-api)"
+      include: "scope"
+
+  # Storybook
+  - package-ecosystem: "npm"
+    directory: "/apps/storybook"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Storybook"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(storybook)"
+      include: "scope"
+    groups:
+      storybook-dependencies:
+        patterns:
+          - "storybook*"
+          - "@storybook/*"
+
+  # Spark UI Package
+  - package-ecosystem: "npm"
+    directory: "/packages/spark-ui"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: SparkUI"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(spark-ui)"
+      include: "scope"
+
+  # Nexus API Contracts
+  - package-ecosystem: "npm"
+    directory: "/packages/nexus-api-contracts"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Nexus-API-Contracts"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(contracts)"
+      include: "scope"
+
+  # Identity API Contracts
+  - package-ecosystem: "npm"
+    directory: "/packages/identity-api-contracts"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Identity-API-Contracts"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(contracts)"
+      include: "scope"
+
+  # Typed REST Package
+  - package-ecosystem: "npm"
+    directory: "/packages/typed-rest"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Typed-REST"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(typed-rest)"
+      include: "scope"
+
+  # Frontend Utils Package
+  - package-ecosystem: "npm"
+    directory: "/packages/frontend-utils"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "Type: Enhance"
+      - "Project: Repository"
+      - "Severity: Low"
+    commit-message:
+      prefix: "chore(frontend-utils)"
+      include: "scope"

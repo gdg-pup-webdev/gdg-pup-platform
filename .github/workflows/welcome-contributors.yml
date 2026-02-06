@@ -1,0 +1,46 @@
+name: Welcome Contributors
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Welcome First-time Contributors
+        uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: |
+            👋 **Welcome to GDG PUP Platform!**
+
+            Thank you for opening your first issue! We're excited to have you as part of our community. 🎉
+
+            A maintainer will review your issue soon. In the meantime, please make sure you've:
+            - [ ] Provided a clear description of the issue
+            - [ ] Included steps to reproduce (if applicable)
+            - [ ] Added relevant labels
+
+            Feel free to join our community discussions and explore our [contributing guidelines](../CONTRIBUTING.md) if you'd like to help fix this issue yourself!
+
+            Happy coding! 💻
+          pr-message: |
+            🎉 **Congratulations on your first Pull Request!**
+
+            Thank you for contributing to GDG PUP Platform! We're thrilled to have you join our community of contributors. 🚀
+
+            Before we review your PR, please ensure:
+            - [ ] Your code follows our coding standards
+            - [ ] All tests pass
+            - [ ] You've updated documentation (if needed)
+            - [ ] Your commits are clear and descriptive
+
+            A maintainer will review your changes soon. We appreciate your patience and contribution!
+
+            Welcome aboard! 🎊
