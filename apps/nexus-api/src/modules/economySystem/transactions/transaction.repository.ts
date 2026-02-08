@@ -1,5 +1,4 @@
 import { NotFoundError } from "@/errors/HttpError";
-import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
 import {
@@ -103,17 +102,13 @@ export class TransactionRepository {
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (listError) {
-      throw new DatabaseError_DONT_USE(listError.message);
-    }
+    if (listError) handlePostgresError(listError);
 
     const { count, error } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
 
-    if (error) {
-      throw new DatabaseError_DONT_USE(error.message);
-    }
+    if (error) handlePostgresError(error);
 
     return {
       list: listData || [],
