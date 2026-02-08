@@ -2,29 +2,34 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+import { Tables, TablesInsert } from "@/types/supabase.types.js";
 
 type rewardRow = Tables<"reward">;
 type rewardInsert = TablesInsert<"reward">;
-type rewardUpdate = TablesUpdate<"reward">;
 
+/**
+ * Repository for managing rewards in the database.
+ */
 export class RewardRepository {
-  tableName = "reward";
+  private readonly tableName = "reward";
 
-  constructor() {}
-
+  /**
+   * Lists all rewards with pagination.
+   * @returns A list of rewards and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   async list(
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<rewardRow> {
+  ): RepositoryResultList<rewardRow> {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
     // Get rewards from the database
     const { data, error } = await supabase
-      .from("reward")
+      .from(this.tableName)
       .select("*")
       .order("created_at", { ascending: false })
       .range(from, to);
@@ -32,7 +37,7 @@ export class RewardRepository {
     if (error) throw new DatabaseError(error.message);
 
     const { count, error: countError } = await supabase
-      .from("reward")
+      .from(this.tableName)
       .select("*", { count: "exact", head: true });
 
     if (countError) throw new DatabaseError(countError.message);
@@ -43,9 +48,14 @@ export class RewardRepository {
     };
   }
 
+  /**
+   * Creates a new reward.
+   * @returns The created reward.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   async createReward(dto: rewardInsert): RepositoryResult<rewardRow> {
     const { data, error } = await supabase
-      .from("reward")
+      .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
@@ -55,9 +65,15 @@ export class RewardRepository {
     return data;
   }
 
+  /**
+   * Gets a single reward by its ID.
+   * @param id - The ID of the reward to fetch.
+   * @returns The fetched reward.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   async getRewardById(id: string): RepositoryResult<rewardRow> {
     const { data, error } = await supabase
-      .from("reward")
+      .from(this.tableName)
       .select("*")
       .eq("id", id)
       .single();
@@ -67,9 +83,14 @@ export class RewardRepository {
     return data;
   }
 
+  /**
+   * Marks a reward as claimed.
+   * @returns The updated reward.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   async markRewardAsClaimed(reward_id: string): RepositoryResult<rewardRow> {
     const { data, error } = await supabase
-      .from("reward")
+      .from(this.tableName)
       .update({
         is_claimed: true,
       })
