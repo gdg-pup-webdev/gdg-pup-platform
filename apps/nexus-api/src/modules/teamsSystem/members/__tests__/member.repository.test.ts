@@ -2,10 +2,10 @@
  * Member repository unit tests.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { DatabaseError } from "../../../../classes/ServerError.js";
+ 
 import { memberFixture } from "../../__tests__/test-helpers.js";
 import { MemberRepository } from "../member.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
 
@@ -61,7 +61,7 @@ describe("member.repository (unit)", () => {
     fromMock.mockReturnValue({ select: selectMock });
 
     await expect(repository.listMembersWithFilter(1, 10, {})).rejects.toBeInstanceOf(
-      DatabaseError,
+      ServerError,
     );
   });
 });

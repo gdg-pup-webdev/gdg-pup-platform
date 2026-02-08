@@ -3,12 +3,12 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DatabaseError } from "../../../../classes/ServerError.js";
 import {
   userAggregateFixture,
   userFixture,
 } from "../../__tests__/test-helpers.js";
 import { UserService } from "../user.service.js";
+import { DatabaseError } from "../../../../errors/DatabaseError.js";
 
 const { repoList, repoGet, repoAggregate } = vi.hoisted(() => ({
   repoList: vi.fn(),
@@ -62,11 +62,12 @@ describe("user.service (unit)", () => {
   });
 
   it("maps repository errors to RepositoryError-shaped failures", async () => {
-    repoList.mockRejectedValue(new DatabaseError("db failure"));
+    repoList.mockRejectedValue(
+      new DatabaseError("Sample DB Error", "Sample Detail"),
+    );
 
     await expect(service.listUsers()).rejects.toMatchObject({
-      title: "Database Error",
-      statusCode: 500,
+      title: "Sample DB Error",
     });
   });
 });

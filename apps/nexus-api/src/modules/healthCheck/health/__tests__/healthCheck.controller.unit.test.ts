@@ -18,7 +18,7 @@ describe("healthCheck.controller (unit)", () => {
       typeof healthCheckController.getHealthCheck
     >[1];
 
-    await healthCheckController.getHealthCheck({} as never, res, vi.fn());
+    await healthCheckController.getHealthCheck({} as never, res, () => {});
 
     expect(status).toHaveBeenCalledWith(200);
     expect(json).toHaveBeenCalledWith(healthCheckExpectedPayload);

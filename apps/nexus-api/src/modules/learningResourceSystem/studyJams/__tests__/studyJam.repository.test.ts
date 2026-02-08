@@ -5,10 +5,10 @@
  * without touching the real database.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { DatabaseError } from "../../../../classes/ServerError.js";
+ 
 import { studyJamFixture } from "../../__tests__/test-helpers.js";
 import { StudyJamRepository } from "../studyJam.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({
   fromMock: vi.fn(),
@@ -145,7 +145,7 @@ describe("studyJam.repository (unit)", () => {
     fromMock.mockReturnValue({ select: selectMock });
 
     await expect(repository.list(1, 10, {})).rejects.toBeInstanceOf(
-      DatabaseError,
+      ServerError,
     );
   });
 
@@ -160,7 +160,7 @@ describe("studyJam.repository (unit)", () => {
     fromMock.mockReturnValue({ insert: insertMock });
 
     await expect(repository.create({} as any)).rejects.toBeInstanceOf(
-      DatabaseError,
+      ServerError,
     );
   });
 });

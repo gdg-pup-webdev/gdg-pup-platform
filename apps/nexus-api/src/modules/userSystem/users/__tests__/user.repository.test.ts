@@ -3,7 +3,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DatabaseError } from "../../../../classes/ServerError.js";
+import { DatabaseError } from "../../../../errors/DatabaseError.js";
 import {
   userAggregateFixture,
   userFixture,

@@ -4,7 +4,6 @@
  * error mapping with a mocked client.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { DatabaseError } from "../../../../classes/ServerError.js";
 
 const { supabaseMock } = vi.hoisted(() => ({
   supabaseMock: {
@@ -17,10 +16,19 @@ vi.mock("@/lib/supabase.js", () => ({
 }));
 
 import { WalletRepository } from "../wallet.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
+import { DatabaseError } from "@/errors/DatabaseError.js";
+import { WalletRowType } from "../wallet.types.js";
 
 describe("WalletRepository", () => {
   const repository = new WalletRepository();
-  const wallet = { id: "wallet-1", user_id: "user-1", balance: 10 };
+  const wallet: WalletRowType = {
+    id: "wallet-1",
+    user_id: "user-1",
+    balance: 10,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,7 +64,9 @@ describe("WalletRepository", () => {
   });
 
   it("list returns list + count", async () => {
-    const rangeMock = vi.fn().mockResolvedValue({ data: [wallet], error: null });
+    const rangeMock = vi
+      .fn()
+      .mockResolvedValue({ data: [wallet], error: null });
     const orderMock = vi.fn().mockReturnValue({ range: rangeMock });
     const selectMock = vi.fn().mockReturnValue({ order: orderMock });
     const countSelectMock = vi
@@ -104,7 +114,9 @@ describe("WalletRepository", () => {
   });
 
   it("list maps count error to DatabaseError", async () => {
-    const rangeMock = vi.fn().mockResolvedValue({ data: [wallet], error: null });
+    const rangeMock = vi
+      .fn()
+      .mockResolvedValue({ data: [wallet], error: null });
     const orderMock = vi.fn().mockReturnValue({ range: rangeMock });
     const selectMock = vi.fn().mockReturnValue({ order: orderMock });
     const countSelectMock = vi
