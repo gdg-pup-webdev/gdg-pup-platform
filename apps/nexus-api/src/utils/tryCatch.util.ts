@@ -38,7 +38,14 @@ export const tryCatch = async <T>(
   if (error) {
     if (error instanceof ServerError) {
       error.addContext(context);
-      throw error; // propagate error outwards
+
+      /**
+       * Propagate error outwards
+       * This is intentional. Do not remove.
+       * This block catches handled (known) errors, adds context passed by the caller, and propagate it outwards until it reaches the global error handler.
+       */
+
+      throw error;
     }
 
     // handle other error types here if needed

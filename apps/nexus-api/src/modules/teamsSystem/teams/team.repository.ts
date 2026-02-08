@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -32,7 +32,7 @@ export class TeamRepository {
     return data;
   };
 
-  listTeams = async (): RespositoryResultList<tableRow> => {
+  listTeams = async (): RepositoryResultList<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")

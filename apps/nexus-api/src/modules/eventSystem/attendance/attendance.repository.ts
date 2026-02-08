@@ -1,6 +1,6 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RepositoryResult, RespositoryResultList } from "@/types/repository.types.js";
+import { RepositoryResultList } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
 /**
@@ -38,7 +38,7 @@ export class AttendanceRepository {
   getAttendanceByEventAndUser = async (
     eventId: string,
     userId: string,
-  ): RepositoryResult<models.eventSystem.attendance.row | null> => {
+  ): RepositoryResultList<models.eventSystem.attendee.row> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
@@ -69,7 +69,7 @@ export class AttendanceRepository {
       created_at_gte?: string;
       created_at_lte?: string;
     },
-  ): RespositoryResultList<models.eventSystem.attendee.row> => {
+  ): RepositoryResultList<models.eventSystem.attendee.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 

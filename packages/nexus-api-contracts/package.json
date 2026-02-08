@@ -11,7 +11,8 @@
     "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
     "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod",
     "dev": "concurrently \"typed-rest --watch\" \"tsc --watch\"",
-    "build": "typed-rest && tsc"
+    "build": "typed-rest && tsc",
+    "gen-types:rebuild": "pnpm run gen-types && pnpm run build"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.4.0",

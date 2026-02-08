@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -13,7 +13,9 @@ import { models } from "@packages/nexus-api-contracts";
 export class EventRepository {
   tableName = "event";
 
-    /**
+  constructor() {}
+
+  /**
    * Lists events with optional filtering and pagination.
    *
    * @returns A promise resolving to a list of events and the total count.
@@ -34,7 +36,7 @@ export class EventRepository {
     options?: {
       orderBy?: { column: string; ascending?: boolean };
     },
-  ): RespositoryResultList<models.eventSystem.event.row> => {
+  ): RepositoryResultList<models.eventSystem.event.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
@@ -62,7 +64,10 @@ export class EventRepository {
       query = query.lte("end_date", filters.end_date_lte);
     }
 
-    const orderBy = options?.orderBy ?? { column: "start_date", ascending: true };
+    const orderBy = options?.orderBy ?? {
+      column: "start_date",
+      ascending: true,
+    };
     const { data, count, error } = await query
       .order(orderBy.column, { ascending: orderBy.ascending })
       .range(from, to);

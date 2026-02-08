@@ -1,8 +1,21 @@
 import { models } from "@packages/nexus-api-contracts";
-import { EventRepository, eventRepositoryInstance } from "./event.repository.js";
-import { AttendanceService, attendanceServiceInstance } from "../attendance/attendance.service.js";
-import { WalletService, walletServiceInstance } from "@/modules/economySystem/wallets/wallet.service.js";
-import { InvalidOperationError, RepositoryError, ServiceError } from "@/classes/ServerError.js";
+import {
+  EventRepository,
+  eventRepositoryInstance,
+} from "./event.repository.js";
+import {
+  AttendanceService,
+  attendanceServiceInstance,
+} from "../attendance/attendance.service.js";
+import {
+  WalletService,
+  walletServiceInstance,
+} from "@/modules/economySystem/wallets/wallet.service.js";
+import {
+  InvalidOperationError,
+  RepositoryError,
+  ServiceError,
+} from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
 /**
@@ -36,7 +49,8 @@ export class EventService {
     },
   ) => {
     const { data, error } = await tryCatch(
-      async () => await this.eventRepository.listEvents(pageNumber, pageSize, filters),
+      async () =>
+        await this.eventRepository.listEvents(pageNumber, pageSize, filters),
       "listing events",
     );
     if (error) throw new RepositoryError(error.message);
@@ -124,7 +138,6 @@ export class EventService {
     userId: string,
     checkinMethod: string,
   ) => {
-
     const { data: eventData, error } = await tryCatch(
       async () => await this.getById(eventId),
       "getting event details",
@@ -132,11 +145,15 @@ export class EventService {
     if (error) throw new ServiceError(error.message);
 
     // ensure the user hasn't already checked in
-    const { data: existingAttendance, error: attendanceCheckError } = await tryCatch(
-      async () =>
-        await this.attendanceService.getAttendanceByEventAndUser(eventId, userId),
-      "checking existing attendance",
-    );
+    const { data: existingAttendance, error: attendanceCheckError } =
+      await tryCatch(
+        async () =>
+          await this.attendanceService.getAttendanceByEventAndUser(
+            eventId,
+            userId,
+          ),
+        "checking existing attendance",
+      );
     if (attendanceCheckError)
       throw new ServiceError(attendanceCheckError.message);
     if (existingAttendance)
