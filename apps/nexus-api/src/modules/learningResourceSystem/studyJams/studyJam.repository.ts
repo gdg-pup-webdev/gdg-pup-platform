@@ -1,5 +1,5 @@
-import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -37,7 +37,7 @@ export class StudyJamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -55,7 +55,7 @@ export class StudyJamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -76,7 +76,7 @@ export class StudyJamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -115,7 +115,7 @@ export class StudyJamRepository {
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return {
       list: data || [],
@@ -135,7 +135,7 @@ export class StudyJamRepository {
       .eq("id", resourceId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };

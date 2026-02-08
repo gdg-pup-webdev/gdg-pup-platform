@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -30,7 +30,7 @@ export class CardRepository {
     return data;
   };
 
-  getCardByUid = async (uid: string) : RepositoryResult<cardRow> => {
+  getCardByUid = async (uid: string): RepositoryResult<cardRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
@@ -42,7 +42,10 @@ export class CardRepository {
     return data;
   };
 
-  activateCard = async (cardUid: string, userId: string) : RepositoryResult<cardRow> => {
+  activateCard = async (
+    cardUid: string,
+    userId: string,
+  ): RepositoryResult<cardRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .update({
@@ -72,7 +75,9 @@ export class CardRepository {
 
     const { data, error } = await supabase
       .from(this.transactionTableName)
-      .insert(transaction).select("*").single();
+      .insert(transaction)
+      .select("*")
+      .single();
 
     if (error) throw new DatabaseError(error.message);
     return data;
@@ -81,7 +86,7 @@ export class CardRepository {
   listCards = async (
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<cardRow> => {
+  ): RepositoryResultList<cardRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact" })

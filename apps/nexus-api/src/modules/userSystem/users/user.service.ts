@@ -1,13 +1,11 @@
 /**
  * @file user.service.ts
  * @description Service layer for the User System.
- * Orchestrates business logic, handles error mapping from the repository, 
+ * Orchestrates business logic, handles error mapping from the repository,
  * and provides a clean API for the controller.
  */
 
-import { tryCatch } from "@/utils/tryCatch.util.js";
 import { UserRepository, userRepositoryInstance } from "./user.repository.js";
-import { RepositoryError } from "@/classes/ServerError.js";
 
 /**
  * UserService
@@ -27,14 +25,7 @@ export class UserService {
    * @param userId - The ID of the user.
    */
   getUserById = async (userId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.userRepository.getUserById(userId),
-      "getting user",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.userRepository.getUserById(userId);
   };
 
   /**
@@ -42,14 +33,7 @@ export class UserService {
    * Retrieves all users registered in the system.
    */
   listUsers = async () => {
-    const { data, error } = await tryCatch(
-      async () => await this.userRepository.listUsers(),
-      "listing users",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.userRepository.listUsers();
   };
 
   /**
@@ -58,14 +42,7 @@ export class UserService {
    * @param userId - The ID of the user to aggregate.
    */
   getUserAggregate = async (userId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.userRepository.getUserAggregate(userId),
-      "getting user aggregate",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.userRepository.getUserAggregate(userId);
   };
 }
 

@@ -8,9 +8,8 @@ import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import {
   buildPaginationMeta,
-  normalizeOptionalText,
-  runServiceCall,
-} from "../controller.utils.js";
+  normalizeOptionalText
+} from "@/utils/controller.utils.js";
 
 /**
  * Controller for handling external resource-related requests.
@@ -30,10 +29,9 @@ export class ExternalResourceController {
   createExternalResource: RequestHandler = createExpressController(
     contract.api.learning_resource_system.external_resources.POST,
     async ({ input, output, ctx }) => {
-      const data = await runServiceCall(
-        async () =>
-          await this.resourceService.create(input.body.data, ctx.req.user!.id),
-        "creating external resource",
+      const data = await this.resourceService.create(
+        input.body.data,
+        ctx.req.user!.id,
       );
 
       return output(200, {
@@ -55,10 +53,7 @@ export class ExternalResourceController {
       .DELETE,
     async ({ input, output }) => {
       const resourceId = input.params.externalResourceId;
-      await runServiceCall(
-        async () => await this.resourceService.delete(resourceId),
-        "deleting external resource",
-      );
+      await this.resourceService.delete(resourceId);
 
       return output(200, {
         status: "success",
@@ -78,10 +73,9 @@ export class ExternalResourceController {
       .PATCH,
     async ({ input, output }) => {
       const resourceId = input.params.externalResourceId;
-      const data = await runServiceCall(
-        async () =>
-          await this.resourceService.update(resourceId, input.body.data),
-        "updating external resource",
+      const data = await this.resourceService.update(
+        resourceId,
+        input.body.data,
       );
 
       return output(200, {
@@ -113,9 +107,9 @@ export class ExternalResourceController {
       const normalizedSearch = normalizeOptionalText(search);
       const normalizedTagIds = tagIds
         ? tagIds
-          .split(",")
-          .map((tagId) => tagId.trim())
-          .filter((tagId) => tagId.length > 0)
+            .split(",")
+            .map((tagId) => tagId.trim())
+            .filter((tagId) => tagId.length > 0)
         : undefined;
       const filters: ExternalResourceListFilters = {
         ...(normalizedSearch ? { search: normalizedSearch } : {}),
@@ -127,10 +121,10 @@ export class ExternalResourceController {
           : {}),
       };
 
-      const data = await runServiceCall(
-        async () =>
-          await this.resourceService.list(pageNumber, pageSize, filters),
-        "listing external resources",
+      const data = await this.resourceService.list(
+        pageNumber,
+        pageSize,
+        filters,
       );
 
       return output(200, {
@@ -153,10 +147,7 @@ export class ExternalResourceController {
       .GET,
     async ({ input, output }) => {
       const resourceId = input.params.externalResourceId;
-      const data = await runServiceCall(
-        async () => await this.resourceService.getOne(resourceId),
-        "getting one external resource",
-      );
+      const data = await this.resourceService.getOne(resourceId);
 
       return output(200, {
         status: "success",

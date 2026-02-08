@@ -8,9 +8,7 @@ import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import {
   RepositoryResult,
   RepositoryResultList,
-} from "@/types/repository.types.js"; 
-import { DatabaseError } from "@/classes/ServerError.js";
-import { tryCatch } from "@/utils/tryCatch.util";
+} from "@/types/repository.types.js";
 import { SupabaseUtils } from "@/utils/supabase.util";
 
 /**
@@ -34,17 +32,9 @@ export class SettingsRepository {
   listSettingsOfUser = async (
     userId: string,
   ): RepositoryResultList<settingsRow> => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
-          user_id: userId,
-        }),
-      "Calling database to list settingss of user",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
+      user_id: userId,
+    });
   };
 
   /**
@@ -52,31 +42,15 @@ export class SettingsRepository {
    * Retrieves all settingss in the system.
    */
   listSettings = async (): RepositoryResultList<settingsRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
-      "Calling database to list settingss",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.listRows(this.tableName, 1, 1000);
   };
 
   /**
    * getOneSettings
    * Fetches a single settings by ID.
    */
-  getOneSettings = async (
-    id: string,
-  ): RepositoryResult<settingsRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.getOneRow(this.tableName, id),
-      "Calling database to get one settings",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+  getOneSettings = async (id: string): RepositoryResult<settingsRow> => {
+    return await SupabaseUtils.getOneRow(this.tableName, id);
   };
 
   /**
@@ -86,14 +60,7 @@ export class SettingsRepository {
   createSettings = async (
     dto: settingsInsert,
   ): RepositoryResult<settingsRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.createRow(this.tableName, dto),
-      "Calling database to create settings",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.createRow(this.tableName, dto);
   };
 
   /**
@@ -104,14 +71,7 @@ export class SettingsRepository {
     id: string,
     dto: settingsUpdate,
   ): RepositoryResult<settingsRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
-      "Calling database to update settings",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.updateRow(this.tableName, id, dto);
   };
 
   /**
@@ -119,14 +79,7 @@ export class SettingsRepository {
    * Deletes an settings record.
    */
   deleteSettings = async (id: string): RepositoryResult<settingsRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.deleteRow(this.tableName, id),
-      "Calling database to delete settings",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.deleteRow(this.tableName, id);
   };
 }
 

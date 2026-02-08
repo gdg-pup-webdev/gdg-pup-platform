@@ -5,10 +5,10 @@
  * keeping tests database-free.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { DatabaseError } from "../../../../classes/ServerError.js";
+ 
 import { externalResourceFixture } from "../../__tests__/test-helpers.js";
 import { ExternalResourceRepository } from "../externalResource.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({
   fromMock: vi.fn(),
@@ -193,7 +193,7 @@ describe("externalResource.repository (unit)", () => {
     fromMock.mockReturnValue({ select: selectMock });
 
     await expect(repository.list(1, 10, {})).rejects.toBeInstanceOf(
-      DatabaseError,
+      ServerError,
     );
   });
 
@@ -208,7 +208,7 @@ describe("externalResource.repository (unit)", () => {
     fromMock.mockReturnValue({ insert: insertMock });
 
     await expect(repository.create({} as any)).rejects.toBeInstanceOf(
-      DatabaseError,
+      ServerError,
     );
   });
 });

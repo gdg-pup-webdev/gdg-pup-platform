@@ -1,4 +1,4 @@
-import { ServerError } from "@/classes/ServerError.js";
+import { ServerError_DEPRECATED } from "@/classes/ServerError.js";
 
 export type SyncResult<T, E = Error> =
   | { data: T; error: undefined }
@@ -13,7 +13,7 @@ export type AsyncResult<T, E = Error> = Promise<SyncResult<T, E>>;
  * - Return the result if successful
  * - Return the error on error
  */
-export const _tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
+export const tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
   try {
     const data = await fn();
     return { data, error: undefined };
@@ -28,17 +28,25 @@ export const _tryCatch = async <T>(fn: () => Promise<T>): AsyncResult<T> => {
  * - converts errors into returned variables
  * - takes a function and optional error handlers
  * - runs the error handlers on error and returns their result instead
+ * @deprecated
  */
-export const tryCatch = async <T>(
+export const tryCatch_deprecated = async <T>(
   fn: () => Promise<T>,
   context: string,
 ): AsyncResult<T> => {
-  const { data, error } = await _tryCatch(fn);
+  const { data, error } = await tryCatch(fn);
 
   if (error) {
-    if (error instanceof ServerError) {
+    if (error instanceof ServerError_DEPRECATED) {
       error.addContext(context);
-      throw error; // propagate error outwards
+
+      /**
+       * Propagate error outwards
+       * This is intentional. Do not remove.
+       * This block catches handled (known) errors, adds context passed by the caller, and propagate it outwards until it reaches the global error handler.
+       */
+
+      throw error;
     }
 
     // handle other error types here if needed
@@ -53,16 +61,20 @@ export const tryCatch = async <T>(
   return { data, error: undefined };
 };
 
-export const tryCatchHandled = async <T>(
+/**
+ * 
+ * @deprecated
+ */
+export const tryCatchHandled_deprecated = async <T>(
   fn: () => Promise<T>,
   handlers?: {
-    onServerError?: (error: ServerError) => void;
+    onServerError?: (error: ServerError_DEPRECATED) => void;
   },
 ): AsyncResult<T> => {
-  const { data, error } = await _tryCatch(fn);
+  const { data, error } = await tryCatch(fn);
 
   if (error) {
-    if (error instanceof ServerError) {
+    if (error instanceof ServerError_DEPRECATED) {
       if (handlers?.onServerError) handlers.onServerError(error);
     }
 
@@ -80,8 +92,9 @@ export const tryCatchHandled = async <T>(
  * Utility builder function to rethrow ServerErrors with added context.
  * - This function returns a function
  * - The function takes a ServerError, adds context to it, and rethrows it.
+ * @deprecated
  */
-export const handleServerError = <T extends ServerError>(context: string) => {
+export const handleServerError_deprecated = <T extends ServerError_DEPRECATED>(context: string) => {
   return (error: T) => {
     console.log("Rethrowing ServerError with context:", error, context);
     error.addContext(context);
@@ -91,8 +104,9 @@ export const handleServerError = <T extends ServerError>(context: string) => {
 
 /**
  * Utility function to assert the type of result
+ * @deprecated
  */
-export function assertResult<T, E>(
+export function assertResult_deprecated<T, E>(
   result: SyncResult<T, E>,
 ): asserts result is { data: T; error: undefined } {
   if (result.error) {

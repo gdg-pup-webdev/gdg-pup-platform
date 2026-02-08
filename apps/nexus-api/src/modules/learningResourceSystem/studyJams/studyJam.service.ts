@@ -1,5 +1,3 @@
-import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 import {
   studyJamRepositoryInstance,
@@ -26,15 +24,7 @@ export class StudyJamService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   create = async (dto: insertDTO, uploaderId: string) => {
-    void uploaderId;
-    const { data, error } = await tryCatch(
-      async () => await this.resourceRepository.create(dto),
-      "creating study jam",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.resourceRepository.create(dto);
   };
 
   /**
@@ -43,14 +33,7 @@ export class StudyJamService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   delete = async (resourceId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.resourceRepository.delete(resourceId),
-      "deleting study jam",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.resourceRepository.delete(resourceId);
   };
 
   /**
@@ -59,14 +42,7 @@ export class StudyJamService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   update = async (resourceId: string, dto: updateDTO) => {
-    const { data, error } = await tryCatch(
-      async () => await this.resourceRepository.update(resourceId, dto),
-      "updating study jam",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.resourceRepository.update(resourceId, dto);
   };
 
   /**
@@ -79,15 +55,7 @@ export class StudyJamService {
     pageSize: number,
     filters: StudyJamListFilters,
   ) => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.resourceRepository.list(pageNumber, pageSize, filters),
-      "listing study jams",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.resourceRepository.list(pageNumber, pageSize, filters);
   };
 
   /**
@@ -96,14 +64,7 @@ export class StudyJamService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   getOne = async (resourceId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.resourceRepository.getOne(resourceId),
-      "getting study jam",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.resourceRepository.getOne(resourceId);
   };
 }
 

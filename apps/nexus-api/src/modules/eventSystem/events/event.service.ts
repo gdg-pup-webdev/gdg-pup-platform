@@ -1,9 +1,16 @@
 import { models } from "@packages/nexus-api-contracts";
-import { EventRepository, eventRepositoryInstance } from "./event.repository.js";
-import { AttendanceService, attendanceServiceInstance } from "../attendance/attendance.service.js";
-import { WalletService, walletServiceInstance } from "@/modules/economySystem/wallets/wallet.service.js";
-import { InvalidOperationError, RepositoryError, ServiceError } from "@/classes/ServerError.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import {
+  EventRepository,
+  eventRepositoryInstance,
+} from "./event.repository.js";
+import {
+  AttendanceService,
+  attendanceServiceInstance,
+} from "../attendance/attendance.service.js";
+import {
+  WalletService,
+  walletServiceInstance,
+} from "@/modules/economySystem/wallets/wallet.service.js";
 
 /**
  * Service for managing event business logic.
@@ -20,7 +27,7 @@ export class EventService {
    * Lists events based on provided filters.
    *
    * @returns A promise resolving to the list of events and count.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   list = async (
     pageNumber: number,
@@ -35,81 +42,53 @@ export class EventService {
       end_date_lte?: string;
     },
   ) => {
-    const { data, error } = await tryCatch(
-      async () => await this.eventRepository.listEvents(pageNumber, pageSize, filters),
-      "listing events",
-    );
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.eventRepository.listEvents(pageNumber, pageSize, filters);
   };
 
   /**
    * Creates a new event.
    *
    * @returns A promise resolving to the created event.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   create = async (
     dto: models.eventSystem.event.insertDTO,
     creatorId: string,
   ) => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.eventRepository.createEvent({
-          ...dto,
-          creator_id: creatorId,
-        }),
-      "creating event",
-    );
-    if (error) throw new RepositoryError(error.message);
-
-    return data;
+    return await this.eventRepository.createEvent({
+      ...dto,
+      creator_id: creatorId,
+    });
   };
 
   /**
    * Retrieves an event by ID.
    *
    * @returns A promise resolving to the event data.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   getById = async (id: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.eventRepository.getEventById(id),
-      "getting service by id",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.eventRepository.getEventById(id);
   };
 
   /**
    * Deletes an event by ID.
    *
    * @returns A promise resolving to the deleted event data.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   delete = async (id: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.eventRepository.deleteEvent(id),
-      "deleting service",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.eventRepository.deleteEvent(id);
   };
 
   /**
    * Updates an event by ID.
    *
    * @returns A promise resolving to the updated event data.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   update = async (id: string, dto: models.eventSystem.event.updateDTO) => {
-    const { data, error } = await tryCatch(
-      async () => await this.eventRepository.updateEvent(id, dto),
-      "updating event",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.eventRepository.updateEvent(id, dto);
   };
 
   /**
@@ -117,63 +96,38 @@ export class EventService {
    * Handles attendance creation, event attendee count update, and point distribution.
    *
    * @returns A promise resolving to the attendance record, updated wallet, and updated event.
-   * @throws {ServiceError} If any step of the process fails.
+   * @throws {ServiceError_DEPRECATED} If any step of the process fails.
    */
   checkInToEvent = async (
     eventId: string,
     userId: string,
     checkinMethod: string,
   ) => {
-
-    const { data: eventData, error } = await tryCatch(
-      async () => await this.getById(eventId),
-      "getting event details",
-    );
-    if (error) throw new ServiceError(error.message);
-
-    // ensure the user hasn't already checked in
-    const { data: existingAttendance, error: attendanceCheckError } = await tryCatch(
-      async () =>
-        await this.attendanceService.getAttendanceByEventAndUser(eventId, userId),
-      "checking existing attendance",
-    );
-    if (attendanceCheckError)
-      throw new ServiceError(attendanceCheckError.message);
-    if (existingAttendance)
-      throw new InvalidOperationError("User already checked in to this event");
+    const eventData = await this.getById(eventId);
 
     // create new attendance record
-    const { data, error: attendanceError } = await tryCatch(
-      async () =>
-        await this.attendanceService.create(eventId, userId, checkinMethod),
-      "creating attendance entry",
+    const newAttendance = await this.attendanceService.create(
+      eventId,
+      userId,
+      checkinMethod,
     );
 
-    if (attendanceError) throw new ServiceError(attendanceError.message);
+    const updatedEventData = await this.update(eventId, {
+      attendees_count: eventData.attendees_count + 1,
+    });
 
-    const { data: updatedEventData, error: updateError } = await tryCatch(
-      async () =>
-        await this.update(eventId, {
-          attendees_count: eventData.attendees_count + 1,
-        }),
-      "incrementing attendees of event",
+    const walletData = await this.walletService.incrementPoints(
+      userId,
+      eventData.attendance_points || 0,
+      "event",
+      eventId,
     );
 
-    if (updateError) throw new ServiceError(updateError.message);
-
-    const { data: walletData, error: walletError } = await tryCatch(
-      async () =>
-        await this.walletService.incrementPoints(
-          userId,
-          eventData.attendance_points || 0,
-          "event",
-          eventId,
-        ),
-      "incrementing points of user",
-    );
-    if (walletError) throw new ServiceError(walletError.message);
-
-    return { attendance: data, wallet: walletData, event: updatedEventData };
+    return {
+      attendance: newAttendance,
+      wallet: walletData,
+      event: updatedEventData,
+    };
   };
 }
 

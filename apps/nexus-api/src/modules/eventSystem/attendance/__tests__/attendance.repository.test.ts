@@ -3,8 +3,7 @@
  * @description Attendance repository tests assert Supabase query structure and
  * error mapping using a fully mocked client.
  */
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { DatabaseError } from "../../../../classes/ServerError.js";
+import { describe, it, expect, vi, beforeEach } from "vitest"; 
 
 const { supabaseMock } = vi.hoisted(() => ({
   supabaseMock: {
@@ -17,6 +16,7 @@ vi.mock("@/lib/supabase.js", () => ({
 }));
 
 import { AttendanceRepository } from "../attendance.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 describe("AttendanceRepository", () => {
   const repository = new AttendanceRepository();
@@ -101,6 +101,6 @@ describe("AttendanceRepository", () => {
 
     await expect(
       repository.listEventAttendees(1, 10, { event_id: "event-1" }),
-    ).rejects.toBeInstanceOf(DatabaseError);
+    ).rejects.toBeInstanceOf(ServerError);
   });
 });

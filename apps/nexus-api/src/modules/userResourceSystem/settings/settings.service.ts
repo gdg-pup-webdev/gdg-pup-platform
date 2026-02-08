@@ -7,8 +7,6 @@ import {
   SettingsRepository,
   settingsRepositoryInstance,
 } from "./settings.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type settingsInsertDTO = models.userResourceSystem.settings.insertDTO;
@@ -20,60 +18,27 @@ export class SettingsService {
   ) {}
 
   listSettingsOfUser = async (userId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.settingsRepository.listSettingsOfUser(userId),
-      "listing settings",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.settingsRepository.listSettingsOfUser(userId);
   };
 
   listSettings = async () => {
-    const { data, error } = await tryCatch(
-      async () => await this.settingsRepository.listSettings(),
-      "listing settings",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.settingsRepository.listSettings();
   };
 
   getOneSettings = async (id: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.settingsRepository.getOneSettings(id),
-      "getting settings",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.settingsRepository.getOneSettings(id);
   };
 
   createSettings = async (dto: settingsInsertDTO) => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.settingsRepository.createSettings(dto),
-      "creating settings",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.settingsRepository.createSettings(dto);
   };
 
   deleteSettings = async (id: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.settingsRepository.deleteSettings(id),
-      "deleting settings",
-    );
-
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.settingsRepository.deleteSettings(id);
   };
 
   updateSettings = async (id: string, dto: settingsUpdateDTO) => {
-    const { data, error } = await tryCatch(
-      async () => await this.settingsRepository.updateSettings(id, dto),
-      "updating settings",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.settingsRepository.updateSettings(id, dto);
   };
 }
 

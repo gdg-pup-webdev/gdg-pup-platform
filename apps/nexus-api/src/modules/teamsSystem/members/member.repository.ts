@@ -1,5 +1,5 @@
-import { DatabaseError } from "@/classes/ServerError.js";
-import { supabase } from "@/lib/supabase.js";
+ import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -29,14 +29,14 @@ export class MemberRepository {
       .eq("team_id", teamId)
       .order("role", { ascending: true });
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     const { count, error: countError } = await supabase
       .from(this.memberTableName)
       .select("*", { count: "exact", head: true })
       .eq("team_id", teamId);
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) handlePostgresError(countError);
 
     return {
       list: data,
@@ -78,7 +78,7 @@ export class MemberRepository {
       .order("role", { ascending: true })
       .range((pageNumber - 1) * pageSize, pageNumber * pageSize - 1);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return {
       list: data || [],
@@ -98,7 +98,7 @@ export class MemberRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -116,7 +116,7 @@ export class MemberRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 }

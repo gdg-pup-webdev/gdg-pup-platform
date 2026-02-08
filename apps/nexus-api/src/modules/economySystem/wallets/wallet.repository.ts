@@ -1,5 +1,5 @@
-import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -28,7 +28,7 @@ export class WalletRepository {
       .eq("user_id", userId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -79,13 +79,14 @@ export class WalletRepository {
       .select("*")
       .order("created_at", { ascending: false })
       .range(from, to);
-    if (error) throw new DatabaseError(error.message);
+
+    if (error) handlePostgresError(error);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) handlePostgresError(countError);
 
     return {
       list: data || [],
@@ -110,7 +111,7 @@ export class WalletRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };

@@ -4,10 +4,10 @@
  * This file handles direct interactions with the Supabase database for the User System.
  */
 
-import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import { RepositoryResult } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js"; 
+import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
 type userRow = Tables<"user">;
 type userInsert = TablesInsert<"user">;
@@ -30,21 +30,21 @@ type userAggregate = userRow & {
  * UserRepository
  * Manages database queries for the user system, including complex joins for resource aggregation.
  */
-export class UserRepository { 
+export class UserRepository {
   tableName = "user";
 
   /**
    * getUserById
    * Fetches a single user record by their unique identifier.
    */
-  getUserById = async (userId: string) : RepositoryResult<userRow> => {
+  getUserById = async (userId: string): RepositoryResult<userRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
       .eq("id", userId)
       .single();
-    if (error) throw new DatabaseError(error.message);
-    return data
+    if (error) handlePostgresError(error);
+    return data;
   };
 
   /**
@@ -53,8 +53,8 @@ export class UserRepository {
    */
   listUsers = async () => {
     const { data, error } = await supabase.from("user").select("*");
-    if (error) throw new DatabaseError(error.message);
-    return data
+    if (error) handlePostgresError(error);
+    return data;
   };
 
   /**
@@ -73,7 +73,7 @@ export class UserRepository {
       .eq("id", userId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data as userAggregate;
   };

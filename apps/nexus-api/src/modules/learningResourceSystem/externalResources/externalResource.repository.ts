@@ -1,5 +1,5 @@
-import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -39,7 +39,7 @@ export class ExternalResourceRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -58,7 +58,7 @@ export class ExternalResourceRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -79,7 +79,7 @@ export class ExternalResourceRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -122,7 +122,7 @@ export class ExternalResourceRepository {
         .select("resource_id")
         .in("resource_tag_id", filters.tagIds);
 
-      if (tagLookupError) throw new DatabaseError(tagLookupError.message);
+      if (tagLookupError) handlePostgresError(tagLookupError);
 
       const resourceIds = Array.from(
         new Set((taggedResources ?? []).map(({ resource_id }) => resource_id)),
@@ -142,7 +142,7 @@ export class ExternalResourceRepository {
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return {
       list: data || [],
@@ -163,7 +163,7 @@ export class ExternalResourceRepository {
       .eq("id", resourceId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };

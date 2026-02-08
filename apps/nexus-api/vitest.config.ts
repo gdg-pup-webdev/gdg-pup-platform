@@ -16,7 +16,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/__tests__/**/*.test.ts"],
     exclude: ["**/node_modules/**", "**/dist/**"],
     /** Load environment variables before running tests */
     env: {

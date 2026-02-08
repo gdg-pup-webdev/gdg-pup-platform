@@ -6,7 +6,6 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DatabaseError } from "../../../../classes/ServerError.js";
 import {
   learningResourcePagination,
   listResult,
@@ -14,6 +13,7 @@ import {
   studyJamFixture,
 } from "../../__tests__/test-helpers.js";
 import { StudyJamService } from "../studyJam.service.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { mockCreate, mockList, mockGetOne, mockUpdate, mockDelete } = vi.hoisted(
   () => ({
@@ -77,13 +77,12 @@ describe("studyJam.service (unit)", () => {
   });
 
   it("maps repository errors to RepositoryError", async () => {
-    mockCreate.mockRejectedValue(new DatabaseError("db failure"));
+    mockCreate.mockRejectedValue(new ServerError("db failure", "detail"));
 
     await expect(
       service.create({ title: "bad" } as any, "user-1"),
     ).rejects.toMatchObject({
-      title: "Database Error",
-      statusCode: 500,
+      title: "db failure", 
     });
   });
 });

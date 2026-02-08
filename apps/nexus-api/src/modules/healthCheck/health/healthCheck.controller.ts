@@ -1,6 +1,5 @@
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest";
-// import { nexusApiContract } from "@packages/nexus-api-contracts";
+import { createExpressController } from "@packages/typed-rest"; 
 
 export class HealthCheckController {
   constructor() {}

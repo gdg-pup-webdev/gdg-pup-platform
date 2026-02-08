@@ -1,6 +1,6 @@
 import { models } from "@packages/nexus-api-contracts";
-import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import {
   MemberRepository,
   memberRepositoryInstance,
@@ -17,12 +17,7 @@ export class MemberService {
   ) {}
 
   listMembersOfTeam = async (teamId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.memberRepository.listMembersOfTeam(teamId),
-      "listing members",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.memberRepository.listMembersOfTeam(teamId);
   };
 
   listMembersWithFilter = async (
@@ -30,35 +25,19 @@ export class MemberService {
     pageSize: number,
     filters: { teamId?: string; userId?: string; role?: string },
   ) => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.memberRepository.listMembersWithFilter(
-          pageNumber,
-          pageSize,
-          filters,
-        ),
-      "listing members",
+    return await this.memberRepository.listMembersWithFilter(
+      pageNumber,
+      pageSize,
+      filters,
     );
-    if (error) throw new RepositoryError(error.message);
-    return data;
   };
 
   createMember = async (dto: memberInserDTO) => {
-    const { data, error } = await tryCatch(
-      async () => await this.memberRepository.createMember(dto),
-      "creating member",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.memberRepository.createMember(dto);
   };
 
   deleteMember = async (memberId: string) => {
-    const { data, error } = await tryCatch(
-      async () => await this.memberRepository.deleteMember(memberId),
-      "deleting member",
-    );
-    if (error) throw new RepositoryError(error.message);
-    return data;
+    return await this.memberRepository.deleteMember(memberId);
   };
 }
 

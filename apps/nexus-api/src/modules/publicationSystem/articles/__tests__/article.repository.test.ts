@@ -5,13 +5,13 @@
  * mapping without touching real schemas or data.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { DatabaseError } from "../../../../classes/ServerError.js";
+ 
 import {
   articleCommentFixture,
   articleFixture,
 } from "../../__tests__/test-helpers.js";
 import { ArticleRepository } from "../article.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
 
@@ -84,6 +84,6 @@ describe("article.repository (unit)", () => {
 
     fromMock.mockReturnValue({ insert: insertMock });
 
-    await expect(repository.create({} as any)).rejects.toBeInstanceOf(DatabaseError);
+    await expect(repository.create({} as any)).rejects.toBeInstanceOf(ServerError);
   });
 });

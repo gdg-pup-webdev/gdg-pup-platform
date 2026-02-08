@@ -2,10 +2,10 @@
  * Team repository unit tests.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { DatabaseError } from "../../../../classes/ServerError.js";
+ 
 import { teamFixture } from "../../__tests__/test-helpers.js";
 import { TeamRepository } from "../team.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
 
@@ -56,6 +56,6 @@ describe("team.repository (unit)", () => {
 
     fromMock.mockReturnValue({ insert: insertMock });
 
-    await expect(repository.createTeam({} as any)).rejects.toBeInstanceOf(DatabaseError);
+    await expect(repository.createTeam({} as any)).rejects.toBeInstanceOf(ServerError);
   });
 });
