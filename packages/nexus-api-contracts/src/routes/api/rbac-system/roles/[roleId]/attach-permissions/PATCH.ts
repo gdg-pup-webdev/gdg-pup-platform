@@ -1,20 +1,18 @@
-import { permission } from "#models/rbacSystem/index.js";
+ import { role } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
 
-export const body = SchemaFactory.Request.withPayload(
-  z.array(permission.insert),
-);
+export const body = SchemaFactory.Request.withArrayPayload(role.permission);
 
 export const response = {
-  200: SchemaFactory.Response.list(permission.row),
+  200: SchemaFactory.Response.single(role.roleAggregate),
   ...SchemaFactory.Response.standardErrors(),
 };
 
 export const docs_summary = "Create multiple permissions in bulk";
 
 export const docs_description =
-  "Create multiple permissions at once for efficient permission setup. This is useful when setting up a new role with many permissions or migrating permission configurations. All permissions in the array will be created atomically - if any fail, none will be created. Each permission must have a unique combination of user_role_id and resource_name.";
+  "Assign multiple permissions to a role in a single transaction. This is more efficient than making multiple individual requests. All permissions must have unique resource names for the specified role.";
 
 export const docs_body = {
   data: [

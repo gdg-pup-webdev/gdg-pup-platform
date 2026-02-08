@@ -86,5 +86,11 @@ export namespace SchemaFactory {
         data: dataSchema,
       });
     };
+
+    export const withArrayPayload = <T extends z.ZodTypeAny>(dataSchema: T) => {
+      return z.object({
+        data: z.array(dataSchema),
+      });
+    };
   }
 }

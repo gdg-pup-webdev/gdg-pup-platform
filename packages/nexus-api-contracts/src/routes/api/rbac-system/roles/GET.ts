@@ -4,21 +4,25 @@ import { z } from "zod";
 
 export const query = SchemaFactory.Request.Paginated.query().extend({
   userId: z.string().nullable().optional(),
+  resourceName: z.string().nullable().optional(),
+  actionName: z.string().nullable().optional(),
 });
 
 export const response = {
-  200: SchemaFactory.Response.paginated(role.row),
+  200: SchemaFactory.Response.paginated(role.roleAggregate),
   ...SchemaFactory.Response.standardErrors(),
 };
 
-export const docs_summary = "List roles with optional user filter";
+export const docs_summary = "List roles";
 
 export const docs_description =
   "Retrieve a paginated list of roles in the RBAC system. When userId is provided, returns only roles assigned to that specific user. Otherwise, returns all available roles in the system.";
 
 export const docs_query = {
   userId:
-    "Optional - UUID of user to filter roles by (returns only roles assigned to this user)",
+    "Filter by user ID. When provided, returns only roles assigned to the specified user.",
+  resourceName: "Filter by resource name",
+  actionName: "Filter by action name",
   pageNumber: "Page number for pagination (default: 1, minimum: 1)",
   pageSize: "Number of items per page (default: 10, minimum: 1, maximum: 100)",
 };
