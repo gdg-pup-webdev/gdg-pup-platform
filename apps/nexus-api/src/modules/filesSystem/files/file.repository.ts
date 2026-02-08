@@ -1,5 +1,6 @@
 import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 
 type ListParams = {
   pageNumber: number;
@@ -16,9 +17,7 @@ export class FileRepository {
       .select("*")
       .single();
 
-    if (error) {
-      throw new DatabaseError_DONT_USE(error.message);
-    }
+    if (error) handlePostgresError(error);
 
     return data;
   }
@@ -33,9 +32,7 @@ export class FileRepository {
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) {
-      throw new DatabaseError_DONT_USE(error.message);
-    }
+    if (error) handlePostgresError(error);
 
     return {
       list: data ?? [],
@@ -50,9 +47,7 @@ export class FileRepository {
       .eq("id", fileId)
       .single();
 
-    if (error) {
-      throw new DatabaseError_DONT_USE(error.message);
-    }
+    if (error) handlePostgresError(error);
 
     return data;
   }
@@ -65,9 +60,7 @@ export class FileRepository {
       .select("*")
       .single();
 
-    if (error) {
-      throw new DatabaseError_DONT_USE(error.message);
-    }
+    if (error) handlePostgresError(error);
 
     return data;
   }
@@ -80,9 +73,7 @@ export class FileRepository {
       .select("*")
       .single();
 
-    if (error) {
-      throw new DatabaseError_DONT_USE(error.message);
-    }
+    if (error) handlePostgresError(error);
 
     return data;
   }
