@@ -2,7 +2,7 @@
   "name": "gdg-pup-platform",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=!storybook",
     "dev:nexus": "turbo dev --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
     "build": "turbo run build",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
@@ -10,7 +10,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "gen-types": "turbo run gen-types", 
+    "gen-types": "turbo run gen-types",
     "test": "turbo run test"
   },
   "devDependencies": {
