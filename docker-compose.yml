@@ -1,5 +1,3 @@
-
-
 services:
   nexus-web:
     build:
