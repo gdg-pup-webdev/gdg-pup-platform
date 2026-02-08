@@ -1,8 +1,13 @@
 // list study jams
 import { studyJam } from "#models/learningResourceSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
+import { z } from "zod";
 
-export const query = SchemaFactory.Request.Paginated.query();
+export const query = SchemaFactory.Request.Paginated.query().extend({
+  search: z.string().optional(),
+  createdFrom: z.string().optional(),
+  createdTo: z.string().optional(),
+});
 
 export const response = {
   200: SchemaFactory.Response.paginated(studyJam.row),
@@ -27,73 +32,73 @@ export const docs_query = {
 export const docs_response_200 = "Paginated list of study jams.";
 
 export const docs_example_response_400 = {
-  "status": "error",
-  "message": "Invalid request.",
-  "errors": [
+  status: "error",
+  message: "Invalid request.",
+  errors: [
     {
-      "title": "Bad Request",
-      "detail": "One or more request fields are invalid."
-    }
-  ]
+      title: "Bad Request",
+      detail: "One or more request fields are invalid.",
+    },
+  ],
 };
 export const docs_example_response_401 = {
-  "status": "error",
-  "message": "Unauthorized.",
-  "errors": [
+  status: "error",
+  message: "Unauthorized.",
+  errors: [
     {
-      "title": "Unauthorized",
-      "detail": "Missing or invalid authentication token."
-    }
-  ]
+      title: "Unauthorized",
+      detail: "Missing or invalid authentication token.",
+    },
+  ],
 };
 export const docs_example_response_403 = {
-  "status": "error",
-  "message": "Forbidden.",
-  "errors": [
+  status: "error",
+  message: "Forbidden.",
+  errors: [
     {
-      "title": "Forbidden",
-      "detail": "You do not have permission to access this resource."
-    }
-  ]
+      title: "Forbidden",
+      detail: "You do not have permission to access this resource.",
+    },
+  ],
 };
 export const docs_example_response_404 = {
-  "status": "error",
-  "message": "Study jam not found.",
-  "errors": [
+  status: "error",
+  message: "Study jam not found.",
+  errors: [
     {
-      "title": "Not Found",
-      "detail": "No study jam found for the provided identifier."
-    }
-  ]
+      title: "Not Found",
+      detail: "No study jam found for the provided identifier.",
+    },
+  ],
 };
 export const docs_example_response_500 = {
-  "status": "error",
-  "message": "Internal server error.",
-  "errors": [
+  status: "error",
+  message: "Internal server error.",
+  errors: [
     {
-      "title": "Internal Server Error",
-      "detail": "An unexpected error occurred."
-    }
-  ]
+      title: "Internal Server Error",
+      detail: "An unexpected error occurred.",
+    },
+  ],
 };
 
 export const docs_example_response = {
-  "status": "success",
-  "message": "Study jams fetched",
-  "data": [
+  status: "success",
+  message: "Study jams fetched",
+  data: [
     {
-      "id": "studyjam-1",
-      "title": "Study Jam: TypeScript",
-      "description": "Hands-on TypeScript session",
-      "summary": "Covers types, narrowing, and inference.",
-      "recording_url": "https://example.com/recording",
-      "created_at": "2026-01-01T00:00:00.000Z"
-    }
+      id: "studyjam-1",
+      title: "Study Jam: TypeScript",
+      description: "Hands-on TypeScript session",
+      summary: "Covers types, narrowing, and inference.",
+      recording_url: "https://example.com/recording",
+      created_at: "2026-01-01T00:00:00.000Z",
+    },
   ],
-  "meta": {
-    "totalRecords": 1,
-    "pageSize": 10,
-    "currentPage": 1,
-    "totalPages": 1
-  }
+  meta: {
+    totalRecords: 1,
+    pageSize: 10,
+    currentPage: 1,
+    totalPages: 1,
+  },
 };
