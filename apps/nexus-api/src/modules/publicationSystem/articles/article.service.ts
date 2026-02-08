@@ -3,8 +3,6 @@ import {
   ArticleRepository,
   articleRepositoryInstance,
 } from "./article.repository.js";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
-import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 
 type insertDTO = models.publicationSystem.article.insert;
 type updateDTO = models.publicationSystem.article.update;
@@ -17,82 +15,38 @@ export class ArticleService {
   ) {}
 
   create = async (dto: insertDTO, userId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () =>
-        await this.articleRepository.create({
-          ...dto,
-          author_id: userId,
-        }),
-      "creating article",
-    );
-
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
+    return await this.articleRepository.create({
+      ...dto,
+      author_id: userId,
+    });
   };
 
   list = async () => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.articleRepository.list(),
-      "listing articles",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
+    return await this.articleRepository.list();
   };
 
   getOne = async (articleId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.articleRepository.getOne(articleId),
-      "getting article",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.articleRepository.getOne(articleId);
   };
 
   update = async (articleId: string, dto: updateDTO) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.articleRepository.update(articleId, dto),
-      "updateing article",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.articleRepository.update(articleId, dto);
   };
 
   delete = async (articleId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.articleRepository.delete(articleId),
-      "deleting article",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.articleRepository.delete(articleId);
   };
 
   listComments = async (articleId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.articleRepository.listComments(articleId),
-      "listing comments",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.articleRepository.listComments(articleId);
   };
 
   createComment = async (dto: commentInserDTO) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.articleRepository.createComment(dto),
-      "creating comment",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.articleRepository.createComment(dto);
   };
 
   deleteComment = async (commentId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.articleRepository.deleteComment(commentId),
-      "deleting comment",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.articleRepository.deleteComment(commentId);
   };
 }
 

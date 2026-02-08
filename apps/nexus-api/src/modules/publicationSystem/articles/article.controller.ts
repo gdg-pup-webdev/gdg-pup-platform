@@ -1,9 +1,7 @@
 import { RequestHandler } from "express";
 import { ArticleService, articleServiceInstance } from "./article.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServerError_DEPRECATED, ServiceError_DEPRECATED } from "../../../classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 
 export class ArticleController {
   constructor(
@@ -15,11 +13,7 @@ export class ArticleController {
     async ({ input, output }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.list(),
-        "listing articles",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.articleService.list();
 
       return output(200, {
         status: "success",
@@ -42,11 +36,7 @@ export class ArticleController {
       const user = req.user!;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.create(dto, user.id),
-        "creating article",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.articleService.create(dto, user.id);
 
       return output(200, {
         status: "success",
@@ -60,11 +50,7 @@ export class ArticleController {
     contract.api.publication_system.articles.articleId.GET,
     async ({ input, output }) => {
       const { articleId } = input.params;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.getOne(articleId),
-        "fetching article",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.articleService.getOne(articleId);
 
       return output(200, {
         status: "success",
@@ -79,11 +65,7 @@ export class ArticleController {
     async ({ input, output }) => {
       const { articleId } = input.params;
       const dto = input.body.data;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.update(articleId, dto),
-        "updating article",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.articleService.update(articleId, dto);
 
       return output(200, {
         status: "success",
@@ -97,11 +79,7 @@ export class ArticleController {
     contract.api.publication_system.articles.articleId.DELETE,
     async ({ input, output }) => {
       const { articleId } = input.params;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.delete(articleId),
-        "deleting article",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      await this.articleService.delete(articleId);
 
       return output(200, {
         status: "success",
@@ -114,11 +92,7 @@ export class ArticleController {
     contract.api.publication_system.articles.articleId.comments.GET,
     async ({ input, output }) => {
       const { articleId } = input.params;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.listComments(articleId),
-        "listing comments",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.articleService.listComments(articleId);
 
       return output(200, {
         status: "success",
@@ -141,18 +115,11 @@ export class ArticleController {
       const { req } = ctx;
       const user = req.user!;
 
-      // input.body.data is defined in contract as { body: string }
-      const dto = {
+      const data = await this.articleService.createComment({
         article_id: articleId,
         user_id: user.id,
         body: input.body.data.body,
-      };
-
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.createComment(dto),
-        "creating comment",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      });
 
       return output(201, {
         status: "success",
@@ -167,11 +134,7 @@ export class ArticleController {
       .DELETE,
     async ({ input, output }) => {
       const { commentId } = input.params;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.articleService.deleteComment(commentId),
-        "deleting comment",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.articleService.deleteComment(commentId);
 
       return output(200, {
         status: "success",
