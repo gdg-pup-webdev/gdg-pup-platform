@@ -1,125 +1,166 @@
 import { RequestHandler } from "express";
 import {
   ExternalResourceService,
+  type ExternalResourceListFilters,
   resourceServiceInstance,
 } from "./externalResource.service.js";
-import { contract, models } from "@packages/nexus-api-contracts";
-import {
-  ControllerError,
-  ServerError,
-  ServiceError,
-} from "@/classes/ServerError.js";
+import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
-import { handleServerError, tryCatch } from "@/utils/tryCatch.util.js";
+import {
+  buildPaginationMeta,
+  normalizeOptionalText,
+  runServiceCall,
+} from "../controller.utils.js";
 
+/**
+ * Controller for handling external resource-related requests.
+ * Manages the flow of data between the client and the ExternalResourceService.
+ */
 export class ExternalResourceController {
   constructor(
     private readonly resourceService: ExternalResourceService = resourceServiceInstance,
   ) {}
 
+  /**
+   * Handles the creation of a new external resource.
+   * Extracts resource data and user ID from the request, then calls the service to create the resource.
+   * @returns A success response with the created resource data.
+   * @throws {ServiceError} If the resource creation fails.
+   */
   createExternalResource: RequestHandler = createExpressController(
     contract.api.learning_resource_system.external_resources.POST,
     async ({ input, output, ctx }) => {
-      const { res, req } = ctx;
-      const user = req.user!;
-      const userId = user.id;
-
-      const { data, error } = await tryCatch(
-        async () => await this.resourceService.create(input.body.data, userId),
+      const data = await runServiceCall(
+        async () =>
+          await this.resourceService.create(input.body.data, ctx.req.user!.id),
         "creating external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
-
       return output(200, {
         status: "success",
-        message: "Resource created successfully",
+        message: "External resource created successfully",
         data,
       });
     },
   );
 
+  /**
+   * Handles the deletion of an external resource.
+   * Extracts the resource ID from the request parameters and calls the service to delete it.
+   * @returns A success response confirming the deletion.
+   * @throws {ServiceError} If the resource deletion fails.
+   */
   deleteExternalResource: RequestHandler = createExpressController(
     contract.api.learning_resource_system.external_resources.externalResourceId
       .DELETE,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       const resourceId = input.params.externalResourceId;
-      const { error } = await tryCatch(
+      await runServiceCall(
         async () => await this.resourceService.delete(resourceId),
         "deleting external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
-
       return output(200, {
         status: "success",
-        message: "Resource deleted successfully",
+        message: "External resource deleted successfully",
       });
     },
   );
 
+  /**
+   * Handles the update of an external resource.
+   * Extracts the resource ID and update data from the request, then calls the service to perform the update.
+   * @returns A success response with the updated resource data.
+   * @throws {ServiceError} If the resource update fails.
+   */
   updateExternalResource: RequestHandler = createExpressController(
     contract.api.learning_resource_system.external_resources.externalResourceId
       .PATCH,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       const resourceId = input.params.externalResourceId;
-      const { data, error } = await tryCatch(
+      const data = await runServiceCall(
         async () =>
           await this.resourceService.update(resourceId, input.body.data),
         "updating external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
-
       return output(200, {
         status: "success",
-        message: "Resource updated successfully",
+        message: "External resource updated successfully",
         data,
       });
     },
   );
 
+  /**
+   * Handles listing external resources with pagination and filtering.
+   * Extracts pagination and filter parameters from the request query and calls the service to fetch the resources.
+   * @returns A success response with the list of resources and pagination metadata.
+   * @throws {ServiceError} If fetching the resources fails.
+   */
   listExternalResources: RequestHandler = createExpressController(
     contract.api.learning_resource_system.external_resources.GET,
-    async ({ input, output, ctx }) => {
-      const pageNumber = input.query.pageNumber;
-      const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
-        async () => await this.resourceService.list(),
+    async ({ input, output }) => {
+      const {
+        pageNumber,
+        pageSize,
+        search,
+        createdFrom,
+        createdTo,
+        uploaderId,
+        tagIds,
+      } = input.query;
+      const normalizedSearch = normalizeOptionalText(search);
+      const normalizedTagIds = tagIds
+        ? tagIds
+          .split(",")
+          .map((tagId) => tagId.trim())
+          .filter((tagId) => tagId.length > 0)
+        : undefined;
+      const filters: ExternalResourceListFilters = {
+        ...(normalizedSearch ? { search: normalizedSearch } : {}),
+        ...(createdFrom ? { createdFrom } : {}),
+        ...(createdTo ? { createdTo } : {}),
+        ...(uploaderId ? { uploaderId } : {}),
+        ...(normalizedTagIds && normalizedTagIds.length > 0
+          ? { tagIds: normalizedTagIds }
+          : {}),
+      };
+
+      const data = await runServiceCall(
+        async () =>
+          await this.resourceService.list(pageNumber, pageSize, filters),
         "listing external resources",
       );
 
-      if (error) throw new ServiceError(error.message);
-
       return output(200, {
         status: "success",
-        message: "Resources fetched successfully",
+        message: "External resources fetched successfully",
         data: data.list,
-        meta: {
-          totalRecords: data.count,
-          currentPage: pageNumber,
-          pageSize,
-          totalPages: Math.ceil(data.count / pageSize),
-        },
+        meta: buildPaginationMeta(data.count, pageNumber, pageSize),
       });
     },
   );
 
+  /**
+   * Handles fetching a single external resource by its ID.
+   * Extracts the resource ID from the request parameters and calls the service to fetch the resource.
+   * @returns A success response with the fetched resource data.
+   * @throws {ServiceError} If fetching the resource fails.
+   */
   getOneExternalResource: RequestHandler = createExpressController(
     contract.api.learning_resource_system.external_resources.externalResourceId
       .GET,
-    async ({ input, output, ctx }) => {
-      const resourceId = input.params.externalResourceId as string;
-      const { data, error } = await tryCatch(
+    async ({ input, output }) => {
+      const resourceId = input.params.externalResourceId;
+      const data = await runServiceCall(
         async () => await this.resourceService.getOne(resourceId),
         "getting one external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
-
       return output(200, {
         status: "success",
-        message: "Resource fetched successfully",
+        message: "External resource fetched successfully",
         data,
       });
     },
