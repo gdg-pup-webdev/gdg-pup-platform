@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=!storybook",
     "lint": "turbo run lint",
     "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
