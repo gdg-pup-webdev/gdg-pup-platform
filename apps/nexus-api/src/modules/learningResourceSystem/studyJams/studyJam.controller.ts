@@ -8,9 +8,8 @@ import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import {
   buildPaginationMeta,
-  normalizeOptionalText,
-  runServiceCall,
-} from "../controller.utils.js";
+  normalizeOptionalText
+} from "@/utils/controller.utils.js";
 
 /**
  * Controller for handling study jam-related requests.
@@ -30,10 +29,9 @@ export class StudyJamController {
   createStudyJam: RequestHandler = createExpressController(
     contract.api.learning_resource_system.study_jams.POST,
     async ({ input, output, ctx }) => {
-      const data = await runServiceCall(
-        async () =>
-          await this.resourceService.create(input.body.data, ctx.req.user!.id),
-        "creating study jam",
+      const data = await this.resourceService.create(
+        input.body.data,
+        ctx.req.user!.id,
       );
 
       return output(200, {
@@ -54,10 +52,7 @@ export class StudyJamController {
     contract.api.learning_resource_system.study_jams.studyJamId.DELETE,
     async ({ input, output }) => {
       const resourceId = input.params.studyJamId;
-      await runServiceCall(
-        async () => await this.resourceService.delete(resourceId),
-        "deleting study jam",
-      );
+      await this.resourceService.delete(resourceId);
 
       return output(200, {
         status: "success",
@@ -76,10 +71,9 @@ export class StudyJamController {
     contract.api.learning_resource_system.study_jams.studyJamId.PATCH,
     async ({ input, output }) => {
       const resourceId = input.params.studyJamId;
-      const data = await runServiceCall(
-        async () =>
-          await this.resourceService.update(resourceId, input.body.data),
-        "updating study jam",
+      const data = await this.resourceService.update(
+        resourceId,
+        input.body.data,
       );
 
       return output(200, {
@@ -108,10 +102,10 @@ export class StudyJamController {
         ...(createdTo ? { createdTo } : {}),
       };
 
-      const data = await runServiceCall(
-        async () =>
-          await this.resourceService.list(pageNumber, pageSize, filters),
-        "listing study jams",
+      const data = await this.resourceService.list(
+        pageNumber,
+        pageSize,
+        filters,
       );
 
       return output(200, {
@@ -133,10 +127,7 @@ export class StudyJamController {
     contract.api.learning_resource_system.study_jams.studyJamId.GET,
     async ({ input, output }) => {
       const resourceId = input.params.studyJamId;
-      const data = await runServiceCall(
-        async () => await this.resourceService.getOne(resourceId),
-        "getting one study jam",
-      );
+      const data = await this.resourceService.getOne(resourceId);
 
       return output(200, {
         status: "success",

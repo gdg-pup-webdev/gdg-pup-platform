@@ -1,5 +1,4 @@
- 
- import { ServerError } from "./ServerError";
+import { ServerError } from "./ServerError";
 
 export class HttpError extends ServerError {
   override name = "HttpError";
@@ -9,10 +8,9 @@ export class HttpError extends ServerError {
     detail: string,
     originalError?: unknown,
   ) {
-    super(title, detail, originalError); 
+    super(title, detail, originalError);
   }
 }
-
 
 // 400 - Bad Request
 export class BadRequestError extends HttpError {
@@ -64,21 +62,29 @@ export class TooManyRequestError extends HttpError {
 }
 
 // 500 - Internal Errors
+/**
+ * @deprecated
+ */
 export class DatabaseError_DONT_USE extends HttpError {
   constructor(detail: string, err?: unknown) {
     super(500, "Database Error", detail, err);
   }
 }
 
+/**
+ * @deprecated
+ */
 export class ServiceError_DONT_USE extends HttpError {
   constructor(detail: string, err?: unknown) {
     super(500, "Service Error", detail, err);
   }
 }
 
+/**
+ * @deprecated
+ */
 export class InternalServerError_DONT_USE extends HttpError {
   constructor(detail: string = "An unexpected error occurred", err?: unknown) {
     super(500, "Internal Server Error", detail, err);
   }
 }
-
