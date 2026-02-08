@@ -52,6 +52,7 @@ Standards and best practices for maintaining code quality and consistency:
 - Branch naming conventions
 - Commit message format
 - Complete contribution workflow
+- Agile Kanban Board
 
 **👉 View Guidelines**: [docs/CodingGuidelines/README.md](./CodingGuidelines/README.md)
 
@@ -102,6 +103,7 @@ Database schema and management:
 2. **[Project Architecture](./Onboarding/1-ProjectArchitecture.md)** – Understand the big picture
 3. **[Coding Guidelines Overview](./CodingGuidelines/README.md)** – Learn our standards
 4. **[Development Workflow](./Onboarding/7-DevelopmentWorkflow.md)** – Daily development process
+5. **[Agile Kanban Board](./CodingGuidelines/706-AgileKanbanBoard.md)** – Agile Kanban Board
 
 ### For Backend Contributors
 
