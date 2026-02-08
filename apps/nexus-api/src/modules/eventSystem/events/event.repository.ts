@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -34,7 +34,7 @@ export class EventRepository {
     options?: {
       orderBy?: { column: string; ascending?: boolean };
     },
-  ): RespositoryResultList<models.eventSystem.event.row> => {
+  ): RepositoryResultList<models.eventSystem.event.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 

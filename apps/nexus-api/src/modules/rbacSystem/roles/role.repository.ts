@@ -1,17 +1,22 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RespositoryResultList } from "@/types/repository.types.js";
+import { RepositoryResultList } from "@/types/repository.types.js";
 import { Tables } from "@/types/supabase.types.js";
-import { models } from "@packages/nexus-api-contracts";
 
 type roleRow = Tables<"user_role">;
 
+/**
+ * Repository for managing user roles in the database.
+ */
 export class RoleRepository {
-  junctionTable = "user_role_junction";
+  private readonly junctionTable = "user_role_junction";
 
-  constructor() {}
-
-  getRolesOfUser = async (userId: string): RespositoryResultList<roleRow> => {
+  /**
+   * Gets the roles of a user.
+   * @returns A list of roles and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
+  getRolesOfUser = async (userId: string): RepositoryResultList<roleRow> => {
     const { data, error } = await supabase
       .from(this.junctionTable)
       .select("*, user_role(*)")

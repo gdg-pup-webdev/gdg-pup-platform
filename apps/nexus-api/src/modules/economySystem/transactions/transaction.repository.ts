@@ -5,7 +5,7 @@ import {
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -29,7 +29,7 @@ export class TransactionRepository {
     userId: string,
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<models.economySystem.transaction.row> => {
+  ): RepositoryResultList<models.economySystem.transaction.row> => {
     const { data: walletData, error: walletError } = await supabase
       .from(this.walletTableName)
       .select("id")
@@ -62,7 +62,7 @@ export class TransactionRepository {
     walletId: string,
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<models.economySystem.transaction.row> => {
+  ): RepositoryResultList<models.economySystem.transaction.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
@@ -102,7 +102,7 @@ export class TransactionRepository {
   listTransactions = async (
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<models.economySystem.transaction.row> => {
+  ): RepositoryResultList<models.economySystem.transaction.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
@@ -144,7 +144,7 @@ export class TransactionRepository {
       userId?: string;
       walletId?: string;
     },
-  ): RespositoryResultList<models.economySystem.transaction.row> => {
+  ): RepositoryResultList<models.economySystem.transaction.row> => {
     if (filters.userId) {
       return await this.listTransactionsByUserId(
         filters.userId,

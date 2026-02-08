@@ -10,50 +10,97 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import app from "../../../../app.js";
 import {
+  externalResourceFilters,
+  externalResourceFilterQuery,
   externalResourceFixture,
   learningResourcePagination,
   listResult,
 } from "../../__tests__/test-helpers.js";
 import { resetCrudMocks } from "../../__tests__/controller-test-utils.js";
 
-const { mockList, mockCreate, mockGetOne, mockUpdate, mockDelete } =
-  vi.hoisted(() => ({ mockList: vi.fn(), mockCreate: vi.fn(), mockGetOne: vi.fn(), mockUpdate: vi.fn(), mockDelete: vi.fn() }));
+const { mockList, mockCreate, mockGetOne, mockUpdate, mockDelete } = vi.hoisted(
+  () => ({
+    mockList: vi.fn(),
+    mockCreate: vi.fn(),
+    mockGetOne: vi.fn(),
+    mockUpdate: vi.fn(),
+    mockDelete: vi.fn(),
+  }),
+);
 
 vi.mock("../../../../middlewares/auth.middleware.js", () => ({
   authMiddlewareInstance: {
-    requireAuth:
-      () => (req: any, _res: any, next: any) => ((req.user = { id: "user-1" }), next()),
+    requireAuth: () => (req: any, _res: any, next: any) => (
+      (req.user = { id: "user-1" }),
+      next()
+    ),
   },
   AuthMiddleware: class {},
 }));
 
 vi.mock("../externalResource.service.js", () => ({
-  resourceServiceInstance: { list: mockList, create: mockCreate, getOne: mockGetOne, update: mockUpdate, delete: mockDelete },
+  resourceServiceInstance: {
+    list: mockList,
+    create: mockCreate,
+    getOne: mockGetOne,
+    update: mockUpdate,
+    delete: mockDelete,
+  },
   ExternalResourceService: class {},
 }));
 
 describe("externalResource.controller (integration)", () => {
   beforeEach(() => {
-    resetCrudMocks({ mockList, mockCreate, mockGetOne, mockUpdate, mockDelete });
+    resetCrudMocks({
+      mockList,
+      mockCreate,
+      mockGetOne,
+      mockUpdate,
+      mockDelete,
+    });
   });
 
   it("GET /api/learning-resource-system/external-resources returns list + meta", async () => {
+    mockList.mockResolvedValue({
+      list: [externalResourceFixture],
+      count: 5,
+    });
+
+    const response = await request(app)
+      .get("/api/learning-resource-system/external-resources")
+      .query({
+        pageNumber: 2,
+        pageSize: 2,
+      });
+
+    expect(response.status).toBe(200);
+    expect(mockList).toHaveBeenCalledWith(2, 2, {});
+    expect(response.body.status).toBe("success");
+    expect(response.body.data).toHaveLength(1);
+    expect(response.body.meta).toMatchObject({
+      totalRecords: 5,
+      currentPage: 2,
+      pageSize: 2,
+      totalPages: 3,
+    });
+  });
+
+  it("GET /api/learning-resource-system/external-resources forwards filters to service", async () => {
     mockList.mockResolvedValue(listResult(externalResourceFixture));
 
     const response = await request(app)
       .get("/api/learning-resource-system/external-resources")
-      .query(learningResourcePagination);
+      .query({
+        ...learningResourcePagination,
+        ...externalResourceFilterQuery,
+      });
 
     expect(response.status).toBe(200);
-    expect(mockList).toHaveBeenCalledTimes(1);
-    expect(response.body.status).toBe("success");
-    expect(response.body.data).toHaveLength(1);
-    expect(response.body.meta).toMatchObject({
-      totalRecords: 1,
-      currentPage: learningResourcePagination.pageNumber,
-      pageSize: learningResourcePagination.pageSize,
-      totalPages: 1,
-    });
+    expect(mockList).toHaveBeenCalledWith(
+      learningResourcePagination.pageNumber,
+      learningResourcePagination.pageSize,
+      externalResourceFilters,
+    );
   });
 
   it("POST /api/learning-resource-system/external-resources calls create with user id", async () => {
