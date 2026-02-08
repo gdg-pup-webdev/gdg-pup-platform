@@ -2,7 +2,7 @@ import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
@@ -10,14 +10,20 @@ type projectRow = Tables<"user_project">;
 type projectInsert = TablesInsert<"user_project">;
 type projectUpdate = TablesUpdate<"user_project">;
 
+/**
+ * Repository for managing user projects in the database.
+ */
 export class ProjectRepository {
-  tableName = "user_project";
+  private readonly tableName = "user_project";
 
-  constructor() {}
-
+  /**
+   * Lists all projects of a user.
+   * @returns A list of projects and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   listProjectsOfUser = async (
     userId: string,
-  ): RespositoryResultList<projectRow> => {
+  ): RepositoryResultList<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
@@ -36,7 +42,12 @@ export class ProjectRepository {
     };
   };
 
-  listProjects = async (): RespositoryResultList<projectRow> => {
+  /**
+   * Lists all projects.
+   * @returns A list of projects and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
+  listProjects = async (): RepositoryResultList<projectRow> => {
     const { data, error } = await supabase.from(this.tableName).select("*");
     if (error) throw new DatabaseError(error.message);
 
@@ -51,6 +62,11 @@ export class ProjectRepository {
     };
   };
 
+  /**
+   * Gets a single project by its ID.
+   * @returns The fetched project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   getOneProject = async (id: string): RepositoryResult<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -63,6 +79,11 @@ export class ProjectRepository {
     return data;
   };
 
+  /**
+   * Creates a new project.
+   * @returns The created project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   createProject = async (dto: projectInsert): RepositoryResult<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -73,6 +94,11 @@ export class ProjectRepository {
     return data;
   };
 
+  /**
+   * Deletes a project.
+   * @returns The deleted project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   deleteProject = async (id: string): RepositoryResult<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -84,6 +110,11 @@ export class ProjectRepository {
     return data;
   };
 
+  /**
+   * Updates a project.
+   * @returns The updated project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   updateProject = async (
     id: string,
     dto: projectUpdate,

@@ -7,7 +7,7 @@
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js"; 
 import { DatabaseError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util";
@@ -33,7 +33,7 @@ export class CertificateRepository {
    */
   listCertificatesOfUser = async (
     userId: string,
-  ): RespositoryResultList<certificateRow> => {
+  ): RepositoryResultList<certificateRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
@@ -51,7 +51,7 @@ export class CertificateRepository {
    * listCertificates
    * Retrieves all certificates in the system.
    */
-  listCertificates = async (): RespositoryResultList<certificateRow> => {
+  listCertificates = async (): RepositoryResultList<certificateRow> => {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
       "Calling database to list certificates",

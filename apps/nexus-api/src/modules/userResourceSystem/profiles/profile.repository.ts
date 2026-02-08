@@ -7,7 +7,7 @@
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js";
 import { DatabaseError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util";
@@ -33,7 +33,7 @@ export class ProfileRepository {
    */
   getProfileByUserId = async (
     userId: string,
-  ): RespositoryResultList<profileRow> => {
+  ): RepositoryResultList<profileRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
@@ -54,7 +54,7 @@ export class ProfileRepository {
   listProfilesPaginated = async (
     pageNumber: number,
     pageSize: number,
-  ): RespositoryResultList<profileRow> => {
+  ): RepositoryResultList<profileRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRows(this.tableName, pageNumber, pageSize),
@@ -70,7 +70,7 @@ export class ProfileRepository {
    * getOneProfile
    * Fetches a single profile by ID.
    */
-  getOneProfile = async (id: string): RespositoryResultList<profileRow> => {
+  async getOneProfile(id: string): RepositoryResultList<profileRow> {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.getOneRow(this.tableName, id),
       "Calling database to get one profile",
@@ -79,7 +79,7 @@ export class ProfileRepository {
     if (error) throw new DatabaseError(error.message);
 
     return data;
-  };
+  }
 
   /**
    * createProfile
@@ -100,10 +100,10 @@ export class ProfileRepository {
    * updateProfile
    * Updates an existing profile record.
    */
-  updateProfile = async (
+  async updateProfile(
     id: string,
     dto: profileUpdate,
-  ): RepositoryResult<profileRow> => {
+  ): RepositoryResult<profileRow> {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
       "Calling database to update profile",
@@ -112,13 +112,13 @@ export class ProfileRepository {
     if (error) throw new DatabaseError(error.message);
 
     return data;
-  };
+  }
 
   /**
    * deleteProfile
    * Deletes an profile record.
    */
-  deleteProfile = async (id: string): RepositoryResult<profileRow> => {
+  async deleteProfile(id: string): RepositoryResult<profileRow> {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.deleteRow(this.tableName, id),
       "Calling database to delete profile",
@@ -127,7 +127,7 @@ export class ProfileRepository {
     if (error) throw new DatabaseError(error.message);
 
     return data;
-  };
+  }
 }
 
 export const profileRepositoryInstance = new ProfileRepository();

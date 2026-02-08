@@ -7,7 +7,7 @@
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 import {
   RepositoryResult,
-  RespositoryResultList,
+  RepositoryResultList,
 } from "@/types/repository.types.js"; 
 import { DatabaseError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util";
@@ -33,7 +33,7 @@ export class SettingsRepository {
    */
   listSettingsOfUser = async (
     userId: string,
-  ): RespositoryResultList<settingsRow> => {
+  ): RepositoryResultList<settingsRow> => {
     const { data, error } = await tryCatch(
       async () =>
         await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
@@ -51,7 +51,7 @@ export class SettingsRepository {
    * listSettingss
    * Retrieves all settingss in the system.
    */
-  listSettings = async (): RespositoryResultList<settingsRow> => {
+  listSettings = async (): RepositoryResultList<settingsRow> => {
     const { data, error } = await tryCatch(
       async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
       "Calling database to list settingss",
