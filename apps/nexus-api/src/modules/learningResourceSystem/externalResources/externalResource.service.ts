@@ -2,7 +2,7 @@ import {
   externalResourceRepositoryInstance,
   ExternalResourceRepository,
 } from "./externalResource.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -15,7 +15,7 @@ export class ExternalResourceService {
   ) {}
 
   create = async (dto: insertDTO, uploaderId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.resourceRepository.create({
           ...dto,
@@ -30,7 +30,7 @@ export class ExternalResourceService {
   };
 
   delete = async (resourceId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.delete(resourceId),
       "deleting external resource",
     );
@@ -41,7 +41,7 @@ export class ExternalResourceService {
   };
 
   update = async (resourceId: string, dto: updateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.update(resourceId, dto),
       "updating external resource",
     );
@@ -52,7 +52,7 @@ export class ExternalResourceService {
   };
 
   list = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.list(),
       "listing external resources",
     );
@@ -63,7 +63,7 @@ export class ExternalResourceService {
   };
 
   getOne = async (resourceId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.getOne(resourceId),
       "getting external resource",
     );

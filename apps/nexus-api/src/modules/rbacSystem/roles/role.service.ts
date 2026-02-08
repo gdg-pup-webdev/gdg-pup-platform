@@ -1,4 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { TablesInsert, Tables, TablesUpdate } from "@/types/supabase.types.js";
@@ -40,7 +40,7 @@ export class RoleService {
    * @throws {NotFoundError} If the role is not found
    */
   getRole = async (roleId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.roleRepository.getRole(roleId),
       "calling repository to fetch role by id",
     );
@@ -78,7 +78,7 @@ export class RoleService {
     pageSize: number,
     filters: RoleListFilters,
   ) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.roleRepository.listRolesWithFilters(
           pageNumber,
@@ -109,7 +109,7 @@ export class RoleService {
       withoutRoles?: boolean;
     },
   ) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.roleRepository.listUsersWithRoles(
           pageNumber,
@@ -132,7 +132,7 @@ export class RoleService {
    * @throws {RepositoryError_DEPRECATED} If the repository operation fails or role name already exists
    */
   createRole = async (roleData: TablesInsert<"user_role">) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.roleRepository.create(roleData),
       "calling repository to create role",
     );
@@ -158,7 +158,7 @@ export class RoleService {
     roleId: string,
     updates: Partial<TablesUpdate<"user_role">>,
   ) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.roleRepository.update(roleId, updates),
       "calling repository to update role",
     );
@@ -182,7 +182,7 @@ export class RoleService {
    */
   deleteRole = async (roleId: string) => {
     // ✅ Check if role is assigned to any users first
-    const { data: usersWithRole, error: checkError } = await tryCatch(
+    const { data: usersWithRole, error: checkError } = await tryCatch_deprecated(
       async () =>
         await this.roleRepository.listUsersWithRoles(1, 1, {
           roleId,
@@ -199,7 +199,7 @@ export class RoleService {
     }
 
     // Proceed with deletion
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.roleRepository.delete(roleId),
       "calling repository to delete role",
     );
@@ -221,7 +221,7 @@ export class RoleService {
    */
   assignRole = async (userId: string, roleId: string) => {
     // First, check if user already has this role
-    const { data: existingRoles, error: checkError } = await tryCatch(
+    const { data: existingRoles, error: checkError } = await tryCatch_deprecated(
       async () =>
         await this.roleRepository.listRolesWithFilters(1, 999, {
           userId,
@@ -238,7 +238,7 @@ export class RoleService {
     }
 
     // Proceed with assignment
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.roleRepository.assignRole(userId, roleId),
       "calling repository to assign role to user",
     );
@@ -257,7 +257,7 @@ export class RoleService {
    * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   removeRole = async (userId: string, roleId: string) => {
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.roleRepository.removeRole(userId, roleId),
       "calling repository to remove role from user",
     );

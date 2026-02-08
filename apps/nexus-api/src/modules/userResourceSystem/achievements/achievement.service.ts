@@ -8,7 +8,7 @@ import {
   AchievementRepository,
   achievementRepositoryInstance,
 } from "./achievement.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -25,7 +25,7 @@ export class AchievementService {
    * Retrieves all achievements for a specific user.
    */
   listAchievementsOfUser = async (userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.achievementRepository.listAchievementsOfUser(userId),
       "listing achievements",
     );
@@ -38,7 +38,7 @@ export class AchievementService {
    * Retrieves all achievements across all users.
    */
   listAchievements = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.achievementRepository.listAchievements(),
       "listing achievements",
     );
@@ -51,7 +51,7 @@ export class AchievementService {
    * Retrieves a single achievement by its ID.
    */
   getOneAchievement = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.achievementRepository.getOneAchievement(id),
       "getting achievement",
     );
@@ -65,7 +65,7 @@ export class AchievementService {
    * @param dto - Data containing title, description, image URL, and user_id.
    */
   createAchievement = async (dto: achievementInsertDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.achievementRepository.createAchievement(dto),
       "creating achievement",
@@ -80,7 +80,7 @@ export class AchievementService {
    * Removes an achievement record.
    */
   deleteAchievement = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.achievementRepository.deleteAchievement(id),
       "deleting achievement",
     );
@@ -94,7 +94,7 @@ export class AchievementService {
    * Updates an existing achievement's metadata.
    */
   updateAchievement = async (id: string, dto: achievementUpdateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.achievementRepository.updateAchievement(id, dto),
       "updating achievement",
     );

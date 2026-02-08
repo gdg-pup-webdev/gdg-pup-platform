@@ -10,7 +10,7 @@ import {
   ServiceError_DEPRECATED,
 } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { handleServerError, tryCatch } from "@/utils/tryCatch.util.js";
+import { handleServerError_deprecated, tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 
 export class ExternalResourceController {
   constructor(
@@ -24,7 +24,7 @@ export class ExternalResourceController {
       const user = req.user!;
       const userId = user.id;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.resourceService.create(input.body.data, userId),
         "creating external resource",
       );
@@ -44,7 +44,7 @@ export class ExternalResourceController {
       .DELETE,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId;
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.resourceService.delete(resourceId),
         "deleting external resource",
       );
@@ -63,7 +63,7 @@ export class ExternalResourceController {
       .PATCH,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.resourceService.update(resourceId, input.body.data),
         "updating external resource",
@@ -84,7 +84,7 @@ export class ExternalResourceController {
     async ({ input, output, ctx }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.resourceService.list(),
         "listing external resources",
       );
@@ -110,7 +110,7 @@ export class ExternalResourceController {
       .GET,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.externalResourceId as string;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.resourceService.getOne(resourceId),
         "getting one external resource",
       );

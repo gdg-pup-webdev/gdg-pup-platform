@@ -1,4 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   ProfileRepository,
   profileRepositoryInstance,
@@ -15,7 +15,7 @@ export class ProfileService {
   ) {}
 
   getUserProfileByUserId = async (userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.profileRespository.getProfileByUserId(userId),
       "getting user profile",
     );
@@ -25,7 +25,7 @@ export class ProfileService {
   };
 
   listProfilesPaginated = async (pageNumber: number, pageSize: number) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.profileRespository.listProfilesPaginated(
           pageNumber,
@@ -39,7 +39,7 @@ export class ProfileService {
   };
 
   createProfile = async (dto: profileInsertDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.profileRespository.createProfile(dto),
       "creating profile",
     );
@@ -49,7 +49,7 @@ export class ProfileService {
   };
 
   updateProfile = async (id: string, dto: profileUpdateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.profileRespository.updateProfile(id, dto),
       "updating profile",
     );

@@ -4,7 +4,7 @@
  * This file handles direct interactions with the Supabase database for the User System.
  */
 
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import { RepositoryResult } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js"; 
@@ -43,7 +43,7 @@ export class UserRepository {
       .select("*")
       .eq("id", userId)
       .single();
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
     return data
   };
 
@@ -53,7 +53,7 @@ export class UserRepository {
    */
   listUsers = async () => {
     const { data, error } = await supabase.from("user").select("*");
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
     return data
   };
 
@@ -73,7 +73,7 @@ export class UserRepository {
       .eq("id", userId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data as userAggregate;
   };

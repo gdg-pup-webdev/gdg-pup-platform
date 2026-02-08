@@ -3,7 +3,7 @@ import { ArticleService, articleServiceInstance } from "./article.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServerError_DEPRECATED, ServiceError_DEPRECATED } from "../../../classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 
 export class ArticleController {
   constructor(
@@ -15,7 +15,7 @@ export class ArticleController {
     async ({ input, output }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.list(),
         "listing articles",
       );
@@ -42,7 +42,7 @@ export class ArticleController {
       const user = req.user!;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.create(dto, user.id),
         "creating article",
       );
@@ -60,7 +60,7 @@ export class ArticleController {
     contract.api.publication_system.articles.articleId.GET,
     async ({ input, output }) => {
       const { articleId } = input.params;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.getOne(articleId),
         "fetching article",
       );
@@ -79,7 +79,7 @@ export class ArticleController {
     async ({ input, output }) => {
       const { articleId } = input.params;
       const dto = input.body.data;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.update(articleId, dto),
         "updating article",
       );
@@ -97,7 +97,7 @@ export class ArticleController {
     contract.api.publication_system.articles.articleId.DELETE,
     async ({ input, output }) => {
       const { articleId } = input.params;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.delete(articleId),
         "deleting article",
       );
@@ -114,7 +114,7 @@ export class ArticleController {
     contract.api.publication_system.articles.articleId.comments.GET,
     async ({ input, output }) => {
       const { articleId } = input.params;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.listComments(articleId),
         "listing comments",
       );
@@ -148,7 +148,7 @@ export class ArticleController {
         body: input.body.data.body,
       };
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.createComment(dto),
         "creating comment",
       );
@@ -167,7 +167,7 @@ export class ArticleController {
       .DELETE,
     async ({ input, output }) => {
       const { commentId } = input.params;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.articleService.deleteComment(commentId),
         "deleting comment",
       );

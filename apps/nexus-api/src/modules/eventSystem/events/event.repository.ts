@@ -1,5 +1,6 @@
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -19,7 +20,7 @@ export class EventRepository {
    * Lists events with optional filtering and pagination.
    *
    * @returns A promise resolving to a list of events and the total count.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   listEvents = async (
     pageNumber: number,
@@ -72,7 +73,7 @@ export class EventRepository {
       .order(orderBy.column, { ascending: orderBy.ascending })
       .range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return {
       list: data || [],
@@ -84,7 +85,7 @@ export class EventRepository {
    * Creates a new event record.
    *
    * @returns A promise resolving to the created event data.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   createEvent = async (
     dto: models.eventSystem.event.insertDTO,
@@ -94,7 +95,8 @@ export class EventRepository {
       .insert(dto)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -103,7 +105,7 @@ export class EventRepository {
    * Retrieves a single event by its ID.
    *
    * @returns A promise resolving to the event data.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   getEventById = async (
     id: string,
@@ -113,7 +115,8 @@ export class EventRepository {
       .select("*")
       .eq("id", id)
       .single();
-    if (error) throw new DatabaseError(error.message);
+
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -122,7 +125,7 @@ export class EventRepository {
    * Deletes an event by its ID.
    *
    * @returns A promise resolving to the deleted event data.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   deleteEvent = async (
     id: string,
@@ -133,7 +136,8 @@ export class EventRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -142,7 +146,7 @@ export class EventRepository {
    * Updates an existing event.
    *
    * @returns A promise resolving to the updated event data.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   updateEvent = async (
     id: string,
@@ -154,7 +158,8 @@ export class EventRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+
+    if (error) handlePostgresError(error);
 
     return data;
   };

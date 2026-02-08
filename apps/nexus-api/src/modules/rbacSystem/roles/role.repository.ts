@@ -2,7 +2,7 @@ import {
   NotFoundError,
   DuplicateResourceError} from "@/errors/HttpError";
 import { RepositoryError_DEPRECATED, InvalidOperationError_DEPRECATED } from "@/classes/ServerError";
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResultList,
@@ -53,14 +53,14 @@ export class RoleRepository {
         .select(`*, user_role(*, user_role_permission(*))`)
         .eq("user_id", filters.userId);
 
-      if (error) throw new DatabaseError(error.message);
+      if (error) throw new DatabaseError_DONT_USE(error.message);
 
       const { count, error: countError } = await supabase
         .from(this.junctionTable)
         .select("*", { count: "exact", head: true })
         .eq("user_id", filters.userId);
 
-      if (countError) throw new DatabaseError(countError.message);
+      if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
       return {
         list: data.map((item) => item.user_role as roleRow),
@@ -77,13 +77,13 @@ export class RoleRepository {
       .select(`*, user_role_permission (*)`)
       .range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     const { count, error: countError } = await supabase
       .from(this.roleTable)
       .select("*", { count: "exact", head: true });
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     return {
       list: data as roleRow[],
@@ -97,7 +97,7 @@ export class RoleRepository {
    * @param roleId - The ID of the role
    * @returns A promise resolving to the role data
    * @throws {NotFoundError} If role is not found
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   getRole = async (roleId: string): RepositoryResult<roleRow> => {
     const { data, error } = await supabase
@@ -106,7 +106,7 @@ export class RoleRepository {
       .eq("id", roleId)
       .maybeSingle();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     if (!data) throw new NotFoundError(`Role with ID "${roleId}" not found`);
 
@@ -121,7 +121,7 @@ export class RoleRepository {
    * @param pageSize - Number of items per page
    * @param filters - Optional filters (roleId, withoutRoles)
    * @returns A promise resolving to grouped user-role data and count
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   listUsersWithRoles = async (
     pageNumber: number,
@@ -141,13 +141,13 @@ export class RoleRepository {
         .select("*")
         .range(from, to);
 
-      if (usersError) throw new DatabaseError(usersError.message);
+      if (usersError) throw new DatabaseError_DONT_USE(usersError.message);
 
       const { data: usersWithRoles, error: rolesError } = await supabase
         .from(this.junctionTable)
         .select("user_id");
 
-      if (rolesError) throw new DatabaseError(rolesError.message);
+      if (rolesError) throw new DatabaseError_DONT_USE(rolesError.message);
 
       const userIdsWithRoles = new Set(
         usersWithRoles.map((row) => row.user_id),
@@ -160,7 +160,7 @@ export class RoleRepository {
         .from(this.userTable)
         .select("*", { count: "exact", head: true });
 
-      if (countError) throw new DatabaseError(countError.message);
+      if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
       const totalUsersWithoutRoles = (count || 0) - userIdsWithRoles.size;
 
@@ -185,7 +185,7 @@ export class RoleRepository {
 
     const { data, error, count } = await query.range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     // Group roles by user
     const userMap: Record<string, { user: userRow; roles: roleRow[] }> = {};
@@ -215,7 +215,7 @@ export class RoleRepository {
    * @param roleData - The role data to insert
    * @returns A promise resolving to the created role
    * @throws {RepositoryError_DEPRECATED} If a role with the same name already exists
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   create = async (
     roleData: TablesInsert<"user_role">,
@@ -234,11 +234,11 @@ export class RoleRepository {
         );
       }
 
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data) {
-      throw new DatabaseError("Failed to create role - no data returned");
+      throw new DatabaseError_DONT_USE("Failed to create role - no data returned");
     }
 
     return data;
@@ -252,7 +252,7 @@ export class RoleRepository {
    * @returns A promise resolving to the updated role
    * @throws {NotFoundError} If the role does not exist
    * @throws {RepositoryError_DEPRECATED} If updating to a duplicate role name
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   update = async (
     roleId: string,
@@ -279,7 +279,7 @@ export class RoleRepository {
       }
 
       // Any other database error
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data) {
@@ -298,7 +298,7 @@ export class RoleRepository {
    * @returns A promise resolving to success status
    * @throws {NotFoundError} If the role does not exist
    * @throws {InvalidOperationError_DEPRECATED} If the role is still assigned to users
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   delete = async (roleId: string): RepositoryResult<void> => {
     // ✅ First check if role exists
@@ -308,7 +308,7 @@ export class RoleRepository {
       .eq("id", roleId)
       .maybeSingle();
 
-    if (checkError) throw new DatabaseError(checkError.message);
+    if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
 
     if (!existingRole) {
       throw new NotFoundError(`Role with ID "${roleId}" not found`);
@@ -320,7 +320,7 @@ export class RoleRepository {
       .select("*", { count: "exact", head: true })
       .eq("role_id", roleId);
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     if (assignmentCount && assignmentCount > 0) {
       throw new InvalidOperationError_DEPRECATED(
@@ -342,7 +342,7 @@ export class RoleRepository {
         );
       }
 
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     // ✅ Verify that a row was actually deleted
@@ -361,7 +361,7 @@ export class RoleRepository {
    * @returns A promise resolving to the created junction row
    * @throws {NotFoundError} If user or role does not exist
    * @throws {RepositoryError_DEPRECATED} If already assigned
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   assignRole = async (
     userId: string,
@@ -387,11 +387,11 @@ export class RoleRepository {
         throw new DuplicateResourceError("User already has this role assigned");
       }
 
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data) {
-      throw new DatabaseError("Failed to assign role - no data returned");
+      throw new DatabaseError_DONT_USE("Failed to assign role - no data returned");
     }
 
     return data;
@@ -404,7 +404,7 @@ export class RoleRepository {
    * @param roleId - The ID of the role
    * @returns A promise resolving to success status
    * @throws {NotFoundError} If the user-role assignment does not exist
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   removeRole = async (
     userId: string,
@@ -416,7 +416,7 @@ export class RoleRepository {
       .eq("user_id", userId)
       .eq("role_id", roleId);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     if (count === 0) {
       throw new NotFoundError(

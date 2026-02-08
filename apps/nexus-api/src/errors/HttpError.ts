@@ -64,19 +64,19 @@ export class TooManyRequestError extends HttpError {
 }
 
 // 500 - Internal Errors
-export class DatabaseError extends HttpError {
+export class DatabaseError_DONT_USE extends HttpError {
   constructor(detail: string, err?: unknown) {
     super(500, "Database Error", detail, err);
   }
 }
 
-export class ServiceError extends HttpError {
+export class ServiceError_DONT_USE extends HttpError {
   constructor(detail: string, err?: unknown) {
     super(500, "Service Error", detail, err);
   }
 }
 
-export class InternalServerError extends HttpError {
+export class InternalServerError_DONT_USE extends HttpError {
   constructor(detail: string = "An unexpected error occurred", err?: unknown) {
     super(500, "Internal Server Error", detail, err);
   }

@@ -1,4 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import {
   PermissionRepository,
   permissionRepositoryInstance,
@@ -42,7 +42,7 @@ export class PermissionService {
   listPermissionsWithFilters = async (
     filters: PermissionListFilters = {},
   ): RepositoryResultList<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.listPermissionsWithFilters(filters),
       "calling repository to list permissions with filters",
@@ -63,7 +63,7 @@ export class PermissionService {
   getPermission = async (
     permissionId: string,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.getPermission(permissionId),
       "calling repository to get permission",
     );
@@ -83,7 +83,7 @@ export class PermissionService {
   createPermission = async (
     permissionData: TablesInsert<"user_role_permission">,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.create(permissionData),
       "calling repository to create permission",
     );
@@ -105,7 +105,7 @@ export class PermissionService {
   ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.createBulk(permissionDataList),
       "calling repository to create permissions in bulk",
@@ -128,7 +128,7 @@ export class PermissionService {
     permissionId: string,
     updates: Partial<TablesUpdate<"user_role_permission">>,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.update(permissionId, updates),
       "calling repository to update permission",
     );
@@ -146,7 +146,7 @@ export class PermissionService {
    * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   deletePermission = async (permissionId: string): RepositoryResult<void> => {
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.delete(permissionId),
       "calling repository to delete permission",
     );
@@ -168,7 +168,7 @@ export class PermissionService {
   ): RepositoryResult<void> => {
     if (!permissionIds.length) return;
 
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.deleteBulk(permissionIds),
       "calling repository to delete permissions in bulk",
     );
@@ -190,7 +190,7 @@ export class PermissionService {
   assignPermissionToRole = async (
     permissionData: TablesInsert<"user_role_permission">,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.assignToRole(permissionData),
       "calling repository to assign permission to role",
     );
@@ -214,7 +214,7 @@ export class PermissionService {
   ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.assignToRoleInBulk(permissionDataList),
       "calling repository to assign permissions to role in bulk",
@@ -236,7 +236,7 @@ export class PermissionService {
   removePermissionFromRole = async (
     permissionId: string,
   ): RepositoryResult<void> => {
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.removeFromRole(permissionId),
       "calling repository to remove permission from role",
     );
@@ -259,7 +259,7 @@ export class PermissionService {
   ): RepositoryResult<void> => {
     if (!permissionIds.length) return;
 
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.removeFromRoleInBulk(permissionIds),
       "calling repository to remove permissions from role in bulk",

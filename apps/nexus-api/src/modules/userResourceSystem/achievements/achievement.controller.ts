@@ -8,7 +8,7 @@ import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   AchievementService,
   achievementServiceInstance,
@@ -43,7 +43,7 @@ export class AchievementController {
 
       let list, count;
       if (userId) {
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () => await this.achievementService.listAchievementsOfUser(userId),
           "getting user achievements",
         );
@@ -53,7 +53,7 @@ export class AchievementController {
         list = data.list;
         count = data.count;
       } else {
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () => await this.achievementService.listAchievements(),
           "getting all achievements",
         );
@@ -87,7 +87,7 @@ export class AchievementController {
     contract.api.user_resource_system.achievements.achievementId.GET,
     async ({ input, output }) => {
       const achievementId = input.params.achievementId;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.achievementService.getOneAchievement(achievementId),
         "fetching achievement",
       );
@@ -110,7 +110,7 @@ export class AchievementController {
     contract.api.user_resource_system.achievements.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.achievementService.createAchievement(dto),
         "creating achievement",
       );
@@ -135,7 +135,7 @@ export class AchievementController {
       const achievementId = input.params.achievementId;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.achievementService.updateAchievement(achievementId, dto),
         "updating achievement",
       );
@@ -158,7 +158,7 @@ export class AchievementController {
     contract.api.user_resource_system.achievements.achievementId.DELETE,
     async ({ input, output }) => {
       const achievementId = input.params.achievementId;
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.achievementService.deleteAchievement(achievementId),
         "deleting achievement",
       );

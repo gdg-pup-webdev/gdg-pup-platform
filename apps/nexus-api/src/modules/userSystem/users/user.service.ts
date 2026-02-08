@@ -5,7 +5,7 @@
  * and provides a clean API for the controller.
  */
 
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { UserRepository, userRepositoryInstance } from "./user.repository.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 
@@ -27,7 +27,7 @@ export class UserService {
    * @param userId - The ID of the user.
    */
   getUserById = async (userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.userRepository.getUserById(userId),
       "getting user",
     );
@@ -42,7 +42,7 @@ export class UserService {
    * Retrieves all users registered in the system.
    */
   listUsers = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.userRepository.listUsers(),
       "listing users",
     );
@@ -58,7 +58,7 @@ export class UserService {
    * @param userId - The ID of the user to aggregate.
    */
   getUserAggregate = async (userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.userRepository.getUserAggregate(userId),
       "getting user aggregate",
     );

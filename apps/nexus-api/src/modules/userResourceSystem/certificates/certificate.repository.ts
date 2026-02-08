@@ -9,8 +9,8 @@ import {
   RepositoryResult,
   RepositoryResultList,
 } from "@/types/repository.types.js";
-import { DatabaseError } from "@/errors/HttpError";
-import { tryCatch } from "@/utils/tryCatch.util";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import { SupabaseUtils } from "@/utils/supabase.util";
 
 /**
@@ -34,7 +34,7 @@ export class CertificateRepository {
   listCertificatesOfUser = async (
     userId: string,
   ): RepositoryResultList<certificateRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
           user_id: userId,
@@ -42,7 +42,7 @@ export class CertificateRepository {
       "Calling database to list certificates of user",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -52,12 +52,12 @@ export class CertificateRepository {
    * Retrieves all certificates in the system.
    */
   listCertificates = async (): RepositoryResultList<certificateRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
       "Calling database to list certificates",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -67,12 +67,12 @@ export class CertificateRepository {
    * Fetches a single certificate by ID.
    */
   getOneCertificate = async (id: string): RepositoryResult<certificateRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.getOneRow(this.tableName, id),
       "Calling database to get one certificate",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -84,12 +84,12 @@ export class CertificateRepository {
   createCertificate = async (
     dto: certificateInsert,
   ): RepositoryResult<certificateRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.createRow(this.tableName, dto),
       "Calling database to create certificate",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -102,12 +102,12 @@ export class CertificateRepository {
     id: string,
     dto: certificateUpdate,
   ): RepositoryResult<certificateRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
       "Calling database to update certificate",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -117,12 +117,12 @@ export class CertificateRepository {
    * Deletes an certificate record.
    */
   deleteCertificate = async (id: string): RepositoryResult<certificateRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.deleteRow(this.tableName, id),
       "Calling database to delete certificate",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };

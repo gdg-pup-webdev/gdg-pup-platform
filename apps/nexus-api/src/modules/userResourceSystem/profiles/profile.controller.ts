@@ -3,7 +3,7 @@ import {
   ProfileService,
   profileServiceInstance,
 } from "./profile.service.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
@@ -29,7 +29,7 @@ export class ProfileController {
         /**
          * PROFILE OF A USER
          */
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () => await this.profileService.getUserProfileByUserId(userId),
           "getting user profile",
         );
@@ -42,7 +42,7 @@ export class ProfileController {
         /**
          * ALL PROFILES
          */
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () =>
             await this.profileService.listProfilesPaginated(
               pageNumber,
@@ -75,7 +75,7 @@ export class ProfileController {
     contract.api.user_resource_system.profiles.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.profileService.createProfile(dto),
         "creating profile",
       );

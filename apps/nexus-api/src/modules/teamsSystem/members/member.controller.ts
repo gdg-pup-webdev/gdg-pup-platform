@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { MemberService, memberServiceInstance } from "./member.service.js";
 
 export class MemberController {
@@ -20,7 +20,7 @@ export class MemberController {
       const userId = input.query.userId;
       const role = input.query.role;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.memberService.listMembersWithFilter(pageNumber, pageSize, {
             teamId,
@@ -50,7 +50,7 @@ export class MemberController {
     async ({ input, output, ctx }) => {
       const { req } = ctx;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.memberService.createMember(input.body.data),
         "creating member",
       );
@@ -68,7 +68,7 @@ export class MemberController {
     contract.api.team_system.members.memberId.DELETE,
     async ({ input, output }) => {
       const { memberId } = input.params;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.memberService.deleteMember(memberId),
         "deleting member",
       );

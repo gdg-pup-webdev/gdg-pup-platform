@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
@@ -22,7 +22,7 @@ export class StudyJamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -35,7 +35,7 @@ export class StudyJamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -51,7 +51,7 @@ export class StudyJamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -62,13 +62,13 @@ export class StudyJamRepository {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     return {
       list: data,
@@ -83,7 +83,7 @@ export class StudyJamRepository {
       .eq("id", resourceId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };

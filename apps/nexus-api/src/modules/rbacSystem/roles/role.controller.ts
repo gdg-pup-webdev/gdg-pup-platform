@@ -5,13 +5,13 @@ import {
 import {
   NotFoundError} from "@/errors/HttpError.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
-import { DatabaseError } from "@/errors/HttpError.js";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError.js";
 import {
   RoleService,
   roleServiceInstance,
   RoleListFilters,
 } from "./role.service.js";
-import { tryCatch } from "@/utils/tryCatch.util";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
@@ -54,7 +54,7 @@ export class RoleController {
     async ({ input, output }) => {
       const { pageNumber, pageSize, userId = null } = input.query;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.roleService.listRolesWithFilters(pageNumber, pageSize, {
             userId,
@@ -95,7 +95,7 @@ export class RoleController {
     async ({ input, output }) => {
       const { pageNumber, pageSize, roleId, withoutRoles } = input.query;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.roleService.listUsersWithRoles(pageNumber, pageSize, {
             roleId: roleId || undefined,
@@ -135,7 +135,7 @@ export class RoleController {
     async ({ input, output }) => {
       const { roleId } = input.params;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.roleService.getRole(roleId),
         "calling service to get role",
       );
@@ -172,7 +172,7 @@ export class RoleController {
     async ({ input, output }) => {
       const roleData = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.roleService.createRole(roleData),
         "calling service to create role",
       );
@@ -204,7 +204,7 @@ export class RoleController {
       const { roleId } = input.params;
       const updates = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.roleService.updateRole(roleId, updates),
         "calling service to update role",
       );
@@ -235,7 +235,7 @@ export class RoleController {
     async ({ input, output }) => {
       const { roleId } = input.params;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.roleService.deleteRole(roleId),
         "calling service to delete role",
       );
@@ -267,7 +267,7 @@ export class RoleController {
       const roleId = input.params.roleId;
       const userId = input.body.userId;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.roleService.assignRole(userId, roleId),
         "calling service to assign role",
       );
@@ -298,7 +298,7 @@ export class RoleController {
       const roleId = input.params.roleId;
       const userId = input.body.userId;
 
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.roleService.removeRole(userId, roleId),
         "calling service to remove role",
       );

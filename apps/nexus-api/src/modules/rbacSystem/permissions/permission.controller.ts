@@ -3,7 +3,7 @@ import {
   PermissionService,
   permissionServiceInstance,
 } from "./permission.service";
-import { tryCatch } from "@/utils/tryCatch.util";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
@@ -54,7 +54,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const { roleId, userId, pageNumber = 1, pageSize = 10 } = input.query;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.listPermissionsWithFilters({
             roleId,
@@ -93,7 +93,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const { permissionId } = input.params;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.permissionService.getPermission(permissionId),
         "calling service to get permission",
       );
@@ -122,7 +122,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionData = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.createPermission(permissionData),
         "calling service to create permission",
@@ -152,7 +152,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionData = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.createPermissionsInBulk(permissionData),
         "calling service to create permission in bulk",
@@ -184,7 +184,7 @@ export class PermissionController {
       const permissionId = input.params.permissionId;
       const updates = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.updatePermission(permissionId, updates),
         "calling service to update permission",
@@ -214,7 +214,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionId = input.params.permissionId;
 
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.permissionService.deletePermission(permissionId),
         "calling service to delete permission",
       );
@@ -242,7 +242,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionIds = input.body.permissionIds;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.deletePermissionsInBulk(permissionIds),
         "calling service to delete permissions in bulk",
@@ -272,7 +272,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionData = input.body.permissionData;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.assignPermissionToRole(permissionData),
         "calling service to assign permission to role",
@@ -303,7 +303,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionDataList = input.body.permissionData;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.assignPermissionsToRoleInBulk(
             permissionDataList,
@@ -336,7 +336,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionId = input.body.permissionId;
 
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.removePermissionFromRole(permissionId),
         "calling service to remove permission from role",
@@ -366,7 +366,7 @@ export class PermissionController {
     async ({ input, output }) => {
       const permissionIds = input.body.permissionIds;
 
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.removePermissionsFromRoleInBulk(
             permissionIds,

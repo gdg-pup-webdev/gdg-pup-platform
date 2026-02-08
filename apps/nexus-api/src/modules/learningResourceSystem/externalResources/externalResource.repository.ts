@@ -2,7 +2,7 @@ import {
   ServerError_DEPRECATED,
 } from "@/classes/ServerError.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError";
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
@@ -27,7 +27,7 @@ export class ExternalResourceRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -40,7 +40,7 @@ export class ExternalResourceRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -56,7 +56,7 @@ export class ExternalResourceRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -67,13 +67,13 @@ export class ExternalResourceRepository {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     return {
       list: data,
@@ -88,7 +88,7 @@ export class ExternalResourceRepository {
       .eq("id", resourceId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };

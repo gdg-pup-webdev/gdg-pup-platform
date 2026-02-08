@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { RewardService, rewardServiceInstance } from "./reward.service.js";
 import { createExpressController } from "@packages/typed-rest";
 import { contract, models } from "@packages/nexus-api-contracts";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 
 export class RewardController {
@@ -12,7 +12,7 @@ export class RewardController {
     contract.api.reward_system.rewards.POST,
     async ({ input, output, ctx }) => {
       const { res, req } = ctx;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.rewardService.createReward(input.body.data, req.user!.id),
         "creating reward",
@@ -32,7 +32,7 @@ export class RewardController {
     async ({ input, output, ctx }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.rewardService.listRewardsByPage(
             pageNumber,
@@ -61,7 +61,7 @@ export class RewardController {
     contract.api.reward_system.rewards.rewardId.GET,
     async ({ input, output, ctx }) => {
       const rewardId = input.params.rewardId;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.rewardService.getReward(rewardId),
         "getting reward",
       );
@@ -78,7 +78,7 @@ export class RewardController {
   claimReward: RequestHandler = createExpressController(
     contract.api.reward_system.rewards.rewardId.claim.POST,
     async ({ input, output, ctx }) => {
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.rewardService.claimReward(input.params.rewardId),
         "claiming reward",
       );

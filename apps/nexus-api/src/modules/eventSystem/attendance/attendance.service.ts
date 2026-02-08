@@ -1,4 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   AttendanceRepository,
   attendanceRepositoryInstance,
@@ -21,17 +21,11 @@ export class AttendanceService {
    * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   create = async (eventId: string, userId: string, checkinMethod: string) => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.attendanceRepository.create({
-          event_id: eventId,
-          user_id: userId,
-          checkin_method: checkinMethod,
-        }),
-      "creating attendance record",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    if (!data) throw new RepositoryError_DEPRECATED("Failed to create attendance record.");
+    const data = await this.attendanceRepository.create({
+      event_id: eventId,
+      user_id: userId,
+      checkin_method: checkinMethod,
+    });
 
     return data;
   };
@@ -43,12 +37,10 @@ export class AttendanceService {
    * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   getAttendanceByEventAndUser = async (eventId: string, userId: string) => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.attendanceRepository.getAttendanceByEventAndUser(eventId, userId),
-      "fetching attendance by event and user",
+    const data = await this.attendanceRepository.getAttendanceByEventAndUser(
+      eventId,
+      userId,
     );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -71,13 +63,11 @@ export class AttendanceService {
       created_at_lte?: string;
     },
   ) => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await this.attendanceRepository.listEventAttendees(pageNumber, pageSize, filters),
-      "listing event attendees",
+    const data = await this.attendanceRepository.listEventAttendees(
+      pageNumber,
+      pageSize,
+      filters,
     );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    if (!data) throw new RepositoryError_DEPRECATED("Failed to list event attendees.");
 
     return data;
   };

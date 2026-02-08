@@ -1,4 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util.js"; 
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js"; 
 import {
   RewardRepository,
   rewardRepositoryInstance,
@@ -20,7 +20,7 @@ export class RewardService {
   ) {}
 
   listRewardsByPage = async (pageNumber: number, pageSize: number) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.rewardRepository.list(pageNumber, pageSize),
       "listing rewards",
     );
@@ -30,7 +30,7 @@ export class RewardService {
   };
 
   createReward = async (body: rewardInsertDTO, creator_id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.rewardRepository.createReward(body),
       "creating reward",
     );
@@ -40,7 +40,7 @@ export class RewardService {
   };
 
   getReward = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.rewardRepository.getRewardById(id),
       "fetching reward",
     );
@@ -60,7 +60,7 @@ export class RewardService {
    */
   claimReward = async (reward_id: string) => {
     // get data of reward to be claimed
-    const { data: reward, error: rewardError } = await tryCatch(
+    const { data: reward, error: rewardError } = await tryCatch_deprecated(
       async () => await this.rewardRepository.getRewardById(reward_id),
       "fetching reward",
     );
@@ -75,7 +75,7 @@ export class RewardService {
     const {
       data: markRewardAsClaimedData,
       error: markRewardAsClaimedDataError,
-    } = await tryCatch(
+    } = await tryCatch_deprecated(
       async () => await this.rewardRepository.markRewardAsClaimed(reward_id),
       "marking reward as claimed",
     );
@@ -83,7 +83,7 @@ export class RewardService {
       throw new RepositoryError_DEPRECATED(markRewardAsClaimedDataError.message);
 
     // debit user's wallet
-    const { data: walletData, error: walletError } = await tryCatch(
+    const { data: walletData, error: walletError } = await tryCatch_deprecated(
       async () =>
         await this.walletService.incrementPoints(
           reward.user_id,

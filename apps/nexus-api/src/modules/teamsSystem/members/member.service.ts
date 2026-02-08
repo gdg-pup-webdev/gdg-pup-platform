@@ -1,5 +1,5 @@
 import { models } from "@packages/nexus-api-contracts";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import {
   MemberRepository,
@@ -17,7 +17,7 @@ export class MemberService {
   ) {}
 
   listMembersOfTeam = async (teamId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.memberRepository.listMembersOfTeam(teamId),
       "listing members",
     );
@@ -30,7 +30,7 @@ export class MemberService {
     pageSize: number,
     filters: { teamId?: string; userId?: string; role?: string },
   ) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.memberRepository.listMembersWithFilter(
           pageNumber,
@@ -44,7 +44,7 @@ export class MemberService {
   };
 
   createMember = async (dto: memberInserDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.memberRepository.createMember(dto),
       "creating member",
     );
@@ -53,7 +53,7 @@ export class MemberService {
   };
 
   deleteMember = async (memberId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.memberRepository.deleteMember(memberId),
       "deleting member",
     );

@@ -7,7 +7,7 @@ import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   SettingsService,
   settingsServiceInstance,
@@ -32,7 +32,7 @@ export class SettingsController {
 
       let list, count;
       if (userId) {
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () => await this.settingsService.listSettingsOfUser(userId),
           "getting user settings",
         );
@@ -40,7 +40,7 @@ export class SettingsController {
         list = data.list;
         count = data.count;
       } else {
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () => await this.settingsService.listSettings(),
           "getting all settings",
         );
@@ -71,7 +71,7 @@ export class SettingsController {
     contract.api.user_resource_system.settings.settingsId.GET,
     async ({ input, output }) => {
       const settingsId = input.params.settingsId;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.settingsService.getOneSettings(settingsId),
         "fetching settings",
       );
@@ -93,7 +93,7 @@ export class SettingsController {
     contract.api.user_resource_system.settings.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.settingsService.createSettings(dto),
         "creating settings",
       );
@@ -117,7 +117,7 @@ export class SettingsController {
       const settingsId = input.params.settingsId;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.settingsService.updateSettings(settingsId, dto),
         "updating settings",
       );
@@ -139,7 +139,7 @@ export class SettingsController {
     contract.api.user_resource_system.settings.settingsId.DELETE,
     async ({ input, output }) => {
       const settingsId = input.params.settingsId;
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.settingsService.deleteSettings(settingsId),
         "deleting settings",
       );

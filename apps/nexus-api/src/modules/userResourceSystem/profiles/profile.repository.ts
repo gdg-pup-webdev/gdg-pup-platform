@@ -9,8 +9,8 @@ import {
   RepositoryResult,
   RepositoryResultList,
 } from "@/types/repository.types.js";
-import { DatabaseError } from "@/errors/HttpError";
-import { tryCatch } from "@/utils/tryCatch.util";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import { SupabaseUtils } from "@/utils/supabase.util";
 
 /**
@@ -34,7 +34,7 @@ export class ProfileRepository {
   getProfileByUserId = async (
     userId: string,
   ): RepositoryResultList<profileRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
           user_id: userId,
@@ -42,7 +42,7 @@ export class ProfileRepository {
       "Calling database to list profiles of user",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -55,13 +55,13 @@ export class ProfileRepository {
     pageNumber: number,
     pageSize: number,
   ): RepositoryResultList<profileRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await SupabaseUtils.listRows(this.tableName, pageNumber, pageSize),
       "Calling database to list profiles",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -71,12 +71,12 @@ export class ProfileRepository {
    * Fetches a single profile by ID.
    */
   getOneProfile = async (id: string): RepositoryResultList<profileRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.getOneRow(this.tableName, id),
       "Calling database to get one profile",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -86,12 +86,12 @@ export class ProfileRepository {
    * Creates a new profile record.
    */
   createProfile = async (dto: profileInsert): RepositoryResult<profileRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.createRow(this.tableName, dto),
       "Calling database to create profile",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -104,12 +104,12 @@ export class ProfileRepository {
     id: string,
     dto: profileUpdate,
   ): RepositoryResult<profileRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
       "Calling database to update profile",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -119,12 +119,12 @@ export class ProfileRepository {
    * Deletes an profile record.
    */
   deleteProfile = async (id: string): RepositoryResult<profileRow> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.deleteRow(this.tableName, id),
       "Calling database to delete profile",
     );
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };

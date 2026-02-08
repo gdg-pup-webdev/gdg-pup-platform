@@ -8,7 +8,7 @@ import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   CertificateService,
   certificateServiceInstance,
@@ -33,7 +33,7 @@ export class CertificateController {
 
       let list, count;
       if (userId) {
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () => await this.certificateService.listCertificatesOfUser(userId),
           "getting user certificates",
         );
@@ -41,7 +41,7 @@ export class CertificateController {
         list = data.list;
         count = data.count;
       } else {
-        const { data, error } = await tryCatch(
+        const { data, error } = await tryCatch_deprecated(
           async () => await this.certificateService.listCertificates(),
           "getting all certificates",
         );
@@ -72,7 +72,7 @@ export class CertificateController {
     contract.api.user_resource_system.certificates.certificateId.GET,
     async ({ input, output }) => {
       const certificateId = input.params.certificateId;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.certificateService.getOneCertificate(certificateId),
         "fetching certificate",
       );
@@ -95,7 +95,7 @@ export class CertificateController {
     async ({ input, output }) => {
       const dto = input.body.data;
       
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.certificateService.createCertificate(dto),
         "creating certificate",
       );
@@ -119,7 +119,7 @@ export class CertificateController {
       const certificateId = input.params.certificateId;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.certificateService.updateCertificate(certificateId, dto),
         "updating certificate",
       );
@@ -141,7 +141,7 @@ export class CertificateController {
     contract.api.user_resource_system.certificates.certificateId.DELETE,
     async ({ input, output }) => {
       const certificateId = input.params.certificateId;
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.certificateService.deleteCertificate(certificateId),
         "deleting certificate",
       );

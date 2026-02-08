@@ -1,10 +1,12 @@
 import { RequestHandler } from "express";
 import { EventService, eventServiceInstance } from "./event.service.js";
-import { AttendanceService, attendanceServiceInstance } from "../attendance/attendance.service.js";
-import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
+import {
+  AttendanceService,
+  attendanceServiceInstance,
+} from "../attendance/attendance.service.js"; 
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { createExpressController } from "@packages/typed-rest"; 
+import { UnauthorizedError } from "@/errors/HttpError.js";
 
 /**
  * Controller for handling event-related HTTP requests.
@@ -38,11 +40,7 @@ export class EventController {
         end_date_lte: input.query.end_date_lte,
       };
 
-      const { data, error } = await tryCatch(
-        async () => await this.eventService.list(pageNumber, pageSize, filters),
-        "listing events",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.eventService.list(pageNumber, pageSize, filters);
 
       return output(200, {
         status: "success",
@@ -70,15 +68,11 @@ export class EventController {
     async ({ input, output, ctx }) => {
       const { req } = ctx;
       const userId = req.user?.id;
-      if (!userId) throw new ServiceError_DEPRECATED("User ID is required");
+      if (!userId) throw new UnauthorizedError("User ID is required");
 
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
-        async () => await this.eventService.create(dto, userId),
-        "creating event",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.eventService.create(dto, userId);
 
       return output(200, {
         status: "success",
@@ -101,11 +95,7 @@ export class EventController {
       const eventId = input.params.eventId;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
-        async () => await this.eventService.update(eventId, dto),
-        "updating event",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.eventService.update(eventId, dto);
 
       return output(200, {
         status: "success",
@@ -127,11 +117,7 @@ export class EventController {
     async ({ input, output }) => {
       const eventId = input.params.eventId;
 
-      const { data, error } = await tryCatch(
-        async () => await this.eventService.delete(eventId),
-        "deleting event",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.eventService.delete(eventId);
 
       return output(200, {
         status: "success",
@@ -153,11 +139,7 @@ export class EventController {
     async ({ input, output }) => {
       const eventId = input.params.eventId;
 
-      const { data, error } = await tryCatch(
-        async () => await this.eventService.getById(eventId),
-        "getting event by id",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.eventService.getById(eventId);
 
       return output(200, {
         status: "success",
@@ -177,20 +159,14 @@ export class EventController {
   checkinToAnEvent: RequestHandler = createExpressController(
     contract.api.event_system.checkin.POST,
     async ({ input, output }) => {
-
       const body = input.body;
       const { eventId, checkinMethod, attendeeId } = body.data;
 
-      const { data, error } = await tryCatch(
-        async () =>
-          await this.eventService.checkInToEvent(
-            eventId,
-            attendeeId,
-            checkinMethod,
-          ),
-        "checking in to event",
+      const data = await this.eventService.checkInToEvent(
+        eventId,
+        attendeeId,
+        checkinMethod,
       );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -221,12 +197,11 @@ export class EventController {
         created_at_gte: input.query.created_at_gte,
         created_at_lte: input.query.created_at_lte,
       };
-      const { data, error } = await tryCatch(
-        async () =>
-          await this.attendanceService.listEventAttendees(pageNumber, pageSize, filters),
-        "listing event attendees",
+      const data = await this.attendanceService.listEventAttendees(
+        pageNumber,
+        pageSize,
+        filters,
       );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

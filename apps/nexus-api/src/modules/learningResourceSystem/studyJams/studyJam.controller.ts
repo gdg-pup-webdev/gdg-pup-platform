@@ -10,7 +10,7 @@ import {
   ServiceError_DEPRECATED,
 } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { handleServerError, tryCatch } from "@/utils/tryCatch.util.js";
+import { handleServerError_deprecated, tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 
 export class StudyJamController {
   constructor(
@@ -24,7 +24,7 @@ export class StudyJamController {
       const user = req.user!;
       const userId = user.id;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.resourceService.create(input.body.data, userId),
         "creating external resource",
       );
@@ -43,7 +43,7 @@ export class StudyJamController {
     contract.api.learning_resource_system.study_jams.studyJamId.DELETE,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.studyJamId;
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.resourceService.delete(resourceId),
         "deleting external resource",
       );
@@ -61,7 +61,7 @@ export class StudyJamController {
     contract.api.learning_resource_system.study_jams.studyJamId.PATCH,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.studyJamId;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.resourceService.update(resourceId, input.body.data),
         "updating external resource",
@@ -82,7 +82,7 @@ export class StudyJamController {
     async ({ input, output, ctx }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.resourceService.list(),
         "listing external resources",
       );
@@ -107,7 +107,7 @@ export class StudyJamController {
     contract.api.learning_resource_system.study_jams.studyJamId.GET,
     async ({ input, output, ctx }) => {
       const resourceId = input.params.studyJamId as string;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.resourceService.getOne(resourceId),
         "getting one external resource",
       );

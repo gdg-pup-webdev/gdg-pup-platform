@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 
 type ListParams = {
@@ -17,7 +17,7 @@ export class FileRepository {
       .single();
 
     if (error) {
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     return data;
@@ -34,7 +34,7 @@ export class FileRepository {
       .range(from, to);
 
     if (error) {
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     return {
@@ -51,7 +51,7 @@ export class FileRepository {
       .single();
 
     if (error) {
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     return data;
@@ -66,7 +66,7 @@ export class FileRepository {
       .single();
 
     if (error) {
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     return data;
@@ -81,7 +81,7 @@ export class FileRepository {
       .single();
 
     if (error) {
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     return data;

@@ -10,7 +10,7 @@ import {
   CertificateRepository,
   certificateRepositoryInstance,
 } from "./certificate.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -36,7 +36,7 @@ export class CertificateService {
    * @returns {Promise<{list: any[], count: number}>} Paginated result of certificates.
    */
   listCertificatesOfUser = async (userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.certificateRepository.listCertificatesOfUser(userId),
       "listing certificates",
     );
@@ -50,7 +50,7 @@ export class CertificateService {
    * @returns {Promise<{list: any[], count: number}>} Paginated result of all certificates.
    */
   listCertificates = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.certificateRepository.listCertificates(),
       "listing certificates",
     );
@@ -64,7 +64,7 @@ export class CertificateService {
    * @param id - The unique ID of the certificate.
    */
   getOneCertificate = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.certificateRepository.getOneCertificate(id),
       "getting certificate",
     );
@@ -78,7 +78,7 @@ export class CertificateService {
    * @param dto - Data containing title, description, image URL, and user_id.
    */
   createCertificate = async (dto: certificateInsertDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.certificateRepository.createCertificate(dto),
       "creating certificate",
@@ -94,7 +94,7 @@ export class CertificateService {
    * @param id - The ID of the certificate to remove.
    */
   deleteCertificate = async (id: string) => {
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.certificateRepository.deleteCertificate(id),
       "deleting certificate",
     );
@@ -109,7 +109,7 @@ export class CertificateService {
    * @param dto - Partial data containing fields to modify.
    */
   updateCertificate = async (id: string, dto: certificateUpdateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.certificateRepository.updateCertificate(id, dto),
       "updating certificate",
     );

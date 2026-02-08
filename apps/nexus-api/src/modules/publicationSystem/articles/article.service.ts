@@ -3,7 +3,7 @@ import {
   ArticleRepository,
   articleRepositoryInstance,
 } from "./article.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 
 type insertDTO = models.publicationSystem.article.insert;
@@ -17,7 +17,7 @@ export class ArticleService {
   ) {}
 
   create = async (dto: insertDTO, userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.articleRepository.create({
           ...dto,
@@ -32,7 +32,7 @@ export class ArticleService {
   };
 
   list = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.articleRepository.list(),
       "listing articles",
     );
@@ -42,7 +42,7 @@ export class ArticleService {
   };
 
   getOne = async (articleId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.articleRepository.getOne(articleId),
       "getting article",
     );
@@ -51,7 +51,7 @@ export class ArticleService {
   };
 
   update = async (articleId: string, dto: updateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.articleRepository.update(articleId, dto),
       "updateing article",
     );
@@ -60,7 +60,7 @@ export class ArticleService {
   };
 
   delete = async (articleId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.articleRepository.delete(articleId),
       "deleting article",
     );
@@ -69,7 +69,7 @@ export class ArticleService {
   };
 
   listComments = async (articleId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.articleRepository.listComments(articleId),
       "listing comments",
     );
@@ -78,7 +78,7 @@ export class ArticleService {
   };
 
   createComment = async (dto: commentInserDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.articleRepository.createComment(dto),
       "creating comment",
     );
@@ -87,7 +87,7 @@ export class ArticleService {
   };
 
   deleteComment = async (commentId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.articleRepository.deleteComment(commentId),
       "deleting comment",
     );

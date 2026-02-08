@@ -1,5 +1,5 @@
 import { NotFoundError } from "@/errors/HttpError";
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
 import {
@@ -21,7 +21,7 @@ export class TransactionRepository {
    * Resolves the user's wallet ID first, then fetches transactions for that wallet.
    *
    * @returns A promise resolving to a list of transactions and the total count.
-   * @throws {DatabaseError} If a database error occurs during wallet lookup.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs during wallet lookup.
    * @throws {NotFoundError} If the user's wallet is not found.
    */
   listTransactionsByUserId = async (
@@ -51,7 +51,7 @@ export class TransactionRepository {
    * Applies pagination and sorts by creation date descending.
    *
    * @returns A promise resolving to a list of transactions and the total count.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   listTransactionsByWalletId = async (
     walletId: string,
@@ -88,7 +88,7 @@ export class TransactionRepository {
    * Orders by creation date descending.
    *
    * @returns A promise resolving to a paginated list of transactions and the total count.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   listTransactions = async (
     pageNumber: number,
@@ -104,7 +104,7 @@ export class TransactionRepository {
       .range(from, to);
 
     if (listError) {
-      throw new DatabaseError(listError.message);
+      throw new DatabaseError_DONT_USE(listError.message);
     }
 
     const { count, error } = await supabase
@@ -112,7 +112,7 @@ export class TransactionRepository {
       .select("*", { count: "exact", head: true });
 
     if (error) {
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     return {
@@ -159,7 +159,7 @@ export class TransactionRepository {
    * Retrieves a single transaction by its ID.
    *
    * @returns A promise resolving to the transaction data.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   getTransactionById = async (
     id: string,
@@ -179,7 +179,7 @@ export class TransactionRepository {
    * Creates a new transaction record.
    *
    * @returns A promise resolving to the created transaction data.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   createTransaction = async (
     dto: models.economySystem.transaction.insertDTO,

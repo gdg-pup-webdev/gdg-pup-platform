@@ -2,7 +2,7 @@ import {
   ProjectRepository,
   projectRepositoryInstance,
 } from "./project.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -15,7 +15,7 @@ export class ProjectService {
   ) {}
 
   listProjectsOfUser = async (userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.projectRepository.listProjectsOfUser(userId),
       "listing projects",
     );
@@ -24,7 +24,7 @@ export class ProjectService {
   };
 
   listProjects = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.projectRepository.listProjects(),
       "listing projects",
     );
@@ -33,7 +33,7 @@ export class ProjectService {
   };
 
   getOneProject = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.projectRepository.getOneProject(id),
       "getting project",
     );
@@ -42,7 +42,7 @@ export class ProjectService {
   };
 
   createProject = async (dto: projectInsertDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.projectRepository.createProject(dto),
       "creating project",
@@ -53,7 +53,7 @@ export class ProjectService {
   };
 
   deleteProject = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.projectRepository.deleteProject(id),
       "deleting project",
     );
@@ -63,7 +63,7 @@ export class ProjectService {
   };
 
   updateProject = async (id: string, dto: projectUpdateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.projectRepository.updateProject(id, dto),
       "updating project",
     );

@@ -1,4 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 import {
@@ -15,7 +15,7 @@ export class StudyJamService {
   ) {}
 
   create = async (dto: insertDTO, uploaderId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.create(dto),
       "creating external resource",
     );
@@ -26,7 +26,7 @@ export class StudyJamService {
   };
 
   delete = async (resourceId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.delete(resourceId),
       "deleting external resource",
     );
@@ -37,7 +37,7 @@ export class StudyJamService {
   };
 
   update = async (resourceId: string, dto: updateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.update(resourceId, dto),
       "updating external resource",
     );
@@ -48,7 +48,7 @@ export class StudyJamService {
   };
 
   list = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.list(),
       "listing external resources",
     );
@@ -59,7 +59,7 @@ export class StudyJamService {
   };
 
   getOne = async (resourceId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.getOne(resourceId),
       "getting external resource",
     );

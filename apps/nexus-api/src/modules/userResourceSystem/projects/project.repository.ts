@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
@@ -22,13 +22,13 @@ export class ProjectRepository {
       .from(this.tableName)
       .select("*")
       .eq("user_id", userId);
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     return {
       list: data,
@@ -38,12 +38,12 @@ export class ProjectRepository {
 
   listProjects = async (): RepositoryResultList<projectRow> => {
     const { data, error } = await supabase.from(this.tableName).select("*");
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     return {
       list: data,
@@ -58,7 +58,7 @@ export class ProjectRepository {
       .eq("id", id)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   };
@@ -69,7 +69,7 @@ export class ProjectRepository {
       .insert(dto)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
     return data;
   };
 
@@ -80,7 +80,7 @@ export class ProjectRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
     return data;
   };
 
@@ -94,7 +94,7 @@ export class ProjectRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
     return data;
   };
 }

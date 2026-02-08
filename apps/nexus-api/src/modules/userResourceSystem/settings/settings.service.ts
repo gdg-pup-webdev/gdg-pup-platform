@@ -7,7 +7,7 @@ import {
   SettingsRepository,
   settingsRepositoryInstance,
 } from "./settings.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -20,7 +20,7 @@ export class SettingsService {
   ) {}
 
   listSettingsOfUser = async (userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.settingsRepository.listSettingsOfUser(userId),
       "listing settings",
     );
@@ -29,7 +29,7 @@ export class SettingsService {
   };
 
   listSettings = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.settingsRepository.listSettings(),
       "listing settings",
     );
@@ -38,7 +38,7 @@ export class SettingsService {
   };
 
   getOneSettings = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.settingsRepository.getOneSettings(id),
       "getting settings",
     );
@@ -47,7 +47,7 @@ export class SettingsService {
   };
 
   createSettings = async (dto: settingsInsertDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.settingsRepository.createSettings(dto),
       "creating settings",
@@ -58,7 +58,7 @@ export class SettingsService {
   };
 
   deleteSettings = async (id: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.settingsRepository.deleteSettings(id),
       "deleting settings",
     );
@@ -68,7 +68,7 @@ export class SettingsService {
   };
 
   updateSettings = async (id: string, dto: settingsUpdateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.settingsRepository.updateSettings(id, dto),
       "updating settings",
     );

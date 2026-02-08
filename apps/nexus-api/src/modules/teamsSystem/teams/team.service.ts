@@ -1,6 +1,6 @@
 import { models } from "@packages/nexus-api-contracts";
 import { TeamRepository, teamRepositoryInstance } from "./team.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 
 type insertDTO = models.teamSystem.team.insert;
@@ -14,7 +14,7 @@ export class TeamService {
   ) {}
 
   createTeam = async (dto: insertDTO, userId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.teamRepository.createTeam({
           ...dto,
@@ -28,7 +28,7 @@ export class TeamService {
   };
 
   listTeams = async () => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.teamRepository.listTeams(),
       "In service, listing teams",
     );
@@ -38,7 +38,7 @@ export class TeamService {
   };
 
   getOneTeam = async (teamId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.teamRepository.getOneTeam(teamId),
       "getting team",
     );
@@ -47,7 +47,7 @@ export class TeamService {
   };
 
   updateTeam = async (teamId: string, dto: updateDTO) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.teamRepository.updateTeam(teamId, dto),
       "updateing team",
     );
@@ -56,7 +56,7 @@ export class TeamService {
   };
 
   deleteTeam = async (teamId: string) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.teamRepository.deleteTeam(teamId),
       "deleting team",
     );

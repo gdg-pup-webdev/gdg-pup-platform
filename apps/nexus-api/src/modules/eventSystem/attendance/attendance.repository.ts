@@ -1,5 +1,6 @@
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import { RepositoryResultList } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
@@ -14,7 +15,7 @@ export class AttendanceRepository {
    * Creates a new attendance record.
    *
    * @returns A promise resolving to the created attendance record.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   create = async (
     dto: models.eventSystem.attendance.insertDTO,
@@ -24,7 +25,9 @@ export class AttendanceRepository {
       .insert(dto)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+      
+
+    if (error) handlePostgresError(error)
 
     return data;
   };
@@ -33,7 +36,7 @@ export class AttendanceRepository {
    * Fetches an attendance record for a specific event and user.
    *
    * @returns A promise resolving to the attendance record or null if not found.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   getAttendanceByEventAndUser = async (
     eventId: string,
@@ -46,7 +49,7 @@ export class AttendanceRepository {
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error)
 
     return data;
   };
@@ -56,7 +59,7 @@ export class AttendanceRepository {
    * Joins with the user table to return user details.
    *
    * @returns A promise resolving to a list of users (attendees) and the total count.
-   * @throws {DatabaseError} If a database error occurs.
+   * @throws {DatabaseError_DONT_USE} If a database error occurs.
    */
   listEventAttendees = async (
     pageNumber: number,
@@ -99,7 +102,7 @@ export class AttendanceRepository {
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error)
 
     return {
       list: (data || []).map((row) => row.user),

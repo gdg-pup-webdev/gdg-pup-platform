@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
@@ -29,13 +29,13 @@ export class RewardRepository {
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     const { count, error: countError } = await supabase
       .from("reward")
       .select("*", { count: "exact", head: true });
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     return {
       list: data,
@@ -50,7 +50,7 @@ export class RewardRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   }
@@ -62,7 +62,7 @@ export class RewardRepository {
       .eq("id", id)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   }
@@ -77,7 +77,7 @@ export class RewardRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
   }

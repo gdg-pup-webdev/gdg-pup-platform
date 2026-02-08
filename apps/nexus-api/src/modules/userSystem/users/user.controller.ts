@@ -9,7 +9,7 @@ import { UserService, userServiceInstance } from "./user.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 
 /**
  * UserSystemController
@@ -27,7 +27,7 @@ export class UserSystemController {
    * Retrieves a list of all users in the system.
    */
   listUsers: RequestHandler = async (_req, res) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.userService.listUsers(),
       "listing users",
     );
@@ -50,7 +50,7 @@ export class UserSystemController {
     contract.api.user_system.users.userId.GET,
     async ({ input, output }) => {
       const userId = input.params.userId;
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.userService.getUserById(userId),
         "getting user",
       );
@@ -76,7 +76,7 @@ export class UserSystemController {
     async ({ input, output }) => {
       const userId = input.params.userId;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.userService.getUserAggregate(userId),
         "getting user aggregate",
       );
