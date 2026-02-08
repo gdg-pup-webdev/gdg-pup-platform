@@ -1,122 +1,146 @@
 import { RequestHandler } from "express";
 import {
   StudyJamService,
+  type StudyJamListFilters,
   resourceServiceInstance,
 } from "./studyJam.service.js";
-import { contract, models } from "@packages/nexus-api-contracts";
-import {
-  ControllerError,
-  ServerError,
-  ServiceError,
-} from "@/classes/ServerError.js";
+import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
-import { handleServerError, tryCatch } from "@/utils/tryCatch.util.js";
+import {
+  buildPaginationMeta,
+  normalizeOptionalText,
+  runServiceCall,
+} from "../controller.utils.js";
 
+/**
+ * Controller for handling study jam-related requests.
+ * Manages the flow of data between the client and the StudyJamService.
+ */
 export class StudyJamController {
   constructor(
     private readonly resourceService: StudyJamService = resourceServiceInstance,
   ) {}
 
+  /**
+   * Handles the creation of a new study jam.
+   * Extracts study jam data and user ID from the request, then calls the service to create the study jam.
+   * @returns A success response with the created study jam data.
+   * @throws {ServiceError} If the study jam creation fails.
+   */
   createStudyJam: RequestHandler = createExpressController(
     contract.api.learning_resource_system.study_jams.POST,
     async ({ input, output, ctx }) => {
-      const { res, req } = ctx;
-      const user = req.user!;
-      const userId = user.id;
-
-      const { data, error } = await tryCatch(
-        async () => await this.resourceService.create(input.body.data, userId),
-        "creating external resource",
+      const data = await runServiceCall(
+        async () =>
+          await this.resourceService.create(input.body.data, ctx.req.user!.id),
+        "creating study jam",
       );
-
-      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "Resource created successfully",
+        message: "Study jam created successfully",
         data,
       });
     },
   );
 
+  /**
+   * Handles the deletion of a study jam.
+   * Extracts the study jam ID from the request parameters and calls the service to delete it.
+   * @returns A success response confirming the deletion.
+   * @throws {ServiceError} If the study jam deletion fails.
+   */
   deleteStudyJam: RequestHandler = createExpressController(
     contract.api.learning_resource_system.study_jams.studyJamId.DELETE,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       const resourceId = input.params.studyJamId;
-      const { error } = await tryCatch(
+      await runServiceCall(
         async () => await this.resourceService.delete(resourceId),
-        "deleting external resource",
+        "deleting study jam",
       );
-
-      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "Resource deleted successfully",
+        message: "Study jam deleted successfully",
       });
     },
   );
 
+  /**
+   * Handles the update of a study jam.
+   * Extracts the study jam ID and update data from the request, then calls the service to perform the update.
+   * @returns A success response with the updated study jam data.
+   * @throws {ServiceError} If the study jam update fails.
+   */
   updateStudyJam: RequestHandler = createExpressController(
     contract.api.learning_resource_system.study_jams.studyJamId.PATCH,
-    async ({ input, output, ctx }) => {
+    async ({ input, output }) => {
       const resourceId = input.params.studyJamId;
-      const { data, error } = await tryCatch(
+      const data = await runServiceCall(
         async () =>
           await this.resourceService.update(resourceId, input.body.data),
-        "updating external resource",
+        "updating study jam",
       );
-
-      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "Resource updated successfully",
+        message: "Study jam updated successfully",
         data,
       });
     },
   );
 
+  /**
+   * Handles listing study jams with pagination and filtering.
+   * Extracts pagination and filter parameters from the request query and calls the service to fetch the study jams.
+   * @returns A success response with the list of study jams and pagination metadata.
+   * @throws {ServiceError} If fetching the study jams fails.
+   */
   listStudyJams: RequestHandler = createExpressController(
     contract.api.learning_resource_system.study_jams.GET,
-    async ({ input, output, ctx }) => {
-      const pageNumber = input.query.pageNumber;
-      const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
-        async () => await this.resourceService.list(),
-        "listing external resources",
-      );
+    async ({ input, output }) => {
+      const { pageNumber, pageSize, search, createdFrom, createdTo } =
+        input.query;
+      const normalizedSearch = normalizeOptionalText(search);
+      const filters: StudyJamListFilters = {
+        ...(normalizedSearch ? { search: normalizedSearch } : {}),
+        ...(createdFrom ? { createdFrom } : {}),
+        ...(createdTo ? { createdTo } : {}),
+      };
 
-      if (error) throw new ServiceError(error.message);
+      const data = await runServiceCall(
+        async () =>
+          await this.resourceService.list(pageNumber, pageSize, filters),
+        "listing study jams",
+      );
 
       return output(200, {
         status: "success",
-        message: "Resources fetched successfully",
+        message: "Study jams fetched successfully",
         data: data.list,
-        meta: {
-          totalRecords: data.count,
-          currentPage: pageNumber,
-          pageSize,
-          totalPages: Math.ceil(data.count / pageSize),
-        },
+        meta: buildPaginationMeta(data.count, pageNumber, pageSize),
       });
     },
   );
 
+  /**
+   * Handles fetching a single study jam by its ID.
+   * Extracts the study jam ID from the request parameters and calls the service to fetch the study jam.
+   * @returns A success response with the fetched study jam data.
+   * @throws {ServiceError} If fetching the study jam fails.
+   */
   getOneStudyJam: RequestHandler = createExpressController(
     contract.api.learning_resource_system.study_jams.studyJamId.GET,
-    async ({ input, output, ctx }) => {
-      const resourceId = input.params.studyJamId as string;
-      const { data, error } = await tryCatch(
+    async ({ input, output }) => {
+      const resourceId = input.params.studyJamId;
+      const data = await runServiceCall(
         async () => await this.resourceService.getOne(resourceId),
-        "getting one external resource",
+        "getting one study jam",
       );
-
-      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
-        message: "Resource fetched successfully",
+        message: "Study jam fetched successfully",
         data,
       });
     },
