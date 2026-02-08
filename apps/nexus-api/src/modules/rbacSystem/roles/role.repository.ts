@@ -1,6 +1,6 @@
 import {
   NotFoundError,
-  DuplicateResourceError} from "@/errors/HttpError";
+  ConflictError} from "@/errors/HttpError";
 import { RepositoryError_DEPRECATED, InvalidOperationError_DEPRECATED } from "@/classes/ServerError";
 import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
@@ -229,7 +229,7 @@ export class RoleRepository {
     if (error) {
       // Handle unique constraint violation (duplicate role name)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Role "${roleData.role_name}" already exists`,
         );
       }
@@ -273,7 +273,7 @@ export class RoleRepository {
 
       // Unique constraint violation (duplicate role name)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Role name "${updates.role_name}" already exists`,
         );
       }
@@ -384,7 +384,7 @@ export class RoleRepository {
 
       // Unique constraint violation: user already has this role
       if (error.code === "23505") {
-        throw new DuplicateResourceError("User already has this role assigned");
+        throw new ConflictError("User already has this role assigned");
       }
 
       throw new DatabaseError_DONT_USE(error.message);

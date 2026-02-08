@@ -41,7 +41,7 @@ export class NotFoundError extends HttpError {
 }
 
 // 409 - Conflict
-export class DuplicateResourceError extends HttpError {
+export class ConflictError extends HttpError {
   constructor(detail: string, err?: unknown) {
     super(409, "Duplicate Resource", detail, err);
   }

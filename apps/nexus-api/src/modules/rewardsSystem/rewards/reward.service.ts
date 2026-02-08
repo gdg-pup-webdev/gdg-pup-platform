@@ -1,14 +1,13 @@
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js"; 
 import {
   RewardRepository,
   rewardRepositoryInstance,
 } from "./reward.repository.js";
-import { generateCouponCode } from "./reward.utils.js";
-import {
-  NotFoundError} from "@/errors/HttpError.js";
-import { InvalidOperationError_DEPRECATED, RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
+import { ConflictError, NotFoundError } from "@/errors/HttpError.js";
 import { models } from "@packages/nexus-api-contracts";
-import { WalletService, walletServiceInstance } from "@/modules/economySystem/wallets/wallet.service.js";
+import {
+  WalletService,
+  walletServiceInstance,
+} from "@/modules/economySystem/wallets/wallet.service.js";
 
 type rewardInsertDTO = models.rewardSystem.reward.insert;
 type rewardUpdateDTO = models.rewardSystem.reward.update;
@@ -20,33 +19,15 @@ export class RewardService {
   ) {}
 
   listRewardsByPage = async (pageNumber: number, pageSize: number) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.rewardRepository.list(pageNumber, pageSize),
-      "listing rewards",
-    );
-
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.rewardRepository.list(pageNumber, pageSize);
   };
 
   createReward = async (body: rewardInsertDTO, creator_id: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.rewardRepository.createReward(body),
-      "creating reward",
-    );
-
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.rewardRepository.createReward(body);
   };
 
   getReward = async (id: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.rewardRepository.getRewardById(id),
-      "fetching reward",
-    );
-
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.rewardRepository.getRewardById(id);
   };
 
   /**
@@ -60,41 +41,22 @@ export class RewardService {
    */
   claimReward = async (reward_id: string) => {
     // get data of reward to be claimed
-    const { data: reward, error: rewardError } = await tryCatch_deprecated(
-      async () => await this.rewardRepository.getRewardById(reward_id),
-      "fetching reward",
-    );
-    if (rewardError) throw new RepositoryError_DEPRECATED(rewardError.message);
-    if (!reward) throw new NotFoundError("Reward not found");
+    const reward = await this.rewardRepository.getRewardById(reward_id);
 
     // check if reward is claimable
-    if (reward.is_claimed)
-      throw new InvalidOperationError_DEPRECATED("Reward already claimed");
+    if (reward.is_claimed) throw new ConflictError("Reward already claimed");
 
     // mark reward as claimed
-    const {
-      data: markRewardAsClaimedData,
-      error: markRewardAsClaimedDataError,
-    } = await tryCatch_deprecated(
-      async () => await this.rewardRepository.markRewardAsClaimed(reward_id),
-      "marking reward as claimed",
-    );
-    if (markRewardAsClaimedDataError)
-      throw new RepositoryError_DEPRECATED(markRewardAsClaimedDataError.message);
+    const markRewardAsClaimedData =
+      await this.rewardRepository.markRewardAsClaimed(reward_id);
 
     // debit user's wallet
-    const { data: walletData, error: walletError } = await tryCatch_deprecated(
-      async () =>
-        await this.walletService.incrementPoints(
-          reward.user_id,
-          reward.value,
-          "reward",
-          reward_id,
-        ),
-      "incrementing points of user",
+    const walletData = await this.walletService.incrementPoints(
+      reward.user_id,
+      reward.value,
+      "reward",
+      reward_id,
     );
-    if (walletError) throw new RepositoryError_DEPRECATED(walletError.message);
-    if (!walletData) throw new NotFoundError("Wallet not found");
 
     // return data
     return {

@@ -1,6 +1,6 @@
 import {
   NotFoundError,
-  DuplicateResourceError
+  ConflictError
 } from "@/errors/HttpError";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError";
 import { DatabaseError_DONT_USE } from "@/errors/HttpError";
@@ -140,7 +140,7 @@ export class PermissionRepository {
    *
    * @param permissionData - The permission data to insert
    * @returns A promise resolving to the created permission
-   * @throws {DuplicateResourceError} If a duplicate permission exists (same role + resource)
+   * @throws {ConflictError} If a duplicate permission exists (same role + resource)
    * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   create = async (
@@ -157,7 +157,7 @@ export class PermissionRepository {
     if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
 
     if (existing) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Permission for resource "${permissionData.resource_name}" already exists for this role`,
       );
     }
@@ -172,7 +172,7 @@ export class PermissionRepository {
     if (error) {
       // Duplicate permission (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${permissionData.resource_name}" already exists for this role`,
         );
       }
@@ -193,7 +193,7 @@ export class PermissionRepository {
    *
    * @param permissionDataList - Array of complete permission data to insert
    * @returns A promise resolving to an array of created permissions
-   * @throws {DuplicateResourceError} If any permission already exists or duplicates within request
+   * @throws {ConflictError} If any permission already exists or duplicates within request
    * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   createBulk = async (
@@ -216,7 +216,7 @@ export class PermissionRepository {
     }
 
     if (duplicatesInRequest.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Duplicate permissions in request: ${duplicatesInRequest.join(", ")}`,
       );
     }
@@ -252,7 +252,7 @@ export class PermissionRepository {
     }
 
     if (conflictingPermissions.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `The following permissions already exist: ${conflictingPermissions.join(", ")}`,
       );
     }
@@ -266,7 +266,7 @@ export class PermissionRepository {
     if (error) {
       // Duplicate error (last resort catch)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           "One or more permissions already exist in the database",
         );
       }
@@ -291,7 +291,7 @@ export class PermissionRepository {
    * @param updates - The fields to update
    * @returns A promise resolving to the updated permission
    * @throws {NotFoundError} If the permission does not exist
-   * @throws {DuplicateResourceError} If update would create duplicate
+   * @throws {ConflictError} If update would create duplicate
    * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   update = async (
@@ -325,7 +325,7 @@ export class PermissionRepository {
       if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
 
       if (existing) {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${updates.resource_name}" already exists for this role`,
         );
       }
@@ -348,7 +348,7 @@ export class PermissionRepository {
       }
       // Duplicate error (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${updates.resource_name}" already exists for this role`,
         );
       }
@@ -416,7 +416,7 @@ export class PermissionRepository {
    *
    * @param permissionData - The complete permission data to assign (including user_role_id)
    * @returns A promise resolving to the created permission
-   * @throws {DuplicateResourceError} If permission already exists for the role
+   * @throws {ConflictError} If permission already exists for the role
    * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   assignToRole = async (
@@ -433,7 +433,7 @@ export class PermissionRepository {
     if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
 
     if (existing) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Permission for resource "${permissionData.resource_name}" already exists for this role`,
       );
     }
@@ -448,7 +448,7 @@ export class PermissionRepository {
     if (error) {
       // Duplicate (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${permissionData.resource_name}" already exists for this role`,
         );
       }
@@ -469,7 +469,7 @@ export class PermissionRepository {
    *
    * @param permissionDataList - Array of complete permission data to assign
    * @returns A promise resolving to an array of created permissions
-   * @throws {DuplicateResourceError} If any permission already exists or duplicates within request
+   * @throws {ConflictError} If any permission already exists or duplicates within request
    * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   assignToRoleInBulk = async (
@@ -492,7 +492,7 @@ export class PermissionRepository {
     }
 
     if (duplicatesInRequest.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Duplicate permissions in request: ${duplicatesInRequest.join(", ")}`,
       );
     }
@@ -524,7 +524,7 @@ export class PermissionRepository {
     }
 
     if (conflictingPermissions.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `The following permissions already exist: ${conflictingPermissions.join(", ")}`,
       );
     }
@@ -537,7 +537,7 @@ export class PermissionRepository {
 
     if (error) {
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           "One or more permissions already exist for this role",
         );
       }
