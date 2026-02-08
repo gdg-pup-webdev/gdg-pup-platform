@@ -1,0 +1,27 @@
+# =============================================================================
+# Docker Compose — Staging Override
+# =============================================================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.staging.yml up
+# =============================================================================
+
+services:
+  nexus-web:
+    build:
+      args:
+        NEXT_PUBLIC_NEXUS_API_URL: ${NEXT_PUBLIC_NEXUS_API_URL}
+        NEXT_PUBLIC_IDENTITY_API_URL: ${NEXT_PUBLIC_IDENTITY_API_URL}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_PUB_KEY: ${NEXT_PUBLIC_SUPABASE_PUB_KEY}
+    env_file:
+      - apps/nexus-web/.env.staging
+    restart: always
+
+  nexus-api:
+    env_file:
+      - apps/nexus-api/.env.staging
+    restart: always
+
+  identity-api:
+    env_file:
+      - apps/identity-api/.env.staging
+    restart: always

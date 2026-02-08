@@ -1,30 +1,33 @@
 
 
+# =============================================================================
+# Base Docker Compose
+# =============================================================================
+
+# BEFORE LOCALLY BUILDING: SET THIS DOCKER_BUILDKIT=1, COMPOSE_DOCKER_CLI_BUILD=1 in the terminal
+
+# Shared service definitions. Extend per environment:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#   docker compose -f docker-compose.yml -f docker-compose.staging.yml up
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up
+# =============================================================================
+
 services:
   nexus-web:
     build:
       context: .
       dockerfile: apps/nexus-web/Dockerfile
-      args:
-        NEXT_PUBLIC_NEXUS_API_URL: ${NEXT_PUBLIC_NEXUS_API_URL}
-        NEXT_PUBLIC_IDENTITY_API_URL: ${NEXT_PUBLIC_IDENTITY_API_URL}
-        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
-        NEXT_PUBLIC_SUPABASE_PUB_KEY: ${NEXT_PUBLIC_SUPABASE_PUB_KEY}
     ports:
       - "3000:3000"
-    restart: always
 
   nexus-api:
     build:
       context: .
       dockerfile: apps/nexus-api/Dockerfile
     ports:
-      - "8000:8000"
-    env_file:
-      - apps/nexus-api/.env
+      - "${NEXUS_API_PORT:-8000}:8000"
     environment:
       - PORT=8000
-    restart: always
 
   identity-api:
     build:
@@ -32,8 +35,5 @@ services:
       dockerfile: apps/identity-api/Dockerfile
     ports:
       - "8100:8100"
-    env_file:
-      - apps/identity-api/.env
     environment:
       - PORT=8100
-    restart: always
