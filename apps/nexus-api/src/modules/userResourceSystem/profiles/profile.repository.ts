@@ -27,6 +27,8 @@ type profileUpdate = TablesUpdate<"user_profile">;
 export class ProfileRepository {
   tableName = "user_profile";
 
+  constructor() {}
+
   /**
    * getProfileByUserId
    * Retrieves all profiles for a specific user.
@@ -79,7 +81,7 @@ export class ProfileRepository {
     if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
-  }
+  };
 
   /**
    * createProfile
@@ -103,7 +105,7 @@ export class ProfileRepository {
   async updateProfile(
     id: string,
     dto: profileUpdate,
-  ): RepositoryResult<profileRow> => {
+  ): RepositoryResult<profileRow> {
     const { data, error } = await tryCatch_deprecated(
       async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
       "Calling database to update profile",
@@ -127,7 +129,7 @@ export class ProfileRepository {
     if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
-  }
+  };
 }
 
 export const profileRepositoryInstance = new ProfileRepository();

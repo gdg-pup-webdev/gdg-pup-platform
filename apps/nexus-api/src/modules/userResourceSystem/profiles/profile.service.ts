@@ -26,7 +26,7 @@ export class ProfileService {
    */
   getUserProfileByUserId = async (userId: string) => {
     const { data, error } = await tryCatch_deprecated(
-      async () => await this.profileRespository.getProfileByUserId(userId),
+      async () => await this.profileRepository.getProfileByUserId(userId),
       "getting user profile",
     );
     if (error) throw new RepositoryError_DEPRECATED(error.message);
@@ -60,7 +60,7 @@ export class ProfileService {
    */
   createProfile = async (dto: profileInsertDTO) => {
     const { data, error } = await tryCatch_deprecated(
-      async () => await this.profileRespository.createProfile(dto),
+      async () => await this.profileRepository.createProfile(dto),
       "creating profile",
     );
     if (error) throw new RepositoryError_DEPRECATED(error.message);
@@ -75,7 +75,7 @@ export class ProfileService {
    */
   updateProfile = async (id: string, dto: profileUpdateDTO) => {
     const { data, error } = await tryCatch_deprecated(
-      async () => await this.profileRespository.updateProfile(id, dto),
+      async () => await this.profileRepository.updateProfile(id, dto),
       "updating profile",
     );
     if (error) throw new RepositoryError_DEPRECATED(error.message);

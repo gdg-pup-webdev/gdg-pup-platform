@@ -1,5 +1,4 @@
-import { ServiceError } from "@/classes/ServerError.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
+ import { tryCatch, tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 
 export const normalizeOptionalText = (value?: string): string | undefined => {
   const normalizedValue = value?.trim();
@@ -23,10 +22,10 @@ export const runServiceCall = async <T>(
   operation: () => Promise<T>,
   context: string,
 ): Promise<T> => {
-  const { data, error } = await tryCatch(operation, context);
+  const { data, error } = await tryCatch_deprecated(operation, context);
 
   if (error) {
-    throw new ServiceError(error.message);
+    throw new Error(error.message);
   }
 
   return data;

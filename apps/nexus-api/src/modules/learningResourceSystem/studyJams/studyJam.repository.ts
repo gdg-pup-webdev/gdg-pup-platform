@@ -115,7 +115,7 @@ export class StudyJamRepository {
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new Error(error.message);
 
     return {
       list: data || [],

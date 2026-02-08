@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-import {
-  ServerError_DEPRECATED,
-} from "@/classes/ServerError.js";
-import { RepositoryError_DEPRECATED } from "@/classes/ServerError";
-import { DatabaseError_DONT_USE } from "@/errors/HttpError";
-=======
-import { DatabaseError } from "@/classes/ServerError.js";
->>>>>>> dev
+ import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,
@@ -130,7 +122,7 @@ export class ExternalResourceRepository {
         .select("resource_id")
         .in("resource_tag_id", filters.tagIds);
 
-      if (tagLookupError) throw new DatabaseError(tagLookupError.message);
+      if (tagLookupError) throw new Error(tagLookupError.message);
 
       const resourceIds = Array.from(
         new Set((taggedResources ?? []).map(({ resource_id }) => resource_id)),

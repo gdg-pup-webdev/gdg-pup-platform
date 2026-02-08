@@ -1,10 +1,10 @@
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import {
   externalResourceRepositoryInstance,
   ExternalResourceRepository,
 } from "./externalResource.repository.js";
 import type { ExternalResourceListFilters } from "./externalResource.repository.js";
-import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { tryCatch, tryCatch_deprecated } from "@/utils/tryCatch.util.js"; 
 import { models } from "@packages/nexus-api-contracts";
 
 type updateDTO = models.learningResourceSystem.externalResource.update;
@@ -82,7 +82,7 @@ export class ExternalResourceService {
     pageSize: number,
     filters: ExternalResourceListFilters,
   ) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.resourceRepository.list(pageNumber, pageSize, filters),
       "listing external resources",

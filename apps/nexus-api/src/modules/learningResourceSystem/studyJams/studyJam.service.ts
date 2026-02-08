@@ -27,7 +27,7 @@ export class StudyJamService {
    */
   create = async (dto: insertDTO, uploaderId: string) => {
     void uploaderId;
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.resourceRepository.create(dto),
       "creating study jam",
     );
@@ -79,7 +79,7 @@ export class StudyJamService {
     pageSize: number,
     filters: StudyJamListFilters,
   ) => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.resourceRepository.list(pageNumber, pageSize, filters),
       "listing study jams",
