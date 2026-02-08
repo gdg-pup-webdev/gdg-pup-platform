@@ -17,12 +17,7 @@ export class MemberService {
   ) {}
 
   listMembersOfTeam = async (teamId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.memberRepository.listMembersOfTeam(teamId),
-      "listing members",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.memberRepository.listMembersOfTeam(teamId);
   };
 
   listMembersWithFilter = async (
@@ -30,35 +25,19 @@ export class MemberService {
     pageSize: number,
     filters: { teamId?: string; userId?: string; role?: string },
   ) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () =>
-        await this.memberRepository.listMembersWithFilter(
-          pageNumber,
-          pageSize,
-          filters,
-        ),
-      "listing members",
+    return await this.memberRepository.listMembersWithFilter(
+      pageNumber,
+      pageSize,
+      filters,
     );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
   };
 
   createMember = async (dto: memberInserDTO) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.memberRepository.createMember(dto),
-      "creating member",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.memberRepository.createMember(dto);
   };
 
   deleteMember = async (memberId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.memberRepository.deleteMember(memberId),
-      "deleting member",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-    return data;
+    return await this.memberRepository.deleteMember(memberId);
   };
 }
 
