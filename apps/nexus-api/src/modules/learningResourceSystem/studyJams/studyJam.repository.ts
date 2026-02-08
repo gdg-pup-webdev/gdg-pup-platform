@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/classes/ServerError.js";
+import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,

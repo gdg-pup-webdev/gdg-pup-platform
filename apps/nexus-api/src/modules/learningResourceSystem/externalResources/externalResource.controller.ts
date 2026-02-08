@@ -6,7 +6,7 @@ import {
 import { contract, models } from "@packages/nexus-api-contracts";
 import {
   ControllerError,
-  ServerError,
+  ServerError_DEPRECATED,
   ServiceError,
 } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";

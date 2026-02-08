@@ -9,7 +9,7 @@ import {
   RepositoryResult,
   RepositoryResultList,
 } from "@/types/repository.types.js";
-import { DatabaseError } from "@/classes/ServerError.js";
+import { DatabaseError } from "@/errors/HttpError";
 import { tryCatch } from "@/utils/tryCatch.util";
 import { SupabaseUtils } from "@/utils/supabase.util";
 

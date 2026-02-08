@@ -1,8 +1,8 @@
 import {
-  DatabaseError,
-  RepositoryError,
-  ServerError,
+  ServerError_DEPRECATED,
 } from "@/classes/ServerError.js";
+import { RepositoryError } from "@/classes/ServerError";
+import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResult,

@@ -1,9 +1,9 @@
 import {
-  RepositoryError,
   NotFoundError,
-  DatabaseError,
-  DuplicateResourceError,
-} from "@/classes/ServerError";
+  DuplicateResourceError
+} from "@/errors/HttpError";
+import { RepositoryError } from "@/classes/ServerError";
+import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase";
 import {
   RepositoryResultList,

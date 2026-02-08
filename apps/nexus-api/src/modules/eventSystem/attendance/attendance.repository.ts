@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/classes/ServerError.js";
+import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";

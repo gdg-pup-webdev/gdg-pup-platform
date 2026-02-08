@@ -1,4 +1,4 @@
-import { ServerError } from "@/classes/ServerError.js";
+import { ServerError_DEPRECATED } from "@/classes/ServerError.js";
 import { RequestHandler } from "express";
 
 /**
@@ -19,7 +19,7 @@ export class AuthMiddleware {
     const user = req.user;
 
     if (!user) {
-      throw ServerError.unauthorized();
+      throw ServerError_DEPRECATED.unauthorized();
     }
 
     next();
@@ -29,7 +29,7 @@ export class AuthMiddleware {
     const role = req.role;
 
     if (!role || role !== "admin") {
-      throw ServerError.forbidden(
+      throw ServerError_DEPRECATED.forbidden(
         "You must be an admin to perform this action.",
       );
     }
@@ -43,7 +43,7 @@ export class AuthMiddleware {
       const userRole = req.role;
 
       if (!userRole || !allowedRoles.includes(userRole)) {
-        throw ServerError.forbidden(
+        throw ServerError_DEPRECATED.forbidden(
           "You do not have permission to perform this action.",
         );
       }

@@ -5,10 +5,8 @@ import {
 } from "./reward.repository.js";
 import { generateCouponCode } from "./reward.utils.js";
 import {
-  InvalidOperationError,
-  NotFoundError,
-  RepositoryError,
-} from "@/classes/ServerError.js";
+  NotFoundError} from "@/errors/HttpError.js";
+import { InvalidOperationError, RepositoryError } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 import { WalletService, walletServiceInstance } from "@/modules/economySystem/wallets/wallet.service.js";
 

@@ -1,10 +1,11 @@
 import {
   ControllerError,
-  DatabaseError,
-  NotFoundError,
-  RepositoryError,
   ServiceError,
 } from "@/classes/ServerError";
+import {
+  NotFoundError} from "@/errors/HttpError.js";
+import { RepositoryError } from "@/classes/ServerError.js";
+import { DatabaseError } from "@/errors/HttpError.js";
 import {
   RoleService,
   roleServiceInstance,

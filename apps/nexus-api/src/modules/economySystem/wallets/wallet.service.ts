@@ -7,9 +7,8 @@ import {
   walletRepositoryInstance,
 } from "./wallet.repository.js";
 import {
-  NotFoundError,
-  RepositoryError,
-} from "../../../classes/ServerError.js";
+  NotFoundError} from "@/errors/HttpError.js";
+import { RepositoryError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
 /**

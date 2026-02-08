@@ -1,4 +1,4 @@
-import { ServerError } from "@/classes/ServerError.js";
+import { ServerError_DEPRECATED } from "@/classes/ServerError.js";
 import { ContractError } from "@packages/typed-rest";
 import { Request, Response, NextFunction } from "express";
 import z, { ZodError } from "zod";
@@ -75,7 +75,7 @@ export const globalErrorHandler = (
    *
    * HANDLING KNOWN ERRORS FROM LAYERS
    */
-  if (err instanceof ServerError) {
+  if (err instanceof ServerError_DEPRECATED) {
     return res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
@@ -97,7 +97,7 @@ export const globalErrorHandler = (
    * HANDLING KNOWN ERROR ACROSS THE SERVER
    *
    */
-  if (err instanceof ServerError) {
+  if (err instanceof ServerError_DEPRECATED) {
     return res.status(err.statusCode).json({
       status: "fail",
       message: "Internal Server Error",

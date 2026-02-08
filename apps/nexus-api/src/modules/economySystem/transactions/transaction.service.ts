@@ -3,9 +3,8 @@ import {
   transactionRepositoryInstance,
 } from "./transaction.repository.js";
 import {
-  NotFoundError,
-  RepositoryError,
-} from "../../../classes/ServerError.js";
+  NotFoundError} from "@/errors/HttpError.js";
+import { RepositoryError } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { models } from "@packages/nexus-api-contracts";
 

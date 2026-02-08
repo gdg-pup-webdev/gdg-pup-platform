@@ -1,4 +1,4 @@
-import { DatabaseError } from "@/classes/ServerError";
+import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase";
 
 export namespace SupabaseUtils {

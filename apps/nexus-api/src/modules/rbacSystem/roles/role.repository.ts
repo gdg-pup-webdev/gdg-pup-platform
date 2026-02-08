@@ -1,10 +1,8 @@
 import {
-  RepositoryError,
   NotFoundError,
-  DatabaseError,
-  DuplicateResourceError,
-  InvalidOperationError,
-} from "@/classes/ServerError.js";
+  DuplicateResourceError} from "@/errors/HttpError";
+import { RepositoryError, InvalidOperationError } from "@/classes/ServerError";
+import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResultList,

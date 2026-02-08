@@ -4,7 +4,7 @@
  * This file handles direct interactions with the Supabase database for the User System.
  */
 
-import { DatabaseError } from "@/classes/ServerError.js";
+import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import { RepositoryResult } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js"; 

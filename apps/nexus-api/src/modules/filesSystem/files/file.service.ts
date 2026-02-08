@@ -1,7 +1,6 @@
 import {
-  NotFoundError,
-  RepositoryError,
-} from "@/classes/ServerError.js";
+  NotFoundError} from "@/errors/HttpError.js";
+import { RepositoryError } from "@/classes/ServerError.js";
 import { FileRepository, fileRepositoryInstance } from "./file.repository.js";
 
 export type FileRecord = {

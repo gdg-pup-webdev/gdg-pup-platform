@@ -12,9 +12,11 @@ import {
   walletServiceInstance,
 } from "@/modules/economySystem/wallets/wallet.service.js";
 import {
-  InvalidOperationError,
-  RepositoryError,
   ServiceError,
+} from "@/classes/ServerError.js";
+import {
+  InvalidOperationError,
+  RepositoryError
 } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
