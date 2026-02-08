@@ -1,5 +1,5 @@
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 import {
   studyJamRepositoryInstance,
@@ -20,7 +20,7 @@ export class StudyJamService {
       "creating external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -31,7 +31,7 @@ export class StudyJamService {
       "deleting external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -42,7 +42,7 @@ export class StudyJamService {
       "updating external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -53,7 +53,7 @@ export class StudyJamService {
       "listing external resources",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -64,7 +64,7 @@ export class StudyJamService {
       "getting external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };

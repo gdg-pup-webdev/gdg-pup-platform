@@ -1,6 +1,7 @@
 import { NotFoundError } from "@/errors/HttpError";
 import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -34,13 +35,9 @@ export class TransactionRepository {
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (walletError) {
-      throw new DatabaseError(walletError.message);
-    }
+    if (walletError) handlePostgresError(walletError);
 
-    if (!walletData?.id) {
-      throw new NotFoundError("Wallet not found.");
-    }
+    if (!walletData?.id) throw new NotFoundError("Wallet not found.");
 
     return await this.listTransactionsByWalletId(
       walletData.id,
@@ -71,18 +68,14 @@ export class TransactionRepository {
       .range(from, to)
       .eq("wallet_id", walletId);
 
-    if (listError) {
-      throw new DatabaseError(listError.message);
-    }
+    if (listError) handlePostgresError(listError);
 
-    const { count, error } = await supabase
+    const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true })
       .eq("wallet_id", walletId);
 
-    if (error) {
-      throw new DatabaseError(error.message);
-    }
+    if (countError) handlePostgresError(countError);
 
     return {
       list: listData || [],
@@ -177,7 +170,7 @@ export class TransactionRepository {
       .eq("id", id)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -198,7 +191,7 @@ export class TransactionRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };

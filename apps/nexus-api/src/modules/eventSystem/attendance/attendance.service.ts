@@ -3,7 +3,7 @@ import {
   AttendanceRepository,
   attendanceRepositoryInstance,
 } from "./attendance.repository.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 
 /**
  * Service for managing attendance business logic.
@@ -18,7 +18,7 @@ export class AttendanceService {
    * Creates an attendance record for a user at an event.
    *
    * @returns A promise resolving to the created attendance record.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   create = async (eventId: string, userId: string, checkinMethod: string) => {
     const { data, error } = await tryCatch(
@@ -30,8 +30,8 @@ export class AttendanceService {
         }),
       "creating attendance record",
     );
-    if (error) throw new RepositoryError(error.message);
-    if (!data) throw new RepositoryError("Failed to create attendance record.");
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
+    if (!data) throw new RepositoryError_DEPRECATED("Failed to create attendance record.");
 
     return data;
   };
@@ -40,7 +40,7 @@ export class AttendanceService {
    * Fetches an attendance record for a user at an event.
    *
    * @returns A promise resolving to the attendance record or null.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   getAttendanceByEventAndUser = async (eventId: string, userId: string) => {
     const { data, error } = await tryCatch(
@@ -48,7 +48,7 @@ export class AttendanceService {
         await this.attendanceRepository.getAttendanceByEventAndUser(eventId, userId),
       "fetching attendance by event and user",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -57,7 +57,7 @@ export class AttendanceService {
    * Lists attendees for an event based on filters.
    *
    * @returns A promise resolving to the list of attendees and count.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   listEventAttendees = async (
     pageNumber: number,
@@ -76,8 +76,8 @@ export class AttendanceService {
         await this.attendanceRepository.listEventAttendees(pageNumber, pageSize, filters),
       "listing event attendees",
     );
-    if (error) throw new RepositoryError(error.message);
-    if (!data) throw new RepositoryError("Failed to list event attendees.");
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
+    if (!data) throw new RepositoryError_DEPRECATED("Failed to list event attendees.");
 
     return data;
   };

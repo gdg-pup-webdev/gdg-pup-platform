@@ -6,7 +6,7 @@
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import {
@@ -48,7 +48,7 @@ export class AchievementController {
           "getting user achievements",
         );
 
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
 
         list = data.list;
         count = data.count;
@@ -58,7 +58,7 @@ export class AchievementController {
           "getting all achievements",
         );
 
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
 
         list = data.list;
         count = data.count;
@@ -91,7 +91,7 @@ export class AchievementController {
         async () => await this.achievementService.getOneAchievement(achievementId),
         "fetching achievement",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -114,7 +114,7 @@ export class AchievementController {
         async () => await this.achievementService.createAchievement(dto),
         "creating achievement",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(201, {
         status: "success",
@@ -139,7 +139,7 @@ export class AchievementController {
         async () => await this.achievementService.updateAchievement(achievementId, dto),
         "updating achievement",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -162,7 +162,7 @@ export class AchievementController {
         async () => await this.achievementService.deleteAchievement(achievementId),
         "deleting achievement",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

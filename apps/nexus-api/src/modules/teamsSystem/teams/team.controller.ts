@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { TeamService, teamServiceInstance } from "./team.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
@@ -17,7 +17,7 @@ export class TeamController {
         async () => await this.teamService.listTeams(),
         "On controller, listing teams",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -44,7 +44,7 @@ export class TeamController {
         async () => await this.teamService.createTeam(dto, user.id),
         "creating team",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -62,7 +62,7 @@ export class TeamController {
         async () => await this.teamService.getOneTeam(teamId),
         "fetching team",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -81,7 +81,7 @@ export class TeamController {
         async () => await this.teamService.updateTeam(teamId, dto),
         "updating team",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -99,7 +99,7 @@ export class TeamController {
         async () => await this.teamService.deleteTeam(teamId),
         "deleting team",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

@@ -1,6 +1,7 @@
 import { ServerError } from "./ServerError";
 
 export class DatabaseError extends ServerError {
+  override name = "DatabaseError";
   constructor(title: string, detail: string, originalError?: unknown) {
     super(title, detail, originalError);
   }

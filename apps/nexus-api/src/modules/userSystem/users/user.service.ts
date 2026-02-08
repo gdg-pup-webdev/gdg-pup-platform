@@ -7,7 +7,7 @@
 
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { UserRepository, userRepositoryInstance } from "./user.repository.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 
 /**
  * UserService
@@ -32,7 +32,7 @@ export class UserService {
       "getting user",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -47,7 +47,7 @@ export class UserService {
       "listing users",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -63,7 +63,7 @@ export class UserService {
       "getting user aggregate",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };

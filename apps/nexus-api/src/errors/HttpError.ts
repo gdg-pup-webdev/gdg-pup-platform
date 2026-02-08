@@ -2,6 +2,7 @@
  import { ServerError } from "./ServerError";
 
 export class HttpError extends ServerError {
+  override name = "HttpError";
   constructor(
     public statusCode: number,
     title: string,

@@ -8,7 +8,7 @@ import {
   settingsRepositoryInstance,
 } from "./settings.repository.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type settingsInsertDTO = models.userResourceSystem.settings.insertDTO;
@@ -24,7 +24,7 @@ export class SettingsService {
       async () => await this.settingsRepository.listSettingsOfUser(userId),
       "listing settings",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -33,7 +33,7 @@ export class SettingsService {
       async () => await this.settingsRepository.listSettings(),
       "listing settings",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -42,7 +42,7 @@ export class SettingsService {
       async () => await this.settingsRepository.getOneSettings(id),
       "getting settings",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -53,7 +53,7 @@ export class SettingsService {
       "creating settings",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -63,7 +63,7 @@ export class SettingsService {
       "deleting settings",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -72,7 +72,7 @@ export class SettingsService {
       async () => await this.settingsRepository.updateSettings(id, dto),
       "updating settings",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 }

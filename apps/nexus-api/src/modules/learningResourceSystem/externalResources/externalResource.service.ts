@@ -3,7 +3,7 @@ import {
   ExternalResourceRepository,
 } from "./externalResource.repository.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type updateDTO = models.learningResourceSystem.externalResource.update;
@@ -24,7 +24,7 @@ export class ExternalResourceService {
       "creating external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -35,7 +35,7 @@ export class ExternalResourceService {
       "deleting external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -46,7 +46,7 @@ export class ExternalResourceService {
       "updating external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -57,7 +57,7 @@ export class ExternalResourceService {
       "listing external resources",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -68,7 +68,7 @@ export class ExternalResourceService {
       "getting external resource",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };

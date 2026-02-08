@@ -1,10 +1,10 @@
 import {
-  ControllerError,
-  ServiceError,
+  ControllerError_DEPRECATED,
+  ServiceError_DEPRECATED,
 } from "@/classes/ServerError";
 import {
   NotFoundError} from "@/errors/HttpError.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { DatabaseError } from "@/errors/HttpError.js";
 import {
   RoleService,
@@ -47,7 +47,7 @@ export class RoleController {
    * @query pageNumber - Current page (1-indexed)
    * @query pageSize - Number of items per page
    * @returns JSON response containing the list of roles and pagination metadata
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   listRoles: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.GET,
@@ -62,7 +62,7 @@ export class RoleController {
         "calling service to list roles",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -88,7 +88,7 @@ export class RoleController {
    * @query pageSize - Number of items per page
    * @query withoutRoles - Optional: If true, returns only users without any roles
    * @returns JSON response containing grouped user-role data
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   listUsersWithRoles: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.users.GET,
@@ -104,7 +104,7 @@ export class RoleController {
         "calling service to list users with roles",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -128,7 +128,7 @@ export class RoleController {
    * @param roleId - The ID of the role to retrieve
    * @returns JSON response containing the role data
    * @throws {NotFoundError} If the role does not exist
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   getRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.GET,
@@ -140,7 +140,7 @@ export class RoleController {
         "calling service to get role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       if (!data) {
         return output(404, {
@@ -164,8 +164,8 @@ export class RoleController {
    * @route POST /api/rbac-system/roles
    * @body data - Role data (role_name, description)
    * @returns JSON response containing the created role
-   * @throws {RepositoryError} If role name already exists
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {RepositoryError_DEPRECATED} If role name already exists
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   createRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.POST,
@@ -177,7 +177,7 @@ export class RoleController {
         "calling service to create role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -196,7 +196,7 @@ export class RoleController {
    * @body data - Partial role data to update
    * @returns JSON response containing the updated role
    * @throws {NotFoundError} If the role does not exist
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   updateRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.PATCH,
@@ -209,7 +209,7 @@ export class RoleController {
         "calling service to update role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -226,9 +226,9 @@ export class RoleController {
    * @route DELETE /api/rbac-system/roles/:roleId
    * @param roleId - The ID of the role to delete
    * @returns JSON response confirming deletion
-   * @throws {RepositoryError} If role is still assigned to users
+   * @throws {RepositoryError_DEPRECATED} If role is still assigned to users
    * @throws {NotFoundError} If the role does not exist
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   deleteRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.DELETE,
@@ -240,7 +240,7 @@ export class RoleController {
         "calling service to delete role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -258,8 +258,8 @@ export class RoleController {
    * @param userId - The ID of the user to receive the role
    * @returns JSON response containing the assignment data
    * @throws {NotFoundError} If role or user does not exist
-   * @throws {RepositoryError} If user already has the role
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {RepositoryError_DEPRECATED} If user already has the role
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   assignRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.users.POST,
@@ -272,7 +272,7 @@ export class RoleController {
         "calling service to assign role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -290,7 +290,7 @@ export class RoleController {
    * @param roleId - The ID of the role to remove
    * @param userId - The ID of the user to remove the role from
    * @returns JSON response confirming removal
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   removeRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.roleId.users.DELETE,
@@ -303,7 +303,7 @@ export class RoleController {
         "calling service to remove role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

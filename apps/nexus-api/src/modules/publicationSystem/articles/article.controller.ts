@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { ArticleService, articleServiceInstance } from "./article.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServerError_DEPRECATED, ServiceError } from "../../../classes/ServerError.js";
+import { ServerError_DEPRECATED, ServiceError_DEPRECATED } from "../../../classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
@@ -19,7 +19,7 @@ export class ArticleController {
         async () => await this.articleService.list(),
         "listing articles",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -46,7 +46,7 @@ export class ArticleController {
         async () => await this.articleService.create(dto, user.id),
         "creating article",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -64,7 +64,7 @@ export class ArticleController {
         async () => await this.articleService.getOne(articleId),
         "fetching article",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -83,7 +83,7 @@ export class ArticleController {
         async () => await this.articleService.update(articleId, dto),
         "updating article",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -101,7 +101,7 @@ export class ArticleController {
         async () => await this.articleService.delete(articleId),
         "deleting article",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -118,7 +118,7 @@ export class ArticleController {
         async () => await this.articleService.listComments(articleId),
         "listing comments",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -152,7 +152,7 @@ export class ArticleController {
         async () => await this.articleService.createComment(dto),
         "creating comment",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(201, {
         status: "success",
@@ -171,7 +171,7 @@ export class ArticleController {
         async () => await this.articleService.deleteComment(commentId),
         "deleting comment",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

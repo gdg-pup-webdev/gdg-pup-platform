@@ -1,4 +1,4 @@
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import {
   ProfileService,
   profileServiceInstance,
@@ -34,7 +34,7 @@ export class ProfileController {
           "getting user profile",
         );
 
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
 
         list = data ? data.list : [];
         count = data ? data.count : 0;
@@ -51,7 +51,7 @@ export class ProfileController {
           "getting profiles",
         );
 
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
 
         list = data.list;
         count = data.count;
@@ -80,7 +80,7 @@ export class ProfileController {
         "creating profile",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(201, {
         status: "success",

@@ -12,11 +12,11 @@ import {
   walletServiceInstance,
 } from "@/modules/economySystem/wallets/wallet.service.js";
 import {
-  ServiceError,
+  ServiceError_DEPRECATED,
 } from "@/classes/ServerError.js";
 import {
-  InvalidOperationError,
-  RepositoryError
+  InvalidOperationError_DEPRECATED,
+  RepositoryError_DEPRECATED
 } from "@/classes/ServerError.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
@@ -35,7 +35,7 @@ export class EventService {
    * Lists events based on provided filters.
    *
    * @returns A promise resolving to the list of events and count.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   list = async (
     pageNumber: number,
@@ -55,7 +55,7 @@ export class EventService {
         await this.eventRepository.listEvents(pageNumber, pageSize, filters),
       "listing events",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -64,7 +64,7 @@ export class EventService {
    * Creates a new event.
    *
    * @returns A promise resolving to the created event.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   create = async (
     dto: models.eventSystem.event.insertDTO,
@@ -78,7 +78,7 @@ export class EventService {
         }),
       "creating event",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -87,14 +87,14 @@ export class EventService {
    * Retrieves an event by ID.
    *
    * @returns A promise resolving to the event data.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   getById = async (id: string) => {
     const { data, error } = await tryCatch(
       async () => await this.eventRepository.getEventById(id),
       "getting service by id",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -102,14 +102,14 @@ export class EventService {
    * Deletes an event by ID.
    *
    * @returns A promise resolving to the deleted event data.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   delete = async (id: string) => {
     const { data, error } = await tryCatch(
       async () => await this.eventRepository.deleteEvent(id),
       "deleting service",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -117,14 +117,14 @@ export class EventService {
    * Updates an event by ID.
    *
    * @returns A promise resolving to the updated event data.
-   * @throws {RepositoryError} If the repository operation fails.
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
   update = async (id: string, dto: models.eventSystem.event.updateDTO) => {
     const { data, error } = await tryCatch(
       async () => await this.eventRepository.updateEvent(id, dto),
       "updating event",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -133,7 +133,7 @@ export class EventService {
    * Handles attendance creation, event attendee count update, and point distribution.
    *
    * @returns A promise resolving to the attendance record, updated wallet, and updated event.
-   * @throws {ServiceError} If any step of the process fails.
+   * @throws {ServiceError_DEPRECATED} If any step of the process fails.
    */
   checkInToEvent = async (
     eventId: string,
@@ -144,7 +144,7 @@ export class EventService {
       async () => await this.getById(eventId),
       "getting event details",
     );
-    if (error) throw new ServiceError(error.message);
+    if (error) throw new ServiceError_DEPRECATED(error.message);
 
     // ensure the user hasn't already checked in
     const { data: existingAttendance, error: attendanceCheckError } =
@@ -157,9 +157,9 @@ export class EventService {
         "checking existing attendance",
       );
     if (attendanceCheckError)
-      throw new ServiceError(attendanceCheckError.message);
+      throw new ServiceError_DEPRECATED(attendanceCheckError.message);
     if (existingAttendance)
-      throw new InvalidOperationError("User already checked in to this event");
+      throw new InvalidOperationError_DEPRECATED("User already checked in to this event");
 
     // create new attendance record
     const { data, error: attendanceError } = await tryCatch(
@@ -168,7 +168,7 @@ export class EventService {
       "creating attendance entry",
     );
 
-    if (attendanceError) throw new ServiceError(attendanceError.message);
+    if (attendanceError) throw new ServiceError_DEPRECATED(attendanceError.message);
 
     const { data: updatedEventData, error: updateError } = await tryCatch(
       async () =>
@@ -178,7 +178,7 @@ export class EventService {
       "incrementing attendees of event",
     );
 
-    if (updateError) throw new ServiceError(updateError.message);
+    if (updateError) throw new ServiceError_DEPRECATED(updateError.message);
 
     const { data: walletData, error: walletError } = await tryCatch(
       async () =>
@@ -190,7 +190,7 @@ export class EventService {
         ),
       "incrementing points of user",
     );
-    if (walletError) throw new ServiceError(walletError.message);
+    if (walletError) throw new ServiceError_DEPRECATED(walletError.message);
 
     return { attendance: data, wallet: walletData, event: updatedEventData };
   };

@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import {
@@ -30,7 +30,7 @@ export class ProjectController {
           "getting user projects",
         );
 
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
 
         list = data.list;
         count = data.count;
@@ -40,7 +40,7 @@ export class ProjectController {
           "getting all projects",
         );
 
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
 
         list = data.list;
         count = data.count;
@@ -68,7 +68,7 @@ export class ProjectController {
         async () => await this.projectService.getOneProject(projectId),
         "fetching project",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -86,7 +86,7 @@ export class ProjectController {
         async () => await this.projectService.createProject(dto),
         "creating project",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(201, {
         status: "success",
@@ -106,7 +106,7 @@ export class ProjectController {
         async () => await this.projectService.updateProject(projectId, dto),
         "updating project",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -124,7 +124,7 @@ export class ProjectController {
         async () => await this.projectService.deleteProject(projectId),
         "deleting project",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

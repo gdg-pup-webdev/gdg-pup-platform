@@ -3,7 +3,7 @@ import { RewardService, rewardServiceInstance } from "./reward.service.js";
 import { createExpressController } from "@packages/typed-rest";
 import { contract, models } from "@packages/nexus-api-contracts";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 
 export class RewardController {
   constructor(private rewardService: RewardService = rewardServiceInstance) {}
@@ -17,7 +17,7 @@ export class RewardController {
           await this.rewardService.createReward(input.body.data, req.user!.id),
         "creating reward",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -41,7 +41,7 @@ export class RewardController {
         "listing rewards",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -65,7 +65,7 @@ export class RewardController {
         async () => await this.rewardService.getReward(rewardId),
         "getting reward",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -82,7 +82,7 @@ export class RewardController {
         async () => await this.rewardService.claimReward(input.params.rewardId),
         "claiming reward",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

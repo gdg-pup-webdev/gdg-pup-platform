@@ -91,6 +91,7 @@ export const globalErrorHandler = (
           moreDetails: {
             stack: err.stack,
             chain: err.getErrorChain(),
+            name: err.name,
           },
         },
       ],
@@ -110,6 +111,7 @@ export const globalErrorHandler = (
               moreDetails: {
                 stack: err.stack,
                 chain: err.getErrorChain(),
+                name: err.name,
               },
             },
           ],
@@ -123,7 +125,7 @@ export const globalErrorHandler = (
       errors: [
         {
           status: "error",
-          title: "Unknwon Error",
+          title: "Unhandled Error",
           errors: [
             {
               title: err.name,
@@ -137,12 +139,12 @@ export const globalErrorHandler = (
       ],
     });
   }
-
+  
   return res.status(500).json({
     errors: [
       {
         status: "error",
-        title: "Unhandled Unknown Server Error",
+        title: "Unknown Error",
         errors: [
           {
             title: "Unknown",

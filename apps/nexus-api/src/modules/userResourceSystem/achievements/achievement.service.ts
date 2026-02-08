@@ -9,7 +9,7 @@ import {
   achievementRepositoryInstance,
 } from "./achievement.repository.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type achievementInsertDTO = models.userResourceSystem.achievement.insertDTO;
@@ -29,7 +29,7 @@ export class AchievementService {
       async () => await this.achievementRepository.listAchievementsOfUser(userId),
       "listing achievements",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -42,7 +42,7 @@ export class AchievementService {
       async () => await this.achievementRepository.listAchievements(),
       "listing achievements",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -55,7 +55,7 @@ export class AchievementService {
       async () => await this.achievementRepository.getOneAchievement(id),
       "getting achievement",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -71,7 +71,7 @@ export class AchievementService {
       "creating achievement",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -85,7 +85,7 @@ export class AchievementService {
       "deleting achievement",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -98,7 +98,7 @@ export class AchievementService {
       async () => await this.achievementRepository.updateAchievement(id, dto),
       "updating achievement",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 }

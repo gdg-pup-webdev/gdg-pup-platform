@@ -3,7 +3,7 @@ import {
   projectRepositoryInstance,
 } from "./project.repository.js";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type projectInsertDTO = models.userResourceSystem.project.insertDTO;
@@ -19,7 +19,7 @@ export class ProjectService {
       async () => await this.projectRepository.listProjectsOfUser(userId),
       "listing projects",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -28,7 +28,7 @@ export class ProjectService {
       async () => await this.projectRepository.listProjects(),
       "listing projects",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -37,7 +37,7 @@ export class ProjectService {
       async () => await this.projectRepository.getOneProject(id),
       "getting project",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -48,7 +48,7 @@ export class ProjectService {
       "creating project",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -58,7 +58,7 @@ export class ProjectService {
       "deleting project",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -67,7 +67,7 @@ export class ProjectService {
       async () => await this.projectRepository.updateProject(id, dto),
       "updating project",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 }

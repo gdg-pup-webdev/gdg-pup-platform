@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { EventService, eventServiceInstance } from "./event.service.js";
 import { AttendanceService, attendanceServiceInstance } from "../attendance/attendance.service.js";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
@@ -21,7 +21,7 @@ export class EventController {
    *
    * @route GET /api/event-system/events
    * @returns JSON response containing the list of events and pagination metadata.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   listEvents: RequestHandler = createExpressController(
     contract.api.event_system.events.GET,
@@ -42,7 +42,7 @@ export class EventController {
         async () => await this.eventService.list(pageNumber, pageSize, filters),
         "listing events",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -63,14 +63,14 @@ export class EventController {
    *
    * @route POST /api/event-system/events
    * @returns JSON response containing the created event.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   createEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.POST,
     async ({ input, output, ctx }) => {
       const { req } = ctx;
       const userId = req.user?.id;
-      if (!userId) throw new ServiceError("User ID is required");
+      if (!userId) throw new ServiceError_DEPRECATED("User ID is required");
 
       const dto = input.body.data;
 
@@ -78,7 +78,7 @@ export class EventController {
         async () => await this.eventService.create(dto, userId),
         "creating event",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -93,7 +93,7 @@ export class EventController {
    *
    * @route PATCH /api/event-system/events/:eventId
    * @returns JSON response containing the updated event.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   updateEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.PATCH,
@@ -105,7 +105,7 @@ export class EventController {
         async () => await this.eventService.update(eventId, dto),
         "updating event",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -120,7 +120,7 @@ export class EventController {
    *
    * @route DELETE /api/event-system/events/:eventId
    * @returns JSON response confirming deletion.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   delete: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.DELETE,
@@ -131,7 +131,7 @@ export class EventController {
         async () => await this.eventService.delete(eventId),
         "deleting event",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -146,7 +146,7 @@ export class EventController {
    *
    * @route GET /api/event-system/events/:eventId
    * @returns JSON response containing the event data.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   getOneEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.GET,
@@ -157,7 +157,7 @@ export class EventController {
         async () => await this.eventService.getById(eventId),
         "getting event by id",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -172,7 +172,7 @@ export class EventController {
    *
    * @route POST /api/event-system/checkin
    * @returns JSON response containing attendance record.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   checkinToAnEvent: RequestHandler = createExpressController(
     contract.api.event_system.checkin.POST,
@@ -190,7 +190,7 @@ export class EventController {
           ),
         "checking in to event",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -205,7 +205,7 @@ export class EventController {
    *
    * @route GET /api/event-system/events/:eventId/attendees
    * @returns JSON response containing list of attendees.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   listEventAttendees: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.attendees.GET,
@@ -226,7 +226,7 @@ export class EventController {
           await this.attendanceService.listEventAttendees(pageNumber, pageSize, filters),
         "listing event attendees",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

@@ -1,6 +1,6 @@
 import {
   NotFoundError} from "@/errors/HttpError.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { FileRepository, fileRepositoryInstance } from "./file.repository.js";
 
 export type FileRecord = {
@@ -24,7 +24,7 @@ export class FileService {
         user_id: userId ?? null,
       });
     } catch (error) {
-      throw new RepositoryError((error as Error).message);
+      throw new RepositoryError_DEPRECATED((error as Error).message);
     }
   }
 
@@ -32,7 +32,7 @@ export class FileService {
     try {
       return await this.repository.list({ pageNumber, pageSize });
     } catch (error) {
-      throw new RepositoryError((error as Error).message);
+      throw new RepositoryError_DEPRECATED((error as Error).message);
     }
   }
 
@@ -47,7 +47,7 @@ export class FileService {
       if (error instanceof NotFoundError) {
         throw error;
       }
-      throw new RepositoryError((error as Error).message);
+      throw new RepositoryError_DEPRECATED((error as Error).message);
     }
   }
 
@@ -62,7 +62,7 @@ export class FileService {
       if (error instanceof NotFoundError) {
         throw error;
       }
-      throw new RepositoryError((error as Error).message);
+      throw new RepositoryError_DEPRECATED((error as Error).message);
     }
   }
 
@@ -77,7 +77,7 @@ export class FileService {
       if (error instanceof NotFoundError) {
         throw error;
       }
-      throw new RepositoryError((error as Error).message);
+      throw new RepositoryError_DEPRECATED((error as Error).message);
     }
   }
 }

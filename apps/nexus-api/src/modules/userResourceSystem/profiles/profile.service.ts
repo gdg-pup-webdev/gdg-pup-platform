@@ -3,7 +3,7 @@ import {
   ProfileRepository,
   profileRepositoryInstance,
 } from "./profile.repository.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type profileInsertDTO = models.userSystem.profile.insertDTO;
@@ -19,7 +19,7 @@ export class ProfileService {
       async () => await this.profileRespository.getProfileByUserId(userId),
       "getting user profile",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -33,7 +33,7 @@ export class ProfileService {
         ),
       "listing profiles",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -43,7 +43,7 @@ export class ProfileService {
       async () => await this.profileRespository.createProfile(dto),
       "creating profile",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -53,7 +53,7 @@ export class ProfileService {
       async () => await this.profileRespository.updateProfile(id, dto),
       "updating profile",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };

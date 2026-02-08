@@ -9,6 +9,9 @@ type ServerErrorProps = {
   context?: string[];
 };
 
+/**
+ * @deprecated Use ServerError and its subclasses instead
+ */
 export class ServerError_DEPRECATED extends Error {
   public statusCode: number;
   public status: "fail" | "error";
@@ -79,33 +82,47 @@ export class ServerError_DEPRECATED extends Error {
   }
 }
 
-export class ServiceError extends ServerError_DEPRECATED {
+/**
+ * @deprecated Use ServerError and its subclasses instead
+ */
+export class ServiceError_DEPRECATED extends ServerError_DEPRECATED {
   constructor(detail: string = "Service Error") {
     super({ statusCode: 500, title: "Service Error", detail: detail });
   }
 }
 
-export class ControllerError extends ServerError_DEPRECATED {
+/**
+ * @deprecated Use ServerError and its subclasses instead
+ */
+export class ControllerError_DEPRECATED extends ServerError_DEPRECATED {
   constructor(detail: string = "Controller Error") {
     super({ statusCode: 500, title: "Controller Error", detail: detail });
   }
 }
-export class InvalidOperationError extends ServerError_DEPRECATED {
+
+/**
+ * @deprecated Use ServerError and its subclasses instead
+ */
+export class InvalidOperationError_DEPRECATED extends ServerError_DEPRECATED {
   constructor(detail: string = "Invalid Operation") {
     super({ statusCode: 400, title: "Invalid Operation", detail: detail });
   }
 }
 
-
-export class RepositoryError extends ServerError_DEPRECATED {
+/**
+ * @deprecated Use ServerError and its subclasses instead
+ */
+export class RepositoryError_DEPRECATED extends ServerError_DEPRECATED {
   constructor(detail: string = "Repository Error") {
     super({ statusCode: 500, title: "Database Error", detail: detail });
   }
 }
 
-export class CantCreateError extends ServerError_DEPRECATED {
+/**
+ * @deprecated Use ServerError and its subclasses instead
+ */
+export class CantCreateError_DEPRECATED extends ServerError_DEPRECATED {
   constructor(detail: string = "Cant create resource") {
     super({ statusCode: 500, title: "Cant create resource", detail: detail });
   }
 }
-

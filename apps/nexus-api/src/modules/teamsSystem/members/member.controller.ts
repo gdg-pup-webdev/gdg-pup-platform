@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import { MemberService, memberServiceInstance } from "./member.service.js";
@@ -29,7 +29,7 @@ export class MemberController {
           }),
         "listing members",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -54,7 +54,7 @@ export class MemberController {
         async () => await this.memberService.createMember(input.body.data),
         "creating member",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -72,7 +72,7 @@ export class MemberController {
         async () => await this.memberService.deleteMember(memberId),
         "deleting member",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

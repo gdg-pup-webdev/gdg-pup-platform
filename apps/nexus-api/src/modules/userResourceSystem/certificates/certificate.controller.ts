@@ -6,7 +6,7 @@
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import {
@@ -37,7 +37,7 @@ export class CertificateController {
           async () => await this.certificateService.listCertificatesOfUser(userId),
           "getting user certificates",
         );
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
         list = data.list;
         count = data.count;
       } else {
@@ -45,7 +45,7 @@ export class CertificateController {
           async () => await this.certificateService.listCertificates(),
           "getting all certificates",
         );
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
         list = data.list;
         count = data.count;
       }
@@ -76,7 +76,7 @@ export class CertificateController {
         async () => await this.certificateService.getOneCertificate(certificateId),
         "fetching certificate",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -99,7 +99,7 @@ export class CertificateController {
         async () => await this.certificateService.createCertificate(dto),
         "creating certificate",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(201, {
         status: "success",
@@ -123,7 +123,7 @@ export class CertificateController {
         async () => await this.certificateService.updateCertificate(certificateId, dto),
         "updating certificate",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -145,7 +145,7 @@ export class CertificateController {
         async () => await this.certificateService.deleteCertificate(certificateId),
         "deleting certificate",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

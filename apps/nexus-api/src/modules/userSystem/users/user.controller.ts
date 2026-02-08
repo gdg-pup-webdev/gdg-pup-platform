@@ -7,7 +7,7 @@
 import { RequestHandler } from "express";
 import { UserService, userServiceInstance } from "./user.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 
@@ -32,7 +32,7 @@ export class UserSystemController {
       "listing users",
     );
 
-    if (error) throw new ServiceError(error.message);
+    if (error) throw new ServiceError_DEPRECATED(error.message);
 
     return res.status(200).json({
       status: "success",
@@ -55,7 +55,7 @@ export class UserSystemController {
         "getting user",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -81,7 +81,7 @@ export class UserSystemController {
         "getting user aggregate",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       /**
        * Map database relation names to the schema names defined in the API contract.

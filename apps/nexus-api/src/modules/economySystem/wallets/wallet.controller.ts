@@ -1,10 +1,7 @@
-import { ServiceError } from "@/classes/ServerError";
 import {
   WalletService,
-  WalletListFilters,
   walletServiceInstance,
 } from "@/modules/economySystem/wallets/wallet.service";
-import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
@@ -35,7 +32,7 @@ export class WalletController {
    *
    * @route GET /api/economy-system/wallets
    * @returns JSON response containing the list of wallets and pagination metadata.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   listWallets: RequestHandler = createExpressController(
     contract.api.economy_system.wallets.GET,
@@ -46,18 +43,13 @@ export class WalletController {
       // getting filters
       const userId = input.query.userId || null;
 
-      const { data, error } = await tryCatch(
-        async () =>
-          await this.walletService.listWalletsWithFilters(
-            pageNumber,
-            pageSize,
-            {
-              userId,
-            } satisfies WalletListFilters,
-          ),
-        "listing wallets",
+      const data = await this.walletService.listWalletsWithFilters(
+        pageNumber,
+        pageSize,
+        {
+          userId,
+        },
       );
-      if (error) throw new ServiceError(error.message);
 
       const list = data.list;
       const count = data.count;

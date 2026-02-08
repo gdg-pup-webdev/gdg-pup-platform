@@ -2,7 +2,7 @@ import {
   NotFoundError,
   DuplicateResourceError
 } from "@/errors/HttpError";
-import { RepositoryError } from "@/classes/ServerError";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError";
 import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase";
 import {

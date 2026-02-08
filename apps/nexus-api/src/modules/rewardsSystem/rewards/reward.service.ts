@@ -6,7 +6,7 @@ import {
 import { generateCouponCode } from "./reward.utils.js";
 import {
   NotFoundError} from "@/errors/HttpError.js";
-import { InvalidOperationError, RepositoryError } from "@/classes/ServerError.js";
+import { InvalidOperationError_DEPRECATED, RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 import { WalletService, walletServiceInstance } from "@/modules/economySystem/wallets/wallet.service.js";
 
@@ -25,7 +25,7 @@ export class RewardService {
       "listing rewards",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -35,7 +35,7 @@ export class RewardService {
       "creating reward",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -45,7 +45,7 @@ export class RewardService {
       "fetching reward",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -64,12 +64,12 @@ export class RewardService {
       async () => await this.rewardRepository.getRewardById(reward_id),
       "fetching reward",
     );
-    if (rewardError) throw new RepositoryError(rewardError.message);
+    if (rewardError) throw new RepositoryError_DEPRECATED(rewardError.message);
     if (!reward) throw new NotFoundError("Reward not found");
 
     // check if reward is claimable
     if (reward.is_claimed)
-      throw new InvalidOperationError("Reward already claimed");
+      throw new InvalidOperationError_DEPRECATED("Reward already claimed");
 
     // mark reward as claimed
     const {
@@ -80,7 +80,7 @@ export class RewardService {
       "marking reward as claimed",
     );
     if (markRewardAsClaimedDataError)
-      throw new RepositoryError(markRewardAsClaimedDataError.message);
+      throw new RepositoryError_DEPRECATED(markRewardAsClaimedDataError.message);
 
     // debit user's wallet
     const { data: walletData, error: walletError } = await tryCatch(
@@ -93,7 +93,7 @@ export class RewardService {
         ),
       "incrementing points of user",
     );
-    if (walletError) throw new RepositoryError(walletError.message);
+    if (walletError) throw new RepositoryError_DEPRECATED(walletError.message);
     if (!walletData) throw new NotFoundError("Wallet not found");
 
     // return data

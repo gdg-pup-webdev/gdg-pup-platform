@@ -1,7 +1,7 @@
 import {
   NotFoundError,
   DuplicateResourceError} from "@/errors/HttpError";
-import { RepositoryError, InvalidOperationError } from "@/classes/ServerError";
+import { RepositoryError_DEPRECATED, InvalidOperationError_DEPRECATED } from "@/classes/ServerError";
 import { DatabaseError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
@@ -214,7 +214,7 @@ export class RoleRepository {
    *
    * @param roleData - The role data to insert
    * @returns A promise resolving to the created role
-   * @throws {RepositoryError} If a role with the same name already exists
+   * @throws {RepositoryError_DEPRECATED} If a role with the same name already exists
    * @throws {DatabaseError} If a database error occurs
    */
   create = async (
@@ -251,7 +251,7 @@ export class RoleRepository {
    * @param updates - Partial role data to update
    * @returns A promise resolving to the updated role
    * @throws {NotFoundError} If the role does not exist
-   * @throws {RepositoryError} If updating to a duplicate role name
+   * @throws {RepositoryError_DEPRECATED} If updating to a duplicate role name
    * @throws {DatabaseError} If a database error occurs
    */
   update = async (
@@ -297,7 +297,7 @@ export class RoleRepository {
    * @param roleId - The ID of the role to delete
    * @returns A promise resolving to success status
    * @throws {NotFoundError} If the role does not exist
-   * @throws {InvalidOperationError} If the role is still assigned to users
+   * @throws {InvalidOperationError_DEPRECATED} If the role is still assigned to users
    * @throws {DatabaseError} If a database error occurs
    */
   delete = async (roleId: string): RepositoryResult<void> => {
@@ -323,7 +323,7 @@ export class RoleRepository {
     if (countError) throw new DatabaseError(countError.message);
 
     if (assignmentCount && assignmentCount > 0) {
-      throw new InvalidOperationError(
+      throw new InvalidOperationError_DEPRECATED(
         `Cannot delete role that is assigned to ${assignmentCount} user(s). Remove all user assignments first.`,
       );
     }
@@ -337,7 +337,7 @@ export class RoleRepository {
     if (error) {
       // Foreign key violation: role is still assigned to users (backup safety check)
       if (error.code === "23503") {
-        throw new InvalidOperationError(
+        throw new InvalidOperationError_DEPRECATED(
           "Cannot delete role that is assigned to users. Remove all user assignments first.",
         );
       }
@@ -360,7 +360,7 @@ export class RoleRepository {
    * @param roleId - The ID of the role
    * @returns A promise resolving to the created junction row
    * @throws {NotFoundError} If user or role does not exist
-   * @throws {RepositoryError} If already assigned
+   * @throws {RepositoryError_DEPRECATED} If already assigned
    * @throws {DatabaseError} If a database error occurs
    */
   assignRole = async (

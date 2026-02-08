@@ -1,8 +1,15 @@
-import { DatabaseConnectionError, DatabaseError, ForeignKeyConstraintError, QueryTimeoutError, UniqueConstraintError } from "@/errors/DatabaseError";
+import {
+  DatabaseConnectionError,
+  DatabaseError,
+  ForeignKeyConstraintError,
+  QueryTimeoutError,
+  UniqueConstraintError,
+} from "@/errors/DatabaseError";
+import { PostgrestError } from "@supabase/supabase-js";
 
-export function handlePostgresError(err: any): never {
-  const code = err?.code;
-  const message = err?.message || "Unknown DB Error";
+export function handlePostgresError(err: PostgrestError): never {
+  const code = err.code;
+  const message = err.message;
 
   switch (code) {
     case "23505": // Unique violation
@@ -17,7 +24,7 @@ export function handlePostgresError(err: any): never {
     default:
       throw new DatabaseError(
         "An unexpected database error occurred",
-        message,
+        `${code}: ${message}`,
         err,
       );
   }

@@ -5,7 +5,7 @@
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { tryCatch } from "@/utils/tryCatch.util.js";
 import {
@@ -36,7 +36,7 @@ export class SettingsController {
           async () => await this.settingsService.listSettingsOfUser(userId),
           "getting user settings",
         );
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
         list = data.list;
         count = data.count;
       } else {
@@ -44,7 +44,7 @@ export class SettingsController {
           async () => await this.settingsService.listSettings(),
           "getting all settings",
         );
-        if (error) throw new ServiceError(error.message);
+        if (error) throw new ServiceError_DEPRECATED(error.message);
         list = data.list;
         count = data.count;
       }
@@ -75,7 +75,7 @@ export class SettingsController {
         async () => await this.settingsService.getOneSettings(settingsId),
         "fetching settings",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -97,7 +97,7 @@ export class SettingsController {
         async () => await this.settingsService.createSettings(dto),
         "creating settings",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(201, {
         status: "success",
@@ -121,7 +121,7 @@ export class SettingsController {
         async () => await this.settingsService.updateSettings(settingsId, dto),
         "updating settings",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -143,7 +143,7 @@ export class SettingsController {
         async () => await this.settingsService.deleteSettings(settingsId),
         "deleting settings",
       );
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

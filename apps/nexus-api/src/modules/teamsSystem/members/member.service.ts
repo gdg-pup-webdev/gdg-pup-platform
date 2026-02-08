@@ -1,6 +1,6 @@
 import { models } from "@packages/nexus-api-contracts";
 import { tryCatch } from "@/utils/tryCatch.util.js";
-import { RepositoryError } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import {
   MemberRepository,
   memberRepositoryInstance,
@@ -21,7 +21,7 @@ export class MemberService {
       async () => await this.memberRepository.listMembersOfTeam(teamId),
       "listing members",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -39,7 +39,7 @@ export class MemberService {
         ),
       "listing members",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -48,7 +48,7 @@ export class MemberService {
       async () => await this.memberRepository.createMember(dto),
       "creating member",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 
@@ -57,7 +57,7 @@ export class MemberService {
       async () => await this.memberRepository.deleteMember(memberId),
       "deleting member",
     );
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
     return data;
   };
 }

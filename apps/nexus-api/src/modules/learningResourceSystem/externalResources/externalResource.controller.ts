@@ -5,9 +5,9 @@ import {
 } from "./externalResource.service.js";
 import { contract, models } from "@packages/nexus-api-contracts";
 import {
-  ControllerError,
+  ControllerError_DEPRECATED,
   ServerError_DEPRECATED,
-  ServiceError,
+  ServiceError_DEPRECATED,
 } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
 import { handleServerError, tryCatch } from "@/utils/tryCatch.util.js";
@@ -29,7 +29,7 @@ export class ExternalResourceController {
         "creating external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -49,7 +49,7 @@ export class ExternalResourceController {
         "deleting external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -69,7 +69,7 @@ export class ExternalResourceController {
         "updating external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -89,7 +89,7 @@ export class ExternalResourceController {
         "listing external resources",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -115,7 +115,7 @@ export class ExternalResourceController {
         "getting one external resource",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
