@@ -1,4 +1,6 @@
 import { ServerError_DEPRECATED } from "@/classes/ServerError.js";
+import { HttpError } from "@/errors/HttpError";
+import { ServerError } from "@/errors/ServerError";
 import { ContractError } from "@packages/typed-rest";
 import { Request, Response, NextFunction } from "express";
 import z, { ZodError } from "zod";
@@ -14,20 +16,11 @@ export const globalErrorHandler = (
   let message = err.message || "An unexpected error occurred.";
   let title = err.title || "Error";
 
-  console.error("ERROR", err); // Log the real error for the dev
+  console.log("///////////////////////////////////");
+  console.error(err);
+  console.log("///////////////////////////////////");
 
-  /**
-   *
-   * HANDLING CONTRACT VIOLATIONS
-   *
-   */
   if (err instanceof ContractError) {
-    console.error("🚨 CONTRACT VIOLATION 🚨", {
-      path: req.path,
-      method: req.method,
-      validationErrors: err.error.issues,
-    });
-
     if (err.blame === "client") {
       return res.status(400).json({
         title: "Bad Request",
@@ -71,10 +64,6 @@ export const globalErrorHandler = (
     }
   }
 
-  /**
-   *
-   * HANDLING KNOWN ERRORS FROM LAYERS
-   */
   if (err instanceof ServerError_DEPRECATED) {
     return res.status(err.statusCode).json({
       status: err.status,
@@ -86,46 +75,78 @@ export const globalErrorHandler = (
           moreDetails: {
             context: err.context.reverse().join(" -> "),
           },
-          // moreDetails: err.context,
         },
       ],
     });
   }
 
-  /**
-   *
-   * HANDLING KNOWN ERROR ACROSS THE SERVER
-   *
-   */
-  if (err instanceof ServerError_DEPRECATED) {
+  if (err instanceof HttpError) {
     return res.status(err.statusCode).json({
       status: "fail",
-      message: "Internal Server Error",
+      message: "HTTP Error",
       errors: [
         {
           title: err.title,
-          detail: err.message,
-          // moreDetails: "An error occured while " + err.context.join(" while "),
-          // moreDetails: err.context,
+          detail: err.detail,
+          moreDetails: {
+            stack: err.stack,
+            chain: err.getErrorChain(),
+          },
         },
       ],
     });
   }
 
-  /**
-   *
-   * HANDLING UNKNOWN ERRORS
-   *
-   */
+  if (err instanceof ServerError) {
+    return res.status(500).json({
+      errors: [
+        {
+          status: "error",
+          title: "Internal Server Error",
+          errors: [
+            {
+              title: err.title,
+              detail: err.detail,
+              moreDetails: {
+                stack: err.stack,
+                chain: err.getErrorChain(),
+              },
+            },
+          ],
+        },
+      ],
+    });
+  }
+
+  if (err instanceof Error) {
+    return res.status(500).json({
+      errors: [
+        {
+          status: "error",
+          title: "Unknwon Error",
+          errors: [
+            {
+              title: err.name,
+              detail: err.message,
+              moreDetails: {
+                stack: err.stack,
+              },
+            },
+          ],
+        },
+      ],
+    });
+  }
+
   return res.status(500).json({
     errors: [
       {
-        status: "500",
-        title: "Internal Server Error",
+        status: "error",
+        title: "Unhandled Unknown Server Error",
         errors: [
           {
-            title: "Unknown Error",
-            detail: "An unknown error occurred.",
+            title: "Unknown",
+            detail: "No details.",
           },
         ],
       },

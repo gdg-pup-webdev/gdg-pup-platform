@@ -2,7 +2,7 @@ export class ServerError extends Error {
   constructor(
     public title: string,
     public detail: string,
-    public originalError?: unknown,
+    private originalError?: unknown,
   ) {
     super(title, { cause: originalError });
     this.name = "ServerError";
@@ -12,10 +12,10 @@ export class ServerError extends Error {
     const parts: string[] = [this.title];
     let currentCause = this.cause;
 
-    while (currentCause !== undefined && currentCause !== null) {
+    while (currentCause) {
       if (currentCause instanceof Error) {
         parts.push(currentCause.message);
-        currentCause = (currentCause as any).cause;
+        currentCause = (currentCause as Error).cause;
       } else {
         parts.push(String(currentCause));
         break;
