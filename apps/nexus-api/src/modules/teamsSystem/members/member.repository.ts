@@ -4,22 +4,22 @@ import {
   RepositoryResult,
   RepositoryResultList,
 } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-
-type tableRow = Tables<"team">;
-type tableInsert = TablesInsert<"team">;
-type tableUpdate = TablesUpdate<"team">;
+import { Tables, TablesInsert } from "@/types/supabase.types.js";
 
 type memberRow = Tables<"team_member">;
 type memberInsert = TablesInsert<"team_member">;
-type memberUpdate = TablesUpdate<"team_member">;
 
+/**
+ * Repository for managing team members in the database.
+ */
 export class MemberRepository {
-  tableName = "team";
-  memberTableName = "team_member";
+  private readonly memberTableName = "team_member";
 
-  constructor() {}
-
+  /**
+   * Lists all members of a team.
+   * @returns A list of members and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   listMembersOfTeam = async (
     teamId: string,
   ): RepositoryResultList<memberRow> => {
@@ -44,6 +44,11 @@ export class MemberRepository {
     };
   };
 
+  /**
+   * Lists members with filtering and pagination.
+   * @returns A list of members and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   listMembersWithFilter = async (
     pageNumber: number,
     pageSize: number,
@@ -69,7 +74,6 @@ export class MemberRepository {
       query = query.eq("role", role);
     }
 
-    // 3. Apply pagination and ordering
     const { data, count, error } = await query
       .order("role", { ascending: true })
       .range((pageNumber - 1) * pageSize, pageNumber * pageSize - 1);
@@ -82,6 +86,11 @@ export class MemberRepository {
     };
   };
 
+  /**
+   * Creates a new team member.
+   * @returns The created member.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   createMember = async (dto: memberInsert): RepositoryResult<memberRow> => {
     const { data, error } = await supabase
       .from(this.memberTableName)
@@ -94,6 +103,11 @@ export class MemberRepository {
     return data;
   };
 
+  /**
+   * Deletes a team member.
+   * @returns The deleted member.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   deleteMember = async (memberId: string): RepositoryResult<memberRow> => {
     const { data, error } = await supabase
       .from(this.memberTableName)

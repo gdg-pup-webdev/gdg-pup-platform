@@ -7,7 +7,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DatabaseError } from "../../../../classes/ServerError.js";
-import { listResult, studyJamFixture } from "../../__tests__/test-helpers.js";
+import {
+  learningResourcePagination,
+  listResult,
+  studyJamFilters,
+  studyJamFixture,
+} from "../../__tests__/test-helpers.js";
 import { StudyJamService } from "../studyJam.service.js";
 
 const { mockCreate, mockList, mockGetOne, mockUpdate, mockDelete } = vi.hoisted(
@@ -45,18 +50,29 @@ describe("studyJam.service (unit)", () => {
   it("create delegates to the repository", async () => {
     mockCreate.mockResolvedValue(studyJamFixture);
 
-    const result = await service.create({ title: studyJamFixture.title } as any, "user-1");
+    const result = await service.create(
+      { title: studyJamFixture.title } as any,
+      "user-1",
+    );
 
     expect(mockCreate).toHaveBeenCalledTimes(1);
     expect(result.id).toBe(studyJamFixture.id);
   });
 
-  it("list delegates to the repository", async () => {
+  it("list delegates to the repository with pagination and filters", async () => {
     mockList.mockResolvedValue(listResult(studyJamFixture));
 
-    const result = await service.list();
+    const result = await service.list(
+      learningResourcePagination.pageNumber,
+      learningResourcePagination.pageSize,
+      studyJamFilters,
+    );
 
-    expect(mockList).toHaveBeenCalledTimes(1);
+    expect(mockList).toHaveBeenCalledWith(
+      learningResourcePagination.pageNumber,
+      learningResourcePagination.pageSize,
+      studyJamFilters,
+    );
     expect(result.count).toBe(1);
   });
 

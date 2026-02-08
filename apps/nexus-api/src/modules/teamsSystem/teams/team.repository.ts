@@ -10,16 +10,17 @@ type tableRow = Tables<"team">;
 type tableInsert = TablesInsert<"team">;
 type tableUpdate = TablesUpdate<"team">;
 
-type memberRow = Tables<"team_member">;
-type memberInsert = TablesInsert<"team_member">;
-type memberUpdate = TablesUpdate<"team_member">;
-
+/**
+ * Repository for managing teams in the database.
+ */
 export class TeamRepository {
-  tableName = "team";
-  memberTableName = "team_member";
+  private readonly tableName = "team";
 
-  constructor() {}
-
+  /**
+   * Creates a new team.
+   * @returns The created team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   createTeam = async (dto: tableInsert): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -32,6 +33,11 @@ export class TeamRepository {
     return data;
   };
 
+  /**
+   * Lists all teams.
+   * @returns A list of teams and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   listTeams = async (): RepositoryResultList<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -52,6 +58,11 @@ export class TeamRepository {
     };
   };
 
+  /**
+   * Gets a single team by its ID.
+   * @returns The fetched team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   getOneTeam = async (teamId: string): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -63,6 +74,11 @@ export class TeamRepository {
     return data;
   };
 
+  /**
+   * Updates a team.
+   * @returns The updated team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   updateTeam = async (
     teamId: string,
     dto: tableUpdate,
@@ -78,6 +94,11 @@ export class TeamRepository {
     return data;
   };
 
+  /**
+   * Deletes a team.
+   * @returns The deleted team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   deleteTeam = async (teamId: string): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)

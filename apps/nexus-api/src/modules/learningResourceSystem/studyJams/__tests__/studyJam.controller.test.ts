@@ -11,6 +11,8 @@ import app from "../../../../app.js";
 import {
   learningResourcePagination,
   listResult,
+  studyJamFilterQuery,
+  studyJamFilters,
   studyJamFixture,
 } from "../../__tests__/test-helpers.js";
 import { resetCrudMocks } from "../../__tests__/controller-test-utils.js";
@@ -18,13 +20,7 @@ import { resetCrudMocks } from "../../__tests__/controller-test-utils.js";
 const studyJamBasePath = "/api/learning-resource-system/study-jams";
 const studyJamPath = (id: string) => `${studyJamBasePath}/${id}`;
 
-const {
-  sjList,
-  sjCreate,
-  sjGetOne,
-  sjUpdate,
-  sjDelete,
-} = vi.hoisted(() => ({
+const { sjList, sjCreate, sjGetOne, sjUpdate, sjDelete } = vi.hoisted(() => ({
   sjList: vi.fn(),
   sjCreate: vi.fn(),
   sjGetOne: vi.fn(),
@@ -34,8 +30,10 @@ const {
 
 vi.mock("../../../../middlewares/auth.middleware.js", () => ({
   authMiddlewareInstance: {
-    requireAuth:
-      () => (req: any, _res: any, next: any) => ((req.user = { id: "user-1" }), next()),
+    requireAuth: () => (req: any, _res: any, next: any) => (
+      (req.user = { id: "user-1" }),
+      next()
+    ),
   },
   AuthMiddleware: class {},
 }));
@@ -63,17 +61,44 @@ describe("studyJam.controller (integration)", () => {
   });
 
   it("GET /api/learning-resource-system/study-jams returns list + meta", async () => {
+    sjList.mockResolvedValue({
+      list: [studyJamFixture],
+      count: 5,
+    });
+
+    const response = await request(app).get(studyJamBasePath).query({
+      pageNumber: 2,
+      pageSize: 2,
+    });
+
+    expect(response.status).toBe(200);
+    expect(sjList).toHaveBeenCalledWith(2, 2, {});
+    expect(response.body.status).toBe("success");
+    expect(response.body.data).toHaveLength(1);
+    expect(response.body.meta).toMatchObject({
+      totalRecords: 5,
+      currentPage: 2,
+      pageSize: 2,
+      totalPages: 3,
+    });
+  });
+
+  it("GET /api/learning-resource-system/study-jams forwards filters to service", async () => {
     sjList.mockResolvedValue(listResult(studyJamFixture));
 
     const response = await request(app)
       .get(studyJamBasePath)
-      .query(learningResourcePagination);
+      .query({
+        ...learningResourcePagination,
+        ...studyJamFilterQuery,
+      });
 
     expect(response.status).toBe(200);
-    expect(sjList).toHaveBeenCalledTimes(1);
-    expect(response.body.status).toBe("success");
-    expect(response.body.data).toHaveLength(1);
-    expect(response.body.meta.totalRecords).toBe(1);
+    expect(sjList).toHaveBeenCalledWith(
+      learningResourcePagination.pageNumber,
+      learningResourcePagination.pageSize,
+      studyJamFilters,
+    );
   });
 
   it("POST /api/learning-resource-system/study-jams calls create with user id", async () => {
@@ -126,7 +151,9 @@ describe("studyJam.controller (integration)", () => {
   it("DELETE /api/learning-resource-system/study-jams/:studyJamId calls delete", async () => {
     sjDelete.mockResolvedValue(studyJamFixture);
 
-    const response = await request(app).delete(studyJamPath(studyJamFixture.id));
+    const response = await request(app).delete(
+      studyJamPath(studyJamFixture.id),
+    );
 
     expect(response.status).toBe(200);
     expect(sjDelete).toHaveBeenCalledWith(studyJamFixture.id);

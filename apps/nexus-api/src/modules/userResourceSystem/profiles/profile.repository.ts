@@ -79,7 +79,7 @@ export class ProfileRepository {
     if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
-  };
+  }
 
   /**
    * createProfile
@@ -100,7 +100,7 @@ export class ProfileRepository {
    * updateProfile
    * Updates an existing profile record.
    */
-  updateProfile = async (
+  async updateProfile(
     id: string,
     dto: profileUpdate,
   ): RepositoryResult<profileRow> => {
@@ -112,7 +112,7 @@ export class ProfileRepository {
     if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
-  };
+  }
 
   /**
    * deleteProfile
@@ -127,7 +127,7 @@ export class ProfileRepository {
     if (error) throw new DatabaseError_DONT_USE(error.message);
 
     return data;
-  };
+  }
 }
 
 export const profileRepositoryInstance = new ProfileRepository();
