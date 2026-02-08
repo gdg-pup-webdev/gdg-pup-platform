@@ -248,6 +248,48 @@ export const publicExternalResourceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicGdgMembersRowSchema = z.object({
+  created_at: z.string().nullable(),
+  department: z.string().nullable(),
+  display_name: z.string().nullable(),
+  email: z.string(),
+  first_name: z.string().nullable(),
+  gdg_id: z.string(),
+  id: z.string(),
+  last_name: z.string().nullable(),
+  program: z.string().nullable(),
+  suffix: z.string().nullable(),
+  updated_at: z.string().nullable(),
+});
+
+export const publicGdgMembersInsertSchema = z.object({
+  created_at: z.string().optional().nullable(),
+  department: z.string().optional().nullable(),
+  display_name: z.string().optional().nullable(),
+  email: z.string(),
+  first_name: z.string().optional().nullable(),
+  gdg_id: z.string(),
+  id: z.string().optional(),
+  last_name: z.string().optional().nullable(),
+  program: z.string().optional().nullable(),
+  suffix: z.string().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+});
+
+export const publicGdgMembersUpdateSchema = z.object({
+  created_at: z.string().optional().nullable(),
+  department: z.string().optional().nullable(),
+  display_name: z.string().optional().nullable(),
+  email: z.string().optional(),
+  first_name: z.string().optional().nullable(),
+  gdg_id: z.string().optional(),
+  id: z.string().optional(),
+  last_name: z.string().optional().nullable(),
+  program: z.string().optional().nullable(),
+  suffix: z.string().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+});
+
 export const publicNfcCardRowSchema = z.object({
   activated_at: z.string().nullable(),
   created_at: z.string(),
@@ -715,97 +757,47 @@ export const publicUserProjectRelationshipsSchema = z.tuple([
 
 export const publicUserRoleRowSchema = z.object({
   description: z.string(),
-  id: z.string(),
-  role_name: z.string(),
+  name: z.string(),
 });
 
 export const publicUserRoleInsertSchema = z.object({
   description: z.string(),
-  id: z.string().optional(),
-  role_name: z.string(),
+  name: z.string(),
 });
 
 export const publicUserRoleUpdateSchema = z.object({
   description: z.string().optional(),
-  id: z.string().optional(),
-  role_name: z.string().optional(),
+  name: z.string().optional(),
 });
-
-export const publicUserRoleJunctionRowSchema = z.object({
-  created_at: z.string(),
-  id: z.string(),
-  role_id: z.string(),
-  user_id: z.string(),
-});
-
-export const publicUserRoleJunctionInsertSchema = z.object({
-  created_at: z.string().optional(),
-  id: z.string().optional(),
-  role_id: z.string(),
-  user_id: z.string(),
-});
-
-export const publicUserRoleJunctionUpdateSchema = z.object({
-  created_at: z.string().optional(),
-  id: z.string().optional(),
-  role_id: z.string().optional(),
-  user_id: z.string().optional(),
-});
-
-export const publicUserRoleJunctionRelationshipsSchema = z.tuple([
-  z.object({
-    foreignKeyName: z.literal("user_role_junction_role_id_fkey"),
-    columns: z.tuple([z.literal("role_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user_role"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("user_role_junction_user_id_fkey1"),
-    columns: z.tuple([z.literal("user_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-]);
 
 export const publicUserRolePermissionRowSchema = z.object({
-  can_delete: z.boolean(),
-  can_read: z.boolean(),
-  can_update: z.boolean(),
-  can_write: z.boolean(),
+  action: z.string(),
   id: z.string(),
-  resource_name: z.string(),
-  user_role_id: z.string(),
+  resource: z.string(),
+  role: z.string(),
 });
 
 export const publicUserRolePermissionInsertSchema = z.object({
-  can_delete: z.boolean(),
-  can_read: z.boolean(),
-  can_update: z.boolean(),
-  can_write: z.boolean(),
+  action: z.string(),
   id: z.string().optional(),
-  resource_name: z.string(),
-  user_role_id: z.string(),
+  resource: z.string(),
+  role: z.string(),
 });
 
 export const publicUserRolePermissionUpdateSchema = z.object({
-  can_delete: z.boolean().optional(),
-  can_read: z.boolean().optional(),
-  can_update: z.boolean().optional(),
-  can_write: z.boolean().optional(),
+  action: z.string().optional(),
   id: z.string().optional(),
-  resource_name: z.string().optional(),
-  user_role_id: z.string().optional(),
+  resource: z.string().optional(),
+  role: z.string().optional(),
 });
 
 export const publicUserRolePermissionRelationshipsSchema = z.tuple([
   z.object({
-    foreignKeyName: z.literal("user_role_permission_user_role_id_fkey"),
-    columns: z.tuple([z.literal("user_role_id")]),
+    foreignKeyName: z.literal("user_role_permission_role_fkey"),
+    columns: z.tuple([z.literal("role")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("user_role"),
-    referencedColumns: z.tuple([z.literal("id")]),
+    referencedColumns: z.tuple([z.literal("name")]),
   }),
 ]);
 
@@ -907,3 +899,23 @@ export const publicWalletTransactionRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
+
+export const publicVerifyMemberArgsSchema = z.object({
+  search_term: z.string(),
+});
+
+export const publicVerifyMemberReturnsSchema = z.array(
+  z.object({
+    created_at: z.string().nullable(),
+    department: z.string().nullable(),
+    display_name: z.string().nullable(),
+    email: z.string(),
+    first_name: z.string().nullable(),
+    gdg_id: z.string(),
+    id: z.string(),
+    last_name: z.string().nullable(),
+    program: z.string().nullable(),
+    suffix: z.string().nullable(),
+    updated_at: z.string().nullable(),
+  }),
+);

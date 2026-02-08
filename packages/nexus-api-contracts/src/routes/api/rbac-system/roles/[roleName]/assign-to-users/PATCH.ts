@@ -2,12 +2,12 @@ import { role } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
 
-export const body = z.object({
+export const body = SchemaFactory.Request.withPayload(z.object({
   userId: z.string(),
-});
+}));
 
 export const response = {
-  200: SchemaFactory.Response.list(role.role),
+  200: SchemaFactory.Response.empty(),
   ...SchemaFactory.Response.standardErrors(),
 };
 

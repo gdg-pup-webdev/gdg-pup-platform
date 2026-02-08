@@ -3,7 +3,9 @@
  * @description Zod model definitions for User Roles.
  */
 
-import z from "../../../node_modules/zod/v4/classic/external.cjs";
+import z from "zod";
+
+ 
 
 export const permission = z.object({
   resource_name: z.string(),

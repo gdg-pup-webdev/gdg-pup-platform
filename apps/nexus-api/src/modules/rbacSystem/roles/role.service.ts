@@ -3,6 +3,7 @@ import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
 import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { TablesInsert, Tables, TablesUpdate } from "@/types/supabase.types.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
+import { roleFilters, roleInsert, rolePermissionInsert } from "./role.types.js";
 
 type roleRow = Tables<"user_role">;
 type userRow = Tables<"user">;
@@ -30,38 +31,6 @@ export class RoleService {
   constructor(
     private roleRepository: RoleRepository = roleRepositoryInstance,
   ) {}
-
-  /**
-   * Retrieves a single role by its ID.
-   *
-   * @param roleId - The ID of the role
-   * @returns A promise resolving to the role data
-   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
-   * @throws {NotFoundError} If the role is not found
-   */
-  getRole = async (roleId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.roleRepository.getRole(roleId),
-      "calling repository to fetch role by id",
-    );
-
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
-  };
-
-  /**
-   * Lists all roles with pagination applied.
-   *
-   * @param pageNumber - Current page number (1-indexed)
-   * @param pageSize - Number of items per page
-   * @returns A promise resolving to a list of roles
-   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
-   */
-  listRoles = async (pageNumber: number, pageSize: number) => {
-    return await this.listRolesWithFilters(pageNumber, pageSize, {});
-  };
-
   /**
    * Fetches a paginated list of users and their assigned roles.
    * Can optionally filter by specific role.
@@ -92,6 +61,65 @@ export class RoleService {
 
     return data;
   };
+
+  /**
+   * Creates a new role.
+   *
+   * @param dto - The role data to insert
+   * @returns A promise resolving to the created role
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails or role name already exists
+   */
+  createRole = async (dto: roleInsert) => {
+    return await this.roleRepository.create(dto);
+  };
+
+  assignRolesToUser = async (userId: string, roleNames: string[]) => {
+    return await this.roleRepository.assignRolesToUser(userId, roleNames);
+  };
+
+  attachPermissions = async (
+    roleName: string,
+    permissions: rolePermissionInsert[],
+  ) => {
+    return await this.roleRepository.attachPermissions(roleName, permissions);
+  };
+
+
+  /**
+   * Retrieves a single role by its ID.
+   *
+   * @param roleId - The ID of the role
+   * @returns A promise resolving to the role data
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
+   * @throws {NotFoundError} If the role is not found
+   */
+  getRole = async (roleId: string) => {
+    const { data, error } = await tryCatch_deprecated(
+      async () => await this.roleRepository.getRole(roleId),
+      "calling repository to fetch role by id",
+    );
+
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
+
+    return data;
+  };
+
+  /**
+   * Lists all roles with pagination applied.
+   *
+   * @param pageNumber - Current page number (1-indexed)
+   * @param pageSize - Number of items per page
+   * @returns A promise resolving to a list of roles
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
+   */
+  listRoles = async (
+    pageNumber: number,
+    pageSize: number,
+    filters: roleFilters = {},
+  ) => {
+    return await this.listRolesWithFilters(pageNumber, pageSize, filters);
+  };
+
   /**
    * Retrieves all users with their assigned roles (paginated).
    *
@@ -120,27 +148,6 @@ export class RoleService {
     );
 
     if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
-  };
-
-  /**
-   * Creates a new role.
-   *
-   * @param roleData - The role data to insert
-   * @returns A promise resolving to the created role
-   * @throws {RepositoryError_DEPRECATED} If the repository operation fails or role name already exists
-   */
-  createRole = async (roleData: TablesInsert<"user_role">) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.roleRepository.create(roleData),
-      "calling repository to create role",
-    );
-
-    if (error) {
-      // Repository already throws RepositoryError for duplicate names
-      throw new RepositoryError_DEPRECATED(error.message);
-    }
 
     return data;
   };
@@ -182,13 +189,14 @@ export class RoleService {
    */
   deleteRole = async (roleId: string) => {
     // ✅ Check if role is assigned to any users first
-    const { data: usersWithRole, error: checkError } = await tryCatch_deprecated(
-      async () =>
-        await this.roleRepository.listUsersWithRoles(1, 1, {
-          roleId,
-        }),
-      "calling repository to check if role is assigned",
-    );
+    const { data: usersWithRole, error: checkError } =
+      await tryCatch_deprecated(
+        async () =>
+          await this.roleRepository.listUsersWithRoles(1, 1, {
+            roleId,
+          }),
+        "calling repository to check if role is assigned",
+      );
 
     if (checkError) throw new RepositoryError_DEPRECATED(checkError.message);
 
@@ -221,20 +229,23 @@ export class RoleService {
    */
   assignRole = async (userId: string, roleId: string) => {
     // First, check if user already has this role
-    const { data: existingRoles, error: checkError } = await tryCatch_deprecated(
-      async () =>
-        await this.roleRepository.listRolesWithFilters(1, 999, {
-          userId,
-        }),
-      "calling repository to list user roles for validation",
-    );
+    const { data: existingRoles, error: checkError } =
+      await tryCatch_deprecated(
+        async () =>
+          await this.roleRepository.listRolesWithFilters(1, 999, {
+            userId,
+          }),
+        "calling repository to list user roles for validation",
+      );
 
     if (checkError) throw new RepositoryError_DEPRECATED(checkError.message);
 
     // Check if the role is already assigned
     const hasRole = existingRoles.list.some((role) => role.id === roleId);
     if (hasRole) {
-      throw new RepositoryError_DEPRECATED("User already has this role assigned");
+      throw new RepositoryError_DEPRECATED(
+        "User already has this role assigned",
+      );
     }
 
     // Proceed with assignment

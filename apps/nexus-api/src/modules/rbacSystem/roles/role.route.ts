@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { RoleController, roleControllerInstance } from "./role.controller.js";
+import { RoleController, roleControllerInstance } from "./role.controller";
+// import { RoleController, roleControllerInstance } from "./role.controller.js";
 
 /**
  * RoleRouter
@@ -48,33 +49,44 @@ export class RoleRouter {
      *
      * and create role
      */
-    router
-      .route("/")
-      .get(this.roleController.listRoles)
-      .post(this.roleController.createRole);
+    router.get("/", this.roleController.listRoles);
+    router.post("/", this.roleController.createRole);
+    router.patch(
+      "/:roleName/assign-to-users",
+      this.roleController.assignRolesToUser,
+    );
+    router.patch(
+      "/:roleName/attach-permissions",
+      this.roleController.attachPermissions,
+    );
 
-    // Route to fetch all roles of all users
-    router.get("/users", this.roleController.listUsersWithRoles);
+    // router
+    //   .route("/")
+    //   .get(this.roleController.listRoles)
+    //   .post(this.roleController.createRole);
 
-    /**
-     * Route to assign role to user
-     * and also remove role from a user
-     */
-    router
-      .route("/:roleId/users")
-      .post(this.roleController.assignRole)
-      .delete(this.roleController.removeRole);
+    // // Route to fetch all roles of all users
+    // router.get("/users", this.roleController.listUsersWithRoles);
 
-    /**
-     * Route to get the role by id
-     * then update a role information
-     * and delete a role
-     */
-    router
-      .route("/:roleId")
-      .get(this.roleController.getRole)
-      .patch(this.roleController.updateRole)
-      .delete(this.roleController.deleteRole);
+    // /**
+    //  * Route to assign role to user
+    //  * and also remove role from a user
+    //  */
+    // router
+    //   .route("/:roleId/users")
+    //   .post(this.roleController.assignRole)
+    //   .delete(this.roleController.removeRole);
+
+    // /**
+    //  * Route to get the role by id
+    //  * then update a role information
+    //  * and delete a role
+    //  */
+    // router
+    //   .route("/:roleId")
+    //   .get(this.roleController.getRole)
+    //   .patch(this.roleController.updateRole)
+    //   .delete(this.roleController.deleteRole);
 
     return router;
   };

@@ -1,18 +1,24 @@
+import { NotFoundError, ConflictError } from "@/errors/HttpError";
 import {
-  NotFoundError,
-  ConflictError} from "@/errors/HttpError";
-import { RepositoryError_DEPRECATED, InvalidOperationError_DEPRECATED } from "@/classes/ServerError";
+  RepositoryError_DEPRECATED,
+  InvalidOperationError_DEPRECATED,
+} from "@/classes/ServerError";
 import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResultList,
   RepositoryResult,
 } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-
-type roleRow = Tables<"user_role">;
-type userRow = Tables<"user">;
-type userRoleJunctionRow = Tables<"user_role_junction">;
+import { TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
+import {
+  roleAggregate,
+  roleFilters,
+  roleInsert,
+  rolePermissionInsert,
+  rolePermissionRow,
+  roleRow,
+} from "./role.types";
 
 /**
  * RoleRepository
@@ -42,53 +48,95 @@ export class RoleRepository {
   listRolesWithFilters = async (
     pageNumber: number,
     pageSize: number,
-    filters: {
-      userId?: string | null;
-    },
-  ): RepositoryResultList<roleRow> => {
-    // If filtering by user, get roles for that specific user
-    if (filters.userId) {
-      const { data, error } = await supabase
-        .from(this.junctionTable)
-        .select(`*, user_role(*, user_role_permission(*))`)
-        .eq("user_id", filters.userId);
-
-      if (error) throw new DatabaseError_DONT_USE(error.message);
-
-      const { count, error: countError } = await supabase
-        .from(this.junctionTable)
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", filters.userId);
-
-      if (countError) throw new DatabaseError_DONT_USE(countError.message);
-
-      return {
-        list: data.map((item) => item.user_role as roleRow),
-        count: count || 0,
-      };
-    }
-
-    // Otherwise, list all roles with pagination
+    filters: roleFilters,
+  ) => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    const { data, error } = await supabase
+    let query = supabase
       .from(this.roleTable)
-      .select(`*, user_role_permission (*)`)
-      .range(from, to);
+      .select(`*, user_role_permission(*)`, { count: "exact" });
 
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (filters.userId) {
+      // Assuming 'id' is the column on the Role table
+      query = query.eq("id", filters.userId);
+    }
 
-    const { count, error: countError } = await supabase
-      .from(this.roleTable)
-      .select("*", { count: "exact", head: true });
+    if (filters.resource) {
+      query = query.eq("user_role_permission.resource", filters.resource);
+    }
 
-    if (countError) throw new DatabaseError_DONT_USE(countError.message);
+    if (filters.action) {
+      query = query.eq("user_role_permission.action", filters.action);
+    }
+
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) handlePostgresError(error);
 
     return {
-      list: data as roleRow[],
+      list: data as roleAggregate[],
       count: count || 0,
     };
+  };
+
+  /**
+   * Creates a new role.
+   *
+   * @param roleData - The role data to insert
+   * @returns A promise resolving to the created role
+   * @throws {RepositoryError_DEPRECATED} If a role with the same name already exists
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
+   */
+  create = async (dto: roleInsert): Promise<roleAggregate> => {
+    const { error } = await supabase.from(this.roleTable).insert(dto);
+
+    if (error) handlePostgresError(error);
+
+    return {
+      ...dto,
+      user_role_permission: [],
+    };
+  };
+
+  assignRolesToUser = async (userId: string, roleNames: string[]) => {
+    const { error } = await supabase
+      .from(this.junctionTable)
+      .insert(
+        roleNames.map((roleName) => ({ user_id: userId, role_name: roleName })),
+      );
+
+    if (error) handlePostgresError(error);
+  };
+
+  attachPermissions = async (
+    roleName: string,
+    permissions: rolePermissionInsert[],
+  ) => {
+    console.log("hell oworld" , roleName, permissions)
+
+    const permissionsDTO = permissions.map((permission) => ({
+      role: roleName,
+      resource: permission.resource,
+      action: permission.action,
+    }));
+
+    const { error } = await supabase
+      .from("user_role_permission")
+      .insert(permissionsDTO);
+
+    if (error) handlePostgresError(error);
+
+    const { data, error: checkError } = await supabase
+      .from("user_role_permission")
+      .select("*")
+      .eq("role", roleName);
+
+    if (checkError) handlePostgresError(checkError);
+
+    return data as rolePermissionRow[];
   };
 
   /**
@@ -208,41 +256,6 @@ export class RoleRepository {
   };
 
   // =========================================================================================== //
-
-  /**
-   * Creates a new role.
-   *
-   * @param roleData - The role data to insert
-   * @returns A promise resolving to the created role
-   * @throws {RepositoryError_DEPRECATED} If a role with the same name already exists
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
-   */
-  create = async (
-    roleData: TablesInsert<"user_role">,
-  ): RepositoryResult<roleRow> => {
-    const { data, error } = await supabase
-      .from(this.roleTable)
-      .insert(roleData)
-      .select()
-      .single();
-
-    if (error) {
-      // Handle unique constraint violation (duplicate role name)
-      if (error.code === "23505") {
-        throw new ConflictError(
-          `Role "${roleData.role_name}" already exists`,
-        );
-      }
-
-      throw new DatabaseError_DONT_USE(error.message);
-    }
-
-    if (!data) {
-      throw new DatabaseError_DONT_USE("Failed to create role - no data returned");
-    }
-
-    return data;
-  };
 
   /**
    * Updates an existing role.
@@ -391,7 +404,9 @@ export class RoleRepository {
     }
 
     if (!data) {
-      throw new DatabaseError_DONT_USE("Failed to assign role - no data returned");
+      throw new DatabaseError_DONT_USE(
+        "Failed to assign role - no data returned",
+      );
     }
 
     return data;
