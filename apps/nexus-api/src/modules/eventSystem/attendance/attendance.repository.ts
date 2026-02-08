@@ -1,6 +1,6 @@
 import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
-import { RepositoryResult, RespositoryResultList } from "@/types/repository.types.js";
+import { RepositoryResult, RepositoryResultList } from "@/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
 /**
@@ -69,7 +69,7 @@ export class AttendanceRepository {
       created_at_gte?: string;
       created_at_lte?: string;
     },
-  ): RespositoryResultList<models.eventSystem.attendee.row> => {
+  ): RepositoryResultList<models.eventSystem.attendee.row> => {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
