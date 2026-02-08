@@ -7,9 +7,7 @@
 import { RequestHandler } from "express";
 import { UserService, userServiceInstance } from "./user.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 
 /**
  * UserSystemController
@@ -19,7 +17,9 @@ export class UserSystemController {
   /**
    * @param userService - Service layer for user-specific business logic.
    */
-  constructor(private readonly userService: UserService = userServiceInstance) {}
+  constructor(
+    private readonly userService: UserService = userServiceInstance,
+  ) {}
 
   /**
    * listUsers
@@ -27,12 +27,7 @@ export class UserSystemController {
    * Retrieves a list of all users in the system.
    */
   listUsers: RequestHandler = async (_req, res) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.userService.listUsers(),
-      "listing users",
-    );
-
-    if (error) throw new ServiceError_DEPRECATED(error.message);
+    const data = await this.userService.listUsers();
 
     return res.status(200).json({
       status: "success",
@@ -50,12 +45,7 @@ export class UserSystemController {
     contract.api.user_system.users.userId.GET,
     async ({ input, output }) => {
       const userId = input.params.userId;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.userService.getUserById(userId),
-        "getting user",
-      );
-
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.userService.getUserById(userId);
 
       return output(200, {
         status: "success",
@@ -76,12 +66,7 @@ export class UserSystemController {
     async ({ input, output }) => {
       const userId = input.params.userId;
 
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.userService.getUserAggregate(userId),
-        "getting user aggregate",
-      );
-
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.userService.getUserAggregate(userId);
 
       /**
        * Map database relation names to the schema names defined in the API contract.
