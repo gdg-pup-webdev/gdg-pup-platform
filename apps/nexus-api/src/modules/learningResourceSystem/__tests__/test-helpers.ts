@@ -9,6 +9,22 @@ export const learningResourcePagination = {
   pageSize: 10,
 } as const;
 
+export const externalResourceFilterQuery = {
+  search: "performance",
+  createdFrom: "2026-01-01T00:00:00.000Z",
+  createdTo: "2026-01-31T23:59:59.999Z",
+  uploaderId: "user-1",
+  tagIds: "tag-1,tag-2",
+} as const;
+
+export const externalResourceFilters = {
+  search: "performance",
+  createdFrom: "2026-01-01T00:00:00.000Z",
+  createdTo: "2026-01-31T23:59:59.999Z",
+  uploaderId: "user-1",
+  tagIds: ["tag-1", "tag-2"],
+};
+
 export const externalResourceFixture = {
   id: "external-1",
   title: "Intro to Web Performance",
@@ -27,6 +43,18 @@ export const studyJamFixture = {
   recording_url: "https://example.com/recording",
   summary: "Covers types, narrowing, and inference.",
 } as const;
+
+export const studyJamFilterQuery = {
+  search: "typescript",
+  createdFrom: "2026-01-01T00:00:00.000Z",
+  createdTo: "2026-01-31T23:59:59.999Z",
+} as const;
+
+export const studyJamFilters = {
+  search: "typescript",
+  createdFrom: "2026-01-01T00:00:00.000Z",
+  createdTo: "2026-01-31T23:59:59.999Z",
+};
 
 export const listResult = <T>(item: T) => ({
   list: [item],
