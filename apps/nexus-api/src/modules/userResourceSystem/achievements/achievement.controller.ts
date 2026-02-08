@@ -1,14 +1,12 @@
 /**
  * @file achievement.controller.ts
- * @description Controller for managing user achievements. Handles HTTP request parsing, 
+ * @description Controller for managing user achievements. Handles HTTP request parsing,
  * contract validation via typed-rest, and response generation for achievement-related operations.
  */
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   AchievementService,
   achievementServiceInstance,
@@ -43,22 +41,13 @@ export class AchievementController {
 
       let list, count;
       if (userId) {
-        const { data, error } = await tryCatch_deprecated(
-          async () => await this.achievementService.listAchievementsOfUser(userId),
-          "getting user achievements",
-        );
-
-        if (error) throw new ServiceError_DEPRECATED(error.message);
+        const data =
+          await this.achievementService.listAchievementsOfUser(userId);
 
         list = data.list;
         count = data.count;
       } else {
-        const { data, error } = await tryCatch_deprecated(
-          async () => await this.achievementService.listAchievements(),
-          "getting all achievements",
-        );
-
-        if (error) throw new ServiceError_DEPRECATED(error.message);
+        const data = await this.achievementService.listAchievements();
 
         list = data.list;
         count = data.count;
@@ -87,11 +76,8 @@ export class AchievementController {
     contract.api.user_resource_system.achievements.achievementId.GET,
     async ({ input, output }) => {
       const achievementId = input.params.achievementId;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.achievementService.getOneAchievement(achievementId),
-        "fetching achievement",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data =
+        await this.achievementService.getOneAchievement(achievementId);
 
       return output(200, {
         status: "success",
@@ -110,11 +96,7 @@ export class AchievementController {
     contract.api.user_resource_system.achievements.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.achievementService.createAchievement(dto),
-        "creating achievement",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.achievementService.createAchievement(dto);
 
       return output(201, {
         status: "success",
@@ -135,11 +117,10 @@ export class AchievementController {
       const achievementId = input.params.achievementId;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.achievementService.updateAchievement(achievementId, dto),
-        "updating achievement",
+      const data = await this.achievementService.updateAchievement(
+        achievementId,
+        dto,
       );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -158,11 +139,7 @@ export class AchievementController {
     contract.api.user_resource_system.achievements.achievementId.DELETE,
     async ({ input, output }) => {
       const achievementId = input.params.achievementId;
-      const { error } = await tryCatch_deprecated(
-        async () => await this.achievementService.deleteAchievement(achievementId),
-        "deleting achievement",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      await this.achievementService.deleteAchievement(achievementId);
 
       return output(200, {
         status: "success",

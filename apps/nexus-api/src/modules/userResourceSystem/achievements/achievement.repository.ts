@@ -9,8 +9,6 @@ import {
   RepositoryResult,
   RepositoryResultList,
 } from "@/types/repository.types.js";
-import { DatabaseError_DONT_USE } from "@/errors/HttpError";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import { SupabaseUtils } from "@/utils/supabase.util";
 
 /**
@@ -34,17 +32,9 @@ export class AchievementRepository {
   listAchievementsOfUser = async (
     userId: string,
   ): RepositoryResultList<achievementRow> => {
-    const { data, error } = await tryCatch_deprecated(
-      async () =>
-        await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
-          user_id: userId,
-        }),
-      "Calling database to list achievements of user",
-    );
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    return data;
+    return await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
+      user_id: userId,
+    });
   };
 
   /**
@@ -52,14 +42,7 @@ export class AchievementRepository {
    * Retrieves all achievements in the system.
    */
   listAchievements = async (): RepositoryResultList<achievementRow> => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await SupabaseUtils.listRows(this.tableName, 1, 1000),
-      "Calling database to list achievements",
-    );
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    return data;
+    return await SupabaseUtils.listRows(this.tableName, 1, 1000);
   };
 
   /**
@@ -67,14 +50,7 @@ export class AchievementRepository {
    * Fetches a single achievement by ID.
    */
   getOneAchievement = async (id: string): RepositoryResult<achievementRow> => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await SupabaseUtils.getOneRow(this.tableName, id),
-      "Calling database to get one achievement",
-    );
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    return data;
+    return await SupabaseUtils.getOneRow(this.tableName, id);
   };
 
   /**
@@ -84,14 +60,7 @@ export class AchievementRepository {
   createAchievement = async (
     dto: achievementInsert,
   ): RepositoryResult<achievementRow> => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await SupabaseUtils.createRow(this.tableName, dto),
-      "Calling database to create achievement",
-    );
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    return data;
+    return await SupabaseUtils.createRow(this.tableName, dto);
   };
 
   /**
@@ -102,14 +71,7 @@ export class AchievementRepository {
     id: string,
     dto: achievementUpdate,
   ): RepositoryResult<achievementRow> => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
-      "Calling database to update achievement",
-    );
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    return data;
+    return await SupabaseUtils.updateRow(this.tableName, id, dto);
   };
 
   /**
@@ -117,14 +79,7 @@ export class AchievementRepository {
    * Deletes an achievement record.
    */
   deleteAchievement = async (id: string): RepositoryResult<achievementRow> => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await SupabaseUtils.deleteRow(this.tableName, id),
-      "Calling database to delete achievement",
-    );
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    return data;
+    return await SupabaseUtils.deleteRow(this.tableName, id);
   };
 }
 

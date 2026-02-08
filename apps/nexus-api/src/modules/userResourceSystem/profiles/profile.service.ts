@@ -1,9 +1,7 @@
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   ProfileRepository,
   profileRepositoryInstance,
 } from "./profile.repository.js";
-import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type profileInsertDTO = models.userSystem.profile.insertDTO;
@@ -25,13 +23,7 @@ export class ProfileService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   getUserProfileByUserId = async (userId: string) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.profileRepository.getProfileByUserId(userId),
-      "getting user profile",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
+    return await this.profileRepository.getProfileByUserId(userId);
   };
 
   /**
@@ -40,17 +32,10 @@ export class ProfileService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   listProfilesPaginated = async (pageNumber: number, pageSize: number) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () =>
-        await this.profileRepository.listProfilesPaginated(
-          pageNumber,
-          pageSize,
-        ),
-      "listing profiles",
+    return await this.profileRepository.listProfilesPaginated(
+      pageNumber,
+      pageSize,
     );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
   };
 
   /**
@@ -59,13 +44,7 @@ export class ProfileService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   createProfile = async (dto: profileInsertDTO) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.profileRepository.createProfile(dto),
-      "creating profile",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
+    return await this.profileRepository.createProfile(dto);
   };
 
   /**
@@ -74,13 +53,7 @@ export class ProfileService {
    * @throws {RepositoryError} If the repository operation fails.
    */
   updateProfile = async (id: string, dto: profileUpdateDTO) => {
-    const { data, error } = await tryCatch_deprecated(
-      async () => await this.profileRepository.updateProfile(id, dto),
-      "updating profile",
-    );
-    if (error) throw new RepositoryError_DEPRECATED(error.message);
-
-    return data;
+    return await this.profileRepository.updateProfile(id, dto);
   };
 }
 

@@ -1,5 +1,5 @@
-import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase";
+import { handlePostgresError } from "@/lib/supabase.utils";
 
 export namespace SupabaseUtils {
   export const listRowsByFilter = async (
@@ -38,7 +38,8 @@ export namespace SupabaseUtils {
     // Await
     const { data, error, count } = await query;
 
-    if (error) throw error;
+    if (error) handlePostgresError(error);
+
     return { list: data, count: count || 0 };
   };
 
@@ -51,7 +52,7 @@ export namespace SupabaseUtils {
       .from(tablename)
       .select("*", { count: "exact" })
       .range((pageNumber - 1) * pageSize, pageNumber * pageSize - 1);
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
     return { list: data, count: count || 0 };
   };
 
@@ -61,7 +62,7 @@ export namespace SupabaseUtils {
       .select("*")
       .eq("id", id)
       .single();
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
@@ -71,7 +72,7 @@ export namespace SupabaseUtils {
       .insert(dto)
       .select("*")
       .single();
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
@@ -82,7 +83,7 @@ export namespace SupabaseUtils {
       .eq("id", id)
       .select("*")
       .maybeSingle();
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
@@ -93,7 +94,7 @@ export namespace SupabaseUtils {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw error;
+    if (error) handlePostgresError(error);
     return data;
   };
 }

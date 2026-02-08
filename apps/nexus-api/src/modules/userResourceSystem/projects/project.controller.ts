@@ -1,12 +1,7 @@
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
-import {
-  ProjectService,
-  projectServiceInstance,
-} from "./project.service";
+import { ProjectService, projectServiceInstance } from "./project.service";
 
 export class ProjectController {
   constructor(
@@ -25,22 +20,12 @@ export class ProjectController {
 
       let list, count;
       if (userId) {
-        const { data, error } = await tryCatch_deprecated(
-          async () => await this.projectService.listProjectsOfUser(userId),
-          "getting user projects",
-        );
-
-        if (error) throw new ServiceError_DEPRECATED(error.message);
+        const data = await this.projectService.listProjectsOfUser(userId);
 
         list = data.list;
         count = data.count;
       } else {
-        const { data, error } = await tryCatch_deprecated(
-          async () => await this.projectService.listProjects(),
-          "getting all projects",
-        );
-
-        if (error) throw new ServiceError_DEPRECATED(error.message);
+        const data = await this.projectService.listProjects();
 
         list = data.list;
         count = data.count;
@@ -64,11 +49,7 @@ export class ProjectController {
     contract.api.user_resource_system.projects.projectId.GET,
     async ({ input, output, ctx }) => {
       const projectId = input.params.projectId;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.projectService.getOneProject(projectId),
-        "fetching project",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.projectService.getOneProject(projectId);
 
       return output(200, {
         status: "success",
@@ -82,11 +63,7 @@ export class ProjectController {
     contract.api.user_resource_system.projects.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.projectService.createProject(dto),
-        "creating project",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.projectService.createProject(dto);
 
       return output(201, {
         status: "success",
@@ -102,11 +79,7 @@ export class ProjectController {
       const projectId = input.params.projectId as string;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.projectService.updateProject(projectId, dto),
-        "updating project",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.projectService.updateProject(projectId, dto);
 
       return output(200, {
         status: "success",
@@ -120,11 +93,7 @@ export class ProjectController {
     contract.api.user_resource_system.projects.projectId.DELETE,
     async ({ input, output, ctx }) => {
       const projectId = input.params.projectId;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.projectService.deleteProject(projectId),
-        "deleting project",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.projectService.deleteProject(projectId);
 
       return output(200, {
         status: "success",

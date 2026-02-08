@@ -1,5 +1,5 @@
-import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -28,13 +28,13 @@ export class ProjectRepository {
       .from(this.tableName)
       .select("*")
       .eq("user_id", userId);
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
-    if (countError) throw new DatabaseError_DONT_USE(countError.message);
+    if (countError) handlePostgresError(countError);
 
     return {
       list: data,
@@ -49,12 +49,12 @@ export class ProjectRepository {
    */
   listProjects = async (): RepositoryResultList<projectRow> => {
     const { data, error } = await supabase.from(this.tableName).select("*");
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
-    if (countError) throw new DatabaseError_DONT_USE(countError.message);
+    if (countError) handlePostgresError(countError);
 
     return {
       list: data,
@@ -74,7 +74,7 @@ export class ProjectRepository {
       .eq("id", id)
       .single();
 
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
@@ -90,7 +90,7 @@ export class ProjectRepository {
       .insert(dto)
       .select("*")
       .single();
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
@@ -106,7 +106,7 @@ export class ProjectRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
@@ -125,7 +125,7 @@ export class ProjectRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 }

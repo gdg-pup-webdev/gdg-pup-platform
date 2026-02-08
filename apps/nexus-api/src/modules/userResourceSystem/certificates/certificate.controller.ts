@@ -1,14 +1,12 @@
 /**
  * @file certificate.controller.ts
- * @description Controller for managing user certificates. Handles HTTP request parsing, 
+ * @description Controller for managing user certificates. Handles HTTP request parsing,
  * contract validation via typed-rest, and response generation.
  */
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import {
   CertificateService,
   certificateServiceInstance,
@@ -33,19 +31,14 @@ export class CertificateController {
 
       let list, count;
       if (userId) {
-        const { data, error } = await tryCatch_deprecated(
-          async () => await this.certificateService.listCertificatesOfUser(userId),
-          "getting user certificates",
-        );
-        if (error) throw new ServiceError_DEPRECATED(error.message);
+        const data =
+          await this.certificateService.listCertificatesOfUser(userId);
+
         list = data.list;
         count = data.count;
       } else {
-        const { data, error } = await tryCatch_deprecated(
-          async () => await this.certificateService.listCertificates(),
-          "getting all certificates",
-        );
-        if (error) throw new ServiceError_DEPRECATED(error.message);
+        const data = await this.certificateService.listCertificates();
+
         list = data.list;
         count = data.count;
       }
@@ -72,11 +65,8 @@ export class CertificateController {
     contract.api.user_resource_system.certificates.certificateId.GET,
     async ({ input, output }) => {
       const certificateId = input.params.certificateId;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.certificateService.getOneCertificate(certificateId),
-        "fetching certificate",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data =
+        await this.certificateService.getOneCertificate(certificateId);
 
       return output(200, {
         status: "success",
@@ -94,12 +84,8 @@ export class CertificateController {
     contract.api.user_resource_system.certificates.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.certificateService.createCertificate(dto),
-        "creating certificate",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+
+      const data = await this.certificateService.createCertificate(dto);
 
       return output(201, {
         status: "success",
@@ -119,11 +105,10 @@ export class CertificateController {
       const certificateId = input.params.certificateId;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.certificateService.updateCertificate(certificateId, dto),
-        "updating certificate",
+      const data = await this.certificateService.updateCertificate(
+        certificateId,
+        dto,
       );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -141,11 +126,7 @@ export class CertificateController {
     contract.api.user_resource_system.certificates.certificateId.DELETE,
     async ({ input, output }) => {
       const certificateId = input.params.certificateId;
-      const { error } = await tryCatch_deprecated(
-        async () => await this.certificateService.deleteCertificate(certificateId),
-        "deleting certificate",
-      );
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      await this.certificateService.deleteCertificate(certificateId);
 
       return output(200, {
         status: "success",

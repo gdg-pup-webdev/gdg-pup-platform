@@ -1,9 +1,4 @@
-import { ServiceError_DEPRECATED } from "@/classes/ServerError.js";
-import {
-  ProfileService,
-  profileServiceInstance,
-} from "./profile.service.js";
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
+import { ProfileService, profileServiceInstance } from "./profile.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
@@ -29,12 +24,7 @@ export class ProfileController {
         /**
          * PROFILE OF A USER
          */
-        const { data, error } = await tryCatch_deprecated(
-          async () => await this.profileService.getUserProfileByUserId(userId),
-          "getting user profile",
-        );
-
-        if (error) throw new ServiceError_DEPRECATED(error.message);
+        const data = await this.profileService.getUserProfileByUserId(userId);
 
         list = data ? data.list : [];
         count = data ? data.count : 0;
@@ -42,16 +32,10 @@ export class ProfileController {
         /**
          * ALL PROFILES
          */
-        const { data, error } = await tryCatch_deprecated(
-          async () =>
-            await this.profileService.listProfilesPaginated(
-              pageNumber,
-              pageSize,
-            ),
-          "getting profiles",
+        const data = await this.profileService.listProfilesPaginated(
+          pageNumber,
+          pageSize,
         );
-
-        if (error) throw new ServiceError_DEPRECATED(error.message);
 
         list = data.list;
         count = data.count;
@@ -75,12 +59,7 @@ export class ProfileController {
     contract.api.user_resource_system.profiles.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      const { data, error } = await tryCatch_deprecated(
-        async () => await this.profileService.createProfile(dto),
-        "creating profile",
-      );
-
-      if (error) throw new ServiceError_DEPRECATED(error.message);
+      const data = await this.profileService.createProfile(dto);
 
       return output(201, {
         status: "success",
