@@ -9,8 +9,6 @@ import {
   RepositoryResult,
   RepositoryResultList,
 } from "@/types/repository.types.js";
-import { DatabaseError } from "@/classes/ServerError.js";
-import { tryCatch } from "@/utils/tryCatch.util";
 import { SupabaseUtils } from "@/utils/supabase.util";
 
 /**
@@ -27,6 +25,8 @@ type profileUpdate = TablesUpdate<"user_profile">;
 export class ProfileRepository {
   tableName = "user_profile";
 
+  constructor() {}
+
   /**
    * getProfileByUserId
    * Retrieves all profiles for a specific user.
@@ -34,17 +34,9 @@ export class ProfileRepository {
   getProfileByUserId = async (
     userId: string,
   ): RepositoryResultList<profileRow> => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
-          user_id: userId,
-        }),
-      "Calling database to list profiles of user",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.listRowsByFilter(this.tableName, 1, 1000, {
+      user_id: userId,
+    });
   };
 
   /**
@@ -55,15 +47,7 @@ export class ProfileRepository {
     pageNumber: number,
     pageSize: number,
   ): RepositoryResultList<profileRow> => {
-    const { data, error } = await tryCatch(
-      async () =>
-        await SupabaseUtils.listRows(this.tableName, pageNumber, pageSize),
-      "Calling database to list profiles",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.listRows(this.tableName, pageNumber, pageSize);
   };
 
   /**
@@ -71,14 +55,7 @@ export class ProfileRepository {
    * Fetches a single profile by ID.
    */
   getOneProfile = async (id: string): RepositoryResultList<profileRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.getOneRow(this.tableName, id),
-      "Calling database to get one profile",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.getOneRow(this.tableName, id);
   };
 
   /**
@@ -86,47 +63,26 @@ export class ProfileRepository {
    * Creates a new profile record.
    */
   createProfile = async (dto: profileInsert): RepositoryResult<profileRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.createRow(this.tableName, dto),
-      "Calling database to create profile",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.createRow(this.tableName, dto);
   };
 
   /**
    * updateProfile
    * Updates an existing profile record.
    */
-  updateProfile = async (
+  async updateProfile(
     id: string,
     dto: profileUpdate,
-  ): RepositoryResult<profileRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.updateRow(this.tableName, id, dto),
-      "Calling database to update profile",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
-  };
+  ): RepositoryResult<profileRow> {
+    return await SupabaseUtils.updateRow(this.tableName, id, dto);
+  }
 
   /**
    * deleteProfile
    * Deletes an profile record.
    */
   deleteProfile = async (id: string): RepositoryResult<profileRow> => {
-    const { data, error } = await tryCatch(
-      async () => await SupabaseUtils.deleteRow(this.tableName, id),
-      "Calling database to delete profile",
-    );
-
-    if (error) throw new DatabaseError(error.message);
-
-    return data;
+    return await SupabaseUtils.deleteRow(this.tableName, id);
   };
 }
 

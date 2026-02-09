@@ -5,7 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TransactionService } from "../transaction.service.js";
-import { RepositoryError } from "../../../../classes/ServerError.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { mockTransactionRepository } = vi.hoisted(() => ({
   mockTransactionRepository: {
@@ -52,14 +52,14 @@ describe("TransactionService", () => {
     expect(result.list).toHaveLength(1);
   });
 
-  it("listTransactions maps repo errors to RepositoryError", async () => {
+  it("listTransactions throws ServerError on error", async () => {
     mockTransactionRepository.listTransactionsWithFilters.mockRejectedValue(
-      new Error("boom"),
+      new ServerError("db down", "db down"),
     );
 
     await expect(
       transactionService.listTransactions(1, 10, {}),
-    ).rejects.toBeInstanceOf(RepositoryError);
+    ).rejects.toBeInstanceOf(ServerError);
   });
 
   it("getTransaction returns transaction", async () => {
@@ -67,7 +67,9 @@ describe("TransactionService", () => {
 
     const result = await transactionService.getTransaction("txn-1");
 
-    expect(mockTransactionRepository.getTransactionById).toHaveBeenCalledWith("txn-1");
+    expect(mockTransactionRepository.getTransactionById).toHaveBeenCalledWith(
+      "txn-1",
+    );
     expect(result).toEqual(transaction);
   });
 
@@ -76,7 +78,9 @@ describe("TransactionService", () => {
 
     const result = await transactionService.create(transaction as any);
 
-    expect(mockTransactionRepository.createTransaction).toHaveBeenCalledWith(transaction);
+    expect(mockTransactionRepository.createTransaction).toHaveBeenCalledWith(
+      transaction,
+    );
     expect(result).toEqual(transaction);
   });
 });

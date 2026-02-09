@@ -1,5 +1,5 @@
-import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -10,16 +10,17 @@ type tableRow = Tables<"team">;
 type tableInsert = TablesInsert<"team">;
 type tableUpdate = TablesUpdate<"team">;
 
-type memberRow = Tables<"team_member">;
-type memberInsert = TablesInsert<"team_member">;
-type memberUpdate = TablesUpdate<"team_member">;
-
+/**
+ * Repository for managing teams in the database.
+ */
 export class TeamRepository {
-  tableName = "team";
-  memberTableName = "team_member";
+  private readonly tableName = "team";
 
-  constructor() {}
-
+  /**
+   * Creates a new team.
+   * @returns The created team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   createTeam = async (dto: tableInsert): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -27,24 +28,29 @@ export class TeamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
 
+  /**
+   * Lists all teams.
+   * @returns A list of teams and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   listTeams = async (): RepositoryResultList<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
       .order("name", { ascending: false });
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
 
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) handlePostgresError(countError);
 
     return {
       list: data,
@@ -52,6 +58,11 @@ export class TeamRepository {
     };
   };
 
+  /**
+   * Gets a single team by its ID.
+   * @returns The fetched team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   getOneTeam = async (teamId: string): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -59,10 +70,15 @@ export class TeamRepository {
       .eq("id", teamId)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
+  /**
+   * Updates a team.
+   * @returns The updated team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   updateTeam = async (
     teamId: string,
     dto: tableUpdate,
@@ -74,10 +90,15 @@ export class TeamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
+  /**
+   * Deletes a team.
+   * @returns The deleted team.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   deleteTeam = async (teamId: string): RepositoryResult<tableRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -86,7 +107,7 @@ export class TeamRepository {
       .select("*")
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 }

@@ -1,10 +1,10 @@
-import { tryCatch } from "@/utils/tryCatch.util";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import {
   PermissionRepository,
   permissionRepositoryInstance,
   PermissionListFilters,
 } from "./permission.repository";
-import { RepositoryError } from "@/classes/ServerError";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types";
 import {
   RepositoryResultList,
@@ -37,18 +37,18 @@ export class PermissionService {
    *
    * @param filters - Optional filters (roleId or userId)
    * @returns A promise resolving to a list of permissions
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   listPermissionsWithFilters = async (
     filters: PermissionListFilters = {},
   ): RepositoryResultList<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.listPermissionsWithFilters(filters),
       "calling repository to list permissions with filters",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -58,17 +58,17 @@ export class PermissionService {
    *
    * @param permissionId - The ID of the permission
    * @returns A promise resolving to the permission data
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   getPermission = async (
     permissionId: string,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.getPermission(permissionId),
       "calling repository to get permission",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -78,17 +78,17 @@ export class PermissionService {
    *
    * @param permissionData - The permission data to insert
    * @returns A promise resolving to the created permission
-   * @throws {RepositoryError} If the repository operation fails or duplicate permission exists
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails or duplicate permission exists
    */
   createPermission = async (
     permissionData: TablesInsert<"user_role_permission">,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.create(permissionData),
       "calling repository to create permission",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -98,20 +98,20 @@ export class PermissionService {
    *
    * @param permissionDataList - Array of complete permission data to insert
    * @returns A promise resolving to an array of created permissions
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   createPermissionsInBulk = async (
     permissionDataList: TablesInsert<"user_role_permission">[],
   ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.createBulk(permissionDataList),
       "calling repository to create permissions in bulk",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -122,18 +122,18 @@ export class PermissionService {
    * @param permissionId - The ID of the permission to update
    * @param updates - The fields to update
    * @returns A promise resolving to the updated permission
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   updatePermission = async (
     permissionId: string,
     updates: Partial<TablesUpdate<"user_role_permission">>,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.update(permissionId, updates),
       "calling repository to update permission",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -143,15 +143,15 @@ export class PermissionService {
    *
    * @param permissionId - The ID of the permission to delete
    * @returns A promise resolving to void
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   deletePermission = async (permissionId: string): RepositoryResult<void> => {
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.delete(permissionId),
       "calling repository to delete permission",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return;
   };
@@ -161,19 +161,19 @@ export class PermissionService {
    *
    * @param permissionIds - Array of permission IDs to delete
    * @returns A promise resolving to void
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   deletePermissionsInBulk = async (
     permissionIds: string[],
   ): RepositoryResult<void> => {
     if (!permissionIds.length) return;
 
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.deleteBulk(permissionIds),
       "calling repository to delete permissions in bulk",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return;
   };
@@ -185,17 +185,17 @@ export class PermissionService {
    *
    * @param permissionData - The complete permission data to assign (including user_role_id)
    * @returns A promise resolving to the created permission
-   * @throws {RepositoryError} If the repository operation fails or duplicate exists
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails or duplicate exists
    */
   assignPermissionToRole = async (
     permissionData: TablesInsert<"user_role_permission">,
   ): RepositoryResult<userRolePermission> => {
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.assignToRole(permissionData),
       "calling repository to assign permission to role",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -207,20 +207,20 @@ export class PermissionService {
    *
    * @param permissionDataList - Array of complete permission data to assign
    * @returns A promise resolving to an array of created permissions
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   assignPermissionsToRoleInBulk = async (
     permissionDataList: TablesInsert<"user_role_permission">[],
   ): RepositoryResult<userRolePermission[]> => {
     if (!permissionDataList.length) return [];
 
-    const { data, error } = await tryCatch(
+    const { data, error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.assignToRoleInBulk(permissionDataList),
       "calling repository to assign permissions to role in bulk",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return data;
   };
@@ -231,17 +231,17 @@ export class PermissionService {
    * @param roleId - The ID of the role
    * @param permissionId - The ID of the permission to remove
    * @returns A promise resolving to void
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   removePermissionFromRole = async (
     permissionId: string,
   ): RepositoryResult<void> => {
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () => await this.permissionRepository.removeFromRole(permissionId),
       "calling repository to remove permission from role",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return;
   };
@@ -252,20 +252,20 @@ export class PermissionService {
    * @param roleId - The ID of the role
    * @param permissionIds - Array of permission IDs to remove
    * @returns A promise resolving to void
-   * @throws {RepositoryError} If the repository operation fails
+   * @throws {RepositoryError_DEPRECATED} If the repository operation fails
    */
   removePermissionsFromRoleInBulk = async (
     permissionIds: string[],
   ): RepositoryResult<void> => {
     if (!permissionIds.length) return;
 
-    const { error } = await tryCatch(
+    const { error } = await tryCatch_deprecated(
       async () =>
         await this.permissionRepository.removeFromRoleInBulk(permissionIds),
       "calling repository to remove permissions from role in bulk",
     );
 
-    if (error) throw new RepositoryError(error.message);
+    if (error) throw new RepositoryError_DEPRECATED(error.message);
 
     return;
   };

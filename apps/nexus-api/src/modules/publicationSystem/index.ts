@@ -5,7 +5,9 @@ import {
 } from "./articles/article.route.js";
 
 export class PublicationSystemRouter {
-  constructor(private readonly articleRouter: ArticleRouter = articleRouterInstance) {}
+  constructor(
+    private readonly articleRouter: ArticleRouter = articleRouterInstance,
+  ) {}
 
   getRouter = (): Router => {
     const router = Router();

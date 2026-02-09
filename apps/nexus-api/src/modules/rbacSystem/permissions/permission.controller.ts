@@ -1,9 +1,9 @@
-import { ServiceError } from "@/classes/ServerError";
+import { ServiceError_DEPRECATED } from "@/classes/ServerError";
 import {
   PermissionService,
   permissionServiceInstance,
 } from "./permission.service";
-import { tryCatch } from "@/utils/tryCatch.util";
+import { tryCatch_deprecated } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
@@ -47,14 +47,14 @@ export class PermissionController {
    * @query pageNumber - Current page (1-indexed)
    * @query pageSize - Number of items per page
    * @returns JSON response containing permissions and pagination metadata
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   listPermissions: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.GET,
     async ({ input, output }) => {
       const { roleId, userId, pageNumber = 1, pageSize = 10 } = input.query;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.listPermissionsWithFilters({
             roleId,
@@ -63,7 +63,7 @@ export class PermissionController {
         "calling service to list permissions",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -86,19 +86,19 @@ export class PermissionController {
    * @route GET /api/rbac-system/permissions/:permissionId
    * @param permissionId - The ID of the permission to fetch
    * @returns JSON response containing the permission
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   getPermission: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.permissionId.GET,
     async ({ input, output }) => {
       const { permissionId } = input.params;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () => await this.permissionService.getPermission(permissionId),
         "calling service to get permission",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -115,20 +115,20 @@ export class PermissionController {
    * @route POST /api/rbac-system/permissions
    * @body data - Permission data (resource_name, can_create, can_read, can_update, can_delete, user_role_id)
    * @returns JSON response containing the created permission
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   createPermission: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.POST,
     async ({ input, output }) => {
       const permissionData = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.createPermission(permissionData),
         "calling service to create permission",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -145,20 +145,20 @@ export class PermissionController {
    * @route POST /api/rbac-system/permissions/bulk-create
    * @body data - Array of Permission data (resource_name, can_create, can_read, can_update, can_delete, user_role_id)
    * @returns JSON response containing array of created permission
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   createPermissionsInBulk: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.bulk_create.POST,
     async ({ input, output }) => {
       const permissionData = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.createPermissionsInBulk(permissionData),
         "calling service to create permission in bulk",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -176,7 +176,7 @@ export class PermissionController {
    * @param permissionId - The ID of the permission to update
    * @body data - Partial permission data to update
    * @returns JSON response containing the updated permission
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   updatePermission: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.permissionId.PATCH,
@@ -184,13 +184,13 @@ export class PermissionController {
       const permissionId = input.params.permissionId;
       const updates = input.body.data;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.updatePermission(permissionId, updates),
         "calling service to update permission",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -207,19 +207,19 @@ export class PermissionController {
    * @route DELETE /api/rbac-system/permissions/:permissionId
    * @param permissionId - The ID of the permission to delete
    * @returns JSON response confirming deletion
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   deletePermission: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.permissionId.DELETE,
     async ({ input, output }) => {
       const permissionId = input.params.permissionId;
 
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () => await this.permissionService.deletePermission(permissionId),
         "calling service to delete permission",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -235,20 +235,20 @@ export class PermissionController {
    * @route DELETE /api/rbac-system/permissions/:permissionId/bulk-delete
    * @param permissionId - Array of ID of the permission to delete
    * @returns JSON response confirming deletion
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   deletePermissionsInBulk: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.bulk_delete.DELETE,
     async ({ input, output }) => {
       const permissionIds = input.body.permissionIds;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.deletePermissionsInBulk(permissionIds),
         "calling service to delete permissions in bulk",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -265,20 +265,20 @@ export class PermissionController {
    * @param roleId - The ID of the role
    * @body permissionData - Permission data to assign (without user_role_id)
    * @returns JSON response containing the assigned permission
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   assignToRole: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roles.assign.POST,
     async ({ input, output }) => {
       const permissionData = input.body.permissionData;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.assignPermissionToRole(permissionData),
         "calling service to assign permission to role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -296,14 +296,14 @@ export class PermissionController {
    * @param roleId - The ID of the role
    * @body permissionData - Array of permission data to assign
    * @returns JSON response containing the assigned permissions
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   assignToRoleInBulk: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roles.bulk_assign.POST,
     async ({ input, output }) => {
       const permissionDataList = input.body.permissionData;
 
-      const { data, error } = await tryCatch(
+      const { data, error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.assignPermissionsToRoleInBulk(
             permissionDataList,
@@ -311,7 +311,7 @@ export class PermissionController {
         "calling service to assign permissions to role in bulk",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -329,20 +329,20 @@ export class PermissionController {
    * @param roleId - The ID of the role
    * @param permissionId - The ID of the permission to remove
    * @returns JSON response confirming removal
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   removeFromRole: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roles.remove.DELETE,
     async ({ input, output }) => {
       const permissionId = input.body.permissionId;
 
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.removePermissionFromRole(permissionId),
         "calling service to remove permission from role",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",
@@ -359,14 +359,14 @@ export class PermissionController {
    * @param roleId - The ID of the role
    * @body permissionIds - Array of permission IDs to remove
    * @returns JSON response confirming removal
-   * @throws {ServiceError} If the service layer encounters an error
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
   removeFromRoleInBulk: RequestHandler = createExpressController(
     contract.api.rbac_system.permissions.roles.bulk_remove.DELETE,
     async ({ input, output }) => {
       const permissionIds = input.body.permissionIds;
 
-      const { error } = await tryCatch(
+      const { error } = await tryCatch_deprecated(
         async () =>
           await this.permissionService.removePermissionsFromRoleInBulk(
             permissionIds,
@@ -374,7 +374,7 @@ export class PermissionController {
         "calling service to remove permissions from role in bulk",
       );
 
-      if (error) throw new ServiceError(error.message);
+      if (error) throw new ServiceError_DEPRECATED(error.message);
 
       return output(200, {
         status: "success",

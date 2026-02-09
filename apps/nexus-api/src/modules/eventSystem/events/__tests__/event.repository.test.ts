@@ -4,7 +4,6 @@
  * mapping with a mocked client to avoid real DB access.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { DatabaseError } from "../../../../classes/ServerError.js";
 
 const { supabaseMock } = vi.hoisted(() => ({
   supabaseMock: {
@@ -17,6 +16,7 @@ vi.mock("@/lib/supabase.js", () => ({
 }));
 
 import { EventRepository } from "../event.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 describe("EventRepository", () => {
   const repository = new EventRepository();
@@ -27,7 +27,9 @@ describe("EventRepository", () => {
   });
 
   it("listEvents applies filters, order, and range", async () => {
-    const rangeMock = vi.fn().mockResolvedValue({ data: [event], count: 1, error: null });
+    const rangeMock = vi
+      .fn()
+      .mockResolvedValue({ data: [event], count: 1, error: null });
     const query = {
       eq: vi.fn().mockReturnThis(),
       gte: vi.fn().mockReturnThis(),
@@ -66,7 +68,11 @@ describe("EventRepository", () => {
   it("listEvents maps query error to DatabaseError", async () => {
     const rangeMock = vi
       .fn()
-      .mockResolvedValue({ data: null, count: null, error: { message: "fail" } });
+      .mockResolvedValue({
+        data: null,
+        count: null,
+        error: { message: "fail" },
+      });
     const query = {
       eq: vi.fn().mockReturnThis(),
       gte: vi.fn().mockReturnThis(),
@@ -82,7 +88,7 @@ describe("EventRepository", () => {
       repository.listEvents(1, 10, {
         creator_id: "user-1",
       }),
-    ).rejects.toBeInstanceOf(DatabaseError);
+    ).rejects.toBeInstanceOf(ServerError);
   });
 
   it("getEventById filters by id", async () => {

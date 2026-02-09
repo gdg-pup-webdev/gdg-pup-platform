@@ -3,9 +3,9 @@
  * @description Unit tests for FileRepository query intent and error mapping.
  * Supabase is mocked so schema expectations are validated without DB writes.
  */
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DatabaseError } from "../../../../classes/ServerError.js";
+import { beforeEach, describe, expect, it, vi } from "vitest"; 
 import { FileRepository } from "../file.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
 
@@ -58,7 +58,7 @@ describe("FileRepository", () => {
     expect(result.count).toBe(1);
   });
 
-  it("getOne maps supabase errors to DatabaseError", async () => {
+  it("getOne maps supabase errors to ServerError", async () => {
     const singleMock = vi.fn().mockResolvedValue({
       data: null,
       error: { message: "boom" },
@@ -73,7 +73,7 @@ describe("FileRepository", () => {
     fromMock.mockReturnValue(chain);
 
     await expect(repository.getOne("file-1")).rejects.toBeInstanceOf(
-      DatabaseError,
+      ServerError,
     );
   });
 

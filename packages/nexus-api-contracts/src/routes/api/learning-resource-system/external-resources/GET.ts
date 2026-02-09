@@ -2,8 +2,15 @@
 // list study jams
 import { externalResource } from "#models/learningResourceSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
+import { z } from "zod";
 
-export const query = SchemaFactory.Request.Paginated.query();
+export const query = SchemaFactory.Request.Paginated.query().extend({
+  search: z.string().optional(),
+  createdFrom: z.string().optional(),
+  createdTo: z.string().optional(),
+  uploaderId: z.string().optional(),
+  tagIds: z.string().optional(),
+});
 
 export const response = {
   200: SchemaFactory.Response.paginated(externalResource.row),
@@ -25,7 +32,7 @@ export const docs_query = {
   createdFrom: "Optional. Filter by created_at on/after this date-time.",
   createdTo: "Optional. Filter by created_at on/before this date-time.",
   uploaderId: "Optional. Filter by uploader ID.",
-  tagIds: "Optional. Filter by tag IDs (match-any).",
+  tagIds: "Optional. CSV tag IDs filter (match-any), e.g. tag-1,tag-2.",
 };
 export const docs_response_200 = "Paginated list of external resources.";
 export const docs_example_response = {
@@ -51,52 +58,52 @@ export const docs_example_response = {
 };
 
 export const docs_example_response_400 = {
-  "status": "error",
-  "message": "Invalid request.",
-  "errors": [
+  status: "error",
+  message: "Invalid request.",
+  errors: [
     {
-      "title": "Bad Request",
-      "detail": "One or more request fields are invalid."
-    }
-  ]
+      title: "Bad Request",
+      detail: "One or more request fields are invalid.",
+    },
+  ],
 };
 export const docs_example_response_401 = {
-  "status": "error",
-  "message": "Unauthorized.",
-  "errors": [
+  status: "error",
+  message: "Unauthorized.",
+  errors: [
     {
-      "title": "Unauthorized",
-      "detail": "Missing or invalid authentication token."
-    }
-  ]
+      title: "Unauthorized",
+      detail: "Missing or invalid authentication token.",
+    },
+  ],
 };
 export const docs_example_response_403 = {
-  "status": "error",
-  "message": "Forbidden.",
-  "errors": [
+  status: "error",
+  message: "Forbidden.",
+  errors: [
     {
-      "title": "Forbidden",
-      "detail": "You do not have permission to access this resource."
-    }
-  ]
+      title: "Forbidden",
+      detail: "You do not have permission to access this resource.",
+    },
+  ],
 };
 export const docs_example_response_404 = {
-  "status": "error",
-  "message": "External resource not found.",
-  "errors": [
+  status: "error",
+  message: "External resource not found.",
+  errors: [
     {
-      "title": "Not Found",
-      "detail": "No external resource found for the provided identifier."
-    }
-  ]
+      title: "Not Found",
+      detail: "No external resource found for the provided identifier.",
+    },
+  ],
 };
 export const docs_example_response_500 = {
-  "status": "error",
-  "message": "Internal server error.",
-  "errors": [
+  status: "error",
+  message: "Internal server error.",
+  errors: [
     {
-      "title": "Internal Server Error",
-      "detail": "An unexpected error occurred."
-    }
-  ]
+      title: "Internal Server Error",
+      detail: "An unexpected error occurred.",
+    },
+  ],
 };

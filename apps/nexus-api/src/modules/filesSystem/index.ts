@@ -14,4 +14,3 @@ export class FileSystemRouter {
 }
 
 export const fileSystemRouterInstance = new FileSystemRouter();
-

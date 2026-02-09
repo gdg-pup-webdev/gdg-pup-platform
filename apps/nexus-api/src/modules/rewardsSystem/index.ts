@@ -2,7 +2,9 @@ import { Router } from "express";
 import { RewardRouter, rewardRouterInstance } from "./rewards/reward.route.js";
 
 export class RewardSystemRouter {
-  constructor(private readonly rewardRouter: RewardRouter = rewardRouterInstance) {}
+  constructor(
+    private readonly rewardRouter: RewardRouter = rewardRouterInstance,
+  ) {}
 
   getRouter = (): Router => {
     const router = Router();

@@ -1,9 +1,7 @@
 import { RequestHandler } from "express";
 import { RewardService, rewardServiceInstance } from "./reward.service.js";
 import { createExpressController } from "@packages/typed-rest";
-import { contract, models } from "@packages/nexus-api-contracts";
-import { tryCatch } from "@/utils/tryCatch.util.js";
-import { ServiceError } from "@/classes/ServerError.js";
+import { contract } from "@packages/nexus-api-contracts";
 
 export class RewardController {
   constructor(private rewardService: RewardService = rewardServiceInstance) {}
@@ -12,12 +10,10 @@ export class RewardController {
     contract.api.reward_system.rewards.POST,
     async ({ input, output, ctx }) => {
       const { res, req } = ctx;
-      const { data, error } = await tryCatch(
-        async () =>
-          await this.rewardService.createReward(input.body.data, req.user!.id),
-        "creating reward",
+      const data = await this.rewardService.createReward(
+        input.body.data,
+        req.user!.id,
       );
-      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -32,16 +28,10 @@ export class RewardController {
     async ({ input, output, ctx }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
-        async () =>
-          await this.rewardService.listRewardsByPage(
-            pageNumber,
-            pageSize,
-          ),
-        "listing rewards",
+      const data = await this.rewardService.listRewardsByPage(
+        pageNumber,
+        pageSize,
       );
-
-      if (error) throw new ServiceError(error.message);
 
       return output(200, {
         status: "success",
@@ -61,11 +51,7 @@ export class RewardController {
     contract.api.reward_system.rewards.rewardId.GET,
     async ({ input, output, ctx }) => {
       const rewardId = input.params.rewardId;
-      const { data, error } = await tryCatch(
-        async () => await this.rewardService.getReward(rewardId),
-        "getting reward",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.rewardService.getReward(rewardId);
 
       return output(200, {
         status: "success",
@@ -78,11 +64,7 @@ export class RewardController {
   claimReward: RequestHandler = createExpressController(
     contract.api.reward_system.rewards.rewardId.claim.POST,
     async ({ input, output, ctx }) => {
-      const { data, error } = await tryCatch(
-        async () => await this.rewardService.claimReward(input.params.rewardId),
-        "claiming reward",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.rewardService.claimReward(input.params.rewardId);
 
       return output(200, {
         status: "success",

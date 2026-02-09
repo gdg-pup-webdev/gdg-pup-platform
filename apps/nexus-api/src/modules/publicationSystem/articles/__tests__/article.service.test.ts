@@ -6,13 +6,13 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DatabaseError } from "../../../../classes/ServerError.js";
 import {
   articleCommentFixture,
   articleFixture,
   listResult,
 } from "../../__tests__/test-helpers.js";
 import { ArticleService } from "../article.service.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const {
   repoCreate,
@@ -135,13 +135,12 @@ describe("article.service (unit)", () => {
   });
 
   it("maps repository errors to RepositoryError-shaped failures", async () => {
-    repoCreate.mockRejectedValue(new DatabaseError("db failure"));
+    repoCreate.mockRejectedValue(new ServerError("db failure", "detail"));
 
     await expect(
       service.create({ title: "bad" } as any, "user-1"),
     ).rejects.toMatchObject({
-      title: "Database Error",
-      statusCode: 500,
+      title: "db failure",
     });
   });
 });

@@ -1,5 +1,5 @@
-import { DatabaseError } from "@/classes/ServerError.js";
 import { supabase } from "@/lib/supabase.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
@@ -10,11 +10,17 @@ type projectRow = Tables<"user_project">;
 type projectInsert = TablesInsert<"user_project">;
 type projectUpdate = TablesUpdate<"user_project">;
 
+/**
+ * Repository for managing user projects in the database.
+ */
 export class ProjectRepository {
-  tableName = "user_project";
+  private readonly tableName = "user_project";
 
-  constructor() {}
-
+  /**
+   * Lists all projects of a user.
+   * @returns A list of projects and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   listProjectsOfUser = async (
     userId: string,
   ): RepositoryResultList<projectRow> => {
@@ -22,13 +28,13 @@ export class ProjectRepository {
       .from(this.tableName)
       .select("*")
       .eq("user_id", userId);
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) handlePostgresError(countError);
 
     return {
       list: data,
@@ -36,14 +42,19 @@ export class ProjectRepository {
     };
   };
 
+  /**
+   * Lists all projects.
+   * @returns A list of projects and the total count.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   listProjects = async (): RepositoryResultList<projectRow> => {
     const { data, error } = await supabase.from(this.tableName).select("*");
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     const { count, error: countError } = await supabase
       .from(this.tableName)
       .select("*", { count: "exact", head: true });
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) handlePostgresError(countError);
 
     return {
       list: data,
@@ -51,6 +62,11 @@ export class ProjectRepository {
     };
   };
 
+  /**
+   * Gets a single project by its ID.
+   * @returns The fetched project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   getOneProject = async (id: string): RepositoryResult<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -58,21 +74,31 @@ export class ProjectRepository {
       .eq("id", id)
       .single();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
 
     return data;
   };
 
+  /**
+   * Creates a new project.
+   * @returns The created project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   createProject = async (dto: projectInsert): RepositoryResult<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
       .insert(dto)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
+  /**
+   * Deletes a project.
+   * @returns The deleted project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   deleteProject = async (id: string): RepositoryResult<projectRow> => {
     const { data, error } = await supabase
       .from(this.tableName)
@@ -80,10 +106,15 @@ export class ProjectRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 
+  /**
+   * Updates a project.
+   * @returns The updated project.
+   * @throws {DatabaseError} If the database operation fails.
+   */
   updateProject = async (
     id: string,
     dto: projectUpdate,
@@ -94,7 +125,7 @@ export class ProjectRepository {
       .eq("id", id)
       .select("*")
       .single();
-    if (error) throw new DatabaseError(error.message);
+    if (error) handlePostgresError(error);
     return data;
   };
 }

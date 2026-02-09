@@ -5,9 +5,7 @@
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
 import {
   SettingsService,
   settingsServiceInstance,
@@ -32,19 +30,11 @@ export class SettingsController {
 
       let list, count;
       if (userId) {
-        const { data, error } = await tryCatch(
-          async () => await this.settingsService.listSettingsOfUser(userId),
-          "getting user settings",
-        );
-        if (error) throw new ServiceError(error.message);
+        const data = await this.settingsService.listSettingsOfUser(userId);
         list = data.list;
         count = data.count;
       } else {
-        const { data, error } = await tryCatch(
-          async () => await this.settingsService.listSettings(),
-          "getting all settings",
-        );
-        if (error) throw new ServiceError(error.message);
+        const data = await this.settingsService.listSettings();
         list = data.list;
         count = data.count;
       }
@@ -71,11 +61,7 @@ export class SettingsController {
     contract.api.user_resource_system.settings.settingsId.GET,
     async ({ input, output }) => {
       const settingsId = input.params.settingsId;
-      const { data, error } = await tryCatch(
-        async () => await this.settingsService.getOneSettings(settingsId),
-        "fetching settings",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.settingsService.getOneSettings(settingsId);
 
       return output(200, {
         status: "success",
@@ -93,11 +79,7 @@ export class SettingsController {
     contract.api.user_resource_system.settings.POST,
     async ({ input, output }) => {
       const dto = input.body.data;
-      const { data, error } = await tryCatch(
-        async () => await this.settingsService.createSettings(dto),
-        "creating settings",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.settingsService.createSettings(dto);
 
       return output(201, {
         status: "success",
@@ -117,11 +99,7 @@ export class SettingsController {
       const settingsId = input.params.settingsId;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
-        async () => await this.settingsService.updateSettings(settingsId, dto),
-        "updating settings",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.settingsService.updateSettings(settingsId, dto);
 
       return output(200, {
         status: "success",
@@ -139,11 +117,7 @@ export class SettingsController {
     contract.api.user_resource_system.settings.settingsId.DELETE,
     async ({ input, output }) => {
       const settingsId = input.params.settingsId;
-      const { error } = await tryCatch(
-        async () => await this.settingsService.deleteSettings(settingsId),
-        "deleting settings",
-      );
-      if (error) throw new ServiceError(error.message);
+      await this.settingsService.deleteSettings(settingsId);
 
       return output(200, {
         status: "success",

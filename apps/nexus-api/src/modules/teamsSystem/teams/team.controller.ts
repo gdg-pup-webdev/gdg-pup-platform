@@ -1,23 +1,19 @@
 import { RequestHandler } from "express";
 import { TeamService, teamServiceInstance } from "./team.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError } from "@/classes/ServerError.js";
 import { createExpressController } from "@packages/typed-rest";
-import { tryCatch } from "@/utils/tryCatch.util.js";
 
 export class TeamController {
-  constructor(private readonly teamService: TeamService = teamServiceInstance) {}
+  constructor(
+    private readonly teamService: TeamService = teamServiceInstance,
+  ) {}
 
   listTeams: RequestHandler = createExpressController(
     contract.api.team_system.teams.GET,
     async ({ input, output }) => {
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-      const { data, error } = await tryCatch(
-        async () => await this.teamService.listTeams(),
-        "On controller, listing teams",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.teamService.listTeams();
 
       return output(200, {
         status: "success",
@@ -40,11 +36,7 @@ export class TeamController {
       const user = req.user!;
       const dto = input.body.data;
 
-      const { data, error } = await tryCatch(
-        async () => await this.teamService.createTeam(dto, user.id),
-        "creating team",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.teamService.createTeam(dto, user.id);
 
       return output(200, {
         status: "success",
@@ -58,11 +50,7 @@ export class TeamController {
     contract.api.team_system.teams.teamId.GET,
     async ({ input, output }) => {
       const { teamId } = input.params;
-      const { data, error } = await tryCatch(
-        async () => await this.teamService.getOneTeam(teamId),
-        "fetching team",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.teamService.getOneTeam(teamId);
 
       return output(200, {
         status: "success",
@@ -77,11 +65,7 @@ export class TeamController {
     async ({ input, output }) => {
       const { teamId } = input.params;
       const dto = input.body.data;
-      const { data, error } = await tryCatch(
-        async () => await this.teamService.updateTeam(teamId, dto),
-        "updating team",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.teamService.updateTeam(teamId, dto);
 
       return output(200, {
         status: "success",
@@ -95,11 +79,7 @@ export class TeamController {
     contract.api.team_system.teams.teamId.DELETE,
     async ({ input, output }) => {
       const { teamId } = input.params;
-      const { data, error } = await tryCatch(
-        async () => await this.teamService.deleteTeam(teamId),
-        "deleting team",
-      );
-      if (error) throw new ServiceError(error.message);
+      const data = await this.teamService.deleteTeam(teamId);
 
       return output(200, {
         status: "success",

@@ -6,9 +6,14 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DatabaseError } from "../../../../classes/ServerError.js";
-import { externalResourceFixture, listResult } from "../../__tests__/test-helpers.js";
+import {
+  externalResourceFilters,
+  externalResourceFixture,
+  learningResourcePagination,
+  listResult,
+} from "../../__tests__/test-helpers.js";
 import { ExternalResourceService } from "../externalResource.service.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { mockCreate, mockList, mockGetOne, mockUpdate, mockDelete } = vi.hoisted(
   () => ({
@@ -45,30 +50,40 @@ describe("externalResource.service (unit)", () => {
   it("create enriches uploader_id before calling the repository", async () => {
     mockCreate.mockResolvedValue(externalResourceFixture);
 
-    await service.create({ title: externalResourceFixture.title } as any, "user-1");
+    await service.create(
+      { title: externalResourceFixture.title } as any,
+      "user-1",
+    );
 
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({ uploader_id: "user-1" }),
     );
   });
 
-  it("list delegates to the repository", async () => {
+  it("list delegates to the repository with pagination and filters", async () => {
     mockList.mockResolvedValue(listResult(externalResourceFixture));
 
-    const result = await service.list();
+    const result = await service.list(
+      learningResourcePagination.pageNumber,
+      learningResourcePagination.pageSize,
+      externalResourceFilters,
+    );
 
-    expect(mockList).toHaveBeenCalledTimes(1);
+    expect(mockList).toHaveBeenCalledWith(
+      learningResourcePagination.pageNumber,
+      learningResourcePagination.pageSize,
+      externalResourceFilters,
+    );
     expect(result.count).toBe(1);
   });
 
   it("maps repository errors to RepositoryError", async () => {
-    mockCreate.mockRejectedValue(new DatabaseError("db failure"));
+    mockCreate.mockRejectedValue(new ServerError("db failure", "detail"));
 
     await expect(
       service.create({ title: "bad" } as any, "user-1"),
     ).rejects.toMatchObject({
-      title: "Database Error",
-      statusCode: 500,
+      title: "db failure", 
     });
   });
 });

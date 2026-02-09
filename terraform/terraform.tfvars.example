@@ -1,0 +1,13 @@
+# =============================================================================
+# Terraform Variables Example
+# =============================================================================
+# Copy this file to terraform.tfvars and fill in real values.
+# NOTE: Do not commit terraform.tfvars if it contains sensitive data.
+# =============================================================================
+
+# Required
+# project_id = "gdg-pup-platform-dev"
+
+# Optional
+# region      = "asia-southeast1"
+# environment = "dev"

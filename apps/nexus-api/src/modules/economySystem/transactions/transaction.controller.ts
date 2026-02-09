@@ -1,9 +1,7 @@
-import { ServiceError } from "@/classes/ServerError";
 import {
   TransactionService,
   transactionServiceInstance,
 } from "@/modules/economySystem/transactions/transaction.service";
-import { tryCatch } from "@/utils/tryCatch.util";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
@@ -22,7 +20,7 @@ export class TransactionController {
    *
    * @route GET /api/economy-system/transactions
    * @returns JSON response containing the list of transactions and pagination metadata.
-   * @throws {ServiceError} If the service layer encounters an error.
+   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
    */
   listTransactions: RequestHandler = createExpressController(
     contract.api.economy_system.transactions.GET,
@@ -33,16 +31,14 @@ export class TransactionController {
       const userId = input.query.userId;
       const walletId = input.query.walletId;
 
-      const { data, error } = await tryCatch(
-        async () =>
-          await this.transactionService.listTransactions(pageNumber, pageSize, {
-            userId,
-            walletId,
-          }),
-        "listing transactions",
+      const data = await this.transactionService.listTransactions(
+        pageNumber,
+        pageSize,
+        {
+          userId,
+          walletId,
+        },
       );
-
-      if (error) throw new ServiceError(error.message);
 
       const list = data.list;
       const count = data.count;

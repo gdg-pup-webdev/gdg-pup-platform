@@ -5,7 +5,6 @@ export class HealthCheckModuleRouter {
   private readonly router: Router = Router();
 
   constructor() {
-    // Mount the health feature at the module root so /api/health stays stable.
     this.router.use("/", healthCheckRouterInstance.getRouter());
   }
 

@@ -1,13 +1,19 @@
 /**
  * @file index.ts
- * @description Entry point for the User Resource System module. 
- * This file aggregates and exposes all resource-related routes (Profiles, Projects, 
+ * @description Entry point for the User Resource System module.
+ * This file aggregates and exposes all resource-related routes (Profiles, Projects,
  * Achievements, Certificates, and Settings) under a unified router.
  */
 
 import { Router } from "express";
-import { ProfileRouter, profileRouterInstance } from "./profiles/profile.route.js";
-import { projectRotuerInstance, ProjectRouter } from "./projects/project.route.js";
+import {
+  ProfileRouter,
+  profileRouterInstance,
+} from "./profiles/profile.route.js";
+import {
+  projectRotuerInstance,
+  ProjectRouter,
+} from "./projects/project.route.js";
 import {
   achievementRouterInstance,
   AchievementRouter,
@@ -16,7 +22,10 @@ import {
   certificateRouterInstance,
   CertificateRouter,
 } from "./certificates/certificate.route.js";
-import { settingsRouterInstance, SettingsRouter } from "./settings/settings.route.js";
+import {
+  settingsRouterInstance,
+  SettingsRouter,
+} from "./settings/settings.route.js";
 
 /**
  * UserResourceSystemRouter

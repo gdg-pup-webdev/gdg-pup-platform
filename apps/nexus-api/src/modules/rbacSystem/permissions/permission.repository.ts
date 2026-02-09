@@ -1,9 +1,6 @@
-import {
-  RepositoryError,
-  NotFoundError,
-  DatabaseError,
-  DuplicateResourceError,
-} from "@/classes/ServerError";
+import { NotFoundError, ConflictError } from "@/errors/HttpError";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError";
+import { DatabaseError_DONT_USE } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase";
 import {
   RepositoryResultList,
@@ -43,7 +40,7 @@ export class PermissionRepository {
    *
    * @param filters - Optional filters (roleId or userId)
    * @returns A promise resolving to a list of permissions and total count
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   listPermissionsWithFilters = async (
     filters: PermissionListFilters = {},
@@ -57,7 +54,8 @@ export class PermissionRepository {
         .select("role_id")
         .eq("user_id", userId);
 
-      if (junctionError) throw new DatabaseError(junctionError.message);
+      if (junctionError)
+        throw new DatabaseError_DONT_USE(junctionError.message);
 
       const roleIds = (junctionRows ?? []).map((row) => row.role_id);
 
@@ -71,14 +69,14 @@ export class PermissionRepository {
         .select("*")
         .in("user_role_id", roleIds);
 
-      if (error) throw new DatabaseError(error.message);
+      if (error) throw new DatabaseError_DONT_USE(error.message);
 
       const { count, error: countError } = await supabase
         .from(this.permissionTable)
         .select("*", { count: "exact", head: true })
         .in("user_role_id", roleIds);
 
-      if (countError) throw new DatabaseError(countError.message);
+      if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
       return {
         list: data as userRolePermission[],
@@ -98,10 +96,10 @@ export class PermissionRepository {
     }
 
     const { data, error } = await query;
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     const { count, error: countError } = await countQuery;
-    if (countError) throw new DatabaseError(countError.message);
+    if (countError) throw new DatabaseError_DONT_USE(countError.message);
 
     return {
       list: data as userRolePermission[],
@@ -115,7 +113,7 @@ export class PermissionRepository {
    * @param permissionId - The ID of the permission
    * @returns A promise resolving to the permission data
    * @throws {NotFoundError} If permission is not found
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   getPermission = async (
     permissionId: string,
@@ -126,7 +124,7 @@ export class PermissionRepository {
       .eq("id", permissionId)
       .maybeSingle();
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     if (!data)
       throw new NotFoundError(`Permission with ID "${permissionId}" not found`);
@@ -140,8 +138,8 @@ export class PermissionRepository {
    *
    * @param permissionData - The permission data to insert
    * @returns A promise resolving to the created permission
-   * @throws {DuplicateResourceError} If a duplicate permission exists (same role + resource)
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {ConflictError} If a duplicate permission exists (same role + resource)
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   create = async (
     permissionData: TablesInsert<"user_role_permission">,
@@ -154,10 +152,10 @@ export class PermissionRepository {
       .eq("resource_name", permissionData.resource_name)
       .maybeSingle();
 
-    if (checkError) throw new DatabaseError(checkError.message);
+    if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
 
     if (existing) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Permission for resource "${permissionData.resource_name}" already exists for this role`,
       );
     }
@@ -172,16 +170,18 @@ export class PermissionRepository {
     if (error) {
       // Duplicate permission (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${permissionData.resource_name}" already exists for this role`,
         );
       }
 
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data) {
-      throw new DatabaseError("Failed to create permission - no data returned");
+      throw new DatabaseError_DONT_USE(
+        "Failed to create permission - no data returned",
+      );
     }
 
     return data;
@@ -193,8 +193,8 @@ export class PermissionRepository {
    *
    * @param permissionDataList - Array of complete permission data to insert
    * @returns A promise resolving to an array of created permissions
-   * @throws {DuplicateResourceError} If any permission already exists or duplicates within request
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {ConflictError} If any permission already exists or duplicates within request
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   createBulk = async (
     permissionDataList: Array<TablesInsert<"user_role_permission">>,
@@ -216,7 +216,7 @@ export class PermissionRepository {
     }
 
     if (duplicatesInRequest.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Duplicate permissions in request: ${duplicatesInRequest.join(", ")}`,
       );
     }
@@ -231,7 +231,7 @@ export class PermissionRepository {
       .select("user_role_id, resource_name")
       .in("user_role_id", roleIds);
 
-    if (fetchError) throw new DatabaseError(fetchError.message);
+    if (fetchError) throw new DatabaseError_DONT_USE(fetchError.message);
 
     // Build a set of existing combinations
     const existingCombinations = new Set(
@@ -252,7 +252,7 @@ export class PermissionRepository {
     }
 
     if (conflictingPermissions.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `The following permissions already exist: ${conflictingPermissions.join(", ")}`,
       );
     }
@@ -266,16 +266,16 @@ export class PermissionRepository {
     if (error) {
       // Duplicate error (last resort catch)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           "One or more permissions already exist in the database",
         );
       }
 
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data || data.length === 0) {
-      throw new DatabaseError(
+      throw new DatabaseError_DONT_USE(
         "Failed to create permissions - no data returned",
       );
     }
@@ -291,8 +291,8 @@ export class PermissionRepository {
    * @param updates - The fields to update
    * @returns A promise resolving to the updated permission
    * @throws {NotFoundError} If the permission does not exist
-   * @throws {DuplicateResourceError} If update would create duplicate
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {ConflictError} If update would create duplicate
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   update = async (
     permissionId: string,
@@ -307,7 +307,7 @@ export class PermissionRepository {
         .eq("id", permissionId)
         .maybeSingle();
 
-      if (fetchError) throw new DatabaseError(fetchError.message);
+      if (fetchError) throw new DatabaseError_DONT_USE(fetchError.message);
       if (!currentPermission)
         throw new NotFoundError(
           `Permission with ID "${permissionId}" not found`,
@@ -322,10 +322,10 @@ export class PermissionRepository {
         .neq("id", permissionId) // Exclude current permission
         .maybeSingle();
 
-      if (checkError) throw new DatabaseError(checkError.message);
+      if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
 
       if (existing) {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${updates.resource_name}" already exists for this role`,
         );
       }
@@ -348,11 +348,11 @@ export class PermissionRepository {
       }
       // Duplicate error (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${updates.resource_name}" already exists for this role`,
         );
       }
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data) {
@@ -368,7 +368,7 @@ export class PermissionRepository {
    * @param permissionId - The ID of the permission to delete
    * @returns A promise resolving to void
    * @throws {NotFoundError} If the permission does not exist
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   delete = async (permissionId: string): RepositoryResult<void> => {
     const { error, count } = await supabase
@@ -376,7 +376,7 @@ export class PermissionRepository {
       .delete({ count: "exact" })
       .eq("id", permissionId);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     if (count === 0) {
       throw new NotFoundError(`Permission with ID "${permissionId}" not found`);
@@ -391,7 +391,7 @@ export class PermissionRepository {
    * @param permissionIds - Array of permission IDs to delete
    * @returns A promise resolving to void
    * @throws {NotFoundError} If no permissions found with provided IDs
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   deleteBulk = async (permissionIds: string[]): RepositoryResult<void> => {
     if (!permissionIds.length) return;
@@ -401,7 +401,7 @@ export class PermissionRepository {
       .delete({ count: "exact" })
       .in("id", permissionIds);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     if (count === 0) {
       throw new NotFoundError("No permissions found with the provided IDs");
@@ -416,8 +416,8 @@ export class PermissionRepository {
    *
    * @param permissionData - The complete permission data to assign (including user_role_id)
    * @returns A promise resolving to the created permission
-   * @throws {DuplicateResourceError} If permission already exists for the role
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {ConflictError} If permission already exists for the role
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   assignToRole = async (
     permissionData: TablesInsert<"user_role_permission">,
@@ -430,10 +430,10 @@ export class PermissionRepository {
       .eq("resource_name", permissionData.resource_name)
       .maybeSingle();
 
-    if (checkError) throw new DatabaseError(checkError.message);
+    if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
 
     if (existing) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Permission for resource "${permissionData.resource_name}" already exists for this role`,
       );
     }
@@ -448,16 +448,18 @@ export class PermissionRepository {
     if (error) {
       // Duplicate (shouldn't happen due to check above)
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           `Permission for resource "${permissionData.resource_name}" already exists for this role`,
         );
       }
 
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data) {
-      throw new DatabaseError("Failed to assign permission - no data returned");
+      throw new DatabaseError_DONT_USE(
+        "Failed to assign permission - no data returned",
+      );
     }
 
     return data;
@@ -469,8 +471,8 @@ export class PermissionRepository {
    *
    * @param permissionDataList - Array of complete permission data to assign
    * @returns A promise resolving to an array of created permissions
-   * @throws {DuplicateResourceError} If any permission already exists or duplicates within request
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {ConflictError} If any permission already exists or duplicates within request
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   assignToRoleInBulk = async (
     permissionDataList: TablesInsert<"user_role_permission">[],
@@ -492,7 +494,7 @@ export class PermissionRepository {
     }
 
     if (duplicatesInRequest.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `Duplicate permissions in request: ${duplicatesInRequest.join(", ")}`,
       );
     }
@@ -505,7 +507,7 @@ export class PermissionRepository {
       .select("user_role_id, resource_name")
       .in("user_role_id", roleIds);
 
-    if (fetchError) throw new DatabaseError(fetchError.message);
+    if (fetchError) throw new DatabaseError_DONT_USE(fetchError.message);
 
     const existingCombinations = new Set(
       (existingPermissions || []).map(
@@ -524,7 +526,7 @@ export class PermissionRepository {
     }
 
     if (conflictingPermissions.length > 0) {
-      throw new DuplicateResourceError(
+      throw new ConflictError(
         `The following permissions already exist: ${conflictingPermissions.join(", ")}`,
       );
     }
@@ -537,16 +539,16 @@ export class PermissionRepository {
 
     if (error) {
       if (error.code === "23505") {
-        throw new DuplicateResourceError(
+        throw new ConflictError(
           "One or more permissions already exist for this role",
         );
       }
 
-      throw new DatabaseError(error.message);
+      throw new DatabaseError_DONT_USE(error.message);
     }
 
     if (!data || data.length === 0) {
-      throw new DatabaseError(
+      throw new DatabaseError_DONT_USE(
         "Failed to assign permissions - no data returned",
       );
     }
@@ -560,7 +562,7 @@ export class PermissionRepository {
    * @param permissionId - The ID of the permission to remove
    * @returns A promise resolving to void
    * @throws {NotFoundError} If the permission does not exist
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   removeFromRole = async (permissionId: string): RepositoryResult<void> => {
     const { error, count } = await supabase
@@ -568,7 +570,7 @@ export class PermissionRepository {
       .delete({ count: "exact" })
       .eq("id", permissionId);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     if (count === 0) {
       throw new NotFoundError(`Permission with ID "${permissionId}" not found`);
@@ -584,7 +586,7 @@ export class PermissionRepository {
    * @param permissionIds - Array of permission IDs to remove
    * @returns A promise resolving to void
    * @throws {NotFoundError} If any permission does not exist
-   * @throws {DatabaseError} If a database error occurs
+   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
   removeFromRoleInBulk = async (
     permissionIds: string[],
@@ -596,7 +598,7 @@ export class PermissionRepository {
       .delete({ count: "exact" })
       .in("id", permissionIds);
 
-    if (error) throw new DatabaseError(error.message);
+    if (error) throw new DatabaseError_DONT_USE(error.message);
 
     if (count === 0) {
       throw new NotFoundError(`No permissions found with the provided IDs`);

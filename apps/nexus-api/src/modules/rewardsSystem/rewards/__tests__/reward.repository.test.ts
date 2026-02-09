@@ -2,10 +2,10 @@
  * Reward repository unit tests.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import { DatabaseError } from "../../../../classes/ServerError.js";
+ 
 import { rewardFixture } from "../../__tests__/test-helpers.js";
 import { RewardRepository } from "../reward.repository.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
 
@@ -77,7 +77,7 @@ describe("reward.repository (unit)", () => {
     fromMock.mockReturnValue({ insert: insertMock });
 
     await expect(repository.createReward(rewardFixture as any)).rejects.toBeInstanceOf(
-      DatabaseError,
+      ServerError,
     );
   });
 });
