@@ -76,7 +76,7 @@ export namespace SchemaFactory {
       export const query = () => {
         return z.object({
           pageNumber: z.coerce.number().int().positive().default(1),
-          pageSize: z.coerce.number().int().positive().max(50).default(10),
+          pageSize: z.coerce.number().int().positive().default(10),
         });
       };
     }

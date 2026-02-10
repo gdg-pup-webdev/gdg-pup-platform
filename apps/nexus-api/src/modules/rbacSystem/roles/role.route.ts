@@ -21,7 +21,7 @@ import { RoleController, roleControllerInstance } from "./role.controller";
  * - POST /api/rbac/roles/:roleId: Update a role.
  * - DELETE /api/rbac/roles/:roleId: Delete a role.
  * - GET /api/rbac/roles/:roleId/users/no-roles: Fetch users without the specified role.
- * - GET /api/rbac/roles/:roleName: Check if a role exists by name.
+ * - GET /api/rbac/roles/:roleId: Check if a role exists by name.
  * - POST /api/rbac/roles/:roleId/users/:userId: Assign a role to a user.
  * - DELETE /api/rbac/roles/:roleId/users/:userId: Remove a role from a user.
  * - POST /api/rbac/roles/:roleId/bulk/assign: Assign a role to multiple users.
@@ -46,28 +46,28 @@ export class RoleRouter {
 
     router.post("/", this.roleController.createOneRole);
 
-    router.delete("/:roleName", this.roleController.deleteOneRole);
+    router.delete("/:roleId", this.roleController.deleteOneRole);
 
-    router.get("/:roleName", this.roleController.getOneRole);
+    router.get("/:roleId", this.roleController.getOneRole);
 
-    router.patch("/:roleName", this.roleController.updateOneRole);
+    router.patch("/:roleId", this.roleController.updateOneRole);
 
     router.patch(
-      "/:roleName/assign-to-users",
+      "/:roleId/assign-to-users",
       this.roleController.assignOneRoleToManyUsers,
     );
     router.patch(
-      "/:roleName/attach-permissions",
+      "/:roleId/attach-permissions",
       this.roleController.attachManyPermissionsToOneRole,
     );
 
     router.patch(
-      "/:roleName/detach-permissions",
+      "/:roleId/detach-permissions",
       this.roleController.detachManyPermissionsFromOneRole,
     );
 
     router.patch(
-      "/:roleName/remove-from-user",
+      "/:roleId/remove-from-user",
       this.roleController.removeOneRoleFromOneUser,
     );
 

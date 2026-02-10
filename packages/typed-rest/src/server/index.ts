@@ -13,8 +13,7 @@ import {
   OpenAPIRegistry,
   OpenApiGeneratorV3,
 } from "@asteasolutions/zod-to-openapi";
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi'; 
- 
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 
 // --- Controller Factory ---
 export const createExpressController = <T extends EndpointDef>(
@@ -42,14 +41,19 @@ export const createExpressController = <T extends EndpointDef>(
 
       try {
         if (request?.query) {
+          console.log("validating query");
           input.query = await request.query.parseAsync(req.query);
         }
         if (request?.params) {
+          console.log("validating params");
+          console.log(req.params);
+          console.log(JSON.stringify(z.toJSONSchema(request.params), null, 2));
           input.params = await request.params.parseAsync(req.params);
         }
         if (request?.body) {
-          // console.log("validating body");
-          // console.log(req.body);
+          console.log("validating body");
+          console.log(req.body);
+          console.log(JSON.stringify(z.toJSONSchema(request.body), null, 2));
           input.body = await request.body.parseAsync(req.body);
         }
       } catch (err) {
@@ -93,12 +97,35 @@ export const createExpressController = <T extends EndpointDef>(
 
       if (responseValidator) {
         try {
+          console.log("validating respones");
+          console.log(result.body);
+          console.log(
+            JSON.stringify(z.toJSONSchema(responseValidator), null, 2),
+          );
           await responseValidator.parseAsync(result.body);
         } catch (err) {
+          // if (err instanceof ZodError) {
+          //   throw new ContractError(err, "server");
+          // }
+          // throw err;
           if (err instanceof ZodError) {
-            throw new ContractError(err, "server");
+            result.body["__typed_rest"] = {
+              warnings: [
+                {
+                  title: "Response Validation Failed",
+                  detail: z.prettifyError(err),
+                  stack: err.stack,
+                  errors: err.issues.map((issue) => {
+                    return {
+                      code: issue.code,
+                      message: issue.message,
+                      path: issue.path.join(" -> "),
+                    };
+                  }),
+                },
+              ],
+            };
           }
-          throw err;
         }
       } else {
         console.warn(
@@ -112,9 +139,6 @@ export const createExpressController = <T extends EndpointDef>(
     }
   };
 };
-
-
-
 
 export const createSwaggerOptions = (endpoints: any): any => {
   const registry = new OpenAPIRegistry();
@@ -223,6 +247,3 @@ export const createSwaggerOptions = (endpoints: any): any => {
 
   return options;
 };
-
-
- 

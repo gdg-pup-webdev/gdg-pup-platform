@@ -92,6 +92,8 @@ export class RoleController {
 
       const data = await this.roleService.createOneRole(roleData);
 
+      console.log("create one role controller hey", data) ;
+
       return output(200, {
         status: "success",
         message: `Role created successfully`,

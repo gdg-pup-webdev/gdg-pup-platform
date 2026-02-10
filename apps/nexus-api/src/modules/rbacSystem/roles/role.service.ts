@@ -57,12 +57,9 @@ export class RoleService {
 
   createOneRole = async (dto: roleInsert) => {
     const data = await this.roleRepository.createRoles([dto]);
+ 
 
-    if (data.length < 1) {
-      throw new InternalServerError("Failed to create role");
-    }
-
-    return data[0];
+    return data[0] ;
   };
 
   assignOneRoleToManyUsers = async (roleId: string, userIds: string[]) => {
