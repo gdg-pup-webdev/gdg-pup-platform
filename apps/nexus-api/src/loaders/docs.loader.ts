@@ -23,6 +23,7 @@ export const docsLoader = (app: Express) => {
       ].join(" "),
     },
     servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
+    generateExample: false,
   });
 
   /**
@@ -33,51 +34,62 @@ export const docsLoader = (app: Express) => {
     res.send(swaggerSpec);
   });
 
-  app.use("/docs-postman.json", (req, res) => {
-    // 1. Force the browser to download the file with a specific name
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=collection.postman_collection.json",
-    );
-    res.setHeader("Content-Type", "application/json");
+ app.use("/docs-postman.json", (req, res) => {
+  res.setHeader("Content-Disposition", "attachment; filename=collection.postman_collection.json");
+  res.setHeader("Content-Type", "application/json");
 
-    converter.convert(
-      { type: "json", data: swaggerSpec },
-      {
-        requestParametersResolution: "Schema",
-        exampleParametersResolution: "Schema",
-        optimizeConversion: true,
-      },
-      (err, conversionResult) => {
-        // Error handling
-        if (
-          err ||
-          !conversionResult?.result ||
-          !conversionResult.output ||
-          !conversionResult.output[0] ||
-          !conversionResult.output[0].data
-        ) {
-          return res.status(500).json({
-            error: "Conversion failed",
-            reason: conversionResult?.reason || err?.message,
-          });
-        }
+  converter.convert(
+    { type: "json", data: swaggerSpec },
+    {
+      requestParametersResolution: "Example",
+      exampleParametersResolution: "Example",
+      enableOptionalParameters: false,
+      disabledParametersValidation: true,
+      alwaysInheritAuthentication: true,
+      collapseFolders: false,
+      optimizeConversion: true,
+    },
+    (err, conversionResult) => {
+      if (err || !conversionResult?.result || !conversionResult.output?.[0]) {
+        return res.status(500).json({ error: "Conversion failed" });
+      }
 
-        // 2. Move the send logic INSIDE the callback
-        const postmandoc = JSON.stringify(
-          conversionResult.output[0].data,
-          null,
-          2,
-        );
+      const collection = conversionResult.output[0].data as any;
 
-        // Send the data once it's ready
-        res.send(postmandoc);
+      // --- RECURSIVE CLEANUP START ---
+      const cleanPostmanItems = (items : Array<any>) => {
+        items.forEach((item) => {
+          // 1. Remove Response Examples (the status code snapshots)
+          if (item.response) item.response = [];
 
-        return;
-      },
-    );
-  });
+          // 2. Clear Query Params and Header values that contain placeholders
+          const clearPlaceholders = (params : Array<any>) => {
+            params?.forEach((p) => {
+              // Checks for "string", "number", "<string>", etc.
+              const isPlaceholder = /^(string|number|integer|boolean|<.*>)$/i.test(p.value);
+              if (isPlaceholder) {
+                p.value = "";
+              }
+            });
+          };
 
+          if (item.request?.url?.query) clearPlaceholders(item.request.url.query);
+          if (item.request?.header) clearPlaceholders(item.request.header);
+
+          // 3. Recurse through folders
+          if (item.item) cleanPostmanItems(item.item);
+        });
+      };
+
+      if (collection.item) cleanPostmanItems(collection.item);
+      // --- RECURSIVE CLEANUP END ---
+
+      res.send(JSON.stringify(collection, null, 2));
+
+      return;
+    }
+  );
+});
   /**
    * LOAD SWAGGER UI DOCUMENTATION
    */
