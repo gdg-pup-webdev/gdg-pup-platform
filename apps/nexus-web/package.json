@@ -15,18 +15,11 @@
     "@packages/spark-tools": "workspace:*",
     "@packages/spark-ui": "workspace:*",
     "@packages/typed-rest": "workspace:*",
-    "@scalar/api-reference-react": "^0.8.52",
-    "@scalar/nextjs-api-reference": "^0.9.18",
     "@supabase/supabase-js": "^2.90.1",
     "cookies-next": "^6.1.1",
-    "core-js": "^3.48.0",
-    "mobx": "^6.15.0",
     "next": "16.1.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-toastify": "^11.0.5",
-    "redoc": "^2.5.2",
-    "styled-components": "^6.3.9"
+    "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
