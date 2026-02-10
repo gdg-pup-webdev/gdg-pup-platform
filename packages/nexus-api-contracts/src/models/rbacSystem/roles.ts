@@ -20,6 +20,8 @@ export const roleInsert = role.omit({
   id: true,
 });
 
+export const roleUpdate = roleInsert.partial();
+
 export const roleAggregate = role.extend({
   permissions: z.array(permission),
 });

@@ -547,7 +547,7 @@ export const publicUserRowSchema = z.object({
   display_name: z.string(),
   email: z.string(),
   first_name: z.string().nullable(),
-  gdg_id: z.string(),
+  gdg_id: z.string().nullable(),
   id: z.string(),
   last_name: z.string().nullable(),
   status: z.string(),
@@ -560,7 +560,7 @@ export const publicUserInsertSchema = z.object({
   display_name: z.string(),
   email: z.string(),
   first_name: z.string().optional().nullable(),
-  gdg_id: z.string().optional(),
+  gdg_id: z.string().optional().nullable(),
   id: z.string().optional(),
   last_name: z.string().optional().nullable(),
   status: z.string().optional(),
@@ -573,7 +573,7 @@ export const publicUserUpdateSchema = z.object({
   display_name: z.string().optional(),
   email: z.string().optional(),
   first_name: z.string().optional().nullable(),
-  gdg_id: z.string().optional(),
+  gdg_id: z.string().optional().nullable(),
   id: z.string().optional(),
   last_name: z.string().optional().nullable(),
   status: z.string().optional(),
@@ -774,19 +774,16 @@ export const publicUserRoleUpdateSchema = z.object({
 });
 
 export const publicUserRoleJunctionRowSchema = z.object({
-  id: z.string(),
   role_id: z.string(),
   user_id: z.string(),
 });
 
 export const publicUserRoleJunctionInsertSchema = z.object({
-  id: z.string().optional(),
   role_id: z.string(),
   user_id: z.string(),
 });
 
 export const publicUserRoleJunctionUpdateSchema = z.object({
-  id: z.string().optional(),
   role_id: z.string().optional(),
   user_id: z.string().optional(),
 });
@@ -799,25 +796,29 @@ export const publicUserRoleJunctionRelationshipsSchema = z.tuple([
     referencedRelation: z.literal("user_role"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
+  z.object({
+    foreignKeyName: z.literal("user_role_junction_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
 ]);
 
 export const publicUserRolePermissionRowSchema = z.object({
   action: z.string(),
-  id: z.string(),
   resource: z.string(),
   role_id: z.string(),
 });
 
 export const publicUserRolePermissionInsertSchema = z.object({
   action: z.string(),
-  id: z.string().optional(),
   resource: z.string(),
   role_id: z.string(),
 });
 
 export const publicUserRolePermissionUpdateSchema = z.object({
   action: z.string().optional(),
-  id: z.string().optional(),
   resource: z.string().optional(),
   role_id: z.string().optional(),
 });

@@ -24,3 +24,7 @@ export type roleFilters = {
   action?: string | null;
   roleId?: string | null;
 };
+
+
+
+export type userRoleJunctionType = Tables<"user_role_junction">;

@@ -41,7 +41,7 @@ export class RoleRouter {
   ) {}
 
   getRouter = (): Router => {
-    const router = Router(); 
+    const router = Router();
     router.get("/", this.roleController.listRoles);
 
     router.post("/", this.roleController.createOneRole);
@@ -70,34 +70,6 @@ export class RoleRouter {
       "/:roleId/remove-from-user",
       this.roleController.removeOneRoleFromOneUser,
     );
-
-    // router
-    //   .route("/")
-    //   .get(this.roleController.listRoles)
-    //   .post(this.roleController.createRole);
-
-    // // Route to fetch all roles of all users
-    // router.get("/users", this.roleController.listUsersWithRoles);
-
-    // /**
-    //  * Route to assign role to user
-    //  * and also remove role from a user
-    //  */
-    // router
-    //   .route("/:roleId/users")
-    //   .post(this.roleController.assignRole)
-    //   .delete(this.roleController.removeRole);
-
-    // /**
-    //  * Route to get the role by id
-    //  * then update a role information
-    //  * and delete a role
-    //  */
-    // router
-    //   .route("/:roleId")
-    //   .get(this.roleController.getRole)
-    //   .patch(this.roleController.updateRole)
-    //   .delete(this.roleController.deleteRole);
 
     return router;
   };

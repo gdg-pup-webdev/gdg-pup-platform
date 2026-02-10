@@ -41,19 +41,19 @@ export const createExpressController = <T extends EndpointDef>(
 
       try {
         if (request?.query) {
-          console.log("validating query");
+          // console.log("validating query");
           input.query = await request.query.parseAsync(req.query);
         }
         if (request?.params) {
-          console.log("validating params");
-          console.log(req.params);
-          console.log(JSON.stringify(z.toJSONSchema(request.params), null, 2));
+          // console.log("validating params");
+          // console.log(req.params);
+          // console.log(JSON.stringify(z.toJSONSchema(request.params), null, 2));
           input.params = await request.params.parseAsync(req.params);
         }
         if (request?.body) {
-          console.log("validating body");
-          console.log(req.body);
-          console.log(JSON.stringify(z.toJSONSchema(request.body), null, 2));
+          // console.log("validating body");
+          // console.log(req.body);
+          // console.log(JSON.stringify(z.toJSONSchema(request.body), null, 2));
           input.body = await request.body.parseAsync(req.body);
         }
       } catch (err) {
@@ -97,11 +97,11 @@ export const createExpressController = <T extends EndpointDef>(
 
       if (responseValidator) {
         try {
-          console.log("validating respones");
-          console.log(result.body);
-          console.log(
-            JSON.stringify(z.toJSONSchema(responseValidator), null, 2),
-          );
+          // console.log("validating respones");
+          // console.log(result.body);
+          // console.log(
+          //   JSON.stringify(z.toJSONSchema(responseValidator), null, 2),
+          // );
           await responseValidator.parseAsync(result.body);
         } catch (err) {
           // if (err instanceof ZodError) {
@@ -128,9 +128,9 @@ export const createExpressController = <T extends EndpointDef>(
           }
         }
       } else {
-        console.warn(
-          `[Contract Warning] No response schema defined for status ${statusCode as string}`,
-        );
+        // console.warn(
+        //   `[Contract Warning] No response schema defined for status ${statusCode as string}`,
+        // );
       }
 
       res.status(Number(statusCode)).json(result.body);

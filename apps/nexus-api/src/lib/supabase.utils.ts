@@ -13,11 +13,11 @@ export function handlePostgresError(err: PostgrestError): never {
 
   switch (code) {
     case "23505": // Unique violation
-      throw new UniqueConstraintError(message, err);
+      throw new UniqueConstraintError(`${code}: ${message}`, err);
     case "23503": // Foreign key violation
-      throw new ForeignKeyConstraintError(message, err);
+      throw new ForeignKeyConstraintError(`${code}: ${message}`, err);
     case "57014": // Query timeout
-      throw new QueryTimeoutError(message, err);
+      throw new QueryTimeoutError(`${code}: ${message}`, err);
     case "08001":
     case "08004":
       throw new DatabaseConnectionError("Unable to establish connection", err);

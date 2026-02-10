@@ -523,7 +523,7 @@ export type Database = {
           display_name: string
           email: string
           first_name: string | null
-          gdg_id: string
+          gdg_id: string | null
           id: string
           last_name: string | null
           status: string
@@ -535,7 +535,7 @@ export type Database = {
           display_name: string
           email: string
           first_name?: string | null
-          gdg_id?: string
+          gdg_id?: string | null
           id?: string
           last_name?: string | null
           status?: string
@@ -547,7 +547,7 @@ export type Database = {
           display_name?: string
           email?: string
           first_name?: string | null
-          gdg_id?: string
+          gdg_id?: string | null
           id?: string
           last_name?: string | null
           status?: string
@@ -742,17 +742,14 @@ export type Database = {
       }
       user_role_junction: {
         Row: {
-          id: string
           role_id: string
           user_id: string
         }
         Insert: {
-          id?: string
           role_id: string
           user_id: string
         }
         Update: {
-          id?: string
           role_id?: string
           user_id?: string
         }
@@ -764,24 +761,28 @@ export type Database = {
             referencedRelation: "user_role"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_role_junction_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_role_permission: {
         Row: {
           action: string
-          id: string
           resource: string
           role_id: string
         }
         Insert: {
           action: string
-          id?: string
           resource: string
           role_id: string
         }
         Update: {
           action?: string
-          id?: string
           resource?: string
           role_id?: string
         }
