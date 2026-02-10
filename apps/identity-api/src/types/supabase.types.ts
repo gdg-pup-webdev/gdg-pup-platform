@@ -725,44 +725,73 @@ export type Database = {
       user_role: {
         Row: {
           description: string
+          id: string
           name: string
         }
         Insert: {
           description: string
+          id?: string
           name: string
         }
         Update: {
           description?: string
+          id?: string
           name?: string
         }
         Relationships: []
+      }
+      user_role_junction: {
+        Row: {
+          id: string
+          role_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_role_junction_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "user_role"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_role_permission: {
         Row: {
           action: string
           id: string
           resource: string
-          role: string
+          role_id: string
         }
         Insert: {
           action: string
           id?: string
           resource: string
-          role: string
+          role_id: string
         }
         Update: {
           action?: string
           id?: string
           resource?: string
-          role?: string
+          role_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_role_permission_role_fkey"
-            columns: ["role"]
+            foreignKeyName: "user_role_permission_role_id_fkey"
+            columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "user_role"
-            referencedColumns: ["name"]
+            referencedColumns: ["id"]
           },
         ]
       }

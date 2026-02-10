@@ -15,6 +15,7 @@ export const permission = z.object({
 export const role = z.object({
   name: z.string(),
   description: z.string(),
+  id: z.string()
 });
 
 export const roleAggregate = role.extend({

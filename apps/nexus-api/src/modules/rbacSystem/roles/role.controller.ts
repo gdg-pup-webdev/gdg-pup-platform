@@ -1,7 +1,9 @@
+import { tryCatch } from "@/utils/tryCatch.util.js";
 import { RoleService, roleServiceInstance } from "./role.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest";
 import { RequestHandler } from "express";
+import { BadRequestError } from "@/errors/HttpError.js";
 
 /**
  * RoleController
@@ -83,21 +85,92 @@ export class RoleController {
    * @throws {RepositoryError_DEPRECATED} If role name already exists
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error
    */
-  createRole: RequestHandler = createExpressController(
+  createOneRole: RequestHandler = createExpressController(
     contract.api.rbac_system.roles.POST,
     async ({ input, output }) => {
       const roleData = input.body.data;
 
-      const data = await this.roleService.createRole(roleData);
-
-      const { user_role_permission, ...rest } = data;
+      const data = await this.roleService.createOneRole(roleData);
 
       return output(200, {
         status: "success",
         message: `Role created successfully`,
+        data: data,
+      });
+    },
+  );
+
+  assignOneRoleToManyUsers: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.assign_to_users.PATCH,
+    async ({ input, output }) => {
+      const { roleId } = input.params;
+      const { userIds } = input.body.data;
+
+      await this.roleService.assignOneRoleToManyUsers(roleId, userIds);
+
+      return output(200, {
+        status: "success",
+        message: `Roles assigned to user successfully`,
+      });
+    },
+  );
+
+  attachManyPermissionsToOneRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.attach_permissions.PATCH,
+    async ({ input, output }) => {
+      const { roleId } = input.params;
+      const permissions = input.body.data;
+
+      const data = await this.roleService.attachManyPermissionsToOneRole(
+        roleId,
+        permissions.map((permission) => ({
+          resource: permission.resource_name,
+          action: permission.action,
+        })),
+      );
+
+      return output(200, {
+        status: "success",
+        message: `Permissions attached to role successfully`,
+        data: data.map((role) => {
+          return {
+            resource_name: role.resource,
+            action: role.action,
+          };
+        }),
+      });
+    },
+  );
+
+  deleteOneRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.DELETE,
+    async ({ input, output }) => {
+      const { roleId } = input.params;
+
+      await this.roleService.deleteOneRole(roleId);
+
+      return output(200, {
+        status: "success",
+        message: `Role deleted successfully`,
+      });
+    },
+  );
+
+  getOneRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.GET,
+    async ({ input, output }) => {
+      const { roleId } = input.params;
+
+      const data = await this.roleService.getOneRole(roleId);
+
+      return output(200, {
+        status: "success",
+        message: "Role fetched successfully",
         data: {
-          ...rest,
-          permissions: user_role_permission.map((permission) => {
+          id: data.id,
+          name: data.name,
+          description: data.description,
+          permissions: data.user_role_permission.map((permission) => {
             return {
               resource_name: permission.resource,
               action: permission.action,
@@ -108,44 +181,68 @@ export class RoleController {
     },
   );
 
-  assignRolesToUser: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleName.assign_to_users.PATCH,
+  updateOneRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.PATCH,
     async ({ input, output }) => {
-      const { roleName } = input.params;
-      const { userId } = input.body.data;
+      const { roleId } = input.params;
+      const updates = input.body.data;
 
-      await this.roleService.assignRolesToUser(userId, [roleName]);
+      const data = await this.roleService.updateOneRole(roleId, updates);
 
       return output(200, {
         status: "success",
-        message: `Roles assigned to user successfully`,
+        message: "Role updated successfully",
+        data,
       });
     },
   );
 
-  attachPermissions: RequestHandler = createExpressController(
-    contract.api.rbac_system.roles.roleName.attach_permissions.PATCH,
+  detachManyPermissionsFromOneRole: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.detach_permissions.PATCH,
     async ({ input, output }) => {
-      const { roleName } = input.params;
+      const { roleId } = input.params;
       const permissions = input.body.data;
 
-      const data = await this.roleService.attachPermissions(
-        roleName,
+      const data = await this.roleService.detachManyPermissionsFromOneRole(
+        roleId,
         permissions.map((permission) => ({
           resource: permission.resource_name,
           action: permission.action,
         })),
       );
 
-      console.log("controller", permissions, data)
-
       return output(200, {
         status: "success",
-        message: `Permissions attached to role successfully`,
+        message: `Permissions detached from role successfully`,
         data: data.map((role) => {
           return {
             resource_name: role.resource,
             action: role.action,
+          };
+        }),
+      });
+    },
+  );
+
+  removeOneRoleFromOneUser: RequestHandler = createExpressController(
+    contract.api.rbac_system.roles.roleId.remove_from_user.PATCH,
+    async ({ input, output }) => {
+      const { roleId } = input.params;
+      const { userId } = input.body.data;
+
+      const data = await this.roleService.removeOneRoleFromOneUser(
+        userId,
+        roleId,
+      );
+
+      return output(200, {
+        status: "success",
+        message: `Roles removed from user successfully`,
+        data: data.map((role) => {
+          return {
+            id: role.id,
+            name: role.name,
+            description: role.description,
           };
         }),
       });

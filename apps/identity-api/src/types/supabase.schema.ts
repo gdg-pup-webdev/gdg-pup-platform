@@ -757,47 +757,78 @@ export const publicUserProjectRelationshipsSchema = z.tuple([
 
 export const publicUserRoleRowSchema = z.object({
   description: z.string(),
+  id: z.string(),
   name: z.string(),
 });
 
 export const publicUserRoleInsertSchema = z.object({
   description: z.string(),
+  id: z.string().optional(),
   name: z.string(),
 });
 
 export const publicUserRoleUpdateSchema = z.object({
   description: z.string().optional(),
+  id: z.string().optional(),
   name: z.string().optional(),
 });
+
+export const publicUserRoleJunctionRowSchema = z.object({
+  id: z.string(),
+  role_id: z.string(),
+  user_id: z.string(),
+});
+
+export const publicUserRoleJunctionInsertSchema = z.object({
+  id: z.string().optional(),
+  role_id: z.string(),
+  user_id: z.string(),
+});
+
+export const publicUserRoleJunctionUpdateSchema = z.object({
+  id: z.string().optional(),
+  role_id: z.string().optional(),
+  user_id: z.string().optional(),
+});
+
+export const publicUserRoleJunctionRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("user_role_junction_role_id_fkey"),
+    columns: z.tuple([z.literal("role_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user_role"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicUserRolePermissionRowSchema = z.object({
   action: z.string(),
   id: z.string(),
   resource: z.string(),
-  role: z.string(),
+  role_id: z.string(),
 });
 
 export const publicUserRolePermissionInsertSchema = z.object({
   action: z.string(),
   id: z.string().optional(),
   resource: z.string(),
-  role: z.string(),
+  role_id: z.string(),
 });
 
 export const publicUserRolePermissionUpdateSchema = z.object({
   action: z.string().optional(),
   id: z.string().optional(),
   resource: z.string().optional(),
-  role: z.string().optional(),
+  role_id: z.string().optional(),
 });
 
 export const publicUserRolePermissionRelationshipsSchema = z.tuple([
   z.object({
-    foreignKeyName: z.literal("user_role_permission_role_fkey"),
-    columns: z.tuple([z.literal("role")]),
+    foreignKeyName: z.literal("user_role_permission_role_id_fkey"),
+    columns: z.tuple([z.literal("role_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("user_role"),
-    referencedColumns: z.tuple([z.literal("name")]),
+    referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
 

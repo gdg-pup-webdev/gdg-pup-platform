@@ -5,7 +5,7 @@ import { z } from "zod";
 export const body = SchemaFactory.Request.withArrayPayload(role.permission);
 
 export const response = {
-  200: SchemaFactory.Response.single(role.roleAggregate),
+  200: SchemaFactory.Response.list(role.permission),
   ...SchemaFactory.Response.standardErrors(),
 };
 

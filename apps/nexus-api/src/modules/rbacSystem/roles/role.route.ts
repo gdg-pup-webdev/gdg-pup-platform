@@ -41,23 +41,34 @@ export class RoleRouter {
   ) {}
 
   getRouter = (): Router => {
-    const router = Router();
-
-    /**
-     * Route to check roles of user or will return all roles
-     * if there are no userId assigned
-     *
-     * and create role
-     */
+    const router = Router(); 
     router.get("/", this.roleController.listRoles);
-    router.post("/", this.roleController.createRole);
+
+    router.post("/", this.roleController.createOneRole);
+
+    router.delete("/:roleName", this.roleController.deleteOneRole);
+
+    router.get("/:roleName", this.roleController.getOneRole);
+
+    router.patch("/:roleName", this.roleController.updateOneRole);
+
     router.patch(
       "/:roleName/assign-to-users",
-      this.roleController.assignRolesToUser,
+      this.roleController.assignOneRoleToManyUsers,
     );
     router.patch(
       "/:roleName/attach-permissions",
-      this.roleController.attachPermissions,
+      this.roleController.attachManyPermissionsToOneRole,
+    );
+
+    router.patch(
+      "/:roleName/detach-permissions",
+      this.roleController.detachManyPermissionsFromOneRole,
+    );
+
+    router.patch(
+      "/:roleName/remove-from-user",
+      this.roleController.removeOneRoleFromOneUser,
     );
 
     // router

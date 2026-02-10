@@ -14,9 +14,7 @@ export const swaggerLoader = (app: Express) => {
         "Public endpoints are marked without a lock icon in Swagger.",
       ].join(" "),
     },
-    servers: [ 
-      { url: "http://localhost:8000", description: "Local Dev" },
-    ],
+    servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
     tags: [
       {
         name: "event system",
@@ -28,7 +26,8 @@ export const swaggerLoader = (app: Express) => {
       },
       {
         name: "user resource system",
-        description: "User profiles, projects, achievements, certificates, settings.",
+        description:
+          "User profiles, projects, achievements, certificates, settings.",
       },
       {
         name: "publication system",
@@ -77,6 +76,11 @@ export const swaggerLoader = (app: Express) => {
   };
 
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, assetOptions));
+
+  app.use("/docs.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(swaggerSpec);
+  });
 
   console.log(
     `Swagger docs available at http://localhost:${configs.port}/docs`,

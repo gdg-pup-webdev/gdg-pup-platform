@@ -4,7 +4,7 @@ import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 export const body = SchemaFactory.Request.withPayload(role.role);
 
 export const response = {
-  200: SchemaFactory.Response.single(role.roleAggregate),
+  200: SchemaFactory.Response.single(role.role),
   ...SchemaFactory.Response.standardErrors(),
 };
 
