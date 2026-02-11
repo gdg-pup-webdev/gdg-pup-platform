@@ -17,11 +17,11 @@ WORKDIR /app
 RUN corepack enable
 COPY --from=installer /app/ .
 COPY --from=pruner /app/out/full/ .
-RUN pnpm turbo run build --filter=storybook
+RUN pnpm install
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=builder /app/apps/storybook/storybook-static ./storybook-static
-EXPOSE 80
-CMD ["serve", "-s", "storybook-static", "-p", "80"]
+EXPOSE 6006
+CMD ["serve", "-s", "storybook-static", "-p", "6006"]

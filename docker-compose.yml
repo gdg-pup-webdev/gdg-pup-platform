@@ -35,3 +35,13 @@ services:
     environment:
       - PORT=8100
     restart: always
+
+  storybook:
+    build:
+      context: .
+      dockerfile: apps/storybook/Dockerfile
+    ports:
+      - "6006:6006"
+    environment:
+      - PORT=6006
+    restart: always
