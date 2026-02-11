@@ -49,3 +49,12 @@ services:
       - "8100:8100"
     environment:
       - PORT=8100
+    restart: always
+
+  storybook:
+    build:
+      context: .
+      dockerfile: apps/storybook/Dockerfile
+    ports:
+      - "80:80"
+    restart: always
