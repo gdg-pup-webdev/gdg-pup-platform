@@ -6,7 +6,7 @@
  */
 
 import express, { Express } from "express";
-import { swaggerLoader } from "./loaders/swagger.loader.js";
+import { docsLoader } from "./loaders/docs.loader.js";
 import { setupLoader } from "./loaders/setup.loader.js";
 import { parsersLoader } from "./loaders/parsers.loader.js";
 import { routesLoader } from "./loaders/routes.loader.js";
@@ -17,7 +17,7 @@ const app: Express = express();
 
 setupLoader(app);
 parsersLoader(app);
-swaggerLoader(app);
+docsLoader(app);
 routesLoader(app);
 errorHandlerLoader(app);
 

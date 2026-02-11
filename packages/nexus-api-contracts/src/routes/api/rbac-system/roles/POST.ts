@@ -1,10 +1,10 @@
 import { role } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
-export const body = SchemaFactory.Request.withPayload(role.insert);
+export const body = SchemaFactory.Request.withPayload(role.roleInsert);
 
 export const response = {
-  200: SchemaFactory.Response.single(role.insert),
+  200: SchemaFactory.Response.single(role.role),
   ...SchemaFactory.Response.standardErrors(),
 };
 

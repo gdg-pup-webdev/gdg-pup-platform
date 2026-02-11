@@ -19,6 +19,12 @@ export class BadRequestError extends HttpError {
   }
 }
 
+export class InternalServerError extends HttpError {
+  constructor(detail: string = "An unexpected error occurred", err?: unknown) {
+    super(500, "Internal Server Error", detail, err);
+  }
+}
+
 // 401 - Unauthorized
 export class UnauthorizedError extends HttpError {
   constructor(detail: string = "Authentication required", err?: unknown) {

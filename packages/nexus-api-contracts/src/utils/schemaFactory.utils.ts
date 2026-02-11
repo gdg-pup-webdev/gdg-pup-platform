@@ -76,7 +76,7 @@ export namespace SchemaFactory {
       export const query = () => {
         return z.object({
           pageNumber: z.coerce.number().int().positive().default(1),
-          pageSize: z.coerce.number().int().positive().max(50).default(10),
+          pageSize: z.coerce.number().int().positive().default(10),
         });
       };
     }
@@ -84,6 +84,12 @@ export namespace SchemaFactory {
     export const withPayload = <T extends z.ZodTypeAny>(dataSchema: T) => {
       return z.object({
         data: dataSchema,
+      });
+    };
+
+    export const withArrayPayload = <T extends z.ZodTypeAny>(dataSchema: T) => {
+      return z.object({
+        data: z.array(dataSchema),
       });
     };
   }
