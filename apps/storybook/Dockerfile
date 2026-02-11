@@ -25,4 +25,4 @@ RUN pnpm run build --filter=storybook
 FROM nginx:alpine AS runner
 COPY --from=builder /app/apps/storybook/storybook-static /usr/share/nginx/html
 EXPOSE 80
-CMD ["serve", "-s", "storybook-static", "-p", "80"]
+CMD ["nginx", "-g", "daemon off;"]
