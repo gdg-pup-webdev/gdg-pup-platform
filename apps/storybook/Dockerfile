@@ -17,11 +17,9 @@ WORKDIR /app
 RUN corepack enable
 COPY --from=installer /app/ .
 COPY --from=pruner /app/out/full/ .
-RUN pnpm install
+RUN pnpm run build --filter=storybook
 
-FROM node:20-alpine AS runner
-WORKDIR /app
-RUN npm install -g serve
-COPY --from=builder /app/apps/storybook/storybook-static ./storybook-static
-EXPOSE 6006
-CMD ["serve", "-s", "storybook-static", "-p", "6006"]
+FROM nginx:alpine AS runner
+COPY --from=builder /app/apps/storybook/storybook-static /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
