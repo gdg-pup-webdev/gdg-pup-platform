@@ -6,6 +6,7 @@
     "dev:nexus": "turbo dev --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
     "build": "turbo run build",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
+    "clean": "node -e \"process.platform === 'win32' ? require('child_process').execSync('scripts\\\\clean.bat', {stdio: 'inherit'}) : require('child_process').execSync('sh scripts/clean.sh', {stdio: 'inherit'})\"",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -17,7 +18,9 @@
   "devDependencies": {
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
+    "npm-run-all": "^4.1.5",
     "prettier": "3.7.4",
+    "rimraf": "^6.1.2",
     "syncpack": "13.0.4",
     "turbo": "2.7.4",
     "typescript": "5.9.3"

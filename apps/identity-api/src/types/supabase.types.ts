@@ -233,6 +233,48 @@ export type Database = {
           },
         ]
       }
+      gdg_members: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          display_name: string | null
+          email: string
+          first_name: string | null
+          gdg_id: string
+          id: string
+          last_name: string | null
+          program: string | null
+          suffix: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          display_name?: string | null
+          email: string
+          first_name?: string | null
+          gdg_id: string
+          id?: string
+          last_name?: string | null
+          program?: string | null
+          suffix?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          display_name?: string | null
+          email?: string
+          first_name?: string | null
+          gdg_id?: string
+          id?: string
+          last_name?: string | null
+          program?: string | null
+          suffix?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       nfc_card: {
         Row: {
           activated_at: string | null
@@ -481,7 +523,7 @@ export type Database = {
           display_name: string
           email: string
           first_name: string | null
-          gdg_id: string
+          gdg_id: string | null
           id: string
           last_name: string | null
           status: string
@@ -493,7 +535,7 @@ export type Database = {
           display_name: string
           email: string
           first_name?: string | null
-          gdg_id?: string
+          gdg_id?: string | null
           id?: string
           last_name?: string | null
           status?: string
@@ -505,7 +547,7 @@ export type Database = {
           display_name?: string
           email?: string
           first_name?: string | null
-          gdg_id?: string
+          gdg_id?: string | null
           id?: string
           last_name?: string | null
           status?: string
@@ -684,36 +726,30 @@ export type Database = {
         Row: {
           description: string
           id: string
-          role_name: string
+          name: string
         }
         Insert: {
           description: string
           id?: string
-          role_name: string
+          name: string
         }
         Update: {
           description?: string
           id?: string
-          role_name?: string
+          name?: string
         }
         Relationships: []
       }
       user_role_junction: {
         Row: {
-          created_at: string
-          id: string
           role_id: string
           user_id: string
         }
         Insert: {
-          created_at?: string
-          id?: string
           role_id: string
           user_id: string
         }
         Update: {
-          created_at?: string
-          id?: string
           role_id?: string
           user_id?: string
         }
@@ -726,7 +762,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "user_role_junction_user_id_fkey1"
+            foreignKeyName: "user_role_junction_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user"
@@ -736,36 +772,24 @@ export type Database = {
       }
       user_role_permission: {
         Row: {
-          can_delete: boolean
-          can_read: boolean
-          can_update: boolean
-          can_write: boolean
-          id: string
-          resource_name: string
-          user_role_id: string
+          action: string
+          resource: string
+          role_id: string
         }
         Insert: {
-          can_delete: boolean
-          can_read: boolean
-          can_update: boolean
-          can_write: boolean
-          id?: string
-          resource_name: string
-          user_role_id: string
+          action: string
+          resource: string
+          role_id: string
         }
         Update: {
-          can_delete?: boolean
-          can_read?: boolean
-          can_update?: boolean
-          can_write?: boolean
-          id?: string
-          resource_name?: string
-          user_role_id?: string
+          action?: string
+          resource?: string
+          role_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_role_permission_user_role_id_fkey"
-            columns: ["user_role_id"]
+            foreignKeyName: "user_role_permission_role_id_fkey"
+            columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "user_role"
             referencedColumns: ["id"]
@@ -870,7 +894,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      verify_member: {
+        Args: { search_term: string }
+        Returns: {
+          created_at: string | null
+          department: string | null
+          display_name: string | null
+          email: string
+          first_name: string | null
+          gdg_id: string
+          id: string
+          last_name: string | null
+          program: string | null
+          suffix: string | null
+          updated_at: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "gdg_members"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
     }
     Enums: {
       [_ in never]: never
