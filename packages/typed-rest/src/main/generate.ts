@@ -104,116 +104,6 @@ ${generateOpenApiOptionsString}
   logger.log("API Contract generated at src/contract.ts");
 }
 
-export const openApiGenerationScriptString = `
-const registry = new OpenAPIRegistry();
-
-const extractPathParams = (path: string): string[] => {
-  const regex = /\\{([^}]+)\\}/g;
-  const matches = path.matchAll(regex);
-  return Array.from(matches).map((match) => match[1]!);
-};
-
-const addDescriptions = (schema: z.ZodObject<any>, descriptions: Record<string, string>) => {
-  const shape = schema.shape;
-  
-  const newShape = Object.fromEntries(
-    Object.entries(shape).map(([key, fieldSchema]) => {
-      const description = descriptions[key];
-      // If a description exists for this key, apply it using .openapi()
-      return [
-        key,
-        description ? (fieldSchema as z.ZodTypeAny).openapi({ description }) : fieldSchema
-      ];
-    })
-  );
-
-  return z.object(newShape);
-};
-
-openapiendpoints.forEach((endpoint: any) => {
-  let formattedResponses: any = {};
-
-  if (endpoint.response) {
-    formattedResponses = Object.fromEntries(
-      Object.entries(endpoint.response).map(([code, schema]) => [
-        code,
-        {
-          description: endpoint[\`docs_response_\${code}\`] || (parseInt(code) < 400 ? "Successful response" : "Error response"),
-          content: {
-            "application/json": { schema },
-          },
-        },
-      ])
-    );
-  } else {
-    formattedResponses = {
-      "200": {
-        description: "OK",
-        content: { "application/json": { schema: z.any() } },
-      },
-    };
-  }
-
-  const requestConfig: any = {};
-  if (endpoint.query) requestConfig.query = addDescriptions(endpoint.query, endpoint.docs_query || {});
-  if (endpoint.body) {
-    requestConfig.body = {
-      description: endpoint.docs_body || \`Payload for \${endpoint.path}\`,
-      content: { "application/json": { schema: endpoint.body } },
-    };
-  }
-
-  const pathParams = extractPathParams(endpoint.path);
-  if (pathParams.length > 0) {
-     const paramsSchema = z.object(
-      pathParams.reduce((acc, param) => {
-        acc[param] = z.string();
-        return acc;
-      }, {} as Record<string, z.ZodString>)
-    );
-
-    requestConfig.params = addDescriptions(paramsSchema, endpoint.docs_params || {})
-  }
-
-  registry.registerPath({
-    method: endpoint.method.replace(".ts", "").toLowerCase() as any,
-    path: endpoint.path,
-    tags: [endpoint.path.split("/").slice(0, 2).join("/")],
-    summary: endpoint.docs_summary || \`Endpoint for \${endpoint.path}\`,
-    description: endpoint.docs_description || \`Endpoint for \${endpoint.path}\`,
-    request: requestConfig,
-    responses: formattedResponses,
-  });
-});
-
-registry.registerComponent("securitySchemes", "bearerAuth", {
-  type: "http",
-  scheme: "bearer",
-  bearerFormat: "JWT",
-});
-
-const generator = new OpenApiGeneratorV3(registry.definitions);
-const openApiObject = generator.generateDocument({
-  openapi: "3.0.0",
-  info: {
-    title: "API Documentation",
-    version: "1.0.0",
-    description: "Generated with typed-rest",
-  },
-  servers: [
-    {
-      url: "http://localhost:8000",
-      description: "Development server",
-    },
-  ],
-  security: [{ bearerAuth: [] }],
-});
-
-export const options = {
-  definition: openApiObject as any,
-  apis: [],
-};`;
-
 
 export const generateOpenApiOptionsString = `
 export const generateOpenApiOptions = ({
@@ -221,11 +111,13 @@ export const generateOpenApiOptions = ({
   servers = [{ url: "http://localhost:8000", description: "Development server" }],
   security = [{ bearerAuth: [] }],
   tags = [],
+  generateExample = true,
 }: {
   info?: { title: string; version: string; description?: string };
   servers?: { url: string; description?: string }[];
   security?: Record<string, string[]>[];
   tags?: { name: string; description?: string }[];
+  generateExample?: boolean;
 }) => {
   const registry = new OpenAPIRegistry();
 
@@ -366,7 +258,7 @@ export const generateOpenApiOptions = ({
         content: {
           "application/json": {
             schema: endpoint.body,
-            ...(endpoint.docs_example_body
+            ...(endpoint.docs_example_body && generateExample
               ? { example: endpoint.docs_example_body }
               : {}),
           },
@@ -410,8 +302,10 @@ export const generateOpenApiOptions = ({
             ...formattedResponses[code],
             content: {
               "application/json": {
-                schema: formattedResponses[code].content["application/json"].schema,
-                example: endpoint.docs_example_response,
+                schema: formattedResponses[code].content["application/json"].schema, 
+                ...( generateExample
+                  ? { example: endpoint.docs_example_response }
+                  : {})
               },
             },
           };
@@ -423,8 +317,10 @@ export const generateOpenApiOptions = ({
           ...formattedResponses[code],
           content: {
             "application/json": {
-              schema: formattedResponses[code].content["application/json"].schema,
-              example,
+              schema: formattedResponses[code].content["application/json"].schema, 
+              ...( generateExample
+                ? { example: example }
+                : {}) 
             },
           },
         };
@@ -460,6 +356,21 @@ export const generateOpenApiOptions = ({
     security,
     tags,
   });
+
+  // Remove examples
+  // remove examples flag is added to prevent openapi-postmanv2 converter from generating default values to parameters.
+  if (!generateExample) {
+    const stripExamples = (obj: any) => {
+      for (const key in obj) {
+        if (key === 'example' || key === 'examples') {
+          delete obj[key];
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          stripExamples(obj[key]);
+        }
+      }
+    };
+    stripExamples(openApiObject);
+  }
 
   return {
     definition: openApiObject as any,
