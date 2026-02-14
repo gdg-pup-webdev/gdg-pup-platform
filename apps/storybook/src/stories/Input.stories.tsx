@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Input } from "@packages/spark-ui/src";
+import { Input } from "@packages/spark-ui";
 
 const meta = {
   title: "Components/Input",

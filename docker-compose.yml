@@ -1,5 +1,3 @@
-
-
 services:
   nexus-web:
     build:
@@ -36,4 +34,12 @@ services:
       - apps/identity-api/.env
     environment:
       - PORT=8100
+    restart: always
+
+  storybook:
+    build:
+      context: .
+      dockerfile: apps/storybook/Dockerfile
+    ports:
+      - "80:80"
     restart: always
