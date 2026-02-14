@@ -14,25 +14,39 @@
 
 services:
   nexus-web:
+    image: gdg-pup-platform-nexus-web:${COMPOSE_PROJECT_NAME}
     build:
       context: .
       dockerfile: apps/nexus-web/Dockerfile
+      extra_hosts:
+        - "registry.npmjs.org:104.16.3.34"
+        - "dl-cdn.alpinelinux.org:146.75.22.132"
+        - "fonts.googleapis.com:142.250.4.95"
+        - "fonts.gstatic.com:142.250.4.94"
     ports:
       - "3000:3000"
 
   nexus-api:
+    image: gdg-pup-platform-nexus-api:${COMPOSE_PROJECT_NAME}
     build:
       context: .
       dockerfile: apps/nexus-api/Dockerfile
+      extra_hosts:
+        - "registry.npmjs.org:104.16.3.34"
+        - "dl-cdn.alpinelinux.org:146.75.22.132"
     ports:
       - "${NEXUS_API_PORT:-8000}:8000"
     environment:
       - PORT=8000
 
   identity-api:
+    image: gdg-pup-platform-identity-api:${COMPOSE_PROJECT_NAME}
     build:
       context: .
       dockerfile: apps/identity-api/Dockerfile
+      extra_hosts:
+        - "registry.npmjs.org:104.16.3.34"
+        - "dl-cdn.alpinelinux.org:146.75.22.132"
     ports:
       - "8100:8100"
     environment:

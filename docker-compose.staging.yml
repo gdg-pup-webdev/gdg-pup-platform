@@ -4,6 +4,8 @@
 # Usage: docker compose -f docker-compose.yml -f docker-compose.staging.yml up
 # =============================================================================
 
+name: gdg-pup-platform-staging
+
 services:
   nexus-web:
     build:

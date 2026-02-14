@@ -1,7 +1,11 @@
 
 FROM node:20-alpine AS pruner
 WORKDIR /app
-RUN npm install -g turbo
+RUN npm install -g turbo@2.7.4 \
+  --registry=https://registry.npmjs.org/ \
+  --fetch-retries=2 \
+  --fetch-retry-mintimeout=2000 \
+  --fetch-retry-maxtimeout=10000
 COPY . .
 RUN turbo prune --scope=nexus-api --docker
 
@@ -20,7 +24,6 @@ COPY --from=installer /app/ .
 COPY --from=pruner /app/out/full/ .
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
   pnpm install --frozen-lockfile
-
 RUN apk add --no-cache dos2unix && dos2unix packages/typed-rest/src/cli.ts
 RUN pnpm turbo run build --filter=nexus-api
 

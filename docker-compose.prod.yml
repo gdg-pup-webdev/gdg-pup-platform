@@ -4,6 +4,8 @@
 # Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 # =============================================================================
 
+name: gdg-pup-platform-prod
+
 services:
   nexus-web:
     build:
