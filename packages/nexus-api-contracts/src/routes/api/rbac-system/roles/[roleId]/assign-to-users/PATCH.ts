@@ -1,25 +1,21 @@
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
 
-export const body = z.object({
-  userId: z.string(),
-});
+export const body = SchemaFactory.Request.withPayload(
+  z.object({
+    userIds: z.string().array(),
+  }),
+);
 
 export const response = {
-  200: SchemaFactory.Response.single(
-    z.object({
-      id: z.string(),
-      role_id: z.string(),
-      user_id: z.string(),
-    }),
-  ),
+  200: SchemaFactory.Response.empty(),
   ...SchemaFactory.Response.standardErrors(),
 };
 
 export const docs_summary = "Assign a role to a user";
 
 export const docs_description =
-  "Assign a specific role to a user, granting them all permissions associated with that role. Users can have multiple roles assigned simultaneously. Duplicate assignments (same user + same role) are prevented.";
+  "Assign a specific role to a user, granting them all permissions associated with that role. Users can have multiple roles assigned simultaneously. This returns a list of all roles assigned to the user.";
 
 export const docs_params = {
   roleId: "UUID of the role to assign to the user",

@@ -89,8 +89,8 @@ export const globalErrorHandler = (
           title: err.title,
           detail: err.detail,
           moreDetails: {
-            stack: err.stack,
-            chain: err.getErrorChain(),
+            last_error_stack: err.stack,
+            all_error_stack: err.getAllErrorStack(),
             name: err.name,
           },
         },
@@ -109,8 +109,8 @@ export const globalErrorHandler = (
               title: err.title,
               detail: err.detail,
               moreDetails: {
-                stack: err.stack,
-                chain: err.getErrorChain(),
+                last_error_stack: err.stack,
+                all_error_stack: err.getAllErrorStack(),
                 name: err.name,
               },
             },
@@ -139,7 +139,7 @@ export const globalErrorHandler = (
       ],
     });
   }
-  
+
   return res.status(500).json({
     errors: [
       {

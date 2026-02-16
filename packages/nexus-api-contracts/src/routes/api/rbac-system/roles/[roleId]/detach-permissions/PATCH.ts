@@ -1,19 +1,18 @@
+ import { role } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { z } from "zod";
 
-export const body = z.object({
-  permissionIds: z.array(z.string()).min(1),
-});
+export const body = SchemaFactory.Request.withArrayPayload(role.permission);
 
 export const response = {
-  200: SchemaFactory.Response.empty(),
+  200: SchemaFactory.Response.list(role.permission),
   ...SchemaFactory.Response.standardErrors(),
 };
 
 export const docs_summary = "Delete multiple permissions in bulk";
 
 export const docs_description =
-  "Permanently delete multiple permissions at once from the RBAC system. This is useful for cleaning up permissions, removing access from a role, or reconfiguring role capabilities. All specified permissions will be deleted atomically. Users with roles containing these permissions will immediately lose the associated access.";
+  "Remove multiple permissions from a role in a single transaction. All specified permissions must belong to the given role. This is more efficient than making multiple individual requests.";
 
 export const docs_body = {
   permissionIds: "Array of permission UUIDs to delete (minimum 1 required)",

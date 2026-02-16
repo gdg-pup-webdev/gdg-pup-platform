@@ -2,9 +2,9 @@
   "name": "gdg-pup-platform",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev --filter=!storybook",
+    "dev": "turbo run dev",
     "dev:nexus": "turbo dev --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
-    "build": "turbo run build",
+    "build": "turbo run build --filter=!storybook",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
     "start": "turbo run start",
     "lint": "turbo run lint",

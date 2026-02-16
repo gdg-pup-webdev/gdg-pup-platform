@@ -1,18 +1,28 @@
 import {
   NotFoundError,
-  ConflictError} from "@/errors/HttpError";
-import { RepositoryError_DEPRECATED, InvalidOperationError_DEPRECATED } from "@/classes/ServerError";
-import { DatabaseError_DONT_USE } from "@/errors/HttpError";
+  ConflictError,
+  ForbiddenError,
+  BadRequestError,
+} from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResultList,
   RepositoryResult,
 } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
-
-type roleRow = Tables<"user_role">;
-type userRow = Tables<"user">;
-type userRoleJunctionRow = Tables<"user_role_junction">;
+import { TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+import { handlePostgresError } from "@/lib/supabase.utils";
+import {
+  roleWithPermission,
+  roleFilters,
+  roleInsert,
+  rolePermissionInsert,
+  rolePermissionRow,
+  roleRow,
+  roleUpdate,
+  roleWithPermissionAndUser,
+  userRoleJunctionType,
+} from "./role.types";
+import { userRow } from "@/modules/userSystem/users/user.types";
 
 /**
  * RoleRepository
@@ -30,381 +40,284 @@ export class RoleRepository {
   constructor() {}
 
   /**
-   * Lists roles based on provided filters.
-   * If userId is provided, returns roles for that user.
-   * Otherwise, returns all roles.
-   *
-   * @param pageNumber - Current page number (1-indexed)
-   * @param pageSize - Number of items per page
-   * @param filters - Object containing optional userId filter
-   * @returns A promise resolving to a list of roles and total count
+   * List roles including its permissions and users
+   * filters:
+   * - userId - id of user the role is assigned to
+   * - resource - name of the resource the role has permission to
+   * - action - roles with specific action towards a resource
    */
-  listRolesWithFilters = async (
+  listRoles = async (
     pageNumber: number,
     pageSize: number,
-    filters: {
-      userId?: string | null;
-    },
-  ): RepositoryResultList<roleRow> => {
-    // If filtering by user, get roles for that specific user
+    filters: roleFilters,
+  ) => {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // Check if we are filtering by permission attributes
+    const needsPermissionInner = !!(filters.resource || filters.action);
+    const permissionSelect = needsPermissionInner
+      ? "user_role_permission!inner(*)"
+      : "user_role_permission(*)";
+
+    const junctionSelect = filters.userId
+      ? "user_role_junction!inner(*)"
+      : "user_role_junction(*)";
+
+    let query = supabase
+      .from(this.roleTable)
+      .select(`*, ${permissionSelect}, ${junctionSelect}`, {
+        count: "exact",
+      });
+
+    // These filters now correctly "prune" the parent list because of !inner
+    if (filters.resource) {
+      query = query.eq("user_role_permission.resource", filters.resource);
+    }
+
+    if (filters.action) {
+      query = query.eq("user_role_permission.action", filters.action);
+    }
+
     if (filters.userId) {
-      const { data, error } = await supabase
-        .from(this.junctionTable)
-        .select(`*, user_role(*, user_role_permission(*))`)
-        .eq("user_id", filters.userId);
-
-      if (error) throw new DatabaseError_DONT_USE(error.message);
-
-      const { count, error: countError } = await supabase
-        .from(this.junctionTable)
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", filters.userId);
-
-      if (countError) throw new DatabaseError_DONT_USE(countError.message);
-
-      return {
-        list: data.map((item) => item.user_role as roleRow),
-        count: count || 0,
-      };
+      query = query.eq("user_role_junction.user_id", filters.userId);
     }
 
-    // Otherwise, list all roles with pagination
-    const from = (pageNumber - 1) * pageSize;
-    const to = from + pageSize - 1;
+    if (filters.roleId) {
+      query = query.eq("id", filters.roleId);
+    }
 
-    const { data, error } = await supabase
-      .from(this.roleTable)
-      .select(`*, user_role_permission (*)`)
-      .range(from, to);
+    query = query.range(from, to);
 
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    const { data, error, count } =
+      await query.overrideTypes<roleWithPermissionAndUser[]>();
 
-    const { count, error: countError } = await supabase
-      .from(this.roleTable)
-      .select("*", { count: "exact", head: true });
-
-    if (countError) throw new DatabaseError_DONT_USE(countError.message);
+    if (error) handlePostgresError(error);
 
     return {
-      list: data as roleRow[],
+      list: data,
       count: count || 0,
     };
   };
-
-  /**
-   * Fetches a single role by its ID.
-   *
-   * @param roleId - The ID of the role
-   * @returns A promise resolving to the role data
-   * @throws {NotFoundError} If role is not found
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
-   */
-  getRole = async (roleId: string): RepositoryResult<roleRow> => {
-    const { data, error } = await supabase
-      .from(this.roleTable)
-      .select(`*, user_role_permission (*)`)
-      .eq("id", roleId)
-      .maybeSingle();
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    if (!data) throw new NotFoundError(`Role with ID "${roleId}" not found`);
-
-    return data;
-  };
-
-  /**
-   * Fetches a paginated list of users and their assigned roles.
-   * Can optionally filter by specific role or show users without roles.
-   *
-   * @param pageNumber - Current page number (1-indexed)
-   * @param pageSize - Number of items per page
-   * @param filters - Optional filters (roleId, withoutRoles)
-   * @returns A promise resolving to grouped user-role data and count
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
-   */
-  listUsersWithRoles = async (
-    pageNumber: number,
-    pageSize: number,
-    filters?: {
-      roleId?: string;
-      withoutRoles?: boolean;
-    },
-  ): RepositoryResultList<{ user: userRow; roles: roleRow[] }> => {
-    const from = (pageNumber - 1) * pageSize;
-    const to = from + pageSize - 1;
-
-    // Handle users WITHOUT roles
-    if (filters?.withoutRoles) {
-      const { data: allUsers, error: usersError } = await supabase
-        .from(this.userTable)
-        .select("*")
-        .range(from, to);
-
-      if (usersError) throw new DatabaseError_DONT_USE(usersError.message);
-
-      const { data: usersWithRoles, error: rolesError } = await supabase
-        .from(this.junctionTable)
-        .select("user_id");
-
-      if (rolesError) throw new DatabaseError_DONT_USE(rolesError.message);
-
-      const userIdsWithRoles = new Set(
-        usersWithRoles.map((row) => row.user_id),
-      );
-      const usersWithoutRoles = allUsers.filter(
-        (user) => !userIdsWithRoles.has(user.id),
-      );
-
-      const { count, error: countError } = await supabase
-        .from(this.userTable)
-        .select("*", { count: "exact", head: true });
-
-      if (countError) throw new DatabaseError_DONT_USE(countError.message);
-
-      const totalUsersWithoutRoles = (count || 0) - userIdsWithRoles.size;
-
-      return {
-        list: usersWithoutRoles.map((user) => ({ user, roles: [] })),
-        count: totalUsersWithoutRoles,
-      };
-    }
-
-    // Handle users WITH roles (optionally filtered by roleId)
-    let query = supabase.from(this.junctionTable).select(
-      `
-      user:user_id(*),
-      user_role (*, user_role_permission(*))
-    `,
-      { count: "exact" },
-    );
-
-    if (filters?.roleId) {
-      query = query.eq("role_id", filters.roleId);
-    }
-
-    const { data, error, count } = await query.range(from, to);
-
-    if (error) throw new DatabaseError_DONT_USE(error.message);
-
-    // Group roles by user
-    const userMap: Record<string, { user: userRow; roles: roleRow[] }> = {};
-
-    for (const row of data as any[]) {
-      const user = row.user;
-      const role = row.user_role;
-      if (!user || !role) continue;
-
-      if (!userMap[user.id]) {
-        userMap[user.id] = { user, roles: [] };
-      }
-      userMap[user.id].roles.push(role);
-    }
-
-    return {
-      list: Object.values(userMap),
-      count: count || 0,
-    };
-  };
-
-  // =========================================================================================== //
 
   /**
    * Creates a new role.
-   *
-   * @param roleData - The role data to insert
-   * @returns A promise resolving to the created role
-   * @throws {RepositoryError_DEPRECATED} If a role with the same name already exists
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
-  create = async (
-    roleData: TablesInsert<"user_role">,
-  ): RepositoryResult<roleRow> => {
+  createRoles = async (roleList: roleInsert[]) => {
     const { data, error } = await supabase
       .from(this.roleTable)
-      .insert(roleData)
-      .select()
-      .single();
+      .insert(roleList)
+      .select("*")
+      .single<roleRow[]>();
 
-    if (error) {
-      // Handle unique constraint violation (duplicate role name)
-      if (error.code === "23505") {
-        throw new ConflictError(
-          `Role "${roleData.role_name}" already exists`,
-        );
-      }
-
-      throw new DatabaseError_DONT_USE(error.message);
-    }
-
-    if (!data) {
-      throw new DatabaseError_DONT_USE("Failed to create role - no data returned");
-    }
+    if (error) handlePostgresError(error);
 
     return data;
+  };
+
+  /**
+   * assigns a list of roles to a list of users
+   */
+  assignRolesToUsers = async (roleIds: string[], userIds: string[]) => {
+    const insertObject = roleIds.flatMap((roleId) =>
+      userIds.map((userId) => ({ user_id: userId, role_id: roleId })),
+    );
+    const { error } = await supabase
+      .from(this.junctionTable)
+      .insert(insertObject);
+
+    if (error) console.log("assign roles to users error");
+    if (error) handlePostgresError(error);
+  };
+
+  /**
+   * attach a list of permissions to a list of roles
+   */
+  attachPermissionsToRoles = async (
+    roleIds: string[],
+    permissions: { resource: string; action: string }[],
+  ) => {
+    const rowsToInsert = roleIds.flatMap((roleId) =>
+      permissions.map((p) => ({
+        role_id: roleId,
+        resource: p.resource,
+        action: p.action,
+      })),
+    );
+
+    const { error } = await supabase
+      .from("user_role_permission")
+      .insert(rowsToInsert);
+
+    if (error) handlePostgresError(error);
+
+    const { data: updatedRoles, error: updatedRolesError } = await supabase
+      .from("user_role")
+      .select("*, user_role_permission(*)")
+      .in("id", roleIds);
+
+    if (updatedRolesError) handlePostgresError(updatedRolesError);
+
+    return updatedRoles as rolePermissionRow[];
+  };
+
+  /**
+   * delete a role
+   */
+  deleteOneRole = async (roleId: string) => {
+    const { data: existingRole, error: existingRoleError } = await supabase
+      .from(this.roleTable)
+      .select("*")
+      .eq("id", roleId)
+      .single();
+
+    if (existingRoleError) handlePostgresError(existingRoleError);
+
+    if (!existingRole) {
+      throw new NotFoundError("Role not found");
+    }
+
+    if (existingRole.name === "admin" || existingRole.name === "default") {
+      throw new ForbiddenError("Cannot delete default admin roles");
+    }
+
+    const { error } = await supabase
+      .from(this.roleTable)
+      .delete()
+      .eq("id", roleId);
+
+    if (error) handlePostgresError(error);
   };
 
   /**
    * Updates an existing role.
-   *
-   * @param roleId - The ID of the role to update
-   * @param updates - Partial role data to update
-   * @returns A promise resolving to the updated role
-   * @throws {NotFoundError} If the role does not exist
-   * @throws {RepositoryError_DEPRECATED} If updating to a duplicate role name
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
    */
-  update = async (
-    roleId: string,
-    updates: Partial<TablesUpdate<"user_role">>,
-  ): RepositoryResult<roleRow> => {
+  updateOneRole = async (roleId: string, dto: roleUpdate) => {
     const { data, error } = await supabase
       .from(this.roleTable)
-      .update(updates)
+      .update(dto)
       .eq("id", roleId)
-      .select()
-      .single();
+      .select("*")
+      .single<roleRow>();
 
-    if (error) {
-      // Not found error code from Supabase/PostgREST
-      if (error.code === "PGRST116") {
-        throw new NotFoundError(`Role with ID "${roleId}" not found`);
-      }
-
-      // Unique constraint violation (duplicate role name)
-      if (error.code === "23505") {
-        throw new ConflictError(
-          `Role name "${updates.role_name}" already exists`,
-        );
-      }
-
-      // Any other database error
-      throw new DatabaseError_DONT_USE(error.message);
-    }
-
-    if (!data) {
-      throw new NotFoundError(
-        `Role with ID "${roleId}" not found -> No data returned`,
-      );
-    }
+    if (error) handlePostgresError(error);
 
     return data;
   };
 
+  detachPermissionsFromRoles = async (
+    roleIds: string[],
+    permissions: { resource: string; action: string }[],
+  ) => {
+    const { error } = await supabase
+      .from("user_role_permission")
+      .delete()
+      .in("role_id", roleIds)
+      .in(
+        "resource",
+        permissions.map((p) => p.resource),
+      )
+      .in(
+        "action",
+        permissions.map((p) => p.action),
+      );
+
+    if (error) handlePostgresError(error);
+
+    const { data: updatedPermissions, error: updatedPermissionsError } =
+      await supabase
+        .from("user_role_permission")
+        .select("*")
+        .in("role_id", roleIds);
+
+    if (updatedPermissionsError) handlePostgresError(updatedPermissionsError);
+
+    return updatedPermissions as rolePermissionRow[];
+  };
+
   /**
-   * Deletes a role.
-   *
-   * @param roleId - The ID of the role to delete
-   * @returns A promise resolving to success status
-   * @throws {NotFoundError} If the role does not exist
-   * @throws {InvalidOperationError_DEPRECATED} If the role is still assigned to users
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
+   * Unassigns a list of roles from a list of users
    */
-  delete = async (roleId: string): RepositoryResult<void> => {
-    // ✅ First check if role exists
-    const { data: existingRole, error: checkError } = await supabase
+  unassignRolesFromUsers = async (roleIds: string[], userIds: string[]) => {
+    const { error } = await supabase
+      .from(this.junctionTable)
+      .delete()
+      .in("role_id", roleIds)
+      .in("user_id", userIds);
+
+    if (error) handlePostgresError(error);
+  };
+
+  /**
+   * get role id by name
+   */
+  getRoleIdByName = async (roleName: string) => {
+    const { data, error } = await supabase
       .from(this.roleTable)
       .select("id")
-      .eq("id", roleId)
-      .maybeSingle();
-
-    if (checkError) throw new DatabaseError_DONT_USE(checkError.message);
-
-    if (!existingRole) {
-      throw new NotFoundError(`Role with ID "${roleId}" not found`);
-    }
-
-    // ✅ Check if role is assigned to any users
-    const { count: assignmentCount, error: countError } = await supabase
-      .from(this.junctionTable)
-      .select("*", { count: "exact", head: true })
-      .eq("role_id", roleId);
-
-    if (countError) throw new DatabaseError_DONT_USE(countError.message);
-
-    if (assignmentCount && assignmentCount > 0) {
-      throw new InvalidOperationError_DEPRECATED(
-        `Cannot delete role that is assigned to ${assignmentCount} user(s). Remove all user assignments first.`,
-      );
-    }
-
-    // ✅ Proceed with deletion and verify it succeeded
-    const { error, count } = await supabase
-      .from(this.roleTable)
-      .delete({ count: "exact" })
-      .eq("id", roleId);
-
-    if (error) {
-      // Foreign key violation: role is still assigned to users (backup safety check)
-      if (error.code === "23503") {
-        throw new InvalidOperationError_DEPRECATED(
-          "Cannot delete role that is assigned to users. Remove all user assignments first.",
-        );
-      }
-
-      throw new DatabaseError_DONT_USE(error.message);
-    }
-
-    // ✅ Verify that a row was actually deleted
-    if (count === 0) {
-      throw new NotFoundError(`Role with ID "${roleId}" not found`);
-    }
-
-    return;
-  };
-
-  /**
-   * Assigns a role to a user.
-   *
-   * @param userId - The ID of the user
-   * @param roleId - The ID of the role
-   * @returns A promise resolving to the created junction row
-   * @throws {NotFoundError} If user or role does not exist
-   * @throws {RepositoryError_DEPRECATED} If already assigned
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
-   */
-  assignRole = async (
-    userId: string,
-    roleId: string,
-  ): RepositoryResult<userRoleJunctionRow> => {
-    const { data, error } = await supabase
-      .from(this.junctionTable)
-      .insert({
-        user_id: userId,
-        role_id: roleId,
-      })
-      .select()
+      .eq("name", roleName)
       .single();
 
-    if (error) {
-      // Foreign key violation: user or role not found
-      if (error.code === "23503") {
-        throw new NotFoundError("User or role not found");
-      }
+    if (error) handlePostgresError(error);
 
-      // Unique constraint violation: user already has this role
-      if (error.code === "23505") {
-        throw new ConflictError("User already has this role assigned");
-      }
-
-      throw new DatabaseError_DONT_USE(error.message);
-    }
-
-    if (!data) {
-      throw new DatabaseError_DONT_USE("Failed to assign role - no data returned");
-    }
-
-    return data;
+    return data?.id;
   };
 
   /**
-   * Removes a role from a user.
-   *
-   * @param userId - The ID of the user
-   * @param roleId - The ID of the role
-   * @returns A promise resolving to success status
-   * @throws {NotFoundError} If the user-role assignment does not exist
-   * @throws {DatabaseError_DONT_USE} If a database error occurs
+   * List users that is assigned a specific role
+   */
+  listUsersThatHasRole = async (
+    pageNumber: number,
+    pageSize: number,
+    roleId: string,
+  ) => {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // Handle users WITH roles (optionally filtered by roleId)
+    let query = supabase
+      .from(this.junctionTable)
+      .select(`*, user(*)`, {
+        count: "exact",
+      })
+      .eq("role_id", roleId);
+
+    const { data, error, count } = await query
+      .range(from, to)
+      .overrideTypes<Array<userRoleJunctionType & { user: userRow }>>();
+
+    if (error) handlePostgresError(error);
+
+    // Group roles by user
+    const users = data.map((u) => u.user);
+
+    return {
+      list: users,
+      count: count || 0,
+    };
+  };
+
+  //////////////////////////////////////
+  //
+  // DEPRECATED METHODS
+  // - keep deprecated methods for backwards compatibility
+  //
+  //////////////////////////////////////
+
+  /**
+   * @deprecated use assignRolesToUsers
+   */
+  assignRole = async (userId: string, roleId: string) => {
+    const { data, error } = await supabase.from(this.junctionTable).insert({
+      user_id: userId,
+      role_id: roleId,
+    });
+
+    if (error) handlePostgresError(error);
+  };
+
+  /**
+   * @deprecated use unassignRolesFromUsers
    */
   removeRole = async (
     userId: string,
@@ -416,7 +329,7 @@ export class RoleRepository {
       .eq("user_id", userId)
       .eq("role_id", roleId);
 
-    if (error) throw new DatabaseError_DONT_USE(error.message);
+    if (error) handlePostgresError(error);
 
     if (count === 0) {
       throw new NotFoundError(

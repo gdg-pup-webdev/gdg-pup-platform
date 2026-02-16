@@ -8,13 +8,13 @@ export class ServerError extends Error {
     this.name = "ServerError";
   }
 
-  public getErrorChain(): string {
-    const parts: string[] = [this.title];
-    let currentCause = this.cause;
+  public getAllErrorStack(): string[] {
+    const parts: string[] = [ ];
+    let currentCause = this as unknown;
 
     while (currentCause) {
       if (currentCause instanceof Error) {
-        parts.push(currentCause.message);
+        parts.push(currentCause.stack || `${currentCause.name}: ${currentCause.message}`);
         currentCause = (currentCause as Error).cause;
       } else {
         parts.push(String(currentCause));
@@ -22,6 +22,7 @@ export class ServerError extends Error {
       }
     }
 
-    return parts.join(" -> ");
+    return parts.reverse();
+    // return parts.join(" -> ");
   }
 }

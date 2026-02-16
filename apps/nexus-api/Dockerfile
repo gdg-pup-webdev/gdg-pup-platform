@@ -1,7 +1,11 @@
 
 FROM node:20-alpine AS pruner
 WORKDIR /app
-RUN npm install -g turbo
+RUN npm install -g turbo@2.7.4 \
+  --registry=https://registry.npmjs.org/ \
+  --fetch-retries=2 \
+  --fetch-retry-mintimeout=2000 \
+  --fetch-retry-maxtimeout=10000
 COPY . .
 RUN turbo prune --scope=nexus-api --docker
 
@@ -10,15 +14,16 @@ WORKDIR /app
 RUN corepack enable
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --frozen-lockfile
 
 FROM node:20-alpine AS builder
 WORKDIR /app
 RUN corepack enable
 COPY --from=installer /app/ .
 COPY --from=pruner /app/out/full/ .
-RUN pnpm install
-
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --frozen-lockfile
 RUN apk add --no-cache dos2unix && dos2unix packages/typed-rest/src/cli.ts
 RUN pnpm turbo run build --filter=nexus-api
 
@@ -44,7 +49,8 @@ COPY --from=builder /app/packages/typed-rest/package.json ./packages/typed-rest/
 COPY --from=builder /app/packages/typed-rest/dist ./packages/typed-rest/dist
 
 # Install only production dependencies (no devDependencies)
-RUN pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --prod --frozen-lockfile
 
 WORKDIR /app/apps/nexus-api
 EXPOSE 8000
