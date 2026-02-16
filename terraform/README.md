@@ -161,3 +161,6 @@ module "iam" {
 2. Update `provider.tf` with the correct backend bucket and project.
 3. Create or update `terraform.tfvars` with environment-specific values.
 4. Run `terraform init` and `terraform plan`.
+
+## Additional Learning Resources
+Still stuck? Check out the [official Terraform documentation](https://developer.hashicorp.com/terraform) for more details and visit Google Skills Boost's course on [Terraform](https://www.skills.google/paths/11/course_templates/636).

@@ -58,6 +58,11 @@ next-env.d.ts
 .env.*
 *.pem
 *.key
+*.tfvars
+*.tfstate
+*.tfstate.backup
+.terraform/
+**/.terraform/
 
 # --- Testing ---
 coverage/

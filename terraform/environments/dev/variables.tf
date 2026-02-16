@@ -15,8 +15,20 @@ variable "region" {
   default     = "asia-southeast1"
 }
 
+variable "image_url" {
+  description = "The container image URL to deploy."
+  type        = string
+  default     = ""
+}
+
+variable "allow_unauthenticated" {
+  description = "Whether to allow unauthenticated access to the Cloud Run service in dev."
+  type        = bool
+  default     = true # Often useful in dev, but can be set to false
+}
+
 variable "environment" {
-  description = "The environment name."
+  description = "The environment name (e.g., dev, staging, prod)."
   type        = string
   default     = "dev"
 }
