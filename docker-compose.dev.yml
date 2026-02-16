@@ -1,0 +1,29 @@
+# =============================================================================
+# Docker Compose — Development Override
+# =============================================================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# =============================================================================
+
+name: gdg-pup-platform-dev
+
+services:
+  nexus-web:
+    build:
+      args:
+        NEXT_PUBLIC_NEXUS_API_URL: ${NEXT_PUBLIC_NEXUS_API_URL}
+        NEXT_PUBLIC_IDENTITY_API_URL: ${NEXT_PUBLIC_IDENTITY_API_URL}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_PUB_KEY: ${NEXT_PUBLIC_SUPABASE_PUB_KEY}
+    env_file:
+      - apps/nexus-web/.env
+    restart: unless-stopped
+
+  nexus-api:
+    env_file:
+      - apps/nexus-api/.env
+    restart: unless-stopped
+
+  identity-api:
+    env_file:
+      - apps/identity-api/.env
+    restart: unless-stopped
