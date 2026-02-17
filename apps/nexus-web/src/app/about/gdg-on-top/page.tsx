@@ -38,12 +38,13 @@ export default function GDGOnTopPage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title="GDG on Top"
-        description="Celebrating our achievements and community excellence"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="GDG on Top"
+          description="Celebrating our achievements and community excellence"
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Stats Grid */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -61,7 +62,7 @@ export default function GDGOnTopPage() {
                 <h3 className="text-2xl font-bold text-blue-600 mb-2">
                   {achievement.title}
                 </h3>
-                <p className="text-gray-600">{achievement.description}</p>
+                <p className="text-gray-700">{achievement.description}</p>
               </Card>
             ))}
           </div>
@@ -85,16 +86,17 @@ export default function GDGOnTopPage() {
         </section>
 
         {/* Impact Statement */}
-        <Card className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <Card className="bg-blue-600 text-white border-blue-700">
           <div className="text-center py-8">
             <h2 className="text-3xl font-bold mb-4">Making an Impact</h2>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            <p className="text-xl text-white max-w-3xl mx-auto">
               Every achievement is a testament to our incredible community.
               Together, we're not just learning technology—we're shaping the
               future of tech education and innovation at PUP.
             </p>
           </div>
         </Card>
+        </div>
       </div>
     </PageLayout>
   );

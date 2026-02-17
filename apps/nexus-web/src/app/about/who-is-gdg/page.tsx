@@ -7,12 +7,13 @@ export default function WhoIsGDGPage() {
   //   Dummy data pa lang
   return (
     <PageLayout>
-      <PageHeader
-        title="What is GDG?"
-        description="Understanding the Google Developer Group program and community"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="What is GDG?"
+          description="Understanding the Google Developer Group program and community"
+        />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Card className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Google Developer Groups
@@ -33,7 +34,7 @@ export default function WhoIsGDGPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card>
             <h3 className="text-xl font-semibold text-blue-600 mb-3">Learn</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Gain hands-on experience with Google technologies through
               workshops, study jams, and peer-to-peer learning sessions.
             </p>
@@ -43,7 +44,7 @@ export default function WhoIsGDGPage() {
             <h3 className="text-xl font-semibold text-blue-600 mb-3">
               Connect
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Meet other students passionate about technology and build lasting
               connections within the developer community.
             </p>
@@ -51,7 +52,7 @@ export default function WhoIsGDGPage() {
 
           <Card>
             <h3 className="text-xl font-semibold text-blue-600 mb-3">Grow</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Develop your technical and leadership skills through community-led
               initiatives and collaborative projects.
             </p>
@@ -59,7 +60,7 @@ export default function WhoIsGDGPage() {
 
           <Card>
             <h3 className="text-xl font-semibold text-blue-600 mb-3">Build</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-700">
               Create solutions that matter by applying your skills to real-world
               problems and local community needs.
             </p>
@@ -95,6 +96,7 @@ export default function WhoIsGDGPage() {
             </li>
           </ul>
         </Card>
+        </div>
       </div>
     </PageLayout>
   );

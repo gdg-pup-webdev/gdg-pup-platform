@@ -32,12 +32,13 @@ export default function MeetTheTeamPage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title="Meet the Team"
-        description="The passionate individuals driving our community forward"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="Meet the Team"
+          description="The passionate individuals driving our community forward"
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
             Our team is composed of dedicated students who volunteer their time
@@ -88,6 +89,7 @@ export default function MeetTheTeamPage() {
             Get Involved
           </button>
         </Card>
+        </div>
       </div>
     </PageLayout>
   );

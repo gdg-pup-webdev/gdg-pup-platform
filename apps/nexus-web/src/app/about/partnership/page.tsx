@@ -37,12 +37,13 @@ export default function PartnershipPage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title="Partnership Opportunities"
-        description="Let's work together to empower the next generation of tech leaders"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="Partnership Opportunities"
+          description="Let's work together to empower the next generation of tech leaders"
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Introduction */}
         <section className="mb-16 text-center">
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
@@ -63,7 +64,7 @@ export default function PartnershipPage() {
                 <h3 className="text-xl font-semibold text-blue-600 mb-3">
                   {benefit.title}
                 </h3>
-                <p className="text-gray-600">{benefit.description}</p>
+                <p className="text-gray-700">{benefit.description}</p>
               </Card>
             ))}
           </div>
@@ -80,7 +81,7 @@ export default function PartnershipPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Educational
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-700">
                 Provide learning resources, workshops, or training programs
               </p>
             </Card>
@@ -90,7 +91,7 @@ export default function PartnershipPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Recruitment
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-700">
                 Access our talent pool for internships and full-time roles
               </p>
             </Card>
@@ -100,7 +101,7 @@ export default function PartnershipPage() {
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Event Sponsorship
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-700">
                 Support our events and initiatives as a sponsor
               </p>
             </Card>
@@ -154,6 +155,7 @@ export default function PartnershipPage() {
             </form>
           </Card>
         </section>
+        </div>
       </div>
     </PageLayout>
   );

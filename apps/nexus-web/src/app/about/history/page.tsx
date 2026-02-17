@@ -34,12 +34,13 @@ export default function HistoryPage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title="Our History"
-        description="A journey of growth, innovation, and community building"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="Our History"
+          description="A journey of growth, innovation, and community building"
+        />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
             The Beginning
@@ -75,7 +76,7 @@ export default function HistoryPage() {
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
                       {milestone.title}
                     </h3>
-                    <p className="text-gray-600">{milestone.description}</p>
+                    <p className="text-gray-700">{milestone.description}</p>
                   </div>
                 </div>
               </Card>
@@ -83,16 +84,17 @@ export default function HistoryPage() {
           </div>
         </div>
 
-        <Card className="bg-gradient-to-r from-blue-50 to-blue-100">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+        <Card className="bg-blue-50 border-2 border-blue-200">
+          <h3 className="text-2xl font-bold text-blue-900 mb-4">
             Looking Forward
           </h3>
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-blue-800 leading-relaxed">
             As we continue to grow, our commitment remains unchanged: to provide
             every student with opportunities to learn, innovate, and make a
             meaningful impact through technology. The best is yet to come!
           </p>
         </Card>
+        </div>
       </div>
     </PageLayout>
   );
