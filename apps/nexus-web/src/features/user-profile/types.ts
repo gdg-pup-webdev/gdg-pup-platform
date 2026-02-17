@@ -39,19 +39,24 @@ export interface UserProfile {
  * Contains nested profile data that needs to be extracted
  */
 export interface UserAggregateResponse {
-  id: string;
-  profiles?: Array<{
+  status: 'success' | 'error';
+  data: {
     id: string;
-    name: string;
+    display_name?: string;
     email?: string;
-    role?: string;
-    bio?: string;
     avatar_url?: string;
-    portfolio_url?: string;
-    social_links?: SocialLink[];
-    created_at?: string;
-    updated_at?: string;
-  }>;
+    profiles?: Array<{
+      id: string;
+      program?: string;
+      year_level?: string;
+      bio?: string;
+      github_url?: string;
+      linkedin_url?: string;
+      portfolio_url?: string;
+      created_at?: string;
+      updated_at?: string;
+    }>;
+  };
   // Additional fields can be added as needed
 }
 

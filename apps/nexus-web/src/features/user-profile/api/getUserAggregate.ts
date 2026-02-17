@@ -69,9 +69,20 @@ export async function getUserAggregate(userId: string): Promise<UserProfile> {
     // Parse the JSON response
     const data: UserAggregateResponse = await response.json();
 
+    // Check if the response has the expected structure
+    if (!data || data.status !== 'success' || !data.data) {
+      throw new UserProfileException(
+        'SERVER_ERROR',
+        'Invalid response structure from server'
+      );
+    }
+
+    // Extract the actual user data from the response
+    const userData = data.data;
+
     // Extract the first profile from the profiles array
     // In the current API structure, user data is nested in profiles[0]
-    const profileData = data.profiles?.[0];
+    const profileData = userData.profiles?.[0];
 
     if (!profileData) {
       throw new UserProfileException(
@@ -80,17 +91,34 @@ export async function getUserAggregate(userId: string): Promise<UserProfile> {
       );
     }
 
+    // Build social links array from individual URL fields
+    const socialLinks: { platform: string; url: string }[] = [];
+    if (profileData.github_url) {
+      socialLinks.push({ platform: 'GitHub', url: profileData.github_url });
+    }
+    if (profileData.linkedin_url) {
+      socialLinks.push({ platform: 'LinkedIn', url: profileData.linkedin_url });
+    }
+
+    // Build role from program and year_level
+    let role = 'Member';
+    if (profileData.program && profileData.year_level) {
+      role = `${profileData.program} - Year ${profileData.year_level}`;
+    } else if (profileData.program) {
+      role = profileData.program;
+    }
+
     // Transform the API response to our UserProfile interface
-    // This converts snake_case to camelCase and structures the data
+    // This converts the actual API structure to our internal format
     const userProfile: UserProfile = {
-      id: data.id,
-      name: profileData.name,
-      email: profileData.email,
-      role: profileData.role,
-      bio: profileData.bio,
-      avatarUrl: profileData.avatar_url,
+      id: userData.id,
+      name: userData.display_name || 'GDG Member',
+      email: userData.email,
+      role: role,
+      bio: profileData.bio || 'No bio available.',
+      avatarUrl: userData.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.id}`,
       portfolioUrl: profileData.portfolio_url,
-      socialLinks: profileData.social_links,
+      socialLinks: socialLinks,
       createdAt: profileData.created_at,
       updatedAt: profileData.updated_at,
     };
