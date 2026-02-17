@@ -103,183 +103,171 @@ export default function LeaderboardsPage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title="Leaderboards"
-        description="Community rankings based on participation, contributions, and achievements"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="Leaderboards"
+          description="Community rankings based on participation, contributions, and achievements"
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Stats Overview */}
-        <section className="mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="text-center bg-gradient-to-br from-yellow-50 to-yellow-100">
-              <div className="text-4xl mb-2">🏆</div>
-              <div className="text-3xl font-bold text-yellow-700 mb-1">
-                500+
-              </div>
-              <div className="text-sm text-gray-600">Active Competitors</div>
-            </Card>
-
-            <Card className="text-center bg-gradient-to-br from-blue-50 to-blue-100">
-              <div className="text-4xl mb-2">⚡</div>
-              <div className="text-3xl font-bold text-blue-700 mb-1">50+</div>
-              <div className="text-sm text-gray-600">Events This Month</div>
-            </Card>
-
-            <Card className="text-center bg-gradient-to-br from-purple-50 to-purple-100">
-              <div className="text-4xl mb-2">🎯</div>
-              <div className="text-3xl font-bold text-purple-700 mb-1">
-                2,450
-              </div>
-              <div className="text-sm text-gray-600">Highest Score</div>
-            </Card>
-          </div>
-        </section>
-
-        {/* How Points Work */}
-        <section className="mb-12">
-          <Card className="bg-blue-50">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              How Points Work
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <span className="font-semibold text-blue-600">
-                  Event Attendance:
-                </span>{" "}
-                <span className="text-gray-700">50 points per event</span>
-              </div>
-              <div>
-                <span className="font-semibold text-blue-600">
-                  Project Completion:
-                </span>{" "}
-                <span className="text-gray-700">100 points per project</span>
-              </div>
-              <div>
-                <span className="font-semibold text-blue-600">
-                  Helping Others:
-                </span>{" "}
-                <span className="text-gray-700">
-                  25 points per contribution
-                </span>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* Top 10 Leaderboard */}
-        <section>
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            Top 10 Members
-          </h2>
-
-          <div className="space-y-4">
-            {leaderboardData.map((member) => (
-              <Card
-                key={member.rank}
-                className={`hover:shadow-lg transition-shadow ${
-                  member.rank <= 3 ? "border-2 border-yellow-400" : ""
-                }`}
-              >
-                <div className="flex items-center gap-6">
-                  {/* Rank */}
-                  <div className="flex-shrink-0 w-16 text-center">
-                    <div
-                      className={`text-3xl font-bold ${
-                        member.rank <= 3 ? "text-yellow-600" : "text-gray-400"
-                      }`}
-                    >
-                      {getRankEmoji(member.rank)}
-                    </div>
-                  </div>
-
-                  {/* Avatar */}
-                  <Avatar
-                    size="lg"
-                    fallback={member.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  />
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      {member.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {member.badges.map((badge, idx) => (
-                        <Badge key={idx} variant="success" size="sm">
-                          {badge}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="hidden md:flex gap-8 text-center">
-                    <div>
-                      <div className="text-2xl font-bold text-blue-600">
-                        {member.points}
-                      </div>
-                      <div className="text-xs text-gray-500">Points</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-700">
-                        {member.events}
-                      </div>
-                      <div className="text-xs text-gray-500">Events</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-gray-700">
-                        {member.projects}
-                      </div>
-                      <div className="text-xs text-gray-500">Projects</div>
-                    </div>
-                  </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Stats Overview */}
+          <section className="mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="text-center bg-yellow-50 border-2 border-yellow-200">
+                <div className="text-4xl mb-2">🏆</div>
+                <div className="text-3xl font-bold text-yellow-800 mb-1">
+                  500+
                 </div>
-
-                {/* Mobile Stats */}
-                <div className="md:hidden grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200">
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-blue-600">
-                      {member.points}
-                    </div>
-                    <div className="text-xs text-gray-500">Points</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-gray-700">
-                      {member.events}
-                    </div>
-                    <div className="text-xs text-gray-500">Events</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-gray-700">
-                      {member.projects}
-                    </div>
-                    <div className="text-xs text-gray-500">Projects</div>
-                  </div>
+                <div className="text-sm text-yellow-700">
+                  Active Competitors
                 </div>
               </Card>
-            ))}
-          </div>
-        </section>
 
-        {/* CTA */}
-        <Card className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center">
-          <div className="py-8">
-            <h3 className="text-2xl font-bold mb-4">
-              Want to See Your Name Here?
-            </h3>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              Participate in events, contribute to projects, and help fellow
-              members to climb the leaderboard!
-            </p>
-            <button className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold">
-              Get Started
-            </button>
-          </div>
-        </Card>
+              <Card className="text-center bg-blue-50 border-2 border-blue-200">
+                <div className="text-4xl mb-2">⚡</div>
+                <div className="text-3xl font-bold text-blue-800 mb-1">50+</div>
+                <div className="text-sm text-blue-700">Events This Month</div>
+              </Card>
+
+              <Card className="text-center bg-purple-50 border-2 border-purple-200">
+                <div className="text-4xl mb-2">🎯</div>
+                <div className="text-3xl font-bold text-purple-800 mb-1">
+                  2,450
+                </div>
+                <div className="text-sm text-purple-700">Highest Score</div>
+              </Card>
+            </div>
+          </section>
+
+          {/* How Points Work */}
+          <section className="mb-12">
+            <Card className="bg-blue-50 border-2 border-blue-200">
+              <h3 className="text-xl font-semibold text-blue-900 mb-4">
+                How Points Work
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="font-semibold text-blue-700">
+                    Event Attendance:
+                  </span>{" "}
+                  <span className="text-blue-800">50 points per event</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-blue-700">
+                    Project Completion:
+                  </span>{" "}
+                  <span className="text-blue-800">100 points per project</span>
+                </div>
+                <div>
+                  <span className="font-semibold text-blue-700">
+                    Helping Others:
+                  </span>{" "}
+                  <span className="text-blue-800">
+                    25 points per contribution
+                  </span>
+                </div>
+              </div>
+            </Card>
+          </section>
+
+          {/* Top 10 Leaderboard */}
+          <section>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              Top 10 Members
+            </h2>
+
+            <div className="space-y-4">
+              {leaderboardData.map((member) => (
+                <Card
+                  key={member.rank}
+                  className={`hover:shadow-lg transition-shadow ${
+                    member.rank <= 3 ? "border-2 border-yellow-400" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-6">
+                    {/* Rank */}
+                    <div className="flex-shrink-0 w-16 text-center">
+                      <div
+                        className={`text-3xl font-bold ${
+                          member.rank <= 3 ? "text-yellow-600" : "text-gray-400"
+                        }`}
+                      >
+                        {getRankEmoji(member.rank)}
+                      </div>
+                    </div>
+
+                    {/* Avatar */}
+                    <Avatar
+                      size="lg"
+                      fallback={member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    />
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        {member.name}
+                      </h3>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {member.badges.map((badge, idx) => (
+                          <Badge key={idx} variant="success" size="sm">
+                            {badge}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="hidden md:flex gap-8 text-center">
+                      <div>
+                        <div className="text-2xl font-bold text-blue-600">
+                          {member.points}
+                        </div>
+                        <div className="text-xs text-gray-600">Points</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-gray-900">
+                          {member.events}
+                        </div>
+                        <div className="text-xs text-gray-600">Events</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-gray-900">
+                          {member.projects}
+                        </div>
+                        <div className="text-xs text-gray-600">Projects</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mobile Stats */}
+                  <div className="md:hidden grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-200">
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-blue-600">
+                        {member.points}
+                      </div>
+                      <div className="text-xs text-gray-600">Points</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">
+                        {member.events}
+                      </div>
+                      <div className="text-xs text-gray-600">Events</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">
+                        {member.projects}
+                      </div>
+                      <div className="text-xs text-gray-600">Projects</div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </section>
+        </div>
       </div>
     </PageLayout>
   );
