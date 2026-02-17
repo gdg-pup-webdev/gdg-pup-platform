@@ -58,12 +58,13 @@ export default function MemberShowcasePage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title="Member Showcase"
-        description="Celebrating the achievements and contributions of our amazing community members"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="Member Showcase"
+          description="Celebrating the achievements and contributions of our amazing community members"
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Introduction */}
         <section className="mb-12 text-center">
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
@@ -98,7 +99,7 @@ export default function MemberShowcasePage() {
                   </p>
                 </div>
 
-                <p className="text-gray-600 text-sm mb-4">{member.bio}</p>
+                <p className="text-gray-700 text-sm mb-4">{member.bio}</p>
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {member.achievements.map((achievement, aIdx) => (
@@ -113,13 +114,13 @@ export default function MemberShowcasePage() {
                     <div className="text-2xl font-bold text-blue-600">
                       {member.projects}
                     </div>
-                    <div className="text-xs text-gray-500">Projects</div>
+                    <div className="text-xs text-gray-600">Projects</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600">
                       {member.events}
                     </div>
-                    <div className="text-xs text-gray-500">Events</div>
+                    <div className="text-xs text-gray-600">Events</div>
                   </div>
                 </div>
               </Card>
@@ -128,10 +129,10 @@ export default function MemberShowcasePage() {
         </section>
 
         {/* Call to Action */}
-        <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <Card className="bg-blue-600 text-white border-blue-700">
           <div className="text-center py-8">
             <h2 className="text-3xl font-bold mb-4">Want to be Featured?</h2>
-            <p className="text-xl text-blue-100 mb-6 max-w-2xl mx-auto">
+            <p className="text-xl text-white mb-6 max-w-2xl mx-auto">
               Stay active in the community, contribute to projects, and share
               your knowledge. Your achievements could be highlighted next!
             </p>
@@ -140,6 +141,7 @@ export default function MemberShowcasePage() {
             </button>
           </div>
         </Card>
+        </div>
       </div>
     </PageLayout>
   );

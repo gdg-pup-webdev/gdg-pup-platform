@@ -42,12 +42,13 @@ export default function CommunityPage() {
 
   return (
     <PageLayout>
-      <PageHeader
-        title="Our Community"
-        description="A vibrant ecosystem of learners, builders, and innovators"
-      />
+      <div className="min-h-screen bg-white">
+        <PageHeader
+          title="Our Community"
+          description="A vibrant ecosystem of learners, builders, and innovators"
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Community Stats */}
         <section className="mb-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -60,7 +61,7 @@ export default function CommunityPage() {
                 <div className="text-3xl font-bold text-blue-600 mb-1">
                   {stat.value}
                 </div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
+                <div className="text-sm text-gray-700">{stat.label}</div>
               </Card>
             ))}
           </div>
@@ -90,11 +91,11 @@ export default function CommunityPage() {
                 <Badge variant="default">Student-Led</Badge>
               </div>
             </div>
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            <Card className="bg-blue-50 border-2 border-blue-200">
+              <h3 className="text-xl font-semibold text-blue-900 mb-4">
                 Join Our Community
               </h3>
-              <p className="text-gray-700 mb-6">
+              <p className="text-blue-800 mb-6">
                 Ready to start your journey with us? Connect with like-minded
                 peers and grow your skills together.
               </p>
@@ -116,8 +117,8 @@ export default function CommunityPage() {
                 <h3 className="text-xl font-semibold text-blue-600 mb-2">
                   {activity.title}
                 </h3>
-                <p className="text-gray-600 mb-3">{activity.description}</p>
-                <div className="flex items-center text-sm text-gray-500">
+                <p className="text-gray-700 mb-3">{activity.description}</p>
+                <div className="flex items-center text-sm text-gray-600">
                   <span className="mr-2">📅</span>
                   {activity.schedule}
                 </div>
@@ -128,12 +129,12 @@ export default function CommunityPage() {
 
         {/* Member Showcase Link */}
         <section>
-          <Card className="bg-gradient-to-r from-purple-50 to-pink-50">
+          <Card className="bg-purple-50 border-2 border-purple-200">
             <div className="text-center py-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl font-bold text-purple-900 mb-4">
                 Member Showcase
               </h2>
-              <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+              <p className="text-purple-800 mb-6 max-w-2xl mx-auto">
                 Discover the amazing projects, achievements, and stories from
                 our talented community members.
               </p>
@@ -145,6 +146,7 @@ export default function CommunityPage() {
             </div>
           </Card>
         </section>
+        </div>
       </div>
     </PageLayout>
   );
