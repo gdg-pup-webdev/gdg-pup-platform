@@ -10,11 +10,12 @@
 
 'use client';
 
+import { use } from 'react';
 import { ProfileCard } from '@/features/user-profile';
 
-export default function UserProfilePage({ params }: { params: { id: string } }) {
-  // Extract the user ID from the URL parameters
-  const { id } = params;
+export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  // Unwrap the params Promise (required in Next.js 15+)
+  const { id } = use(params);
 
   // Render the ProfileCard component with the user ID
   // The ProfileCard handles all the data fetching, loading states, and rendering

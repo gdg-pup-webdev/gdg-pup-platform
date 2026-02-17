@@ -20,11 +20,13 @@ export default function ProfilePage() {
   if (status === "checking") {
     return (
       <PageLayout>
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen bg-white">
+          <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin text-4xl mb-4">⏳</div>
             <p className="text-gray-600">Loading...</p>
           </div>
+        </div>
         </div>
       </PageLayout>
     );
@@ -33,12 +35,13 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <PageLayout>
-        <PageHeader
-          title="Your Profile"
-          description="Sign in to view and manage your profile"
-        />
+        <div className="min-h-screen bg-white">
+          <PageHeader
+            title="Your Profile"
+            description="Sign in to view and manage your profile"
+          />
 
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Card className="text-center">
             <div className="py-12">
               <div className="text-6xl mb-6">🔐</div>
@@ -88,6 +91,7 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+      </div>
       </PageLayout>
     );
   }
