@@ -48,10 +48,10 @@ export function HealthCheckCard({
       <div className="p-6 space-y-4 min-w-[320px]">
         {/* Header with API name */}
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-gray-900">
             {apiName}
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500">
             Health Status Monitor
           </p>
         </div>
