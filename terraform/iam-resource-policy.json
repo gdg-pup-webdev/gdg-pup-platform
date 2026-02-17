@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "bindings": [
+    {
+      "role": "roles/run.admin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/compute.networkAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/compute.securityAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/firestore.admin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/firebase.admin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/serviceusage.serviceUsageAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    }
+  ]
+}

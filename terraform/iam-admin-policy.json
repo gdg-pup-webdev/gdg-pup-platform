@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "bindings": [
+    {
+      "role": "roles/iam.securityAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/iam.roleAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/resourcemanager.projectIamAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/resourcemanager.tagUser",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/resourcemanager.tagViewer",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    }
+  ]
+}
