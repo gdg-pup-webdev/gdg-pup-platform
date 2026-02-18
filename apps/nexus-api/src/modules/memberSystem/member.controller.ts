@@ -1,4 +1,4 @@
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 import { memberService } from "./member.service.js";
 import { RequestHandler } from "express";
