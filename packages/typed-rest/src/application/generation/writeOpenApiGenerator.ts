@@ -87,6 +87,22 @@ export const generateOpenApiSpec = (
     openapiendpoints: openapiendpoints,
   },
 ) => {
-  return generateOpenApiOptions(props);
+  const defaultProps = {
+    info: {
+      title: "API Documentation",
+      version: "1.0.0",
+      description: "Generated Documentation",
+    },
+    servers: [
+      { url: "http://localhost:8000", description: "Development server" },
+    ],
+    security: [{ bearerAuth: [] }],
+    generateExample: true,
+    openapiendpoints: openapiendpoints,
+  }; 
+  return generateOpenApiOptions({
+    ...defaultProps,
+    ...props,
+  });
 };
 `;

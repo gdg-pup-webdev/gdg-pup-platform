@@ -23,6 +23,7 @@ export const docsLoader = (app: Express) => {
     servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
     generateExample: false,
   });
+  const swaggerSpec = swaggerJsdoc(options);
 
   /**
    * EXPOSE THE OPENAPI DOCUMENT
@@ -91,7 +92,6 @@ export const docsLoader = (app: Express) => {
   /**
    * LOAD SWAGGER UI DOCUMENTATION
    */
-  const swaggerSpec = swaggerJsdoc(options);
   const assetOptions = {
     customCssUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
