@@ -9,13 +9,19 @@ import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
 import { publicationSystemRouterInstance } from "@/modules/publicationSystem/index.js";
 import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
-import {
-  RewardSystemRouter,
-  rewardSystemRouterInstance,
-} from "@/modules/rewardsSystem/index.js";
+import { rewardSystemRouterInstance } from "@/modules/rewardsSystem/index.js";
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js";
+import { ApiVersion1Router } from "../routes/v1";
 
 export const routesLoader = (app: Express) => {
+  /**
+   * load version 1 routes
+   */
+  app.use("/api/v1", new ApiVersion1Router().router);
+
+  /**
+   * load legacy routes
+   */
   app.use("/api/health", healthCheckModuleRouterInstance.getRouter());
 
   app.use("/api/user-resource-system", userResourceSystemRouter.getRouter());
@@ -38,20 +44,6 @@ export const routesLoader = (app: Express) => {
   app.use(
     "/api/learning-resource-system",
     learningResourceSystemRouterInstance.getRouter(),
-  );
-
-  /**
-   * TODO
-   * - file system
-   * - leaderboard system
-   * - rbac system
-   */
-
-  app.use("/api/file-system", fileSystemRouterInstance.getRouter());
-
-  app.use(
-    "/api/leaderboard-system",
-    leaderboardSystemRouterInstance.getRouter(),
   );
 
   app.use("/api/rbac-system", rbacSystemRouterInstance.getRouter());
