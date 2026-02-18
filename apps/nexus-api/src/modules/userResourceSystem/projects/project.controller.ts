@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { ProjectService, projectServiceInstance } from "./project.service";
 
 export class ProjectController {

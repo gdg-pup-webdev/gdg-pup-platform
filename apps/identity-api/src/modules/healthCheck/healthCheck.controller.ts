@@ -1,5 +1,5 @@
 import { contract } from "@packages/identity-api-contracts";
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
 
 export class HealthCheckController {

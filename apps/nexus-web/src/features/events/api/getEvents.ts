@@ -4,7 +4,7 @@
  * Retrieves a paginated list of events with optional filtering.
  */
 
-import { callEndpoint } from "@packages/typed-rest";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/configs/servers.config";
 import { EventsException, EventsQueryParams, EventsResponse } from "../types";

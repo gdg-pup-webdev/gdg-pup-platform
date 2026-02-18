@@ -5,7 +5,7 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "paths": {
-      "@packages/typed-rest": ["../typed-rest/src"],
+      // "@packages/typed-rest": ["../typed-rest/src"],
       "@/*": ["./src/*"]
     }
   },
