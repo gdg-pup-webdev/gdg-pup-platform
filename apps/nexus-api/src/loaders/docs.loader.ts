@@ -2,7 +2,7 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
-import { generateOpenApiOptions } from "@packages/nexus-api-contracts"; 
+import { generateOpenApiSpec } from "@packages/nexus-api-contracts"; 
 import converter from "openapi-to-postmanv2"; 
 
 let scalarMiddleware: any = null;
@@ -10,7 +10,7 @@ let scalarMiddleware: any = null;
  * load the documentations of the api
  */
 export const docsLoader = (app: Express) => {
-  const options = generateOpenApiOptions({
+  const options = generateOpenApiSpec({
     info: {
       title: "Nexus API",
       version: "2.1.0",

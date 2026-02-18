@@ -1,6 +1,6 @@
 import { ProfileService, profileServiceInstance } from "./profile.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
 
 export class ProfileController {

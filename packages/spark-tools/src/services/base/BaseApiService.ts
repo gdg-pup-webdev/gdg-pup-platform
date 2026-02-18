@@ -11,7 +11,7 @@
  * All domain-specific services should extend this class.
  */
 
-import { callEndpoint } from '@packages/typed-rest';
+import { callEndpoint } from '@packages/typed-rest/clientReact';
 import { 
   processError, 
   logError, 

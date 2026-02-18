@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { TeamService, teamServiceInstance } from "./team.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 
 export class TeamController {
   constructor(
