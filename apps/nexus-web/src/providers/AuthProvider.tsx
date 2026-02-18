@@ -1,16 +1,29 @@
 "use client";
 
-import {
-  signInWithGoogle as supabaseSignInWithGoogle,
-  supabase,
-} from "@/lib/supabase";
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { createContext, useContext, useEffect, useState } from "react";
-import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
+import type { User, Session } from "@supabase/supabase-js";
+
+const NEXUS_API_URL =
+  process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
+
+// Define session type with possible extra fields if needed,
+// but extending the official Session is safer.
+// For now, let's just use the official Session type directly in our state where possible,
+// or intersection if we add custom properties.
+// The backend returns a shape that matches Supabase Session, so we can use it.
+
+// Helper type for usage where full session might not be available
+type SessionLike = Partial<Session> & {
+  access_token: string;
+  provider_token?: string | null;
+  refresh_token?: string;
+  expires_at?: number;
+};
 
 // 1. Define a strictly typed State Object to prevent invalid combos
 type AuthState = {
-  user: SupabaseUser | null;
+  user: User | null;
   token: string | null;
   role: string | null;
   googleAccessToken: string | null;
@@ -21,7 +34,10 @@ type AuthState = {
 // 2. Define the Context Method types separate from the State
 type AuthContextActions = {
   loginWithGoogle: () => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  refreshSession: () => Promise<void>;
 };
 
 // Combine them for the final context type
@@ -48,17 +64,15 @@ export const useAuthContext = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  // 3. Use a SINGLE state object for atomic updates
   const [authState, setAuthState] = useState<AuthState>(initialState);
 
-  const getStoredGoogleToken = () => {
-    const storedAccessToken = getCookie("googleAccessToken");
-    return typeof storedAccessToken === "string" ? storedAccessToken : null;
-  };
-
-  const syncSessionToState = (session: Session | null) => {
-    if (session) {
-      const providerToken = session.provider_token || getStoredGoogleToken();
+  const syncSessionToState = (
+    user: User | null,
+    session: SessionLike | null,
+  ) => {
+    if (user && session) {
+      const providerToken =
+        session.provider_token || (getCookie("googleAccessToken") as string);
 
       if (session.provider_token) {
         setCookie("googleAccessToken", session.provider_token, {
@@ -76,20 +90,65 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       }
 
-      const role =
-        (session.user?.app_metadata?.role as string) ||
-        session.user?.role ||
-        "guest";
+      const role = user.app_metadata?.role || user.role || "guest";
 
       setAuthState({
-        user: session.user,
-        token: session.access_token ?? null,
+        user,
+        token: session.access_token,
         role,
-        googleAccessToken: providerToken,
+        googleAccessToken: providerToken || null,
         status: "authenticated",
         error: null,
       });
     } else {
+      deleteCookie("googleAccessToken");
+      deleteCookie("supabaseAccessToken");
+      setAuthState({
+        ...initialState,
+        status: "unauthenticated",
+      });
+    }
+  };
+
+  // Main function to fetch/refresh user session
+  const refreshSession = async () => {
+    try {
+      const token = getCookie("supabaseAccessToken") as string;
+
+      if (!token) {
+        setAuthState({
+          ...initialState,
+          status: "unauthenticated",
+        });
+        return;
+      }
+
+      // Fetch current user from backend
+      const response = await fetch(`${NEXUS_API_URL}api/auth-system/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user");
+      }
+
+      const result = await response.json();
+
+      if (result.status === "success" && result.data.user) {
+        syncSessionToState(result.data.user, {
+          access_token: token,
+          // If we had the refresh token in memory we'd pass it, but
+          // for restoring from cookie, just access_token is critical.
+          // The syncSessionToState mainly cares about access_token for state.
+        });
+      } else {
+        throw new Error("Invalid user data");
+      }
+    } catch (err) {
+      console.error("Auth initialization error:", err);
+      deleteCookie("supabaseAccessToken");
       deleteCookie("googleAccessToken");
       setAuthState({
         ...initialState,
@@ -98,54 +157,115 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Initialize auth state on mount
   useEffect(() => {
     let isMounted = true;
-    let subscription:
-      | ReturnType<
-          typeof supabase.auth.onAuthStateChange
-        >["data"]["subscription"]
-      | null = null;
 
-    const initializeAuth = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
-
-        if (isMounted) {
-          syncSessionToState(data.session);
-        }
-
-        const { data: listener } = supabase.auth.onAuthStateChange(
-          (_event, session) => {
-            if (!isMounted) return;
-            syncSessionToState(session);
-          },
-        );
-
-        subscription = listener.subscription;
-      } catch (err) {
-        console.error("Auth State Change Error:", err);
-        if (!isMounted) return;
-        setAuthState({
-          ...initialState,
-          status: "unauthenticated",
-          error: "Failed to restore authentication state",
-        });
-      }
-    };
-
-    initializeAuth();
+    // We wrap refreshSession to respect isMounted, essentially
+    // But since check is async, we can just run it.
+    // State updates in refreshSession will trigger re-renders.
+    refreshSession();
 
     return () => {
       isMounted = false;
-      subscription?.unsubscribe();
     };
   }, []);
+
+  const signUpWithEmail = async (email: string, password: string) => {
+    try {
+      setAuthState((prev) => ({ ...prev, error: null }));
+
+      const response = await fetch(`${NEXUS_API_URL}api/auth-system/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: { email, password } }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result.status !== "success") {
+        const detail = result.errors?.[0]?.detail;
+        const message = detail || result.message || "Failed to sign up";
+        throw new Error(message);
+      }
+
+      // Store session
+      if (result.data.session && result.data.user) {
+        syncSessionToState(result.data.user, result.data.session);
+      }
+
+      alert(result.message || "Sign up successful!");
+    } catch (error: any) {
+      console.error(error);
+      setAuthState((prev) => ({
+        ...prev,
+        error: error.message || "Failed to sign up with email",
+      }));
+      throw error;
+    }
+  };
+
+  const signInWithEmail = async (email: string, password: string) => {
+    try {
+      setAuthState((prev) => ({ ...prev, error: null }));
+
+      const response = await fetch(`${NEXUS_API_URL}api/auth-system/signin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: { email, password } }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result.status !== "success") {
+        const detail = result.errors?.[0]?.detail;
+        const message = detail || result.message || "Failed to sign in";
+        throw new Error(message);
+      }
+
+      // Store session
+      if (result.data.session && result.data.user) {
+        syncSessionToState(result.data.user, result.data.session);
+      }
+    } catch (error: any) {
+      console.error(error);
+      setAuthState((prev) => ({
+        ...prev,
+        error: error.message || "Failed to sign in with email",
+      }));
+      throw error;
+    }
+  };
 
   const loginWithGoogle = async () => {
     try {
       setAuthState((prev) => ({ ...prev, error: null }));
-      await supabaseSignInWithGoogle();
+
+      // Call backend to initiate OAuth
+      const response = await fetch(`${NEXUS_API_URL}api/auth-system/oauth`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          data: {
+            provider: "google",
+            redirect_url: `${window.location.origin}/auth/callback`,
+          },
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || result.status !== "success") {
+        const detail = result.errors?.[0]?.detail;
+        const message =
+          detail || result.message || "Failed to initiate Google login";
+        throw new Error(message);
+      }
+
+      // Redirect to OAuth URL
+      if (result.data.url) {
+        window.location.href = result.data.url;
+      }
     } catch (error: any) {
       console.error(error);
       setAuthState((prev) => ({
@@ -157,20 +277,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      deleteCookie("googleAccessToken");
-      // Again, no need to manually set state; the listener will handle it.
+      // 1. Call backend to invalidate session (if we have a token)
+      if (authState.token) {
+        await fetch(`${NEXUS_API_URL}api/auth-system/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authState.token}`,
+          },
+        });
+      }
     } catch (err: any) {
-      setAuthState((prev) => ({
-        ...prev,
-        error: "Failed to logout",
-      }));
+      console.error("Logout error:", err);
+    } finally {
+      // 2. Always clear client-side state and cookies
+      deleteCookie("googleAccessToken");
+      deleteCookie("supabaseAccessToken");
+      deleteCookie("supabaseRefreshToken");
+
+      setAuthState({
+        ...initialState,
+        status: "unauthenticated",
+      });
+
+      // Optional: Redirect to home or signin
+      // window.location.href = "/signin";
     }
   };
 
   return (
-    <AuthContext.Provider value={{ ...authState, loginWithGoogle, logout }}>
+    <AuthContext.Provider
+      value={{
+        ...authState,
+        loginWithGoogle,
+        signUpWithEmail,
+        signInWithEmail,
+        logout,
+        refreshSession,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
