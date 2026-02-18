@@ -1,7 +1,7 @@
 import {
   IncomingRequestValidationError,
   ParsingError,
-} from "./domains/CrestError";
+} from "./domains/TypedRestError";
 
 import { Contract, ValidatedInputObject } from "./domains/serverTypes";
 

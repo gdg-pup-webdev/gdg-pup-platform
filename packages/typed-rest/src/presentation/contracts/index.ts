@@ -2,6 +2,6 @@ export { generateOpenApiOptions } from "#application/generation/generateOpenApiO
 
 
 
-export * from "#application/enforcement/domains/CrestError.js";
+export * from "#application/enforcement/domains/TypedRestError.js";
 export * from "#application/enforcement/domains/serverTypes.js";
 export * from "#application/enforcement/domains/errors.js";

@@ -1,15 +1,15 @@
 import { ZodError } from "zod";
 
 
-export class CrestError extends Error {
+export class TypedRestError extends Error {
   constructor(message: string, err: unknown) {
-    super("CrestError", { cause: err });
-    this.name = "CrestError";
+    super("TypedRestError", { cause: err });
+    this.name = "TypedRestError";
     this.message = message;
   }
 }
 
-export class IncomingRequestValidationError extends CrestError {
+export class IncomingRequestValidationError extends TypedRestError {
   public zodError: ZodError | undefined |
    unknown;
 
@@ -21,7 +21,7 @@ export class IncomingRequestValidationError extends CrestError {
   }
 }
 
-export class ParsingError extends CrestError {
+export class ParsingError extends TypedRestError {
   constructor(message: string, err?: unknown) {
     super("ParsingError", err);
     this.name = "ParsingError";
@@ -29,7 +29,7 @@ export class ParsingError extends CrestError {
   }
 }
 
-export class ContractImplementationError extends CrestError {
+export class ContractImplementationError extends TypedRestError {
   constructor(message: string, err?: unknown) {
     super("IncomingValidationError", err);
     this.name = "IncomingValidationError";
@@ -37,7 +37,7 @@ export class ContractImplementationError extends CrestError {
   }
 }
 
-export class OutgoingResponseValidationError extends CrestError {
+export class OutgoingResponseValidationError extends TypedRestError {
   constructor(message: string, err?: unknown) {
     super("OutgoingValidationError", err);
     this.name = "OutgoingValidationError";
