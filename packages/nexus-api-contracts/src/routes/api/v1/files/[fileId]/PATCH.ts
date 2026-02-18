@@ -1,8 +1,8 @@
 import { models } from "#typedrest.contract.js";
-import { cz, OpenApiSchemas } from "@packages/typed-rest/shared";
+import { OpenApiSchemas } from "@packages/typed-rest/shared";
 
 export const body = OpenApiSchemas.Request.Body.withPayload(
-  models.fileSystem.file.insertDTO,
+  models.fileSystem.file.updateDTO,
 );
 
 export const files = {
@@ -14,4 +14,4 @@ export const responses = {
   ...OpenApiSchemas.Response.standardErrors(),
 };
 
-export const docs_summary = "Upload a single file to the server";
+export const docs_summary = "Update a single file";
