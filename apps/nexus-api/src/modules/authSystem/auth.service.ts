@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase.js";
 import { BadRequestError } from "@/errors/HttpError.js";
 import { AuthError } from "@supabase/supabase-js";
 import { memberService } from "../memberSystem/member.service.js";
+import { userRepositoryInstance } from "../userSystem/users/user.repository.js";
 
 export class AuthService {
   constructor(private readonly supabaseClient = supabase) {}
@@ -20,19 +21,6 @@ export class AuthService {
       throw new BadRequestError(
         "Verification failed: No user or session returned.",
       );
-    }
-
-    // Check membership
-    if (data.user.email) {
-      try {
-        await memberService.ensureEmailIsMember(data.user.email);
-      } catch (err) {
-        // Invalidate session if not a member
-        if (data.session?.access_token) {
-          await this.signOut(data.session.access_token);
-        }
-        throw err;
-      }
     }
 
     const userId = data.user.id;
@@ -54,8 +42,19 @@ export class AuthService {
     password: string,
     display_name?: string,
   ): Promise<any> {
-    // Check if email exists in gdg_members table via MemberService
-    await memberService.ensureEmailIsMember(email);
+    // 1. Check if email exists in gdg_members table via MemberService
+    const member = await memberService.checkMemberByEmail(email);
+    if (!member) {
+      throw new BadRequestError(
+        "Access denied: Email is not a registered GDG member.",
+      );
+    }
+
+    // 2. Check if user already has an account in the system
+    const existingUser = await userRepositoryInstance.getUserByEmail(email);
+    if (existingUser) {
+      throw new BadRequestError("Account already exists with this email.");
+    }
 
     const { data, error } = await this.supabaseClient.auth.signUp({
       email,
@@ -80,7 +79,12 @@ export class AuthService {
 
   async signIn(email: string, password: string): Promise<any> {
     // Check if email exists in gdg_members table via MemberService
-    await memberService.ensureEmailIsMember(email);
+    const member = await memberService.checkMemberByEmail(email);
+    if (!member) {
+      throw new BadRequestError(
+        "Access denied: Email is not a registered GDG member.",
+      );
+    }
 
     const { data, error } = await this.supabaseClient.auth.signInWithPassword({
       email,
@@ -130,14 +134,14 @@ export class AuthService {
       }
 
       if (data.user?.email) {
-        try {
-          await memberService.ensureEmailIsMember(data.user.email);
-        } catch (err) {
-          // If not a member, invalidate the session immediately
+        const member = await memberService.checkMemberByEmail(data.user.email);
+        if (!member) {
           if (data.session?.access_token) {
             await this.signOut(data.session.access_token);
           }
-          throw err;
+          throw new BadRequestError(
+            "Access denied: Email is not a registered GDG member.",
+          );
         }
       }
 
@@ -157,12 +161,15 @@ export class AuthService {
       }
 
       if (userData.user?.email) {
-        try {
-          await memberService.ensureEmailIsMember(userData.user.email);
-        } catch (err) {
+        const member = await memberService.checkMemberByEmail(
+          userData.user.email,
+        );
+        if (!member) {
           // Revoke the token if member check fails
           await this.signOut(payload.access_token);
-          throw err;
+          throw new BadRequestError(
+            "Access denied: Email is not a registered GDG member.",
+          );
         }
       }
 

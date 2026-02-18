@@ -13,13 +13,18 @@ export class MemberRepository {
    * Fetches a single member record by their email.
    */
   getMemberByEmail = async (email: string): RepositoryResult<memberRow> => {
+    // Escape wildcards for ILIKE to prevent pattern injection
+    const escapedEmail = email.replace(/[%_]/g, "\\$&");
+
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
-      .eq("email", email)
+      .ilike("email", escapedEmail)
       .maybeSingle();
 
-    if (error) handlePostgresError(error);
+    if (error) {
+      handlePostgresError(error);
+    }
 
     return data;
   };
