@@ -138,6 +138,10 @@ export class AuthService {
         if (!member) {
           if (data.session?.access_token) {
             await this.signOut(data.session.access_token);
+            // Critical: Delete the user from auth system to prevent zombie account
+            if (data.user.id) {
+              await this.supabaseClient.auth.admin.deleteUser(data.user.id);
+            }
           }
           throw new BadRequestError(
             "Access denied: Email is not a registered GDG member.",
@@ -167,6 +171,10 @@ export class AuthService {
         if (!member) {
           // Revoke the token if member check fails
           await this.signOut(payload.access_token);
+          // Critical: Delete the user from auth system to prevent zombie account
+          if (userData.user.id) {
+            await this.supabaseClient.auth.admin.deleteUser(userData.user.id);
+          }
           throw new BadRequestError(
             "Access denied: Email is not a registered GDG member.",
           );
