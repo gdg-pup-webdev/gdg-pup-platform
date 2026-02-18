@@ -1,6 +1,6 @@
 import { authOAuth } from "#models/authSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
-import { z } from "zod";
+import {cz as z} from "@packages/typed-rest/shared";
 
 export const body = SchemaFactory.Request.withPayload(authOAuth.oauthRequest);
 

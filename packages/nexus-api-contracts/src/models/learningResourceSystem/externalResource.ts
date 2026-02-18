@@ -1,5 +1,6 @@
 import { publicExternalResourceRowSchema } from "#types/supabase.schema.js";
-import z from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
+
 
 export const row = publicExternalResourceRowSchema;
 

@@ -1,4 +1,3 @@
-import { publicUserRowSchema } from "#types/supabase.schema.js";
-import z from "zod";
+import { publicUserRowSchema } from "#types/supabase.schema.js"; 
 
 export const row = publicUserRowSchema;
