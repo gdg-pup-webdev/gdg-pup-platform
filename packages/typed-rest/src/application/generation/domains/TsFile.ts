@@ -19,7 +19,7 @@ export interface TsFileMetadata {
   exports: string[];
 }
 
-export class TsFile {
+export class TsRealFile {
   public readonly id: string;
   public readonly pathAbsolute: string; // path to file in OS
   public readonly dirAbsolute: string; // dir of file in OS

@@ -4,7 +4,7 @@ import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 export const response = {
   200: SchemaFactory.Response.single(user.row),
   ...SchemaFactory.Response.standardErrors(),
-};
+}; 
 
 export const docs_summary = "Get user";
 export const docs_description = [

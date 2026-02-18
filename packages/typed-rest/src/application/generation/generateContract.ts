@@ -1,10 +1,12 @@
 import fs from "fs";
 import path from "path";
-import prettier from "prettier";
-import { Project, ts } from "ts-morph"; 
+import prettier from "prettier"; 
 import { RouteTree } from "./domains/RouteTree";
 import { ModelTree } from "./domains/ModelTree";
 import { writeOpenApiGenerator } from "./writeOpenApiGenerator";
+import { logger } from "#utils/logger.utils.js";
+import { TsFile, TsImportStatement } from "./tsObjectStuff";
+import { configs } from "#configs/configs.js";
 
 export async function generateContract(
   absoluteRootDir: string,
@@ -13,45 +15,56 @@ export async function generateContract(
   relativeOutputDir: string,
   relativeOutputBasename: string,
 ) {
+  const outputDir = path.resolve(absoluteRootDir, relativeOutputDir);
   const outputPath = path.resolve(
     absoluteRootDir,
     relativeOutputDir,
     relativeOutputBasename,
   );
 
-  const project = new Project();
-  const f = ts.factory;
-  const sourceFile = project.createSourceFile(outputPath, "", {
-    overwrite: true,
-  });
+  const mytsfile = new TsFile();
 
-  const routeTree = new RouteTree(absoluteRootDir, relativeRoutesDir);
-  routeTree.scanDirectory();
-  routeTree.writeTreeOnFile(
-    sourceFile,
-    absoluteRootDir,
-    "contract",
+  /**
+   * top level imports
+   */
+  mytsfile.addImport(
+    new TsImportStatement("cz", "z", false, `${configs.packageName}/shared`),
   );
 
+  /**
+   * scanning files and generating structures
+   */
+  logger.log("Scanning for routes");
+  const routeTree = new RouteTree(absoluteRootDir, relativeRoutesDir);
+  routeTree.scanDirectory();
+  logger.log("Writing routes");
+  routeTree.writeTreeOnTsFileObject(mytsfile, outputDir);
+
+  logger.log("Scanning for models");
   const modelTree = new ModelTree(absoluteRootDir, relativeModelsDir);
   modelTree.scanDirectory();
-  modelTree.writeAsNamespaceOnSourceFile(sourceFile, absoluteRootDir, "models");
+  logger.log("Writing models");
+  modelTree.writeTreeOnTsFileObject(mytsfile, outputDir);
 
-  writeOpenApiGenerator(sourceFile, absoluteRootDir, relativeRoutesDir);
+  logger.log("Writing OpenAPI Generator");
+  writeOpenApiGenerator(
+    mytsfile,
+    absoluteRootDir,
+    relativeRoutesDir,
+    outputDir,
+  );
 
-  // sourceFile.formatText({
-  //   indentSize: 2,
-  //   newLineKind: ts.NewLineKind.LineFeed,
-  //   convertTabsToSpaces: true,
-  // });
-  // sourceFile.saveSync();
-  sourceFile.organizeImports();
-  const rawText = sourceFile.getFullText();
-  const formattedText = await prettier.format(rawText, {
+  /**
+   * writing
+   */
+  logger.log("Generating output string");
+  const filestring = mytsfile.getString();
+  logger.log("Formatting output string");
+  const formattedText = await prettier.format(filestring, {
     parser: "typescript",
-    singleQuote: true,
-    trailingComma: "all",
-    printWidth: 100,
+    printWidth: 80,
   });
+
+  logger.log("Writing output file");
   fs.writeFileSync(outputPath, formattedText);
 }

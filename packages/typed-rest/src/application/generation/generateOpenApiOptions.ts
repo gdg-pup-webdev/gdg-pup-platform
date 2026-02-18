@@ -23,6 +23,7 @@ export const generateOpenApiOptions = ({
   generateExample?: boolean;
   openapiendpoints?: any[];
 }) => {
+
   const registry = new OpenAPIRegistry();
 
   const extractPathParams = (path: string): string[] => {

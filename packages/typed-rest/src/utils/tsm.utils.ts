@@ -7,6 +7,9 @@ import {
   ts,
 } from "ts-morph";
 
+const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+const dummyFile = ts.createSourceFile("temp.ts", "", ts.ScriptTarget.Latest);
+
 export namespace tsmUtils {
   export function codeStringToExpression(code: string): ts.Expression {
     const project = new Project();
@@ -14,6 +17,29 @@ export namespace tsmUtils {
     const tempFile = project.createSourceFile("temp.ts", `const x = ${code}`);
     const declaration = tempFile.getVariableDeclarationOrThrow("x");
     return declaration.getInitializerOrThrow().compilerNode as ts.Expression;
+  }
+
+ export const printNode = (node: ts.Node): string => {
+    return printer.printNode(ts.EmitHint.Unspecified, node, dummyFile);
+  }
+
+  export const printNode_old = (node: ts.Node): string => {
+    // 1. Create a printer
+    const printer = ts.createPrinter({
+      newLine: ts.NewLineKind.LineFeed,
+    });
+
+    // 2. Create a dummy source file to give the node context
+    const resultFile = ts.createSourceFile(
+      "temp.ts",
+      "",
+      ts.ScriptTarget.Latest,
+      false,
+      ts.ScriptKind.TS,
+    );
+
+    // 3. Print the node
+    return printer.printNode(ts.EmitHint.Unspecified, node, resultFile);
   }
 
   export function writeObjectToModule(

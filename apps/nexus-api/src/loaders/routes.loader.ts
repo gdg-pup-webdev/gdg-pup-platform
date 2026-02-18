@@ -12,6 +12,8 @@ import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
 import { rewardSystemRouterInstance } from "@/modules/rewardsSystem/index.js";
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js"; 
 import { ApiVersion1Router } from "@/presentation/routes/v1";
+import { authSystemRouterInstance } from "@/modules/authSystem/index.js";
+import { memberSystemRouterInstance } from "@/modules/memberSystem/index.js";
 
 export const routesLoader = (app: Express) => {
   /**
@@ -47,4 +49,6 @@ export const routesLoader = (app: Express) => {
   );
 
   app.use("/api/rbac-system", rbacSystemRouterInstance.getRouter());
+  app.use("/api/auth-system", authSystemRouterInstance.getRouter());
+  app.use("/api/member-system", memberSystemRouterInstance.getRouter());
 };

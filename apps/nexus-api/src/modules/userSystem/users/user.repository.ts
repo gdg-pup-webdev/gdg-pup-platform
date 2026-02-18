@@ -48,6 +48,20 @@ export class UserRepository {
   };
 
   /**
+   * getUserByEmail
+   * Fetches a single user record by their email.
+   */
+  getUserByEmail = async (email: string): RepositoryResult<userRow> => {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .eq("email", email)
+      .maybeSingle();
+    if (error) handlePostgresError(error);
+    return data;
+  };
+
+  /**
    * listUsers
    * Retrieves all user records from the system.
    */
