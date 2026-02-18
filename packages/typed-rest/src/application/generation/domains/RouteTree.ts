@@ -1,20 +1,23 @@
 import path from "node:path";
 import { SourceFile, ModuleDeclarationKind, ModuleDeclaration } from "ts-morph";
-import { TsFile } from "./TsFile";
+import { TsRealFile } from "./TsFile";
 import { tsmUtils } from "#utils/tsm.utils.js";
-import { sanitizeToIdentifier } from "#utils/core.utils.js";
+import {
+  sanitizeToIdentifier,
+  segmentIsPathParameter,
+} from "#utils/core.utils.js";
 import { listTsFilesOfDirectorySync } from "../listTsFilesOfDir";
 import { RouteEndpointFile } from "./RouteEndpointFile";
-import { logger } from "#utils/logger.utils.js";
-import fs from "fs";
 
 import {
-  OptionalKind,
-  ImportDeclarationStructure,
-  ts,
-  ModuleDeclarationStructure,
-  StructureKind,
-} from "ts-morph";
+  TsNamespace,
+  TsImportStatement,
+  TsObjectLiteral,
+  TsRawValue,
+  TsVariable,
+  TsTypeDeclaration,
+  TsFile,
+} from "../tsObjectStuff";
 export class RouteTree {
   public rootDirAbsolute: string;
   public routesDirRelative: string;
@@ -39,17 +42,17 @@ export class RouteTree {
 
     const tsFiles = listTsFilesOfDirectorySync(routeRootDirAbsolute);
 
-    const totalCount = tsFiles.length;
-    let count = 0;
+    // const totalCount = tsFiles.length;
+    // let count = 0;
 
     for (const routeFile of tsFiles) {
-      count++;
-      logger.log(`...${((count * 100) / totalCount).toFixed(2)}%`);
+      // count++;
+      // logger.log(`...${((count * 100) / totalCount).toFixed(2)}%`);
       this.addEndpoint(routeFile);
     }
   }
 
-  addEndpoint(endpoint: TsFile) {
+  addEndpoint(endpoint: TsRealFile) {
     const newRouteFile = RouteEndpointFile.fromTsFile(
       endpoint,
       this.routesDirAbsolute,
@@ -81,171 +84,190 @@ export class RouteTree {
 
     currentTree.children[newRouteFile.method] = newRouteFile;
   }
+ 
+ 
+  // ... inside RouteTree class ...
 
-  writeToSourceFile(sourceFile: SourceFile) {
-    const collectedImports: OptionalKind<ImportDeclarationStructure>[] = [];
+  writeTreeOnTsFileObject(tsFile: TsFile, outputDirAbsolute: string) {
+    // 1. Create the root namespace "contract"
+    const rootNamespace = new TsNamespace(true, "contract");
 
-    // 1. Generate the tree structure in memory
-    const rootNamespaceStructure = this.generateStructure(
-      this.routesDirAbsolute,
-      "AppRoutes", // or whatever your root namespace is
-      collectedImports,
-    );
+    // 2. Recursively fill the namespace with routes and types
+    // Pass the outputDirAbsolute down the chain
+    this.recursivelyPopulateNamespace(rootNamespace, tsFile, outputDirAbsolute);
 
-    // 2. Add all imports at once (FAST)
-    // Deduplicate imports if necessary here
-    sourceFile.addImportDeclarations(collectedImports);
-
-    // 3. Add the entire module tree at once (FAST)
-    if (rootNamespaceStructure) {
-      sourceFile.addModule(rootNamespaceStructure);
-    }
+    // 3. Add the populated namespace to the file
+    tsFile.addStatement(rootNamespace);
   }
 
-  /**
-   * Recursive function that returns a STRUCTURE instead of writing
-   */
-  private generateStructure(
-    sourceFileDirAbsolute: string,
-    namespaceName: string,
-    collectedImports: OptionalKind<ImportDeclarationStructure>[],
-  ): OptionalKind<ModuleDeclarationStructure> {
-    // Create the structure for the current namespace
-    const moduleStructure: OptionalKind<ModuleDeclarationStructure> = {
-      name: namespaceName,
-      isExported: true,
-      declarationKind: ModuleDeclarationKind.Namespace,
-      statements: [], // We will fill this array
-    };
-
-    for (const [key, value] of Object.entries(this.children)) {
-      if (value instanceof RouteEndpointFile) {
-        // 1. Get the object expression string/structure
-        const { objectExpression, importStatements } = value.getTsObject(
-          sourceFileDirAbsolute,
-        );
-
-        // Collect imports (don't write them yet)
-        collectedImports.push(...importStatements);
-
-        // Add the object export to statements
-        // Assuming tsmUtils can return a string or you convert the node to string
-        // Using a writer function is best here:
-        (moduleStructure.statements as any[]).push((writer: any) => {
-          writer.write(`export const ${key} = `);
-          // You might need a printer to convert the TS Node to string if objectExpression is a Node
-          // Or update getTsObject to return a string/writer
-          writer.write(tsmUtils.printNode_old(objectExpression));
-        });
-
-        // 2. Get the Type definitions structure
-        const typeStructures = value.getTypeStructures(
-          sourceFileDirAbsolute,
-          key,
-          collectedImports,
-        );
-        (moduleStructure.statements as any[]).push(typeStructures);
-      }
-
-      if (value instanceof RouteTree) {
-        // Recursively get the structure
-        const childStruct = value.generateStructure(
-          sourceFileDirAbsolute,
-          key,
-          collectedImports,
-        );
-        (moduleStructure.statements as any[]).push(childStruct);
-      }
-    }
-
-    return moduleStructure;
-  }
-
-  writeToDiskFast(outputPath: string) {
-    const imports = new Set<string>();
-
-    // 1. Generate the body content (recursively)
-    const bodyContent = this.generateBodyString(
-      this.routesDirAbsolute,
-      imports,
-    );
-
-    // 2. Combine Imports + Body
-    const fileContent = [
-      ...Array.from(imports),
-      "",
-      `export namespace contract {`, // Root namespace
-      bodyContent,
-      `}`,
-    ].join("\n");
-
-    // 3. Write purely using FS (Bypasses ts-morph entirely)
-    fs.writeFileSync(outputPath, fileContent);
-  }
-
-  private generateBodyString(
-    sourceFileDirAbsolute: string,
-    imports: Set<string>,
-  ): string {
-    const parts: string[] = [];
-
-    for (const [key, value] of Object.entries(this.children)) {
-      if (value instanceof RouteEndpointFile) {
-        // Open Module
-        parts.push(`export namespace ${key} {`);
-
-        // 1. Add the const export
-        parts.push(value.getExportString(sourceFileDirAbsolute, key, imports));
-
-        // 2. Add the type exports
-        parts.push(value.getTypeString(sourceFileDirAbsolute, imports));
-
-        // Close Module
-        parts.push(`}`);
-      }
-
-      if (value instanceof RouteTree) {
-        // Open Namespace
-        parts.push(`export namespace ${key} {`);
-
-        // Recurse
-        parts.push(value.generateBodyString(sourceFileDirAbsolute, imports));
-
-        // Close Namespace
-        parts.push(`}`);
-      }
-    }
-
-    return parts.join("\n");
-  }
-
-  writeTreeOnFile(
-    sourceFile: SourceFile | ModuleDeclaration,
-    sourceFileDirAbsolute: string,
-    namespaceName: string,
+  private recursivelyPopulateNamespace(
+    currentNamespace: TsNamespace,
+    tsFile: TsFile,
+    outputDirAbsolute: string, // <--- Changed from currentDirAbsolute to outputDirAbsolute
   ) {
-    const myNamespace = sourceFile.addModule({
-      name: namespaceName,
-      isExported: true,
-      declarationKind: ModuleDeclarationKind.Namespace,
+    for (const [key, value] of Object.entries(this.children)) {
+      if (value instanceof RouteEndpointFile) {
+        // Pass outputDirAbsolute here
+        this.addEndpointToNamespace(
+          value,
+          currentNamespace,
+          tsFile,
+          key,
+          outputDirAbsolute,
+        );
+      }
+
+      if (value instanceof RouteTree) {
+        const childNamespace = new TsNamespace(true, key);
+        // Pass outputDirAbsolute down recursively
+        value.recursivelyPopulateNamespace(
+          childNamespace,
+          tsFile,
+          outputDirAbsolute,
+        );
+        currentNamespace.children.push(childNamespace);
+      }
+    }
+  }
+
+  private addEndpointToNamespace(
+    endpoint: RouteEndpointFile,
+    parentNamespace: TsNamespace,
+    tsFile: TsFile,
+    exportName: string,
+    outputDirAbsolute: string, // <--- New parameter
+  ) {
+    // =========================================================
+    // 1. HANDLE IMPORTS
+    // =========================================================
+
+    // Use the OUTPUT DIR as the base for relative imports
+    const { importStatements } = endpoint.getTsObject(outputDirAbsolute);
+
+    importStatements.forEach((impStr) => {
+      if (impStr.moduleSpecifier && impStr.namedImports) {
+        const namedImports = Array.isArray(impStr.namedImports)
+          ? impStr.namedImports
+          : [impStr.namedImports];
+
+        namedImports.forEach((namedImp: any) => {
+          const name = typeof namedImp === "string" ? namedImp : namedImp.name;
+          const alias =
+            typeof namedImp === "string"
+              ? namedImp
+              : namedImp.alias || namedImp.name;
+
+          // Deduplicate imports
+          // const exists = tsFile.imports.some(
+          //   (i) => i.alias === alias && i.path === impStr.moduleSpecifier,
+          // );
+          // if (!exists) {
+          tsFile.addImport(
+            new TsImportStatement(name, alias, false, impStr.moduleSpecifier),
+          );
+          // }
+        });
+      }
     });
 
-    for (const [key, value] of Object.entries(this.children)) {
-      if (value instanceof RouteEndpointFile) {
-        const { objectExpression, importStatements } = value.getTsObject(
-          sourceFileDirAbsolute,
-        );
-        tsmUtils.writeObjectToModule(objectExpression, myNamespace, key);
-        importStatements.map((e) => {
-          myNamespace.getSourceFile().addImportDeclaration(e);
-        });
+    // =========================================================
+    // 2. BUILD THE ROUTE OBJECT (export const GET = { ... })
+    // =========================================================
 
-        value.writeTypeOnModule(myNamespace, sourceFileDirAbsolute, key);
-      }
+    // 2a. Build Request Object Literal (nested)
+    const requestLiteral = new TsObjectLiteral();
+    const pathParams = endpoint.urlSegments
+      .filter(segmentIsPathParameter)
+      .map((p) => p.slice(1, -1));
 
-      if (value instanceof RouteTree) {
-        value.writeTreeOnFile(myNamespace, sourceFileDirAbsolute, key);
-      }
+    if (pathParams.length > 0) {
+      const zodString = `z.object({${pathParams.map((p) => `${p}: z.string()`).join(",")}})`;
+      requestLiteral.addProperty("params", new TsRawValue(zodString));
     }
+
+    ["files", "body", "query"].forEach((prop) => {
+      if (endpoint.exports.includes(prop)) {
+        requestLiteral.addProperty(
+          prop,
+          new TsRawValue(endpoint.getExportVariableName(prop)),
+        );
+      }
+    });
+
+    // 2b. Build Main Object Literal
+    const routeObject = new TsObjectLiteral({
+      method: new TsRawValue(`'${endpoint.method}'`), // wrap in quotes
+      path: new TsRawValue(`'${endpoint.urlPath}'`), // wrap in quotes
+    });
+
+    if (endpoint.exports.includes("response")) {
+      routeObject.addProperty(
+        "response",
+        new TsRawValue(endpoint.getExportVariableName("response")),
+      );
+    }
+
+    // Only add request block if it has properties
+    // if (Object.keys(requestLiteral.properties).length > 0) {
+    //   routeObject.addProperty("request", requestLiteral);
+    // }
+    routeObject.addProperty("request", requestLiteral);
+
+    // 2c. Add Variable to Namespace
+    parentNamespace.children.push(
+      new TsVariable(true, exportName, routeObject),
+    );
+
+    // =========================================================
+    // 3. BUILD THE TYPE NAMESPACE (export namespace GET { ... })
+    // =========================================================
+    const typeNamespace = new TsNamespace(true, exportName);
+    const requestTypeNamespace = new TsNamespace(true, "request");
+
+    // 3a. Params Type
+    if (pathParams.length > 0) {
+      const zodString = `z.ZodObject<{${pathParams.map((p) => `${p}: z.ZodString`).join(", ")}}>`;
+      requestTypeNamespace.children.push(
+        new TsTypeDeclaration(true, "params", `z.infer<${zodString}>`),
+      );
+    }
+
+    // 3b. Files, Body, Query Types
+    ["files", "body", "query"].forEach((prop) => {
+      if (endpoint.exports.includes(prop)) {
+        requestTypeNamespace.children.push(
+          new TsTypeDeclaration(
+            true,
+            prop,
+            `z.infer<typeof ${endpoint.getExportVariableName(prop)}>`,
+          ),
+        );
+      }
+    });
+
+    // Add nested 'request' namespace if it has children
+    // if (requestTypeNamespace.children.length > 0) {
+    typeNamespace.children.push(requestTypeNamespace);
+    // }
+
+    // 3c. Metadata Types
+    typeNamespace.children.push(
+      new TsTypeDeclaration(true, "method", `'${endpoint.method}'`),
+    );
+    typeNamespace.children.push(
+      new TsTypeDeclaration(true, "path", `'${endpoint.urlPath}'`),
+    );
+
+    // 3d. Response Type
+    if (endpoint.exports.includes("response")) {
+      const respVar = endpoint.getExportVariableName("response");
+      const mappedType = `{ [K in keyof typeof ${respVar}]: z.infer<(typeof ${respVar})[K]> }`;
+      typeNamespace.children.push(
+        new TsTypeDeclaration(true, "response", mappedType),
+      );
+    }
+
+    // Add Type Namespace to Parent
+    parentNamespace.children.push(typeNamespace);
   }
 }
