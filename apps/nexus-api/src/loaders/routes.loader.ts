@@ -10,8 +10,8 @@ import { publicationSystemRouterInstance } from "@/modules/publicationSystem/ind
 import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
 import { rewardSystemRouterInstance } from "@/modules/rewardsSystem/index.js";
-import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js";
-import { ApiVersion1Router } from "../routes/v1";
+import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js"; 
+import { ApiVersion1Router } from "@/presentation/routes/v1";
 
 export const routesLoader = (app: Express) => {
   /**

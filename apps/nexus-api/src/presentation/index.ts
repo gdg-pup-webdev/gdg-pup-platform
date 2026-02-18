@@ -7,8 +7,8 @@
 
 import { docsLoader } from "@/loaders/docs.loader";
 import { errorHandlerLoader } from "@/loaders/errorHandlers.loader";
-import { parsersLoader } from "@/loaders/parsers.loader";
-import { routesLoader } from "@/presentation/loaders/routes.loader";
+import { parsersLoader } from "@/loaders/parsers.loader"; 
+import { routesLoader } from "@/loaders/routes.loader";
 import { setupLoader } from "@/loaders/setup.loader";
 import express, { Express } from "express"; 
 
