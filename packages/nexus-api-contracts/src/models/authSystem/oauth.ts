@@ -1,4 +1,5 @@
-import { z } from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
+
 
 export const oauthRequest = z.object({
   provider: z.enum(["google"]),

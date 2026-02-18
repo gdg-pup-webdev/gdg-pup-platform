@@ -1,4 +1,5 @@
-import z from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
+
 
 export const shape = z.object({
   type: z.string(),

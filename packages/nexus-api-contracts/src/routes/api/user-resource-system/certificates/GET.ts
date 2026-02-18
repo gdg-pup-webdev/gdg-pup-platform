@@ -1,6 +1,6 @@
 import { certificate } from "#models/userResourceSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
-import { z } from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
 
 export const query = SchemaFactory.Request.Paginated.query().extend({
   userId: z.string().optional(),

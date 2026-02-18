@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
 
 export const signUpRequest = z.object({
   email: z.string().email(),
