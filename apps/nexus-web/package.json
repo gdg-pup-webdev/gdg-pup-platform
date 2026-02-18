@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "g": "tsx scripts/generate-feature.ts"
   },
   "dependencies": {
     "@configs/tailwind-config": "workspace:*",
@@ -32,6 +33,7 @@
     "eslint-config-next": "16.1.1",
     "postcss-import": "^16.1.1",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^4.0.18"
   }
