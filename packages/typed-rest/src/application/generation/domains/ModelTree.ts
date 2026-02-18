@@ -1,15 +1,10 @@
 import path from "node:path";
-import {
-  SourceFile,
-  ModuleDeclarationKind,
-  ModuleDeclaration,
-} from "ts-morph";
-import { ModelEndpointFile } from "./ModelEndpointFile"; 
-import {
-  sanitizeToIdentifier, 
-} from "#utils/core.utils.js";  
+import { SourceFile, ModuleDeclarationKind, ModuleDeclaration } from "ts-morph";
+import { ModelEndpointFile } from "./ModelEndpointFile";
+import { sanitizeToIdentifier } from "#utils/core.utils.js";
 import { listTsFilesOfDirectorySync } from "../listTsFilesOfDir";
 import { TsFile } from "./TsFile";
+import { logger } from "#utils/logger.utils.js";
 
 export class ModelTree {
   public rootDirAbsolute: string;
@@ -32,11 +27,16 @@ export class ModelTree {
       this.rootDirAbsolute,
       this.modelsDirRelative,
     );
- 
-    const tsFiles = listTsFilesOfDirectorySync(modelRootDirAbsolute); 
+
+    const tsFiles = listTsFilesOfDirectorySync(modelRootDirAbsolute);
+
+    const totalCount = tsFiles.length;
+    let count = 0;
 
     for (const routeFile of tsFiles) {
-      this.addEndpoint(routeFile);
+      count++;
+      logger.log(`...${(count * 100  / totalCount).toFixed(2)}%`);
+      this.addEndpoint(routeFile); 
     }
   }
 

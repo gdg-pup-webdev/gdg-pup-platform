@@ -1,14 +1,11 @@
 import path from "node:path";
-import {
-  SourceFile,
-  ModuleDeclarationKind,
-  ModuleDeclaration,
-} from "ts-morph"; 
-import { TsFile } from "./TsFile"; 
+import { SourceFile, ModuleDeclarationKind, ModuleDeclaration } from "ts-morph";
+import { TsFile } from "./TsFile";
 import { tsmUtils } from "#utils/tsm.utils.js";
 import { sanitizeToIdentifier } from "#utils/core.utils.js";
 import { listTsFilesOfDirectorySync } from "../listTsFilesOfDir";
 import { RouteEndpointFile } from "./RouteEndpointFile";
+import { logger } from "#utils/logger.utils.js";
 
 export class RouteTree {
   public rootDirAbsolute: string;
@@ -34,7 +31,12 @@ export class RouteTree {
 
     const tsFiles = listTsFilesOfDirectorySync(routeRootDirAbsolute);
 
+    const totalCount = tsFiles.length;
+    let count = 0;
+
     for (const routeFile of tsFiles) {
+      count++;
+      logger.log(`...${(count * 100 / totalCount).toFixed(2)}%`);
       this.addEndpoint(routeFile);
     }
   }
@@ -97,11 +99,7 @@ export class RouteTree {
       }
 
       if (value instanceof RouteTree) {
-        value.writeTreeOnFile(
-          myNamespace,
-          sourceFileDirAbsolute,
-          key,
-        );
+        value.writeTreeOnFile(myNamespace, sourceFileDirAbsolute, key);
       }
     }
   }
