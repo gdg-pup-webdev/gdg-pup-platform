@@ -109,13 +109,22 @@ export const Navbar: React.FC = () => {
                 </button>
               </>
             ) : (
-              <button
-                onClick={loginWithGoogle}
+              <div className="flex items-center gap-4">
+              <Link
+                href="/signin"
                 className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Sign In
-              </button>
-            )}
+              </Link>
+              
+              <Link
+                href="/signup"
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Sign Up
+              </Link>
+              </div>
+              )}
           </div>
         </div>
       </div>

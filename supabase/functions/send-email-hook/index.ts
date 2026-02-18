@@ -36,11 +36,13 @@ Deno.serve(async (req) => {
   try {
     // TODO: Re-enable after debugging
     // const authHeader = req.headers.get("authorization");
-    // const hookSecret = Deno.env.get("SUPABASE_HOOK_SECRET");
+    // const hookSecret = Deno.env.get("HOOK_SECRET");
     // if (hookSecret && authHeader) {
     //   const providedSecret = authHeader.replace("Bearer ", "");
     //   if (providedSecret !== hookSecret) {
     //     console.error("Invalid hook secret provided");
+    //     console.error("Expected:", hookSecret);
+    //     console.error("Received:", providedSecret);
     //     return new Response(JSON.stringify({ error: "Unauthorized" }), {
     //       headers: { "Content-Type": "application/json" },
     //       status: 401,
