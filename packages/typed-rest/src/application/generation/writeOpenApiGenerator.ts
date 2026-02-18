@@ -1,14 +1,21 @@
-import { SourceFile, ts, VariableDeclarationKind } from "ts-morph";
-
 import path from "node:path";
 import { listTsFilesOfDirectorySync } from "./listTsFilesOfDir";
 import { RouteEndpointFile } from "./domains/RouteEndpointFile";
 import { configs } from "#configs/configs.js";
+import {
+  TsFile,
+  TsObjectLiteral,
+  TsRawValue,
+  TsImportStatement,
+  TsVariable,
+  TsArrayLiteral,
+} from "./tsObjectStuff";
 
 export function writeOpenApiGenerator(
-  sourceFile: SourceFile,
+  tsFile: TsFile,
   projectRootDirAbsolute: string,
   routeRootDirRelative: string,
+  outputDirAbsolute: string,
 ) {
   const routeRootDirAbsolute = path.resolve(
     projectRootDirAbsolute,
@@ -20,51 +27,46 @@ export function writeOpenApiGenerator(
     RouteEndpointFile.fromTsFile(f, routeRootDirAbsolute),
   );
 
-  // 1. Create the actual data structure in memory
-  const data = routeFiles.map((routeFile) => {
-    let obj: any = {
-      method: routeFile.method,
-      path: routeFile.urlPath,
-    };
+  // 1. Build the array of Route Object Literals
+  const routeObjects = routeFiles.map((routeFile) => {
+    const obj = new TsObjectLiteral({
+      method: new TsRawValue(`'${routeFile.method}'`),
+      path: new TsRawValue(`'${routeFile.urlPath}'`),
+    });
 
-    routeFile.exports.map((e) => {
-      obj[e] =
-        `__CODE_START__${routeFile.getExportVariableName(e)}__CODE_END__`;
+    routeFile.exports.forEach((e) => {
+      const varName = routeFile.getExportVariableName(e);
+      obj.addProperty(e, new TsRawValue(varName));
 
-      sourceFile.addImportDeclaration(
-        routeFile.getImportStatementOfExport(e, projectRootDirAbsolute),
+      // Add the import to the file
+      const imp = routeFile.getImportStatementOfExport(e, outputDirAbsolute);
+      tsFile.addImport(
+        new TsImportStatement(e, varName, false, imp.moduleSpecifier as string),
       );
     });
 
     return obj;
   });
 
-  // 2. Use JSON.stringify as the initializer
-  sourceFile.addVariableStatement({
-    declarationKind: VariableDeclarationKind.Const,
-    isExported: true,
-    declarations: [
-      {
-        name: "openapiendpoints",
-        // null, 2 adds indentation to the generated code
-        initializer: JSON.stringify(data, null, 2).replace(
-          /"__CODE_START__(.*?)__CODE_END__"/g,
-          "$1",
-        ),
-      },
-    ],
-  });
+  // 2. Add the variable: export const openapiendpoints = [...]
+  tsFile.addStatement(
+    new TsVariable(true, "openapiendpoints", new TsArrayLiteral(routeObjects)),
+  );
 
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: `${configs.packageName}/contracts`,
-    namedImports: [{ name: "generateOpenApiOptions" }],
-  });
-  sourceFile.addImportDeclaration({
-    moduleSpecifier: `${configs.packageName}/shared`,
-    namedImports: [{ name: "cz", alias: "z" }],
-  });
-  sourceFile.insertText(sourceFile.getEnd(), callGenerateOpenApiOptionsString);
+  // 3. Add Static Imports
+  tsFile.addImport(
+    new TsImportStatement(
+      "generateOpenApiOptions",
+      "generateOpenApiOptions",
+      false,
+      `${configs.packageName}/contracts`,
+    ),
+  );
+
+  // 4. Add the helper function as a raw block
+  tsFile.addStatement(new TsRawValue(callGenerateOpenApiOptionsString));
 }
+
 const callGenerateOpenApiOptionsString = `
 export const generateOpenApiSpec = (
   props: {

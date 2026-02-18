@@ -1,14 +1,7 @@
 import { sanitizeToIdentifier } from "#utils/core.utils.js";
+import { TsRealFile } from "./TsFile";
 
-import { 
-  ModuleDeclarationKind,
-  SourceFile,
-  VariableDeclarationKind,
-  ModuleDeclaration,
-} from "ts-morph"; 
-import { TsFile } from "./TsFile";
-
-export class ModelEndpointFile extends TsFile {
+export class ModelEndpointFile extends TsRealFile {
   public urlSegments: string[];
   public urlSegmentsClean: string[];
   public method: string;
@@ -29,48 +22,11 @@ export class ModelEndpointFile extends TsFile {
     this.urlPath = `/${this.urlSegments.join("/")}`;
   }
 
-  static fromTsFile(tsFile: TsFile, routeRootDirAbsolute: string) {
+  static fromTsFile(tsFile: TsRealFile, routeRootDirAbsolute: string) {
     return new ModelEndpointFile(
       routeRootDirAbsolute,
       tsFile.dirRelative,
       tsFile.baseName,
     );
-  }
-
-  writeAsNamespaceOnSourceFile(
-    sourceFile: SourceFile | ModuleDeclaration,
-    sourceFileDirAbsolute: string,
-    namespaceName: string,
-  ) {
-    const myNamespace = sourceFile.addModule({
-      name: namespaceName,
-      isExported: true,
-      declarationKind: ModuleDeclarationKind.Namespace,
-    });
-
-    this.exports.map((e) => {
-      myNamespace
-        .getSourceFile()
-        .addImportDeclaration(
-          this.getImportStatementOfExport(e, sourceFileDirAbsolute),
-        );
-
-      myNamespace.addVariableStatement({
-        declarationKind: VariableDeclarationKind.Const,
-        isExported: true,
-        declarations: [
-          {
-            name: e,
-            initializer: this.getExportVariableName(e),
-          },
-        ],
-      });
-
-      myNamespace.addTypeAlias({
-        name: e,
-        isExported: true,
-        type: `z.infer<typeof ${this.getExportVariableName(e)}>`,
-      });
-    });
   }
 }

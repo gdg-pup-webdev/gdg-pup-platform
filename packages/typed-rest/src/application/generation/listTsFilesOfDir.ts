@@ -1,7 +1,7 @@
 import path from "node:path"; 
 import { promises as fs } from "fs";
 import fsSync from "node:fs";
-import { TsFile } from "./domains/TsFile";
+import { TsRealFile } from "./domains/TsFile";
 
 /**
  * Scan a directory for all ts files
@@ -9,11 +9,11 @@ import { TsFile } from "./domains/TsFile";
  */
 export async function listTsFilesOfDirectory(
   directoryAbsolute: string,
-): Promise<TsFile[]> {
+): Promise<TsRealFile[]> {
   /**
    * Scan the directory for .ts files
    */
-  const tsFileMap: TsFile[] = [];
+  const tsFileMap: TsRealFile[] = [];
 
   async function iterate(currentDir: string, segments: string[]) {
     const entries = await fs.readdir(currentDir, { withFileTypes: true });
@@ -28,7 +28,7 @@ export async function listTsFilesOfDirectory(
 
         const baseName = entry.name;
 
-        const tsFile = new TsFile(
+        const tsFile = new TsRealFile(
           directoryAbsolute,
           relativeDirectory,
           baseName,
@@ -46,8 +46,8 @@ export async function listTsFilesOfDirectory(
 
 export function listTsFilesOfDirectorySync(
   directoryAbsolute: string,
-): TsFile[] {
-  const tsFiles: TsFile[] = [];
+): TsRealFile[] {
+  const tsFiles: TsRealFile[] = [];
 
   function iterate(currentDir: string, segments: string[]) {
     // 1. Use readdirSync with file types
@@ -64,7 +64,7 @@ export function listTsFilesOfDirectorySync(
         const baseName = entry.name;
 
         // 3. Instantiate TsFile (ensure the constructor is also sync)
-        const tsFile = new TsFile(
+        const tsFile = new TsRealFile(
           directoryAbsolute,
           relativeDirectory,
           baseName,
