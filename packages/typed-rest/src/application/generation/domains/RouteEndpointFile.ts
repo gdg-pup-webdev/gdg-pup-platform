@@ -150,6 +150,142 @@ export class RouteEndpointFile extends TsFile {
     };
   }
 
+  getTypeStructures(
+    sourceFileDirAbsolute: string,
+    namespaceName: string,
+    importsCollector: any[],
+  ): ModuleDeclarationStructure {
+    // Collect imports
+    if (this.exports.includes("files")) {
+      importsCollector.push(
+        this.getImportStatementOfExport("files", sourceFileDirAbsolute),
+      );
+    }
+    // ... repeat for body, query, response ...
+
+    // Create the namespace structure
+    const myNamespace: ModuleDeclarationStructure = {
+      kind: StructureKind.Module, // <--- 1. REQUIRED: Identify this as a Module
+      name: namespaceName,
+      isExported: true,
+      declarationKind: ModuleDeclarationKind.Namespace,
+      statements: [
+        {
+          kind: StructureKind.Module, // <--- 2. REQUIRED: Identify nested object as Module
+          name: "request",
+          isExported: true,
+          declarationKind: ModuleDeclarationKind.Namespace,
+          statements: [
+            // params type alias...
+          ],
+        },
+        {
+          kind: StructureKind.TypeAlias, // <--- Already correct here
+          name: "method",
+          type: `"${this.method}"`,
+          isExported: true,
+        },
+        {
+          kind: StructureKind.TypeAlias, // <--- Already correct here
+          name: "path",
+          type: `"${this.urlPath}"`,
+          isExported: true,
+        },
+      ],
+    };
+
+    return myNamespace;
+  }
+
+  getExportString(
+    sourceFileDirAbsolute: string,
+    exportName: string,
+    imports: Set<string>,
+  ): string {
+    const { objectExpression, importStatements } = this.getTsObject(
+      sourceFileDirAbsolute,
+    );
+
+    // 1. Collect imports strings into the Set
+    importStatements.forEach((imp) => {
+      // Assuming your getImportStatementOfExport returns a Structure.
+      // We reconstruct the string simply here for speed.
+      // Or if you can get the raw string from your utils, do that.
+      // Example format: import { X } from "./path";
+      if (imp.moduleSpecifier && imp.namedImports) {
+        const names = (imp.namedImports as any[])
+          .map((n) => (typeof n === "string" ? n : n.name))
+          .join(", ");
+        imports.add(`import { ${names} } from "${imp.moduleSpecifier}";`);
+      }
+    });
+
+    // 2. Convert the object expression to string immediately
+    const objectString = tsmUtils.printNode(objectExpression);
+    return `export const ${exportName} = ${objectString};`;
+  }
+
+  /**
+   * Returns the "export namespace request { ... }" string
+   */
+  getTypeString(sourceFileDirAbsolute: string, imports: Set<string>): string {
+    // Collect imports exactly like above...
+    // (You can refactor import collection to a helper method)
+
+    const parts: string[] = [];
+
+    // Start Namespace
+    parts.push(`export namespace request {`);
+
+    // Params
+    const pathParams = this.urlSegments
+      .filter(segmentIsPathParameter)
+      .map((p) => p.slice(1, -1));
+
+    if (pathParams.length > 0) {
+      const zodObject = `z.object({${pathParams.map((p) => `${p}: z.string()`).join(", ")}})`;
+      // Note: We use z.infer<typeof ZodObject> pattern or just raw TS types if you prefer
+      parts.push(`  export type params = z.infer<${zodObject}>;`);
+    }
+
+    // Files
+    if (this.exports.includes("files")) {
+      parts.push(
+        `  export type files = z.infer<typeof ${this.getExportVariableName("files")}>;`,
+      );
+    }
+
+    // Body
+    if (this.exports.includes("body")) {
+      parts.push(
+        `  export type body = z.infer<typeof ${this.getExportVariableName("body")}>;`,
+      );
+    }
+
+    // Query
+    if (this.exports.includes("query")) {
+      parts.push(
+        `  export type query = z.infer<typeof ${this.getExportVariableName("query")}>;`,
+      );
+    }
+
+    parts.push(`}`); // End request namespace
+
+    // Metadata types
+    parts.push(`export type method = "${this.method}";`);
+    parts.push(`export type path = "${this.urlPath}";`);
+
+    // Response
+    if (this.exports.includes("response")) {
+      const respVar = this.getExportVariableName("response");
+      parts.push(
+        `export type response = { [K in keyof typeof ${respVar}]: z.infer<(typeof ${respVar})[K]> };`,
+      );
+    }
+
+    return parts.join("\n");
+  }
+
   /**
    * wrap all export types into a single namespace
    * and write it to a module
@@ -270,126 +406,5 @@ export class RouteEndpointFile extends TsFile {
         type: `{ [K in keyof typeof ${this.getExportVariableName("response")}]: z.infer<(typeof ${this.getExportVariableName("response")})[K]> }`,
       });
     }
-  }
-
-  getTypeStructures(
-    sourceFileDirAbsolute: string,
-    namespaceName: string,
-    importsCollector: any[],
-  ): ModuleDeclarationStructure {
-    // Collect imports
-    if (this.exports.includes("files")) {
-      importsCollector.push(
-        this.getImportStatementOfExport("files", sourceFileDirAbsolute),
-      );
-    }
-    // ... repeat for body, query, response ...
-
-    // Create the namespace structure
-    const myNamespace: ModuleDeclarationStructure = {
-    kind: StructureKind.Module, // <--- 1. REQUIRED: Identify this as a Module
-    name: namespaceName,
-    isExported: true,
-    declarationKind: ModuleDeclarationKind.Namespace,
-    statements: [
-      {
-        kind: StructureKind.Module, // <--- 2. REQUIRED: Identify nested object as Module
-        name: "request",
-        isExported: true,
-        declarationKind: ModuleDeclarationKind.Namespace,
-        statements: [
-          // params type alias...
-        ],
-      },
-      {
-        kind: StructureKind.TypeAlias, // <--- Already correct here
-        name: "method",
-        type: `"${this.method}"`,
-        isExported: true,
-      },
-      {
-        kind: StructureKind.TypeAlias, // <--- Already correct here
-        name: "path",
-        type: `"${this.urlPath}"`,
-        isExported: true,
-      },
-    ],
-  };
-
-    return myNamespace;
-  }
-
-
-  getExportString(sourceFileDirAbsolute: string, exportName: string, imports: Set<string>): string {
-    const { objectExpression, importStatements } = this.getTsObject(sourceFileDirAbsolute);
-
-    // 1. Collect imports strings into the Set
-    importStatements.forEach(imp => {
-        // Assuming your getImportStatementOfExport returns a Structure. 
-        // We reconstruct the string simply here for speed.
-        // Or if you can get the raw string from your utils, do that.
-        // Example format: import { X } from "./path";
-        if (imp.moduleSpecifier && imp.namedImports) {
-             const names = (imp.namedImports as any[]).map(n => typeof n === 'string' ? n : n.name).join(", ");
-             imports.add(`import { ${names} } from "${imp.moduleSpecifier}";`);
-        }
-    });
-
-    // 2. Convert the object expression to string immediately
-    const objectString = tsmUtils.printNode(objectExpression);
-    return `export const ${exportName} = ${objectString};`;
-  }
-
-  /**
-   * Returns the "export namespace request { ... }" string
-   */
-  getTypeString(sourceFileDirAbsolute: string, imports: Set<string>): string {
-     // Collect imports exactly like above...
-     // (You can refactor import collection to a helper method)
-
-     const parts: string[] = [];
-
-     // Start Namespace
-     parts.push(`export namespace request {`);
-     
-     // Params
-     const pathParams = this.urlSegments
-      .filter(segmentIsPathParameter)
-      .map((p) => p.slice(1, -1));
-
-     if (pathParams.length > 0) {
-        const zodObject = `z.object({${pathParams.map((p) => `${p}: z.string()`).join(", ")}})`;
-        // Note: We use z.infer<typeof ZodObject> pattern or just raw TS types if you prefer
-        parts.push(`  export type params = z.infer<${zodObject}>;`);
-     }
-
-     // Files
-     if (this.exports.includes("files")) {
-       parts.push(`  export type files = z.infer<typeof ${this.getExportVariableName("files")}>;`);
-     }
-
-     // Body
-     if (this.exports.includes("body")) {
-       parts.push(`  export type body = z.infer<typeof ${this.getExportVariableName("body")}>;`);
-     }
-     
-     // Query
-     if (this.exports.includes("query")) {
-       parts.push(`  export type query = z.infer<typeof ${this.getExportVariableName("query")}>;`);
-     }
-
-     parts.push(`}`); // End request namespace
-
-     // Metadata types
-     parts.push(`export type method = "${this.method}";`);
-     parts.push(`export type path = "${this.urlPath}";`);
-
-     // Response
-     if (this.exports.includes("response")) {
-        const respVar = this.getExportVariableName("response");
-        parts.push(`export type response = { [K in keyof typeof ${respVar}]: z.infer<(typeof ${respVar})[K]> };`);
-     }
-
-     return parts.join("\n");
   }
 }
