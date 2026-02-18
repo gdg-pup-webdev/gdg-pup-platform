@@ -3,7 +3,8 @@ import {
   publicRewardRowSchema,
   publicRewardUpdateSchema,
 } from "#types/supabase.schema.js";
-import z from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
+
 import { transaction, wallet } from "../economySystem";
 
 export const row = publicRewardRowSchema;

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
 
 export const verifyEmailRequest = z.object({
   token_hash: z.string().min(1),

@@ -1,7 +1,7 @@
-import { ZodAny, ZodObject, ZodRawShape } from "zod";
+ 
 
-import { z } from "zod";
-import { omit } from "zod/mini";
+import { cz as z } from "@packages/typed-rest/shared";
+
 import { AnyZodObject } from "zod/v3";
 
 export const standardMetadata = z.object({
@@ -23,9 +23,9 @@ export function safeOmit<T extends AnyZodObject, K extends string>(
   keysToOmit: K[],
 ) {
   const currentShape = schema.shape;
-  const filteredShape: ZodRawShape = { ...currentShape };
+  const filteredShape: z.ZodRawShape = { ...currentShape };
 
-  let newShape: ZodRawShape = {};
+  let newShape: z.ZodRawShape = {};
 
   Object.keys(filteredShape).forEach((key) => {
     if (key in keysToOmit) {
@@ -33,7 +33,7 @@ export function safeOmit<T extends AnyZodObject, K extends string>(
       newShape = {
         ...newShape,
         [key]: filteredShape[key],
-      } as ZodRawShape;
+      } as z.ZodRawShape;
     }
   });
 
@@ -41,8 +41,8 @@ export function safeOmit<T extends AnyZodObject, K extends string>(
 }
 
 export function omitSchema<
-  T extends ZodObject<any, any>,
-  K extends ZodObject<any, any>,
+  T extends z.ZodObject<any, any>,
+  K extends z.ZodObject<any, any>,
 >(original: T, toRemove: K) {
   // 1. Get the keys from the metadata schema
   const metadataKeys = Object.keys(toRemove.shape);
