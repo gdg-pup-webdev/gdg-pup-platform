@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  
 import { externalResourceFixture } from "../../__tests__/test-helpers.js";
 import { ExternalResourceRepository } from "../externalResource.repository.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({
   fromMock: vi.fn(),

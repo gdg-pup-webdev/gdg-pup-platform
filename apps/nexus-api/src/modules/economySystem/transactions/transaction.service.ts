@@ -2,7 +2,7 @@ import {
   TransactionRepository,
   transactionRepositoryInstance,
 } from "./transaction.repository.js";
-import { NotFoundError } from "@/errors/HttpError.js"; 
+import { NotFoundError } from "@/presentation/errors/HttpError.js"; 
 import { models } from "@packages/nexus-api-contracts";
 
 /**

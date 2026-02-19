@@ -16,8 +16,8 @@ vi.mock("@/lib/supabase.js", () => ({
 }));
 
 import { WalletRepository } from "../wallet.repository.js";
-import { ServerError } from "@/errors/ServerError.js";
-import { DatabaseError } from "@/errors/DatabaseError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
+import { DatabaseError } from "@/presentation/errors/DatabaseError.js";
 import { WalletRowType } from "../wallet.types.js";
 
 describe("WalletRepository", () => {

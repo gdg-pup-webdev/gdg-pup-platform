@@ -16,7 +16,7 @@ vi.mock("@/lib/supabase.js", () => ({
 }));
 
 import { EventRepository } from "../event.repository.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 describe("EventRepository", () => {
   const repository = new EventRepository();

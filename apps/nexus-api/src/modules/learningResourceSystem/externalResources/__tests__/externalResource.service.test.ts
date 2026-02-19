@@ -13,7 +13,7 @@ import {
   listResult,
 } from "../../__tests__/test-helpers.js";
 import { ExternalResourceService } from "../externalResource.service.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 const { mockCreate, mockList, mockGetOne, mockUpdate, mockDelete } = vi.hoisted(
   () => ({

@@ -5,7 +5,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { TransactionService } from "../transaction.service.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 const { mockTransactionRepository } = vi.hoisted(() => ({
   mockTransactionRepository: {

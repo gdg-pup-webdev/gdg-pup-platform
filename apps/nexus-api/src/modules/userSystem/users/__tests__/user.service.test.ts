@@ -8,7 +8,7 @@ import {
   userFixture,
 } from "../../__tests__/test-helpers.js";
 import { UserService } from "../user.service.js";
-import { DatabaseError } from "../../../../errors/DatabaseError.js";
+import { DatabaseError } from "../../../../presentation/errors/DatabaseError.js";
 
 const { repoList, repoGet, repoAggregate } = vi.hoisted(() => ({
   repoList: vi.fn(),

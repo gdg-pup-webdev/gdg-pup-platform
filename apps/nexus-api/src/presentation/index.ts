@@ -5,24 +5,18 @@
  * listener (index.ts) to facilitate integration testing using supertest.
  */
 
-import { docsLoader } from "@/loaders/docs.loader";
-import { errorHandlerLoader } from "@/loaders/errorHandlers.loader";
-import { parsersLoader } from "@/loaders/parsers.loader"; 
-import { routesLoader } from "@/loaders/routes.loader";
-import { setupLoader } from "@/loaders/setup.loader";
-import express, { Express } from "express"; 
+import { errorHandlerLoader } from "@/presentation/loaders/errorHandlers.loader";
+import { parsersLoader } from "@/presentation/loaders/parsers.loader";
+import { routesLoader } from "@/presentation/loaders/routes.loader";
+import { setupLoader } from "@/presentation/loaders/setup.loader";
+import express, { Express } from "express";
 
 const app: Express = express();
 
 setupLoader(app);
 parsersLoader(app);
 
-/////////////////////////////////////////////////////
-// LOADING ROUTES
- 
 routesLoader(app);
-
-/////////////////////////////////////////////////////
 
 errorHandlerLoader(app);
 

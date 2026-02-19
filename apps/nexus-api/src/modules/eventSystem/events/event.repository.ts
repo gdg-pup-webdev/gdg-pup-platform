@@ -1,4 +1,4 @@
-import { DatabaseError_DONT_USE } from "@/errors/HttpError";
+import { DatabaseError_DONT_USE } from "@/presentation/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
 import {

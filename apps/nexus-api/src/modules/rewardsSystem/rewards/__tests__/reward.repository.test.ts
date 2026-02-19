@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  
 import { rewardFixture } from "../../__tests__/test-helpers.js";
 import { RewardRepository } from "../reward.repository.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
 

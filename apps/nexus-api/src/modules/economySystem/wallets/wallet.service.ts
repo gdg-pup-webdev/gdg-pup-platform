@@ -6,7 +6,7 @@ import {
   WalletRepository,
   walletRepositoryInstance,
 } from "./wallet.repository.js";
-import { NotFoundError } from "@/errors/HttpError.js"; 
+import { NotFoundError } from "@/presentation/errors/HttpError.js"; 
 
 /**
  * Service for managing wallet business logic.

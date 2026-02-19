@@ -6,7 +6,7 @@ import {
 } from "../attendance/attendance.service.js"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress"; 
-import { UnauthorizedError } from "@/errors/HttpError.js";
+import { UnauthorizedError } from "@/presentation/errors/HttpError.js";
 
 /**
  * Controller for handling event-related HTTP requests.

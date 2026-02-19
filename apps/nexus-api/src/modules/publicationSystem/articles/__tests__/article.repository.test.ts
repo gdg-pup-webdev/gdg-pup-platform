@@ -11,7 +11,7 @@ import {
   articleFixture,
 } from "../../__tests__/test-helpers.js";
 import { ArticleRepository } from "../article.repository.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({ fromMock: vi.fn() }));
 

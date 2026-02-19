@@ -3,7 +3,7 @@ import {
   ConflictError,
   ForbiddenError,
   BadRequestError,
-} from "@/errors/HttpError";
+} from "@/presentation/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import {
   RepositoryResultList,

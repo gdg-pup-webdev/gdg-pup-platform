@@ -13,7 +13,7 @@ import {
   ConflictError,
   InternalServerError,
   NotFoundError,
-} from "@/errors/HttpError.js";
+} from "@/presentation/errors/HttpError.js";
 
 type roleRow = Tables<"user_role">;
 type userRow = Tables<"user">;

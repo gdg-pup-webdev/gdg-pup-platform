@@ -15,19 +15,21 @@ import { memberSystemRouterInstance } from "@/modules/memberSystem/index.js";
 import { FilesRouter } from "@/presentation/routes/v1/files/files.router";
 import { filesModuleController } from "@/modules/filesModule";
 import { FilesHttpController } from "@/presentation/routes/v1/files/files.controller";
-import { getDeprecationWarningInterceptor } from "@/middlewares/deprecatedWarningInterceptor.middleware";
-import { docsLoader } from "./docs.loader";
+import { getDeprecationWarningInterceptor } from "@/presentation/middlewares/deprecatedWarningInterceptor.middleware"; 
+import { DocsRouter } from "@/presentation/routes/docs/docs.loader";
 
 export const routesLoader = (app: Express) => {
   /**
    * load version 1 routes
    */
+  const docsRouter=  new DocsRouter();
+
   const filesHttpController = new FilesHttpController(filesModuleController);
   const filesRouter = new FilesRouter(filesHttpController);
   const apiV1Router = new ApiVersion1Router(filesRouter);
   app.use("/api/v1", apiV1Router.router);
 
-  docsLoader(app);
+  app.use("/docs", docsRouter.router);
 
   /**
    * load legacy routes

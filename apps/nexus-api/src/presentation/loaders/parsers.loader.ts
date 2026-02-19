@@ -1,7 +1,7 @@
 import {
   tokenParser,
   tokenParserFromHeaders,
-} from "@/middlewares/tokenParser.js";
+} from "@/presentation/middlewares/tokenParser.js";
 import { Express } from "express";
 import express from "express";
 

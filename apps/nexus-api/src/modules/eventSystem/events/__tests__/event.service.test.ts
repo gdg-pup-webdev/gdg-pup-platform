@@ -5,8 +5,8 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EventService } from "../event.service.js";
-import { ConflictError } from "@/errors/HttpError.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ConflictError } from "@/presentation/errors/HttpError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 const { mockEventRepository, mockAttendanceService, mockWalletService } =
   vi.hoisted(() => ({

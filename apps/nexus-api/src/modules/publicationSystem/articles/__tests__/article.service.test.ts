@@ -12,7 +12,7 @@ import {
   listResult,
 } from "../../__tests__/test-helpers.js";
 import { ArticleService } from "../article.service.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { ServerError } from "@/presentation/errors/ServerError.js";
 
 const {
   repoCreate,

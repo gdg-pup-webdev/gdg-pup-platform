@@ -3,7 +3,7 @@ import { RoleService, roleServiceInstance } from "./role.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
-import { BadRequestError } from "@/errors/HttpError.js";
+import { BadRequestError } from "@/presentation/errors/HttpError.js";
 
 /**
  * RoleController
