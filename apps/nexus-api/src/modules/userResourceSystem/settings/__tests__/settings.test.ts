@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import supertest from 'supertest';
 
 // Mock Auth Middleware
-vi.mock('@/middlewares/auth.middleware.js', () => ({
+vi.mock("@/presentation/middlewares/auth.middleware.js", () => ({
   authMiddlewareInstance: {
     requireAuth: () => (req: any, res: any, next: any) => {
       req.user = { id: 'test-user-id', email: 'test@example.com' };

@@ -20,7 +20,7 @@ const { svcList, svcCreate, svcDelete } = vi.hoisted(() => ({
   svcDelete: vi.fn(),
 }));
 
-vi.mock("../../../../middlewares/auth.middleware.js", () => ({
+vi.mock("@/presentation/middlewares/auth.middleware.js", () => ({
   authMiddlewareInstance: {
     requireAuth:
       () => (req: any, _res: any, next: any) => ((req.user = { id: "user-1" }), next()),
