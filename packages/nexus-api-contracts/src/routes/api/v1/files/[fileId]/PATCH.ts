@@ -9,7 +9,7 @@ export const files = {
   file: OpenApiSchemas.Models.file(),
 };
 
-export const responses = {
+export const response = {
   200: OpenApiSchemas.Response.single(file.row),
   ...OpenApiSchemas.Response.standardErrors(),
 };

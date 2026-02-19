@@ -25,8 +25,15 @@ export const generateOpenApiOptions = ({
 }) => {
   const registry = new OpenAPIRegistry();
 
+  // const extractPathParams = (path: string): string[] => {
+  //   const regex = /\{([^}]+)\}/g;
+  //   const matches = path.matchAll(regex);
+  //   return Array.from(matches).map((match) => match[1]!);
+  // };
+
   const extractPathParams = (path: string): string[] => {
-    const regex = /\{([^}]+)\}/g;
+    // Matches {id} OR [id]
+    const regex = /(?:\{|\[)([^}\]]+)(?:\}|\])/g;
     const matches = path.matchAll(regex);
     return Array.from(matches).map((match) => match[1]!);
   };
@@ -150,40 +157,52 @@ export const generateOpenApiOptions = ({
       };
     }
 
-    const pathParams = extractPathParams(endpoint.path);
-    if (pathParams.length > 0) {
-      const paramsSchema = z.object(
-        pathParams.reduce(
-          (acc, param) => {
-            acc[param] = z.string();
-            return acc;
-          },
-          {} as Record<string, z.ZodString>,
-        ),
-      );
-      requestConfig.params = addDescriptions(
-        paramsSchema,
-        endpoint.docs_params || {},
-      );
-    }
+    // const openapiPath = endpoint.path.replace(/\[([^\]]+)\]/g, "{$1}");
+    const openapiPath = endpoint.path.replace(/\[([^\]]+)\]/g, "{$1}");
+
+    // const pathParams = extractPathParams(endpoint.path);
+    // console.log("extract path params of ", endpoint.path, pathParams);
+    // if (pathParams.length > 0) {
+    //   const paramsSchema = z.object(
+    //     pathParams.reduce(
+    //       (acc, param) => {
+    //         acc[param] = z.string();
+    //         return acc;
+    //       },
+    //       {} as Record<string, z.ZodString>,
+    //     ),
+    //   );
+    //   requestConfig.params = addDescriptions(
+    //     paramsSchema,
+    //     endpoint.docs_params || {},
+    //   );
+    // }
 
     //////////// RANDALL PART ////////////
 
-    const { summary, description } = postProcess(
-      endpoint,
-      pathParams,
-      formattedResponses,
-      generateExample,
-    );
+    let mysummary = null;
+    let mydescription = null;
+    // const { summary, description } = postProcess(
+    //   endpoint,
+    //   pathParams,
+    //   formattedResponses,
+    //   generateExample,
+    // );
+    // mysummary = summary;
+    // mydescription = description;
 
     //////////// RANDALL PART END ////////////
 
     registry.registerPath({
       method: endpoint.method.replace(".ts", "").toLowerCase() as any,
-      path: endpoint.path,
+      path: openapiPath || endpoint.path,
       tags: [formatTagFromPath(endpoint.path)],
-      summary,
-      description,
+      summary:
+        mysummary || endpoint.docs_summary || `Endpoint for ${endpoint.path}`,
+      description:
+        mydescription ||
+        endpoint.docs_description ||
+        `Endpoint for ${endpoint.path}`,
       request: requestConfig,
       responses: formattedResponses,
       ...(endpoint.docs_auth === "Public" ||

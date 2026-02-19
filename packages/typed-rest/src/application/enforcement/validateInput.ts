@@ -34,7 +34,9 @@ export async function validateInput<T extends Contract>(
 
   // --- Params ---
   const paramsContract = contract.request.params;
+  console.log("checking for params")
   if (paramsContract) {
+    console.log("we have path params", req.params);
     const parseResult = await paramsContract.safeParseAsync(req.params);
     if (parseResult.error) {
       throw new IncomingRequestValidationError(

@@ -3,6 +3,7 @@ import { cz } from "@packages/typed-rest/shared";
 export const row = cz.object({
   fileName: cz.string(),
   fileDescription: cz.string(),
+  filePath: cz.string(),
 
   // metadata
   id: cz.string(),

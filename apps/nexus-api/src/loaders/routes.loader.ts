@@ -1,8 +1,6 @@
 import { Express } from "express";
 import { healthCheckModuleRouterInstance } from "@/modules/healthCheck/index.js";
-import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
-import { fileSystemRouterInstance } from "@/modules/filesSystem/index.js";
-import { leaderboardSystemRouterInstance } from "@/modules/leaderboardSystem/leaderboardSystem.route.js";
+import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js"; 
 import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js";
 import { economySystemRouterInstance } from "@/modules/economySystem/index.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
@@ -11,7 +9,7 @@ import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
 import { rewardSystemRouterInstance } from "@/modules/rewardsSystem/index.js";
 import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js"; 
-import { ApiVersion1Router } from "@/presentation/routes/v1";
+import { ApiVersion1Router } from "@/presentation/routes/v1/ApiVersion1Router";
 import { authSystemRouterInstance } from "@/modules/authSystem/index.js";
 import { memberSystemRouterInstance } from "@/modules/memberSystem/index.js";
 
