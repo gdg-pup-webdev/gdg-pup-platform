@@ -21,7 +21,7 @@ export const docsLoader = (app: Express) => {
       ].join(" "),
     },
     servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
-    generateExample: false,
+    generateExample: true,
   });
   const swaggerSpec = swaggerJsdoc(options);
 
