@@ -4,7 +4,7 @@ import {
   ForeignKeyConstraintError,
   QueryTimeoutError,
   UniqueConstraintError,
-} from "@/presentation/errors/DatabaseError";
+} from "@/errors/DatabaseError";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export function handlePostgresError(err: PostgrestError): never {

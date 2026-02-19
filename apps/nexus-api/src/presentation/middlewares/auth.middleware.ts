@@ -1,4 +1,4 @@
-import { ServerError_DEPRECATED } from "@/classes/ServerError.js";
+import { ServerError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
 import { RequestHandler } from "express";
 
 /**

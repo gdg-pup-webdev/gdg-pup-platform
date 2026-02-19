@@ -1,6 +1,6 @@
-import { ServerError_DEPRECATED } from "@/classes/ServerError.js";
-import { HttpError } from "@/presentation/errors/HttpError";
-import { ServerError } from "@/presentation/errors/ServerError";
+import { ServerError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
+import { HttpError } from "@/errors/HttpError";
+import { ServerError } from "@/errors/ServerError";
 import { ContractError } from "@packages/typed-rest/serverExpress";
 import { Request, Response, NextFunction } from "express";
 import z, { ZodError } from "zod";

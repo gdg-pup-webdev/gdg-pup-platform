@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  
 import { studyJamFixture } from "../../__tests__/test-helpers.js";
 import { StudyJamRepository } from "../studyJam.repository.js";
-import { ServerError } from "@/presentation/errors/ServerError.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { fromMock } = vi.hoisted(() => ({
   fromMock: vi.fn(),

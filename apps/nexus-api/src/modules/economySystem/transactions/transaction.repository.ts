@@ -1,4 +1,4 @@
-import { NotFoundError } from "@/presentation/errors/HttpError";
+import { NotFoundError } from "@/errors/HttpError";
 import { supabase } from "@/lib/supabase.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
 import {

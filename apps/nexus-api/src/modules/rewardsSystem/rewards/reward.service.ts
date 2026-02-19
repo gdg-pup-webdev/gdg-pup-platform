@@ -2,7 +2,7 @@ import {
   RewardRepository,
   rewardRepositoryInstance,
 } from "./reward.repository.js";
-import { ConflictError, NotFoundError } from "@/presentation/errors/HttpError.js";
+import { ConflictError, NotFoundError } from "@/errors/HttpError.js";
 import { models } from "@packages/nexus-api-contracts";
 import {
   WalletService,

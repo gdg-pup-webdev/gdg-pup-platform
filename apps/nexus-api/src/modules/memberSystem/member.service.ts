@@ -1,4 +1,4 @@
-import { BadRequestError } from "@/presentation/errors/HttpError.js";
+import { BadRequestError } from "@/errors/HttpError.js";
 import { memberRepositoryInstance } from "./member.repository.js";
 
 export class MemberService {

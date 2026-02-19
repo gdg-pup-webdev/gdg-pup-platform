@@ -12,8 +12,8 @@ import {
   rewardFixture,
 } from "../../__tests__/test-helpers.js";
 import { RewardService } from "../reward.service.js";
-import { ConflictError, NotFoundError } from "@/presentation/errors/HttpError.js";
-import { ServerError } from "@/presentation/errors/ServerError.js";
+import { ConflictError, NotFoundError } from "@/errors/HttpError.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { repoList, repoCreate, repoGet, repoMarkClaimed, walletIncrement } =
   vi.hoisted(() => ({

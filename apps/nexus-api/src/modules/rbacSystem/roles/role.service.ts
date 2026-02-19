@@ -1,6 +1,6 @@
 import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
 import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
-import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
 import { TablesInsert, Tables, TablesUpdate } from "@/types/supabase.types.js";
 import { RepositoryResultList } from "@/types/repository.types.js";
 import {
@@ -13,7 +13,7 @@ import {
   ConflictError,
   InternalServerError,
   NotFoundError,
-} from "@/presentation/errors/HttpError.js";
+} from "@/errors/HttpError.js";
 
 type roleRow = Tables<"user_role">;
 type userRow = Tables<"user">;

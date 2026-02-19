@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase.js";
-import { BadRequestError } from "@/presentation/errors/HttpError.js";
+import { BadRequestError } from "@/errors/HttpError.js";
 import { AuthError } from "@supabase/supabase-js";
 import { memberService } from "../memberSystem/member.service.js";
 import { userRepositoryInstance } from "../userSystem/users/user.repository.js";

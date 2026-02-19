@@ -13,7 +13,7 @@ import {
   studyJamFixture,
 } from "../../__tests__/test-helpers.js";
 import { StudyJamService } from "../studyJam.service.js";
-import { ServerError } from "@/presentation/errors/ServerError.js";
+import { ServerError } from "@/errors/ServerError.js";
 
 const { mockCreate, mockList, mockGetOne, mockUpdate, mockDelete } = vi.hoisted(
   () => ({

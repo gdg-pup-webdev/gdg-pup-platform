@@ -16,7 +16,7 @@ vi.mock("@/lib/supabase.js", () => ({
 }));
 
 import { TransactionRepository } from "../transaction.repository.js";
-import { DatabaseError } from "@/presentation/errors/DatabaseError.js";
+import { DatabaseError } from "@/errors/DatabaseError.js";
 import { TransactionRowType } from "../transaction.types.js";
 
 describe("TransactionRepository", () => {

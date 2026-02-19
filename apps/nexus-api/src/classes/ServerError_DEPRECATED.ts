@@ -1,6 +1,6 @@
 import { extend } from "zod/mini";
 
-type ServerErrorProps = {
+type ServerErrorProps_DEPRECATED = {
   statusCode: number;
   status?: "fail" | "error";
   message?: string;
@@ -27,7 +27,7 @@ export class ServerError_DEPRECATED extends Error {
     title = "Internal Server Error",
     detail = "Internal Server Error",
     context = [],
-  }: ServerErrorProps) {
+  }: ServerErrorProps_DEPRECATED) {
     super(message);
     this.statusCode = statusCode;
     this.message = message;
