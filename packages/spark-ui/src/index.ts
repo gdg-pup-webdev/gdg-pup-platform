@@ -11,10 +11,10 @@ export * from "./components/skeleton/";
 export * from "./components/avatar/";
 export * from "./components/checkbox/";
 export * from "./components/radio/";
-export * from "./components/textarea/";
-export * from "./components/Tabs/";
-export * from "./components/Tooltip/";
-export * from "./components/Toast/";
+export * from "./components/textarea";
+export * from "./components/tabs";
+export * from "./components/tooltip";
+export * from "./components/toast";
 
 // Layout Primitives
 export * from "./primitives/Stack/";
