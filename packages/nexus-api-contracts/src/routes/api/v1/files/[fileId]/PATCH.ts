@@ -1,8 +1,9 @@
+import { file } from "#models/fileSystem/index.js";
 import { models } from "#typedrest.contract.js";
 import { OpenApiSchemas } from "@packages/typed-rest/shared";
 
 export const body = OpenApiSchemas.Request.Body.withPayload(
-  models.fileSystem.file.updateDTO,
+  file.updateDTO
 );
 
 export const files = {
