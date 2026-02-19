@@ -28,7 +28,7 @@ const { sjList, sjCreate, sjGetOne, sjUpdate, sjDelete } = vi.hoisted(() => ({
   sjDelete: vi.fn(),
 }));
 
-vi.mock("../../../../middlewares/auth.middleware.js", () => ({
+vi.mock("@/presentation/middlewares/auth.middleware.js", () => ({
   authMiddlewareInstance: {
     requireAuth: () => (req: any, _res: any, next: any) => (
       (req.user = { id: "user-1" }),

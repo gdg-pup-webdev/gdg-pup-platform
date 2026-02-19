@@ -30,8 +30,8 @@ export function writeOpenApiGenerator(
   // 1. Build the array of Route Object Literals
   const routeObjects = routeFiles.map((routeFile) => {
     const obj = new TsObjectLiteral({
-      method: new TsRawValue(`'${routeFile.method}'`),
-      path: new TsRawValue(`'${routeFile.urlPath}'`),
+      method: new TsRawValue(`'${routeFile.method}'`.toLocaleLowerCase()),
+      path: new TsRawValue(`'${routeFile.urlPath}'`.replace(/\[/g, "{").replace(/\]/g, "}")),
     });
 
     routeFile.exports.forEach((e) => {
@@ -57,54 +57,39 @@ export function writeOpenApiGenerator(
   tsFile.addImport(
     new TsImportStatement(
       "generateOpenApiOptions",
-      "generateOpenApiOptions",
+      "generateOpenApiOptionsREAL",
       false,
       `${configs.packageName}/contracts`,
     ),
   );
 
   // 4. Add the helper function as a raw block
-  tsFile.addStatement(new TsRawValue(callGenerateOpenApiOptionsString));
+  tsFile.addStatement(new TsRawValue(generateOpenApiOptionsString));
 }
 
-const callGenerateOpenApiOptionsString = `
-export const generateOpenApiSpec = (
-  props: {
-    info?: { title: string; version: string; description?: string };
-    servers?: { url: string; description?: string }[];
-    security?: Record<string, string[]>[];
-    generateExample?: boolean;
-    openapiendpoints?: any[];
-  } = {
-    info: {
-      title: "API Documentation",
-      version: "1.0.0",
-      description: "Generated Documentation",
-    },
-    servers: [
-      { url: "http://localhost:8000", description: "Development server" },
-    ],
-    security: [{ bearerAuth: [] }],
-    generateExample: true,
-    openapiendpoints: openapiendpoints,
-  },
-) => {
-  const defaultProps = {
-    info: {
-      title: "API Documentation",
-      version: "1.0.0",
-      description: "Generated Documentation",
-    },
-    servers: [
-      { url: "http://localhost:8000", description: "Development server" },
-    ],
-    security: [{ bearerAuth: [] }],
-    generateExample: true,
-    openapiendpoints: openapiendpoints,
-  }; 
-  return generateOpenApiOptions({
-    ...defaultProps,
-    ...props,
-  });
+
+export const generateOpenApiOptionsString = `
+export const generateOpenApiOptions = ({
+  info = { title: "API Documentation", version: "1.0.0", description: "Generated Documentation" },
+  servers = [{ url: "http://localhost:8000", description: "Development server" }],
+  security = [{ bearerAuth: [] }],
+  tags = [],
+  generateExample = true,
+}: {
+  info?: { title: string; version: string; description?: string };
+  servers?: { url: string; description?: string }[];
+  security?: Record<string, string[]>[];
+  tags?: { name: string; description?: string }[];
+  generateExample?: boolean;
+}) => {
+  return  generateOpenApiOptionsREAL({
+      info,
+      servers,
+      security,
+      tags,
+      generateExample,
+      openapiendpoints,
+    });
 };
 `;
+

@@ -1,4 +1,4 @@
-import { ServerError_DEPRECATED } from "@/classes/ServerError.js";
+import { ServerError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
 
 export type SyncResult<T, E = Error> =
   | { data: T; error: undefined }

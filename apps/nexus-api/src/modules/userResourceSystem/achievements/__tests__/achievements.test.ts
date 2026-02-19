@@ -9,7 +9,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import supertest from 'supertest';
 
 // Mock Auth Middleware to simulate a logged-in user
-vi.mock('@/middlewares/auth.middleware.js', () => ({
+vi.mock("@/presentation/middlewares/auth.middleware.js", () => ({
   authMiddlewareInstance: {
     requireAuth: () => (req: any, res: any, next: any) => {
       req.user = { id: 'test-user-id', email: 'test@example.com' };
