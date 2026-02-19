@@ -23,7 +23,7 @@ export class DocsRouter {
         ].join(" "),
       },
       servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
-      generateExample: false,
+      generateExample: true,
     });
 
     /**
@@ -41,8 +41,23 @@ export class DocsRouter {
       );
       res.setHeader("Content-Type", "application/json");
 
+      const optionsWithoutExamples = generateOpenApiOptions({
+        info: {
+          title: "Nexus API",
+          version: "2.1.0",
+          description: [
+            "Documentation for the GDG PUP Platform Nexus API.",
+            "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
+            "Public endpoints are marked without a lock icon in Swagger.",
+          ].join(" "),
+        },
+        servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
+        generateExample: true,
+      });
+      const swaggerSpecWithoutExamples = swaggerJsdoc(optionsWithoutExamples);
+
       converter.convert(
-        { type: "json", data: swaggerSpec },
+        { type: "json", data: swaggerSpecWithoutExamples },
         {
           requestParametersResolution: "Example",
           exampleParametersResolution: "Example",
@@ -100,7 +115,6 @@ export class DocsRouter {
       );
     });
 
-    
     const swaggerSpec = swaggerJsdoc(options);
 
     /**
@@ -208,14 +222,13 @@ export class DocsRouter {
   `);
     });
 
-    
     console.log(
       `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
     );
     console.log(
       `postman-import.json is available at http://localhost:${configs.port}/docs/rapidoc`,
     );
-    console.log("\n")
+    console.log("\n");
     console.log(
       `Scalar API docs available at http://localhost:${configs.port}/docs`,
     );
@@ -228,7 +241,6 @@ export class DocsRouter {
     console.log(
       `Rapidoc docs available at http://localhost:${configs.port}/docs/rapidoc`,
     );
-    console.log("\n")
-
+    console.log("\n");
   }
 }
