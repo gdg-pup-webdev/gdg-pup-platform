@@ -16,7 +16,7 @@ export const row = cz.object({
   downloadUrl: cz.string(),
 });
 
-export const insertDTO = row.pick({
+export const insertDTO = row.omit({
   id: true,
   createdAt: true,
   updatedAt: true,

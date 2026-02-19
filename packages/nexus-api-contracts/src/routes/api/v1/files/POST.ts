@@ -11,7 +11,7 @@ export const files = {
 };
 
 export const responses = {
-  200: OpenApiSchemas.Response.single(models.fileSystem.file.row),
+  200: OpenApiSchemas.Response.single(file.row),
   ...OpenApiSchemas.Response.standardErrors(),
 };
 

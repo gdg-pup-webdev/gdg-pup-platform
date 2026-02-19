@@ -23,7 +23,6 @@ export const generateOpenApiOptions = ({
   generateExample?: boolean;
   openapiendpoints?: any[];
 }) => {
-
   const registry = new OpenAPIRegistry();
 
   const extractPathParams = (path: string): string[] => {
@@ -33,12 +32,22 @@ export const generateOpenApiOptions = ({
   };
 
   const formatTagFromPath = (path: string) => {
-    const prefixRegex = /^\/?(api\/)?(v\d+\/)?/;
+    // this code doesnt include the api version of the endpoint
+    // const prefixRegex = /^\/?(api\/)?(v\d+\/)?/;
+    // const cleanPath = path.replace(prefixRegex, "");
+    // const segments = cleanPath.split("/").filter(Boolean);
+    // const domainIndex = 0;
+    // const tag = segments[domainIndex] || "api";
+    // return tag.replace(/-/g, " ");
+
+    const prefixRegex = /^\/?(?:api\/)?(v\d+)?\/?/;
+    const match = path.match(prefixRegex);
+    const version = match?.[1] || ""; // e.g., "v1" or ""
     const cleanPath = path.replace(prefixRegex, "");
     const segments = cleanPath.split("/").filter(Boolean);
     const domainIndex = 0;
-    const tag = segments[domainIndex] || "api";
-    return tag.replace(/-/g, " ");
+    const tagName = (segments[domainIndex] || "api").replace(/-/g, " ");
+    return version ? `(${version}) ${tagName}` : tagName;
   };
 
   const addDescriptions = (
