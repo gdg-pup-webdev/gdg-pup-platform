@@ -43,15 +43,24 @@ export const generateOpenApiOptions = ({
 
   const addDescriptions = (
     schema: z.ZodObject<any>,
-    descriptions: Record<string, string>,
-  ) => {
+    descriptions: Record<string, any>,
+  ): z.ZodObject<any> => {
     const shape = schema.shape;
     const newShape = Object.fromEntries(
       Object.entries(shape).map(([key, fieldSchema]) => {
         const description = descriptions[key];
+        if (!description) return [key, fieldSchema];
+
+        if (
+          typeof description === "object" &&
+          fieldSchema instanceof z.ZodObject
+        ) {
+          return [key, addDescriptions(fieldSchema, description)];
+        }
+
         return [
           key,
-          description
+          typeof description === "string"
             ? (fieldSchema as z.ZodTypeAny).openapi({ description })
             : fieldSchema,
         ];
@@ -127,11 +136,22 @@ export const generateOpenApiOptions = ({
         requestSchema = requestSchema.extend(endpoint.files);
       }
 
+      const bodyDocs =
+        typeof endpoint.docs_body === "object" ? endpoint.docs_body : {};
+      const bodyDescription =
+        typeof endpoint.docs_body === "string"
+          ? endpoint.docs_body
+          : endpoint.docs_summary || `Payload for ${endpoint.path}`;
+
       requestConfig.body = {
-        description: endpoint.docs_body || `Payload for ${endpoint.path}`,
+        description: bodyDescription,
         content: {
           [contentType]: {
-            schema: requestSchema,
+            schema:
+              requestSchema instanceof z.ZodObject &&
+              Object.keys(bodyDocs).length > 0
+                ? addDescriptions(requestSchema, bodyDocs)
+                : requestSchema,
             // examples
             ...(endpoint.docs_example_body && generateExample
               ? { example: endpoint.docs_example_body }
