@@ -3,7 +3,8 @@
  * @description Zod model definitions for User Roles.
  */
 
-import z from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
+
 
 export const permission = z.object({
   resource_name: z.string(),

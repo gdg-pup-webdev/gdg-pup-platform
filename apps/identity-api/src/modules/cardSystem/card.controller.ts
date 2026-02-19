@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/identity-api-contracts";
 import { CardService, cardServiceInstance } from "./card.service.js";
 import { ServerError, ServiceError } from "@/classes/ServerError.js";

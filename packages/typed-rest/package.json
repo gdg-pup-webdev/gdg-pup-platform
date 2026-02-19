@@ -1,10 +1,15 @@
 {
   "name": "@packages/typed-rest",
+  "version": "1.0.0",
+  "private": false,
   "bin": {
-    "typed-rest": "./src/cli.ts"
+    "typed-rest": "./src/presentation/cli/index.ts"
   },
   "exports": {
-    ".": "./dist/index.js"
+    "./contracts": "./dist/presentation/contracts/index.js",
+    "./serverExpress": "./dist/presentation/serverExpress/index.js",
+    "./clientReact": "./dist/presentation/clientReact/index.js",
+    "./shared": "./dist/shared/index.js"
   },
   "scripts": {
     "dev": "tsc --watch",
@@ -19,11 +24,14 @@
     "chokidar": "^5.0.0",
     "commander": "11.0.0",
     "express": "5.2.1",
+    "multer": "2.0.2",
     "ts-morph": "^27.0.2",
+    "tsc-alias": "1.8.16",
     "zod": "4.3.2"
   },
   "devDependencies": {
     "@types/express": "5.0.6",
+    "@types/multer": "2.0.0",
     "@types/node": "25.0.3",
     "tsx": "4.21.0",
     "typescript": "5.9.3"

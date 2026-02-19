@@ -2,17 +2,15 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
-import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
-import { apiReference } from "@scalar/express-api-reference";
-import converter from "openapi-to-postmanv2";
-import { aP } from "vitest/dist/reporters-w_64AS5f.js";
-import { ServerError } from "@/errors/ServerError.js";
+import { generateOpenApiSpec } from "@packages/nexus-api-contracts"; 
+import converter from "openapi-to-postmanv2"; 
 
+let scalarMiddleware: any = null;
 /**
  * load the documentations of the api
  */
 export const docsLoader = (app: Express) => {
-  const options = generateOpenApiOptions({
+  const options = generateOpenApiSpec({
     info: {
       title: "Nexus API",
       version: "2.1.0",
@@ -25,6 +23,7 @@ export const docsLoader = (app: Express) => {
     servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
     generateExample: false,
   });
+  const swaggerSpec = swaggerJsdoc(options);
 
   /**
    * EXPOSE THE OPENAPI DOCUMENT
@@ -93,7 +92,6 @@ export const docsLoader = (app: Express) => {
   /**
    * LOAD SWAGGER UI DOCUMENTATION
    */
-  const swaggerSpec = swaggerJsdoc(options);
   const assetOptions = {
     customCssUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
@@ -111,17 +109,25 @@ export const docsLoader = (app: Express) => {
   /**
    * LOAD SCALAR DOCUMENTATION
    */
-  app.use(
-    "/docs",
-    apiReference({
-      // Top-level properties
-      theme: "default",
-      content: swaggerSpec,
-      darkMode: true,
-      hideTestRequestButton: false,
-      pageTitle: "Nexus Api Documentation",
-    }),
-  );
+  app.use("/docs", async (req, res, next) => {
+    try {
+      if (!scalarMiddleware) {
+        // Dynamic import happens here, only when user visits /docs
+        const { apiReference } = await import("@scalar/express-api-reference");
+        scalarMiddleware = apiReference({
+          theme: "default",
+          content: swaggerSpec,
+          darkMode: true,
+          hideTestRequestButton: false,
+          pageTitle: "Nexus Api Documentation",
+        });
+      }
+      return scalarMiddleware(req, res, next);
+    } catch (error) {
+      console.error("Failed to load Scalar:", error);
+      next(error);
+    }
+  });
 
   /**
    * LOAD STOPLIGHT DOCUMENTATION

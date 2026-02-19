@@ -10,21 +10,19 @@
     "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/types/supabase.types.ts",
     "gen-types:zod": "supazod -i src/types/supabase.types.ts -o src/types/supabase.schema.ts",
     "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod",
-    "dev": "concurrently \"typed-rest --watch\" \"tsc --watch\"",
-    "build": "typed-rest && tsc",
+    "dev": "typed-rest dev",
+    "build": "typed-rest build",
     "gen-types:rebuild": "pnpm run gen-types && pnpm run build"
   },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@configs/typescript-config": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "concurrently": "9.2.1",
     "express": "5.2.1",
     "supazod": "^4.5.0",
-    "zod": "4.3.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/express": "5.0.6",
     "@types/node": "25.0.3",
     "chokidar": "^5.0.0",
     "supabase": "2.70.5",

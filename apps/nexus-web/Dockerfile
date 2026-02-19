@@ -10,14 +10,16 @@ WORKDIR /app
 RUN corepack enable
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --frozen-lockfile
 
 FROM node:20-alpine AS builder
 WORKDIR /app
 RUN corepack enable
 COPY --from=installer /app/ .
 COPY --from=pruner /app/out/full/ .
-RUN pnpm install
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+  pnpm install --frozen-lockfile
 
 ARG NEXT_PUBLIC_NEXUS_API_URL
 ARG NEXT_PUBLIC_IDENTITY_API_URL

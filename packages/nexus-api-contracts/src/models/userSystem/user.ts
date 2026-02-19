@@ -10,7 +10,8 @@ import {
   publicUserRowSchema,
   publicUserUpdateSchema,
 } from "#types/supabase.schema.js";
-import { z } from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
+
 import { row as profileRow } from "./profile.js";
 import {
   achievement,

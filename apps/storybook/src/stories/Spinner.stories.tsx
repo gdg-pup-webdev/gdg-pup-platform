@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Spinner } from "@packages/spark-ui/src";
+import { Spinner } from "@packages/spark-ui";
 
 const meta = {
   title: "Components/Spinner",

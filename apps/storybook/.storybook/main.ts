@@ -13,7 +13,7 @@ function getAbsolutePath(value: string) {
 }
 const config: StorybookConfig = {
   "stories": [
-    "../src/**/*.mdx",
+
     "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
   ],
   "addons": [
@@ -25,7 +25,7 @@ const config: StorybookConfig = {
   ],
   "framework": getAbsolutePath('@storybook/nextjs-vite'),
   "staticDirs": [
-    "..\\public"
+    "../public"
   ]
 };
 export default config;

@@ -7,7 +7,7 @@ import {
   CardContent,
   CardFooter,
   Button,
-} from "@packages/spark-ui/src";
+} from "@packages/spark-ui";
 
 const meta = {
   title: "Components/Card",

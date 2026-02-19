@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Alert, AlertTitle, AlertDescription } from "@packages/spark-ui/src";
+import { Alert, AlertTitle, AlertDescription } from "@packages/spark-ui";
 
 const meta = {
   title: "Components/Alert",
@@ -212,7 +212,7 @@ export const InContext: Story = {
           💡 Tip: You can use keyboard shortcuts to navigate faster.
         </AlertDescription>
       </Alert>
-      
+
       <div className="border rounded-lg p-6">
         <h2 className="text-lg font-semibold mb-4">Update Profile</h2>
         <p className="text-sm text-muted-foreground mb-4">
