@@ -1,6 +1,6 @@
 import { Express } from "express";
 import { healthCheckModuleRouterInstance } from "@/modules/healthCheck/index.js";
-import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js"; 
+import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
 import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js";
 import { economySystemRouterInstance } from "@/modules/economySystem/index.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
@@ -8,20 +8,32 @@ import { publicationSystemRouterInstance } from "@/modules/publicationSystem/ind
 import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
 import { rewardSystemRouterInstance } from "@/modules/rewardsSystem/index.js";
-import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js"; 
+import { rbacSystemRouterInstance } from "@/modules/rbacSystem/index.js";
 import { ApiVersion1Router } from "@/presentation/routes/v1/ApiVersion1Router";
 import { authSystemRouterInstance } from "@/modules/authSystem/index.js";
 import { memberSystemRouterInstance } from "@/modules/memberSystem/index.js";
+import { FilesRouter } from "@/presentation/routes/v1/files/files.router";
+import { filesModuleController } from "@/modules/filesModule";
+import { FilesHttpController } from "@/presentation/routes/v1/files/files.controller";
+import { getDeprecationWarningInterceptor } from "@/middlewares/deprecatedWarningInterceptor.middleware";
+import { docsLoader } from "./docs.loader";
 
 export const routesLoader = (app: Express) => {
   /**
    * load version 1 routes
    */
-  app.use("/api/v1", new ApiVersion1Router().router);
+  const filesHttpController = new FilesHttpController(filesModuleController);
+  const filesRouter = new FilesRouter(filesHttpController);
+  const apiV1Router = new ApiVersion1Router(filesRouter);
+  app.use("/api/v1", apiV1Router.router);
+
+  docsLoader(app);
 
   /**
    * load legacy routes
    */
+  app.use(getDeprecationWarningInterceptor("v1"));
+
   app.use("/api/health", healthCheckModuleRouterInstance.getRouter());
 
   app.use("/api/user-resource-system", userResourceSystemRouter.getRouter());

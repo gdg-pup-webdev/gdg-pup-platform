@@ -1,14 +1,10 @@
-import { fileSystemController } from "@/modules/filesSystem";
+import { FilesModuleController } from "@/modules/filesModule";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
-import { RequestHandler } from "express";
-import {
-  convertFileRecordToFileRow,
-  convertFileToFileBuffer,
-} from "./fileSystem.utils";
+import { RequestHandler } from "express"; 
 
-export class FileSystemController {
-  constructor() {}
+export class FilesHttpController {
+  constructor(private filesModuleController: FilesModuleController) {}
 
   listFiles: RequestHandler = createExpressController(
     contract.api.v1.files.GET,
@@ -16,26 +12,28 @@ export class FileSystemController {
       const pageNumber = input.query.pageNumber || 1;
       const pageSize = input.query.pageSize || 10;
 
-      const result = await fileSystemController.listFIlesWithPagination(
-        pageNumber,
-        pageSize,
-        (f) => {
-          return {
-            list: f.list.map(convertFileRecordToFileRow),
-            count: f.count,
-          };
-        },
-      );
+      const { list, count } =
+        await this.filesModuleController.listFIlesWithPagination(
+          pageNumber,
+          pageSize,
+        );
 
       return output(200, {
         status: "success",
         message: "Files fetched successfully",
-        data: result.list,
+        data: list.map((f) => {
+          return {
+            ...f,
+            fileName: f.name,
+            fileDescription: f.description,
+            filePath: f.path,
+          };
+        }),
         meta: {
-          totalRecords: result.count,
+          totalRecords: count,
           currentPage: pageNumber,
           pageSize,
-          totalPages: Math.ceil(result.count / pageSize),
+          totalPages: Math.ceil(count / pageSize),
         },
       });
     },
@@ -53,18 +51,23 @@ export class FileSystemController {
         });
       }
 
-      const result = await fileSystemController.uploadFile(
-        await convertFileToFileBuffer(file),
+      const result = await this.filesModuleController.uploadFile(
+        await file.arrayBuffer(),
+        file.type,
         input.body.data.fileName,
         input.body.data.fileDescription,
         input.body.data.filePath,
-        (f) => convertFileRecordToFileRow(f),
       );
 
       return output(200, {
         status: "success",
         message: "File uploaded successfully",
-        data: result,
+        data: {
+          ...result,
+          fileName: result.name,
+          fileDescription: result.description,
+          filePath: result.path,
+        },
       });
     },
   );
@@ -73,7 +76,7 @@ export class FileSystemController {
     contract.api.v1.files.fileId.DELETE,
     async ({ input, output, ctx }) => {
       const id = input.params.fileId;
-      await fileSystemController.deleteFileById(id, (f) => f);
+      await this.filesModuleController.deleteFileById(id);
       return output(200, {
         status: "success",
         message: "File deleted successfully",
@@ -86,14 +89,16 @@ export class FileSystemController {
     async ({ input, output, ctx }) => {
       const id = input.params.fileId;
       console.log("id", id);
-      const result = await fileSystemController.getOneFileById(
-        id,
-        convertFileRecordToFileRow,
-      );
+      const result = await this.filesModuleController.getOneFileById(id);
       return output(200, {
         status: "success",
         message: "File fetched successfully",
-        data: result,
+        data: {
+          ...result,
+          fileName: result.name,
+          fileDescription: result.description,
+          filePath: result.path,
+        },
       });
     },
   );
@@ -103,15 +108,19 @@ export class FileSystemController {
     async ({ input, output, ctx }) => {
       const id = input.params.fileId;
       const updateDTO = input.body.data;
-      const result = await fileSystemController.updateFileById(
+      const result = await this.filesModuleController.updateFileById(
         id,
         updateDTO,
-        convertFileRecordToFileRow,
       );
       return output(200, {
         status: "success",
         message: "File updated successfully",
-        data: result,
+        data: {
+          ...result,
+          fileName: result.name,
+          fileDescription: result.description,
+          filePath: result.path,
+        },
       });
     },
   );

@@ -1,4 +1,4 @@
-import { FileSystemController } from "./FileSystemController";
+import { FilesModuleController } from "./FilesModuleController";
 import { MockFileRepository } from "./infrastructure/MockFileRepository";
 import { MockFileStorage } from "./infrastructure/MockFileStorage";
 import { DeleteFileById } from "./useCases/DeleteFileById";
@@ -16,31 +16,31 @@ const fileStorage = new MockFileStorage();
 /**
  * use cases
  */
-const deleteFileByIdUseCase: DeleteFileById = new DeleteFileById(
+export const deleteFileByIdUseCase: DeleteFileById = new DeleteFileById(
   fileRepository,
   fileStorage,
 );
-const getOneFileByIdUseCase: GetOneFileById = new GetOneFileById(
+export const getOneFileByIdUseCase: GetOneFileById = new GetOneFileById(
   fileRepository,
 );
-const listFIlesWithPaginationUseCase: ListFIlesWithPagination =
+export const listFIlesWithPaginationUseCase: ListFIlesWithPagination =
   new ListFIlesWithPagination(fileRepository);
-const updateFileByIdUseCase: UpdateFileById = new UpdateFileById(
+export const updateFileByIdUseCase: UpdateFileById = new UpdateFileById(
   fileRepository,
 );
-const uploadFileUseCase: UploadFile = new UploadFile(
+export const uploadFileUseCase: UploadFile = new UploadFile(
   fileStorage,
   fileRepository,
 );
 
 /**
- * controller
+ * exporting default controller
  */
-export const fileSystemController = new FileSystemController(
+export const filesModuleController = new FilesModuleController(
   deleteFileByIdUseCase,
   getOneFileByIdUseCase,
   listFIlesWithPaginationUseCase,
   updateFileByIdUseCase,
   uploadFileUseCase,
 );
-export * from "./FileSystemController";
+export * from "./FilesModuleController";
