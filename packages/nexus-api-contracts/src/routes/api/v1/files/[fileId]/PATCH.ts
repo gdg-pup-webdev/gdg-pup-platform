@@ -5,9 +5,6 @@ export const body = OpenApiSchemas.Request.Body.withPayload(
   file.updateDTO
 );
 
-export const files = {
-  file: OpenApiSchemas.Models.file(),
-};
 
 export const response = {
   200: OpenApiSchemas.Response.single(file.row),
