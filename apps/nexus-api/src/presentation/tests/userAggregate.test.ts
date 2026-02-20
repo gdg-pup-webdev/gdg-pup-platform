@@ -16,7 +16,7 @@ vi.mock("../modules/userSystem/users/user.service.js", () => ({
   UserService: class {},
 }));
 
-import app from "../app.js";
+import app from "../../app.js";
 
 describe("User Aggregate API Integration", () => {
   const now = new Date().toISOString();

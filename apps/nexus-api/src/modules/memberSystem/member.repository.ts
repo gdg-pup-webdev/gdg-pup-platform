@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
-import { RepositoryResult } from "@/types/repository.types.js";
-import { Tables } from "@/types/supabase.types.js";
+import { RepositoryResult } from "@/presentation/types/repository.types.js";
+import { Tables } from "@/presentation/types/supabase.types.js";
 
 type memberRow = Tables<"gdg_members">;
 

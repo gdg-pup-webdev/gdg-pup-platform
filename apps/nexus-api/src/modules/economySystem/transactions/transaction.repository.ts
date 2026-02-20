@@ -4,7 +4,7 @@ import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
-} from "@/types/repository.types.js";
+} from "@/presentation/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 
 /**

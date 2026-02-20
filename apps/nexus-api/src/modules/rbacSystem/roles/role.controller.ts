@@ -1,4 +1,4 @@
-import { tryCatch } from "@/utils/tryCatch.util.js";
+import { tryCatch } from "@/presentation/utils/tryCatch.util.js";
 import { RoleService, roleServiceInstance } from "./role.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";

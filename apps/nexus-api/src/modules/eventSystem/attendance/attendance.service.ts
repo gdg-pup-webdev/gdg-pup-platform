@@ -1,4 +1,4 @@
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/presentation/utils/tryCatch.util.js";
 import {
   AttendanceRepository,
   attendanceRepositoryInstance,

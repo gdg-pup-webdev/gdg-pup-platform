@@ -3,8 +3,8 @@ import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
-} from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+} from "@/presentation/types/repository.types.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/presentation/types/supabase.types.js";
 
 type tableRow = Tables<"external_resource">;
 type tableUpdate = TablesUpdate<"external_resource">;
