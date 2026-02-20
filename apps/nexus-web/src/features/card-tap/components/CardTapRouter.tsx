@@ -10,6 +10,7 @@ import { useCardStatus } from "../hooks/useCardStatus";
 import { LoadingCard } from "./LoadingCard";
 import { ErrorCard } from "./ErrorCard";
 import { DebugCard } from "./DebugCard";
+import { Stack, Text } from '@packages/spark-ui';
 
 interface CardTapRouterProps {
   /** The unique identifier of the card */
@@ -81,10 +82,10 @@ export const CardTapRouter: React.FC<CardTapRouterProps> = ({
   // (Usually won't be visible because redirect happens immediately)
   return (
     <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
-      <div className="text-center">
+      <Stack gap="md" className="text-center">
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-zinc-500 border-t-white"></div>
-        <p className="mt-4 text-zinc-400">{routingDecision.message}</p>
-      </div>
+        <Text variant="body" className="text-zinc-400">{routingDecision.message}</Text>
+      </Stack>
     </div>
   );
 };
