@@ -7,10 +7,10 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from '@packages/spark-ui';
+import { Input } from '@packages/spark-ui';
+import { Button } from '@packages/spark-ui';
+import { Badge } from '@packages/spark-ui';
 import { EventFilters, EventCategory } from "../types";
 
 interface EventsFiltersProps {
@@ -53,7 +53,7 @@ export function EventsFilters({
   ];
 
   return (
-    <Card className="bg-gradient-to-br from-white to-gray-50">
+    <Card className="bg-linear-to-br from-white to-gray-50">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -109,7 +109,7 @@ export function EventsFilters({
                   px-4 py-2 rounded-lg font-medium text-sm transition-all
                   ${
                     filters.category === cat.value
-                      ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md scale-105"
+                      ? "bg-linear-to-r from-blue-600 to-blue-500 text-white shadow-md scale-105"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105"
                   }
                 `}
@@ -137,7 +137,7 @@ export function EventsFilters({
                   flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-all
                   ${
                     filters.timeFilter === time.value
-                      ? "bg-gradient-to-r from-green-600 to-green-500 text-white shadow-md"
+                      ? "bg-linear-to-r from-green-600 to-green-500 text-white shadow-md"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }
                 `}
@@ -200,17 +200,17 @@ export function EventsFilters({
             </p>
             <div className="flex flex-wrap gap-2">
               {filters.search && (
-                <Badge variant="info">
+                <Badge variant="default">
                   Search: "{filters.search}"
                 </Badge>
               )}
               {filters.category !== "all" && (
-                <Badge variant="info">
+                <Badge variant="default">
                   Category: {filters.category}
                 </Badge>
               )}
               {filters.timeFilter !== "upcoming" && (
-                <Badge variant="info">
+                <Badge variant="default">
                   Time: {filters.timeFilter}
                 </Badge>
               )}

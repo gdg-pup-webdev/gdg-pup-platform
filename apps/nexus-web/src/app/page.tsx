@@ -9,8 +9,8 @@
 
 import { Header } from '@packages/spark-ui';
 import { HealthChecksGrid } from '@/features/health-checks';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Card } from '@packages/spark-ui';
+import { Button } from '@packages/spark-ui';
 import Link from 'next/link';
 
 export default function HomePage() {

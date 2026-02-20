@@ -8,10 +8,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { Spinner } from "@/components/ui/Spinner";
+import { Card } from '@packages/spark-ui';
+import { Button } from '@packages/spark-ui';
+import { Badge } from '@packages/spark-ui';
+import { Spinner } from '@packages/spark-ui';
 import { ApiTestResult } from "../types";
 
 interface ApiTesterProps {
@@ -90,7 +90,7 @@ export function ApiTester({ token }: ApiTesterProps) {
         <Button
           onClick={handleTestGoogleClassroom}
           disabled={!token || isLoading}
-          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
@@ -121,10 +121,10 @@ export function ApiTester({ token }: ApiTesterProps) {
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-gray-900">Test Results</h4>
             <div className="flex items-center gap-2">
-              <Badge variant={result.success ? "success" : "danger"}>
+              <Badge variant={result.success ? "success" : "destructive"}>
                 {result.statusCode} {result.success ? "Success" : "Failed"}
               </Badge>
-              <Badge variant="info">{result.duration}ms</Badge>
+              <Badge variant="default">{result.duration}ms</Badge>
             </div>
           </div>
 

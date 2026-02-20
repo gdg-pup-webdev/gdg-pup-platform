@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Spinner } from '@/components/ui/Spinner';
+import { Spinner } from '@packages/spark-ui';
 
 export function LoadingState() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Avatar, Badge, Button } from "@/components/ui";
+import { Card, Avatar, Badge, Button } from "@packages/spark-ui";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

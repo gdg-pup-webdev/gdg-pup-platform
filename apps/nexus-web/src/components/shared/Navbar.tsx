@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { Avatar } from "@/components/ui";
+import { Avatar } from "@packages/spark-ui";
 
 export const Navbar: React.FC = () => {
   const { user, loginWithGoogle, logout, status } = useAuthContext();

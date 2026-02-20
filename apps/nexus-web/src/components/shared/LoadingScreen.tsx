@@ -1,5 +1,5 @@
 import React from "react";
-import { Spinner } from "@/components/ui";
+import { Spinner } from "@packages/spark-ui";
 
 interface LoadingScreenProps {
   message?: string;

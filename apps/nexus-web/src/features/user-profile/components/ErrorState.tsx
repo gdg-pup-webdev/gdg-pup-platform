@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@packages/spark-ui';
 
 interface ErrorStateProps {
   // The error message to display

@@ -6,10 +6,10 @@
  */
 
 import React from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Spinner } from '@/components/ui/Spinner';
-import { Badge } from '@/components/ui/Badge';
+import { Button } from '@packages/spark-ui';
+import { Card } from '@packages/spark-ui';
+import { Spinner } from '@packages/spark-ui';
+import { Badge } from '@packages/spark-ui';
 import { HealthCheckResponse } from '../types';
 
 interface HealthCheckCardProps {
@@ -114,7 +114,7 @@ export function HealthCheckCard({
                   <h3 className="font-semibold text-red-900 dark:text-red-100">
                     ✗ Unhealthy
                   </h3>
-                  <Badge variant="danger" size="sm">
+                  <Badge variant="destructive" size="sm">
                     Error
                   </Badge>
                 </div>

@@ -10,7 +10,7 @@
 import React from "react";
 import { DebugNavigation } from "@/features/debugging";
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from "@/components/ui/Card";
+import { Card } from '@packages/spark-ui';
 
 export default function DebugPage() {
   return (

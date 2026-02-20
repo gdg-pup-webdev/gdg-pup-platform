@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Badge } from "@/components/ui";
+import { Card, Badge } from "@packages/spark-ui";
 import Link from "next/link";
 
 export default function CommunityPage() {
@@ -85,7 +85,7 @@ export default function CommunityPage() {
                 a place for you here.
               </p>
               <div className="flex gap-3 flex-wrap">
-                <Badge variant="info">Inclusive</Badge>
+                <Badge variant="default">Inclusive</Badge>
                 <Badge variant="success">Collaborative</Badge>
                 <Badge variant="warning">Innovative</Badge>
                 <Badge variant="default">Student-Led</Badge>
