@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@packages/spark-ui';
 
 interface ProfileHeaderProps {
   // User's display name
@@ -33,7 +33,7 @@ export function ProfileHeader({ name, role, bio }: ProfileHeaderProps) {
       {/* User's role (if provided) */}
       {role && (
         <div className="flex justify-center">
-          <Badge variant="info" size="md">
+          <Badge variant="default" size="md">
             {role}
           </Badge>
         </div>

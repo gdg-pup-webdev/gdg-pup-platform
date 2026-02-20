@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from '@packages/spark-ui';
 
 interface ProfileAvatarProps {
   // URL of the user's avatar image

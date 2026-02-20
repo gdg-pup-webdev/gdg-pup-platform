@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@packages/spark-ui';
 
 interface ProfileActionsProps {
   // User ID for edit navigation

@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@packages/spark-ui';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { BackgroundGradients } from './BackgroundGradients';
 import { LoadingState } from './LoadingState';
