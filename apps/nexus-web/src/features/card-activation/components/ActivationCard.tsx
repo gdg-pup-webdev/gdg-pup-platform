@@ -16,6 +16,7 @@ import { ActivationHeader } from "./ActivationHeader";
 import { LoadingState } from "./LoadingState";
 import { AuthPrompt } from "./AuthPrompt";
 import { UserConfirmation } from "./UserConfirmation";
+import { Text } from '@packages/spark-ui';
 
 interface ActivationCardProps {
   /** The unique identifier of the card to activate */
@@ -93,10 +94,10 @@ export const ActivationCard: React.FC<ActivationCardProps> = ({ cardUid }) => {
 
         {/* Footer with disclaimer */}
         <div className="mt-8 pt-6 border-t border-zinc-800 text-center">
-          <p className="text-xs text-zinc-600">
+          <Text variant="caption" className="text-zinc-600">
             By activating, you agree to link this physical card to your digital
             profile.
-          </p>
+          </Text>
         </div>
       </div>
     </div>

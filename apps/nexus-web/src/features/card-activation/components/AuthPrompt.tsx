@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { Stack, Inline, Text } from '@packages/spark-ui';
 
 interface AuthPromptProps {
   /** Function to trigger Google login */
@@ -21,12 +22,12 @@ interface AuthPromptProps {
  */
 export const AuthPrompt: React.FC<AuthPromptProps> = ({ onLoginClick }) => {
   return (
-    <div className="space-y-6">
+    <Stack gap="lg">
       {/* Warning message */}
       <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-center">
-        <p className="text-yellow-200 text-sm">
+        <Text variant="body-sm" className="text-yellow-200">
           You need to be logged in to link this card to your account.
-        </p>
+        </Text>
       </div>
 
       {/* Google sign-in button */}
@@ -42,6 +43,6 @@ export const AuthPrompt: React.FC<AuthPromptProps> = ({ onLoginClick }) => {
         />
         <span>Continue with Google</span>
       </button>
-    </div>
+    </Stack>
   );
 };
