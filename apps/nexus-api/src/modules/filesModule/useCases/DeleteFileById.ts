@@ -20,7 +20,7 @@ export class DeleteFileById {
     const file = await this.fileRepository.findById(fileId);
 
     if (!file) {
-      throw new Error("File not found");
+      return true;
     }
 
     await this.fileStorage.deleteFile(file.props.storageReference);
