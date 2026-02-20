@@ -4,7 +4,7 @@ import { createExpressController } from "@packages/typed-rest/serverExpress";
 import {
   buildPaginationMeta,
   normalizeOptionalText
-} from "@/utils/controller.utils.js";
+} from "@/presentation/utils/controller.utils.js";
 import { StudyJamListFilters, StudyJamService } from "@/modules/learningResourceSystem/studyJams/studyJam.service";
 
 /**

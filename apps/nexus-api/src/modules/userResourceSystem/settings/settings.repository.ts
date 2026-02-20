@@ -4,12 +4,12 @@
  * Utilizes SupabaseWrapper for standard database operations.
  */
 
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/presentation/types/supabase.types.js";
 import {
   RepositoryResult,
   RepositoryResultList,
-} from "@/types/repository.types.js";
-import { SupabaseUtils } from "@/utils/supabase.util";
+} from "@/presentation/types/repository.types.js";
+import { SupabaseUtils } from "@/presentation/utils/supabase.util";
 
 /**
  * Database types
