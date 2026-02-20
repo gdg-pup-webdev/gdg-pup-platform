@@ -8,10 +8,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card } from '@packages/spark-ui';
-import { Button } from '@packages/spark-ui';
-import { Badge } from '@packages/spark-ui';
-import { Spinner } from '@packages/spark-ui';
+import { Card, Button, Badge, Spinner, Stack, Inline, Text } from '@packages/spark-ui';
 import { ApiTestResult } from "../types";
 
 interface ApiTesterProps {
@@ -76,104 +73,107 @@ export function ApiTester({ token }: ApiTesterProps) {
 
   return (
     <Card>
-      <h3 className="text-lg font-semibold mb-4 text-gray-900 flex items-center gap-2">
-        <span className="text-2xl">🧪</span>
-        API Endpoint Tester
-      </h3>
+      <Stack gap="md">
+        <Stack gap="xs">
+          <Inline gap="xs" align="center">
+            <Text variant="heading-3">🧪 API Endpoint Tester</Text>
+          </Inline>
+          <Text variant="body-sm" className="text-gray-600">
+            Test API endpoints using your current authentication tokens
+          </Text>
+        </Stack>
 
-      <p className="text-sm text-gray-600 mb-4">
-        Test API endpoints using your current authentication tokens
-      </p>
+        {/* Test Actions */}
+        <Stack gap="xs">
+          <Button
+            variant="primary"
+            onClick={handleTestGoogleClassroom}
+            disabled={!token || isLoading}
+            className="w-full"
+          >
+            {isLoading ? (
+              <Inline gap="xs" align="center" justify="center">
+                <Spinner size="sm" />
+                <span>Testing...</span>
+              </Inline>
+            ) : (
+              <Inline gap="xs" align="center" justify="center">
+                <span className="text-lg">📚</span>
+                <span>Test Google Classroom API</span>
+              </Inline>
+            )}
+          </Button>
 
-      {/* Test Actions */}
-      <div className="space-y-3 mb-6">
-        <Button
-          onClick={handleTestGoogleClassroom}
-          disabled={!token || isLoading}
-          className="w-full bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <Spinner size="sm" />
-              Testing...
-            </span>
-          ) : (
-            <span className="flex items-center justify-center gap-2">
-              <span className="text-lg">📚</span>
-              Test Google Classroom API
-            </span>
+          {!token && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <Text variant="body-sm" className="text-yellow-800">
+                ⚠️ Please login first to test API endpoints
+              </Text>
+            </div>
           )}
-        </Button>
+        </Stack>
 
-        {!token && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            <p className="text-sm text-yellow-800">
-              ⚠️ Please login first to test API endpoints
-            </p>
-          </div>
+        {/* Results Display */}
+        {result && (
+          <Stack gap="md">
+            {/* Result Header */}
+            <Inline align="center" justify="between">
+              <Text variant="label">Test Results</Text>
+              <Inline gap="xs">
+                <Badge variant={result.success ? "success" : "destructive"}>
+                  {result.statusCode} {result.success ? "Success" : "Failed"}
+                </Badge>
+                <Badge variant="default">{result.duration}ms</Badge>
+              </Inline>
+            </Inline>
+
+            {/* Success Response */}
+            {result.success && result.data && (
+              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                <Inline gap="xs" align="start">
+                  <span className="text-2xl">✅</span>
+                  <Stack gap="xs" className="flex-1">
+                    <Text variant="label" className="text-green-900">
+                      Request Successful
+                    </Text>
+                    <div className="bg-white rounded p-3 border border-green-200">
+                      <pre className="text-xs font-mono text-gray-800 overflow-x-auto max-h-64 overflow-y-auto">
+                        {JSON.stringify(result.data, null, 2)}
+                      </pre>
+                    </div>
+                    {result.data.courses && (
+                      <Text variant="body-sm" className="text-green-700">
+                        📊 Found {result.data.courses.length} courses
+                      </Text>
+                    )}
+                  </Stack>
+                </Inline>
+              </div>
+            )}
+
+            {/* Error Response */}
+            {!result.success && (
+              <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                <Inline gap="xs" align="start">
+                  <span className="text-2xl">❌</span>
+                  <Stack gap="xs" className="flex-1">
+                    <Text variant="label" className="text-red-900">
+                      Request Failed
+                    </Text>
+                    <Text variant="body-sm" className="text-red-700">
+                      {result.error || "Unknown error occurred"}
+                    </Text>
+                    <div className="bg-red-100 rounded p-3 text-xs font-mono text-red-900">
+                      <p>Status Code: {result.statusCode}</p>
+                      <p>Duration: {result.duration}ms</p>
+                    </div>
+                  </Stack>
+                </Inline>
+              </div>
+            )}
+          </Stack>
         )}
-      </div>
-
-      {/* Results Display */}
-      {result && (
-        <div className="space-y-4">
-          {/* Result Header */}
-          <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-gray-900">Test Results</h4>
-            <div className="flex items-center gap-2">
-              <Badge variant={result.success ? "success" : "destructive"}>
-                {result.statusCode} {result.success ? "Success" : "Failed"}
-              </Badge>
-              <Badge variant="default">{result.duration}ms</Badge>
-            </div>
-          </div>
-
-          {/* Success Response */}
-          {result.success && result.data && (
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">✅</span>
-                <div className="flex-1">
-                  <h5 className="font-semibold text-green-900 mb-2">
-                    Request Successful
-                  </h5>
-                  <div className="bg-white rounded p-3 border border-green-200">
-                    <pre className="text-xs font-mono text-gray-800 overflow-x-auto max-h-64 overflow-y-auto">
-                      {JSON.stringify(result.data, null, 2)}
-                    </pre>
-                  </div>
-                  {result.data.courses && (
-                    <p className="text-sm text-green-700 mt-2">
-                      📊 Found {result.data.courses.length} courses
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Error Response */}
-          {!result.success && (
-            <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">❌</span>
-                <div className="flex-1">
-                  <h5 className="font-semibold text-red-900 mb-2">
-                    Request Failed
-                  </h5>
-                  <p className="text-sm text-red-700 mb-3">
-                    {result.error || "Unknown error occurred"}
-                  </p>
-                  <div className="bg-red-100 rounded p-3 text-xs font-mono text-red-900">
-                    <p>Status Code: {result.statusCode}</p>
-                    <p>Duration: {result.duration}ms</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      </Stack>
     </Card>
   );
 }

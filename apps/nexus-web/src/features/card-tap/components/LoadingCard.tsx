@@ -7,6 +7,7 @@
  */
 
 import React from "react";
+import { Stack, Text } from '@packages/spark-ui';
 
 /**
  * Loading state for card tap
@@ -16,13 +17,13 @@ import React from "react";
 export const LoadingCard: React.FC = () => {
   return (
     <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
-      <div className="text-center">
+      <Stack gap="md" className="text-center">
         {/* Spinning animation */}
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-zinc-500 border-t-white"></div>
         
         {/* Loading message */}
-        <p className="mt-4 text-zinc-400">Reading card...</p>
-      </div>
+        <Text variant="body" className="text-zinc-400">Reading card...</Text>
+      </Stack>
     </div>
   );
 };

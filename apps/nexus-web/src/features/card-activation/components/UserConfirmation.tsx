@@ -7,6 +7,7 @@
 
 import React from "react";
 import type { User } from "@supabase/supabase-js";
+import { Stack, Inline, Text } from '@packages/spark-ui';
 
 interface UserConfirmationProps {
   /** The authenticated user object from Supabase */
@@ -40,28 +41,30 @@ export const UserConfirmation: React.FC<UserConfirmationProps> = ({
     `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
 
   return (
-    <div className="space-y-6">
+    <Stack gap="lg">
       {/* User info card */}
-      <div className="bg-zinc-800/50 rounded-xl p-4 flex items-center gap-4">
-        {/* User avatar */}
-        <img
-          src={avatarUrl}
-          alt="User avatar"
-          className="w-12 h-12 rounded-full bg-zinc-700"
-        />
+      <div className="bg-zinc-800/50 rounded-xl p-4">
+        <Inline gap="md" align="center">
+          {/* User avatar */}
+          <img
+            src={avatarUrl}
+            alt="User avatar"
+            className="w-12 h-12 rounded-full bg-zinc-700"
+          />
 
-        {/* User details */}
-        <div className="flex-1 min-w-0">
-          <p className="text-sm text-zinc-400">Activating as</p>
-          <p className="font-semibold truncate">{displayName}</p>
-        </div>
+          {/* User details */}
+          <Stack gap="none" className="flex-1 min-w-0">
+            <Text variant="body-sm" className="text-zinc-400">Activating as</Text>
+            <Text variant="body" className="font-semibold truncate">{displayName}</Text>
+          </Stack>
+        </Inline>
       </div>
 
       {/* Activation button */}
       <button
         onClick={onConfirm}
         disabled={isActivating}
-        className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3.5 px-6 rounded-xl bg-linear-to-r from-purple-600 to-blue-600 text-white font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isActivating ? (
           // Loading state
@@ -74,6 +77,6 @@ export const UserConfirmation: React.FC<UserConfirmationProps> = ({
           <span>Confirm Activation</span>
         )}
       </button>
-    </div>
+    </Stack>
   );
 };

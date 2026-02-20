@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { Stack, Text } from '@packages/spark-ui';
 
 interface ActivationHeaderProps {
   /** The unique identifier of the card being activated */
@@ -22,9 +23,9 @@ export const ActivationHeader: React.FC<ActivationHeaderProps> = ({
   cardUid,
 }) => {
   return (
-    <div className="text-center mb-8">
+    <Stack gap="md" className="text-center mb-8">
       {/* Icon with gradient background */}
-      <div className="mx-auto w-16 h-16 bg-gradient-to-tr from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 mb-4">
+      <div className="mx-auto w-16 h-16 bg-linear-to-tr from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
         <svg
           className="w-8 h-8 text-white"
           fill="none"
@@ -41,12 +42,12 @@ export const ActivationHeader: React.FC<ActivationHeaderProps> = ({
       </div>
 
       {/* Title with gradient text */}
-      <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400">
+      <Text variant="heading-2" className="bg-clip-text text-transparent bg-linear-to-r from-white to-zinc-400">
         Activate Nexus Card
-      </h1>
+      </Text>
 
       {/* Display the card UID in monospace font */}
-      <p className="text-zinc-500 text-sm mt-2 font-mono">{cardUid}</p>
-    </div>
+      <Text variant="body-sm" className="text-zinc-500 font-mono">{cardUid}</Text>
+    </Stack>
   );
 };

@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { Stack, Text } from '@packages/spark-ui';
 
 interface ErrorCardProps {
   /** The error message to display */
@@ -23,9 +24,9 @@ interface ErrorCardProps {
 export const ErrorCard: React.FC<ErrorCardProps> = ({ message }) => {
   return (
     <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
-      <div className="text-center max-w-md p-6">
+      <Stack gap="md" className="text-center max-w-md p-6">
         {/* Error icon */}
-        <div className="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+        <div className="mx-auto w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center">
           <svg
             className="w-8 h-8 text-red-500"
             fill="none"
@@ -42,10 +43,10 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({ message }) => {
         </div>
 
         {/* Error title */}
-        <h1 className="text-2xl font-bold text-red-500 mb-2">Card Error</h1>
+        <Text variant="heading-2" className="text-red-500">Card Error</Text>
         
         {/* Error message */}
-        <p className="text-zinc-400">{message}</p>
+        <Text variant="body" className="text-zinc-400">{message}</Text>
 
         {/* Optional: Add a back button */}
         <button
@@ -54,7 +55,7 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({ message }) => {
         >
           Go Home
         </button>
-      </div>
+      </Stack>
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setCookie } from "cookies-next";
+import { Stack, Text } from '@packages/spark-ui';
 
 import { useAuthContext } from "@/providers/AuthProvider";
 
@@ -201,11 +202,11 @@ function AuthCallbackContent() {
   if (status === "success") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-green-50 to-blue-50">
-        <div className="text-center">
-          <div className="text-green-500 text-6xl mb-4">✓</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Success!</h1>
-          <p className="text-gray-700">{message}</p>
-        </div>
+        <Stack gap="md" className="text-center">
+          <div className="text-green-500 text-6xl">✓</div>
+          <Text variant="heading-2" className="text-gray-800">Success!</Text>
+          <Text variant="body" className="text-gray-700">{message}</Text>
+        </Stack>
       </div>
     );
   }
@@ -217,43 +218,51 @@ function AuthCallbackContent() {
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="max-w-2xl w-full">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">
-              Authentication Error
-            </h1>
-            <p className="text-red-700 mb-4">{error}</p>
-            {isMembershipError && (
-              <div className="mt-4 p-4 bg-yellow-50 text-yellow-900 rounded-md border border-yellow-200">
-                <p className="font-semibold">Membership Required</p>
-                <p className="text-sm mt-1">
-                  You must be a registered GDG member to sign in.
-                </p>
-              </div>
-            )}
+        <Stack gap="md" className="max-w-2xl w-full">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <Stack gap="md">
+              <Text variant="heading-2" className="text-red-600">
+                Authentication Error
+              </Text>
+              <Text variant="body" className="text-red-700">{error}</Text>
+              {isMembershipError && (
+                <div className="p-4 bg-yellow-50 text-yellow-900 rounded-md border border-yellow-200">
+                  <Stack gap="xs">
+                    <Text variant="label">Membership Required</Text>
+                    <Text variant="body-sm">
+                      You must be a registered GDG member to sign in.
+                    </Text>
+                  </Stack>
+                </div>
+              )}
+            </Stack>
           </div>
 
           {debugInfo && (
-            <div className="bg-gray-100 rounded-lg p-6 mb-4">
-              <h2 className="text-lg font-semibold mb-3">Debug Information</h2>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm">
-                {JSON.stringify(debugInfo, null, 2)}
-              </pre>
+            <div className="bg-gray-100 rounded-lg p-6">
+              <Stack gap="sm">
+                <Text variant="heading-3">Debug Information</Text>
+                <pre className="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm">
+                  {JSON.stringify(debugInfo, null, 2)}
+                </pre>
+              </Stack>
             </div>
           )}
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
-            <h2 className="text-lg font-semibold text-blue-900 mb-3">
-              Troubleshooting Steps
-            </h2>
-            <ul className="list-disc list-inside space-y-2 text-blue-800 text-sm">
-              <li>
-                Check that the redirect URL is configured in Supabase dashboard
-              </li>
-              <li>Verify that Google OAuth is enabled in Supabase</li>
-              <li>Ensure the backend API is running on {NEXUS_API_URL}</li>
-              <li>Check browser console for additional errors</li>
-            </ul>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <Stack gap="sm">
+              <Text variant="heading-3" className="text-blue-900">
+                Troubleshooting Steps
+              </Text>
+              <ul className="list-disc list-inside space-y-2 text-blue-800 text-sm">
+                <li>
+                  Check that the redirect URL is configured in Supabase dashboard
+                </li>
+                <li>Verify that Google OAuth is enabled in Supabase</li>
+                <li>Ensure the backend API is running on {NEXUS_API_URL}</li>
+                <li>Check browser console for additional errors</li>
+              </ul>
+            </Stack>
           </div>
 
           <button
@@ -262,17 +271,17 @@ function AuthCallbackContent() {
           >
             Return Home
           </button>
-        </div>
+        </Stack>
       </div>
     );
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-700">{message}</p>
-      </div>
+      <Stack gap="md" className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <Text variant="body" className="text-gray-700">{message}</Text>
+      </Stack>
     </div>
   );
 }
@@ -282,10 +291,10 @@ export default function AuthCallback() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-700">Loading authentication...</p>
-          </div>
+          <Stack gap="md" className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <Text variant="body" className="text-gray-700">Loading authentication...</Text>
+          </Stack>
         </div>
       }
     >

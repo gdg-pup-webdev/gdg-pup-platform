@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { Stack, Text } from '@packages/spark-ui';
 
 /**
  * Loading state shown while checking authentication
@@ -15,12 +16,12 @@ import React from "react";
  */
 export const LoadingState: React.FC = () => {
   return (
-    <div className="flex flex-col items-center py-8">
+    <Stack gap="md" className="items-center py-8">
       {/* Spinning loader */}
-      <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-white rounded-full mb-4"></div>
+      <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-white rounded-full"></div>
       
       {/* Loading message */}
-      <p className="text-zinc-400 text-sm">Checking authentication...</p>
-    </div>
+      <Text variant="body-sm" className="text-zinc-400">Checking authentication...</Text>
+    </Stack>
   );
 };

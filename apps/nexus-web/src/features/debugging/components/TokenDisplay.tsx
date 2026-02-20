@@ -8,9 +8,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card } from '@packages/spark-ui';
-import { Button } from '@packages/spark-ui';
-import { Badge } from '@packages/spark-ui';
+import { Card, Button, Badge, Stack, Inline, Text } from '@packages/spark-ui';
 
 interface TokenDisplayProps {
   /** The token value to display */
@@ -61,28 +59,24 @@ export function TokenDisplay({
   const getColorClasses = () => {
     const colors = {
       blue: {
-        bg: "from-blue-50 to-blue-100",
+        bg: "bg-blue-50",
         border: "border-blue-300",
         text: "text-blue-700",
-        button: "from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
       },
       green: {
-        bg: "from-green-50 to-green-100",
+        bg: "bg-green-50",
         border: "border-green-300",
         text: "text-green-700",
-        button: "from-green-500 to-green-600 hover:from-green-600 hover:to-green-700",
       },
       yellow: {
-        bg: "from-yellow-50 to-yellow-100",
+        bg: "bg-yellow-50",
         border: "border-yellow-300",
         text: "text-yellow-700",
-        button: "from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700",
       },
       red: {
-        bg: "from-red-50 to-red-100",
+        bg: "bg-red-50",
         border: "border-red-300",
         text: "text-red-700",
-        button: "from-red-500 to-red-600 hover:from-red-600 hover:to-red-700",
       },
     };
     return colors[variant];
@@ -103,64 +97,66 @@ export function TokenDisplay({
   };
 
   return (
-    <Card className={`bg-linear-to-br ${colors.bg} border-2 ${colors.border}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h4 className={`font-semibold ${colors.text}`}>{label}</h4>
-          {description && (
-            <p className="text-xs text-gray-600 mt-1">{description}</p>
-          )}
+    <Card className={`${colors.bg} border-2 ${colors.border}`}>
+      <Stack gap="xs">
+        {/* Header */}
+        <Inline align="center" justify="between">
+          <Stack gap="none">
+            <Text variant="label" className={colors.text}>{label}</Text>
+            {description && (
+              <Text variant="caption" className="text-gray-600">{description}</Text>
+            )}
+          </Stack>
+          <Badge variant={token ? "success" : "default"}>
+            {token ? "Available" : "Not Set"}
+          </Badge>
+        </Inline>
+
+        {/* Token Display */}
+        <div className="bg-white rounded-lg p-3 border border-gray-200">
+          <code className="text-sm font-mono text-gray-800 break-all">
+            {getDisplayToken()}
+          </code>
         </div>
-        <Badge variant={token ? "success" : "default"}>
-          {token ? "Available" : "Not Set"}
-        </Badge>
-      </div>
 
-      {/* Token Display */}
-      <div className="bg-white rounded-lg p-3 mb-3 border border-gray-200">
-        <code className="text-sm font-mono text-gray-800 break-all">
-          {getDisplayToken()}
-        </code>
-      </div>
+        {/* Action Buttons */}
+        <Inline gap="xs">
+          <Button
+            onClick={() => setIsVisible(!isVisible)}
+            variant="secondary"
+            size="sm"
+            disabled={!token}
+            className="flex-1"
+          >
+            <Inline gap="none" align="center" justify="center">
+              <span>{isVisible ? "🙈" : "👁️"}</span>
+              <span className="ml-1">{isVisible ? "Hide" : "Show"}</span>
+            </Inline>
+          </Button>
+          
+          <Button
+            onClick={handleCopy}
+            variant="primary"
+            size="sm"
+            disabled={!token}
+            className="flex-1"
+          >
+            <Inline gap="none" align="center" justify="center">
+              <span>{copied ? "✅" : "📋"}</span>
+              <span className="ml-1">{copied ? "Copied!" : "Copy"}</span>
+            </Inline>
+          </Button>
+        </Inline>
 
-      {/* Action Buttons */}
-      <div className="flex gap-2">
-        <Button
-          onClick={() => setIsVisible(!isVisible)}
-          variant="secondary"
-          size="sm"
-          disabled={!token}
-          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
-        >
-          <span className="flex items-center justify-center gap-1">
-            <span>{isVisible ? "🙈" : "👁️"}</span>
-            {isVisible ? "Hide" : "Show"}
-          </span>
-        </Button>
-        
-        <Button
-          onClick={handleCopy}
-          variant="secondary"
-          size="sm"
-          disabled={!token}
-          className={`flex-1 bg-linear-to-r ${colors.button} text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50`}
-        >
-          <span className="flex items-center justify-center gap-1">
-            <span>{copied ? "✅" : "📋"}</span>
-            {copied ? "Copied!" : "Copy"}
-          </span>
-        </Button>
-      </div>
-
-      {/* Token Length Info */}
-      {token && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <p className="text-xs text-gray-500">
-            Token length: <span className="font-semibold">{token.length}</span> characters
-          </p>
-        </div>
-      )}
+        {/* Token Length Info */}
+        {token && (
+          <Stack gap="none" className="pt-3 border-t border-gray-200">
+            <Text variant="caption" className="text-gray-500">
+              Token length: <span className="font-semibold">{token.length}</span> characters
+            </Text>
+          </Stack>
+        )}
+      </Stack>
     </Card>
   );
 }
