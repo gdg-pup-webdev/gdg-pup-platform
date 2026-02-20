@@ -1,15 +1,13 @@
 /**
  * EventCard Component
  * 
- * Displays an individual event with Google Material Design styling.
+ * Displays an individual event using SparkUI primitives and components.
  */
 
 "use client";
 
 import React from "react";
-import { Card } from '@packages/spark-ui';
-import { Badge } from '@packages/spark-ui';
-import { Button } from '@packages/spark-ui';
+import { Card, Badge, Button, Stack, Inline, Text } from '@packages/spark-ui';
 import { Event } from "../types";
 import Link from "next/link";
 
@@ -63,10 +61,10 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/events/${event.id}`} className="block">
-      <Card className="h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer overflow-hidden border-2 border-gray-100 hover:border-blue-300">
+      <Card className="h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer overflow-hidden">
         {/* Event Banner */}
         {event.banner_url ? (
-          <div className="relative h-48 w-full overflow-hidden bg-linear-to-br from-blue-100 via-purple-100 to-pink-100">
+          <div className="relative h-48 w-full overflow-hidden bg-gray-50">
             <img
               src={event.banner_url}
               alt={event.title}
@@ -81,7 +79,7 @@ export function EventCard({ event }: EventCardProps) {
             </div>
           </div>
         ) : (
-          <div className="relative h-48 w-full bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
+          <div className="relative h-48 w-full bg-blue-500 flex items-center justify-center">
             <div className="text-center text-white">
               <div className="text-6xl mb-2">
                 {event.category === "workshop" && "🛠️"}
@@ -102,62 +100,62 @@ export function EventCard({ event }: EventCardProps) {
         )}
 
         {/* Event Content */}
-        <div className="p-5">
+        <Stack gap="md" className="p-6">
           {/* Event Title */}
-          <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors">
+          <Text variant="heading-3" className="line-clamp-2">
             {event.title}
-          </h3>
+          </Text>
 
           {/* Event Description */}
           {event.description && (
-            <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+            <Text variant="body-sm" className="text-gray-600 line-clamp-3">
               {event.description}
-            </p>
+            </Text>
           )}
 
           {/* Event Details */}
-          <div className="space-y-2 mb-4">
+          <Stack gap="xs">
             {/* Date & Time */}
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-blue-600">📅</span>
-              <span className="text-gray-700 font-medium">
+            <Inline gap="xs" align="center" className="text-sm">
+              <span>📅</span>
+              <Text variant="body-sm" className="font-medium">
                 {formatDate(event.start_date)}
-              </span>
-              <span className="text-gray-500">•</span>
-              <span className="text-gray-600">
+              </Text>
+              <span className="text-gray-400">•</span>
+              <Text variant="body-sm" className="text-gray-600">
                 {formatTime(event.start_date)}
-              </span>
-            </div>
+              </Text>
+            </Inline>
 
             {/* Venue */}
             {event.venue && (
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-red-600">📍</span>
-                <span className="text-gray-700">{event.venue}</span>
-              </div>
+              <Inline gap="xs" align="center" className="text-sm">
+                <span>📍</span>
+                <Text variant="body-sm">{event.venue}</Text>
+              </Inline>
             )}
 
             {/* Attendees */}
             {event.attendee_count !== undefined && (
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-green-600">👥</span>
-                <span className="text-gray-700">
+              <Inline gap="xs" align="center" className="text-sm">
+                <span>👥</span>
+                <Text variant="body-sm">
                   {event.attendee_count}
                   {event.max_capacity && ` / ${event.max_capacity}`} attending
-                </span>
-              </div>
+                </Text>
+              </Inline>
             )}
-          </div>
+          </Stack>
 
           {/* Action Button */}
           <Button
             variant="primary"
             size="sm"
-            className="w-full bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md"
+            className="w-full"
           >
             {isUpcoming ? "Register Now" : "View Details"}
           </Button>
-        </div>
+        </Stack>
       </Card>
     </Link>
   );
