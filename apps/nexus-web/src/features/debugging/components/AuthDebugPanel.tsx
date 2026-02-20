@@ -10,10 +10,10 @@
 import React from "react";
 import { useDebugAuth } from "../hooks/useDebugAuth";
 import { toast } from "react-toastify";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Avatar } from "@/components/ui/Avatar";
+import { Button } from '@packages/spark-ui';
+import { Card } from '@packages/spark-ui';
+import { Badge } from '@packages/spark-ui';
+import { Avatar } from '@packages/spark-ui';
 
 /**
  * Main authentication debugging panel
@@ -57,7 +57,7 @@ export function AuthDebugPanel() {
       case "authenticated":
         return "success";
       case "unauthenticated":
-        return "danger";
+        return "destructive";
       case "checking":
         return "warning";
       default:

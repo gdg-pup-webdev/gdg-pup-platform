@@ -8,9 +8,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from '@packages/spark-ui';
+import { Button } from '@packages/spark-ui';
+import { Badge } from '@packages/spark-ui';
 
 interface TokenDisplayProps {
   /** The token value to display */
@@ -103,7 +103,7 @@ export function TokenDisplay({
   };
 
   return (
-    <Card className={`bg-gradient-to-br ${colors.bg} border-2 ${colors.border}`}>
+    <Card className={`bg-linear-to-br ${colors.bg} border-2 ${colors.border}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div>
@@ -144,7 +144,7 @@ export function TokenDisplay({
           variant="secondary"
           size="sm"
           disabled={!token}
-          className={`flex-1 bg-gradient-to-r ${colors.button} text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50`}
+          className={`flex-1 bg-linear-to-r ${colors.button} text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50`}
         >
           <span className="flex items-center justify-center gap-1">
             <span>{copied ? "✅" : "📋"}</span>
