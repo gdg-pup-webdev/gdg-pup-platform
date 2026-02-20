@@ -7,10 +7,7 @@
 "use client";
 
 import React from "react";
-import { Card } from '@packages/spark-ui';
-import { Input } from '@packages/spark-ui';
-import { Button } from '@packages/spark-ui';
-import { Badge } from '@packages/spark-ui';
+import { Card, Input, Button, Badge, Stack, Inline, Text, Grid } from '@packages/spark-ui';
 import { EventFilters, EventCategory } from "../types";
 
 interface EventsFiltersProps {
@@ -53,39 +50,34 @@ export function EventsFilters({
   ];
 
   return (
-    <Card className="bg-linear-to-br from-white to-gray-50">
-      <div className="space-y-6">
+    <Card>
+      <Stack gap="lg">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-2xl">🔍</span>
-              Filter Events
-            </h2>
+        <Inline align="center" justify="between">
+          <Stack gap="xs">
+            <Inline gap="xs" align="center">
+              <Text variant="heading-3">🔍 Filter Events</Text>
+            </Inline>
             {totalCount !== undefined && (
-              <p className="text-sm text-gray-600 mt-1">
+              <Text variant="body-sm" className="text-gray-600">
                 Showing {totalCount} event{totalCount !== 1 ? "s" : ""}
-              </p>
+              </Text>
             )}
-          </div>
+          </Stack>
           <Button
             variant="secondary"
             size="sm"
             onClick={onReset}
-            className="text-gray-700 hover:bg-gray-100"
           >
-            <span className="flex items-center gap-1">
-              <span>🔄</span>
-              Reset
-            </span>
+            🔄 Reset
           </Button>
-        </div>
+        </Inline>
 
         {/* Search Bar */}
-        <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">
+        <Stack gap="xs">
+          <Text variant="label" className="text-gray-700">
             Search Events
-          </label>
+          </Text>
           <Input
             type="text"
             placeholder="Search by title, description, or venue..."
@@ -93,68 +85,54 @@ export function EventsFilters({
             onChange={(e) => onFilterChange("search", e.target.value)}
             className="w-full"
           />
-        </div>
+        </Stack>
 
         {/* Category Filter */}
-        <div>
-          <label className="text-sm font-semibold text-gray-700 mb-3 block">
+        <Stack gap="xs">
+          <Text variant="label" className="text-gray-700">
             Category
-          </label>
-          <div className="flex flex-wrap gap-2">
+          </Text>
+          <Inline gap="xs" className="flex-wrap">
             {categories.map((cat) => (
-              <button
+              <Button
                 key={cat.value}
                 onClick={() => onFilterChange("category", cat.value)}
-                className={`
-                  px-4 py-2 rounded-lg font-medium text-sm transition-all
-                  ${
-                    filters.category === cat.value
-                      ? "bg-linear-to-r from-blue-600 to-blue-500 text-white shadow-md scale-105"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105"
-                  }
-                `}
+                variant={filters.category === cat.value ? "primary" : "secondary"}
+                size="sm"
               >
-                <span className="flex items-center gap-2">
-                  <span>{cat.icon}</span>
-                  {cat.label}
-                </span>
-              </button>
+                {cat.icon} {cat.label}
+              </Button>
             ))}
-          </div>
-        </div>
+          </Inline>
+        </Stack>
 
         {/* Time Filter */}
-        <div>
-          <label className="text-sm font-semibold text-gray-700 mb-3 block">
+        <Stack gap="xs">
+          <Text variant="label" className="text-gray-700">
             Time Period
-          </label>
-          <div className="flex gap-2">
+          </Text>
+          <Inline gap="xs">
             {timeFilters.map((time) => (
-              <button
+              <Button
                 key={time.value}
                 onClick={() => onFilterChange("timeFilter", time.value)}
-                className={`
-                  flex-1 px-4 py-2 rounded-lg font-medium text-sm transition-all
-                  ${
-                    filters.timeFilter === time.value
-                      ? "bg-linear-to-r from-green-600 to-green-500 text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }
-                `}
+                variant={filters.timeFilter === time.value ? "primary" : "secondary"}
+                size="sm"
+                className="flex-1"
               >
                 {time.label}
-              </button>
+              </Button>
             ))}
-          </div>
-        </div>
+          </Inline>
+        </Stack>
 
         {/* Sort Options */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-900">
+        <Grid gap="md" className="grid-cols-1 md:grid-cols-2">
           {/* Sort By */}
-          <div>
-            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+          <Stack gap="xs">
+            <Text variant="label" className="text-gray-700">
               Sort By
-            </label>
+            </Text>
             <select
               value={filters.sortBy}
               onChange={(e) =>
@@ -169,13 +147,13 @@ export function EventsFilters({
               <option value="title">Title</option>
               <option value="attendees">Attendees</option>
             </select>
-          </div>
+          </Stack>
 
           {/* Sort Order */}
-          <div>
-            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+          <Stack gap="xs">
+            <Text variant="label" className="text-gray-700">
               Sort Order
-            </label>
+            </Text>
             <select
               value={filters.sortOrder}
               onChange={(e) =>
@@ -189,16 +167,16 @@ export function EventsFilters({
               <option value="asc">Ascending</option>
               <option value="desc">Descending</option>
             </select>
-          </div>
-        </div>
+          </Stack>
+        </Grid>
 
         {/* Active Filters Summary */}
         {(filters.search || filters.category !== "all" || filters.timeFilter !== "upcoming") && (
-          <div className="pt-4 border-t border-gray-200">
-            <p className="text-sm font-semibold text-gray-700 mb-2">
+          <Stack gap="xs" className="pt-4 border-t border-gray-200">
+            <Text variant="label" className="text-gray-700">
               Active Filters:
-            </p>
-            <div className="flex flex-wrap gap-2">
+            </Text>
+            <Inline gap="xs" className="flex-wrap">
               {filters.search && (
                 <Badge variant="default">
                   Search: "{filters.search}"
@@ -214,10 +192,10 @@ export function EventsFilters({
                   Time: {filters.timeFilter}
                 </Badge>
               )}
-            </div>
-          </div>
+            </Inline>
+          </Stack>
         )}
-      </div>
+      </Stack>
     </Card>
   );
 }
