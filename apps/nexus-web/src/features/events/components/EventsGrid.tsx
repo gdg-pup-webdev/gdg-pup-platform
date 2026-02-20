@@ -10,9 +10,9 @@
 import React from "react";
 import { Event } from "../types";
 import { EventCard } from "./EventCard";
-import { Spinner } from "@/components/ui/Spinner";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Spinner } from '@packages/spark-ui';
+import { Card } from '@packages/spark-ui';
+import { Button } from '@packages/spark-ui';
 
 interface EventsGridProps {
   events: Event[];

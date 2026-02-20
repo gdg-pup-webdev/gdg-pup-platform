@@ -7,9 +7,9 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Card } from '@packages/spark-ui';
+import { Badge } from '@packages/spark-ui';
+import { Button } from '@packages/spark-ui';
 import { Event } from "../types";
 import Link from "next/link";
 
@@ -47,11 +47,11 @@ export function EventCard({ event }: EventCardProps) {
   const getCategoryColor = (category: string | null) => {
     switch (category?.toLowerCase()) {
       case "workshop":
-        return "info";
+        return "default";
       case "meetup":
         return "success";
       case "hackathon":
-        return "danger";
+        return "destructive";
       case "talk":
         return "warning";
       default:
@@ -66,7 +66,7 @@ export function EventCard({ event }: EventCardProps) {
       <Card className="h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer overflow-hidden border-2 border-gray-100 hover:border-blue-300">
         {/* Event Banner */}
         {event.banner_url ? (
-          <div className="relative h-48 w-full overflow-hidden bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+          <div className="relative h-48 w-full overflow-hidden bg-linear-to-br from-blue-100 via-purple-100 to-pink-100">
             <img
               src={event.banner_url}
               alt={event.title}
@@ -81,7 +81,7 @@ export function EventCard({ event }: EventCardProps) {
             </div>
           </div>
         ) : (
-          <div className="relative h-48 w-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
+          <div className="relative h-48 w-full bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center">
             <div className="text-center text-white">
               <div className="text-6xl mb-2">
                 {event.category === "workshop" && "🛠️"}
@@ -153,7 +153,7 @@ export function EventCard({ event }: EventCardProps) {
           <Button
             variant="primary"
             size="sm"
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md"
+            className="w-full bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md"
           >
             {isUpcoming ? "Register Now" : "View Details"}
           </Button>
