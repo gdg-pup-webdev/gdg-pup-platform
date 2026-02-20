@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { Stack, Inline, Text } from '@packages/spark-ui';
 import { SocialLink } from '../types';
 
 interface SocialLinksProps {
@@ -26,12 +27,12 @@ export function SocialLinks({ links, portfolioUrl }: SocialLinksProps) {
   }
 
   return (
-    <div className="border-t border-white/10 pt-8 mt-8">
-      <h2 className="text-xl font-semibold text-white mb-4 text-center">
+    <Stack gap="md" className="border-t border-white/10 pt-8">
+      <Text variant="heading-3" className="text-white text-center">
         Connect With Me
-      </h2>
+      </Text>
       
-      <div className="flex flex-wrap justify-center gap-4">
+      <Inline gap="md" justify="center" className="flex-wrap">
         {/* Portfolio link (if provided) */}
         {portfolioUrl && (
           <a
@@ -57,14 +58,14 @@ export function SocialLinks({ links, portfolioUrl }: SocialLinksProps) {
             className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors border border-white/10"
           >
             {/* Icon placeholder - you can add specific icons for each platform */}
-            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-400 to-pink-400" />
+            <div className="w-5 h-5 rounded-full bg-linear-to-br from-purple-400 to-pink-400" />
             
             <span className="text-white font-medium capitalize">
               {link.platform}
             </span>
           </a>
         ))}
-      </div>
-    </div>
+      </Inline>
+    </Stack>
   );
 }
