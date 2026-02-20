@@ -25,7 +25,7 @@ export function ProfileAvatar({ avatarUrl, name }: ProfileAvatarProps) {
       {/* Animated gradient border container */}
       <div className="relative">
         {/* Gradient border with animation */}
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full animate-spin-slow blur-sm" />
+        <div className="absolute inset-0 bg-linear-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full animate-spin-slow blur-sm" />
         
         {/* Avatar container with white bg to create border effect */}
         <div className="relative bg-slate-900 rounded-full p-2">
