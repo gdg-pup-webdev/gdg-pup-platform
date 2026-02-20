@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from "@/components/ui";
+import { Card } from "@packages/spark-ui";
 
 export default function WhoIsGDGPage() {
   //   Dummy data pa lang

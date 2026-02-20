@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from "@/components/ui";
+import { Card } from "@packages/spark-ui";
 import Link from "next/link";
 
 export default function AboutPage() {

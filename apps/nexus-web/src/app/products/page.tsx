@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Badge } from "@/components/ui";
+import { Card, Badge } from "@packages/spark-ui";
 
 export default function ProductsPage() {
   //   Dummy data pa lang

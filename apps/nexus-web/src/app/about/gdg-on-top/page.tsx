@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Badge } from "@/components/ui";
+import { Card, Badge } from "@packages/spark-ui";
 
 export default function GDGOnTopPage() {
   //   Dummy data pa lang
@@ -56,7 +56,7 @@ export default function GDGOnTopPage() {
                 key={idx}
                 className="text-center hover:shadow-lg transition-shadow"
               >
-                <Badge variant="info" className="mb-4">
+                <Badge variant="default" className="mb-4">
                   {achievement.badge}
                 </Badge>
                 <h3 className="text-2xl font-bold text-blue-600 mb-2">

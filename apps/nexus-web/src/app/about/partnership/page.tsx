@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Button, Input } from "@/components/ui";
+import { Card, Button, Input } from "@packages/spark-ui";
 import { useState } from "react";
 
 export default function PartnershipPage() {
@@ -115,24 +115,32 @@ export default function PartnershipPage() {
           </h2>
           <Card className="max-w-2xl mx-auto">
             <form className="space-y-6">
-              <Input
-                label="Organization Name"
-                placeholder="Your company or organization"
-                value={formData.organization}
-                onChange={(e) =>
-                  setFormData({ ...formData, organization: e.target.value })
-                }
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Organization Name
+                </label>
+                <Input
+                  placeholder="Your company or organization"
+                  value={formData.organization}
+                  onChange={(e) =>
+                    setFormData({ ...formData, organization: e.target.value })
+                  }
+                />
+              </div>
 
-              <Input
-                label="Email Address"
-                type="email"
-                placeholder="contact@example.com"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Email Address
+                </label>
+                <Input
+                  type="email"
+                  placeholder="contact@example.com"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
+              </div>
 
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">
