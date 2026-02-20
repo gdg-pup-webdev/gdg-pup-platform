@@ -31,11 +31,26 @@ export const row = publicUserRowSchema;
  * Includes enhanced validation for email, display name, and avatar URL.
  */
 export const insertDTO = publicUserInsertSchema.extend({
-  email: z.email(),
-  display_name: z.string().min(2).max(50),
-  first_name: z.string().optional().nullable(),
-  last_name: z.string().optional().nullable(),
-  avatar_url: z.url().optional().nullable(),
+  email: z.email().openapi({
+    description: "The unique email address of the user.",
+    example: "user@example.com",
+  }),
+  display_name: z.string().min(2).max(50).openapi({
+    description: "The name displayed on the user's profile and across the platform.",
+    example: "Juan Dela Cruz",
+  }),
+  first_name: z.string().optional().nullable().openapi({
+    description: "The user's legal first name.",
+    example: "Juan",
+  }),
+  last_name: z.string().optional().nullable().openapi({
+    description: "The user's legal last name.",
+    example: "Dela Cruz",
+  }),
+  avatar_url: z.url().optional().nullable().openapi({
+    description: "URL pointing to the user's profile picture.",
+    example: "https://example.com/avatar.png",
+  }),
 });
 
 /**
@@ -43,9 +58,15 @@ export const insertDTO = publicUserInsertSchema.extend({
  * All fields are optional, with the same validation rules as insertDTO.
  */
 export const updateDTO = publicUserUpdateSchema.extend({
-  email: z.email().optional(),
-  display_name: z.string().min(2).max(50).optional(),
-  avatar_url: z.url().optional().nullable(),
+  email: z.email().optional().openapi({
+    description: "Update the user's email address.",
+  }),
+  display_name: z.string().min(2).max(50).optional().openapi({
+    description: "Update the user's display name.",
+  }),
+  avatar_url: z.url().optional().nullable().openapi({
+    description: "Update the URL of the user's profile picture.",
+  }),
 });
 
 /**
