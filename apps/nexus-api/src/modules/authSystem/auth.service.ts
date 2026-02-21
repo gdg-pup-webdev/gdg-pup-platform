@@ -1,14 +1,20 @@
-import { supabase } from "@/lib/supabase.js";
+import { createAuthClient, supabase } from "@/lib/supabase.js";
 import { BadRequestError } from "@/errors/HttpError.js";
 import { AuthError } from "@supabase/supabase-js";
 import { memberService } from "../memberSystem/member.service.js";
 import { userRepositoryInstance } from "../userSystem/users/user.repository.js";
 
 export class AuthService {
-  constructor(private readonly supabaseClient = supabase) {}
+  constructor(private readonly _customClient?: any) {}
+
+  private get client() {
+    // Return custom injected client if provided (for mocking/tests)
+    // Otherwise return a fresh client per operation to prevent session bleed
+    return this._customClient || createAuthClient();
+  }
 
   async verifyEmail(token_hash: string, type: any) {
-    const { data, error } = await this.supabaseClient.auth.verifyOtp({
+    const { data, error } = await this.client.auth.verifyOtp({
       token_hash,
       type,
     });
@@ -43,6 +49,8 @@ export class AuthService {
     display_name?: string,
   ): Promise<any> {
     // 1. Check if email exists in gdg_members table via MemberService
+    console.log("Checking if email exists in gdg_members table via MemberService");
+    console.log(email);
     const member = await memberService.checkMemberByEmail(email);
     if (!member) {
       throw new BadRequestError(
@@ -56,7 +64,7 @@ export class AuthService {
       throw new BadRequestError("Account already exists with this email.");
     }
 
-    const { data, error } = await this.supabaseClient.auth.signUp({
+    const { data, error } = await this.client.auth.signUp({
       email,
       password,
       options: {
@@ -86,7 +94,7 @@ export class AuthService {
       );
     }
 
-    const { data, error } = await this.supabaseClient.auth.signInWithPassword({
+    const { data, error } = await this.client.auth.signInWithPassword({
       email,
       password,
     });
@@ -103,7 +111,7 @@ export class AuthService {
   }
 
   async signInWithOAuth(provider: "google", redirectUrl?: string) {
-    const { data, error } = await this.supabaseClient.auth.signInWithOAuth({
+    const { data, error } = await this.client.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: redirectUrl || process.env.NEXT_PUBLIC_SITE_URL,
@@ -126,8 +134,9 @@ export class AuthService {
     refresh_token?: string;
   }) {
     if (payload.code) {
-      const { data, error } =
-        await this.supabaseClient.auth.exchangeCodeForSession(payload.code);
+      const { data, error } = await this.client.auth.exchangeCodeForSession(
+        payload.code,
+      );
 
       if (error) {
         throw new BadRequestError(error.message);
@@ -140,7 +149,7 @@ export class AuthService {
             await this.signOut(data.session.access_token);
             // Critical: Delete the user from auth system to prevent zombie account
             if (data.user.id) {
-              await this.supabaseClient.auth.admin.deleteUser(data.user.id);
+              await this.client.auth.admin.deleteUser(data.user.id);
             }
           }
           throw new BadRequestError(
@@ -156,7 +165,7 @@ export class AuthService {
       };
     } else if (payload.access_token) {
       // Validate existing token (Implicit Flow handling)
-      const { data: userData, error } = await this.supabaseClient.auth.getUser(
+      const { data: userData, error } = await this.client.auth.getUser(
         payload.access_token,
       );
 
@@ -173,7 +182,7 @@ export class AuthService {
           await this.signOut(payload.access_token);
           // Critical: Delete the user from auth system to prevent zombie account
           if (userData.user.id) {
-            await this.supabaseClient.auth.admin.deleteUser(userData.user.id);
+            await this.client.auth.admin.deleteUser(userData.user.id);
           }
           throw new BadRequestError(
             "Access denied: Email is not a registered GDG member.",
@@ -196,7 +205,7 @@ export class AuthService {
   }
 
   async getUser(token: string) {
-    const { data, error } = await this.supabaseClient.auth.getUser(token);
+    const { data, error } = await this.client.auth.getUser(token);
 
     if (error) {
       throw new BadRequestError(error.message);
@@ -209,7 +218,7 @@ export class AuthService {
   }
 
   async signOut(token: string) {
-    const { error } = await this.supabaseClient.auth.admin.signOut(token);
+    const { error } = await this.client.auth.admin.signOut(token);
 
     if (error) {
       throw new BadRequestError(error.message);
