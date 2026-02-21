@@ -15,7 +15,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Close Issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const body = context.payload.pull_request.body;
