@@ -38,7 +38,7 @@ async function syncAndGenerate() {
 
   logger.log("Compiling...");
   try {
-    execSync(`npx tsc -p ${ROOT_ABSOLUTE}`, { stdio: "inherit" });
+    execSync(`npx tsc -p "${ROOT_ABSOLUTE}"`, { stdio: "inherit" });
     logger.log("✅ Final build ready in dist/build");
   } catch (tscError) {
     logger.error(
