@@ -1,9 +1,9 @@
 import { RequestHandler } from "express"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress"; 
-import { UnauthorizedError } from "@/errors/HttpError.js";
-import { EventService } from "@/modules/eventSystem/events/event.service";
+import { UnauthorizedError } from "@/errors/HttpError.js"; 
 import { AttendanceService } from "@/modules/eventSystem/deprecated/attendance/attendance.service";
+import { EventService } from "@/modules/eventSystem/deprecated/events/event.service";
 
 /**
  * Controller for handling event-related HTTP requests.

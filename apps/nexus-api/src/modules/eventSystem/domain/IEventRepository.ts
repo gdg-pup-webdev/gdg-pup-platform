@@ -13,4 +13,5 @@ export abstract class IEventRepository {
     pageNumber: number,
     pageSize: number,
   ): Promise<{ list: Event[]; count: number }>;
+
 }

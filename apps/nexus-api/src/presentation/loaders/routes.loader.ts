@@ -23,8 +23,7 @@ import { AuthRouter } from "../routes/v1/auth/auth.route";
 import { AuthHttpController } from "../routes/v1/auth/auth.controller";
 import { supabase } from "@/lib/supabase";
 import { EventsRouter } from "../routes/v1/events/event.route";
-import { EventsHttpController } from "../routes/v1/events/event.controller";
-import { EventService } from "@/modules/eventSystem/events/event.service";
+import { EventsHttpController } from "../routes/v1/events/event.controller"; 
 import { authMiddlewareInstance } from "../middlewares/auth.middleware";
 import { AttendanceService } from "@/modules/eventSystem/deprecated/attendance/attendance.service";
 import { HealthRouter } from "../routes/v1/health/healthCheck.route";
@@ -71,6 +70,7 @@ import { ProjectService } from "@/modules/userResourceSystem/projects/project.se
 import { TransactionsHttpController } from "../routes/v1/users/points/transactions/transaction.controller";   
 import { TransactionService } from "@/deprecated/walletSystem/transactions/transaction.service";
 import { economySystemRouterInstance } from "@/deprecated";
+import { EventService } from "@/modules/eventSystem/deprecated/events/event.service";
 
 export const routesLoader = (app: Express) => {
   ///////////////////////////////////////////////

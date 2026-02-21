@@ -1,4 +1,4 @@
-import { Attendance } from "./Attendance";
+import { Attendance } from "./Attendance"; 
 
 export type EventProps = {
   id: string;
@@ -56,16 +56,15 @@ export class Event {
     };
   };
 
-  addAttendance = (userId: string, method: string) {
-    const newAttendance = new Attendance({
-      userId,
+  addAttendance = (userId: string, method: string) => {
+    const newAttendance =   Attendance.create({
+      userId: userId,
       eventId: this._props.id,
-      checkInMethod: method,
-      checkedInAt: new Date(),
-    })
+      checkInMethod: method, 
+    });
 
     this._props.attendees_count += 1;
 
     return newAttendance;
-  }
+  };
 }

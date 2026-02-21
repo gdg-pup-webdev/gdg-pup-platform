@@ -2,12 +2,9 @@ import { models } from "@packages/nexus-api-contracts";
 import {
   EventRepository,
   eventRepositoryInstance,
-} from "./event.repository.js";
-import {
-  AttendanceService,
-  attendanceServiceInstance,
-} from "../deprecated/attendance/attendance.service.js";  
+} from "./event.repository.js"; 
 import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/wallets/wallet.service.js";
+import { AttendanceService } from "../attendance/attendance.service.js";
 
 /**
  * Service for managing event business logic.
@@ -16,7 +13,7 @@ import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/
 export class EventService {
   constructor(
     private readonly eventRepository: EventRepository = eventRepositoryInstance,
-    private readonly attendanceService: AttendanceService = attendanceServiceInstance,
+    private readonly attendanceService: AttendanceService = attendanceService,
     private readonly walletService: WalletService = walletServiceInstance,
   ) {}
 

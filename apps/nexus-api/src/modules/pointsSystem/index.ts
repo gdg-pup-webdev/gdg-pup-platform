@@ -1,6 +1,6 @@
 import { MockTransactionRepository } from "./infrastructure/MockTransactionRepository";
 import { MockWalletRepository } from "./infrastructure/MockWalletRepository";
-import { PointSystemController } from "./PointSystem";
+import { PointSystemController } from "./PointSystemController";
 import { GetOneTransaction } from "./useCases/GetOneTransaction";
 import { GetUserWallet } from "./useCases/GetUserWallet";
 import { GivePointsToUser } from "./useCases/GivePointsToUser";
@@ -40,4 +40,4 @@ export const pointSystemController = new PointSystemController(
   listUserTransactionsUseCase,
   takePointsFromUserUseCase,
 );
-export * from "./PointSystem";
+export * from "./PointSystemController";
