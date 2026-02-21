@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Radio - Form radio input
- * 
+ *
  * Styled radio input with label and error state support.
  * Uses theme tokens for all colors.
  */
@@ -32,7 +32,7 @@ export const radioVariants = cva(
     defaultVariants: {
       size: "md",
     },
-  }
+  },
 );
 
 export const radioLabelVariants = cva([

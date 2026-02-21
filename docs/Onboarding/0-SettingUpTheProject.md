@@ -4,15 +4,14 @@
 
 # Project Setup
 
-
 This guide will walk you through setting up your local development environment. This repository utilizes a monorepo structure managed by **pnpm** and **Turborepo**.
 
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
 
--   [Node.js](https://nodejs.org/) (v18 or higher recommended)
--   [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [Git](https://git-scm.com/)
 
 ## Setup Steps
 
@@ -31,8 +30,8 @@ cd gdgnexussecondclone
 
 The project requires environment variables for configuration.
 
--   Obtain the necessary `.env` files from the project organizers.
--   Place them in the corresponding folders as instructed.
+- Obtain the necessary `.env` files from the project organizers.
+- Place them in the corresponding folders as instructed.
 
 ### 3. Install Dependencies
 
@@ -65,5 +64,5 @@ You are now ready to start developing!
 
 To learn more about the tools used in this project, refer to the following resources:
 
--   [pnpm Documentation](https://pnpm.io/pnpm-cli)
--   [Turborepo Documentation](https://turborepo.dev/docs)
+- [pnpm Documentation](https://pnpm.io/pnpm-cli)
+- [Turborepo Documentation](https://turborepo.dev/docs)

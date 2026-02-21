@@ -42,10 +42,11 @@ import { Alert } from "@packages/spark-ui";
 
 <Alert variant="info" size="md">
   Your changes have been saved
-</Alert>
+</Alert>;
 ```
 
 **Props:**
+
 - `variant`: "info" | "success" | "warning" | "error"
 - `size`: "sm" | "md" | "lg"
 
@@ -66,6 +67,7 @@ import { Avatar } from "@packages/spark-ui";
 ```
 
 **Props:**
+
 - `src`: Image URL
 - `alt`: Alternative text for image
 - `fallback`: Text to show when image fails (defaults to first letter of alt)
@@ -85,11 +87,13 @@ import { Badge } from "@packages/spark-ui";
 ```
 
 **Props:**
+
 - `variant`: "default" | "secondary" | "success" | "warning" | "destructive" | "outline" | "muted"
 - `size`: "sm" | "md" | "lg"
 - `as`: Polymorphic component type (defaults to "span")
 
 **Use cases:**
+
 - Event categories/tags
 - Status indicators
 - Notification counts
@@ -106,10 +110,11 @@ import { Button } from "@packages/spark-ui";
 
 <Button variant="primary" size="md" onClick={handleClick}>
   Click me
-</Button>
+</Button>;
 ```
 
 **Props:**
+
 - `variant`: "primary" | "secondary" | "outline" | "ghost" | "destructive"
 - `size`: "sm" | "md" | "lg"
 
@@ -125,7 +130,7 @@ import { Card } from "@packages/spark-ui";
 <Card>
   <h2>Card Title</h2>
   <p>Card content goes here</p>
-</Card>
+</Card>;
 ```
 
 ---
@@ -137,16 +142,17 @@ Form checkbox input with label and validation support.
 ```tsx
 import { Checkbox } from "@packages/spark-ui";
 
-<Checkbox 
+<Checkbox
   label="Accept terms and conditions"
   helperText="You must accept to continue"
   error={hasError}
   errorMessage="This field is required"
   size="md"
-/>
+/>;
 ```
 
 **Props:**
+
 - `label`: Label text displayed next to checkbox
 - `helperText`: Optional helper text below checkbox
 - `error`: Boolean to show error state
@@ -155,6 +161,7 @@ import { Checkbox } from "@packages/spark-ui";
 - All standard input attributes (`checked`, `disabled`, `onChange`, etc.)
 
 **Accessibility:**
+
 - Automatically generates unique IDs for label association
 - Supports ARIA attributes
 - Includes aria-describedby for helper text and errors
@@ -168,15 +175,16 @@ Text input field component.
 ```tsx
 import { Input } from "@packages/spark-ui";
 
-<Input 
-  type="text" 
+<Input
+  type="text"
   placeholder="Enter your name"
   variant="default"
   inputSize="md"
-/>
+/>;
 ```
 
 **Props:**
+
 - `variant`: "default" | "error"
 - `inputSize`: "sm" | "md" | "lg"
 
@@ -189,16 +197,17 @@ Form radio input with label and validation support.
 ```tsx
 import { Radio } from "@packages/spark-ui";
 
-<Radio 
+<Radio
   label="Option 1"
   name="choice"
   value="option1"
   helperText="This is the first option"
   size="md"
-/>
+/>;
 ```
 
 **Props:**
+
 - `label`: Label text displayed next to radio button
 - `helperText`: Optional helper text below radio
 - `error`: Boolean to show error state
@@ -207,6 +216,7 @@ import { Radio } from "@packages/spark-ui";
 - All standard input attributes (`name`, `value`, `checked`, `disabled`, etc.)
 
 **Accessibility:**
+
 - Auto-generated IDs for label association
 - ARIA support
 - Proper radio group semantics
@@ -231,10 +241,12 @@ import { Skeleton } from "@packages/spark-ui";
 ```
 
 **Props:**
+
 - `variant`: "default" | "circle" | "text"
 - `className`: Custom dimensions (required)
 
 **Use cases:**
+
 - Content loading states
 - Card skeletons
 - Profile skeletons
@@ -249,10 +261,11 @@ Loading spinner indicator.
 ```tsx
 import { Spinner } from "@packages/spark-ui";
 
-<Spinner size="md" />
+<Spinner size="md" />;
 ```
 
 **Props:**
+
 - `size`: "sm" | "md" | "lg"
 
 ---
@@ -264,17 +277,18 @@ Multi-line text input with character counting.
 ```tsx
 import { Textarea } from "@packages/spark-ui";
 
-<Textarea 
+<Textarea
   label="Description"
   placeholder="Enter description..."
   helperText="Max 500 characters"
   maxLength={500}
   showCount
   textareaSize="md"
-/>
+/>;
 ```
 
 **Props:**
+
 - `label`: Label text above textarea
 - `helperText`: Helper text below textarea
 - `error`: Boolean for error state
@@ -285,6 +299,7 @@ import { Textarea } from "@packages/spark-ui";
 - All standard textarea attributes
 
 **Features:**
+
 - Character counter (when maxLength and showCount are set)
 - Error state styling
 - Adjustable min-height based on size
@@ -305,24 +320,28 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@packages/spark-ui";
   </TabsList>
   <TabsContent value="tab1">Overview content</TabsContent>
   <TabsContent value="tab2">Details content</TabsContent>
-</Tabs>
+</Tabs>;
 ```
 
 **Components:**
+
 - `Tabs`: Container with controlled/uncontrolled state management
 - `TabsList`: Container for tab triggers
 - `TabsTrigger`: Individual tab button
 - `TabsContent`: Content panel for each tab
 
 **TabsList Props:**
+
 - `variant`: "default" | "pills"
 
 **Tabs Props:**
+
 - `defaultValue`: Default active tab (uncontrolled)
 - `value`: Controlled active tab value
 - `onValueChange`: Callback when tab changes
 
 **Features:**
+
 - Controlled and uncontrolled modes
 - Two visual variants (default with underline, pills with background)
 - ARIA compliant (role="tablist", role="tab", role="tabpanel")
@@ -339,15 +358,17 @@ import { Tooltip } from "@packages/spark-ui";
 
 <Tooltip content="This is helpful information" side="top">
   <button>Hover me</button>
-</Tooltip>
+</Tooltip>;
 ```
 
 **Props:**
+
 - `content`: Tooltip text or content (required)
 - `side`: "top" | "right" | "bottom" | "left"
 - `showArrow`: Boolean to display arrow pointer
 
 **Features:**
+
 - Hover and focus triggers
 - Four positioning options
 - Fade in/out animations
@@ -355,6 +376,7 @@ import { Tooltip } from "@packages/spark-ui";
 - Theme token styling
 
 **Use cases:**
+
 - Help text for icons
 - Additional context for buttons
 - Explanations for form fields
@@ -372,7 +394,7 @@ import { ToastProvider, useToast } from "@packages/spark-ui";
 // Wrap app with provider
 <ToastProvider>
   <App />
-</ToastProvider>
+</ToastProvider>;
 
 // Use in components
 const { addToast } = useToast();
@@ -386,6 +408,7 @@ addToast({
 ```
 
 **Toast Props:**
+
 - `title`: Toast title text
 - `description`: Additional description text
 - `variant`: "default" | "success" | "warning" | "destructive"
@@ -393,6 +416,7 @@ addToast({
 - `action`: Optional action button `{ label: string; onClick: () => void }`
 
 **Hook API:**
+
 ```tsx
 const { addToast, removeToast, clearToasts } = useToast();
 
@@ -407,6 +431,7 @@ clearToasts();
 ```
 
 **Features:**
+
 - Context-based toast management
 - Multiple toasts stacking
 - Auto-dismiss with configurable duration
@@ -416,6 +441,7 @@ clearToasts();
 - Manual dismiss with close button
 
 **Architecture:**
+
 - `ToastProvider`: Context provider (wrap app root)
 - `useToast`: Hook to trigger toasts from anywhere
 - `Toast`: Individual toast component (rendered by provider)
@@ -435,12 +461,13 @@ const [errors, setErrors] = useState({});
   label="Agree to terms"
   error={!!errors.terms}
   errorMessage={errors.terms}
-/>
+/>;
 ```
 
 ### Accessibility
 
 All form components:
+
 - Generate unique IDs automatically using `useId()`
 - Connect labels with inputs via `htmlFor`/`id`
 - Link helper text and errors via `aria-describedby`
@@ -449,6 +476,7 @@ All form components:
 ### Sizing
 
 All components support consistent size props:
+
 - `sm`: Compact size for dense UIs
 - `md`: Default size for most use cases
 - `lg`: Large size for emphasis or accessibility
@@ -465,10 +493,10 @@ Never use hardcoded colors or spacing:
 
 ```tsx
 // ❌ Bad
-className="bg-blue-500 text-white"
+className = "bg-blue-500 text-white";
 
 // ✅ Good
-className="bg-primary text-primary-foreground"
+className = "bg-primary text-primary-foreground";
 ```
 
 ### 2. CVA for Variants
@@ -505,7 +533,7 @@ All components should forward refs:
 export const Component = React.forwardRef<HTMLDivElement, ComponentProps>(
   ({ className, ...props }, ref) => {
     return <div ref={ref} className={className} {...props} />;
-  }
+  },
 );
 
 Component.displayName = "Component";
@@ -516,8 +544,9 @@ Component.displayName = "Component";
 Provide comprehensive type definitions:
 
 ```tsx
-export interface ComponentProps 
-  extends React.HTMLAttributes<HTMLDivElement>,
+export interface ComponentProps
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof componentStyles> {
   // Additional props
 }
@@ -527,10 +556,10 @@ export interface ComponentProps
 
 Include examples in JSDoc:
 
-```tsx
+````tsx
 /**
  * A brief description of the component.
- * 
+ *
  * @example
  * ```tsx
  * <Component variant="primary" size="md">
@@ -538,7 +567,7 @@ Include examples in JSDoc:
  * </Component>
  * ```
  */
-```
+````
 
 ---
 

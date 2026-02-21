@@ -1,15 +1,15 @@
 /**
  * @file certificate.service.ts
  * @description Service layer for managing user certificates.
- * This class handles the business logic, data orchestration, and error mapping 
- * for certificate-related operations, serving as the bridge between controllers 
+ * This class handles the business logic, data orchestration, and error mapping
+ * for certificate-related operations, serving as the bridge between controllers
  * and the database repository.
  */
 
 import {
   CertificateRepository,
   certificateRepositoryInstance,
-} from "./certificate.repository.js"; 
+} from "./certificate.repository.js";
 import { models } from "@packages/nexus-api-contracts";
 
 type certificateInsertDTO = models.userResourceSystem.certificate.insertDTO;
@@ -33,8 +33,8 @@ export class CertificateService {
    * @param userId - The unique identifier of the user.
    * @returns {Promise<{list: any[], count: number}>} Paginated result of certificates.
    */
-  listCertificatesOfUser = async (userId: string) => { 
-    return  await this.certificateRepository.listCertificatesOfUser(userId);
+  listCertificatesOfUser = async (userId: string) => {
+    return await this.certificateRepository.listCertificatesOfUser(userId);
   };
 
   /**
@@ -42,7 +42,7 @@ export class CertificateService {
    * Retrieves all certificates in the system.
    * @returns {Promise<{list: any[], count: number}>} Paginated result of all certificates.
    */
-  listCertificates = async () => { 
+  listCertificates = async () => {
     return await this.certificateRepository.listCertificates();
   };
 
@@ -51,8 +51,8 @@ export class CertificateService {
    * Fetches detailed information for a single certificate by ID.
    * @param id - The unique ID of the certificate.
    */
-  getOneCertificate = async (id: string) => { 
-    return  await this.certificateRepository.getOneCertificate(id);
+  getOneCertificate = async (id: string) => {
+    return await this.certificateRepository.getOneCertificate(id);
   };
 
   /**
@@ -60,8 +60,8 @@ export class CertificateService {
    * Validates and persists a new certificate for a user.
    * @param dto - Data containing title, description, image URL, and user_id.
    */
-  createCertificate = async (dto: certificateInsertDTO) => { 
-    return  await this.certificateRepository.createCertificate(dto);
+  createCertificate = async (dto: certificateInsertDTO) => {
+    return await this.certificateRepository.createCertificate(dto);
   };
 
   /**
@@ -70,7 +70,7 @@ export class CertificateService {
    * @param id - The ID of the certificate to remove.
    */
   deleteCertificate = async (id: string) => {
-     await this.certificateRepository.deleteCertificate(id)
+    await this.certificateRepository.deleteCertificate(id);
   };
 
   /**
@@ -79,7 +79,7 @@ export class CertificateService {
    * @param id - The ID of the certificate to update.
    * @param dto - Partial data containing fields to modify.
    */
-  updateCertificate = async (id: string, dto: certificateUpdateDTO) => { 
+  updateCertificate = async (id: string, dto: certificateUpdateDTO) => {
     return await this.certificateRepository.updateCertificate(id, dto);
   };
 }

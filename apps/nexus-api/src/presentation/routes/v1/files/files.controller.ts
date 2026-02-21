@@ -1,7 +1,7 @@
 import { FilesModuleController } from "@/modules/filesModule";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 
 export class FilesHttpController {
   constructor(private filesModuleController: FilesModuleController) {}

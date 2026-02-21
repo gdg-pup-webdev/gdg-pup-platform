@@ -58,7 +58,11 @@ export const ThreeColumns: Story = {
     children: (
       <>
         {Array.from({ length: 9 }, (_, i) => (
-          <Box key={i} padding="lg" className="bg-primary text-primary-foreground">
+          <Box
+            key={i}
+            padding="lg"
+            className="bg-primary text-primary-foreground"
+          >
             Item {i + 1}
           </Box>
         ))}
@@ -74,7 +78,11 @@ export const FourColumns: Story = {
     children: (
       <>
         {Array.from({ length: 12 }, (_, i) => (
-          <Box key={i} padding="lg" className="bg-primary text-primary-foreground">
+          <Box
+            key={i}
+            padding="lg"
+            className="bg-primary text-primary-foreground"
+          >
             {i + 1}
           </Box>
         ))}

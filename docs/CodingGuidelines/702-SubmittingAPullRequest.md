@@ -58,6 +58,7 @@ The PR title should be **readable and informative**. Follow the same convention 
 **Format:** `<type>(<scope>): <brief description>`
 
 **Example:**
+
 ```
 feat(nexus-api): implement achievement tier validation
 ```
@@ -67,12 +68,14 @@ See **[704 - Commit Conventions](./704-CommitConventions.md)** for details on ty
 ### Title Examples
 
 ✅ **Good Titles:**
+
 - `feat(nexus-web): add event registration form`
 - `fix(identity-api): resolve token expiration bug`
 - `refactor(nexus-api): restructure user service using layered architecture`
 - `docs(repository): update onboarding guide with troubleshooting steps`
 
 ❌ **Bad Titles:**
+
 - `Fixed stuff` (too vague)
 - `Update` (no context)
 - `Made changes to the user service` (missing type and scope)
@@ -88,13 +91,16 @@ The PR body should provide context for reviewers. Use the following structure:
 Link the issue so it automatically closes when merged.
 
 **Format:**
+
 - `Closes #102`
 - `Fixes #65`
 - `Resolves #234`
 
 **Example:**
+
 ```markdown
 ## Related Issue
+
 Closes #102
 ```
 
@@ -108,8 +114,10 @@ Provide a **high-level explanation** of the changes.
 - **What** does it accomplish?
 
 **Example:**
+
 ```markdown
 ## Summary
+
 This PR introduces logic for validating user achievement tiers based on
 the new contract specifications in nexus-api. Previously, tier validation
 was missing, allowing invalid tiers to be assigned to users.
@@ -124,8 +132,10 @@ Explain **important strategies and decisions** involved in the pull request.
 - Explanations for any deviations from coding guidelines (see **[501 - The Grey Area](./501-TheGreyArea.md)**)
 
 ** Example:**
+
 ```markdown
 ## Strategies
+
 - Used a middleware approach for tier validation to keep controllers lightweight
 - Implemented caching for tier calculations to improve performance
 ```
@@ -140,8 +150,10 @@ Provide **any additional context** that could be useful for the reviewer.
 - Screenshots/videos for UI changes
 
 **Example:**
+
 ```markdown
 ## Additional Information
+
 - ⚠️ **Breaking Change**: The `UserTier` type now requires explicit values
 - Migration: Existing users will need tier recalculation (run `pnpm run migrate:tiers`)
 - Follow-up: Add tier history tracking (tracked in #234)
@@ -154,21 +166,26 @@ Provide **any additional context** that could be useful for the reviewer.
 **Title:** `feat(nexus-api): implement user achievement tier validation`
 
 **Body:**
+
 ```markdown
 ## Related Issue
+
 Closes #102
 
 ## Summary
+
 This PR adds validation logic for user achievement tiers in nexus-api.
 Previously, users could be assigned invalid tiers, causing inconsistencies
 in the achievement system.
 
 ## Strategies
+
 - Implemented tier validation middleware to centralize logic
 - Added caching layer for tier calculations using Redis
 - Tier calculations run async to avoid blocking the main request thread
 
 ## Additional Information
+
 - All existing tests pass
 - Added 12 new test cases for tier validation edge cases
 - Tested with 10K users in staging environment
@@ -187,6 +204,7 @@ in the achievement system.
 ### Final Merge
 
 Once approved:
+
 - **Squash commits** if there are many small commits
 - **Merge** using the "Squash and merge" button on GitHub
 - **Delete the branch** after merging

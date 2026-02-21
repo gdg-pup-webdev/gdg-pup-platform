@@ -1,12 +1,20 @@
 /**
  * Loading state component for the profile page
- * 
+ *
  * Displays a skeleton loader while user data is being fetched.
  * This provides visual feedback that content is loading.
  */
 
-import React from 'react';
-import { Spinner, Container, Stack, Text, Grid, Skeleton, Inline } from '@packages/spark-ui';
+import React from "react";
+import {
+  Spinner,
+  Container,
+  Stack,
+  Text,
+  Grid,
+  Skeleton,
+  Inline,
+} from "@packages/spark-ui";
 
 export function LoadingState() {
   return (

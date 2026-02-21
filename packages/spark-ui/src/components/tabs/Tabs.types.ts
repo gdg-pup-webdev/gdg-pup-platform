@@ -1,5 +1,9 @@
 import type { VariantProps } from "class-variance-authority";
-import type { tabsListStyles, tabsTriggerStyles, tabsContentStyles } from "./Tabs.styles";
+import type {
+  tabsListStyles,
+  tabsTriggerStyles,
+  tabsContentStyles,
+} from "./Tabs.styles";
 
 export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -17,11 +21,13 @@ export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export interface TabsListProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof tabsListStyles> {}
 
 export interface TabsTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof tabsTriggerStyles> {
   /**
    * The value that identifies this tab
@@ -34,7 +40,8 @@ export interface TabsTriggerProps
 }
 
 export interface TabsContentProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof tabsContentStyles> {
   /**
    * The value that identifies this content panel

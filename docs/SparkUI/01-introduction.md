@@ -7,6 +7,7 @@
 Spark-UI is the shared UI foundation for all frontend applications.
 
 Its goals are to:
+
 - Ensure visual and interaction consistency
 - Centralize accessibility and UI behavior
 - Reduce duplication and ad-hoc styling

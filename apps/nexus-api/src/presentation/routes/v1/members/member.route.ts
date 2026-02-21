@@ -1,10 +1,8 @@
 import { Router } from "express";
-import { MembersHttpController  } from "./member.controller.js";
+import { MembersHttpController } from "./member.controller.js";
 
 export class MemberRouter {
-  constructor(
-    private readonly controller: MembersHttpController ,
-  ) {}
+  constructor(private readonly controller: MembersHttpController) {}
 
   getRouter(): Router {
     const router = Router();
@@ -12,4 +10,3 @@ export class MemberRouter {
     return router;
   }
 }
- 

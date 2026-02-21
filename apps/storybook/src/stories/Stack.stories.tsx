@@ -117,7 +117,10 @@ export const SpaceBetween: Story = {
         <Box padding="md" className="bg-success text-success-foreground">
           Middle
         </Box>
-        <Box padding="md" className="bg-destructive text-destructive-foreground">
+        <Box
+          padding="md"
+          className="bg-destructive text-destructive-foreground"
+        >
           Bottom
         </Box>
       </>

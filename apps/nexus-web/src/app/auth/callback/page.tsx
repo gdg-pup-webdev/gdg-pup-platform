@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setCookie } from "cookies-next";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text } from "@packages/spark-ui";
 
 import { useAuthContext } from "@/providers/AuthProvider";
 
@@ -204,8 +204,12 @@ function AuthCallbackContent() {
       <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-green-50 to-blue-50">
         <Stack gap="md" className="text-center">
           <div className="text-green-500 text-6xl">✓</div>
-          <Text variant="heading-2" className="text-gray-800">Success!</Text>
-          <Text variant="body" className="text-gray-700">{message}</Text>
+          <Text variant="heading-2" className="text-gray-800">
+            Success!
+          </Text>
+          <Text variant="body" className="text-gray-700">
+            {message}
+          </Text>
         </Stack>
       </div>
     );
@@ -224,7 +228,9 @@ function AuthCallbackContent() {
               <Text variant="heading-2" className="text-red-600">
                 Authentication Error
               </Text>
-              <Text variant="body" className="text-red-700">{error}</Text>
+              <Text variant="body" className="text-red-700">
+                {error}
+              </Text>
               {isMembershipError && (
                 <div className="p-4 bg-yellow-50 text-yellow-900 rounded-md border border-yellow-200">
                   <Stack gap="xs">
@@ -256,7 +262,8 @@ function AuthCallbackContent() {
               </Text>
               <ul className="list-disc list-inside space-y-2 text-blue-800 text-sm">
                 <li>
-                  Check that the redirect URL is configured in Supabase dashboard
+                  Check that the redirect URL is configured in Supabase
+                  dashboard
                 </li>
                 <li>Verify that Google OAuth is enabled in Supabase</li>
                 <li>Ensure the backend API is running on {NEXUS_API_URL}</li>
@@ -280,7 +287,9 @@ function AuthCallbackContent() {
     <div className="flex min-h-screen items-center justify-center">
       <Stack gap="md" className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-        <Text variant="body" className="text-gray-700">{message}</Text>
+        <Text variant="body" className="text-gray-700">
+          {message}
+        </Text>
       </Stack>
     </div>
   );
@@ -293,7 +302,9 @@ export default function AuthCallback() {
         <div className="flex min-h-screen items-center justify-center">
           <Stack gap="md" className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <Text variant="body" className="text-gray-700">Loading authentication...</Text>
+            <Text variant="body" className="text-gray-700">
+              Loading authentication...
+            </Text>
           </Stack>
         </div>
       }

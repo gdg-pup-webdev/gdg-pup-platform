@@ -1,4 +1,3 @@
-
 import { cz as z } from "#shared/index.js";
 
 export type Contract = {
@@ -36,7 +35,10 @@ export type ContractResponseStatus<T extends Contract> = Extract<
   number
 >;
 
-export type ValidatedOutputObject<T extends Contract, S extends ContractResponseStatus<T>> = {
+export type ValidatedOutputObject<
+  T extends Contract,
+  S extends ContractResponseStatus<T>,
+> = {
   status: S;
   body: z.infer<T["response"][S]>;
 };

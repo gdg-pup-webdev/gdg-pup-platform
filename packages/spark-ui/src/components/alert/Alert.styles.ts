@@ -11,16 +11,19 @@ export const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-background text-foreground",
-        success: "border-green-500/50 text-green-900 dark:text-green-100 bg-green-50 dark:bg-green-950/30",
-        warning: "border-yellow-500/50 text-yellow-900 dark:text-yellow-100 bg-yellow-50 dark:bg-yellow-950/30",
-        error: "border-destructive/50 text-destructive dark:border-destructive bg-destructive/10",
+        success:
+          "border-green-500/50 text-green-900 dark:text-green-100 bg-green-50 dark:bg-green-950/30",
+        warning:
+          "border-yellow-500/50 text-yellow-900 dark:text-yellow-100 bg-yellow-50 dark:bg-yellow-950/30",
+        error:
+          "border-destructive/50 text-destructive dark:border-destructive bg-destructive/10",
         info: "border-blue-500/50 text-blue-900 dark:text-blue-100 bg-blue-50 dark:bg-blue-950/30",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export const alertTitleVariants = cva([

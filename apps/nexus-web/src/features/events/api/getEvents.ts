@@ -1,6 +1,6 @@
 /**
  * API function to fetch events from Nexus API
- * 
+ *
  * Retrieves a paginated list of events with optional filtering.
  */
 
@@ -11,11 +11,11 @@ import { EventsException, EventsQueryParams, EventsResponse } from "../types";
 
 /**
  * Fetch events from the Nexus API
- * 
+ *
  * @param params - Query parameters for filtering and pagination
  * @returns Promise resolving to paginated events response
  * @throws EventsException if the request fails
- * 
+ *
  * @example
  * ```tsx
  * // Get upcoming workshops
@@ -27,7 +27,7 @@ import { EventsException, EventsQueryParams, EventsResponse } from "../types";
  * ```
  */
 export async function getEvents(
-  params: EventsQueryParams = {}
+  params: EventsQueryParams = {},
 ): Promise<EventsResponse> {
   try {
     // Set default pagination
@@ -43,7 +43,7 @@ export async function getEvents(
       contract.api.event_system.events.GET,
       {
         query: queryParams,
-      }
+      },
     );
 
     // Check for successful response
@@ -55,16 +55,15 @@ export async function getEvents(
     throw new EventsException(
       "Failed to fetch events",
       "FETCH_ERROR",
-      `Received status ${result.status}`
+      `Received status ${result.status}`,
     );
-
   } catch (error) {
     // Network errors
     if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new EventsException(
         `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`,
         "NETWORK_ERROR",
-        error.message
+        error.message,
       );
     }
 
@@ -73,7 +72,7 @@ export async function getEvents(
       throw new EventsException(
         "Request timed out while fetching events",
         "TIMEOUT_ERROR",
-        "The request took too long to complete"
+        "The request took too long to complete",
       );
     }
 
@@ -86,7 +85,7 @@ export async function getEvents(
     throw new EventsException(
       "An unexpected error occurred while fetching events",
       "SERVER_ERROR",
-      error instanceof Error ? error.message : String(error)
+      error instanceof Error ? error.message : String(error),
     );
   }
 }

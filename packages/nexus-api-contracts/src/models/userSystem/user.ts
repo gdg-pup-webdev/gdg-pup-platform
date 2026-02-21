@@ -1,7 +1,7 @@
 /**
  * @file user.ts
  * @description Zod model definitions for the User entity.
- * This file defines the base user schemas and the complex aggregate schema 
+ * This file defines the base user schemas and the complex aggregate schema
  * that includes all related user resources (profiles, projects, wallets, etc.).
  */
 

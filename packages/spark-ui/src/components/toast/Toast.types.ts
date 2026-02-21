@@ -2,7 +2,8 @@ import type { VariantProps } from "class-variance-authority";
 import type { toastStyles } from "./Toast.styles";
 
 export interface ToastProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof toastStyles> {
   /**
    * Unique identifier for the toast

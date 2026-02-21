@@ -7,7 +7,7 @@ import {
 import { models } from "@packages/nexus-api-contracts";
 
 /**
- * @deprecated 
+ * @deprecated
  */
 export class WalletRepository {
   tableName = "wallet";
@@ -116,6 +116,6 @@ export class WalletRepository {
   };
 }
 /**
- * @deprecated 
+ * @deprecated
  */
 export const walletRepositoryInstance = new WalletRepository();

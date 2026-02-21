@@ -1,8 +1,7 @@
 import { sanitizeToIdentifier } from "#utils/core.utils.js";
 import { listExportsSync } from "#utils/filesystem/listExportsSync.js";
-import path from "node:path"; 
+import path from "node:path";
 import { ImportDeclarationStructure, OptionalKind } from "ts-morph";
- 
 
 /**
  * Metadata for a file in a directory
@@ -95,7 +94,6 @@ export class TsRealFile {
 
     const dirRelative = path.relative(importFromDirAbsolute, this.dirAbsolute);
 
-
     const { dir, name } = path.parse(dirRelative);
     let importPath = path.join(dir, name, this.fileName);
     if (!importPath.startsWith("..") && !importPath.startsWith(".")) {
@@ -110,8 +108,4 @@ export class TsRealFile {
       namedImports: [{ name: exportKey, alias: importAlias }],
     };
   }
- 
-  
 }
-
-

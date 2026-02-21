@@ -2,7 +2,7 @@ import {
   publicNfcCardTransactionInsertSchema,
   publicNfcCardTransactionRowSchema,
   publicNfcCardTransactionUpdateSchema,
-} from "../../types/supabase.schema.js"; 
+} from "../../types/supabase.schema.js";
 
 export const row = publicNfcCardTransactionRowSchema;
 

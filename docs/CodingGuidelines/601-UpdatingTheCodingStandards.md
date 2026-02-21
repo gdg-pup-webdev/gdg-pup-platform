@@ -19,21 +19,22 @@ Guidelines follow a systematic numbering pattern: **`XY Z`**
 ### Example
 
 **`105`** breaks down as:
+
 - `1` = Backend category
 - `0` = Separator
 - `5` = Fifth guideline in the backend category
 
 ## Major Categories
 
-| Major Value | Category | Description |
-|-------------|----------|-------------|
-| **1** | Backend | Express.js API development standards |
-| **2** | Frontend | Client-side development patterns _(reserved)_ |
-| **3** | Contracts | API contract specifications _(reserved)_ |
-| **4** | Project Structure | File and folder organization |
-| **5** | General Standards | Universal coding practices |
-| **6** | Documentation | Documentation and guideline management |
-| **7** | Collaboration | Git workflow, PRs, and teamwork |
+| Major Value | Category          | Description                                   |
+| ----------- | ----------------- | --------------------------------------------- |
+| **1**       | Backend           | Express.js API development standards          |
+| **2**       | Frontend          | Client-side development patterns _(reserved)_ |
+| **3**       | Contracts         | API contract specifications _(reserved)_      |
+| **4**       | Project Structure | File and folder organization                  |
+| **5**       | General Standards | Universal coding practices                    |
+| **6**       | Documentation     | Documentation and guideline management        |
+| **7**       | Collaboration     | Git workflow, PRs, and teamwork               |
 
 ## How to Propose a New Guideline
 
@@ -47,6 +48,7 @@ Before creating a new guideline, **open an issue** to discuss:
 - **Which** category it belongs to
 
 **Issue Template:**
+
 ```markdown
 **Title:** [Guideline Proposal] <Brief Description>
 
@@ -59,6 +61,7 @@ Describe the issue or gap in current guidelines
 Outline the key points of the proposed guideline
 
 **Benefits:**
+
 - How this helps the codebase
 - What problems it prevents
 
@@ -68,7 +71,7 @@ Provide examples of good vs bad practices
 
 ### 2. Determine the Guideline Number
 
-Find the next available number in the appropriate  category:
+Find the next available number in the appropriate category:
 
 ```
 Backend (100s):
@@ -85,6 +88,7 @@ Backend (100s):
 Create a new guideline file following the established format:
 
 **File Structure:**
+
 ```markdown
 **[🏠 Repository](../../README.md)** • **[📚 Onboarding](../Onboarding/README.md)** • **[📖 Coding Guidelines](./README.md)**
 
@@ -93,24 +97,30 @@ Create a new guideline file following the established format:
 # <Number> - <Title>
 
 ## Overview
+
 Brief description of the guideline
 
 ## Core Principle
+
 Main idea in 1-2 sentences
 
 ## Guidelines
+
 Specific rules and recommendations
 
 ## Examples
+
 ✅ Good examples
 ❌ Bad examples
 
 ## Rationale
+
 Why this guideline exists
 
 ---
 
 ## Related Guidelines
+
 - Links to related guidelines
 
 ---
@@ -132,6 +142,7 @@ Add an entry to [`CHANGELOG.md`](./CHANGELOG.md) documenting your changes:
 **Author:** @your-username
 
 ### Added
+
 - New guideline **[10X-YourGuideline.md](./10X-YourGuideline.md)** - Brief description
 
 **Rationale:** Explain why this guideline was needed
@@ -142,6 +153,7 @@ See the [changelog template](./CHANGELOG.md#template-for-new-entries) for the co
 ## Updating Existing Guidelines
 
 If you find:
+
 - ❌ **Conflicting guidance** between guidelines
 - 📝 **Missing scenarios** not covered
 - 💡 **Better approaches** based on experience
@@ -157,12 +169,14 @@ If you find:
    - **Updated [CHANGELOG.md](./CHANGELOG.md)** entry documenting the changes
 
 **Changelog Entry Example:**
+
 ```markdown
 ## [2026-01-26] - Clarified Error Handling Guidelines
 
 **Author:** @your-username
 
 ### Changed
+
 - **[105-ErrorHandling.md](./105-ErrorHandling.md)** - Clarified tryCatch usage patterns
 
 **Rationale:** Developers were confused about when to use tryCatch vs try-catch
@@ -170,13 +184,13 @@ If you find:
 
 ## When to Create vs Update
 
-| Situation | Action |
-|-----------|--------|
-| Entirely new topic not covered | **Create new guideline** |
-| Clarifying existing guideline | **Update existing guideline** |
-| Conflicting rules | **Update both guidelines** to align |
-| Adding examples to existing rule | **Update existing guideline** |
-| Deprecating old practice | **Update + add deprecation notice** |
+| Situation                        | Action                              |
+| -------------------------------- | ----------------------------------- |
+| Entirely new topic not covered   | **Create new guideline**            |
+| Clarifying existing guideline    | **Update existing guideline**       |
+| Conflicting rules                | **Update both guidelines** to align |
+| Adding examples to existing rule | **Update existing guideline**       |
+| Deprecating old practice         | **Update + add deprecation notice** |
 
 ## Review Process
 
@@ -188,6 +202,7 @@ If you find:
 ## Version Control
 
 Guidelines are version-controlled through Git:
+
 - **History**: View all changes to a guideline via Git history
 - **Blame**: See who introduced specific sections
 - **Revert**: Roll back problematic changes if needed

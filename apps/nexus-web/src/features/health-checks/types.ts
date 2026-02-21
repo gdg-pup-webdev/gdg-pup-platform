@@ -1,6 +1,6 @@
 /**
  * Type definitions for API Health Checks feature
- * 
+ *
  * This feature monitors the health status of backend APIs:
  * - Nexus API (user data, events, etc.)
  * - Identity API (authentication, card management)
@@ -20,21 +20,21 @@ export interface HealthCheckResponse {
 /**
  * API identifiers for health checks
  */
-export type ApiType = 'nexus' | 'identity';
+export type ApiType = "nexus" | "identity";
 
 /**
  * Health check status types
  */
-export type HealthStatus = 'healthy' | 'unhealthy' | 'unknown';
+export type HealthStatus = "healthy" | "unhealthy" | "unknown";
 
 /**
  * Error types specific to health check operations
  */
-export type HealthCheckError = 
-  | 'NETWORK_ERROR'
-  | 'SERVER_ERROR'
-  | 'TIMEOUT_ERROR'
-  | 'UNKNOWN_ERROR';
+export type HealthCheckError =
+  | "NETWORK_ERROR"
+  | "SERVER_ERROR"
+  | "TIMEOUT_ERROR"
+  | "UNKNOWN_ERROR";
 
 /**
  * Custom error class for health check errors
@@ -42,9 +42,9 @@ export type HealthCheckError =
 export class HealthCheckException extends Error {
   constructor(
     public type: HealthCheckError,
-    message: string
+    message: string,
   ) {
     super(message);
-    this.name = 'HealthCheckException';
+    this.name = "HealthCheckException";
   }
 }

@@ -21,7 +21,7 @@ export abstract class TransactionRecord {
   }
 }
 
-export  class TransactionRecordPrototype {
+export class TransactionRecordPrototype {
   props: TransactionRecordPrototypeProps;
   constructor(props: TransactionRecordPrototypeProps) {
     this.props = props;

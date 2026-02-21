@@ -8,7 +8,7 @@ import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import {
   buildPaginationMeta,
-  normalizeOptionalText
+  normalizeOptionalText,
 } from "@/presentation/utils/controller.utils.js";
 
 /**

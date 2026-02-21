@@ -9,7 +9,8 @@ const meta = {
     layout: "centered",
     docs: {
       description: {
-        component: "A versatile input component with multiple variants and sizes. Built with accessibility in mind and supports all native HTML input attributes.",
+        component:
+          "A versatile input component with multiple variants and sizes. Built with accessibility in mind and supports all native HTML input attributes.",
       },
     },
   },
@@ -177,7 +178,9 @@ export const FormExample: Story = {
       <div>
         <label className="block text-sm font-medium mb-2">Invalid Field</label>
         <Input variant="error" defaultValue="invalid-email" />
-        <p className="text-sm text-destructive mt-1">Please enter a valid email</p>
+        <p className="text-sm text-destructive mt-1">
+          Please enter a valid email
+        </p>
       </div>
     </div>
   ),

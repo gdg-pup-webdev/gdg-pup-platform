@@ -51,31 +51,31 @@ terraform/
 
 Each subdirectory under `environments/` represents a deployment target (dev, staging, prod). Every environment is **self-contained** — it has its own provider config, variables, and state. Environments consume the shared modules to build their infrastructure.
 
-| File            | Purpose                                                                 |
-| --------------- | ----------------------------------------------------------------------- |
-| `main.tf`       | Calls reusable modules from `modules/` and wires them together.         |
-| `variables.tf`  | Declares all input variables needed for this environment.               |
-| `provider.tf`   | Configures the GCP provider (project, region) and Terraform backend.    |
-| `outputs.tf`    | Exposes useful values (IPs, URLs, resource IDs) after `terraform apply`.|
-| `terraform.tfvars` | Supplies concrete values for the declared variables (not committed). |
+| File               | Purpose                                                                  |
+| ------------------ | ------------------------------------------------------------------------ |
+| `main.tf`          | Calls reusable modules from `modules/` and wires them together.          |
+| `variables.tf`     | Declares all input variables needed for this environment.                |
+| `provider.tf`      | Configures the GCP provider (project, region) and Terraform backend.     |
+| `outputs.tf`       | Exposes useful values (IPs, URLs, resource IDs) after `terraform apply`. |
+| `terraform.tfvars` | Supplies concrete values for the declared variables (not committed).     |
 
 ### Modules (`modules/`)
 
 Modules are **reusable building blocks** that define a logical group of resources. They are called by the environment configs and accept input variables so the same module can be used across dev, staging, and prod with different settings.
 
-| Module      | Responsibility                                                          |
-| ----------- | ----------------------------------------------------------------------- |
-| `network`   | VPC, subnets, firewall rules, Cloud NAT, etc.                          |
-| `compute`   | Compute workloads — Cloud Run services, GCE instances, GKE clusters.   |
-| `data`      | Data stores — Cloud SQL, Cloud Storage buckets, Firestore databases.   |
+| Module    | Responsibility                                                       |
+| --------- | -------------------------------------------------------------------- |
+| `network` | VPC, subnets, firewall rules, Cloud NAT, etc.                        |
+| `compute` | Compute workloads — Cloud Run services, GCE instances, GKE clusters. |
+| `data`    | Data stores — Cloud SQL, Cloud Storage buckets, Firestore databases. |
 
 Each module follows the standard three-file convention:
 
-| File           | Purpose                                           |
-| -------------- | ------------------------------------------------- |
-| `main.tf`      | Resource definitions.                             |
-| `variables.tf` | Input variables the module accepts.               |
-| `outputs.tf`   | Values the module exposes to the calling config.  |
+| File           | Purpose                                          |
+| -------------- | ------------------------------------------------ |
+| `main.tf`      | Resource definitions.                            |
+| `variables.tf` | Input variables the module accepts.              |
+| `outputs.tf`   | Values the module exposes to the calling config. |
 
 ---
 

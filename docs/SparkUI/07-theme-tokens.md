@@ -17,6 +17,7 @@ Theme tokens are **named design values** that define the visual language of the 
 ### Why Use Tokens?
 
 **Without Tokens (Bad):**
+
 ```tsx
 // ❌ Hardcoded - requires manual updates everywhere
 <div className="bg-blue-500 text-white p-4 rounded-lg">
@@ -25,6 +26,7 @@ Theme tokens are **named design values** that define the visual language of the 
 ```
 
 **With Tokens (Good):**
+
 ```tsx
 // ✅ Token-based - update once, applies everywhere
 <Card variant="primary">
@@ -33,6 +35,7 @@ Theme tokens are **named design values** that define the visual language of the 
 ```
 
 **Benefits:**
+
 - 🎨 **Consistent design** across all features
 - ⚡ **Fast design updates** (change 1 value, update entire app)
 - 🔄 **Theme support** (light/dark mode, brand variations)
@@ -46,30 +49,32 @@ Theme tokens are **named design values** that define the visual language of the 
 
 Semantic colors define **what** a color represents, not **how** it looks.
 
-| Token | Purpose | Example Use |
-|-------|---------|-------------|
-| `primary` | Main brand color, primary CTAs | Primary buttons, links |
-| `secondary` | Accent brand color | Secondary buttons, tags |
-| `accent` | Interactive highlights | Hover states, selections |
-| `destructive` | Errors, dangerous actions | Delete buttons, error alerts |
-| `success` | Success states, positive actions | Success alerts, checkmarks |
-| `warning` | Warning states | Warning alerts, caution badges |
-| `info` | Informational states | Info alerts, help tooltips |
-| `muted` | Subtle backgrounds | Disabled states, placeholders |
-| `card` | Default card background | Card components |
-| `border` | Default border color | Dividers, outlines |
+| Token         | Purpose                          | Example Use                    |
+| ------------- | -------------------------------- | ------------------------------ |
+| `primary`     | Main brand color, primary CTAs   | Primary buttons, links         |
+| `secondary`   | Accent brand color               | Secondary buttons, tags        |
+| `accent`      | Interactive highlights           | Hover states, selections       |
+| `destructive` | Errors, dangerous actions        | Delete buttons, error alerts   |
+| `success`     | Success states, positive actions | Success alerts, checkmarks     |
+| `warning`     | Warning states                   | Warning alerts, caution badges |
+| `info`        | Informational states             | Info alerts, help tooltips     |
+| `muted`       | Subtle backgrounds               | Disabled states, placeholders  |
+| `card`        | Default card background          | Card components                |
+| `border`      | Default border color             | Dividers, outlines             |
 
 **Current Values:**
+
 ```css
---color-primary: #2a8af6;           /* GDG Blue */
+--color-primary: #2a8af6; /* GDG Blue */
 --color-primary-foreground: #ffffff;
---color-secondary: #a853ba;         /* GDG Purple */
---color-destructive: #e92a67;       /* GDG Red */
---color-success: #10b981;           /* Green */
---color-warning: #f59e0b;           /* Amber */
+--color-secondary: #a853ba; /* GDG Purple */
+--color-destructive: #e92a67; /* GDG Red */
+--color-success: #10b981; /* Green */
+--color-warning: #f59e0b; /* Amber */
 ```
 
 **Usage in Components:**
+
 ```tsx
 // SparkUI components use semantic tokens automatically
 <Button variant="primary">Primary Action</Button>
@@ -78,6 +83,7 @@ Semantic colors define **what** a color represents, not **how** it looks.
 ```
 
 **Usage in Custom Styles:**
+
 ```tsx
 // When you need custom styling (rare)
 <div className="bg-primary text-primary-foreground">
@@ -91,27 +97,29 @@ Semantic colors define **what** a color represents, not **how** it looks.
 
 Gray shades for text hierarchy, subtle backgrounds, and borders.
 
-| Token | Hex | Use Case |
-|-------|-----|----------|
-| `gray-50` | #f9fafb | Lightest background |
-| `gray-100` | #f3f4f6 | Light background |
+| Token      | Hex     | Use Case                 |
+| ---------- | ------- | ------------------------ |
+| `gray-50`  | #f9fafb | Lightest background      |
+| `gray-100` | #f3f4f6 | Light background         |
 | `gray-200` | #e5e7eb | Borders, subtle dividers |
-| `gray-300` | #d1d5db | Input borders |
-| `gray-400` | #9ca3af | Placeholder text |
-| `gray-500` | #6b7280 | Secondary text |
-| `gray-600` | #4b5563 | Body text |
-| `gray-700` | #374151 | Emphasized text |
-| `gray-800` | #1f2937 | Headings |
-| `gray-900` | #111827 | Primary text |
-| `gray-950` | #030712 | Darkest elements |
+| `gray-300` | #d1d5db | Input borders            |
+| `gray-400` | #9ca3af | Placeholder text         |
+| `gray-500` | #6b7280 | Secondary text           |
+| `gray-600` | #4b5563 | Body text                |
+| `gray-700` | #374151 | Emphasized text          |
+| `gray-800` | #1f2937 | Headings                 |
+| `gray-900` | #111827 | Primary text             |
+| `gray-950` | #030712 | Darkest elements         |
 
 **When to Use:**
+
 - **gray-400-500:** Placeholder text, disabled states
 - **gray-600-700:** Body text, secondary content
 - **gray-800-900:** Headings, primary content
 - **gray-100-300:** Backgrounds, borders
 
 **Example:**
+
 ```tsx
 <Text variant="body" className="text-gray-600">
   Secondary information
@@ -127,27 +135,25 @@ Gray shades for text hierarchy, subtle backgrounds, and borders.
 
 Consistent spacing for margins, padding, and gaps.
 
-| Token | Value | Pixels | Common Use |
-|-------|-------|--------|------------|
-| `spacing-1` | 0.25rem | 4px | Tight spacing |
-| `spacing-2` | 0.5rem | 8px | `xs` - Small gaps |
-| `spacing-3` | 0.75rem | 12px | `sm` - Compact padding |
-| `spacing-4` | 1rem | 16px | `md` - Default spacing |
-| `spacing-6` | 1.5rem | 24px | `lg` - Section gaps |
-| `spacing-8` | 2rem | 32px | `xl` - Large spacing |
-| `spacing-12` | 3rem | 48px | `2xl` - Section padding |
+| Token        | Value   | Pixels | Common Use              |
+| ------------ | ------- | ------ | ----------------------- |
+| `spacing-1`  | 0.25rem | 4px    | Tight spacing           |
+| `spacing-2`  | 0.5rem  | 8px    | `xs` - Small gaps       |
+| `spacing-3`  | 0.75rem | 12px   | `sm` - Compact padding  |
+| `spacing-4`  | 1rem    | 16px   | `md` - Default spacing  |
+| `spacing-6`  | 1.5rem  | 24px   | `lg` - Section gaps     |
+| `spacing-8`  | 2rem    | 32px   | `xl` - Large spacing    |
+| `spacing-12` | 3rem    | 48px   | `2xl` - Section padding |
 
 **Semantic Names:**
+
 ```css
---spacing-xs: 8px
---spacing-sm: 12px
---spacing-md: 16px
---spacing-lg: 24px
---spacing-xl: 32px
---spacing-2xl: 48px
+--spacing-xs: 8px --spacing-sm: 12px --spacing-md: 16px --spacing-lg: 24px
+  --spacing-xl: 32px --spacing-2xl: 48px;
 ```
 
 **Usage with Layout Primitives:**
+
 ```tsx
 // Use semantic names with primitives (coming in Phase 2)
 <Stack gap="md">...</Stack>        {/* 16px gap */}
@@ -156,6 +162,7 @@ Consistent spacing for margins, padding, and gaps.
 ```
 
 **⚠️ Important:**
+
 - Always use spacing tokens, never arbitrary values
 - ❌ Bad: `className="gap-2"` (arbitrary)
 - ✅ Good: `<Stack gap="sm">` (semantic)
@@ -168,28 +175,29 @@ Font sizes, weights, and line heights for text hierarchy.
 
 #### Font Sizes
 
-| Token | Value | Pixels | Use Case |
-|-------|-------|--------|----------|
-| `font-size-xs` | 0.75rem | 12px | Captions, labels |
-| `font-size-sm` | 0.875rem | 14px | Secondary text |
-| `font-size-base` | 1rem | 16px | Body text |
-| `font-size-lg` | 1.125rem | 18px | Emphasized body |
-| `font-size-xl` | 1.25rem | 20px | Subheadings |
-| `font-size-2xl` | 1.5rem | 24px | H3 headings |
-| `font-size-3xl` | 1.875rem | 30px | H2 headings |
-| `font-size-4xl` | 2.25rem | 36px | H1 headings |
-| `font-size-5xl` | 3rem | 48px | Display text |
+| Token            | Value    | Pixels | Use Case         |
+| ---------------- | -------- | ------ | ---------------- |
+| `font-size-xs`   | 0.75rem  | 12px   | Captions, labels |
+| `font-size-sm`   | 0.875rem | 14px   | Secondary text   |
+| `font-size-base` | 1rem     | 16px   | Body text        |
+| `font-size-lg`   | 1.125rem | 18px   | Emphasized body  |
+| `font-size-xl`   | 1.25rem  | 20px   | Subheadings      |
+| `font-size-2xl`  | 1.5rem   | 24px   | H3 headings      |
+| `font-size-3xl`  | 1.875rem | 30px   | H2 headings      |
+| `font-size-4xl`  | 2.25rem  | 36px   | H1 headings      |
+| `font-size-5xl`  | 3rem     | 48px   | Display text     |
 
 #### Font Weights
 
-| Token | Value | Use Case |
-|-------|-------|----------|
-| `font-weight-normal` | 400 | Body text |
-| `font-weight-medium` | 500 | Emphasized text |
-| `font-weight-semibold` | 600 | Subheadings |
-| `font-weight-bold` | 700 | Headings |
+| Token                  | Value | Use Case        |
+| ---------------------- | ----- | --------------- |
+| `font-weight-normal`   | 400   | Body text       |
+| `font-weight-medium`   | 500   | Emphasized text |
+| `font-weight-semibold` | 600   | Subheadings     |
+| `font-weight-bold`     | 700   | Headings        |
 
 **Usage with Text Component (Phase 2):**
+
 ```tsx
 <Text variant="heading-1">Main Heading</Text>      {/* 36px, bold */}
 <Text variant="heading-2">Subheading</Text>        {/* 24px, semibold */}
@@ -203,17 +211,18 @@ Font sizes, weights, and line heights for text hierarchy.
 
 Rounded corner values for consistent shapes.
 
-| Token | Value | Pixels | Use Case |
-|-------|-------|--------|----------|
-| `radius-sm` | 0.125rem | 2px | Tight corners |
-| `radius-base` | 0.25rem | 4px | Default buttons |
-| `radius-md` | 0.375rem | 6px | Cards, inputs |
-| `radius-lg` | 0.5rem | 8px | Large cards |
-| `radius-xl` | 0.75rem | 12px | Modals, panels |
-| `radius-2xl` | 1rem | 16px | Hero sections |
-| `radius-full` | 9999px | Full | Avatars, pills |
+| Token         | Value    | Pixels | Use Case        |
+| ------------- | -------- | ------ | --------------- |
+| `radius-sm`   | 0.125rem | 2px    | Tight corners   |
+| `radius-base` | 0.25rem  | 4px    | Default buttons |
+| `radius-md`   | 0.375rem | 6px    | Cards, inputs   |
+| `radius-lg`   | 0.5rem   | 8px    | Large cards     |
+| `radius-xl`   | 0.75rem  | 12px   | Modals, panels  |
+| `radius-2xl`  | 1rem     | 16px   | Hero sections   |
+| `radius-full` | 9999px   | Full   | Avatars, pills  |
 
 **Component Defaults:**
+
 - Buttons: `radius-base` (4px)
 - Cards: `radius-lg` (8px)
 - Inputs: `radius-md` (6px)
@@ -225,17 +234,18 @@ Rounded corner values for consistent shapes.
 
 Elevation levels for depth and hierarchy.
 
-| Token | Use Case | Example |
-|-------|----------|---------|
-| `shadow-xs` | Subtle elevation | Input focus |
-| `shadow-sm` | Low elevation | Badges, pills |
-| `shadow-base` | Default elevation | Default cards |
-| `shadow-md` | Medium elevation | Elevated cards |
-| `shadow-lg` | High elevation | Dropdowns, tooltips |
-| `shadow-xl` | Highest elevation | Modals, dialogs |
-| `shadow-inner` | Inset depth | Pressed buttons |
+| Token          | Use Case          | Example             |
+| -------------- | ----------------- | ------------------- |
+| `shadow-xs`    | Subtle elevation  | Input focus         |
+| `shadow-sm`    | Low elevation     | Badges, pills       |
+| `shadow-base`  | Default elevation | Default cards       |
+| `shadow-md`    | Medium elevation  | Elevated cards      |
+| `shadow-lg`    | High elevation    | Dropdowns, tooltips |
+| `shadow-xl`    | Highest elevation | Modals, dialogs     |
+| `shadow-inner` | Inset depth       | Pressed buttons     |
 
 **Component Usage:**
+
 ```tsx
 <Card variant="default">...</Card>    {/* shadow-sm */}
 <Card variant="elevated">...</Card>   {/* shadow-md */}
@@ -247,14 +257,15 @@ Elevation levels for depth and hierarchy.
 
 Timing values for smooth interactions.
 
-| Token | Value | Use Case |
-|-------|-------|----------|
-| `duration-fast` | 150ms | Quick state changes |
-| `duration-base` | 200ms | Default transitions |
-| `duration-slow` | 300ms | Smooth animations |
-| `duration-slower` | 500ms | Complex animations |
+| Token             | Value | Use Case            |
+| ----------------- | ----- | ------------------- |
+| `duration-fast`   | 150ms | Quick state changes |
+| `duration-base`   | 200ms | Default transitions |
+| `duration-slow`   | 300ms | Smooth animations   |
+| `duration-slower` | 500ms | Complex animations  |
 
 **Easing Functions:**
+
 - `ease-linear` - Constant speed
 - `ease-in` - Accelerating
 - `ease-out` - Decelerating (most common)
@@ -290,7 +301,7 @@ When building custom components, use token-based Tailwind classes:
 ```tsx
 // Using semantic color tokens
 <div className="bg-primary text-primary-foreground">
-  
+
 // Using neutral scale
 <div className="text-gray-600 border-gray-200">
 
@@ -320,6 +331,7 @@ When building custom components, use token-based Tailwind classes:
 ### Most Commonly Used Tokens
 
 **Colors:**
+
 - `bg-primary` / `text-primary-foreground`
 - `bg-secondary` / `text-secondary-foreground`
 - `bg-muted` / `text-muted-foreground`
@@ -328,18 +340,21 @@ When building custom components, use token-based Tailwind classes:
 - `border-border` (dividers)
 
 **Spacing:**
+
 - `gap-4` (16px) - default gap
 - `gap-6` (24px) - section gap
 - `p-4` (16px) - default padding
 - `p-6` (24px) - card padding
 
 **Typography:**
+
 - `text-base` (16px) - body
 - `text-lg` (18px) - emphasized
 - `text-xl` (20px) - subheading
 - `text-2xl` (24px) - heading
 
 **Borders:**
+
 - `rounded-md` - cards, inputs
 - `rounded-lg` - large components
 - `rounded-full` - avatars
@@ -351,6 +366,7 @@ When building custom components, use token-based Tailwind classes:
 ### When Hi-Fi Designs Arrive
 
 **Step 1: Update Color Tokens**
+
 ```css
 /* configs/tailwind-config/shared-styles.css */
 @theme {
@@ -361,11 +377,13 @@ When building custom components, use token-based Tailwind classes:
 ```
 
 **Step 2: Test**
+
 - All components update automatically
 - Run visual regression tests
 - Check for any edge cases
 
 **Step 3: Done!**
+
 - No feature code changes needed
 - No component refactoring required
 
@@ -374,6 +392,7 @@ When building custom components, use token-based Tailwind classes:
 If you need to add new tokens:
 
 1. Add to `shared-styles.css`:
+
 ```css
 @theme {
   --color-brand-purple: #7c3aed;
@@ -381,6 +400,7 @@ If you need to add new tokens:
 ```
 
 2. Use in components:
+
 ```tsx
 <div className="bg-[--color-brand-purple]">
 ```
@@ -394,17 +414,20 @@ If you need to add new tokens:
 ### Semantic vs. Descriptive
 
 **✅ Semantic (Good):**
+
 - `--color-primary` (describes purpose)
 - `--color-destructive` (describes meaning)
 - `--spacing-md` (describes relative size)
 
 **❌ Descriptive (Avoid):**
+
 - `--color-blue-500` (describes appearance)
 - `--color-delete-button-red` (too specific)
 
 ### Foreground Pairing
 
 Many tokens have `-foreground` variants:
+
 - `--color-primary` (background)
 - `--color-primary-foreground` (text on that background)
 
@@ -420,8 +443,8 @@ Theme tokens support dark mode through CSS custom properties. Update in app-leve
 /* apps/nexus-web/src/app/globals.css */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-primary: #3b9eff;        /* Lighter in dark mode */
-    --color-card: #1f2937;           /* Dark card background */
+    --color-primary: #3b9eff; /* Lighter in dark mode */
+    --color-card: #1f2937; /* Dark card background */
     --color-card-foreground: #f9fafb;
   }
 }
@@ -434,11 +457,13 @@ Theme tokens support dark mode through CSS custom properties. Update in app-leve
 ## Learning Resources
 
 **For Junior Developers:**
+
 - [Design Tokens 101](https://css-tricks.com/what-are-design-tokens/) - CSS Tricks guide
 - [Why Design Tokens?](https://www.designtokens.org/) - W3C Design Tokens spec
 - [Tailwind v4 Theme](https://tailwindcss.com/docs/v4-beta) - Official Tailwind docs
 
 **Questions?**
+
 - Check component examples in Storybook
 - Ask in team chat: "Which token should I use for...?"
 - Reference this guide when building features

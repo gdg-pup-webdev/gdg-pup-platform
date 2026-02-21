@@ -13,6 +13,7 @@ Our backend follows a strict **layered architecture** to decouple the API schema
 **Always adhere to the layered architecture.**
 
 The layers are:
+
 1. **Routes** – Define HTTP endpoints
 2. **Controllers** – Handle HTTP requests/responses and translate between API contracts and domain models
 3. **Services** – Contain business logic
@@ -45,6 +46,7 @@ The layers are:
 ## Benefits
 
 This separation allows us to:
+
 - ✅ **Decouple** API schema from database structure
 - ✅ **Modify tables** without updating the API schema
 - ✅ **Avoid breaking changes** to the frontend
@@ -57,29 +59,32 @@ The frontend and backend can grow at their own pace without being tightly couple
 ### Scenario: Get User Profile
 
 #### 1. Route Definition
+
 ```typescript
 // routes/user.routes.ts
-import { getUserProfileController } from '../controllers/user.controller';
-import { getUserProfileContract } from '@packages/nexus-api-contracts';
+import { getUserProfileController } from "../controllers/user.controller";
+import { getUserProfileContract } from "@packages/nexus-api-contracts";
 
-router.get('/users/:userId', 
-  createExpressController(getUserProfileContract, getUserProfileController)
+router.get(
+  "/users/:userId",
+  createExpressController(getUserProfileContract, getUserProfileController),
 );
 ```
 
 #### 2. Controller (Translator Layer)
+
 ```typescript
 // controllers/user.controller.ts
-import type { GetUserProfileResponse } from '@packages/nexus-api-contracts';
-import { userService } from '../services/user.service';
+import type { GetUserProfileResponse } from "@packages/nexus-api-contracts";
+import { userService } from "../services/user.service";
 
 export async function getUserProfileController(req) {
   // 1. Extract from request
   const userId = req.params.userId;
-  
+
   // 2. Call service with domain types (no API types here in service)
   const user = await userService.getUserById(userId);
-  
+
   // 3. Translate domain model → API contract
   const response: GetUserProfileResponse = {
     id: user.id,
@@ -87,44 +92,46 @@ export async function getUserProfileController(req) {
     email: user.email,
     createdAt: user.createdAt.toISOString(),
   };
-  
+
   return response;
 }
 ```
 
 #### 3. Service (Domain Logic)
+
 ```typescript
 // services/user.service.ts
-import { userRepository } from '../repositories/user.repository';
-import type { User } from '../types/user.types'; // Local domain type
+import { userRepository } from "../repositories/user.repository";
+import type { User } from "../types/user.types"; // Local domain type
 
 export class UserService {
   async getUserById(userId: string): Promise<User> {
     const user = await userRepository.findById(userId);
-    
+
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError("User not found");
     }
-    
+
     return user; // Returns domain type, not API type
   }
 }
 ```
 
 #### 4. Repository (Database Layer)
+
 ```typescript
 // repositories/user.repository.ts
-import { supabase } from '../config/database';
-import type { User } from '../types/user.types'; // Local domain type
+import { supabase } from "../config/database";
+import type { User } from "../types/user.types"; // Local domain type
 
 export class UserRepository {
   async findById(id: string): Promise<User | null> {
     const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
+      .from("users")
+      .select("*")
+      .eq("id", id)
       .single();
-    
+
     if (error) throw error;
     return data; // Database row → domain model
   }
@@ -133,12 +140,12 @@ export class UserRepository {
 
 ## Key Takeaways
 
-| Layer | Aware of API? | Uses API Types? | Responsibility |
-|-------|---------------|-----------------|----------------|
-| **Routes** | ✅ Yes | ✅ Yes | Connect endpoints to controllers |
-| **Controllers** | ✅ Yes | ✅ Yes | Translate API ↔ Domain |
-| **Services** | ❌ No | ❌ No | Business logic with domain types |
-| **Repositories** | ❌ No | ❌ No | Database operations with domain types |
+| Layer            | Aware of API? | Uses API Types? | Responsibility                        |
+| ---------------- | ------------- | --------------- | ------------------------------------- |
+| **Routes**       | ✅ Yes        | ✅ Yes          | Connect endpoints to controllers      |
+| **Controllers**  | ✅ Yes        | ✅ Yes          | Translate API ↔ Domain                |
+| **Services**     | ❌ No         | ❌ No           | Business logic with domain types      |
+| **Repositories** | ❌ No         | ❌ No           | Database operations with domain types |
 
 ---
 

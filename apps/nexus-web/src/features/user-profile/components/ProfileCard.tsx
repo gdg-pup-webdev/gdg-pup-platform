@@ -1,9 +1,9 @@
 /**
  * Main Profile Card Component
- * 
+ *
  * This is the top-level component for displaying a user's profile.
  * It orchestrates all the smaller components and handles data fetching.
- * 
+ *
  * Features:
  * - Fetches user data using TanStack Query
  * - Shows loading state while fetching
@@ -12,31 +12,31 @@
  * - Provides action buttons for interacting with the profile
  */
 
-import React from 'react';
-import { Card, Stack, Container } from '@packages/spark-ui';
-import { useUserProfile } from '../hooks/useUserProfile';
-import { BackgroundGradients } from './BackgroundGradients';
-import { LoadingState } from './LoadingState';
-import { ErrorState } from './ErrorState';
-import { ProfileAvatar } from './ProfileAvatar';
-import { ProfileHeader } from './ProfileHeader';
-import { SocialLinks } from './SocialLinks';
-import { ProfileActions } from './ProfileActions';
+import React from "react";
+import { Card, Stack, Container } from "@packages/spark-ui";
+import { useUserProfile } from "../hooks/useUserProfile";
+import { BackgroundGradients } from "./BackgroundGradients";
+import { LoadingState } from "./LoadingState";
+import { ErrorState } from "./ErrorState";
+import { ProfileAvatar } from "./ProfileAvatar";
+import { ProfileHeader } from "./ProfileHeader";
+import { SocialLinks } from "./SocialLinks";
+import { ProfileActions } from "./ProfileActions";
 
 interface ProfileCardProps {
   // The ID of the user whose profile to display
   userId: string;
-  
+
   // Whether to show action buttons (edit, share, etc.)
   showActions?: boolean;
-  
+
   // Whether this is the current user's profile
   isOwnProfile?: boolean;
 }
 
 /**
  * Displays a complete user profile with all information and actions
- * 
+ *
  * @example
  * ```typescript
  * // In a Next.js page component
@@ -45,14 +45,15 @@ interface ProfileCardProps {
  * }
  * ```
  */
-export function ProfileCard({ 
-  userId, 
+export function ProfileCard({
+  userId,
   showActions = true,
   isOwnProfile = false,
 }: ProfileCardProps) {
   // Fetch the user profile data using our custom hook
   // This hook uses TanStack Query under the hood for caching and state management
-  const { profile, isLoading, error, errorType, refetch } = useUserProfile(userId);
+  const { profile, isLoading, error, errorType, refetch } =
+    useUserProfile(userId);
 
   // LOADING STATE
   // Show a loading screen while we fetch the user data
@@ -64,8 +65,8 @@ export function ProfileCard({
   // Show an error screen if something went wrong
   if (error || !profile) {
     return (
-      <ErrorState 
-        error={error || 'Profile data is missing'} 
+      <ErrorState
+        error={error || "Profile data is missing"}
         errorType={errorType}
         onRetry={refetch}
       />
@@ -86,7 +87,7 @@ export function ProfileCard({
           <Card>
             <Stack gap="xl" className="p-8 md:p-12">
               {/* Avatar with gradient border */}
-              <ProfileAvatar 
+              <ProfileAvatar
                 avatarUrl={profile.avatarUrl}
                 name={profile.name}
               />
@@ -100,10 +101,7 @@ export function ProfileCard({
 
               {/* Action buttons (if enabled) */}
               {showActions && (
-                <ProfileActions
-                  userId={userId}
-                  isOwnProfile={isOwnProfile}
-                />
+                <ProfileActions userId={userId} isOwnProfile={isOwnProfile} />
               )}
 
               {/* Social media links and portfolio */}

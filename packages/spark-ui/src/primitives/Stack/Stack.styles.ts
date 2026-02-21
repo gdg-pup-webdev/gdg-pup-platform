@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Stack - Vertical layout primitive
- * 
+ *
  * Provides consistent vertical spacing between child elements.
  * Uses theme spacing tokens for all gap values.
  */
@@ -13,11 +13,11 @@ export const stackVariants = cva(["flex flex-col"], {
      */
     gap: {
       none: "gap-0",
-      xs: "gap-2",    // 8px
-      sm: "gap-3",    // 12px
-      md: "gap-4",    // 16px
-      lg: "gap-6",    // 24px
-      xl: "gap-8",    // 32px
+      xs: "gap-2", // 8px
+      sm: "gap-3", // 12px
+      md: "gap-4", // 16px
+      lg: "gap-6", // 24px
+      xl: "gap-8", // 32px
       "2xl": "gap-12", // 48px
     },
     /**

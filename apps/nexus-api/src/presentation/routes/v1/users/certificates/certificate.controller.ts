@@ -6,13 +6,11 @@
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest/serverExpress"; 
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { CertificateService } from "@/modules/userResourceSystem/certificates/certificate.service";
 
 export class CertificatesHttpController {
-  constructor(
-    private readonly certificateService: CertificateService ,
-  ) {}
+  constructor(private readonly certificateService: CertificateService) {}
 
   /**
    * listUserCertificates
@@ -132,4 +130,3 @@ export class CertificatesHttpController {
     },
   );
 }
- 

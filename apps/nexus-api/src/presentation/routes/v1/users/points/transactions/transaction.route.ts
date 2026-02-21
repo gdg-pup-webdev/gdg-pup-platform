@@ -1,12 +1,10 @@
 import { Router } from "express";
-import {
-  TransactionsHttpController, 
-} from "./transaction.controller";
+import { TransactionsHttpController } from "./transaction.controller";
 
 export class TransactionRouter {
   router: Router;
   constructor(
-    private readonly transactionController: TransactionsHttpController  ,
+    private readonly transactionController: TransactionsHttpController,
   ) {
     this.router = Router();
 

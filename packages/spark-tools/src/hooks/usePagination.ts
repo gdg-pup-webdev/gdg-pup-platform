@@ -1,8 +1,8 @@
 /**
  * usePagination Hook
- * 
+ *
  * Hook for managing pagination state.
- * 
+ *
  * @example
  * ```typescript
  * const {
@@ -18,17 +18,17 @@
  * ```
  */
 
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface UsePaginationOptions {
   /** Initial page number (1-indexed) */
   initialPage?: number;
-  
+
   /** Initial page size */
   initialPageSize?: number;
-  
+
   /** Total number of items (optional, for calculating last page) */
   totalItems?: number;
 }
@@ -36,37 +36,37 @@ export interface UsePaginationOptions {
 export interface UsePaginationReturn {
   /** Current page number (1-indexed) */
   page: number;
-  
+
   /** Current page size */
   pageSize: number;
-  
+
   /** Total number of pages (if totalItems provided) */
   totalPages?: number;
-  
+
   /** Set the current page */
   setPage: (page: number) => void;
-  
+
   /** Set the page size */
   setPageSize: (pageSize: number) => void;
-  
+
   /** Go to next page */
   nextPage: () => void;
-  
+
   /** Go to previous page */
   prevPage: () => void;
-  
+
   /** Go to a specific page */
   goToPage: (page: number) => void;
-  
+
   /** Reset pagination to initial values */
   reset: () => void;
-  
+
   /** Whether there is a next page */
   hasNextPage: boolean;
-  
+
   /** Whether there is a previous page */
   hasPrevPage: boolean;
-  
+
   /** Calculate offset for API calls (0-indexed) */
   offset: number;
 }
@@ -81,39 +81,42 @@ export function usePagination({
 }: UsePaginationOptions = {}): UsePaginationReturn {
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
-  
+
   const totalPages = totalItems ? Math.ceil(totalItems / pageSize) : undefined;
-  
+
   const nextPage = useCallback(() => {
     setPage((prev) => {
       if (totalPages && prev >= totalPages) return prev;
       return prev + 1;
     });
   }, [totalPages]);
-  
+
   const prevPage = useCallback(() => {
     setPage((prev) => Math.max(1, prev - 1));
   }, []);
-  
-  const goToPage = useCallback((newPage: number) => {
-    if (newPage < 1) {
-      setPage(1);
-    } else if (totalPages && newPage > totalPages) {
-      setPage(totalPages);
-    } else {
-      setPage(newPage);
-    }
-  }, [totalPages]);
-  
+
+  const goToPage = useCallback(
+    (newPage: number) => {
+      if (newPage < 1) {
+        setPage(1);
+      } else if (totalPages && newPage > totalPages) {
+        setPage(totalPages);
+      } else {
+        setPage(newPage);
+      }
+    },
+    [totalPages],
+  );
+
   const reset = useCallback(() => {
     setPage(initialPage);
     setPageSize(initialPageSize);
   }, [initialPage, initialPageSize]);
-  
+
   const hasNextPage = totalPages ? page < totalPages : true;
   const hasPrevPage = page > 1;
   const offset = (page - 1) * pageSize;
-  
+
   return {
     page,
     pageSize,

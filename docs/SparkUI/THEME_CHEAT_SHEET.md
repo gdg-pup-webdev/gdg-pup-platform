@@ -1,4 +1,5 @@
 # Theme Token Quick Reference
+
 **For developers: Print this or keep it handy while coding!**
 
 ---
@@ -29,13 +30,13 @@ border-gray-200 // Subtle dividers
 
 ## 📏 Spacing Scale
 
-| Token | Pixels | Semantic | Common Use |
-|-------|--------|----------|------------|
-| `gap-2` | 8px | `xs` | Tight icon spacing |
-| `gap-3` | 12px | `sm` | Compact layouts |
-| `gap-4` | 16px | `md` | Default gaps |
-| `gap-6` | 24px | `lg` | Section spacing |
-| `gap-8` | 32px | `xl` | Large sections |
+| Token   | Pixels | Semantic | Common Use         |
+| ------- | ------ | -------- | ------------------ |
+| `gap-2` | 8px    | `xs`     | Tight icon spacing |
+| `gap-3` | 12px   | `sm`     | Compact layouts    |
+| `gap-4` | 16px   | `md`     | Default gaps       |
+| `gap-6` | 24px   | `lg`     | Section spacing    |
+| `gap-8` | 32px   | `xl`     | Large sections     |
 
 ```tsx
 // Examples with layout primitives (Phase 2)
@@ -70,11 +71,11 @@ font-bold      // 700 - main headings
 ## 🔲 Border Radii
 
 ```tsx
-rounded-sm   // 2px - tight corners
-rounded-md   // 6px - inputs, small cards
-rounded-lg   // 8px - cards (default)
-rounded-xl   // 12px - large cards
-rounded-full // circle - avatars, pills
+rounded - sm; // 2px - tight corners
+rounded - md; // 6px - inputs, small cards
+rounded - lg; // 8px - cards (default)
+rounded - xl; // 12px - large cards
+rounded - full; // circle - avatars, pills
 ```
 
 ---
@@ -82,10 +83,10 @@ rounded-full // circle - avatars, pills
 ## 🌑 Shadows
 
 ```tsx
-shadow-sm   // Subtle - default cards
-shadow-md   // Medium - elevated cards
-shadow-lg   // High - dropdowns
-shadow-xl   // Highest - modals
+shadow - sm; // Subtle - default cards
+shadow - md; // Medium - elevated cards
+shadow - lg; // High - dropdowns
+shadow - xl; // Highest - modals
 ```
 
 ---
@@ -126,6 +127,7 @@ shadow-xl   // Highest - modals
 ## 🚀 Common Patterns
 
 ### Card with Content
+
 ```tsx
 <Card variant="elevated">
   <CardContent className="p-6 space-y-4">
@@ -136,6 +138,7 @@ shadow-xl   // Highest - modals
 ```
 
 ### Button Variants
+
 ```tsx
 <Button variant="primary">Primary Action</Button>
 <Button variant="secondary">Secondary</Button>
@@ -144,6 +147,7 @@ shadow-xl   // Highest - modals
 ```
 
 ### Text Hierarchy
+
 ```tsx
 <h1 className="text-4xl font-bold text-gray-900">Main Heading</h1>
 <h2 className="text-2xl font-semibold text-gray-800">Subheading</h2>
@@ -152,9 +156,14 @@ shadow-xl   // Highest - modals
 ```
 
 ### Spacing Layout
+
 ```tsx
-<div className="space-y-6">      {/* Vertical spacing */}
-  <div className="flex gap-4">   {/* Horizontal spacing */}
+<div className="space-y-6">
+  {" "}
+  {/* Vertical spacing */}
+  <div className="flex gap-4">
+    {" "}
+    {/* Horizontal spacing */}
     <Button>Action 1</Button>
     <Button>Action 2</Button>
   </div>

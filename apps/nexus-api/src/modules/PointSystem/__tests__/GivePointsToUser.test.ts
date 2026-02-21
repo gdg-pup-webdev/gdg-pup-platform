@@ -11,7 +11,10 @@ let givePointsToUserUseCase: GivePointsToUser;
 const initializeInstances = () => {
   walletRepository = new MockWalletRepository();
   transactionRepository = new MockTransactionRepository();
-  givePointsToUserUseCase = new GivePointsToUser(walletRepository, transactionRepository);
+  givePointsToUserUseCase = new GivePointsToUser(
+    walletRepository,
+    transactionRepository,
+  );
 };
 
 describe("GivePointsToUser Use Case", () => {
@@ -22,7 +25,7 @@ describe("GivePointsToUser Use Case", () => {
     const userId = "user_789";
     const initialPoints = 100;
     const pointsToAdd = 50;
-    
+
     const wallet = Wallet.hydrate({
       userId,
       totalPoints: initialPoints,
@@ -37,18 +40,22 @@ describe("GivePointsToUser Use Case", () => {
       "sparkPoints",
       pointsToAdd,
       "ref_001",
-      "STUDY_JAM_BONUS"
+      "STUDY_JAM_BONUS",
     );
 
     // 3. Assert - Wallet State
-    expect(result.updatedWallet.props.totalPoints).toBe(initialPoints + pointsToAdd);
-    expect(result.updatedWallet.props.points.sparkPoints).toBe(initialPoints + pointsToAdd);
+    expect(result.updatedWallet.props.totalPoints).toBe(
+      initialPoints + pointsToAdd,
+    );
+    expect(result.updatedWallet.props.points.sparkPoints).toBe(
+      initialPoints + pointsToAdd,
+    );
 
     // 3. Assert - Transaction Record
     expect(result.transactionRecord.props.userId).toBe(userId);
     expect(result.transactionRecord.props.pointsChange).toBe(pointsToAdd);
     expect(result.transactionRecord.props.sourceType).toBe("STUDY_JAM_BONUS");
-    
+
     // Ensure persistence was actually called
     const savedWallet = await walletRepository.findByUserId(userId);
     expect(savedWallet?.props.totalPoints).toBe(150);
@@ -62,8 +69,8 @@ describe("GivePointsToUser Use Case", () => {
         "sparkPoints",
         10,
         "ref_999",
-        "TEST"
-      )
+        "TEST",
+      ),
     ).rejects.toThrow("Wallet not found");
   });
 
@@ -86,8 +93,8 @@ describe("GivePointsToUser Use Case", () => {
         "invalidPointsType",
         50,
         "ref_123",
-        "TEST"
-      )
+        "TEST",
+      ),
     ).rejects.toThrow("Invalid points type");
   });
 });

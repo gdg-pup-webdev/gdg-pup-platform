@@ -5,10 +5,10 @@ import type { ContainerProps } from "./Container.types";
 
 /**
  * Container Component
- * 
+ *
  * A max-width centered container primitive for main content areas.
  * Automatically centers content horizontally with consistent padding.
- * 
+ *
  * @example Default container
  * ```tsx
  * <Container>
@@ -16,7 +16,7 @@ import type { ContainerProps } from "./Container.types";
  *   <p>Page content that stays within max-width</p>
  * </Container>
  * ```
- * 
+ *
  * @example Narrow container for reading
  * ```tsx
  * <Container maxWidth="2xl">
@@ -26,7 +26,7 @@ import type { ContainerProps } from "./Container.types";
  *   </article>
  * </Container>
  * ```
- * 
+ *
  * @example Full-width with padding
  * ```tsx
  * <Container maxWidth="full" padding="lg">
@@ -47,7 +47,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
         {children}
       </Component>
     );
-  }
+  },
 );
 
 Container.displayName = "Container";

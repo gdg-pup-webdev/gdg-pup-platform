@@ -1,4 +1,8 @@
-import { Tables, TablesInsert, TablesUpdate } from "@/presentation/types/supabase.types";
+import {
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+} from "@/presentation/types/supabase.types";
 
 export type roleRow = Tables<"user_role">;
 export type roleInsert = Omit<TablesInsert<"user_role">, "id">;
@@ -10,7 +14,7 @@ export type roleWithPermission = Tables<"user_role"> & {
 
 export type roleWithPermissionAndUser = roleWithPermission & {
   user_role_junction: Tables<"user_role_junction">[];
-}
+};
 
 export type rolePermissionRow = Tables<"user_role_permission">;
 export type rolePermissionInsert = {
@@ -24,7 +28,5 @@ export type roleFilters = {
   action?: string | null;
   roleId?: string | null;
 };
-
-
 
 export type userRoleJunctionType = Tables<"user_role_junction">;

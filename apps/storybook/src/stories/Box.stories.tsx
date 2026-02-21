@@ -58,10 +58,18 @@ export const WithMargin: Story = {
   },
   render: () => (
     <>
-      <Box padding="md" margin="md" className="bg-primary text-primary-foreground">
+      <Box
+        padding="md"
+        margin="md"
+        className="bg-primary text-primary-foreground"
+      >
         Box with margin
       </Box>
-      <Box padding="md" margin="md" className="bg-secondary text-secondary-foreground">
+      <Box
+        padding="md"
+        margin="md"
+        className="bg-secondary text-secondary-foreground"
+      >
         Another box with margin
       </Box>
     </>
@@ -103,18 +111,28 @@ export const Card: Story = {
     children: <></>,
   },
   render: () => (
-    <Box padding="lg" className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <Box
+      padding="lg"
+      className="bg-white border border-gray-200 rounded-lg shadow-sm"
+    >
       <Text variant="heading-4">Card Title</Text>
       <div className="my-2" />
       <Text variant="body" color="muted">
-        This is a card built with the Box primitive. You can use it to create any custom layout.
+        This is a card built with the Box primitive. You can use it to create
+        any custom layout.
       </Text>
       <div className="my-4" />
       <Box display="flex" className="gap-2">
-        <Box padding="sm" className="bg-primary text-primary-foreground rounded">
+        <Box
+          padding="sm"
+          className="bg-primary text-primary-foreground rounded"
+        >
           Action 1
         </Box>
-        <Box padding="sm" className="bg-secondary text-secondary-foreground rounded">
+        <Box
+          padding="sm"
+          className="bg-secondary text-secondary-foreground rounded"
+        >
           Action 2
         </Box>
       </Box>
@@ -127,7 +145,10 @@ export const Hero: Story = {
     children: <></>,
   },
   render: () => (
-    <Box padding="2xl" className="bg-linear-to-r from-primary to-secondary text-primary-foreground">
+    <Box
+      padding="2xl"
+      className="bg-linear-to-r from-primary to-secondary text-primary-foreground"
+    >
       <Box className="max-w-3xl mx-auto text-center">
         <Text variant="display">Welcome to Our Platform</Text>
         <div className="my-4" />
@@ -135,7 +156,11 @@ export const Hero: Story = {
           Build amazing applications with our design system primitives
         </Text>
         <div className="my-6" />
-        <Box display="inline-block" padding="md" className="bg-white text-primary rounded">
+        <Box
+          display="inline-block"
+          padding="md"
+          className="bg-white text-primary rounded"
+        >
           Get Started
         </Box>
       </Box>

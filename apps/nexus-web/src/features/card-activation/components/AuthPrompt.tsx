@@ -1,12 +1,12 @@
 /**
  * Auth Prompt Component
- * 
+ *
  * Prompts unauthenticated users to log in before activating a card.
  * Shows a warning message and Google sign-in button.
  */
 
 import React from "react";
-import { Stack, Inline, Text } from '@packages/spark-ui';
+import { Stack, Inline, Text } from "@packages/spark-ui";
 
 interface AuthPromptProps {
   /** Function to trigger Google login */
@@ -15,7 +15,7 @@ interface AuthPromptProps {
 
 /**
  * Authentication prompt for unauthenticated users
- * 
+ *
  * This component is shown when a user tries to activate a card
  * but isn't logged in. It explains why login is needed and provides
  * a Google sign-in button.

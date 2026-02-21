@@ -8,7 +8,7 @@ import {
 import { models } from "@packages/nexus-api-contracts";
 
 /**
- * @deprecated 
+ * @deprecated
  */
 export class TransactionRepository {
   tableName = "wallet_transaction";

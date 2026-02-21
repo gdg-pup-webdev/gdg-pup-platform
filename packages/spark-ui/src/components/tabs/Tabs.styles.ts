@@ -12,7 +12,7 @@ export const tabsListStyles = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export const tabsTriggerStyles = cva(
@@ -40,7 +40,7 @@ export const tabsTriggerStyles = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export const tabsContentStyles = cva("mt-4 focus-visible:outline-none", {

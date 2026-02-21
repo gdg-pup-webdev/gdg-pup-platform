@@ -12,10 +12,10 @@ Functions should either return a result successfully or throw an error. When an 
 
 Using custom error classes allows us to attach more context to our errors and handle them programmatically.
 
--   `ServerError`: Base class for all application-specific errors.
--   `DatabaseError`: For errors related to database operations.
--   `ServiceError`: For errors occurring within the business logic layer.
--   `ControllerError`: For errors in the request handling layer.
+- `ServerError`: Base class for all application-specific errors.
+- `DatabaseError`: For errors related to database operations.
+- `ServiceError`: For errors occurring within the business logic layer.
+- `ControllerError`: For errors in the request handling layer.
 
 Any error thrown within the application will be caught by our global error handler middleware, which then formats and sends an appropriate response to the API caller.
 
@@ -53,11 +53,11 @@ export class UserRepository {
 
 When calling a function that may throw an error, always wrap it with our custom `tryCatch` utility. This utility helps standardize error handling across the application.
 
--   **How it works**:
-    -   It takes a function to execute and an optional context message.
-    -   If the function executes successfully, it returns `{ data, error: null }`.
-    -   If the function throws a known `ServerError`, `tryCatch` re-throws it to be caught by the global error handler while attaching the passed context.
-    -   If the function throws an *unknown* error (e.g., a native `TypeError`), it catches the error and returns `{ data: null, error }`. This allows you to decide how to handle the unexpected errors.
+- **How it works**:
+  - It takes a function to execute and an optional context message.
+  - If the function executes successfully, it returns `{ data, error: null }`.
+  - If the function throws a known `ServerError`, `tryCatch` re-throws it to be caught by the global error handler while attaching the passed context.
+  - If the function throws an _unknown_ error (e.g., a native `TypeError`), it catches the error and returns `{ data: null, error }`. This allows you to decide how to handle the unexpected errors.
 
 **Example: Using `tryCatch` in a service**
 
@@ -75,15 +75,18 @@ export class UserService {
       // 1. Pass the function to execute
       () => this.userRepository.getUserById(userId),
       // 2. Provide context for better error logging
-      "Error fetching user from the database."
+      "Error fetching user from the database.",
     );
 
     // 3. Handle any unexpected, unknown errors
     if (error) {
       // Classify the unknown error and re-throw it
-      throw new ServiceError("An unexpected error occurred in the user service.", {
-        cause: error
-      });
+      throw new ServiceError(
+        "An unexpected error occurred in the user service.",
+        {
+          cause: error,
+        },
+      );
     }
 
     // 4. Return the data on success

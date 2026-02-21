@@ -27,7 +27,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Card.displayName = "Card";
 
@@ -40,20 +40,16 @@ export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
         {...props}
       />
     );
-  }
+  },
 );
 CardHeader.displayName = "CardHeader";
 
 export const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({ className, ...props }, ref) => {
     return (
-      <h3
-        ref={ref}
-        className={cn(cardTitleVariants(), className)}
-        {...props}
-      />
+      <h3 ref={ref} className={cn(cardTitleVariants(), className)} {...props} />
     );
-  }
+  },
 );
 CardTitle.displayName = "CardTitle";
 
@@ -80,7 +76,7 @@ export const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
         {...props}
       />
     );
-  }
+  },
 );
 CardContent.displayName = "CardContent";
 
@@ -93,6 +89,6 @@ export const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
         {...props}
       />
     );
-  }
+  },
 );
 CardFooter.displayName = "CardFooter";

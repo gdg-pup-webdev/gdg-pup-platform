@@ -4,7 +4,7 @@ import { UploadedFileBuffer } from "../domain/UploadedFileBuffer";
 
 export class MockFileStorage implements IFileStorage {
   /**
-   * Internal "database" to track what has been uploaded 
+   * Internal "database" to track what has been uploaded
    * Useful for assertions in your tests.
    */
   public uploadedFiles: Map<string, FileBuffer> = new Map();
@@ -18,7 +18,7 @@ export class MockFileStorage implements IFileStorage {
     // 2. Simulate a public URL
     const publicUrl = `https://mock-storage.provider.com/${storageReference}`;
 
-    // 3. (Optional) Store the buffer internally if you need to 
+    // 3. (Optional) Store the buffer internally if you need to
     // verify the content of the "uploaded" file later in tests.
     this.uploadedFiles.set(storageReference, file);
 
@@ -33,7 +33,7 @@ export class MockFileStorage implements IFileStorage {
       return true;
     }
 
-    // Even if it doesn't exist, most storage APIs return true/success 
+    // Even if it doesn't exist, most storage APIs return true/success
     // or you can return false to simulate a 404.
     return false;
   }

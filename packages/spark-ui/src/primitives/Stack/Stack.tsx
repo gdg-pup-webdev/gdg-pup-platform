@@ -5,9 +5,9 @@ import type { StackProps } from "./Stack.types";
 
 /**
  * Stack Component
- * 
+ *
  * A vertical layout primitive that provides consistent spacing between children.
- * 
+ *
  * @example
  * ```tsx
  * <Stack gap="md">
@@ -16,7 +16,7 @@ import type { StackProps } from "./Stack.types";
  *   <div>Item 3</div>
  * </Stack>
  * ```
- * 
+ *
  * @example With alignment
  * ```tsx
  * <Stack gap="lg" align="center">
@@ -38,7 +38,7 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
         {children}
       </Component>
     );
-  }
+  },
 );
 
 Stack.displayName = "Stack";

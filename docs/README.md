@@ -30,6 +30,7 @@ Our documentation is organized into specialized sections:
 Standards and best practices for maintaining code quality and consistency:
 
 **Backend Development**
+
 - API utility patterns
 - Layered architecture implementation
 - Contract-first API design
@@ -37,16 +38,19 @@ Standards and best practices for maintaining code quality and consistency:
 - Error handling patterns
 
 **Project Organization**
+
 - File and folder structure
 - Code organization within files
 - Refactoring and deprecation strategies
 
 **Code Quality**
+
 - Self-documenting code principles
 - Documentation standards
 - Code readability guidelines
 
 **Collaboration**
+
 - Issue creation standards
 - Pull request guidelines
 - Branch naming conventions
@@ -63,6 +67,7 @@ Standards and best practices for maintaining code quality and consistency:
 ### [Architecture Guide](./ARCHITECTURE.md)
 
 Deep dive into the platform's system design:
+
 - Monorepo structure and organization
 - Service architecture and boundaries
 - Contract-first development patterns
@@ -72,6 +77,7 @@ Deep dive into the platform's system design:
 ### [Database Guide](./DATABASE.md)
 
 Database schema and management:
+
 - PostgreSQL/Supabase setup
 - Schema design patterns
 - Migration strategies
@@ -82,16 +88,16 @@ Database schema and management:
 
 ## 🗺️ Quick Navigation
 
-| I want to... | Go to... |
-|--------------|----------|
-| **Set up my development environment** | [Onboarding: Setting Up](./Onboarding/0-SettingUpTheProject.md) |
-| **Understand the architecture** | [Onboarding: Project Architecture](./Onboarding/1-ProjectArchitecture.md) |
-| **Learn how to write backend code** | [Coding Guidelines: Backend](./CodingGuidelines/README.md#-backend-development-100s) |
-| **Submit my first contribution** | [Coding Guidelines: Contributing](./CodingGuidelines/705-Contributing.md) |
-| **Debug setup issues** | [Onboarding: Troubleshooting](./Onboarding/99.2-TroubleShootingGuides.md) |
-| **Understand type-safe APIs** | [Onboarding: Contract-First](./Onboarding/2-ContractFirstDevelopment.md) |
-| **Follow coding standards** | [Coding Guidelines: README](./CodingGuidelines/README.md) |
-| **See database schema** | [Database Guide](./DATABASE.md) |
+| I want to...                          | Go to...                                                                             |
+| ------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Set up my development environment** | [Onboarding: Setting Up](./Onboarding/0-SettingUpTheProject.md)                      |
+| **Understand the architecture**       | [Onboarding: Project Architecture](./Onboarding/1-ProjectArchitecture.md)            |
+| **Learn how to write backend code**   | [Coding Guidelines: Backend](./CodingGuidelines/README.md#-backend-development-100s) |
+| **Submit my first contribution**      | [Coding Guidelines: Contributing](./CodingGuidelines/705-Contributing.md)            |
+| **Debug setup issues**                | [Onboarding: Troubleshooting](./Onboarding/99.2-TroubleShootingGuides.md)            |
+| **Understand type-safe APIs**         | [Onboarding: Contract-First](./Onboarding/2-ContractFirstDevelopment.md)             |
+| **Follow coding standards**           | [Coding Guidelines: README](./CodingGuidelines/README.md)                            |
+| **See database schema**               | [Database Guide](./DATABASE.md)                                                      |
 
 ---
 

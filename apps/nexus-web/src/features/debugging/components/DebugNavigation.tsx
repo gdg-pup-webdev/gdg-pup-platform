@@ -1,6 +1,6 @@
 /**
  * DebugNavigation Component
- * 
+ *
  * Navigation component for debugging pages with Google Material Design styling.
  */
 
@@ -8,7 +8,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Card, Stack, Grid, Text, Inline } from '@packages/spark-ui';
+import { Card, Stack, Grid, Text, Inline } from "@packages/spark-ui";
 
 interface NavLinkProps {
   href: string;
@@ -39,11 +39,17 @@ function NavLink({ href, label, icon, description, active }: NavLinkProps) {
         <Stack gap="xs" className="flex-1">
           <Text
             variant="label"
-            className={active ? "text-blue-700" : "text-gray-900 group-hover:text-blue-600"}
+            className={
+              active
+                ? "text-blue-700"
+                : "text-gray-900 group-hover:text-blue-600"
+            }
           >
             {label}
           </Text>
-          <Text variant="body-sm" className="text-gray-600">{description}</Text>
+          <Text variant="body-sm" className="text-gray-600">
+            {description}
+          </Text>
         </Stack>
         <span className="text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
           →
@@ -60,7 +66,7 @@ interface DebugNavigationProps {
 
 /**
  * Navigation component for debugging tools
- * 
+ *
  * Provides quick access to different debugging pages with
  * Material Design aesthetics and visual feedback.
  */
@@ -85,7 +91,7 @@ export function DebugNavigation({ activePage }: DebugNavigationProps) {
             description="Main debugging dashboard"
             active={activePage === "index"}
           />
-          
+
           <NavLink
             href="/debugging/auth"
             label="Auth Debugger"
@@ -93,7 +99,7 @@ export function DebugNavigation({ activePage }: DebugNavigationProps) {
             description="Test authentication & tokens"
             active={activePage === "auth"}
           />
-          
+
           <NavLink
             href="/"
             label="Home Page"
@@ -106,8 +112,8 @@ export function DebugNavigation({ activePage }: DebugNavigationProps) {
         {/* Quick Info */}
         <Stack gap="xs" className="pt-4 border-t border-gray-200">
           <Text variant="caption" className="text-gray-500">
-            💡 <strong>Tip:</strong> Use these tools to test authentication flows,
-            inspect tokens, and debug API calls during development.
+            💡 <strong>Tip:</strong> Use these tools to test authentication
+            flows, inspect tokens, and debug API calls during development.
           </Text>
         </Stack>
       </Stack>

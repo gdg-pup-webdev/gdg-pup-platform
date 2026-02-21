@@ -58,14 +58,14 @@ apps/nexus-web/src/
 
 ### Directory Responsibilities
 
--   **`app/`**: Next.js App Router for file-based routing and server components
--   **`features/`**: Self-contained feature modules with their own API, components, hooks, and types
--   **`components/ui/`**: Reusable UI components built with or composed from Spark-UI
--   **`components/shared/`**: Shared layout and structural components (Navbar, Footer, etc.)
--   **`providers/`**: React context providers that wrap the entire application
--   **`lib/`**: Core utilities and third-party service configurations
--   **`configs/`**: Application configuration files
--   **`utils/`**: General-purpose utility functions
+- **`app/`**: Next.js App Router for file-based routing and server components
+- **`features/`**: Self-contained feature modules with their own API, components, hooks, and types
+- **`components/ui/`**: Reusable UI components built with or composed from Spark-UI
+- **`components/shared/`**: Shared layout and structural components (Navbar, Footer, etc.)
+- **`providers/`**: React context providers that wrap the entire application
+- **`lib/`**: Core utilities and third-party service configurations
+- **`configs/`**: Application configuration files
+- **`utils/`**: General-purpose utility functions
 
 ### Internal UI Library (SparkUI)
 
@@ -99,22 +99,22 @@ The standard pattern is to create an API function using `callEndpoint`, then wra
 
 ```typescript
 // src/features/user-profile/api/getUserProfile.ts
-import { callEndpoint } from '@packages/typed-rest';
-import { contract } from '@packages/nexus-api-contracts';
-import { configs } from '@/configs/servers.config';
+import { callEndpoint } from "@packages/typed-rest";
+import { contract } from "@packages/nexus-api-contracts";
+import { configs } from "@/configs/servers.config";
 
 export async function getUserProfile(userId: string) {
   const result = await callEndpoint(
     configs.nexusApi.baseUrl,
     contract.api.users.userId.GET,
-    { params: { userId } }
+    { params: { userId } },
   );
 
   // The 'result' object is fully typed based on the contract
   if (result.status === 200) {
     return result.body.data;
   }
-  
+
   throw new Error(result.body.message);
 }
 ```
@@ -123,12 +123,12 @@ export async function getUserProfile(userId: string) {
 
 ```typescript
 // src/features/user-profile/hooks/useUserProfile.ts
-import { useQuery } from '@tanstack/react-query';
-import { getUserProfile } from '../api';
+import { useQuery } from "@tanstack/react-query";
+import { getUserProfile } from "../api";
 
 export function useUserProfile(userId: string) {
   return useQuery({
-    queryKey: ['user-profile', userId],
+    queryKey: ["user-profile", userId],
     queryFn: () => getUserProfile(userId),
     enabled: !!userId, // Only run if userId exists
   });
@@ -146,11 +146,11 @@ import { LoadingScreen } from '@/components/shared';
 
 export default function ProfilePage({ params }: { params: { userId: string } }) {
   const { data: profile, isLoading, error } = useUserProfile(params.userId);
-  
+
   if (isLoading) return <LoadingScreen />;
   if (error) return <div>Error loading profile</div>;
   if (!profile) return null;
-  
+
   return (
     <div>
       <h1>{profile.name}</h1>
@@ -217,6 +217,7 @@ pnpm run g <feature-name>
 ```
 
 **Example:**
+
 ```bash
 pnpm run g user-profile
 ```
@@ -255,7 +256,7 @@ After generating a feature, follow these steps to implement it:
 Import from the feature module using clean, absolute imports:
 
 ```typescript
-import { UserProfileCard, useUserProfile } from '@/features/user-profile';
+import { UserProfileCard, useUserProfile } from "@/features/user-profile";
 ```
 
 This approach keeps imports clean and makes it easy to refactor feature internals without affecting consumers.
@@ -289,7 +290,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
   if (result.status === 200) {
     return result.body.data;
   }
-  
+
   throw new Error(result.body.message);
 }
 
@@ -344,11 +345,11 @@ import { UserProfileCard, useUserProfile } from '@/features/user-profile';
 
 export default function UserPage({ params }: { params: { userId: string } }) {
   const { data: profile, isLoading, error } = useUserProfile(params.userId);
-  
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading profile</div>;
   if (!profile) return null;
-  
+
   return <UserProfileCard profile={profile} />;
 }
 ```

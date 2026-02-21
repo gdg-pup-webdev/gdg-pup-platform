@@ -1,7 +1,9 @@
-import { Contract, ValidatedInputObject } from "#application/enforcement/domains/serverTypes.js";
+import {
+  Contract,
+  ValidatedInputObject,
+} from "#application/enforcement/domains/serverTypes.js";
 import { HandlerOutput } from "#presentation/serverExpress/types.js";
 
- 
 // Helper: Extra options like Auth
 type FetchOptions = Omit<RequestInit, "body" | "method"> & {
   token?: string; // Helper for "Authorization: Bearer <token>"

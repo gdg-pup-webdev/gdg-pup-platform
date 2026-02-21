@@ -2,7 +2,8 @@ import type { VariantProps } from "class-variance-authority";
 import type { tooltipStyles } from "./Tooltip.styles";
 
 export interface TooltipProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "content">,
+  extends
+    Omit<React.HTMLAttributes<HTMLDivElement>, "content">,
     VariantProps<typeof tooltipStyles> {
   /**
    * The content to display in the tooltip

@@ -1,8 +1,14 @@
-import { Router } from "express"; 
-import { TransactionRouter, transactionRouterInstance } from "./walletSystem/transactions/transaction.route";
-import { WalletRouter, walletRouterInstance } from "./walletSystem/wallets/wallet.route";
+import { Router } from "express";
+import {
+  TransactionRouter,
+  transactionRouterInstance,
+} from "./walletSystem/transactions/transaction.route";
+import {
+  WalletRouter,
+  walletRouterInstance,
+} from "./walletSystem/wallets/wallet.route";
 /**
- * @deprecated 
+ * @deprecated
  */
 export class EconomySystemRouter {
   constructor(
@@ -21,6 +27,6 @@ export class EconomySystemRouter {
   };
 }
 /**
- * @deprecated 
+ * @deprecated
  */
 export const economySystemRouterInstance = new EconomySystemRouter();

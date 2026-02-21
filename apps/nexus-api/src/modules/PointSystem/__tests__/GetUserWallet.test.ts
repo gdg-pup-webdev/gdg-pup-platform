@@ -28,7 +28,7 @@ describe("GetUserWallet Use Case", () => {
         webdevPoints: 400,
       },
     });
-    
+
     // Using the seed helper from our Mock
     (walletRepository as MockWalletRepository).__seed(wallet);
 

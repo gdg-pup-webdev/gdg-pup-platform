@@ -1,12 +1,10 @@
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { TeamService } from "@/modules/teamsSystem/teams/team.service";
 
 export class TeamsHttpController {
-  constructor(
-    private readonly teamService: TeamService  ,
-  ) {}
+  constructor(private readonly teamService: TeamService) {}
 
   listTeams: RequestHandler = createExpressController(
     contract.api.team_system.teams.GET,
@@ -88,4 +86,3 @@ export class TeamsHttpController {
     },
   );
 }
- 

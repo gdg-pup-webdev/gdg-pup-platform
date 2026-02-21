@@ -1,6 +1,6 @@
 /**
  * Events Components Export
- * 
+ *
  * Central export point for all events-related components.
  */
 

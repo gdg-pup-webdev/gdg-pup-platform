@@ -3,7 +3,6 @@ import {
   publicTeamRowSchema,
   publicTeamUpdateSchema,
 } from "#types/supabase.schema.js";
- 
 
 export const row = publicTeamRowSchema;
 

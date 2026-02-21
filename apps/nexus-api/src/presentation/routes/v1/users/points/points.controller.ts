@@ -1,5 +1,7 @@
-  
-import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/wallets/wallet.service";
+import {
+  WalletService,
+  walletServiceInstance,
+} from "@/deprecated/walletSystem/wallets/wallet.service";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";

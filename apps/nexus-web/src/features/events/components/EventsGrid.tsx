@@ -1,8 +1,8 @@
 /**
  * EventsGrid Component
- * 
+ *
  * Grid layout for displaying multiple events with loading,
- * empty, and error states. 
+ * empty, and error states.
  */
 
 "use client";
@@ -10,7 +10,16 @@
 import React from "react";
 import { Event } from "../types";
 import { EventCard } from "./EventCard";
-import { Spinner, Card, Button, Grid, Stack, Inline, Text, Skeleton } from '@packages/spark-ui';
+import {
+  Spinner,
+  Card,
+  Button,
+  Grid,
+  Stack,
+  Inline,
+  Text,
+  Skeleton,
+} from "@packages/spark-ui";
 
 interface EventsGridProps {
   events: Event[];
@@ -51,21 +60,18 @@ function EmptyState() {
         <Stack gap="xs" align="center">
           <Text variant="heading-2">No Events Found</Text>
           <Text variant="body" color="secondary" className="max-w-md">
-            There are no events matching your filters. Try adjusting your search or
-            check back later for new events.
+            There are no events matching your filters. Try adjusting your search
+            or check back later for new events.
           </Text>
         </Stack>
         <Inline gap="sm" justify="center" wrap={true}>
           <Button
             variant="primary"
-            onClick={() => window.location.href = "/events"}
+            onClick={() => (window.location.href = "/events")}
           >
             View All Events
           </Button>
-          <Button
-            variant="secondary"
-            onClick={() => window.location.reload()}
-          >
+          <Button variant="secondary" onClick={() => window.location.reload()}>
             Refresh Page
           </Button>
         </Inline>
@@ -77,28 +83,41 @@ function EmptyState() {
 /**
  * Error state with retry option
  */
-function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => void }) {
+function ErrorState({
+  error,
+  onRetry,
+}: {
+  error: Error;
+  onRetry?: () => void;
+}) {
   return (
     <Card>
       <Stack gap="md" className="py-16 px-6" align="center">
         <div className="text-6xl">❌</div>
         <Stack gap="xs" align="center">
-          <Text variant="heading-2" color="error">Failed to Load Events</Text>
-          <Text variant="body" weight="medium" className="max-w-md text-red-700">
+          <Text variant="heading-2" color="error">
+            Failed to Load Events
+          </Text>
+          <Text
+            variant="body"
+            weight="medium"
+            className="max-w-md text-red-700"
+          >
             {error.message}
           </Text>
         </Stack>
-        <Stack as="ul" gap="xs" className="text-sm text-red-600 max-w-md list-disc list-inside">
+        <Stack
+          as="ul"
+          gap="xs"
+          className="text-sm text-red-600 max-w-md list-disc list-inside"
+        >
           <li>Check your internet connection</li>
           <li>Verify the API server is running</li>
           <li>Try refreshing the page</li>
           <li>Contact support if the issue persists</li>
         </Stack>
         {onRetry && (
-          <Button
-            variant="primary"
-            onClick={onRetry}
-          >
+          <Button variant="primary" onClick={onRetry}>
             <Inline gap="xs" align="center">
               <span>🔄</span>
               <span>Try Again</span>
@@ -112,7 +131,7 @@ function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => void }) 
 
 /**
  * Grid component for displaying events
- * 
+ *
  * Automatically handles loading, empty, and error states
  * using SparkUI primitives.
  */

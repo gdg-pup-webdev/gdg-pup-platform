@@ -4,7 +4,7 @@ import {
   transactionControllerInstance,
 } from "./transaction.controller";
 /**
- * @deprecated 
+ * @deprecated
  */
 export class TransactionRouter {
   constructor(
@@ -20,6 +20,6 @@ export class TransactionRouter {
   };
 }
 /**
- * @deprecated 
+ * @deprecated
  */
 export const transactionRouterInstance = new TransactionRouter();

@@ -1,6 +1,6 @@
 /**
  * AuthDebugPanel Component
- * 
+ *
  * Displays authentication state and provides controls for testing
  * authentication flows. Features Google Material Design styling.
  */
@@ -10,11 +10,19 @@
 import React from "react";
 import { useDebugAuth } from "../hooks/useDebugAuth";
 import { toast } from "react-toastify";
-import { Button, Card, Badge, Avatar, Stack, Inline, Text } from '@packages/spark-ui';
+import {
+  Button,
+  Card,
+  Badge,
+  Avatar,
+  Stack,
+  Inline,
+  Text,
+} from "@packages/spark-ui";
 
 /**
  * Main authentication debugging panel
- * 
+ *
  * Provides controls for login/logout and displays current auth state
  * with Google Material Design aesthetics.
  */
@@ -67,9 +75,7 @@ export function AuthDebugPanel() {
       {/* Header Section */}
       <Inline align="center" justify="between">
         <Stack gap="none">
-          <Text variant="heading-2">
-            Authentication Debugger
-          </Text>
+          <Text variant="heading-2">Authentication Debugger</Text>
           <Text variant="body-sm" className="text-gray-600">
             Test authentication flows and inspect tokens
           </Text>
@@ -85,9 +91,17 @@ export function AuthDebugPanel() {
           <Inline gap="md" align="center">
             <Avatar
               src={authState.user.user_metadata?.avatar_url}
-              alt={authState.user.user_metadata?.name || authState.user.email || "User"}
+              alt={
+                authState.user.user_metadata?.name ||
+                authState.user.email ||
+                "User"
+              }
               size="lg"
-              fallback={authState.user.user_metadata?.name?.charAt(0) || authState.user.email?.charAt(0) || "U"}
+              fallback={
+                authState.user.user_metadata?.name?.charAt(0) ||
+                authState.user.email?.charAt(0) ||
+                "U"
+              }
               className="border-2 border-blue-500"
             />
             <Stack gap="none">
@@ -110,10 +124,7 @@ export function AuthDebugPanel() {
         <Stack gap="md">
           <Text variant="heading-3">Authentication Controls</Text>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Button
-              onClick={loginWithGoogle}
-              variant="primary"
-            >
+            <Button onClick={loginWithGoogle} variant="primary">
               <Inline gap="xs" align="center">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -137,29 +148,26 @@ export function AuthDebugPanel() {
               </Inline>
             </Button>
 
-          <Button
-            onClick={logout}
-            variant="destructive"
-          >
-            Logout
-          </Button>
+            <Button onClick={logout} variant="destructive">
+              Logout
+            </Button>
 
-          <Button
-            onClick={handleCopyToken}
-            variant="secondary"
-            disabled={!authState.token}
-          >
-            Copy Backend Token
-          </Button>
+            <Button
+              onClick={handleCopyToken}
+              variant="secondary"
+              disabled={!authState.token}
+            >
+              Copy Backend Token
+            </Button>
 
-          <Button
-            onClick={handleCopyGoogleAccessToken}
-            variant="secondary"
-            disabled={!authState.googleAccessToken}
-          >
-            Copy Google Token
-          </Button>
-        </div>
+            <Button
+              onClick={handleCopyGoogleAccessToken}
+              variant="secondary"
+              disabled={!authState.googleAccessToken}
+            >
+              Copy Google Token
+            </Button>
+          </div>
         </Stack>
       </Card>
 

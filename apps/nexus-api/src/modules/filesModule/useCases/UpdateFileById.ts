@@ -1,5 +1,5 @@
 import { FileRecord, FileRecordUpdateProps } from "../domain/FileRecord";
-import { IFileRepository } from "../domain/IFileRepository"; 
+import { IFileRepository } from "../domain/IFileRepository";
 
 export class UpdateFileById {
   constructor(private fileRepository: IFileRepository) {}

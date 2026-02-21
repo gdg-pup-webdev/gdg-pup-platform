@@ -1,25 +1,25 @@
 /**
  * Base API Service
- * 
+ *
  * Abstract base class for all API services.
  * Provides common functionality for API communication including:
  * - Type-safe API calls using contracts
  * - Automatic error handling and transformation
  * - Request/response interceptors
  * - Retry logic for transient failures
- * 
+ *
  * All domain-specific services should extend this class.
  */
 
-import { callEndpoint } from '@packages/typed-rest/clientReact';
-import { 
-  processError, 
-  logError, 
-  shouldRetry, 
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import {
+  processError,
+  logError,
+  shouldRetry,
   getRetryDelay,
   ApiError,
-} from '../../errors';
-import { API_CONFIG } from './config';
+} from "../../errors";
+import { API_CONFIG } from "./config";
 
 /**
  * Type helper to extract the contract type
@@ -29,8 +29,8 @@ type Contract = any; // This will be typed by the actual contract
 /**
  * Type helper to extract response data type from a contract
  */
-type ExtractResponseData<T> = T extends { response: { 200: { data: infer D } } } 
-  ? D 
+type ExtractResponseData<T> = T extends { response: { 200: { data: infer D } } }
+  ? D
   : any;
 
 /**
@@ -41,33 +41,33 @@ export interface ApiRequestOptions {
   params?: any;
   query?: any;
   body?: any;
-  
+
   /** Authentication token */
   token?: string;
-  
+
   /** Custom headers */
   headers?: Record<string, string>;
-  
+
   /** Whether to retry on failure */
   retry?: boolean;
-  
+
   /** Custom timeout for this request */
   timeout?: number;
-  
+
   /** Whether to log errors (default: true) */
   logErrors?: boolean;
 }
 
 /**
  * Abstract base service class
- * 
+ *
  * @example
  * ```typescript
  * export class UserService extends BaseApiService {
  *   constructor() {
  *     super('nexus');
  *   }
- * 
+ *
  *   async getUserProfile(userId: string): Promise<UserProfile> {
  *     return this.get(
  *       contract.api.user_system.users.userId.profile.GET,
@@ -83,15 +83,16 @@ export abstract class BaseApiService {
   /**
    * @param api - Which API this service communicates with ('nexus' or 'identity')
    */
-  constructor(api: 'nexus' | 'identity' = 'nexus') {
-    this.baseUrl = api === 'nexus' 
-      ? API_CONFIG.nexusApiBaseUrl 
-      : API_CONFIG.identityApiBaseUrl;
+  constructor(api: "nexus" | "identity" = "nexus") {
+    this.baseUrl =
+      api === "nexus"
+        ? API_CONFIG.nexusApiBaseUrl
+        : API_CONFIG.identityApiBaseUrl;
   }
 
   /**
    * Make a type-safe API call
-   * 
+   *
    * @param endpoint - The contract endpoint to call
    * @param options - Request options
    * @returns The response data
@@ -99,7 +100,7 @@ export abstract class BaseApiService {
    */
   protected async call<T extends Contract>(
     endpoint: T,
-    options: ApiRequestOptions = {}
+    options: ApiRequestOptions = {},
   ): Promise<any> {
     const {
       params,
@@ -140,7 +141,10 @@ export abstract class BaseApiService {
 
         // Log the error if enabled
         if (logErrors) {
-          logError(apiError, `${this.constructor.name}.call (attempt ${attempt}/${maxAttempts})`);
+          logError(
+            apiError,
+            `${this.constructor.name}.call (attempt ${attempt}/${maxAttempts})`,
+          );
         }
 
         // Check if we should retry
@@ -156,7 +160,7 @@ export abstract class BaseApiService {
     }
 
     // This should never be reached, but TypeScript needs it
-    throw lastError || processError('Unknown error');
+    throw lastError || processError("Unknown error");
   }
 
   /**
@@ -172,7 +176,7 @@ export abstract class BaseApiService {
       token?: string;
       headers?: Record<string, string>;
       timeout?: number;
-    }
+    },
   ): Promise<any> {
     const { params, query, body, token, headers, timeout } = options;
 
@@ -201,7 +205,7 @@ export abstract class BaseApiService {
    */
   protected async get<T extends Contract>(
     endpoint: T,
-    options: Omit<ApiRequestOptions, 'body'> = {}
+    options: Omit<ApiRequestOptions, "body"> = {},
   ): Promise<any> {
     return this.call(endpoint, options);
   }
@@ -212,7 +216,7 @@ export abstract class BaseApiService {
   protected async post<T extends Contract>(
     endpoint: T,
     body: any,
-    options: Omit<ApiRequestOptions, 'body'> = {}
+    options: Omit<ApiRequestOptions, "body"> = {},
   ): Promise<any> {
     return this.call(endpoint, { ...options, body });
   }
@@ -223,7 +227,7 @@ export abstract class BaseApiService {
   protected async put<T extends Contract>(
     endpoint: T,
     body: any,
-    options: Omit<ApiRequestOptions, 'body'> = {}
+    options: Omit<ApiRequestOptions, "body"> = {},
   ): Promise<any> {
     return this.call(endpoint, { ...options, body });
   }
@@ -234,7 +238,7 @@ export abstract class BaseApiService {
   protected async patch<T extends Contract>(
     endpoint: T,
     body: any,
-    options: Omit<ApiRequestOptions, 'body'> = {}
+    options: Omit<ApiRequestOptions, "body"> = {},
   ): Promise<any> {
     return this.call(endpoint, { ...options, body });
   }
@@ -244,7 +248,7 @@ export abstract class BaseApiService {
    */
   protected async delete<T extends Contract>(
     endpoint: T,
-    options: Omit<ApiRequestOptions, 'body'> = {}
+    options: Omit<ApiRequestOptions, "body"> = {},
   ): Promise<any> {
     return this.call(endpoint, options);
   }
@@ -253,14 +257,16 @@ export abstract class BaseApiService {
    * Sleep utility for retry delays
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
    * Hook called before each request
    * Subclasses can override this for custom logic (e.g., adding tokens)
    */
-  protected async beforeRequest?(options: ApiRequestOptions): Promise<ApiRequestOptions>;
+  protected async beforeRequest?(
+    options: ApiRequestOptions,
+  ): Promise<ApiRequestOptions>;
 
   /**
    * Hook called after each successful response

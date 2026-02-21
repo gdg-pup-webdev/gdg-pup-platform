@@ -1,6 +1,5 @@
 import { ZodError } from "zod";
 
-
 export class TypedRestError extends Error {
   constructor(message: string, err: unknown) {
     super("TypedRestError", { cause: err });
@@ -10,8 +9,7 @@ export class TypedRestError extends Error {
 }
 
 export class IncomingRequestValidationError extends TypedRestError {
-  public zodError: ZodError | undefined |
-   unknown;
+  public zodError: ZodError | undefined | unknown;
 
   constructor(message: string, err?: ZodError) {
     super("IncomingValidationError", err);

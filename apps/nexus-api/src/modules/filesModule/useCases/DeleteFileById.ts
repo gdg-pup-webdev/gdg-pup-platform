@@ -1,4 +1,4 @@
- import { IFileRepository } from "../domain/IFileRepository";
+import { IFileRepository } from "../domain/IFileRepository";
 import { IFileStorage } from "../domain/IFileStorage";
 
 export class DeleteFileById {

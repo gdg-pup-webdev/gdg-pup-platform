@@ -1,6 +1,6 @@
 import { highlight } from "#models/publicationSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
- 
+
 export const response = {
   200: SchemaFactory.Response.single(highlight.row),
   ...SchemaFactory.Response.standardErrors(),
@@ -16,65 +16,65 @@ export const docs_description = [
 ].join("\n\n");
 
 export const docs_example_response_400 = {
-  "status": "error",
-  "message": "Invalid request.",
-  "errors": [
+  status: "error",
+  message: "Invalid request.",
+  errors: [
     {
-      "title": "Bad Request",
-      "detail": "One or more request fields are invalid."
-    }
-  ]
+      title: "Bad Request",
+      detail: "One or more request fields are invalid.",
+    },
+  ],
 };
 export const docs_example_response_401 = {
-  "status": "error",
-  "message": "Unauthorized.",
-  "errors": [
+  status: "error",
+  message: "Unauthorized.",
+  errors: [
     {
-      "title": "Unauthorized",
-      "detail": "Missing or invalid authentication token."
-    }
-  ]
+      title: "Unauthorized",
+      detail: "Missing or invalid authentication token.",
+    },
+  ],
 };
 export const docs_example_response_403 = {
-  "status": "error",
-  "message": "Forbidden.",
-  "errors": [
+  status: "error",
+  message: "Forbidden.",
+  errors: [
     {
-      "title": "Forbidden",
-      "detail": "You do not have permission to access this resource."
-    }
-  ]
+      title: "Forbidden",
+      detail: "You do not have permission to access this resource.",
+    },
+  ],
 };
 export const docs_example_response_404 = {
-  "status": "error",
-  "message": "HighlightId not found.",
-  "errors": [
+  status: "error",
+  message: "HighlightId not found.",
+  errors: [
     {
-      "title": "Not Found",
-      "detail": "No highlightid found for the provided identifier."
-    }
-  ]
+      title: "Not Found",
+      detail: "No highlightid found for the provided identifier.",
+    },
+  ],
 };
 export const docs_example_response_500 = {
-  "status": "error",
-  "message": "Internal server error.",
-  "errors": [
+  status: "error",
+  message: "Internal server error.",
+  errors: [
     {
-      "title": "Internal Server Error",
-      "detail": "An unexpected error occurred."
-    }
-  ]
+      title: "Internal Server Error",
+      detail: "An unexpected error occurred.",
+    },
+  ],
 };
 
 export const docs_example_response = {
-  "status": "success",
-  "message": "Highlight fetched",
-  "data": {
-    "id": "highlight-1",
-    "title": "Top Talk",
-    "description": "Best session highlight",
-    "createdAt": "2026-01-01T00:00:00.000Z",
-    "updatedAt": "2026-01-01T00:00:00.000Z",
-    "createdBy": "user-1"
-  }
+  status: "success",
+  message: "Highlight fetched",
+  data: {
+    id: "highlight-1",
+    title: "Top Talk",
+    description: "Best session highlight",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
+    createdBy: "user-1",
+  },
 };

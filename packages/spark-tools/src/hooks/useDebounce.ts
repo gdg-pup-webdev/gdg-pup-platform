@@ -1,13 +1,13 @@
 /**
  * useDebounce Hook
- * 
+ *
  * Hook for debouncing values (e.g., search input).
- * 
+ *
  * @example
  * ```typescript
  * const [searchTerm, setSearchTerm] = useState('');
  * const debouncedSearchTerm = useDebounce(searchTerm, 500);
- * 
+ *
  * // debouncedSearchTerm will only update 500ms after searchTerm stops changing
  * useEffect(() => {
  *   if (debouncedSearchTerm) {
@@ -17,13 +17,13 @@
  * ```
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * Hook that debounces a value
- * 
+ *
  * @param value - The value to debounce
  * @param delay - Delay in milliseconds (default: 500ms)
  * @returns The debounced value
@@ -48,21 +48,21 @@ export function useDebounce<T>(value: T, delay: number = 500): T {
 
 /**
  * useDebounceCallback Hook
- * 
+ *
  * Hook for debouncing callback functions.
- * 
+ *
  * @example
  * ```typescript
  * const debouncedSearch = useDebounceCallback((term: string) => {
  *   searchResults(term);
  * }, 500);
- * 
+ *
  * <input onChange={(e) => debouncedSearch(e.target.value)} />
  * ```
  */
 export function useDebounceCallback<T extends (...args: any[]) => any>(
   callback: T,
-  delay: number = 500
+  delay: number = 500,
 ): (...args: Parameters<T>) => void {
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 

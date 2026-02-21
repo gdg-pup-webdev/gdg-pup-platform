@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Box - Generic container primitive
- * 
+ *
  * A flexible container that accepts spacing, sizing, and display props.
  * Uses theme spacing tokens for all values.
  */
@@ -13,11 +13,11 @@ export const boxVariants = cva([], {
      */
     padding: {
       none: "p-0",
-      xs: "p-2",    // 8px
-      sm: "p-3",    // 12px
-      md: "p-4",    // 16px
-      lg: "p-6",    // 24px
-      xl: "p-8",    // 32px
+      xs: "p-2", // 8px
+      sm: "p-3", // 12px
+      md: "p-4", // 16px
+      lg: "p-6", // 24px
+      xl: "p-8", // 32px
       "2xl": "p-12", // 48px
     },
     /**
@@ -47,7 +47,7 @@ export const boxVariants = cva([], {
       auto: "h-auto",
       full: "h-full",
       screen: "h-screen",
-      banner: "h-48",  // Common banner height
+      banner: "h-48", // Common banner height
     },
     /**
      * Display type

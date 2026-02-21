@@ -1,4 +1,3 @@
- 
 import {
   Project,
   SourceFile,
@@ -19,9 +18,9 @@ export namespace tsmUtils {
     return declaration.getInitializerOrThrow().compilerNode as ts.Expression;
   }
 
- export const printNode = (node: ts.Node): string => {
+  export const printNode = (node: ts.Node): string => {
     return printer.printNode(ts.EmitHint.Unspecified, node, dummyFile);
-  }
+  };
 
   export const printNode_old = (node: ts.Node): string => {
     // 1. Create a printer
@@ -40,7 +39,7 @@ export namespace tsmUtils {
 
     // 3. Print the node
     return printer.printNode(ts.EmitHint.Unspecified, node, resultFile);
-  }
+  };
 
   export function writeObjectToModule(
     objectLiteral: ts.ObjectLiteralExpression,

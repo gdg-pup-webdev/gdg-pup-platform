@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import prettier from "prettier"; 
+import prettier from "prettier";
 import { RouteTree } from "./domains/RouteTree";
 import { ModelTree } from "./domains/ModelTree";
 import { writeOpenApiGenerator } from "./writeOpenApiGenerator";
@@ -31,13 +31,22 @@ export async function generateContract(
     new TsImportStatement("cz", "z", false, `${configs.packageName}/shared`),
   );
   mytsfile.addImport(
-    new TsImportStatement("OpenApiGeneratorV3", "OpenApiGeneratorV3", false, `${configs.packageName}/shared`),
+    new TsImportStatement(
+      "OpenApiGeneratorV3",
+      "OpenApiGeneratorV3",
+      false,
+      `${configs.packageName}/shared`,
+    ),
   );
 
   mytsfile.addImport(
-    new TsImportStatement("OpenAPIRegistry", "OpenAPIRegistry", false, `${configs.packageName}/shared`),
+    new TsImportStatement(
+      "OpenAPIRegistry",
+      "OpenAPIRegistry",
+      false,
+      `${configs.packageName}/shared`,
+    ),
   );
-
 
   /**
    * scanning files and generating structures

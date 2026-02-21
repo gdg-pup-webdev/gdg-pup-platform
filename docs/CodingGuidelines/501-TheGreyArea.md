@@ -47,19 +47,19 @@ If you find a recurring pattern where deviations are necessary, consider proposi
 
 ## Examples
 
-
 ## Communication is Key
 
 **Before deviating:**
+
 1. Discuss with your team lead or supervisor
 2. Document the decision in code comments
 3. Add a TODO or FIXME if this is temporary
 
 **During code review:**
+
 1. Explicitly call out deviations in the PR description
 2. Explain your reasoning in the "Strategies" section
 3. Link to related discussions or decisions
-
 
 ---
 

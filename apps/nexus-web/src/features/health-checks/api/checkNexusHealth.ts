@@ -1,21 +1,21 @@
 /**
  * API function for checking Nexus API health
- * 
+ *
  * This function calls the Nexus API health endpoint to verify
  * that the API is running and responding correctly.
  */
 
-import { callEndpoint } from '@packages/typed-rest/clientReact';
-import { contract as nexusApiContract } from '@packages/nexus-api-contracts';
-import { configs } from '@/configs/servers.config';
-import { HealthCheckResponse, HealthCheckException } from '../types';
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { contract as nexusApiContract } from "@packages/nexus-api-contracts";
+import { configs } from "@/configs/servers.config";
+import { HealthCheckResponse, HealthCheckException } from "../types";
 
 /**
  * Checks the health status of the Nexus API
- * 
+ *
  * @returns Promise<HealthCheckResponse> - The health status information
  * @throws {HealthCheckException} - When the health check fails
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -44,8 +44,8 @@ export async function checkNexusHealth(): Promise<HealthCheckResponse> {
 
     // Handle non-200 responses
     throw new HealthCheckException(
-      'SERVER_ERROR',
-      `Nexus API returned status ${result.status}: ${result.body.message || 'Unknown error'}`
+      "SERVER_ERROR",
+      `Nexus API returned status ${result.status}: ${result.body.message || "Unknown error"}`,
     );
   } catch (error) {
     // If it's already a HealthCheckException, re-throw it
@@ -54,25 +54,25 @@ export async function checkNexusHealth(): Promise<HealthCheckResponse> {
     }
 
     // Handle network errors (fetch failures, CORS issues, etc.)
-    if (error instanceof TypeError && error.message.includes('fetch')) {
+    if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new HealthCheckException(
-        'NETWORK_ERROR',
-        `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`
+        "NETWORK_ERROR",
+        `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`,
       );
     }
 
     // Handle timeout errors
-    if (error instanceof Error && error.message.includes('timeout')) {
+    if (error instanceof Error && error.message.includes("timeout")) {
       throw new HealthCheckException(
-        'TIMEOUT_ERROR',
-        'Nexus API health check timed out. The server may be slow or unresponsive.'
+        "TIMEOUT_ERROR",
+        "Nexus API health check timed out. The server may be slow or unresponsive.",
       );
     }
 
     // Handle unknown errors
     throw new HealthCheckException(
-      'UNKNOWN_ERROR',
-      `An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`
+      "UNKNOWN_ERROR",
+      `An unexpected error occurred: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }

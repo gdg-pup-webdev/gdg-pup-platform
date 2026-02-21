@@ -16,7 +16,7 @@ export const toastViewportStyles = cva(
     defaultVariants: {
       position: "bottom-right",
     },
-  }
+  },
 );
 
 export const toastStyles = cva(
@@ -34,33 +34,30 @@ export const toastStyles = cva(
         default: "bg-background text-foreground",
         success: "bg-success text-success-foreground border-success",
         warning: "bg-warning text-warning-foreground border-warning",
-        destructive: "bg-destructive text-destructive-foreground border-destructive",
+        destructive:
+          "bg-destructive text-destructive-foreground border-destructive",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export const toastTitleStyles = cva("text-sm font-semibold");
 
 export const toastDescriptionStyles = cva("text-sm opacity-90");
 
-export const toastActionStyles = cva(
-  [
-    "inline-flex h-8 shrink-0 items-center justify-center rounded-md",
-    "border border-current px-3 text-sm font-medium",
-    "transition-colors hover:bg-secondary",
-    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  ]
-);
+export const toastActionStyles = cva([
+  "inline-flex h-8 shrink-0 items-center justify-center rounded-md",
+  "border border-current px-3 text-sm font-medium",
+  "transition-colors hover:bg-secondary",
+  "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+]);
 
-export const toastCloseStyles = cva(
-  [
-    "absolute right-2 top-2 rounded-md p-1",
-    "text-foreground/50 opacity-0 transition-opacity",
-    "hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2",
-    "group-hover:opacity-100",
-  ]
-);
+export const toastCloseStyles = cva([
+  "absolute right-2 top-2 rounded-md p-1",
+  "text-foreground/50 opacity-0 transition-opacity",
+  "hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2",
+  "group-hover:opacity-100",
+]);

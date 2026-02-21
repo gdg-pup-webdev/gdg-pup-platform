@@ -1,4 +1,4 @@
-import {cz as z} from "@packages/typed-rest/shared";
+import { cz as z } from "@packages/typed-rest/shared";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
 // No body requirement for logout usually, but we might want to pass the token if not relying on cookies being forwarded automatically by some proxy,

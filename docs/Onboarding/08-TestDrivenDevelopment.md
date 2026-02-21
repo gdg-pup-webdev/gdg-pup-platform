@@ -7,6 +7,7 @@ This guide explains the testing strategy and development workflow used in the GD
 We employ **Integration Testing** to verify that our API contracts, controllers, services, and repositories work together seamlessly. Instead of testing isolated units, we test the "happy paths" and "error cases" of our API endpoints.
 
 ### Key Tools
+
 - **Vitest**: Our primary test runner (fast, compatible with Vite/ESM).
 - **Supertest**: Used to simulate HTTP requests against our Express application.
 - **Mocking**: We mock the Service layer and Auth middleware to isolate endpoint logic from external dependencies (like the real Supabase database) during local testing.
@@ -18,7 +19,7 @@ We employ **Integration Testing** to verify that our API contracts, controllers,
 To make the backend testable, we separate the **Server Listener** from the **Application Logic**:
 
 1.  **`src/app.ts`**: Configures Express, mounts loaders (Swagger, Routes, Error Handlers), and exports the `app` instance. **This file is imported by tests.**
-2.  **`src/index.ts`**: Imports `app` and calls `app.listen()`. This is the entry point for production but is *never* imported by tests.
+2.  **`src/index.ts`**: Imports `app` and calls `app.listen()`. This is the entry point for production but is _never_ imported by tests.
 
 This separation prevents tests from trying to start a real server on a network port, making them faster and avoiding port conflicts.
 
@@ -42,18 +43,22 @@ When adding a new feature (like Achievements or Certificates):
 ## 🏃 Running Tests
 
 ### All Tests (Monorepo)
+
 From the root directory:
+
 ```bash
 pnpm run test
 ```
 
 ### Specific App (Nexus API)
+
 ```bash
 cd apps/nexus-api
 pnpm test
 ```
 
 ### Specific Test File
+
 ```bash
 npx vitest run src/tests/achievements.test.ts
 ```

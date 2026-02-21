@@ -1,8 +1,6 @@
 import { IWalletRepository } from "../domain/IWalletRepository";
 import { Wallet } from "../domain/Wallet";
 
- 
-
 export class MockWalletRepository extends IWalletRepository {
   private wallets: Wallet[] = [];
 
@@ -12,14 +10,16 @@ export class MockWalletRepository extends IWalletRepository {
   }
 
   async persistUpdates(wallet: Wallet): Promise<Wallet> {
-    const index = this.wallets.findIndex((w) => w.props.userId === wallet.props.userId);
-    
+    const index = this.wallets.findIndex(
+      (w) => w.props.userId === wallet.props.userId,
+    );
+
     if (index !== -1) {
       this.wallets[index] = wallet;
     } else {
       this.wallets.push(wallet);
     }
-    
+
     return wallet;
   }
 

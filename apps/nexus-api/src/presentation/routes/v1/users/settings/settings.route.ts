@@ -4,12 +4,8 @@
  */
 
 import { Router } from "express";
-import {
-  SettingsHttpController, 
-} from "./settings.controller.js";
-import {
-  AuthMiddleware, 
-} from "@/presentation/middlewares/auth.middleware.js";
+import { SettingsHttpController } from "./settings.controller.js";
+import { AuthMiddleware } from "@/presentation/middlewares/auth.middleware.js";
 
 export class SettingsRouter {
   router: Router;

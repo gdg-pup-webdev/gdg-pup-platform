@@ -1,7 +1,6 @@
 import fsSync from "fs";
 import ts from "typescript";
 
-
 /**
  * Scan a ts file
  * list all of the keywords it exports
@@ -15,7 +14,7 @@ export function listExportsSync(absolutePath: string): string[] {
     absolutePath,
     content,
     ts.ScriptTarget.Latest,
-    true
+    true,
   );
 
   const exportNames: string[] = [];
@@ -41,18 +40,22 @@ export function listExportsSync(absolutePath: string): string[] {
             exportNames.push(decl.name.text);
           }
         });
-      } else if ((ts.isFunctionDeclaration(node) ||
-        ts.isClassDeclaration(node) ||
-        ts.isModuleDeclaration(node)) &&
-        node.name) {
+      } else if (
+        (ts.isFunctionDeclaration(node) ||
+          ts.isClassDeclaration(node) ||
+          ts.isModuleDeclaration(node)) &&
+        node.name
+      ) {
         exportNames.push(node.name.text);
       }
     }
 
     // 2. Export declarations: export { a, b as c }
-    if (ts.isExportDeclaration(node) &&
+    if (
+      ts.isExportDeclaration(node) &&
       node.exportClause &&
-      ts.isNamedExports(node.exportClause)) {
+      ts.isNamedExports(node.exportClause)
+    ) {
       node.exportClause.elements.forEach((element) => {
         exportNames.push(element.name.text);
       });

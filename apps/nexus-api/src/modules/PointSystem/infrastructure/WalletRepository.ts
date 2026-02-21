@@ -1,4 +1,3 @@
- 
 import { supabase } from "@/lib/supabase.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
 import { NotFoundError } from "@/errors/HttpError";
@@ -44,7 +43,7 @@ export class WalletRepository extends IWalletRepository {
       .single();
 
     if (error) handlePostgresError(error);
-    
+
     return wallet;
   }
 }

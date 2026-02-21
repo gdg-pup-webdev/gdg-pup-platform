@@ -10,9 +10,9 @@ Dependency Injection (DI) is a core design pattern we use throughout the backend
 
 In our layered architecture, higher-level components depend on lower-level abstractions. For example, a `UserService` depends on a `UserRepository`.
 
--   **Constructor Injection**: Dependencies are provided as arguments to the constructor.
--   **Default Instances**: We provide a default, singleton instance of the dependency, which is used in production.
--   **Testability**: During testing, we can easily provide a mock or stub version of the dependency.
+- **Constructor Injection**: Dependencies are provided as arguments to the constructor.
+- **Default Instances**: We provide a default, singleton instance of the dependency, which is used in production.
+- **Testability**: During testing, we can easily provide a mock or stub version of the dependency.
 
 ### Example
 
@@ -68,8 +68,8 @@ import { UserService } from "./user.service.js";
 // 1. Create a mock repository
 const mockUserRepository = {
   getUserById: jest.fn().mockResolvedValue({
-    id: '123',
-    name: 'Test User'
+    id: "123",
+    name: "Test User",
   }),
 };
 
@@ -77,13 +77,13 @@ const mockUserRepository = {
 const userService = new UserService(mockUserRepository as any);
 
 // 3. Test the service logic in isolation
-it('should fetch a user correctly', async () => {
-  const user = await userService.fetchUser('123');
+it("should fetch a user correctly", async () => {
+  const user = await userService.fetchUser("123");
 
   // Assert that the mock was called
-  expect(mockUserRepository.getUserById).toHaveBeenCalledWith('122');
+  expect(mockUserRepository.getUserById).toHaveBeenCalledWith("122");
   // Assert the result
-  expect(user.name).toBe('Test User');
+  expect(user.name).toBe("Test User");
 });
 ```
 

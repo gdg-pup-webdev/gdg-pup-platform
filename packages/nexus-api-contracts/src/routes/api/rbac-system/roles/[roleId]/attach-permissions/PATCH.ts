@@ -1,4 +1,4 @@
- import { role } from "#models/rbacSystem/index.js";
+import { role } from "#models/rbacSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import { cz as z } from "@packages/typed-rest/shared";
 

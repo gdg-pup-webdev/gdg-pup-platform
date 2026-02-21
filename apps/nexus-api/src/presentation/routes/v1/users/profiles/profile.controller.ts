@@ -1,12 +1,10 @@
- import { ProfileService } from "@/modules/userResourceSystem/profiles/profile.service";
+import { ProfileService } from "@/modules/userResourceSystem/profiles/profile.service";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
 
 export class ProfilesHttpController {
-  constructor(
-    private readonly profileService: ProfileService ,
-  ) {}
+  constructor(private readonly profileService: ProfileService) {}
 
   listProfiles: RequestHandler = createExpressController(
     contract.api.user_resource_system.profiles.GET,
@@ -69,4 +67,3 @@ export class ProfilesHttpController {
     },
   );
 }
- 

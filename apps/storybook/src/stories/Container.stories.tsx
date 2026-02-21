@@ -8,7 +8,21 @@ const meta = {
   argTypes: {
     maxWidth: {
       control: "select",
-      options: ["xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl", "7xl", "full", "screen"],
+      options: [
+        "xs",
+        "sm",
+        "md",
+        "lg",
+        "xl",
+        "2xl",
+        "3xl",
+        "4xl",
+        "5xl",
+        "6xl",
+        "7xl",
+        "full",
+        "screen",
+      ],
     },
     padding: {
       control: "select",
@@ -87,14 +101,16 @@ export const ArticleLayout: Story = {
         </Text>
         <div className="h-64 bg-gray-200 rounded" />
         <Text variant="body">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-          ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+          aliquip ex ea commodo consequat.
         </Text>
         <Text variant="body">
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-          nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-          deserunt mollit anim id est laborum.
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est
+          laborum.
         </Text>
       </Stack>
     </Container>
@@ -171,7 +187,8 @@ export const MultipleContainers: Story = {
         <Stack gap="md">
           <Text variant="heading-2">Content Section (Narrower)</Text>
           <Text variant="body">
-            Different sections can use different container widths for visual hierarchy.
+            Different sections can use different container widths for visual
+            hierarchy.
           </Text>
         </Stack>
       </Container>

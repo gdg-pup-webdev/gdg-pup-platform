@@ -20,7 +20,7 @@ export const spinnerVariants = cva(
       size: "md",
       variant: "default",
     },
-  }
+  },
 );
 
 export type SpinnerVariants = VariantProps<typeof spinnerVariants>;

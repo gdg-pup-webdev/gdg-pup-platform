@@ -4,7 +4,7 @@
  * ==========================================
  */
 
-import {cz as z } from "@packages/typed-rest/shared";
+import { cz as z } from "@packages/typed-rest/shared";
 import { type Json } from "./supabase.types";
 
 export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>

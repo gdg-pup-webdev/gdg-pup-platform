@@ -10,14 +10,14 @@ import type { CheckboxProps } from "./Checkbox.types";
 
 /**
  * Checkbox Component
- * 
+ *
  * A form checkbox input with label and error state support.
- * 
+ *
  * @example Basic checkbox
  * ```tsx
  * <Checkbox label="Accept terms and conditions" />
  * ```
- * 
+ *
  * @example With helper text
  * ```tsx
  * <Checkbox
@@ -25,7 +25,7 @@ import type { CheckboxProps } from "./Checkbox.types";
  *   helperText="We'll send you updates once a week"
  * />
  * ```
- * 
+ *
  * @example With error
  * ```tsx
  * <Checkbox
@@ -34,7 +34,7 @@ import type { CheckboxProps } from "./Checkbox.types";
  *   errorMessage="You must accept to continue"
  * />
  * ```
- * 
+ *
  * @example Different sizes
  * ```tsx
  * <Checkbox label="Small" size="sm" />
@@ -44,17 +44,8 @@ import type { CheckboxProps } from "./Checkbox.types";
  */
 export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   (
-    {
-      className,
-      size,
-      label,
-      helperText,
-      error,
-      errorMessage,
-      id,
-      ...props
-    },
-    ref
+    { className, size, label, helperText, error, errorMessage, id, ...props },
+    ref,
   ) => {
     const generatedId = React.useId();
     const checkboxId = id || generatedId;
@@ -78,10 +69,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             {...props}
           />
           {label && (
-            <label
-              htmlFor={checkboxId}
-              className={cn(checkboxLabelVariants())}
-            >
+            <label htmlFor={checkboxId} className={cn(checkboxLabelVariants())}>
               {label}
             </label>
           )}
@@ -95,16 +83,13 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           </p>
         )}
         {error && errorMessage && (
-          <p
-            id={`${checkboxId}-error`}
-            className={cn(checkboxErrorVariants())}
-          >
+          <p id={`${checkboxId}-error`} className={cn(checkboxErrorVariants())}>
             {errorMessage}
           </p>
         )}
       </div>
     );
-  }
+  },
 );
 
 Checkbox.displayName = "Checkbox";

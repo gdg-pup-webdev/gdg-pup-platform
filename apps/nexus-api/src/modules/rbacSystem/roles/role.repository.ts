@@ -9,7 +9,10 @@ import {
   RepositoryResultList,
   RepositoryResult,
 } from "@/presentation/types/repository.types.js";
-import { TablesInsert, TablesUpdate } from "@/presentation/types/supabase.types.js";
+import {
+  TablesInsert,
+  TablesUpdate,
+} from "@/presentation/types/supabase.types.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
 import {
   roleWithPermission,

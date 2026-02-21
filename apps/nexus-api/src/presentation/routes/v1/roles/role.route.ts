@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { RolesHttpController  } from "./role.controller";
+import { RolesHttpController } from "./role.controller";
 // import { RoleController, roleControllerInstance } from "./role.controller.js";
 
 /**

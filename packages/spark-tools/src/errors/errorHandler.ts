@@ -1,6 +1,6 @@
 /**
  * Error handling utilities for processing API responses and errors
- * 
+ *
  * These utilities convert API responses and thrown errors into typed ApiError instances,
  * allowing for consistent error handling throughout the application.
  */
@@ -17,7 +17,7 @@ import {
   ServerError,
   NetworkError,
   TimeoutError,
-} from './ApiError';
+} from "./ApiError";
 
 /**
  * Type guard to check if an error is an ApiError
@@ -38,11 +38,11 @@ export function getErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
 
-  return 'An unexpected error occurred';
+  return "An unexpected error occurred";
 }
 
 /**
@@ -56,48 +56,39 @@ export function handleApiResponse(result: any): never {
   switch (status) {
     case 400:
       throw new ValidationError(
-        body.message || 'Bad request',
+        body.message || "Bad request",
         body.errors,
-        body.detail
+        body.detail,
       );
 
     case 401:
-      throw new UnauthorizedError(
-        body.message || 'Unauthorized',
-        body.detail
-      );
+      throw new UnauthorizedError(body.message || "Unauthorized", body.detail);
 
     case 403:
-      throw new ForbiddenError(
-        body.message || 'Forbidden',
-        body.detail
-      );
+      throw new ForbiddenError(body.message || "Forbidden", body.detail);
 
     case 404:
       throw new NotFoundError(
-        body.message || 'Not found',
+        body.message || "Not found",
         body.resourceType,
         body.resourceId,
-        body.detail
+        body.detail,
       );
 
     case 409:
-      throw new ConflictError(
-        body.message || 'Conflict',
-        body.detail
-      );
+      throw new ConflictError(body.message || "Conflict", body.detail);
 
     case 422:
       throw new UnprocessableEntityError(
-        body.message || 'Unprocessable entity',
-        body.detail
+        body.message || "Unprocessable entity",
+        body.detail,
       );
 
     case 429:
       throw new RateLimitError(
-        body.message || 'Too many requests',
+        body.message || "Too many requests",
         body.retryAfter,
-        body.detail
+        body.detail,
       );
 
     case 500:
@@ -105,17 +96,17 @@ export function handleApiResponse(result: any): never {
     case 503:
     case 504:
       throw new ServerError(
-        body.message || 'Internal server error',
+        body.message || "Internal server error",
         status,
-        body.detail
+        body.detail,
       );
 
     default:
       throw new ApiError(
-        body.message || 'An error occurred',
+        body.message || "An error occurred",
         status,
         body.title,
-        body.detail
+        body.detail,
       );
   }
 }
@@ -133,49 +124,43 @@ export function handleApiError(error: unknown): never {
   // Handle native Error types
   if (error instanceof Error) {
     // Network errors (fetch failed, no internet, etc.)
-    if (error.message.includes('fetch') || 
-        error.message.includes('network') ||
-        error.message.includes('Failed to fetch')) {
-      throw new NetworkError(
-        'Unable to connect to the server',
-        error.message
-      );
+    if (
+      error.message.includes("fetch") ||
+      error.message.includes("network") ||
+      error.message.includes("Failed to fetch")
+    ) {
+      throw new NetworkError("Unable to connect to the server", error.message);
     }
 
     // Timeout errors
-    if (error.message.includes('timeout') || error.message.includes('timed out')) {
-      throw new TimeoutError(
-        'The request timed out',
-        30000,
-        error.message
-      );
+    if (
+      error.message.includes("timeout") ||
+      error.message.includes("timed out")
+    ) {
+      throw new TimeoutError("The request timed out", 30000, error.message);
     }
 
     // Generic server error for unknown Error types
-    throw new ServerError(
-      error.message,
-      500,
-      error.stack
-    );
+    throw new ServerError(error.message, 500, error.stack);
   }
 
   // Handle string errors
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     throw new ServerError(error);
   }
 
   // Handle unknown error types
   throw new ServerError(
-    'An unexpected error occurred',
+    "An unexpected error occurred",
     500,
-    JSON.stringify(error)
+    JSON.stringify(error),
   );
 }
 
 /**
  * Process any error or API response into a typed ApiError
  * This is the main entry point for error handling
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -198,10 +183,10 @@ export function processError(errorOrResponse: unknown): ApiError {
 
     // If it looks like an API response object with status
     if (
-      typeof errorOrResponse === 'object' &&
+      typeof errorOrResponse === "object" &&
       errorOrResponse !== null &&
-      'status' in errorOrResponse &&
-      'body' in errorOrResponse
+      "status" in errorOrResponse &&
+      "body" in errorOrResponse
     ) {
       handleApiResponse(errorOrResponse);
     }
@@ -214,7 +199,7 @@ export function processError(errorOrResponse: unknown): ApiError {
       return error;
     }
     // Fallback for truly unexpected cases
-    return new ServerError('An unexpected error occurred');
+    return new ServerError("An unexpected error occurred");
   }
 }
 
@@ -223,8 +208,8 @@ export function processError(errorOrResponse: unknown): ApiError {
  * In production, this could send to a logging service
  */
 export function logError(error: unknown, context?: string): void {
-  const prefix = context ? `[${context}]` : '';
-  
+  const prefix = context ? `[${context}]` : "";
+
   if (isApiError(error)) {
     console.error(`${prefix} API Error:`, error.toJSON());
   } else if (error instanceof Error) {
@@ -269,7 +254,10 @@ export function getErrorTitle(error: ApiError): string {
  * Check if we should retry the request
  * Some errors are transient and worth retrying
  */
-export function shouldRetry(error: ApiError, attemptNumber: number = 1): boolean {
+export function shouldRetry(
+  error: ApiError,
+  attemptNumber: number = 1,
+): boolean {
   const maxRetries = 3;
 
   if (attemptNumber >= maxRetries) {

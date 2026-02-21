@@ -72,7 +72,11 @@ export const WithWrapping: Story = {
     children: (
       <>
         {Array.from({ length: 20 }, (_, i) => (
-          <Box key={i} padding="md" className="bg-primary text-primary-foreground">
+          <Box
+            key={i}
+            padding="md"
+            className="bg-primary text-primary-foreground"
+          >
             Item {i + 1}
           </Box>
         ))}
@@ -118,7 +122,10 @@ export const SpaceBetween: Story = {
           <Box padding="md">Link 2</Box>
           <Box padding="md">Link 3</Box>
         </Inline>
-        <Box padding="md" className="bg-primary text-primary-foreground rounded">
+        <Box
+          padding="md"
+          className="bg-primary text-primary-foreground rounded"
+        >
           Sign In
         </Box>
       </>
@@ -132,17 +139,23 @@ export const TagList: Story = {
   },
   render: () => (
     <Inline gap="sm" wrap>
-      {["React", "TypeScript", "Next.js", "Tailwind", "Storybook", "Vitest", "TanStack Query"].map(
-        (tag) => (
-          <Box
-            key={tag}
-            padding="sm"
-            className="bg-secondary text-secondary-foreground rounded text-sm"
-          >
-            {tag}
-          </Box>
-        )
-      )}
+      {[
+        "React",
+        "TypeScript",
+        "Next.js",
+        "Tailwind",
+        "Storybook",
+        "Vitest",
+        "TanStack Query",
+      ].map((tag) => (
+        <Box
+          key={tag}
+          padding="sm"
+          className="bg-secondary text-secondary-foreground rounded text-sm"
+        >
+          {tag}
+        </Box>
+      ))}
     </Inline>
   ),
 };

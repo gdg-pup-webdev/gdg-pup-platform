@@ -1,13 +1,13 @@
 /**
  * EventCard Component
- * 
+ *
  * Displays an individual event using SparkUI primitives and components.
  */
 
 "use client";
 
 import React from "react";
-import { Card, Badge, Button, Stack, Inline, Text } from '@packages/spark-ui';
+import { Card, Badge, Button, Stack, Inline, Text } from "@packages/spark-ui";
 import { Event } from "../types";
 import Link from "next/link";
 
@@ -17,7 +17,7 @@ interface EventCardProps {
 
 /**
  * Card component for displaying a single event
- * 
+ *
  * Features Material Design aesthetics with gradients,
  * shadows, and modern typography.
  */
@@ -148,11 +148,7 @@ export function EventCard({ event }: EventCardProps) {
           </Stack>
 
           {/* Action Button */}
-          <Button
-            variant="primary"
-            size="sm"
-            className="w-full"
-          >
+          <Button variant="primary" size="sm" className="w-full">
             {isUpcoming ? "Register Now" : "View Details"}
           </Button>
         </Stack>

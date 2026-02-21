@@ -1,11 +1,13 @@
- 
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
-import { TransactionService, transactionServiceInstance } from "./transaction.service";
+import {
+  TransactionService,
+  transactionServiceInstance,
+} from "./transaction.service";
 
 /**
- * @deprecated 
+ * @deprecated
  */
 export class TransactionController {
   constructor(
@@ -13,8 +15,8 @@ export class TransactionController {
   ) {}
 
   /**
- * @deprecated 
- */
+   * @deprecated
+   */
   listTransactions: RequestHandler = createExpressController(
     contract.api.economy_system.transactions.GET,
     async ({ input, output }) => {
@@ -51,6 +53,6 @@ export class TransactionController {
   );
 }
 /**
- * @deprecated 
+ * @deprecated
  */
 export const transactionControllerInstance = new TransactionController();

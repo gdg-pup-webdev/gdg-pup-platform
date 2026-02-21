@@ -27,7 +27,7 @@ export const inputVariants = cva(
       variant: "default",
       inputSize: "md",
     },
-  }
+  },
 );
 
 export type InputVariants = VariantProps<typeof inputVariants>;

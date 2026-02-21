@@ -16,7 +16,8 @@ export const docs_description = [
   "Errors: 400, 401, 403, 404, 500.",
   "Auth: Requires Bearer token.",
 ].join("\n\n");
-export const docs_body = "Check-in payload (eventId, attendeeId, checkinMethod).";
+export const docs_body =
+  "Check-in payload (eventId, attendeeId, checkinMethod).";
 export const docs_response_200 = "Check-in recorded successfully.";
 export const docs_response_400 = "Invalid check-in payload.";
 export const docs_example_body = {
@@ -40,52 +41,52 @@ export const docs_example_response = {
 };
 
 export const docs_example_response_400 = {
-  "status": "error",
-  "message": "Invalid request.",
-  "errors": [
+  status: "error",
+  message: "Invalid request.",
+  errors: [
     {
-      "title": "Bad Request",
-      "detail": "One or more request fields are invalid."
-    }
-  ]
+      title: "Bad Request",
+      detail: "One or more request fields are invalid.",
+    },
+  ],
 };
 export const docs_example_response_401 = {
-  "status": "error",
-  "message": "Unauthorized.",
-  "errors": [
+  status: "error",
+  message: "Unauthorized.",
+  errors: [
     {
-      "title": "Unauthorized",
-      "detail": "Missing or invalid authentication token."
-    }
-  ]
+      title: "Unauthorized",
+      detail: "Missing or invalid authentication token.",
+    },
+  ],
 };
 export const docs_example_response_403 = {
-  "status": "error",
-  "message": "Forbidden.",
-  "errors": [
+  status: "error",
+  message: "Forbidden.",
+  errors: [
     {
-      "title": "Forbidden",
-      "detail": "You do not have permission to access this resource."
-    }
-  ]
+      title: "Forbidden",
+      detail: "You do not have permission to access this resource.",
+    },
+  ],
 };
 export const docs_example_response_404 = {
-  "status": "error",
-  "message": "Checkin not found.",
-  "errors": [
+  status: "error",
+  message: "Checkin not found.",
+  errors: [
     {
-      "title": "Not Found",
-      "detail": "No checkin found for the provided identifier."
-    }
-  ]
+      title: "Not Found",
+      detail: "No checkin found for the provided identifier.",
+    },
+  ],
 };
 export const docs_example_response_500 = {
-  "status": "error",
-  "message": "Internal server error.",
-  "errors": [
+  status: "error",
+  message: "Internal server error.",
+  errors: [
     {
-      "title": "Internal Server Error",
-      "detail": "An unexpected error occurred."
-    }
-  ]
+      title: "Internal Server Error",
+      detail: "An unexpected error occurred.",
+    },
+  ],
 };

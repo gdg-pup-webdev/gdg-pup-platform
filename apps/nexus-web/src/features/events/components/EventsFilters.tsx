@@ -1,20 +1,29 @@
 /**
  * EventsFilters Component
- * 
+ *
  * Filter and search controls for events with Google Material Design styling.
  */
 
 "use client";
 
 import React from "react";
-import { Card, Input, Button, Badge, Stack, Inline, Text, Grid } from '@packages/spark-ui';
+import {
+  Card,
+  Input,
+  Button,
+  Badge,
+  Stack,
+  Inline,
+  Text,
+  Grid,
+} from "@packages/spark-ui";
 import { EventFilters, EventCategory } from "../types";
 
 interface EventsFiltersProps {
   filters: EventFilters;
   onFilterChange: <K extends keyof EventFilters>(
     key: K,
-    value: EventFilters[K]
+    value: EventFilters[K],
   ) => void;
   onReset: () => void;
   totalCount?: number;
@@ -22,7 +31,7 @@ interface EventsFiltersProps {
 
 /**
  * Events filter bar component
- * 
+ *
  * Provides controls for category, time, search, and sorting
  * with modern Material Design aesthetics.
  */
@@ -32,7 +41,11 @@ export function EventsFilters({
   onReset,
   totalCount,
 }: EventsFiltersProps) {
-  const categories: Array<{ value: EventCategory | "all"; label: string; icon: string }> = [
+  const categories: Array<{
+    value: EventCategory | "all";
+    label: string;
+    icon: string;
+  }> = [
     { value: "all", label: "All Events", icon: "📅" },
     { value: "workshop", label: "Workshops", icon: "🛠️" },
     { value: "meetup", label: "Meetups", icon: "👥" },
@@ -43,7 +56,10 @@ export function EventsFilters({
     { value: "other", label: "Other", icon: "✨" },
   ];
 
-  const timeFilters: Array<{ value: EventFilters["timeFilter"]; label: string }> = [
+  const timeFilters: Array<{
+    value: EventFilters["timeFilter"];
+    label: string;
+  }> = [
     { value: "upcoming", label: "Upcoming" },
     { value: "past", label: "Past" },
     { value: "all", label: "All Time" },
@@ -64,11 +80,7 @@ export function EventsFilters({
               </Text>
             )}
           </Stack>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onReset}
-          >
+          <Button variant="secondary" size="sm" onClick={onReset}>
             🔄 Reset
           </Button>
         </Inline>
@@ -97,7 +109,9 @@ export function EventsFilters({
               <Button
                 key={cat.value}
                 onClick={() => onFilterChange("category", cat.value)}
-                variant={filters.category === cat.value ? "primary" : "secondary"}
+                variant={
+                  filters.category === cat.value ? "primary" : "secondary"
+                }
                 size="sm"
               >
                 {cat.icon} {cat.label}
@@ -116,7 +130,9 @@ export function EventsFilters({
               <Button
                 key={time.value}
                 onClick={() => onFilterChange("timeFilter", time.value)}
-                variant={filters.timeFilter === time.value ? "primary" : "secondary"}
+                variant={
+                  filters.timeFilter === time.value ? "primary" : "secondary"
+                }
                 size="sm"
                 className="flex-1"
               >
@@ -138,7 +154,7 @@ export function EventsFilters({
               onChange={(e) =>
                 onFilterChange(
                   "sortBy",
-                  e.target.value as EventFilters["sortBy"]
+                  e.target.value as EventFilters["sortBy"],
                 )
               }
               className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
@@ -159,7 +175,7 @@ export function EventsFilters({
               onChange={(e) =>
                 onFilterChange(
                   "sortOrder",
-                  e.target.value as EventFilters["sortOrder"]
+                  e.target.value as EventFilters["sortOrder"],
                 )
               }
               className="w-full px-4 py-2 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-colors"
@@ -171,26 +187,22 @@ export function EventsFilters({
         </Grid>
 
         {/* Active Filters Summary */}
-        {(filters.search || filters.category !== "all" || filters.timeFilter !== "upcoming") && (
+        {(filters.search ||
+          filters.category !== "all" ||
+          filters.timeFilter !== "upcoming") && (
           <Stack gap="xs" className="pt-4 border-t border-gray-200">
             <Text variant="label" className="text-gray-700">
               Active Filters:
             </Text>
             <Inline gap="xs" className="flex-wrap">
               {filters.search && (
-                <Badge variant="default">
-                  Search: "{filters.search}"
-                </Badge>
+                <Badge variant="default">Search: "{filters.search}"</Badge>
               )}
               {filters.category !== "all" && (
-                <Badge variant="default">
-                  Category: {filters.category}
-                </Badge>
+                <Badge variant="default">Category: {filters.category}</Badge>
               )}
               {filters.timeFilter !== "upcoming" && (
-                <Badge variant="default">
-                  Time: {filters.timeFilter}
-                </Badge>
+                <Badge variant="default">Time: {filters.timeFilter}</Badge>
               )}
             </Inline>
           </Stack>

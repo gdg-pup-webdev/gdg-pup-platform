@@ -1,6 +1,6 @@
 /**
  * Events Page
- * 
+ *
  * Main events listing page with filtering, search, and grid display.
  * Features modern Google Material Design.
  */
@@ -45,9 +45,9 @@ export default function EventsPage() {
                 Join Our Community Events
               </h2>
               <p className="text-lg mb-6">
-                Connect with fellow developers, learn new skills, and build amazing
-                projects together. From beginner-friendly workshops to advanced
-                hackathons, there's something for everyone.
+                Connect with fellow developers, learn new skills, and build
+                amazing projects together. From beginner-friendly workshops to
+                advanced hackathons, there's something for everyone.
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="bg-white bg-opacity-20 rounded-lg px-4 py-2">

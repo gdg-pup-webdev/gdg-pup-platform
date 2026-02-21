@@ -39,6 +39,7 @@ apps/nexus-api/src/
 **Always collocate related files.** Group files by feature or domain, not by type.
 
 This means:
+
 - ✅ Keep tests alongside the code they test
 - ✅ Keep types, services, and controllers for a feature together
 - ❌ Don't separate by technical role (all controllers in one folder, all services in another)
@@ -69,6 +70,7 @@ apps/nexus-api/src/
 ```
 
 **Benefits:**
+
 - All user-related code is in one place
 - Easy to find and modify related files
 - Deleting a feature means deleting one folder
@@ -96,15 +98,16 @@ apps/nexus-api/src/
 ```
 
 **Problems:**
+
 - Related files are scattered across multiple folders
 - Modifying a feature requires navigating many directories
 - Import paths are inconsistent
 - Hard to delete or move features
 
-
 ## When to Create Subdirectories
 
 You may create subdirectories when:
+
 - A feature has **many** related sub-features (e.g., `users/profile/`, `users/authentication/`)
 - It improves clarity without adding unnecessary depth
 

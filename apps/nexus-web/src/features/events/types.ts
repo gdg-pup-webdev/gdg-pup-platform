@@ -1,6 +1,6 @@
 /**
  * Type definitions for the events feature
- * 
+ *
  * This module contains all TypeScript interfaces and types used
  * in the events system.
  */
@@ -11,43 +11,43 @@
 export interface Event {
   /** Unique event identifier */
   id: string;
-  
+
   /** Event title */
   title: string;
-  
+
   /** Event description (optional) */
   description: string | null;
-  
+
   /** Event start date-time (ISO string) */
   start_date: string;
-  
+
   /** Event end date-time (ISO string) */
   end_date: string;
-  
+
   /** Event venue/location */
   venue: string | null;
-  
+
   /** Event category (workshop, meetup, hackathon, etc.) */
   category: string | null;
-  
+
   /** Creator user ID */
   creator_id?: string;
-  
+
   /** Event banner/image URL */
   banner_url?: string;
-  
+
   /** Registration link  */
   registration_url?: string;
-  
+
   /** Current attendee count */
   attendee_count?: number;
-  
+
   /** Maximum capacity */
   max_capacity?: number;
-  
+
   /** Record creation timestamp */
   created_at: string;
-  
+
   /** Record last update timestamp */
   updated_at: string;
 }
@@ -58,7 +58,7 @@ export interface Event {
 export interface EventsResponse {
   /** List of events */
   data: Event[];
-  
+
   /** Pagination metadata */
   meta: {
     totalRecords: number;
@@ -74,28 +74,28 @@ export interface EventsResponse {
 export interface EventsQueryParams {
   /** Page number (default: 1) */
   pageNumber?: number;
-  
+
   /** Page size (default: 10) */
   pageSize?: number;
-  
+
   /** Filter by creator user ID */
   creator_id?: string;
-  
+
   /** Filter by category */
   category?: string;
-  
+
   /** Filter by venue */
   venue?: string;
-  
+
   /** Filter events starting on/after this date */
   start_date_gte?: string;
-  
+
   /** Filter events starting on/before this date */
   start_date_lte?: string;
-  
+
   /** Filter events ending on/after this date */
   end_date_gte?: string;
-  
+
   /** Filter events ending on/before this date */
   end_date_lte?: string;
 }
@@ -103,7 +103,7 @@ export interface EventsQueryParams {
 /**
  * Event category types
  */
-export type EventCategory = 
+export type EventCategory =
   | "workshop"
   | "meetup"
   | "hackathon"
@@ -118,16 +118,16 @@ export type EventCategory =
 export interface EventFilters {
   /** Selected category filter */
   category: EventCategory | "all";
-  
+
   /** Search query */
   search: string;
-  
+
   /** Time filter (upcoming, past, all) */
   timeFilter: "upcoming" | "past" | "all";
-  
+
   /** Sort order */
   sortBy: "date" | "title" | "attendees";
-  
+
   /** Sort direction */
   sortOrder: "asc" | "desc";
 }
@@ -138,13 +138,13 @@ export interface EventFilters {
 export class EventsException extends Error {
   constructor(
     message: string,
-    public code: 
+    public code:
       | "FETCH_ERROR"
       | "NETWORK_ERROR"
       | "SERVER_ERROR"
       | "NOT_FOUND"
       | "TIMEOUT_ERROR",
-    public details?: string
+    public details?: string,
   ) {
     super(message);
     this.name = "EventsException";

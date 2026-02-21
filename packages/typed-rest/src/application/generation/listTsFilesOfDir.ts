@@ -1,4 +1,4 @@
-import path from "node:path"; 
+import path from "node:path";
 import { promises as fs } from "fs";
 import fsSync from "node:fs";
 import { TsRealFile } from "./domains/TsFile";

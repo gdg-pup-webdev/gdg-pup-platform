@@ -48,11 +48,11 @@ pnpm run dev
 
 ### Access Your Services
 
-| Service      | URL                      |
-|--------------|--------------------------|
-| Nexus Web    | http://localhost:3000    |
-| Nexus API    | http://localhost:8000    |
-| Identity API | http://localhost:8100    |
+| Service      | URL                   |
+| ------------ | --------------------- |
+| Nexus Web    | http://localhost:3000 |
+| Nexus API    | http://localhost:8000 |
+| Identity API | http://localhost:8100 |
 
 ---
 
@@ -82,6 +82,7 @@ Our coding guidelines ensure code quality, scalability, and consistency across t
 ### Quick Reference
 
 **Backend Development**
+
 - **[101 - API Utilities](./docs/CodingGuidelines/101-ApiUtilities.md)** – Reusable utility functions
 - **[102 - Layered Architecture](./docs/CodingGuidelines/102-LayeredArchitecture.md)** – Backend structure
 - **[103 - Contract-First Development](./docs/CodingGuidelines/103-ContractFirstDevelopment.md)** – API contracts
@@ -89,13 +90,16 @@ Our coding guidelines ensure code quality, scalability, and consistency across t
 - **[105 - Error Handling](./docs/CodingGuidelines/105-ErrorHandling.md)** – Error patterns
 
 **Project Structure**
+
 - **[401 - File Structure](./docs/CodingGuidelines/401-FileStructure.md)** – Folder organization
 
 **General Standards**
+
 - **[503 - Code Readability](./docs/CodingGuidelines/503-CodeReadability.md)** – Self-documenting code
 - **[504 - Documenting Your Code](./docs/CodingGuidelines/504-DocumentingYourCode.md)** – Documentation practices
 
 **Collaboration**
+
 - **[701 - Opening an Issue](./docs/CodingGuidelines/701-OpeningAnIssue.md)** – Issue creation
 - **[702 - Submitting a Pull Request](./docs/CodingGuidelines/702-SubmittingAPullRequest.md)** – PR standards
 - **[703 - Naming Your Branches](./docs/CodingGuidelines/703-NamingYourBranches.md)** – Branch naming
@@ -148,17 +152,16 @@ root/
 
 ### 💻 Tech Stack
 
-| Layer           | Technologies                                      |
-|-----------------|---------------------------------------------------|
-| **Frontend**    | Next.js 14, React, TailwindCSS, shadcn/ui        |
-| **Backend**     | Express.js, TypeScript, Node.js                  |
-| **Database**    | Supabase (PostgreSQL)                            |
-| **Contracts**   | Zod, Supazod                                     |
-| **Monorepo**    | pnpm, Turborepo                                  |
-| **DevOps**      | Docker, Docker Compose                           |
+| Layer         | Technologies                              |
+| ------------- | ----------------------------------------- |
+| **Frontend**  | Next.js 14, React, TailwindCSS, shadcn/ui |
+| **Backend**   | Express.js, TypeScript, Node.js           |
+| **Database**  | Supabase (PostgreSQL)                     |
+| **Contracts** | Zod, Supazod                              |
+| **Monorepo**  | pnpm, Turborepo                           |
+| **DevOps**    | Docker, Docker Compose                    |
 
 ---
-
 
 ### � Docker Development (Optional)
 

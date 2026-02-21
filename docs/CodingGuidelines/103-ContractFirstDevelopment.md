@@ -15,7 +15,7 @@
 When making controllers, you **must** use the `createExpressController` function imported from `@packages/typed-rest`.
 
 ```typescript
-import { createExpressController } from '@packages/typed-rest';
+import { createExpressController } from "@packages/typed-rest";
 ```
 
 ### 2. Create the Contract First
@@ -41,7 +41,8 @@ You **must** export `docs_description` and `docs_summary` strings for our API do
 
 ```typescript
 export const docs_summary = "Get user profile by ID";
-export const docs_description = "Retrieves detailed user profile information including name, email, and creation date.";
+export const docs_description =
+  "Retrieves detailed user profile information including name, email, and creation date.";
 ```
 
 ## Complete Example
@@ -50,8 +51,8 @@ export const docs_description = "Retrieves detailed user profile information inc
 
 ```typescript
 // packages/nexus-api-contracts/src/users/getUserProfile.contract.ts
-import { z } from 'zod';
-import { route } from '@packages/typed-rest';
+import { z } from "zod";
+import { route } from "@packages/typed-rest";
 
 export const docs_summary = "Get user profile";
 export const docs_description = `
@@ -60,8 +61,8 @@ Returns 404 if the user does not exist.
 `;
 
 export const getUserProfileContract = route({
-  method: 'GET',
-  path: '/api/users/:userId',
+  method: "GET",
+  path: "/api/users/:userId",
   request: {
     params: z.object({
       userId: z.string().uuid(),
@@ -86,29 +87,29 @@ export const getUserProfileContract = route({
 
 ```typescript
 // apps/nexus-api/src/controllers/user.controller.ts
-import { createExpressController } from '@packages/typed-rest';
-import { getUserProfileContract } from '@packages/nexus-api-contracts';
-import { userService } from '../services/user.service';
-import { NotFoundError } from '../errors';
+import { createExpressController } from "@packages/typed-rest";
+import { getUserProfileContract } from "@packages/nexus-api-contracts";
+import { userService } from "../services/user.service";
+import { NotFoundError } from "../errors";
 
 export const getUserProfileController = createExpressController(
   getUserProfileContract,
   async (req) => {
     const { userId } = req.params;
-    
+
     const user = await userService.getUserById(userId);
-    
+
     if (!user) {
       throw new NotFoundError(`User with ID ${userId} not found`);
     }
-    
+
     return {
       id: user.id,
       displayName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       createdAt: user.createdAt.toISOString(),
     };
-  }
+  },
 );
 ```
 
@@ -116,12 +117,12 @@ export const getUserProfileController = createExpressController(
 
 ```typescript
 // apps/nexus-api/src/routes/user.routes.ts
-import { Router } from 'express';
-import { getUserProfileController } from '../controllers/user.controller';
+import { Router } from "express";
+import { getUserProfileController } from "../controllers/user.controller";
 
 const router = Router();
 
-router.get('/users/:userId', getUserProfileController);
+router.get("/users/:userId", getUserProfileController);
 
 export default router;
 ```
@@ -132,7 +133,7 @@ export default router;
 ✅ **API Documentation**: Auto-generated from contracts  
 ✅ **Contract Testing**: Validate requests/responses against schemas  
 ✅ **Independent Development**: Frontend and backend work in parallel  
-✅ **Breaking Change Detection**: Contract changes are explicit and visible  
+✅ **Breaking Change Detection**: Contract changes are explicit and visible
 
 ---
 

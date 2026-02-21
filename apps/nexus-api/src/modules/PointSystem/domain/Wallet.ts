@@ -1,5 +1,5 @@
-export type WalletProps = { 
-  updatedAt: string; 
+export type WalletProps = {
+  updatedAt: string;
 
   points: {
     sparkPoints: number;

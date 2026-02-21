@@ -1,9 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
 export const cardVariants = cva(
-  [
-    "rounded-lg border bg-card text-card-foreground shadow-sm",
-  ],
+  ["rounded-lg border bg-card text-card-foreground shadow-sm"],
   {
     variants: {
       variant: {
@@ -15,7 +13,7 @@ export const cardVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export const cardHeaderVariants = cva(["flex flex-col space-y-1.5 p-6"]);

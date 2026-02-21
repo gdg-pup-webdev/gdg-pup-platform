@@ -5,7 +5,6 @@
 
 import { cz as z } from "@packages/typed-rest/shared";
 
-
 export const permission = z.object({
   resource_name: z.string(),
   action: z.string(),

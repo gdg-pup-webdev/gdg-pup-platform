@@ -29,11 +29,10 @@ export const roleJunctionFixture = {
   role_id: "role-1",
 } as const;
 
-export const permissionFixture: userRolePermission = { 
+export const permissionFixture: userRolePermission = {
   role_id: "role-1",
   resource: "resource-1",
   action: "action-1",
-
 };
 
 export const listResult = <T>(items: T[] = []) => ({

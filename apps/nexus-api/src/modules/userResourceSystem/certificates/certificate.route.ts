@@ -37,13 +37,13 @@ export class CertificateRouter {
   getRouter() {
     const router: Router = Router();
 
-    /** 
+    /**
      * GET /api/user-resource-system/certificates
      * Publicly list all certificates or filter by user via query params.
      */
     router.get("/", this.certificateController.listUserCertificates);
 
-    /** 
+    /**
      * POST /api/user-resource-system/certificates
      * Create a new certificate record. (Requires Authentication)
      */
@@ -53,13 +53,13 @@ export class CertificateRouter {
       this.certificateController.createCertificate,
     );
 
-    /** 
+    /**
      * GET /api/user-resource-system/certificates/:certificateId
      * Fetch details of a single certificate.
      */
     router.get("/:certificateId", this.certificateController.getOneCertificate);
 
-    /** 
+    /**
      * DELETE /api/user-resource-system/certificates/:certificateId
      * Remove a certificate record. (Requires Authentication)
      */
@@ -69,7 +69,7 @@ export class CertificateRouter {
       this.certificateController.deleteCertificate,
     );
 
-    /** 
+    /**
      * PATCH /api/user-resource-system/certificates/:certificateId
      * Update metadata for an existing certificate. (Requires Authentication)
      */

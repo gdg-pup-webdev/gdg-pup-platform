@@ -22,6 +22,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ### The Problem with Hardcoded Classes
 
 ❌ **Before (Hardcoded):**
+
 ```tsx
 <div className="flex flex-col gap-4">
   <div className="text-2xl font-semibold">Title</div>
@@ -30,6 +31,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```
 
 **Problems:**
+
 - Magic numbers (`gap-4` = 16px) - hard to understand intent
 - Design changes require find-and-replace across entire codebase
 - No semantic meaning - `flex flex-col` doesn't communicate intent
@@ -38,14 +40,18 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ### The Solution: Layout Primitives
 
 ✅ **After (Primitives):**
+
 ```tsx
 <Stack gap="md">
   <Text variant="heading-3">Title</Text>
-  <Text variant="body" color="muted">Description</Text>
+  <Text variant="body" color="muted">
+    Description
+  </Text>
 </Stack>
 ```
 
 **Benefits:**
+
 - Semantic meaning - `Stack` communicates vertical layout
 - Theme integration - `gap="md"` uses design tokens
 - Single source of truth - design changes propagate automatically
@@ -61,12 +67,14 @@ Layout primitives are the foundational building blocks for creating consistent, 
 **Purpose:** Vertical layout with consistent spacing between children.
 
 **When to use:**
+
 - Form fields stacked vertically
 - Card content sections
 - Navigation menu items
 - Any vertical list of items
 
 **Props:**
+
 - `gap`: `"none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl"` (default: `"md"`)
 - `align`: `"start" | "center" | "end" | "stretch"` (default: `"start"`)
 - `justify`: `"start" | "center" | "end" | "between" | "around"` (default: `"start"`)
@@ -107,6 +115,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```
 
 **Migration:**
+
 ```tsx
 // Before
 <div className="flex flex-col gap-4 items-center">
@@ -126,6 +135,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 **Purpose:** Horizontal layout with consistent spacing, supports wrapping.
 
 **When to use:**
+
 - Navigation links
 - Button groups
 - Tag lists
@@ -133,6 +143,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 - Breadcrumbs
 
 **Props:**
+
 - `gap`: `"none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl"` (default: `"md"`)
 - `align`: `"start" | "center" | "end" | "baseline" | "stretch"` (default: `"center"`)
 - `justify`: `"start" | "center" | "end" | "between" | "around"` (default: `"start"`)
@@ -176,6 +187,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```
 
 **Migration:**
+
 ```tsx
 // Before
 <div className="flex items-center gap-2">
@@ -195,6 +207,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 **Purpose:** CSS Grid layout with defined columns and responsive support.
 
 **When to use:**
+
 - Product grids
 - Image galleries
 - Dashboard cards
@@ -202,6 +215,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 - Any multi-column layout
 
 **Props:**
+
 - `columns`: `1 | 2 | 3 | 4 | 5 | 6` (default: `3`)
 - `gap`: `"none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl"` (default: `"md"`)
 - `align`: `"start" | "center" | "end" | "stretch"` (default: `"stretch"`)
@@ -242,6 +256,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```
 
 **Migration:**
+
 ```tsx
 // Before
 <div className="grid grid-cols-3 gap-4">
@@ -261,12 +276,14 @@ Layout primitives are the foundational building blocks for creating consistent, 
 **Purpose:** Generic container with maximum flexibility for padding, margin, width, height, display, and position.
 
 **When to use:**
+
 - Custom layouts not covered by other primitives
 - Spacers and dividers
 - Wrapper elements
 - When you need precise control over spacing
 
 **Props:**
+
 - `padding`: `"none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl"` (default: `"none"`)
 - `margin`: `"none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl"` (default: `"none"`)
 - `width`: `"auto" | "full" | "screen" | "banner"` (default: `"auto"`)
@@ -308,6 +325,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```
 
 **Migration:**
+
 ```tsx
 // Before
 <div className="p-4 m-2">
@@ -327,12 +345,14 @@ Layout primitives are the foundational building blocks for creating consistent, 
 **Purpose:** Max-width centered container for content areas.
 
 **When to use:**
+
 - Page sections
 - Article content
 - Form containers
 - Any content that should be centered with a max-width
 
 **Props:**
+
 - `maxWidth`: `"xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl" | "full" | "screen"` (default: `"7xl"`)
 - `padding`: `"none" | "sm" | "md" | "lg"` (default: `"md"`)
 - `as`: Render as different element (default: `"div"`)
@@ -381,6 +401,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```
 
 **Migration:**
+
 ```tsx
 // Before
 <div className="max-w-7xl mx-auto px-4">
@@ -400,11 +421,13 @@ Layout primitives are the foundational building blocks for creating consistent, 
 **Purpose:** Typography primitive for all text content.
 
 **When to use:**
+
 - **Always** - Replace all direct text rendering with Text component
 - Headings, paragraphs, labels, captions
 - Any text that appears in the UI
 
 **Props:**
+
 - `variant`: Typography style
   - `"display"` - Hero headlines (48px)
   - `"heading-1"` through `"heading-5"` - Section headings
@@ -464,6 +487,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```
 
 **Migration:**
+
 ```tsx
 // Before
 <h1 className="text-4xl font-bold">Title</h1>
@@ -486,7 +510,9 @@ Layout primitives are the foundational building blocks for creating consistent, 
     {/* Header */}
     <Stack gap="sm">
       <Text variant="heading-1">Dashboard</Text>
-      <Text variant="body-lg" color="muted">Welcome back, John!</Text>
+      <Text variant="body-lg" color="muted">
+        Welcome back, John!
+      </Text>
     </Stack>
 
     {/* Stats Grid */}
@@ -501,7 +527,7 @@ Layout primitives are the foundational building blocks for creating consistent, 
     <Stack gap="md">
       <Text variant="heading-2">Recent Activity</Text>
       <Stack gap="sm">
-        {activities.map(activity => (
+        {activities.map((activity) => (
           <ActivityItem key={activity.id} activity={activity} />
         ))}
       </Stack>
@@ -515,11 +541,14 @@ Layout primitives are the foundational building blocks for creating consistent, 
 ```tsx
 export function EventCard({ event }: EventCardProps) {
   return (
-    <Box padding="lg" className="bg-white border rounded-lg hover:shadow-md transition-shadow">
+    <Box
+      padding="lg"
+      className="bg-white border rounded-lg hover:shadow-md transition-shadow"
+    >
       <Stack gap="md">
         {/* Image */}
         <Box className="aspect-video bg-gray-200 rounded" />
-        
+
         {/* Content */}
         <Stack gap="sm">
           <Text variant="heading-4">{event.title}</Text>
@@ -532,15 +561,21 @@ export function EventCard({ event }: EventCardProps) {
         <Inline gap="md" justify="between" align="center">
           <Inline gap="xs" align="center">
             <Icon name="calendar" />
-            <Text variant="body-sm" color="muted">{event.date}</Text>
+            <Text variant="body-sm" color="muted">
+              {event.date}
+            </Text>
           </Inline>
           <Badge>{event.category}</Badge>
         </Inline>
 
         {/* Actions */}
         <Inline gap="sm">
-          <Button variant="primary" size="sm">Register</Button>
-          <Button variant="ghost" size="sm">Learn More</Button>
+          <Button variant="primary" size="sm">
+            Register
+          </Button>
+          <Button variant="ghost" size="sm">
+            Learn More
+          </Button>
         </Inline>
       </Stack>
     </Box>
@@ -556,7 +591,9 @@ export function EventCard({ event }: EventCardProps) {
     {/* Header */}
     <Stack gap="sm">
       <Text variant="heading-2">Create Event</Text>
-      <Text variant="body" color="muted">Fill out the details below</Text>
+      <Text variant="body" color="muted">
+        Fill out the details below
+      </Text>
     </Stack>
 
     {/* Form Fields */}
@@ -577,11 +614,15 @@ export function EventCard({ event }: EventCardProps) {
 
       <Grid columns={2} gap="md">
         <Stack gap="xs">
-          <Text as="label" variant="label">Start Date</Text>
+          <Text as="label" variant="label">
+            Start Date
+          </Text>
           <Input type="date" />
         </Stack>
         <Stack gap="xs">
-          <Text as="label" variant="label">End Date</Text>
+          <Text as="label" variant="label">
+            End Date
+          </Text>
           <Input type="date" />
         </Stack>
       </Grid>
@@ -630,8 +671,16 @@ export function EventCard({ event }: EventCardProps) {
 ### Step-by-Step Process
 
 1. **Import primitives:**
+
    ```tsx
-   import { Stack, Inline, Grid, Box, Container, Text } from "@packages/spark-ui";
+   import {
+     Stack,
+     Inline,
+     Grid,
+     Box,
+     Container,
+     Text,
+   } from "@packages/spark-ui";
    ```
 
 2. **Identify patterns:**
@@ -649,14 +698,14 @@ export function EventCard({ event }: EventCardProps) {
 
 ### Common Replacements
 
-| Before | After |
-|--------|-------|
-| `className="flex flex-col gap-4"` | `<Stack gap="md">` |
+| Before                                | After                              |
+| ------------------------------------- | ---------------------------------- |
+| `className="flex flex-col gap-4"`     | `<Stack gap="md">`                 |
 | `className="flex items-center gap-2"` | `<Inline gap="sm" align="center">` |
-| `className="grid grid-cols-3 gap-4"` | `<Grid columns={3} gap="md">` |
-| `className="p-4"` | `<Box padding="md">` |
-| `className="max-w-4xl mx-auto"` | `<Container maxWidth="4xl">` |
-| `className="text-2xl font-semibold"` | `<Text variant="heading-3">` |
+| `className="grid grid-cols-3 gap-4"`  | `<Grid columns={3} gap="md">`      |
+| `className="p-4"`                     | `<Box padding="md">`               |
+| `className="max-w-4xl mx-auto"`       | `<Container maxWidth="4xl">`       |
+| `className="text-2xl font-semibold"`  | `<Text variant="heading-3">`       |
 
 ### Migration Checklist
 
@@ -693,6 +742,7 @@ export function EventCard({ event }: EventCardProps) {
 ### When to use `className`
 
 Primitives support `className` for:
+
 - Tailwind utilities not covered by props (e.g., `hover:`, `focus:`)
 - Background colors and borders
 - Responsive overrides

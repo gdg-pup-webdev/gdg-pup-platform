@@ -33,13 +33,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > 100) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
-      
+
       lastScrollY = currentScrollY;
     };
 
@@ -50,16 +50,28 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Click outside handler to close dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (aboutRef.current && !aboutRef.current.contains(event.target as Node)) {
+      if (
+        aboutRef.current &&
+        !aboutRef.current.contains(event.target as Node)
+      ) {
         setIsAboutOpen(false);
       }
-      if (communityRef.current && !communityRef.current.contains(event.target as Node)) {
+      if (
+        communityRef.current &&
+        !communityRef.current.contains(event.target as Node)
+      ) {
         setIsCommunityOpen(false);
       }
-      if (debuggingRef.current && !debuggingRef.current.contains(event.target as Node)) {
+      if (
+        debuggingRef.current &&
+        !debuggingRef.current.contains(event.target as Node)
+      ) {
         setIsDebuggingOpen(false);
       }
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -93,16 +105,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <Box 
+    <Box
       className="fixed top-0 left-0 right-0 z-50 px-16 lg:px-20 pt-10 pointer-events-none transition-all duration-700 ease-out"
       style={{
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateY(0) scale(1)" : "translateY(-2rem) scale(0.95)",
+        transform: isVisible
+          ? "translateY(0) scale(1)"
+          : "translateY(-2rem) scale(0.95)",
       }}
     >
       <Box
         style={{
-          background: "linear-gradient(90deg, #EA4335 0%, #F9AB00 50%, #97AA2A 75%, #4285F4 100%)",
+          background:
+            "linear-gradient(90deg, #EA4335 0%, #F9AB00 50%, #97AA2A 75%, #4285F4 100%)",
           padding: "2px",
           maxWidth: "80rem",
           borderRadius: "2rem",
@@ -120,7 +135,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           }}
         >
           <Box className="h-full px-12 lg:px-20 flex items-center">
-            <Inline justify="between" align="center" gap="lg" className="w-full">
+            <Inline
+              justify="between"
+              align="center"
+              gap="lg"
+              className="w-full"
+            >
               {/* Brand */}
               <Link href="/" className="hover:opacity-80 transition-opacity">
                 <Inline gap="sm" align="center">
@@ -131,7 +151,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     height={40}
                     className="w-8 h-8 lg:w-10 lg:h-10"
                   />
-                  <Text variant="heading-4" weight="bold" className="text-white tracking-tight">
+                  <Text
+                    variant="heading-4"
+                    weight="bold"
+                    className="text-white tracking-tight"
+                  >
                     GDG PUP NEXUS
                   </Text>
                 </Inline>
@@ -150,14 +174,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                       className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
                     >
-                      <Text variant="body" className="text-inherit">About</Text>
+                      <Text variant="body" className="text-inherit">
+                        About
+                      </Text>
                       <svg
                         className={`w-4 h-4 transition-transform duration-200 ${isAboutOpen ? "rotate-180" : ""}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </button>
 
@@ -189,14 +220,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                       className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
                     >
-                      <Text variant="body" className="text-inherit">Community</Text>
+                      <Text variant="body" className="text-inherit">
+                        Community
+                      </Text>
                       <svg
                         className={`w-4 h-4 transition-transform duration-200 ${isCommunityOpen ? "rotate-180" : ""}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </button>
 
@@ -225,7 +263,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       href={link.href}
                       className="text-gray-300 hover:text-white transition-colors py-2"
                     >
-                      <Text variant="body" className="text-inherit">{link.label}</Text>
+                      <Text variant="body" className="text-inherit">
+                        {link.label}
+                      </Text>
                     </Link>
                   ))}
 
@@ -239,14 +279,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                       className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
                     >
-                      <Text variant="body" className="text-inherit">🛠️</Text>
+                      <Text variant="body" className="text-inherit">
+                        🛠️
+                      </Text>
                       <svg
                         className={`w-4 h-4 transition-transform duration-200 ${isDebuggingOpen ? "rotate-180" : ""}`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </button>
 
@@ -273,24 +320,44 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {!hideAuth && (
                   <Inline gap="md" align="center">
                     <Link href="#">
-                      <Button variant="primary" size="md" className="bg-blue-600 hover:bg-blue-700 transition-colors">
+                      <Button
+                        variant="primary"
+                        size="md"
+                        className="bg-blue-600 hover:bg-blue-700 transition-colors"
+                      >
                         Get ID
                       </Button>
                     </Link>
 
                     {status === "checking" ? (
-                      <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
+                      <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse">
+                        {" "}
+                      </Box>
                     ) : user ? (
-                      <Link href={`/id/${user.id}`} className="hover:opacity-80 hover:scale-105 transition-all duration-200">
+                      <Link
+                        href={`/id/${user.id}`}
+                        className="hover:opacity-80 hover:scale-105 transition-all duration-200"
+                      >
                         <Avatar
                           src={user.user_metadata?.avatar_url}
-                          alt={user.user_metadata?.full_name || user.email || "User"}
+                          alt={
+                            user.user_metadata?.full_name ||
+                            user.email ||
+                            "User"
+                          }
                           size="sm"
-                          fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+                          fallback={
+                            user.user_metadata?.full_name?.charAt(0) ||
+                            user.email?.charAt(0) ||
+                            "U"
+                          }
                         />
                       </Link>
                     ) : (
-                      <Link href="/signin" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
+                      <Link
+                        href="/signin"
+                        className="hover:opacity-80 hover:scale-105 transition-all duration-200"
+                      >
                         <Avatar
                           fallback="?"
                           size="sm"
@@ -304,31 +371,53 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Mobile Menu Button */}
               <Box className="md:hidden" ref={mobileMenuRef}>
-                <button 
+                <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="text-gray-300 hover:text-white p-2 transition-colors"
                   aria-label="Toggle menu"
                 >
                   {isMobileMenuOpen ? (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
                     </svg>
                   )}
                 </button>
 
                 {/* Mobile Menu Dropdown */}
                 {isMobileMenuOpen && (
-                  <Box 
-                    className="absolute right-4 top-full mt-4 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                  >
+                  <Box className="absolute right-4 top-full mt-4 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                     <Stack gap="none">
                       {/* About Section */}
                       <Box className="px-4 py-2 border-b border-slate-700">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase">
+                        <Text
+                          variant="body-sm"
+                          weight="semibold"
+                          className="text-gray-400 uppercase"
+                        >
                           About
                         </Text>
                       </Box>
@@ -345,7 +434,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                       {/* Community Section */}
                       <Box className="px-4 py-2 border-b border-slate-700 mt-2">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase">
+                        <Text
+                          variant="body-sm"
+                          weight="semibold"
+                          className="text-gray-400 uppercase"
+                        >
                           Community
                         </Text>
                       </Box>
@@ -362,7 +455,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                       {/* Nav Links */}
                       <Box className="px-4 py-2 border-b border-slate-700 mt-2">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase">
+                        <Text
+                          variant="body-sm"
+                          weight="semibold"
+                          className="text-gray-400 uppercase"
+                        >
                           Navigation
                         </Text>
                       </Box>
@@ -379,7 +476,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                       {/* Debugging Section */}
                       <Box className="px-4 py-2 border-b border-slate-700 mt-2">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase">
+                        <Text
+                          variant="body-sm"
+                          weight="semibold"
+                          className="text-gray-400 uppercase"
+                        >
                           🛠️ Debug
                         </Text>
                       </Box>
@@ -398,37 +499,61 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {!hideAuth && (
                         <Box className="px-4 py-3 mt-2 border-t border-slate-700">
                           <Stack gap="sm">
-                            <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
-                              <Button variant="primary" size="md" className="w-full bg-blue-600 hover:bg-blue-700 transition-colors">
+                            <Link
+                              href="#"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              <Button
+                                variant="primary"
+                                size="md"
+                                className="w-full bg-blue-600 hover:bg-blue-700 transition-colors"
+                              >
                                 Get ID
                               </Button>
                             </Link>
                             {status === "checking" ? (
-                              <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse"> </Box>
+                              <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse">
+                                {" "}
+                              </Box>
                             ) : user ? (
-                              <Link 
-                                href={`/id/${user.id}`} 
+                              <Link
+                                href={`/id/${user.id}`}
                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 <Avatar
                                   src={user.user_metadata?.avatar_url}
-                                  alt={user.user_metadata?.full_name || user.email || "User"}
+                                  alt={
+                                    user.user_metadata?.full_name ||
+                                    user.email ||
+                                    "User"
+                                  }
                                   size="sm"
-                                  fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+                                  fallback={
+                                    user.user_metadata?.full_name?.charAt(0) ||
+                                    user.email?.charAt(0) ||
+                                    "U"
+                                  }
                                 />
                                 <Stack gap="none">
-                                  <Text variant="body-sm" weight="semibold" className="text-white">
+                                  <Text
+                                    variant="body-sm"
+                                    weight="semibold"
+                                    className="text-white"
+                                  >
                                     {user.user_metadata?.full_name || "User"}
                                   </Text>
-                                  <Text variant="body-sm" className="text-gray-400">
+                                  <Text
+                                    variant="body-sm"
+                                    className="text-gray-400"
+                                  >
                                     View Profile
                                   </Text>
                                 </Stack>
                               </Link>
                             ) : (
-                              <Link 
-                                href="/signin" 
+                              <Link
+                                href="/signin"
                                 className="block text-center py-2 px-4 rounded-lg border border-gray-500 text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >

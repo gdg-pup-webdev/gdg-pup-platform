@@ -6,7 +6,7 @@
 
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest/serverExpress"; 
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { AchievementService } from "@/modules/userResourceSystem/achievements/achievement.service";
 
 /**
@@ -17,9 +17,7 @@ export class AchievementsHttpController {
   /**
    * @param achievementService - Service layer for achievement business logic.
    */
-  constructor(
-    private readonly achievementService: AchievementService ,
-  ) {}
+  constructor(private readonly achievementService: AchievementService) {}
 
   /**
    * listUserAchievements
@@ -145,4 +143,3 @@ export class AchievementsHttpController {
     },
   );
 }
- 

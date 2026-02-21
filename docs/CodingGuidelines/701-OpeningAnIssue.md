@@ -22,15 +22,15 @@ Every issue **must** have the following tags:
 
 **Required**: Must have **at least one** project tag to indicate which part(s) of the monorepo are affected.
 
-| Tag | Description |
-|-----|-------------|
-| `repository` | Global repository changes (root configs, CI/CD, global docs, or scripts) |
-| `nexus-api` | Issues affecting the Nexus backend service |
-| `identity-api` | Issues affecting the Identity/Auth backend service |
-| `nexus-api-contracts` | Changes to shared Nexus API schemas or TypeScript contracts |
-| `identity-api-contracts` | Changes to shared Identity API schemas or TypeScript contracts |
-| `nexus-web` | Issues affecting the Nexus frontend/web application |
-| `typed-rest` | Changes to the internal typed-rest utility package |
+| Tag                      | Description                                                              |
+| ------------------------ | ------------------------------------------------------------------------ |
+| `repository`             | Global repository changes (root configs, CI/CD, global docs, or scripts) |
+| `nexus-api`              | Issues affecting the Nexus backend service                               |
+| `identity-api`           | Issues affecting the Identity/Auth backend service                       |
+| `nexus-api-contracts`    | Changes to shared Nexus API schemas or TypeScript contracts              |
+| `identity-api-contracts` | Changes to shared Identity API schemas or TypeScript contracts           |
+| `nexus-web`              | Issues affecting the Nexus frontend/web application                      |
+| `typed-rest`             | Changes to the internal typed-rest utility package                       |
 
 **Example**: An issue affecting both the API and frontend would use both `nexus-api` and `nexus-web` tags.
 
@@ -40,11 +40,11 @@ Every issue **must** have the following tags:
 
 **Required**: Must have **exactly one** severity tag.
 
-| Tag | When to Use | Example |
-|-----|-------------|---------|
-| `low` | Non-critical issues, minor UI tweaks, or "nice-to-have" improvements | Button color adjustment, tooltip text update |
-| `normal` | Standard tasks or bugs that don't block work but need resolution | Missing validation message, slow API response |
-| `high` | Significant impact on functionality or blocking a specific feature | Login broken for certain users, registration fails |
+| Tag      | When to Use                                                          | Example                                                    |
+| -------- | -------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `low`    | Non-critical issues, minor UI tweaks, or "nice-to-have" improvements | Button color adjustment, tooltip text update               |
+| `normal` | Standard tasks or bugs that don't block work but need resolution     | Missing validation message, slow API response              |
+| `high`   | Significant impact on functionality or blocking a specific feature   | Login broken for certain users, registration fails         |
 | `severe` | Critical system failure, security leak, or production-down situation | Database connection lost, authentication bypass, data leak |
 
 ---
@@ -53,15 +53,15 @@ Every issue **must** have the following tags:
 
 **Required**: Must have **exactly one** type tag.
 
-| Tag | Description | Use When |
-|-----|-------------|----------|
-| `feature` | New functionality or capabilities added for the user | Adding event registration, user profiles, notifications |
-| `enhance` | Improvements to existing features (performance, UX, or minor logic updates) | Making search faster, improving form validation |
-| `bug` | Issues found in the dev branch or during staging | Broken functionality, incorrect behavior |
-| `hotfix` | Critical patches specifically for the main branch/production | Production is down, security vulnerabilities |
-| `refactor` | Code changes that improve structure without changing behavior | Reorganizing files, extracting utilities |
-| `documentation` | Updates to READMEs, AP docs, or internal guides | Adding missing docs, clarifying setup steps |
-| `release` | Tasks related to deploying to production | Version bumps, changelog updates, deployment prep |
+| Tag             | Description                                                                 | Use When                                                |
+| --------------- | --------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `feature`       | New functionality or capabilities added for the user                        | Adding event registration, user profiles, notifications |
+| `enhance`       | Improvements to existing features (performance, UX, or minor logic updates) | Making search faster, improving form validation         |
+| `bug`           | Issues found in the dev branch or during staging                            | Broken functionality, incorrect behavior                |
+| `hotfix`        | Critical patches specifically for the main branch/production                | Production is down, security vulnerabilities            |
+| `refactor`      | Code changes that improve structure without changing behavior               | Reorganizing files, extracting utilities                |
+| `documentation` | Updates to READMEs, AP docs, or internal guides                             | Adding missing docs, clarifying setup steps             |
+| `release`       | Tasks related to deploying to production                                    | Version bumps, changelog updates, deployment prep       |
 
 ---
 
@@ -74,14 +74,17 @@ The issue description **must** include the following sections:
 Briefly explain what the issue is about.
 
 **For bugs:**
+
 - What were you trying to do?
 - What is happening instead?
 
 **For features/enhancements:**
+
 - What feature are you adding/improving?
 - Why is it needed?
 
 **For refactors:**
+
 - What code is being refactored?
 - Why does it need refactoring?
 
@@ -101,13 +104,16 @@ For bugs, provide a **step-by-step guide** to reproduce the problem:
 Explain what the final result looks like.
 
 **For features:**
+
 - List the specific features that need to be implemented
 - Include acceptance criteria
 
 **For bugs:**
+
 - Describe the expected correct behavior
 
 **For refactors:**
+
 - Describe the improved code structure
 
 ---
@@ -121,12 +127,14 @@ Explain what the final result looks like.
 ### Examples
 
 ✅ **Good Titles:**
+
 - `User registration fails with invalid email error`
 - `Add event capacity validation to registration flow`
 - `Refactor user service to use layered architecture`
 - `Update API documentation for authentication endpoints`
 
 ❌ **Bad Titles:**
+
 - `Bug in users` (too vague)
 - `Fix it` (no context)
 - `The registration system is not working properly when users try to sign up for events with special characters in the name` (too long)
@@ -138,6 +146,7 @@ Explain what the final result looks like.
 **Title:** `Event registration fails when event is at capacity`
 
 **Tags:**
+
 - Project: `nexus-api`, `nexus-web`
 - Severity: `high`
 - Type: `bug`
@@ -145,9 +154,11 @@ Explain what the final result looks like.
 **Description:**
 
 ### Context
+
 Users are able to register for events even when the event has reached maximum capacity. This violates our business rule that events should close registration when full.
 
 ### Steps to Reproduce
+
 1. Create an event with `maxCapacity: 10`
 2. Register 10 users for the event
 3. Attempt to register an 11th user
@@ -155,6 +166,7 @@ Users are able to register for events even when the event has reached maximum ca
 5. **Actual**: Registration succeeds, event now has 11 registrations
 
 ### Goals
+
 - Prevent registration when event is at capacity
 - Return clear error message to user: "This event is full"
 - Add capacity check in event service before creating registration

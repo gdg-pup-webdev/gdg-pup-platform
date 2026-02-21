@@ -2,7 +2,7 @@ import {
   publicArticleInsertSchema,
   publicArticleRowSchema,
   publicArticleUpdateSchema,
-} from "#types/index.js"; 
+} from "#types/index.js";
 
 export const row = publicArticleRowSchema;
 

@@ -3,8 +3,8 @@ import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 import z from "zod";
 
 export const query = SchemaFactory.Request.Paginated.query().extend({
-  userId : z.string().optional(),
-  status : z.enum(["READY", "ACTIVATED", "INACTIVE"]).optional(),
+  userId: z.string().optional(),
+  status: z.enum(["READY", "ACTIVATED", "INACTIVE"]).optional(),
 });
 
 export const response = {
@@ -13,11 +13,11 @@ export const response = {
 };
 
 export const docs_query = {
-    pageNumber : "Page number",
-    pageSize : "Page size",
-    userId : "User ID",
-    status : "Card status",
-}
+  pageNumber: "Page number",
+  pageSize: "Page size",
+  userId: "User ID",
+  status: "Card status",
+};
 
 export const docs_description =
   "List cards. Can be filtered by user_id and status.";

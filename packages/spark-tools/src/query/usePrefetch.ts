@@ -1,13 +1,13 @@
 /**
  * usePrefetch Hook
- * 
+ *
  * Hook for prefetching data before it's needed.
  * Useful for optimistic navigation and hover-to-prefetch patterns.
- * 
+ *
  * @example
  * ```typescript
  * const prefetchUser = usePrefetch();
- * 
+ *
  * // Prefetch on hover
  * <Link
  *   href={`/users/${userId}`}
@@ -21,15 +21,15 @@
  * ```
  */
 
-'use client';
+"use client";
 
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
 
 export interface PrefetchOptions {
   /** Time in ms before data is considered stale (default: 5 minutes) */
   staleTime?: number;
-  
+
   /** Whether to force refetch even if data exists (default: false) */
   force?: boolean;
 }
@@ -42,7 +42,7 @@ export function usePrefetch() {
 
   /**
    * Prefetch a query
-   * 
+   *
    * @param queryKey - The query key
    * @param queryFn - Function to fetch the data
    * @param options - Prefetch options
@@ -51,15 +51,15 @@ export function usePrefetch() {
     async <TData>(
       queryKey: readonly unknown[],
       queryFn: () => Promise<TData>,
-      options: PrefetchOptions = {}
+      options: PrefetchOptions = {},
     ) => {
       const { staleTime = 5 * 60 * 1000, force = false } = options;
-      
+
       // Check if data already exists in cache and is fresh
       if (!force) {
         const existingData = queryClient.getQueryData(queryKey);
         const queryState = queryClient.getQueryState(queryKey);
-        
+
         // If data exists and is fresh, don't prefetch
         if (existingData && queryState && !queryState.isInvalidated) {
           const dataAge = Date.now() - (queryState.dataUpdatedAt || 0);
@@ -68,7 +68,7 @@ export function usePrefetch() {
           }
         }
       }
-      
+
       // Prefetch the query
       await queryClient.prefetchQuery({
         queryKey,
@@ -76,7 +76,7 @@ export function usePrefetch() {
         staleTime,
       });
     },
-    [queryClient]
+    [queryClient],
   );
 
   /**
@@ -88,15 +88,15 @@ export function usePrefetch() {
         queryKey: readonly unknown[];
         queryFn: () => Promise<any>;
         options?: PrefetchOptions;
-      }>
+      }>,
     ) => {
       await Promise.all(
         queries.map(({ queryKey, queryFn, options }) =>
-          prefetch(queryKey, queryFn, options)
-        )
+          prefetch(queryKey, queryFn, options),
+        ),
       );
     },
-    [prefetch]
+    [prefetch],
   );
 
   /**
@@ -105,14 +105,14 @@ export function usePrefetch() {
   const ensureQueryData = useCallback(
     async <TData>(
       queryKey: readonly unknown[],
-      queryFn: () => Promise<TData>
+      queryFn: () => Promise<TData>,
     ): Promise<TData> => {
       return await queryClient.ensureQueryData({
         queryKey,
         queryFn,
       });
     },
-    [queryClient]
+    [queryClient],
   );
 
   return {
@@ -124,16 +124,16 @@ export function usePrefetch() {
 
 /**
  * usePrefetchOnHover Hook
- * 
+ *
  * Specialized hook that returns props for hover-based prefetching.
- * 
+ *
  * @example
  * ```typescript
  * const prefetchProps = usePrefetchOnHover(
  *   queryKeys.users.detail(userId),
  *   () => userService.getUserProfile(userId)
  * );
- * 
+ *
  * <Link {...prefetchProps} href={`/users/${userId}`}>
  *   View Profile
  * </Link>
@@ -142,18 +142,18 @@ export function usePrefetch() {
 export function usePrefetchOnHover<TData>(
   queryKey: readonly unknown[],
   queryFn: () => Promise<TData>,
-  options?: PrefetchOptions
+  options?: PrefetchOptions,
 ) {
   const { prefetch } = usePrefetch();
-  
+
   const handleMouseEnter = useCallback(() => {
     prefetch(queryKey, queryFn, options);
   }, [prefetch, queryKey, queryFn, options]);
-  
+
   const handleTouchStart = useCallback(() => {
     prefetch(queryKey, queryFn, options);
   }, [prefetch, queryKey, queryFn, options]);
-  
+
   return {
     onMouseEnter: handleMouseEnter,
     onTouchStart: handleTouchStart,

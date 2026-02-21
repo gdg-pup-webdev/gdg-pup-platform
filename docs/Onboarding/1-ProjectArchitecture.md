@@ -10,19 +10,19 @@ This document provides a high-level overview of the project's architecture, tech
 
 The project is built with the following technologies:
 
--   **Frontend**: Next.js, Tailwind CSS, shadcn/ui
--   **Backend**: Express.js, TypeScript
--   **Database**: Supabase (PostgreSQL)
--   **API Contracts**: Zod
--   **Monorepo**: pnpm, Turborepo
--   **Containerization**: Docker, Docker Compose
+- **Frontend**: Next.js, Tailwind CSS, shadcn/ui
+- **Backend**: Express.js, TypeScript
+- **Database**: Supabase (PostgreSQL)
+- **API Contracts**: Zod
+- **Monorepo**: pnpm, Turborepo
+- **Containerization**: Docker, Docker Compose
 
 ## Monorepo Structure
 
 The repository is organized as a monorepo with the following structure:
 
 ```
-gdg-pup-platform/ 
+gdg-pup-platform/
 ├── apps/
 │   ├── nexus-api/              # Express.js Backend API
 │   ├── nexus-web/              # Next.js Frontend
@@ -46,9 +46,9 @@ gdg-pup-platform/
 └── turbo.json                  # Turborepo configuration
 ```
 
--   **`apps/`**: Contains deployable applications, such as backend servers and frontend web apps.
--   **`packages/`**: Contains shared libraries and modules consumed by applications or other packages.
--   **`configs/`**: Contains shared configurations for tools like ESLint and TypeScript, ensuring consistency across the monorepo.
+- **`apps/`**: Contains deployable applications, such as backend servers and frontend web apps.
+- **`packages/`**: Contains shared libraries and modules consumed by applications or other packages.
+- **`configs/`**: Contains shared configurations for tools like ESLint and TypeScript, ensuring consistency across the monorepo.
 
 ## Key Principles
 

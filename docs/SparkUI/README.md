@@ -11,4 +11,4 @@ This documentation describes how Spark-UI works, what belongs in it, and how it 
 - [Styling & Theming](./05-styling-and-theming.md)
 - [Adding & Changing Components](./06-adding-and-changing-components.md)
 - [Theme Tokens Reference](./07-theme-tokens.md)
-- [Layout Primitives](./08-layout-primitives.md) 
+- [Layout Primitives](./08-layout-primitives.md)

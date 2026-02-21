@@ -1,6 +1,6 @@
 /**
  * Custom hook for debugging authentication state
- * 
+ *
  * This hook provides access to authentication state and methods
  * specifically formatted for debugging purposes.
  */
@@ -10,14 +10,14 @@ import { DebugAuthState } from "../types";
 
 /**
  * Hook to access authentication state for debugging
- * 
+ *
  * @returns Authentication state formatted for debugging display
- * 
+ *
  * @example
  * ```tsx
  * function DebugPanel() {
  *   const { authState, loginWithGoogle, logout, copyToken } = useDebugAuth();
- *   
+ *
  *   return (
  *     <div>
  *       <p>Status: {authState.status}</p>
@@ -42,7 +42,7 @@ export function useDebugAuth() {
 
   /**
    * Copy authentication token to clipboard
-   * 
+   *
    * @returns Success or error toast notification
    */
   const copyToken = async (): Promise<boolean> => {
@@ -60,7 +60,7 @@ export function useDebugAuth() {
 
   /**
    * Copy Google access token to clipboard
-   * 
+   *
    * @returns Success or error toast notification
    */
   const copyGoogleAccessToken = async (): Promise<boolean> => {

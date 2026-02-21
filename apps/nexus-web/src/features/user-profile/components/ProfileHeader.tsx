@@ -1,20 +1,20 @@
 /**
  * Profile header component
- * 
+ *
  * Displays the user's name, role, and bio.
  * This is the main identifying information for the profile.
  */
 
-import React from 'react';
-import { Badge, Stack, Text, Inline } from '@packages/spark-ui';
+import React from "react";
+import { Badge, Stack, Text, Inline } from "@packages/spark-ui";
 
 interface ProfileHeaderProps {
   // User's display name
   name: string;
-  
+
   // User's role or title (e.g., "Developer", "Designer")
   role?: string;
-  
+
   // User's biography or description
   bio?: string;
 }
@@ -26,7 +26,10 @@ export function ProfileHeader({ name, role, bio }: ProfileHeaderProps) {
   return (
     <Stack gap="md" className="text-center">
       {/* User's name */}
-      <Text variant="heading-1" className="text-5xl bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-400 to-blue-400">
+      <Text
+        variant="heading-1"
+        className="text-5xl bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-400 to-blue-400"
+      >
         {name}
       </Text>
 

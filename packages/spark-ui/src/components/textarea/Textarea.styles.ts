@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Textarea - Multi-line text input
- * 
+ *
  * Styled textarea input with label, helper text, and error state support.
  * Uses theme tokens for all colors and spacing.
  */
@@ -48,12 +48,14 @@ export const textareaVariants = cva(
     defaultVariants: {
       textareaSize: "md",
     },
-  }
+  },
 );
 
 export const textareaLabelVariants = cva(["text-sm font-medium leading-none"]);
 
-export const textareaHelperTextVariants = cva(["text-sm text-muted-foreground"]);
+export const textareaHelperTextVariants = cva([
+  "text-sm text-muted-foreground",
+]);
 
 export const textareaErrorVariants = cva(["text-sm text-destructive"]);
 

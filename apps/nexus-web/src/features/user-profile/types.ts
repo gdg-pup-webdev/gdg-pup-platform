@@ -1,6 +1,6 @@
 /**
  * Type definitions for the User Profile feature
- * 
+ *
  * This feature displays user profile information including:
  * - Basic info (name, role, bio)
  * - Social media links
@@ -39,7 +39,7 @@ export interface UserProfile {
  * Contains nested profile data that needs to be extracted
  */
 export interface UserAggregateResponse {
-  status: 'success' | 'error';
+  status: "success" | "error";
   data: {
     id: string;
     display_name?: string;
@@ -63,11 +63,11 @@ export interface UserAggregateResponse {
 /**
  * Error types specific to user profile operations
  */
-export type UserProfileError = 
-  | 'USER_NOT_FOUND'
-  | 'NETWORK_ERROR'
-  | 'INVALID_USER_ID'
-  | 'SERVER_ERROR';
+export type UserProfileError =
+  | "USER_NOT_FOUND"
+  | "NETWORK_ERROR"
+  | "INVALID_USER_ID"
+  | "SERVER_ERROR";
 
 /**
  * Custom error class for user profile errors
@@ -75,9 +75,9 @@ export type UserProfileError =
 export class UserProfileException extends Error {
   constructor(
     public type: UserProfileError,
-    message: string
+    message: string,
   ) {
     super(message);
-    this.name = 'UserProfileException';
+    this.name = "UserProfileException";
   }
 }

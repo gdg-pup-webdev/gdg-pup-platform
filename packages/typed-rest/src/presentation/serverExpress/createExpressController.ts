@@ -24,7 +24,6 @@ export const createExpressController = <T extends Contract>(
         files: {} as any,
       };
 
-
       if (contract.request.files) {
         const filesContract = contract.request.files;
         const bodyContract = contract.request.body;

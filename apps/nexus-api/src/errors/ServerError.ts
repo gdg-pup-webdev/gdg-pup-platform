@@ -9,12 +9,14 @@ export class ServerError extends Error {
   }
 
   public getAllErrorStack(): string[] {
-    const parts: string[] = [ ];
+    const parts: string[] = [];
     let currentCause = this as unknown;
 
     while (currentCause) {
       if (currentCause instanceof Error) {
-        parts.push(currentCause.stack || `${currentCause.name}: ${currentCause.message}`);
+        parts.push(
+          currentCause.stack || `${currentCause.name}: ${currentCause.message}`,
+        );
         currentCause = (currentCause as Error).cause;
       } else {
         parts.push(String(currentCause));

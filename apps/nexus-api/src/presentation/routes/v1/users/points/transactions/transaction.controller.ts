@@ -1,4 +1,3 @@
-  
 import { TransactionService } from "@/deprecated/walletSystem/transactions/transaction.service";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
@@ -9,9 +8,7 @@ import { RequestHandler } from "express";
  * Implements endpoints defined in the economy system contract.
  */
 export class TransactionsHttpController {
-  constructor(
-    private readonly transactionService: TransactionService  ,
-  ) {}
+  constructor(private readonly transactionService: TransactionService) {}
 
   /**
    * Lists transactions with optional filtering and pagination.
@@ -55,4 +52,3 @@ export class TransactionsHttpController {
     },
   );
 }
- 

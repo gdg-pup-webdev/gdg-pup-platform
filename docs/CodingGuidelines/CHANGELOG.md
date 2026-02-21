@@ -25,27 +25,33 @@ When making changes to coding guidelines, update this changelog following these 
 **Author:** @your-username
 
 ### Added
+
 - New guideline files or sections
 
 ### Changed
+
 - Modified guidelines or clarifications
 
 ### Fixed
+
 - Corrected typos, broken links, or inaccuracies
 
 ### Removed
+
 - Deprecated or obsolete guidelines
 
 **Rationale:** Brief explanation of why these changes were made
 ```
 
 **Example Entry:**
+
 ```markdown
 ## [2026-01-26] - Added Testing Guidelines
 
 **Author:** @developer-name
 
 ### Added
+
 - New guideline **[106-Testing.md](./106-Testing.md)** covering unit and integration testing standards
 
 **Rationale:** Team needed clear guidance on testing expectations and patterns
@@ -58,6 +64,7 @@ When making changes to coding guidelines, update this changelog following these 
 **Author:** Erwin Daguinotas
 
 ### Added
+
 - **[README.md](./README.md)** - Root documentation with complete navigation system
 - **[101-ApiUtilities.md](./101-ApiUtilities.md)** - Guidelines for creating reusable utility functions
 - **[102-LayeredArchitecture.md](./102-LayeredArchitecture.md)** - Backend layered architecture standards
@@ -79,13 +86,15 @@ When making changes to coding guidelines, update this changelog following these 
 - **[CHANGELOG.md](./CHANGELOG.md)** - This changelog file
 
 ### Changed
+
 - None (initial creation)
 
 ### Fixed
+
 - None (initial creation)
 
 ### Removed
+
 - None (initial creation)
 
 **Rationale:** Established comprehensive coding guidelines to maintain code quality, scalability, and consistency across the GDG PUP Platform monorepo. These guidelines provide clear standards for backend development, project structure, general coding practices, documentation, and collaboration workflows.
-

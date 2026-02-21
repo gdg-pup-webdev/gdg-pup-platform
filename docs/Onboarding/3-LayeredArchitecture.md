@@ -8,9 +8,9 @@ Our backend follows a layered architecture to ensure a clean separation of conce
 
 ## Guiding Principles
 
--   **Services and Repositories**: These layers are API-agnostic. They should not have any knowledge of the API contracts. Types should be imported directly from the project's `types` directory, not from the `*-api-contracts` packages.
--   **Routes and Controllers**: These layers are API-aware and act as the bridge between the API contracts and the application's core logic. They are responsible for translating data between the API schema and the internal database types.
--   **External Services**: When integrating with external services (e.g., GCP, AWS), use dependency injection to ensure that implementations can be easily swapped out.
+- **Services and Repositories**: These layers are API-agnostic. They should not have any knowledge of the API contracts. Types should be imported directly from the project's `types` directory, not from the `*-api-contracts` packages.
+- **Routes and Controllers**: These layers are API-aware and act as the bridge between the API contracts and the application's core logic. They are responsible for translating data between the API schema and the internal database types.
+- **External Services**: When integrating with external services (e.g., GCP, AWS), use dependency injection to ensure that implementations can be easily swapped out.
 
 ## Backend Structure
 
@@ -38,13 +38,13 @@ apps/nexus-api/src/
 
 The repository layer is the lowest level, responsible for all direct interactions with the database.
 
--   **Responsibilities**:
-    -   Perform basic CRUD (Create, Read, Update, Delete) operations.
-    -   Abstract away the database implementation details.
-    -   Manage a single database resource (e.g., a `user` table).
--   **Constraints**:
-    -   Contains no business logic.
-    -   Is unaware of the API and its schemas.
+- **Responsibilities**:
+  - Perform basic CRUD (Create, Read, Update, Delete) operations.
+  - Abstract away the database implementation details.
+  - Manage a single database resource (e.g., a `user` table).
+- **Constraints**:
+  - Contains no business logic.
+  - Is unaware of the API and its schemas.
 
 **Example: `UserRepository`**
 
@@ -81,12 +81,12 @@ export const userRepository = new UserRepository();
 
 The service layer contains the core business logic of the application.
 
--   **Responsibilities**:
-    -   Orchestrate data flow by calling repository methods.
-    -   Implement complex business rules and operations.
-    -   Coordinate between different services to handle side effects (e.g., logging a transaction, sending a notification).
--   **Constraints**:
-    -   Is unaware of the API and its schemas.
+- **Responsibilities**:
+  - Orchestrate data flow by calling repository methods.
+  - Implement complex business rules and operations.
+  - Coordinate between different services to handle side effects (e.g., logging a transaction, sending a notification).
+- **Constraints**:
+  - Is unaware of the API and its schemas.
 
 **Example: `UserService`**
 
@@ -102,7 +102,7 @@ export class UserService {
   async getUserById(userId: string) {
     const { data, error } = await tryCatch(
       () => this.userRepository.getUserById(userId),
-      "An error occurred while getting the user."
+      "An error occurred while getting the user.",
     );
 
     if (error) {
@@ -120,12 +120,12 @@ export const userService = new UserService();
 
 The controller layer acts as the bridge between the API endpoints and the application's services.
 
--   **Responsibilities**:
-    -   Handle incoming HTTP requests.
-    -   Validate and sanitize request data (delegated to `typed-rest`).
-    -   Call service methods to execute business logic.
-    -   Translate data from services into a format that conforms to the API contract.
-    -   Return a structured HTTP response.
+- **Responsibilities**:
+  - Handle incoming HTTP requests.
+  - Validate and sanitize request data (delegated to `typed-rest`).
+  - Call service methods to execute business logic.
+  - Translate data from services into a format that conforms to the API contract.
+  - Return a structured HTTP response.
 
 We use the `createExpressController` utility from `@packages/typed-rest` to enforce our API contract, providing fully typed and validated inputs.
 
@@ -147,8 +147,8 @@ export class UserSystemController {
     async ({ input, output }) => {
       const { userId } = input.params;
 
-      const { data, error } = await tryCatch(
-        () => this.userService.getUserById(userId)
+      const { data, error } = await tryCatch(() =>
+        this.userService.getUserById(userId),
       );
 
       if (error) {
@@ -160,7 +160,7 @@ export class UserSystemController {
         message: "User fetched successfully",
         data,
       });
-    }
+    },
   );
 }
 
@@ -185,11 +185,7 @@ const router = Router();
 router.post("/users", userController.createUser);
 
 // Protected route with authentication middleware
-router.get(
-  "/users/:userId",
-  authMiddleware,
-  userController.getUserById,
-);
+router.get("/users/:userId", authMiddleware, userController.getUserById);
 
 export const userRouter = router;
 ```

@@ -9,6 +9,7 @@ Applications consume Spark-UI via workspace imports.
 ```tsx
 import { Button, Card } from "@packages/spark-ui";
 ```
+
 # Usage guidelines
 
 - Prefer Spark-UI components over raw HTML

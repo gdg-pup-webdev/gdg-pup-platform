@@ -4,7 +4,7 @@ import {
   walletControllerInstance,
 } from "./wallet.controller";
 /**
- * @deprecated 
+ * @deprecated
  */
 export class WalletRouter {
   constructor(
@@ -20,6 +20,6 @@ export class WalletRouter {
   };
 }
 /**
- * @deprecated 
+ * @deprecated
  */
 export const walletRouterInstance = new WalletRouter();

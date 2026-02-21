@@ -20,7 +20,7 @@ All calls to the following **must** be wrapped with the `tryCatch` function defi
 - Repositories
 
 ```typescript
-import { tryCatch } from '../utils/error.utils';
+import { tryCatch } from "../utils/error.utils";
 
 const result = await tryCatch(() => userService.getUserById(userId));
 ```
@@ -40,6 +40,7 @@ const result = await tryCatch(() => userService.getUserById(userId));
 When encountering a **known error**, always use our `ServerError` class or its subclasses defined in the classes folder.
 
 Common error types:
+
 - `NotFoundError` – Resource not found (404)
 - `ValidationError` – Invalid input (400)
 - `UnauthorizedError` – Authentication required (401)
@@ -52,23 +53,24 @@ Common error types:
 
 ```typescript
 // services/user.service.ts
-import { NotFoundError, ServerError } from '../errors';
-import { tryCatch } from '../utils/error.utils';
-import { userRepository } from '../repositories/user.repository';
+import { NotFoundError, ServerError } from "../errors";
+import { tryCatch } from "../utils/error.utils";
+import { userRepository } from "../repositories/user.repository";
 
 export class UserService {
   async getUserById(userId: string): Promise<User> {
     // Wrap repository call with tryCatch
-    const {data:user, error} = await tryCatch(() => userRepository.findById(userId));
-    
+    const { data: user, error } = await tryCatch(() =>
+      userRepository.findById(userId),
+    );
+
     // Throw known error for specific case
     if (!user) {
       throw new NotFoundError(`User with ID ${userId} not found`);
     }
-    
+
     return user;
   }
-  
 }
 ```
 
@@ -76,26 +78,26 @@ export class UserService {
 
 ```typescript
 // repositories/user.repository.ts
-import { supabase } from '../config/database';
-import { ServerError } from '../errors';
+import { supabase } from "../config/database";
+import { ServerError } from "../errors";
 
 export class UserRepository {
   async findById(id: string): Promise<User | null> {
     const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', id)
+      .from("users")
+      .select("*")
+      .eq("id", id)
       .single();
-    
+
     // Re-throw database errors with context
     if (error) {
       throw new ServerError(
         `Failed to fetch user: ${error.message}`,
         500,
-        error
+        error,
       );
     }
-    
+
     return data;
   }
 }
@@ -105,26 +107,28 @@ export class UserRepository {
 
 ```typescript
 // controllers/user.controller.ts
-import { createExpressController } from '@packages/typed-rest';
-import { getUserProfileContract } from '@packages/nexus-api-contracts';
-import { userService } from '../services/user.service';
-import { tryCatch } from '../utils/error.utils';
+import { createExpressController } from "@packages/typed-rest";
+import { getUserProfileContract } from "@packages/nexus-api-contracts";
+import { userService } from "../services/user.service";
+import { tryCatch } from "../utils/error.utils";
 
 export const getUserProfileController = createExpressController(
   getUserProfileContract,
   async (req) => {
     const { userId } = req.params;
-    
+
     // tryCatch will handle errors and format them properly
-    const {data:user, error} = await tryCatch(() => userService.getUserById(userId));
-    
+    const { data: user, error } = await tryCatch(() =>
+      userService.getUserById(userId),
+    );
+
     return {
       id: user.id,
       displayName: `${user.firstName} ${user.lastName}`,
       email: user.email,
       createdAt: user.createdAt.toISOString(),
     };
-  }
+  },
 );
 ```
 
@@ -161,7 +165,7 @@ async updateUser(userId: string, data: UpdateUserData): Promise<User> {
 ✅ **Consistent Error Responses**: All errors follow the same format  
 ✅ **Clear Error Messages**: Proper error types make debugging easier  
 ✅ **Graceful Failures**: Users get actionable feedback instead of crashes  
-✅ **Traceable**: Error context preserved through layers  
+✅ **Traceable**: Error context preserved through layers
 
 ---
 

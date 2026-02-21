@@ -20,10 +20,10 @@ Consistent branch naming makes it easy to identify what work is being done and h
 
 These branches have special meaning and **must not** have sub-branches:
 
-| Branch | Purpose | Sub-branches? |
-|--------|---------|---------------|
-| `main` | Production code | ❌ No `main/something` |
-| `dev` | Development code | ❌ No `dev/something` |
+| Branch | Purpose          | Sub-branches?          |
+| ------ | ---------------- | ---------------------- |
+| `main` | Production code  | ❌ No `main/something` |
+| `dev`  | Development code | ❌ No `dev/something`  |
 
 ---
 
@@ -36,6 +36,7 @@ These branches have special meaning and **must not** have sub-branches:
 Used for preparing a new production release.
 
 **Examples:**
+
 ```
 release/v1.0.0
 release/v2.1.3
@@ -50,11 +51,13 @@ release/v2.1.3
 For fixing critical issues in the `main` branch (production).
 
 **Format:**
+
 - Start with `hotfix/`
 - Followed by kebab-case issue name
 - End with `-#` and the issue number
 
 **Examples:**
+
 ```
 hotfix/critical-auth-bug-#100
 hotfix/payment-failure-#245
@@ -69,11 +72,13 @@ hotfix/payment-failure-#245
 For developing new features.
 
 **Format:**
+
 - Start with `feat/`
 - Followed by kebab-case feature name
 - End with `-#` and the issue number
 
 **Examples:**
+
 ```
 feat/event-registration-#102
 feat/user-profile-page-#156
@@ -88,11 +93,13 @@ feat/user-profile-page-#156
 For improving existing features.
 
 **Format:**
+
 - Start with `enhance/`
 - Followed by kebab-case feature name
 - End with `-#` and the issue number
 
 **Examples:**
+
 ```
 enhance/search-performance-#87
 enhance/user-dashboard-#134
@@ -107,11 +114,13 @@ enhance/user-dashboard-#134
 For fixing issues in the `dev` branch (staging/development).
 
 **Format:**
+
 - Start with `bug/`
 - Followed by kebab-case bug description
 - End with `-#` and the issue number
 
 **Examples:**
+
 ```
 bug/button-not-working-#65
 bug/registration-validation-#98
@@ -126,11 +135,13 @@ bug/registration-validation-#98
 For code refactoring without changing functionality.
 
 **Format:**
+
 - Start with `refactor/`
 - Followed by kebab-case description
 - End with `-#` and the issue number
 
 **Examples:**
+
 ```
 refactor/user-service-#120
 refactor/event-repository-#145
@@ -145,11 +156,13 @@ refactor/event-repository-#145
 For documentation updates.
 
 **Format:**
+
 - Start with `docs/`
-- Followed by  kebab-case description
+- Followed by kebab-case description
 - End with `-#` and the issue number
 
 **Examples:**
+
 ```
 docs/api-documentation-#101
 docs/setup-guide-#89
@@ -160,27 +173,29 @@ docs/coding-guidelines-#234
 
 ## Branch Naming Quick Reference
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| **Release** | `release/<version>` | `release/v1.0.0` |
-| **Hotfix** | `hotfix/<name>-#<num>` | `hotfix/auth-bug-#100` |
-| **Feature** | `feat/<name>-#<num>` | `feat/registration-#102` |
-| **Enhancement** | `enhance/<name>-#<num>` | `enhance/search-#87` |
-| **Bug Fix** | `bug/<name>-#<num>` | `bug/validation-#65` |
-| **Refactor** | `refactor/<name>-#<num>` | `refactor/user-service-#120` |
-| **Documentation** | `docs/<name>-#<num>` | `docs/api-docs-#101` |
+| Type              | Pattern                  | Example                      |
+| ----------------- | ------------------------ | ---------------------------- |
+| **Release**       | `release/<version>`      | `release/v1.0.0`             |
+| **Hotfix**        | `hotfix/<name>-#<num>`   | `hotfix/auth-bug-#100`       |
+| **Feature**       | `feat/<name>-#<num>`     | `feat/registration-#102`     |
+| **Enhancement**   | `enhance/<name>-#<num>`  | `enhance/search-#87`         |
+| **Bug Fix**       | `bug/<name>-#<num>`      | `bug/validation-#65`         |
+| **Refactor**      | `refactor/<name>-#<num>` | `refactor/user-service-#120` |
+| **Documentation** | `docs/<name>-#<num>`     | `docs/api-docs-#101`         |
 
 ---
 
 ## Naming Conventions Summary
 
 ✅ **Always:**
+
 - Use lowercase
 - Use kebab-case for names
 - Include issue number with `#`
 - Keep names short but descriptive
 
 ❌ **Never:**
+
 - Use spaces or underscores
 - Use capital letters
 - Create sub-branches of `main` or `dev`

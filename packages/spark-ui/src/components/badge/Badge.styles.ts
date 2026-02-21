@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Badge - Small status and category indicators
- * 
+ *
  * Used for event categories, user roles, status indicators, and tags.
  * Uses theme tokens for all colors and spacing.
  */
@@ -41,7 +41,7 @@ export const badgeVariants = cva(
       variant: "default",
       size: "md",
     },
-  }
+  },
 );
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>;

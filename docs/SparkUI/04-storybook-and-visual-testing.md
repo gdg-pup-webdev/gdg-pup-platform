@@ -9,6 +9,7 @@ Storybook is the source of truth for Spark-UI components.
 ## Storybook responsibilities
 
 Storybook documents:
+
 - Component APIs
 - Supported variants
 - Visual states

@@ -1,7 +1,6 @@
 import { publicExternalResourceRowSchema } from "#types/supabase.schema.js";
 import { cz as z } from "@packages/typed-rest/shared";
 
-
 export const row = publicExternalResourceRowSchema;
 
 export const insert = row.omit({

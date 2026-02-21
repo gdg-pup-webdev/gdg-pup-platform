@@ -45,8 +45,15 @@ const useTabsContext = () => {
  */
 export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
   (
-    { defaultValue = "", value: controlledValue, onValueChange, children, className, ...props },
-    ref
+    {
+      defaultValue = "",
+      value: controlledValue,
+      onValueChange,
+      children,
+      className,
+      ...props
+    },
+    ref,
   ) => {
     const [internalValue, setInternalValue] = useState(defaultValue);
     const isControlled = controlledValue !== undefined;
@@ -68,7 +75,7 @@ export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
         </div>
       </TabsContext.Provider>
     );
-  }
+  },
 );
 
 Tabs.displayName = "Tabs";
@@ -105,7 +112,7 @@ export const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
         {childrenWithVariant}
       </div>
     );
-  }
+  },
 );
 
 TabsList.displayName = "TabsList";
@@ -171,7 +178,7 @@ export const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
         {children}
       </div>
     );
-  }
+  },
 );
 
 TabsContent.displayName = "TabsContent";

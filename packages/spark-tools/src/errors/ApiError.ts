@@ -1,6 +1,6 @@
 /**
  * Custom error classes for API-related errors
- * 
+ *
  * These error classes provide structured error handling across the frontend,
  * allowing components and services to handle specific error types appropriately.
  */
@@ -19,10 +19,10 @@ export class ApiError extends Error {
     message: string,
     statusCode: number = 500,
     title?: string,
-    detail?: string
+    detail?: string,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
     this.statusCode = statusCode;
     this.title = title || this.name;
     this.detail = detail;
@@ -63,18 +63,18 @@ export class ValidationError extends ApiError {
   public readonly errors?: Array<{ field: string; message: string }>;
 
   constructor(
-    message: string = 'Validation failed',
+    message: string = "Validation failed",
     errors?: Array<{ field: string; message: string }>,
-    detail?: string
+    detail?: string,
   ) {
-    super(message, 400, 'Validation Error', detail);
-    this.name = 'ValidationError';
+    super(message, 400, "Validation Error", detail);
+    this.name = "ValidationError";
     this.errors = errors;
   }
 
   getUserMessage(): string {
     if (this.errors && this.errors.length > 0) {
-      return `Validation failed: ${this.errors.map(e => e.message).join(', ')}`;
+      return `Validation failed: ${this.errors.map((e) => e.message).join(", ")}`;
     }
     return this.message;
   }
@@ -92,15 +92,15 @@ export class ValidationError extends ApiError {
  */
 export class UnauthorizedError extends ApiError {
   constructor(
-    message: string = 'You must be logged in to access this resource',
-    detail?: string
+    message: string = "You must be logged in to access this resource",
+    detail?: string,
   ) {
-    super(message, 401, 'Unauthorized', detail);
-    this.name = 'UnauthorizedError';
+    super(message, 401, "Unauthorized", detail);
+    this.name = "UnauthorizedError";
   }
 
   getUserMessage(): string {
-    return 'Please log in to continue.';
+    return "Please log in to continue.";
   }
 }
 
@@ -109,15 +109,15 @@ export class UnauthorizedError extends ApiError {
  */
 export class ForbiddenError extends ApiError {
   constructor(
-    message: string = 'You do not have permission to access this resource',
-    detail?: string
+    message: string = "You do not have permission to access this resource",
+    detail?: string,
   ) {
-    super(message, 403, 'Forbidden', detail);
-    this.name = 'ForbiddenError';
+    super(message, 403, "Forbidden", detail);
+    this.name = "ForbiddenError";
   }
 
   getUserMessage(): string {
-    return 'You do not have permission to perform this action.';
+    return "You do not have permission to perform this action.";
   }
 }
 
@@ -129,13 +129,13 @@ export class NotFoundError extends ApiError {
   public readonly resourceId?: string;
 
   constructor(
-    message: string = 'The requested resource was not found',
+    message: string = "The requested resource was not found",
     resourceType?: string,
     resourceId?: string,
-    detail?: string
+    detail?: string,
   ) {
-    super(message, 404, 'Not Found', detail);
-    this.name = 'NotFoundError';
+    super(message, 404, "Not Found", detail);
+    this.name = "NotFoundError";
     this.resourceType = resourceType;
     this.resourceId = resourceId;
   }
@@ -144,7 +144,7 @@ export class NotFoundError extends ApiError {
     if (this.resourceType) {
       return `${this.resourceType} not found.`;
     }
-    return 'The requested resource was not found.';
+    return "The requested resource was not found.";
   }
 
   toJSON() {
@@ -161,11 +161,11 @@ export class NotFoundError extends ApiError {
  */
 export class ConflictError extends ApiError {
   constructor(
-    message: string = 'The request conflicts with the current state',
-    detail?: string
+    message: string = "The request conflicts with the current state",
+    detail?: string,
   ) {
-    super(message, 409, 'Conflict', detail);
-    this.name = 'ConflictError';
+    super(message, 409, "Conflict", detail);
+    this.name = "ConflictError";
   }
 
   getUserMessage(): string {
@@ -178,11 +178,11 @@ export class ConflictError extends ApiError {
  */
 export class UnprocessableEntityError extends ApiError {
   constructor(
-    message: string = 'The request was well-formed but contains semantic errors',
-    detail?: string
+    message: string = "The request was well-formed but contains semantic errors",
+    detail?: string,
   ) {
-    super(message, 422, 'Unprocessable Entity', detail);
-    this.name = 'UnprocessableEntityError';
+    super(message, 422, "Unprocessable Entity", detail);
+    this.name = "UnprocessableEntityError";
   }
 
   getUserMessage(): string {
@@ -197,12 +197,12 @@ export class RateLimitError extends ApiError {
   public readonly retryAfter?: number; // seconds
 
   constructor(
-    message: string = 'Too many requests. Please try again later',
+    message: string = "Too many requests. Please try again later",
     retryAfter?: number,
-    detail?: string
+    detail?: string,
   ) {
-    super(message, 429, 'Rate Limit Exceeded', detail);
-    this.name = 'RateLimitError';
+    super(message, 429, "Rate Limit Exceeded", detail);
+    this.name = "RateLimitError";
     this.retryAfter = retryAfter;
   }
 
@@ -210,7 +210,7 @@ export class RateLimitError extends ApiError {
     if (this.retryAfter) {
       return `Too many requests. Please try again in ${this.retryAfter} seconds.`;
     }
-    return 'Too many requests. Please try again later.';
+    return "Too many requests. Please try again later.";
   }
 
   toJSON() {
@@ -226,16 +226,16 @@ export class RateLimitError extends ApiError {
  */
 export class ServerError extends ApiError {
   constructor(
-    message: string = 'An unexpected error occurred. Please try again later',
+    message: string = "An unexpected error occurred. Please try again later",
     statusCode: number = 500,
-    detail?: string
+    detail?: string,
   ) {
-    super(message, statusCode, 'Server Error', detail);
-    this.name = 'ServerError';
+    super(message, statusCode, "Server Error", detail);
+    this.name = "ServerError";
   }
 
   getUserMessage(): string {
-    return 'Something went wrong. Please try again later.';
+    return "Something went wrong. Please try again later.";
   }
 }
 
@@ -244,15 +244,15 @@ export class ServerError extends ApiError {
  */
 export class NetworkError extends ApiError {
   constructor(
-    message: string = 'Unable to connect to the server. Please check your internet connection',
-    detail?: string
+    message: string = "Unable to connect to the server. Please check your internet connection",
+    detail?: string,
   ) {
-    super(message, 0, 'Network Error', detail);
-    this.name = 'NetworkError';
+    super(message, 0, "Network Error", detail);
+    this.name = "NetworkError";
   }
 
   getUserMessage(): string {
-    return 'Unable to connect. Please check your internet connection.';
+    return "Unable to connect. Please check your internet connection.";
   }
 }
 
@@ -263,17 +263,17 @@ export class TimeoutError extends ApiError {
   public readonly timeoutMs: number;
 
   constructor(
-    message: string = 'The request timed out',
+    message: string = "The request timed out",
     timeoutMs: number = 30000,
-    detail?: string
+    detail?: string,
   ) {
-    super(message, 0, 'Timeout Error', detail);
-    this.name = 'TimeoutError';
+    super(message, 0, "Timeout Error", detail);
+    this.name = "TimeoutError";
     this.timeoutMs = timeoutMs;
   }
 
   getUserMessage(): string {
-    return 'The request took too long. Please try again.';
+    return "The request took too long. Please try again.";
   }
 
   toJSON() {

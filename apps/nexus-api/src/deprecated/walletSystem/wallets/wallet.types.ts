@@ -1,5 +1,5 @@
 import { Tables } from "@/presentation/types/supabase.types";
 /**
- * @deprecated 
+ * @deprecated
  */
 export type WalletRowType = Tables<"wallet">;

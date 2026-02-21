@@ -1,12 +1,12 @@
 /**
  * Card Activation Feature - Component Exports
- * 
+ *
  * This file exports all components from the card-activation feature.
  * It makes imports cleaner in other parts of the app.
- * 
+ *
  * Instead of:
  *   import { ActivationCard } from "@/features/card-activation/components/ActivationCard"
- * 
+ *
  * You can do:
  *   import { ActivationCard } from "@/features/card-activation/components"
  */

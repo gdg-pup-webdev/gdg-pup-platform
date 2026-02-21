@@ -1,12 +1,12 @@
 /**
  * Activation Header Component
- * 
+ *
  * Displays the header section with icon, title, and card UID.
  * This helps users understand what card they're activating.
  */
 
 import React from "react";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text } from "@packages/spark-ui";
 
 interface ActivationHeaderProps {
   /** The unique identifier of the card being activated */
@@ -15,7 +15,7 @@ interface ActivationHeaderProps {
 
 /**
  * Header component for the card activation page
- * 
+ *
  * Shows a lightning bolt icon, title, and the card's unique ID
  * to help users confirm they're activating the correct card.
  */
@@ -42,12 +42,17 @@ export const ActivationHeader: React.FC<ActivationHeaderProps> = ({
       </div>
 
       {/* Title with gradient text */}
-      <Text variant="heading-2" className="bg-clip-text text-transparent bg-linear-to-r from-white to-zinc-400">
+      <Text
+        variant="heading-2"
+        className="bg-clip-text text-transparent bg-linear-to-r from-white to-zinc-400"
+      >
         Activate Nexus Card
       </Text>
 
       {/* Display the card UID in monospace font */}
-      <Text variant="body-sm" className="text-zinc-500 font-mono">{cardUid}</Text>
+      <Text variant="body-sm" className="text-zinc-500 font-mono">
+        {cardUid}
+      </Text>
     </Stack>
   );
 };

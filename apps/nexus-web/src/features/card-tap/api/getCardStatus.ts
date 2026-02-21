@@ -1,6 +1,6 @@
 /**
  * Card Status API
- * 
+ *
  * This module handles fetching the status of a card from the Identity API.
  * The status tells us if the card is ready, active, or lost.
  */
@@ -9,15 +9,15 @@ import type { CardStatusResponse } from "../types";
 
 /**
  * Fetches the current status of a card
- * 
+ *
  * This function queries the Identity API to get information about a card,
  * including its current status and the user it belongs to (if activated).
- * 
+ *
  * @param cardUid - The unique identifier of the card (from NFC/QR scan)
- * 
+ *
  * @returns Promise with card status information
  * @throws Error if the API request fails
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -36,7 +36,9 @@ export async function getCardStatus(
     process.env.NEXT_PUBLIC_IDENTITY_API_URL || "http://localhost:8100";
 
   // Make the API request
-  const response = await fetch(`${apiUrl}/api/card-system/cards/${cardUid}/status`);
+  const response = await fetch(
+    `${apiUrl}/api/card-system/cards/${cardUid}/status`,
+  );
 
   // Parse the response
   const json = await response.json();

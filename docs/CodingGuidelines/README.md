@@ -30,15 +30,15 @@ Guidelines are organized using a systematic numbering convention: `XYZ`
 
 ### Categories
 
-| Category | Number Range | Description |
-|----------|--------------|-------------|
-| **Backend** | 100-199 | Backend API development standards |
-| **Frontend** | 200-299 | Frontend development patterns _(reserved for future use)_ |
-| **Contracts** | 300-399 | API contract specifications _(reserved for future use)_ |
-| **Project Structure** | 400-499 | File organization and architecture |
-| **General Standards** | 500-599 | Universal coding practices |
-| **Documentation** | 600-699 | Documentation standards |
-| **Collaboration** | 700-799 | Git workflow, PRs, and teamwork |
+| Category              | Number Range | Description                                               |
+| --------------------- | ------------ | --------------------------------------------------------- |
+| **Backend**           | 100-199      | Backend API development standards                         |
+| **Frontend**          | 200-299      | Frontend development patterns _(reserved for future use)_ |
+| **Contracts**         | 300-399      | API contract specifications _(reserved for future use)_   |
+| **Project Structure** | 400-499      | File organization and architecture                        |
+| **General Standards** | 500-599      | Universal coding practices                                |
+| **Documentation**     | 600-699      | Documentation standards                                   |
+| **Collaboration**     | 700-799      | Git workflow, PRs, and teamwork                           |
 
 ---
 
@@ -100,16 +100,19 @@ Git workflows, issue tracking, and pull request conventions.
 ## 🚀 Quick Reference
 
 ### For New Features
+
 1. Review **[103 - Contract-First Development](./103-ContractFirstDevelopment.md)**
 2. Follow **[102 - Layered Architecture](./102-LayeredArchitecture.md)**
 3. Check **[701 - Opening an Issue](./701-OpeningAnIssue.md)** and **[703 - Naming Your Branches](./703-NamingYourBranches.md)**
 
 ### For Code Quality
+
 1. **[503 - Code Readability](./503-CodeReadability.md)** – Keep code self-documenting
 2. **[504 - Documenting Your Code](./504-DocumentingYourCode.md)** – When comments are needed
 3. **[105 - Error Handling](./105-ErrorHandling.md)** – Proper error patterns
 
 ### For Collaboration
+
 1. **[703 - Naming Your Branches](./703-NamingYourBranches.md)** – Branch naming
 2. **[704 - Commit Conventions](./704-CommitConventions.md)** – Commit messages
 3. **[702 - Submitting a Pull Request](./702-SubmittingAPullRequest.md)** – PR workflow

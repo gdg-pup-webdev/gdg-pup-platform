@@ -16,8 +16,8 @@ export class CardController {
     async ({ input, output, ctx }) => {
       const { cardUid } = input.params;
       const { data, error } = await tryCatch(
-        async () => await this.cardService.getCardStatus(cardUid), 
-        "fetching card status"
+        async () => await this.cardService.getCardStatus(cardUid),
+        "fetching card status",
       );
 
       if (error) throw new ServiceError(error.message);
@@ -25,7 +25,7 @@ export class CardController {
       return output(200, {
         status: "success",
         message: "Card status retrieved successfully",
-        data : data,
+        data: data,
       });
     },
   );
@@ -59,7 +59,7 @@ export class CardController {
   createCard: RequestHandler = createExpressController(
     contract.api.card_system.cards.POST,
     async ({ input, output, ctx }) => {
-      const { req } = ctx; 
+      const { req } = ctx;
 
       const { data, error } = await tryCatch(
         async () => await this.cardService.createCard(input.body.data),
@@ -90,7 +90,6 @@ export class CardController {
       // pagination parameters
       const pageNumber = input.query.pageNumber;
       const pageSize = input.query.pageSize;
-
 
       const { req } = ctx;
       const user = req.user!;

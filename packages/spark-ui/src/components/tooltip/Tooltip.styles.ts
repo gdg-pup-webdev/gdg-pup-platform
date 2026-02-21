@@ -21,7 +21,7 @@ export const tooltipStyles = cva(
     defaultVariants: {
       side: "top",
     },
-  }
+  },
 );
 
 export const tooltipTriggerStyles = cva("relative inline-block");

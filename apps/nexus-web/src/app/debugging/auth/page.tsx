@@ -1,6 +1,6 @@
 /**
  * Authentication Debugging Page
- * 
+ *
  * Provides tools for testing authentication, inspecting tokens,
  * and debugging API calls. Features modern Google Material Design.
  */
@@ -48,7 +48,7 @@ export default function AuthDebugPage() {
               description="JWT token for Nexus/Identity API authentication"
               variant="blue"
             />
-            
+
             <TokenDisplay
               token={authState.googleAccessToken}
               label="Google OAuth Access Token"

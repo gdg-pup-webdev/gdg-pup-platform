@@ -65,82 +65,82 @@ export default function MemberShowcasePage() {
         />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Introduction */}
-        <section className="mb-12 text-center">
-          <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-            Our community thrives because of the incredible people who make it
-            up. Here are some of the outstanding members who inspire us every
-            day.
-          </p>
-        </section>
-
-        {/* Featured Members Grid */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            Featured Members
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredMembers.map((member, idx) => (
-              <Card key={idx} className="hover:shadow-lg transition-shadow">
-                <div className="flex flex-col items-center text-center mb-4">
-                  <Avatar
-                    size="xl"
-                    fallback={member.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                    className="mb-4"
-                  />
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    {member.name}
-                  </h3>
-                  <p className="text-blue-600 font-medium mb-3">
-                    {member.role}
-                  </p>
-                </div>
-
-                <p className="text-gray-700 text-sm mb-4">{member.bio}</p>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {member.achievements.map((achievement, aIdx) => (
-                    <Badge key={aIdx} variant="success" size="sm">
-                      {achievement}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {member.projects}
-                    </div>
-                    <div className="text-xs text-gray-600">Projects</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">
-                      {member.events}
-                    </div>
-                    <div className="text-xs text-gray-600">Events</div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Call to Action */}
-        <Card className="bg-blue-600 text-white border-blue-700">
-          <div className="text-center py-8">
-            <h2 className="text-3xl font-bold mb-4">Want to be Featured?</h2>
-            <p className="text-xl text-white mb-6 max-w-2xl mx-auto">
-              Stay active in the community, contribute to projects, and share
-              your knowledge. Your achievements could be highlighted next!
+          {/* Introduction */}
+          <section className="mb-12 text-center">
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              Our community thrives because of the incredible people who make it
+              up. Here are some of the outstanding members who inspire us every
+              day.
             </p>
-            <button className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold">
-              Get Started Today
-            </button>
-          </div>
-        </Card>
+          </section>
+
+          {/* Featured Members Grid */}
+          <section className="mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">
+              Featured Members
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredMembers.map((member, idx) => (
+                <Card key={idx} className="hover:shadow-lg transition-shadow">
+                  <div className="flex flex-col items-center text-center mb-4">
+                    <Avatar
+                      size="xl"
+                      fallback={member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                      className="mb-4"
+                    />
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {member.name}
+                    </h3>
+                    <p className="text-blue-600 font-medium mb-3">
+                      {member.role}
+                    </p>
+                  </div>
+
+                  <p className="text-gray-700 text-sm mb-4">{member.bio}</p>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {member.achievements.map((achievement, aIdx) => (
+                      <Badge key={aIdx} variant="success" size="sm">
+                        {achievement}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {member.projects}
+                      </div>
+                      <div className="text-xs text-gray-600">Projects</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {member.events}
+                      </div>
+                      <div className="text-xs text-gray-600">Events</div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </section>
+
+          {/* Call to Action */}
+          <Card className="bg-blue-600 text-white border-blue-700">
+            <div className="text-center py-8">
+              <h2 className="text-3xl font-bold mb-4">Want to be Featured?</h2>
+              <p className="text-xl text-white mb-6 max-w-2xl mx-auto">
+                Stay active in the community, contribute to projects, and share
+                your knowledge. Your achievements could be highlighted next!
+              </p>
+              <button className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold">
+                Get Started Today
+              </button>
+            </div>
+          </Card>
         </div>
       </div>
     </PageLayout>

@@ -62,7 +62,7 @@ export const tryCatch_deprecated = async <T>(
 };
 
 /**
- * 
+ *
  * @deprecated
  */
 export const tryCatchHandled_deprecated = async <T>(
@@ -94,7 +94,9 @@ export const tryCatchHandled_deprecated = async <T>(
  * - The function takes a ServerError, adds context to it, and rethrows it.
  * @deprecated
  */
-export const handleServerError_deprecated = <T extends ServerError_DEPRECATED>(context: string) => {
+export const handleServerError_deprecated = <T extends ServerError_DEPRECATED>(
+  context: string,
+) => {
   return (error: T) => {
     console.log("Rethrowing ServerError with context:", error, context);
     error.addContext(context);

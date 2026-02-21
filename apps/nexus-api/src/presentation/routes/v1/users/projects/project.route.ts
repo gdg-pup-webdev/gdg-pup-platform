@@ -1,17 +1,13 @@
 import { Router } from "express";
-import {
-  ProjectsHttpController, 
-} from "./project.controller.js";
-import {
-  AuthMiddleware, 
-} from "@/presentation/middlewares/auth.middleware.js";
+import { ProjectsHttpController } from "./project.controller.js";
+import { AuthMiddleware } from "@/presentation/middlewares/auth.middleware.js";
 
 export class ProjectsRouter {
   router: Router;
 
   constructor(
-    private projectController: ProjectsHttpController ,
-    private authMiddleware: AuthMiddleware ,
+    private projectController: ProjectsHttpController,
+    private authMiddleware: AuthMiddleware,
   ) {
     this.router = Router();
 
@@ -36,7 +32,5 @@ export class ProjectsRouter {
       this.authMiddleware.requireAuth(),
       this.projectController.updateProject,
     );
- 
   }
 }
- 

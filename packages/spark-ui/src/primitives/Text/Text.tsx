@@ -5,30 +5,30 @@ import type { TextProps } from "./Text.types";
 
 /**
  * Text Component
- * 
+ *
  * A typography primitive that provides consistent text styling across the application.
  * Use Text for all text content to ensure design system compliance.
- * 
+ *
  * @example Heading
  * ```tsx
  * <Text variant="heading-1">Page Title</Text>
  * <Text variant="heading-2">Section Title</Text>
  * ```
- * 
+ *
  * @example Body text with colors
  * ```tsx
  * <Text variant="body">Default body text</Text>
  * <Text variant="body" color="muted">Secondary information</Text>
  * <Text variant="body" color="error">Error message</Text>
  * ```
- * 
+ *
  * @example Truncated text
  * ```tsx
  * <Text variant="body" clamp={2}>
  *   Long text that will be truncated after 2 lines...
  * </Text>
  * ```
- * 
+ *
  * @example As different elements
  * ```tsx
  * <Text as="h1" variant="heading-1">Semantic H1</Text>
@@ -50,7 +50,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     // Default element based on variant
     const defaultElement = (() => {
@@ -82,14 +82,14 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
         ref={ref as any}
         className={cn(
           textVariants({ variant, color, align, weight, truncate, clamp }),
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </Component>
     );
-  }
+  },
 );
 
 Text.displayName = "Text";

@@ -1,7 +1,7 @@
 import { Express } from "express";
 import { healthCheckModuleRouterInstance } from "@/modules/healthCheck/index.js";
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
-import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js"; 
+import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js";
 import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
 import { publicationSystemRouterInstance } from "@/modules/publicationSystem/index.js";
 import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
@@ -68,7 +68,7 @@ import { AchievementsHttpController } from "../routes/v1/users/achievements/achi
 import { AchievementService } from "@/modules/userResourceSystem/achievements/achievement.service";
 import { ProjectsHttpController } from "../routes/v1/users/projects/project.controller";
 import { ProjectService } from "@/modules/userResourceSystem/projects/project.service";
-import { TransactionsHttpController } from "../routes/v1/users/points/transactions/transaction.controller";   
+import { TransactionsHttpController } from "../routes/v1/users/points/transactions/transaction.controller";
 import { TransactionService } from "@/deprecated/walletSystem/transactions/transaction.service";
 import { economySystemRouterInstance } from "@/deprecated";
 
@@ -161,7 +161,9 @@ export const routesLoader = (app: Express) => {
     authMiddleware,
   );
   const transactionService = new TransactionService();
-  const transactionHttpController=  new TransactionsHttpController(transactionService);
+  const transactionHttpController = new TransactionsHttpController(
+    transactionService,
+  );
   const transactionRouter = new TransactionRouter(transactionHttpController);
   const pointsHttpController = new PointsHttpController();
   const pointsRouter = new PointsRouter(

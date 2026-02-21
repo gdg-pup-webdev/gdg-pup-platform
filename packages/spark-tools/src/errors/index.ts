@@ -1,13 +1,13 @@
 /**
  * Error handling module
- * 
+ *
  * This module provides custom error classes and utilities for handling
  * API errors throughout the frontend application.
- * 
+ *
  * @example
  * ```typescript
  * import { processError, NotFoundError } from '@/lib/errors';
- * 
+ *
  * try {
  *   const result = await callEndpoint(...);
  *   if (result.status !== 200) {
@@ -15,7 +15,7 @@
  *   }
  * } catch (error) {
  *   const apiError = processError(error);
- *   
+ *
  *   if (apiError instanceof NotFoundError) {
  *     // Show "not found" UI
  *   } else {
@@ -38,7 +38,7 @@ export {
   ServerError,
   NetworkError,
   TimeoutError,
-} from './ApiError';
+} from "./ApiError";
 
 // Export all error handling utilities
 export {
@@ -52,4 +52,4 @@ export {
   getErrorTitle,
   shouldRetry,
   getRetryDelay,
-} from './errorHandler';
+} from "./errorHandler";

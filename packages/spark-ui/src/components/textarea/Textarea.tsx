@@ -11,14 +11,14 @@ import type { TextareaProps } from "./Textarea.types";
 
 /**
  * Textarea Component
- * 
+ *
  * A multi-line text input with label, helper text, and error state support.
- * 
+ *
  * @example Basic textarea
  * ```tsx
  * <Textarea label="Description" placeholder="Enter description..." />
  * ```
- * 
+ *
  * @example With helper text
  * ```tsx
  * <Textarea
@@ -27,7 +27,7 @@ import type { TextareaProps } from "./Textarea.types";
  *   placeholder="Write your bio..."
  * />
  * ```
- * 
+ *
  * @example With character count
  * ```tsx
  * <Textarea
@@ -37,7 +37,7 @@ import type { TextareaProps } from "./Textarea.types";
  *   placeholder="What's happening?"
  * />
  * ```
- * 
+ *
  * @example With error
  * ```tsx
  * <Textarea
@@ -62,21 +62,17 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       value,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedId = React.useId();
     const textareaId = id || generatedId;
 
-    const currentLength =
-      typeof value === "string" ? value.length : 0;
+    const currentLength = typeof value === "string" ? value.length : 0;
 
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label
-            htmlFor={textareaId}
-            className={cn(textareaLabelVariants())}
-          >
+          <label htmlFor={textareaId} className={cn(textareaLabelVariants())}>
             {label}
           </label>
         )}
@@ -123,7 +119,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 Textarea.displayName = "Textarea";

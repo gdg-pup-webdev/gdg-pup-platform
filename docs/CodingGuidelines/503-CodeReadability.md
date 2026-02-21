@@ -45,9 +45,9 @@ function processUserData(user: User) {
 }
 
 // ✅ Good: Single responsibility
-function validateUser(user: User): boolean { }
-function saveUser(user: User): Promise<void> { }
-function sendWelcomeEmail(user: User): Promise<void> { }
+function validateUser(user: User): boolean {}
+function saveUser(user: User): Promise<void> {}
+function sendWelcomeEmail(user: User): Promise<void> {}
 ```
 
 #### 3. Use Clear Control Flow
@@ -76,12 +76,12 @@ return true;
 // ✅ Good: Grouped and organized
 export class UserService {
   // Public methods first
-  async getUserById(id: string): Promise<User> { }
-  async createUser(data: CreateUserData): Promise<User> { }
-  
+  async getUserById(id: string): Promise<User> {}
+  async createUser(data: CreateUserData): Promise<User> {}
+
   // Private helpers below
-  private validateUserData(data: CreateUserData): void { }
-  private sendNotification(user: User): void { }
+  private validateUserData(data: CreateUserData): void {}
+  private sendNotification(user: User): void {}
 }
 ```
 
@@ -90,6 +90,7 @@ export class UserService {
 > See **[504 - Documenting Your Code](./504-DocumentingYourCode.md)** for when comments are appropriate.
 
 Comments should explain:
+
 - **Why** (not what) you're doing something
 - Non-obvious constraints or business rules
 - Workarounds for library bugs
@@ -111,22 +112,25 @@ const userKey = hashEmail(user.email);
 
 ```typescript
 export class EventRegistrationService {
-  async registerUserForEvent(userId: string, eventId: string): Promise<Registration> {
+  async registerUserForEvent(
+    userId: string,
+    eventId: string,
+  ): Promise<Registration> {
     const user = await this.getUserOrThrow(userId);
     const event = await this.getEventOrThrow(eventId);
-    
+
     this.ensureEventHasCapacity(event);
     this.ensureUserNotAlreadyRegistered(user, event);
-    
+
     const registration = await this.createRegistration(user, event);
     await this.sendConfirmationEmail(user, event);
-    
+
     return registration;
   }
-  
+
   private ensureEventHasCapacity(event: Event): void {
     if (event.registrations >= event.maxCapacity) {
-      throw new ConflictError('Event is full');
+      throw new ConflictError("Event is full");
     }
   }
 }
@@ -139,24 +143,24 @@ export class RegSvc {
   async reg(u: string, e: string): Promise<Reg> {
     const usr = await this.repo.getU(u);
     const evt = await this.repo.getE(e);
-    
+
     // Check if event is full
     if (evt.r >= evt.mc) {
-      throw new Error('Full');
+      throw new Error("Full");
     }
-    
+
     // Check if already registered
     const existing = await this.repo.findR(u, e);
     if (existing) {
-      throw new Error('Exists');
+      throw new Error("Exists");
     }
-    
+
     // Create registration
     const reg = await this.repo.createR(usr, evt);
-    
+
     // Send email
-    await this.email.send(usr.em, 'Confirmed', evt.nm);
-    
+    await this.email.send(usr.em, "Confirmed", evt.nm);
+
     return reg;
   }
 }
@@ -167,7 +171,7 @@ export class RegSvc {
 ✅ **Easier to Understand**: New developers can grasp the code quickly  
 ✅ **Easier to Maintain**: Clear code is easier to modify safely  
 ✅ **Fewer Bugs**: Obvious code has fewer hidden edge cases  
-✅ **Self-Reviewing**: Clear code catches logic errors during writing  
+✅ **Self-Reviewing**: Clear code catches logic errors during writing
 
 ---
 

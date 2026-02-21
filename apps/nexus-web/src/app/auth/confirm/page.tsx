@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text } from "@packages/spark-ui";
 
 const NEXUS_API_URL =
   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
@@ -114,7 +114,9 @@ function ConfirmPageContent() {
               <Text variant="heading-2" className="text-gray-800">
                 Verifying Email
               </Text>
-              <Text variant="body" className="text-gray-600">{message}</Text>
+              <Text variant="body" className="text-gray-600">
+                {message}
+              </Text>
             </>
           )}
 
@@ -124,7 +126,9 @@ function ConfirmPageContent() {
               <Text variant="heading-2" className="text-gray-800">
                 Email Verified!
               </Text>
-              <Text variant="body" className="text-gray-600">{message}</Text>
+              <Text variant="body" className="text-gray-600">
+                {message}
+              </Text>
             </>
           )}
 
@@ -134,7 +138,9 @@ function ConfirmPageContent() {
               <Text variant="heading-2" className="text-gray-800">
                 Verification Failed
               </Text>
-              <Text variant="body" className="text-gray-600">{message}</Text>
+              <Text variant="body" className="text-gray-600">
+                {message}
+              </Text>
               <button
                 onClick={() => router.push("/")}
                 className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
@@ -157,7 +163,9 @@ export default function ConfirmPage() {
           <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
             <Stack gap="md">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
-              <Text variant="body" className="text-gray-600">Loading verification...</Text>
+              <Text variant="body" className="text-gray-600">
+                Loading verification...
+              </Text>
             </Stack>
           </div>
         </div>

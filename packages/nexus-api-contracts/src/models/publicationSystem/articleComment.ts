@@ -3,7 +3,6 @@ import {
   publicArticleCommentRowSchema,
   publicArticleCommentUpdateSchema,
 } from "#types/supabase.schema.js";
- 
 
 export const row = publicArticleCommentRowSchema;
 

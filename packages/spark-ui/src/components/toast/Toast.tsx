@@ -65,7 +65,9 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast, clearToasts }}>
+    <ToastContext.Provider
+      value={{ toasts, addToast, removeToast, clearToasts }}
+    >
       {children}
       <ToastViewport />
     </ToastContext.Provider>
@@ -112,7 +114,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { removeToast } = useToast();
     const [isOpen, setIsOpen] = useState(true);
@@ -169,7 +171,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         </button>
       </div>
     );
-  }
+  },
 );
 
 Toast.displayName = "Toast";

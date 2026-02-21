@@ -2,9 +2,7 @@ import { file } from "#models/fileSystem/index.js";
 import { models } from "#typedrest.contract.js";
 import { cz, OpenApiSchemas } from "@packages/typed-rest/shared";
 
-export const body = OpenApiSchemas.Request.Body.withPayload(
-  file.insertDTO,
-);
+export const body = OpenApiSchemas.Request.Body.withPayload(file.insertDTO);
 
 export const files = {
   file: OpenApiSchemas.Models.file(),

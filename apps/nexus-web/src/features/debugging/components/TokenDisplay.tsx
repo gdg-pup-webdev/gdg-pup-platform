@@ -1,6 +1,6 @@
 /**
  * TokenDisplay Component
- * 
+ *
  * Displays authentication tokens in a secure, copyable format
  * with Google Material Design styling.
  */
@@ -8,25 +8,25 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, Button, Badge, Stack, Inline, Text } from '@packages/spark-ui';
+import { Card, Button, Badge, Stack, Inline, Text } from "@packages/spark-ui";
 
 interface TokenDisplayProps {
   /** The token value to display */
   token: string | null;
-  
+
   /** Label for the token */
   label: string;
-  
+
   /** Optional description */
   description?: string;
-  
+
   /** Color theme for the display */
   variant?: "blue" | "green" | "yellow" | "red";
 }
 
 /**
  * Component for displaying and copying authentication tokens
- * 
+ *
  * Features:
  * - Masked token display by default
  * - Toggle visibility
@@ -45,7 +45,7 @@ export function TokenDisplay({
   // Handle copy to clipboard
   const handleCopy = async () => {
     if (!token) return;
-    
+
     try {
       await navigator.clipboard.writeText(token);
       setCopied(true);
@@ -88,7 +88,7 @@ export function TokenDisplay({
   const getDisplayToken = () => {
     if (!token) return "No token available";
     if (isVisible) return token;
-    
+
     // Show first 10 and last 10 characters
     if (token.length > 20) {
       return `${token.substring(0, 10)}...${token.substring(token.length - 10)}`;
@@ -102,9 +102,13 @@ export function TokenDisplay({
         {/* Header */}
         <Inline align="center" justify="between">
           <Stack gap="none">
-            <Text variant="label" className={colors.text}>{label}</Text>
+            <Text variant="label" className={colors.text}>
+              {label}
+            </Text>
             {description && (
-              <Text variant="caption" className="text-gray-600">{description}</Text>
+              <Text variant="caption" className="text-gray-600">
+                {description}
+              </Text>
             )}
           </Stack>
           <Badge variant={token ? "success" : "default"}>
@@ -133,7 +137,7 @@ export function TokenDisplay({
               <span className="ml-1">{isVisible ? "Hide" : "Show"}</span>
             </Inline>
           </Button>
-          
+
           <Button
             onClick={handleCopy}
             variant="primary"
@@ -152,7 +156,8 @@ export function TokenDisplay({
         {token && (
           <Stack gap="none" className="pt-3 border-t border-gray-200">
             <Text variant="caption" className="text-gray-500">
-              Token length: <span className="font-semibold">{token.length}</span> characters
+              Token length:{" "}
+              <span className="font-semibold">{token.length}</span> characters
             </Text>
           </Stack>
         )}

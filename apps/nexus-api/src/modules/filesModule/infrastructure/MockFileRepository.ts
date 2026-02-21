@@ -7,7 +7,7 @@ export class MockFileRepository implements IFileRepository {
 
   async savePrototype(file: FileRecordPrototype): Promise<FileRecord> {
     const now = new Date().toISOString();
-    
+
     // Create the metadata and hydrate the record
     const record = FileRecord.hydrate({
       ...file.props,
@@ -19,7 +19,7 @@ export class MockFileRepository implements IFileRepository {
 
     this.list.push(record);
     this.count = this.list.length;
-    
+
     return record;
   }
 
@@ -30,14 +30,14 @@ export class MockFileRepository implements IFileRepository {
 
   async saveUpdates(file: FileRecord): Promise<FileRecord> {
     const index = this.list.findIndex((f) => f.props.id === file.props.id);
-    
+
     if (index === -1) {
       throw new Error(`FileRecord with id ${file.props.id} not found.`);
     }
 
     // Update the timestamp
     file.props.updatedAt = new Date().toISOString();
-    
+
     this.list[index] = file;
     return file;
   }
@@ -48,7 +48,7 @@ export class MockFileRepository implements IFileRepository {
   ): Promise<{ list: FileRecord[]; count: number }> {
     const start = (page - 1) * pageSize;
     const end = start + pageSize;
-    
+
     return {
       list: this.list.slice(start, end),
       count: this.list.length,
@@ -59,7 +59,7 @@ export class MockFileRepository implements IFileRepository {
     const initialLength = this.list.length;
     this.list = this.list.filter((f) => f.props.id !== id);
     this.count = this.list.length;
-    
+
     return this.list.length < initialLength;
   }
 }

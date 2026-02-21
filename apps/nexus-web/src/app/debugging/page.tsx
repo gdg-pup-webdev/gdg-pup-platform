@@ -1,6 +1,6 @@
 /**
  * Debugging Home Page
- * 
+ *
  * Main debugging dashboard with navigation to debug tools.
  * Showcases modern Google Material Design styling.
  */
@@ -10,7 +10,7 @@
 import React from "react";
 import { DebugNavigation } from "@/features/debugging";
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from '@packages/spark-ui';
+import { Card } from "@packages/spark-ui";
 
 export default function DebugPage() {
   return (
@@ -37,7 +37,8 @@ export default function DebugPage() {
                   Authentication
                 </h3>
                 <p className="text-sm text-blue-800">
-                  Test login flows, inspect tokens, and debug authentication issues
+                  Test login flows, inspect tokens, and debug authentication
+                  issues
                 </p>
               </div>
             </Card>
@@ -76,9 +77,9 @@ export default function DebugPage() {
                   Development Only
                 </h3>
                 <p className="text-sm text-yellow-800">
-                  These debugging tools are for development purposes only and should
-                  not be accessible in production environments. Ensure proper
-                  environment checks are in place before deployment.
+                  These debugging tools are for development purposes only and
+                  should not be accessible in production environments. Ensure
+                  proper environment checks are in place before deployment.
                 </p>
               </div>
             </div>

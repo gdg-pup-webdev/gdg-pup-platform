@@ -1,11 +1,10 @@
- 
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
 import { WalletService, walletServiceInstance } from "./wallet.service";
 
 /**
- * @deprecated 
+ * @deprecated
  */
 export class WalletController {
   constructor(
@@ -66,6 +65,6 @@ export class WalletController {
   );
 }
 /**
- * @deprecated 
+ * @deprecated
  */
 export const walletControllerInstance = new WalletController();

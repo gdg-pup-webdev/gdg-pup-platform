@@ -5,17 +5,17 @@ import type { BoxProps } from "./Box.types";
 
 /**
  * Box Component
- * 
+ *
  * A generic container primitive that provides consistent spacing and sizing.
  * Use Box when you need a simple container with controlled spacing.
- * 
+ *
  * @example Simple padded box
  * ```tsx
  * <Box padding="lg">
  *   <p>Content with consistent padding</p>
  * </Box>
  * ```
- * 
+ *
  * @example Full-width section
  * ```tsx
  * <Box as="section" width="full" padding="xl">
@@ -23,7 +23,7 @@ import type { BoxProps } from "./Box.types";
  *   <p>Section content</p>
  * </Box>
  * ```
- * 
+ *
  * @example Banner height container
  * ```tsx
  * <Box height="banner" className="bg-primary">
@@ -45,7 +45,7 @@ export const Box = React.forwardRef<HTMLDivElement, BoxProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Component = as || "div";
 
@@ -54,14 +54,14 @@ export const Box = React.forwardRef<HTMLDivElement, BoxProps>(
         ref={ref}
         className={cn(
           boxVariants({ padding, margin, width, height, display, position }),
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </Component>
     );
-  }
+  },
 );
 
 Box.displayName = "Box";

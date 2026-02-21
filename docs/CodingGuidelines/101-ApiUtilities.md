@@ -13,6 +13,7 @@ Utility functions are reusable, context-agnostic functions that perform specific
 ### 1. Return Values and Error Handling
 
 Utility functions can either:
+
 - **Return the expected result** on success
 - **Throw an error** when an operation fails
 
@@ -23,6 +24,7 @@ See **[105 - Error Handling](./105-ErrorHandling.md)** for complete error handli
 **Utilities must not be aware of the context in which they are called.**
 
 This means:
+
 - ✅ A utility operates on **data**, not specific **resources**
 - ✅ It should be reusable across multiple domains
 - ❌ It should not contain domain-specific business logic
@@ -43,18 +45,18 @@ Design utilities to work with various data types and use cases, not just the imm
  * @returns The title-cased string
  */
 export function toTitleCase(input: string): string {
-  if (!input) throw new Error('Input string cannot be empty');
-  
+  if (!input) throw new Error("Input string cannot be empty");
+
   return input
     .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 // Can be used anywhere:
-const userName = toTitleCase('john doe');        // "John Doe"
-const eventTitle = toTitleCase('gdg meetup');    // "Gdg Meetup"
+const userName = toTitleCase("john doe"); // "John Doe"
+const eventTitle = toTitleCase("gdg meetup"); // "Gdg Meetup"
 ```
 
 ### ❌ Bad: Domain-Specific Utility
@@ -76,18 +78,19 @@ export function formatUserDisplayName(user: User): string {
  * Validates if a value is within a numeric range
  */
 export function isInRange(value: number, min: number, max: number): boolean {
-  if (min > max) throw new Error('Min cannot be greater than max');
+  if (min > max) throw new Error("Min cannot be greater than max");
   return value >= min && value <= max;
 }
 
 // Extensible across domains:
-isInRange(userAge, 18, 65);           // User validation
-isInRange(eventCapacity, 10, 500);    // Event validation
+isInRange(userAge, 18, 65); // User validation
+isInRange(eventCapacity, 10, 500); // Event validation
 ```
 
 ## Rationale
 
 By keeping utilities context-independent:
+
 - **Reusability**: The same function can be used across multiple features
 - **Testability**: Utilities are easy to unit test in isolation
 - **Maintainability**: Changes to one domain don't break utility functions

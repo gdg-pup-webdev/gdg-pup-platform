@@ -1,4 +1,3 @@
-
 type ServerErrorProps = {
   statusCode: number;
   status?: "fail" | "error";
@@ -85,7 +84,6 @@ export class ServerError extends Error {
     });
   }
 }
-
 
 export class BadRequestError extends ServerError {
   constructor(detail: string = "Bad Request") {

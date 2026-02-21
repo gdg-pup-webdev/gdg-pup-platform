@@ -1,8 +1,8 @@
 /**
  * Events Feature Module
- * 
+ *
  * Main export point for the events feature.
- * 
+ *
  * This module provides comprehensive event management capabilities
  * including listing, filtering, and displaying events.
  */

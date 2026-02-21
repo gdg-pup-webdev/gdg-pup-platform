@@ -22,7 +22,7 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Alert.displayName = "Alert";
 
@@ -35,7 +35,7 @@ export const AlertTitle = React.forwardRef<HTMLHeadingElement, AlertTitleProps>(
         {...props}
       />
     );
-  }
+  },
 );
 AlertTitle.displayName = "AlertTitle";
 

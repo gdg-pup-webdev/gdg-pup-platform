@@ -5,10 +5,10 @@ import type { InlineProps } from "./Inline.types";
 
 /**
  * Inline Component
- * 
+ *
  * A horizontal layout primitive that provides consistent spacing between children.
  * Supports wrapping for responsive layouts.
- * 
+ *
  * @example
  * ```tsx
  * <Inline gap="sm">
@@ -17,7 +17,7 @@ import type { InlineProps } from "./Inline.types";
  *   <Button>Action 3</Button>
  * </Inline>
  * ```
- * 
+ *
  * @example With wrapping
  * ```tsx
  * <Inline gap="md" wrap={true}>
@@ -40,7 +40,7 @@ export const Inline = React.forwardRef<HTMLDivElement, InlineProps>(
         {children}
       </Component>
     );
-  }
+  },
 );
 
 Inline.displayName = "Inline";

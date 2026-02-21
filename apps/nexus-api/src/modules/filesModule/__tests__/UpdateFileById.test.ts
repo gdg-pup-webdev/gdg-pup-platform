@@ -24,12 +24,16 @@ describe("UpdateFileById Use Case", () => {
 
   it("successfully updates file metadata", async () => {
     // 1. Upload a file first
-    const fileBuffer = new FileBuffer(new ArrayBuffer(0), "old-name.png", "image/png");
+    const fileBuffer = new FileBuffer(
+      new ArrayBuffer(0),
+      "old-name.png",
+      "image/png",
+    );
     const uploadedFile = await uploadFileUseCase.execute(
       fileBuffer,
       "Original Name",
       "Original Description",
-      "path/to/file"
+      "path/to/file",
     );
 
     // 2. Update it
@@ -38,7 +42,10 @@ describe("UpdateFileById Use Case", () => {
       fileDescription: "Updated Description",
     };
 
-    const result = await updateFileByIdUseCase.execute(uploadedFile.props.id, updateProps);
+    const result = await updateFileByIdUseCase.execute(
+      uploadedFile.props.id,
+      updateProps,
+    );
 
     // 3. Assertions
     expect(result.props.fileName).toBe("Updated Name");
@@ -48,7 +55,8 @@ describe("UpdateFileById Use Case", () => {
   });
 
   it("throws an error if attempting to update a non-existent file", async () => {
-    const call = () => updateFileByIdUseCase.execute("non-existent-id", { fileName: "New" });
+    const call = () =>
+      updateFileByIdUseCase.execute("non-existent-id", { fileName: "New" });
     await expect(call).rejects.toThrow("File not found");
   });
 });

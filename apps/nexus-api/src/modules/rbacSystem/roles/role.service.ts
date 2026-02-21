@@ -1,7 +1,11 @@
 import { tryCatch_deprecated } from "@/presentation/utils/tryCatch.util.js";
 import { RoleRepository, roleRepositoryInstance } from "./role.repository.js";
 import { RepositoryError_DEPRECATED } from "@/deprecated/classes/ServerError_DEPRECATED.js";
-import { TablesInsert, Tables, TablesUpdate } from "@/presentation/types/supabase.types.js";
+import {
+  TablesInsert,
+  Tables,
+  TablesUpdate,
+} from "@/presentation/types/supabase.types.js";
 import { RepositoryResultList } from "@/presentation/types/repository.types.js";
 import {
   roleFilters,

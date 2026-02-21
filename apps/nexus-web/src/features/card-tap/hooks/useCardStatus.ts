@@ -1,6 +1,6 @@
 /**
  * Card Status Hook
- * 
+ *
  * Custom hook that fetches card status and determines routing.
  * Uses TanStack Query for efficient data fetching with automatic retries.
  */
@@ -13,25 +13,25 @@ import type { RoutingDecision } from "../types";
 
 /**
  * Custom hook for card tap routing
- * 
+ *
  * This hook:
  * 1. Fetches the card's status from the API
  * 2. Determines where to redirect based on the status
  * 3. Optionally auto-redirects (can be disabled for testing)
- * 
+ *
  * @param cardUid - The unique identifier of the card
  * @param options.enableAutoRedirect - Whether to automatically redirect (default: true)
- * 
+ *
  * @returns Object containing loading state, error, and routing information
- * 
+ *
  * @example
  * ```typescript
  * function TapPage() {
  *   const { isLoading, error, routingDecision } = useCardStatus("ABC123");
- * 
+ *
  *   if (isLoading) return <div>Loading...</div>;
  *   if (error) return <div>Error: {error.message}</div>;
- * 
+ *
  *   return <div>Redirecting to {routingDecision.path}</div>;
  * }
  * ```
@@ -64,7 +64,7 @@ export function useCardStatus(
 
   /**
    * Determine where to redirect based on card status
-   * 
+   *
    * This function takes the card data and figures out which page
    * the user should be sent to.
    */
@@ -78,7 +78,8 @@ export function useCardStatus(
     if (card.status === "READY") {
       return {
         path: `/activate/${cardUid}`,
-        message: "Card is ready for activation. Redirecting to activation page...",
+        message:
+          "Card is ready for activation. Redirecting to activation page...",
       };
     }
 
@@ -105,7 +106,7 @@ export function useCardStatus(
 
   /**
    * Auto-redirect effect
-   * 
+   *
    * If auto-redirect is enabled and we have a routing decision,
    * automatically navigate to the target page.
    */

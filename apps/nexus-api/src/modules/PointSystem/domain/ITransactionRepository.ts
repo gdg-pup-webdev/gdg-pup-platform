@@ -1,4 +1,7 @@
-import { TransactionRecord, TransactionRecordPrototype } from "./TransactionRecord";
+import {
+  TransactionRecord,
+  TransactionRecordPrototype,
+} from "./TransactionRecord";
 
 export abstract class ITransactionRepository {
   constructor() {}

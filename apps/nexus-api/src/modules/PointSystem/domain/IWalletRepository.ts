@@ -1,9 +1,9 @@
 import { Wallet } from "./Wallet";
 
 export abstract class IWalletRepository {
-    constructor () {}
+  constructor() {}
 
-    abstract findByUserId(userId: string) : Promise<Wallet | null>
+  abstract findByUserId(userId: string): Promise<Wallet | null>;
 
-    abstract persistUpdates(wallet: Wallet) : Promise<Wallet>
+  abstract persistUpdates(wallet: Wallet): Promise<Wallet>;
 }

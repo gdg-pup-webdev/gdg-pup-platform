@@ -1,6 +1,6 @@
 /**
  * ApiTester Component
- * 
+ *
  * Interactive tool for testing API endpoints with authentication tokens.
  * Features Google Material Design styling.
  */
@@ -8,7 +8,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, Button, Badge, Spinner, Stack, Inline, Text } from '@packages/spark-ui';
+import {
+  Card,
+  Button,
+  Badge,
+  Spinner,
+  Stack,
+  Inline,
+  Text,
+} from "@packages/spark-ui";
 import { ApiTestResult } from "../types";
 
 interface ApiTesterProps {
@@ -18,7 +26,7 @@ interface ApiTesterProps {
 
 /**
  * API testing tool component
- * 
+ *
  * Allows developers to test API endpoints with the current authentication token.
  * Displays request/response details and timing information.
  */
@@ -45,7 +53,7 @@ export function ApiTester({ token }: ApiTesterProps) {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const endTime = performance.now();
@@ -56,7 +64,9 @@ export function ApiTester({ token }: ApiTesterProps) {
         success: response.ok,
         data: data,
         duration: Math.round(endTime - startTime),
-        error: !response.ok ? data.error?.message || "Request failed" : undefined,
+        error: !response.ok
+          ? data.error?.message || "Request failed"
+          : undefined,
       });
     } catch (error) {
       const endTime = performance.now();

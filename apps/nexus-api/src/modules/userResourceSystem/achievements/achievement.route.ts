@@ -1,6 +1,6 @@
 /**
  * @file achievement.route.ts
- * @description Defines the HTTP routes for Achievement management. 
+ * @description Defines the HTTP routes for Achievement management.
  * Integrates with authentication middleware to protect write operations.
  */
 

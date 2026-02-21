@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Tabs, TabsList, TabsTrigger, TabsContent, Card } from "@packages/spark-ui";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Card,
+} from "@packages/spark-ui";
 
 const meta = {
   title: "Components/Tabs",

@@ -1,6 +1,6 @@
 /**
  * Events Gallery Page
- * 
+ *
  * Visual gallery of past events with photos and highlights.
  * Features modern Google Material Design.
  */
@@ -9,8 +9,8 @@
 
 import React from "react";
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from '@packages/spark-ui';
-import { Button } from '@packages/spark-ui';
+import { Card } from "@packages/spark-ui";
+import { Button } from "@packages/spark-ui";
 import Link from "next/link";
 
 export default function EventsGalleryPage() {
@@ -55,9 +55,9 @@ export default function EventsGalleryPage() {
                 Capture the Memories
               </h2>
               <p className="text-lg mb-6">
-                Browse through our collection of photos and videos from past events.
-                See the community in action, the learning moments, and the fun we
-                had together!
+                Browse through our collection of photos and videos from past
+                events. See the community in action, the learning moments, and
+                the fun we had together!
               </p>
             </div>
           </div>
@@ -90,9 +90,9 @@ export default function EventsGalleryPage() {
                 Gallery Coming Soon!
               </h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                We're currently building out our event gallery feature. Soon you'll
-                be able to browse through photos, videos, and highlights from all
-                our past events. Check back soon!
+                We're currently building out our event gallery feature. Soon
+                you'll be able to browse through photos, videos, and highlights
+                from all our past events. Check back soon!
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/events">
@@ -104,9 +104,7 @@ export default function EventsGalleryPage() {
                   </Button>
                 </Link>
                 <Link href="/community">
-                  <Button variant="secondary">
-                    Visit Community Page
-                  </Button>
+                  <Button variant="secondary">Visit Community Page</Button>
                 </Link>
               </div>
             </div>

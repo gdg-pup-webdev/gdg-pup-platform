@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { GoogleSignInButton } from "./GoogleSignInButton";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text } from "@packages/spark-ui";
 
 export const SignUpForm = () => {
   const router = useRouter();
@@ -71,7 +71,9 @@ export const SignUpForm = () => {
     <Stack gap="lg" className="w-full">
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <Text variant="body-sm" className="text-red-700">{error}</Text>
+          <Text variant="body-sm" className="text-red-700">
+            {error}
+          </Text>
         </div>
       )}
 

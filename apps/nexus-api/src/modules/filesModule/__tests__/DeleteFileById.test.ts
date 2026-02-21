@@ -1,11 +1,11 @@
-import { describe, expect, it,beforeEach} from "vitest";
+import { describe, expect, it, beforeEach } from "vitest";
 import { MockFileRepository } from "../infrastructure/MockFileRepository";
 import { MockFileStorage } from "../infrastructure/MockFileStorage";
 import { DeleteFileById } from "../useCases/DeleteFileById";
 import { UploadFile } from "../useCases/UploadFile";
 import { FileBuffer } from "../domain/FileBuffer";
 import { IFileRepository } from "../domain/IFileRepository";
-import { IFileStorage } from "../domain/IFileStorage"; 
+import { IFileStorage } from "../domain/IFileStorage";
 
 let fileRepository: IFileRepository;
 let fileStorage: IFileStorage;

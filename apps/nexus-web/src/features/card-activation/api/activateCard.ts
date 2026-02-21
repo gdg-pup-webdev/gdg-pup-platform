@@ -1,6 +1,6 @@
 /**
  * Card Activation API
- * 
+ *
  * This module handles the API call to activate a card.
  * It communicates with the Identity API to link a physical card to a user's account.
  */
@@ -9,17 +9,17 @@ import type { ActivateCardRequest, ActivateCardResponse } from "../types";
 
 /**
  * Activates a card by linking it to a user's account
- * 
+ *
  * This function makes a POST request to the Identity API to activate a card.
  * The card must be in "READY" status to be activated.
- * 
+ *
  * @param cardUid - The unique identifier of the card (from NFC scan or QR code)
  * @param userId - The ID of the user who will own this card
  * @param token - JWT authentication token for the API request
- * 
+ *
  * @returns Promise with the activation response
  * @throws Error if the activation fails or the API returns an error
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -38,7 +38,7 @@ export async function activateCard(
   // Get the API URL from environment variables or use default localhost
   const apiUrl =
     process.env.NEXT_PUBLIC_IDENTITY_API_URL || "http://localhost:8100";
-  
+
   // Ensure the URL has a trailing slash for proper path construction
   const baseUrl = apiUrl.endsWith("/") ? apiUrl : `${apiUrl}/`;
 

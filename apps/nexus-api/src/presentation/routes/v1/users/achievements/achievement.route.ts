@@ -5,15 +5,13 @@
  */
 
 import { Router } from "express";
-import {
-  AchievementsHttpController, 
-} from "./achievement.controller.js";
+import { AchievementsHttpController } from "./achievement.controller.js";
 import { AuthMiddleware } from "@/presentation/middlewares/auth.middleware.js";
 
 export class AchievementsRouter {
   router: Router;
   constructor(
-    private achievementController: AchievementsHttpController  ,
+    private achievementController: AchievementsHttpController,
     private authMiddleware: AuthMiddleware,
   ) {
     this.router = Router();

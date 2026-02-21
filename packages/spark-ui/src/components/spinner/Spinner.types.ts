@@ -1,8 +1,7 @@
 import type { SpinnerVariants } from "./Spinner.styles";
 
 export interface SpinnerProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    SpinnerVariants {
+  extends React.HTMLAttributes<HTMLDivElement>, SpinnerVariants {
   label?: string;
 }
 

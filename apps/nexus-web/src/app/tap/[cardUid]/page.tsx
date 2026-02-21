@@ -1,13 +1,13 @@
 /**
  * Card Tap Page (Route)
- * 
+ *
  * This page handles the /tap/[cardUid] route.
  * It's triggered when someone scans an NFC card or QR code.
- * 
+ *
  * The page's responsibility is to:
  * 1. Extract the cardUid from the URL
  * 2. Render the CardTapRouter component
- * 
+ *
  * All logic has been moved to the card-tap feature for better organization.
  */
 

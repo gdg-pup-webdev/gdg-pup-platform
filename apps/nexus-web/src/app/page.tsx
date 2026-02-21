@@ -1,43 +1,47 @@
 /**
  * Home Page
- * 
+ *
  * Modern landing page with Google Material Design.
  * Features hero section, highlights, and API health monitoring.
  */
 
-'use client';
+"use client";
 
-import { Header } from '@packages/spark-ui';
-import { HealthChecksGrid } from '@/features/health-checks';
-import { Card } from '@packages/spark-ui';
-import { Button } from '@packages/spark-ui';
-import Link from 'next/link';
+import { Header } from "@packages/spark-ui";
+import { HealthChecksGrid } from "@/features/health-checks";
+import { Card } from "@packages/spark-ui";
+import { Button } from "@packages/spark-ui";
+import Link from "next/link";
 
 export default function HomePage() {
   const features = [
     {
-      title: 'Smart NFC Cards',
-      description: 'Tap to access your digital profile instantly. Activate and manage your GDG membership card.',
-      link: '/activate',
-      color: 'bg-blue-600',
+      title: "Smart NFC Cards",
+      description:
+        "Tap to access your digital profile instantly. Activate and manage your GDG membership card.",
+      link: "/activate",
+      color: "bg-blue-600",
     },
     {
-      title: 'Community Events',
-      description: 'Join workshops, hackathons, and meetups. Learn, build, and connect with fellow developers.',
-      link: '/events',
-      color: 'bg-green-600',
+      title: "Community Events",
+      description:
+        "Join workshops, hackathons, and meetups. Learn, build, and connect with fellow developers.",
+      link: "/events",
+      color: "bg-green-600",
     },
     {
-      title: 'Member Profiles',
-      description: 'Showcase your projects, achievements, and contributions to the GDG community.',
-      link: '/community',
-      color: 'bg-yellow-600',
+      title: "Member Profiles",
+      description:
+        "Showcase your projects, achievements, and contributions to the GDG community.",
+      link: "/community",
+      color: "bg-yellow-600",
     },
     {
-      title: 'Leaderboards',
-      description: 'Compete with peers, earn badges, and climb the rankings through active participation.',
-      link: '/leaderboards',
-      color: 'bg-red-600',
+      title: "Leaderboards",
+      description:
+        "Compete with peers, earn badges, and climb the rankings through active participation.",
+      link: "/leaderboards",
+      color: "bg-red-600",
     },
   ];
 
@@ -49,16 +53,15 @@ export default function HomePage() {
           <div className="text-center">
             {/* Title */}
             <Header>
-              <span className="text-blue-600">
-                GDG PUP
-              </span>{' '}
-              Nexus
+              <span className="text-blue-600">GDG PUP</span> Nexus
             </Header>
-            
+
             {/* Subtitle */}
             <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-              Your gateway to the <strong className="text-blue-600">Google Developer Group</strong> community.
-              Connect, learn, and build together with fellow developers.
+              Your gateway to the{" "}
+              <strong className="text-blue-600">Google Developer Group</strong>{" "}
+              community. Connect, learn, and build together with fellow
+              developers.
             </p>
 
             {/* CTA Buttons */}
@@ -73,10 +76,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/about">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                >
+                <Button variant="secondary" size="lg">
                   Learn More
                 </Button>
               </Link>
@@ -106,9 +106,7 @@ export default function HomePage() {
                   </h3>
                 </div>
                 <div className="p-6">
-                  <p className="text-gray-600 text-sm">
-                    {feature.description}
-                  </p>
+                  <p className="text-gray-600 text-sm">{feature.description}</p>
                 </div>
               </Card>
             </Link>
@@ -126,7 +124,7 @@ export default function HomePage() {
             Real-time monitoring of our platform services
           </p>
         </div>
-        
+
         <HealthChecksGrid />
       </div>
     </div>

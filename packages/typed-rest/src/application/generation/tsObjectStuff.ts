@@ -121,9 +121,13 @@ export class TsImportStatement extends TsThing {
 }
 
 export class TsArrayLiteral extends TsThing {
-  constructor(public elements: TsThing[] = []) { super(); }
+  constructor(public elements: TsThing[] = []) {
+    super();
+  }
   getString(): string {
-    const body = this.elements.map(e => this.indent(e.getString())).join(",\n");
+    const body = this.elements
+      .map((e) => this.indent(e.getString()))
+      .join(",\n");
     return `[\n${body}\n]`;
   }
 }
@@ -148,7 +152,7 @@ export class TsFile extends TsThing {
     if (!this.importMap.has(uniqueKey)) {
       this.importMap.set(uniqueKey, importStmt);
     }
-    
+
     return this;
   }
 
@@ -160,7 +164,7 @@ export class TsFile extends TsThing {
   getString(): string {
     // Convert Map values back to an array for rendering
     const uniqueImports = Array.from(this.importMap.values());
-    
+
     // Optional: Sort imports alphabetically by path for cleaner output
     uniqueImports.sort((a, b) => a.path.localeCompare(b.path));
 
@@ -175,7 +179,6 @@ export class TsFile extends TsThing {
     return [importsString, "", bodyString].join("\n").trim();
   }
 }
-
 
 export class TsFile_DEPRECATED extends TsThing {
   imports: TsImportStatement[] = [];

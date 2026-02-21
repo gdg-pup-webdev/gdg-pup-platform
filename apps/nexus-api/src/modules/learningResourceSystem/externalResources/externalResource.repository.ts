@@ -4,7 +4,11 @@ import {
   RepositoryResult,
   RepositoryResultList,
 } from "@/presentation/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/presentation/types/supabase.types.js";
+import {
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+} from "@/presentation/types/supabase.types.js";
 
 type tableRow = Tables<"external_resource">;
 type tableUpdate = TablesUpdate<"external_resource">;

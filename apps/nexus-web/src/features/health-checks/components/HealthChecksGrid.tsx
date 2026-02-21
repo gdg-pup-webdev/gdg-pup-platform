@@ -1,14 +1,17 @@
 /**
  * Health Checks Grid Component
- * 
+ *
  * Main component that orchestrates all health check cards.
  * Displays Nexus API and Identity API health checks side-by-side.
  */
 
-import React from 'react';
-import { Container, Grid, Stack, Button } from '@packages/spark-ui';
-import { HealthCheckCard } from './HealthCheckCard';
-import { useNexusHealthCheck, useIdentityHealthCheck } from '../hooks/useHealthChecks';
+import React from "react";
+import { Container, Grid, Stack, Button } from "@packages/spark-ui";
+import { HealthCheckCard } from "./HealthCheckCard";
+import {
+  useNexusHealthCheck,
+  useIdentityHealthCheck,
+} from "../hooks/useHealthChecks";
 
 /**
  * Displays a grid of health check cards for all APIs

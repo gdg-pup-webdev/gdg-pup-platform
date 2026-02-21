@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Avatar - User profile image or initials
- * 
+ *
  * Displays a circular user image or fallback initials.
  * Uses theme tokens for sizing and colors.
  */
@@ -34,7 +34,7 @@ export const avatarVariants = cva(
     defaultVariants: {
       size: "md",
     },
-  }
+  },
 );
 
 export const avatarImageVariants = cva([

@@ -84,8 +84,7 @@ export class RouteTree {
 
     currentTree.children[newRouteFile.method] = newRouteFile;
   }
- 
- 
+
   // ... inside RouteTree class ...
 
   writeTreeOnTsFileObject(tsFile: TsFile, outputDirAbsolute: string) {

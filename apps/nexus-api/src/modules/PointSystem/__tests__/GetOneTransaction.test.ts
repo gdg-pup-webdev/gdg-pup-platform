@@ -25,11 +25,13 @@ describe("GetOneTransaction Use Case", () => {
       sourceReference: "event_001",
       sourceType: "STUDY_JAM_ATTENDANCE",
     });
-    
+
     const createdRecord = await transactionRepository.savePrototype(prototype);
 
     // 2. Act
-    const result = await getOneTransactionUseCase.execute(createdRecord.props.id);
+    const result = await getOneTransactionUseCase.execute(
+      createdRecord.props.id,
+    );
 
     // 3. Assert
     expect(result).not.toBeNull();
@@ -55,7 +57,7 @@ describe("GetOneTransaction Use Case", () => {
       sourceReference: "store_001",
       sourceType: "MERCH_REDEEM",
     };
-    
+
     const prototype = new TransactionRecordPrototype(prototypeProps);
     const seeded = await transactionRepository.savePrototype(prototype);
 

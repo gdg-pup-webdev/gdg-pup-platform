@@ -1,4 +1,4 @@
-import { FileRecord  } from "../domain/FileRecord";
+import { FileRecord } from "../domain/FileRecord";
 import { IFileRepository } from "../domain/IFileRepository";
 
 export class ListFIlesWithPagination {

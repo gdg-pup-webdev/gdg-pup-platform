@@ -1,12 +1,12 @@
 /**
  * Error Card Component
- * 
+ *
  * Displays error messages when card status check fails.
  * Shows a red error state with the error message.
  */
 
 import React from "react";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text } from "@packages/spark-ui";
 
 interface ErrorCardProps {
   /** The error message to display */
@@ -15,7 +15,7 @@ interface ErrorCardProps {
 
 /**
  * Error state for card tap
- * 
+ *
  * Shows when:
  * - Card is not found in the system
  * - API request fails
@@ -43,14 +43,18 @@ export const ErrorCard: React.FC<ErrorCardProps> = ({ message }) => {
         </div>
 
         {/* Error title */}
-        <Text variant="heading-2" className="text-red-500">Card Error</Text>
-        
+        <Text variant="heading-2" className="text-red-500">
+          Card Error
+        </Text>
+
         {/* Error message */}
-        <Text variant="body" className="text-zinc-400">{message}</Text>
+        <Text variant="body" className="text-zinc-400">
+          {message}
+        </Text>
 
         {/* Optional: Add a back button */}
         <button
-          onClick={() => window.location.href = "/"}
+          onClick={() => (window.location.href = "/")}
           className="mt-6 px-6 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors"
         >
           Go Home

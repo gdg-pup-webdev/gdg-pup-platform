@@ -17,7 +17,7 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
         <span className="sr-only">{label || "Loading..."}</span>
       </div>
     );
-  }
+  },
 );
 
 Spinner.displayName = "Spinner";

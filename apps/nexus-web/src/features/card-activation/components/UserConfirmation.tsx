@@ -1,13 +1,13 @@
 /**
  * User Confirmation Component
- * 
+ *
  * Shows the logged-in user's information and provides a button
  * to confirm they want to activate the card with their account.
  */
 
 import React from "react";
 import type { User } from "@supabase/supabase-js";
-import { Stack, Inline, Text } from '@packages/spark-ui';
+import { Stack, Inline, Text } from "@packages/spark-ui";
 
 interface UserConfirmationProps {
   /** The authenticated user object from Supabase */
@@ -20,7 +20,7 @@ interface UserConfirmationProps {
 
 /**
  * User confirmation screen for card activation
- * 
+ *
  * Shows the user's profile information and a button to confirm
  * that they want to link this card to their account.
  */
@@ -31,9 +31,7 @@ export const UserConfirmation: React.FC<UserConfirmationProps> = ({
 }) => {
   // Get user's display name from metadata, fallback to email
   const displayName =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    user.email;
+    user.user_metadata?.full_name || user.user_metadata?.name || user.email;
 
   // Get user's avatar URL or generate one using DiceBear API
   const avatarUrl =
@@ -54,8 +52,12 @@ export const UserConfirmation: React.FC<UserConfirmationProps> = ({
 
           {/* User details */}
           <Stack gap="none" className="flex-1 min-w-0">
-            <Text variant="body-sm" className="text-zinc-400">Activating as</Text>
-            <Text variant="body" className="font-semibold truncate">{displayName}</Text>
+            <Text variant="body-sm" className="text-zinc-400">
+              Activating as
+            </Text>
+            <Text variant="body" className="font-semibold truncate">
+              {displayName}
+            </Text>
           </Stack>
         </Inline>
       </div>

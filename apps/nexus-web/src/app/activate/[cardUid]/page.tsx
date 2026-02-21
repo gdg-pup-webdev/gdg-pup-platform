@@ -1,9 +1,9 @@
 /**
  * Card Activation Page (Route)
- * 
+ *
  * This page handles the /activate/[cardUid] route.
  * All the logic has been moved to the feature module for better organization.
- * 
+ *
  * The page's only job is to:
  * 1. Get the cardUid from the URL
  * 2. Render the ActivationCard component

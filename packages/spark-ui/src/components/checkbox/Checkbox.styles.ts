@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Checkbox - Form checkbox input
- * 
+ *
  * Styled checkbox input with label and error state support.
  * Uses theme tokens for all colors.
  */
@@ -32,7 +32,7 @@ export const checkboxVariants = cva(
     defaultVariants: {
       size: "md",
     },
-  }
+  },
 );
 
 export const checkboxLabelVariants = cva([
@@ -40,7 +40,9 @@ export const checkboxLabelVariants = cva([
   "peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
 ]);
 
-export const checkboxHelperTextVariants = cva(["text-sm text-muted-foreground"]);
+export const checkboxHelperTextVariants = cva([
+  "text-sm text-muted-foreground",
+]);
 
 export const checkboxErrorVariants = cva(["text-sm text-destructive"]);
 

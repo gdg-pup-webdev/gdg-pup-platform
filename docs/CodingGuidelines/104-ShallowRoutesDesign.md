@@ -31,13 +31,13 @@ Follow the **`/resourceName/:resourceId`** format:
 
 Use **HTTP methods** to specify the action:
 
-| Method | Endpoint | Action |
-|--------|----------|--------|
-| `GET` | `/users` | List all users |
-| `POST` | `/users` | Create a new user |
-| `GET` | `/users/:userId` | Get specific user |
-| `PUT` | `/users/:userId` | Update user |
-| `DELETE` | `/users/:userId` | Delete user |
+| Method   | Endpoint         | Action            |
+| -------- | ---------------- | ----------------- |
+| `GET`    | `/users`         | List all users    |
+| `POST`   | `/users`         | Create a new user |
+| `GET`    | `/users/:userId` | Get specific user |
+| `PUT`    | `/users/:userId` | Update user       |
+| `DELETE` | `/users/:userId` | Delete user       |
 
 ### 3. Domain-Based
 
@@ -111,7 +111,7 @@ GET /tasks?userId=:userId&eventId=:eventId
 ✅ **Predictable**: Consistent patterns make API intuitive  
 ✅ **Maintainable**: Shallow routes are easier to refactor  
 ✅ **Decoupled**: Resources aren't tightly bound to complex hierarchies  
-✅ **Scalable**: Adding new resources doesn't create deep nesting  
+✅ **Scalable**: Adding new resources doesn't create deep nesting
 
 ---
 

@@ -125,12 +125,12 @@ Create a branch, make changes, commit, push, and open a PR.
 
 For all scenarios above, you **must** adhere to our collaboration guidelines:
 
-| Guideline | Purpose |
-|-----------|---------|
-| **[701 - Opening an Issue](./701-OpeningAnIssue.md)** | How to create well-formed issues |
-| **[702 - Submitting a Pull Request](./702-SubmittingAPullRequest.md)** | PR standards and checklist |
-| **[703 - Naming Your Branches](./703-NamingYourBranches.md)** | Branch naming conventions |
-| **[704 - Commit Conventions](./704-CommitConventions.md)** | Commit message format |
+| Guideline                                                              | Purpose                          |
+| ---------------------------------------------------------------------- | -------------------------------- |
+| **[701 - Opening an Issue](./701-OpeningAnIssue.md)**                  | How to create well-formed issues |
+| **[702 - Submitting a Pull Request](./702-SubmittingAPullRequest.md)** | PR standards and checklist       |
+| **[703 - Naming Your Branches](./703-NamingYourBranches.md)**          | Branch naming conventions        |
+| **[704 - Commit Conventions](./704-CommitConventions.md)**             | Commit message format            |
 
 ---
 

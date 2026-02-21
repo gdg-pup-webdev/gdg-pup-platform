@@ -5,19 +5,19 @@ import type { AvatarProps } from "./Avatar.types";
 
 /**
  * Avatar Component
- * 
+ *
  * Displays a user profile image with fallback support.
- * 
+ *
  * @example With image
  * ```tsx
  * <Avatar src="/avatar.jpg" alt="John Doe" />
  * ```
- * 
+ *
  * @example With fallback initials
  * ```tsx
  * <Avatar fallback="JD" />
  * ```
- * 
+ *
  * @example Different sizes
  * ```tsx
  * <Avatar src="/avatar.jpg" size="sm" />
@@ -49,7 +49,7 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Avatar.displayName = "Avatar";

@@ -11,7 +11,10 @@ let takePointsFromUserUseCase: TakePointsFromUser;
 const initializeInstances = () => {
   walletRepository = new MockWalletRepository();
   transactionRepository = new MockTransactionRepository();
-  takePointsFromUserUseCase = new TakePointsFromUser(walletRepository, transactionRepository);
+  takePointsFromUserUseCase = new TakePointsFromUser(
+    walletRepository,
+    transactionRepository,
+  );
 };
 
 describe("TakePointsFromUser Use Case", () => {
@@ -22,7 +25,7 @@ describe("TakePointsFromUser Use Case", () => {
     const userId = "user_redemption";
     const initialPoints = 500;
     const pointsToTake = 200;
-    
+
     const wallet = Wallet.hydrate({
       userId,
       totalPoints: initialPoints,
@@ -37,7 +40,7 @@ describe("TakePointsFromUser Use Case", () => {
       "webdevPoints",
       pointsToTake,
       "order_001",
-      "MERCH_PURCHASE"
+      "MERCH_PURCHASE",
     );
 
     // 3. Assert - Wallet state
@@ -61,8 +64,8 @@ describe("TakePointsFromUser Use Case", () => {
         "sparkPoints",
         10,
         "ref_null",
-        "TEST"
-      )
+        "TEST",
+      ),
     ).rejects.toThrow("Wallet not found");
   });
 
@@ -83,7 +86,7 @@ describe("TakePointsFromUser Use Case", () => {
       "sparkPoints",
       50,
       "penalty_001",
-      "MISCONDUCT_PENALTY"
+      "MISCONDUCT_PENALTY",
     );
 
     // 3. Assert

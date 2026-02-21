@@ -1,6 +1,5 @@
 import { cz as z } from "@packages/typed-rest/shared";
 
-
 export const insertDTO = z.object({
   eventId: z.string(),
   attendeeId: z.string(),

@@ -6,16 +6,16 @@ import {
   WalletRepository,
   walletRepositoryInstance,
 } from "./wallet.repository.js";
-import { NotFoundError } from "@/errors/HttpError.js"; 
+import { NotFoundError } from "@/errors/HttpError.js";
 
 /**
- * @deprecated 
+ * @deprecated
  */
 export type WalletListFilters = {
   userId?: string | null;
 };
 /**
- * @deprecated 
+ * @deprecated
  */
 export class WalletService {
   constructor(
@@ -134,6 +134,6 @@ export class WalletService {
   };
 }
 /**
- * @deprecated 
+ * @deprecated
  */
 export const walletServiceInstance = new WalletService();

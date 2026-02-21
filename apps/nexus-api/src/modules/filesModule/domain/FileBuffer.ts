@@ -1,4 +1,3 @@
-
 /**
  * Raw file buffer containing byte files that makes the file.
  * - the buffer is required to upload data to storage

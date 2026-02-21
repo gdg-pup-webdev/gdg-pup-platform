@@ -51,11 +51,11 @@ export default function RootLayout({ children }) {
 The TanStack Query integration provides better caching, automatic refetching, and optimistic updates.
 
 ```typescript
-import { 
-  useQuery, 
-  useMutation, 
+import {
+  useQuery,
+  useMutation,
   queryKeys,
-  useQueryUtils 
+  useQueryUtils
 } from '@packages/spark-tools/query';
 
 // Fetch data with automatic caching
@@ -73,7 +73,7 @@ function UserProfile({ userId }) {
 // Mutations with cache invalidation
 function UpdateUserButton({ userId }) {
   const utils = useQueryUtils();
-  
+
   const { mutate, loading } = useMutation({
     mutationFn: (data) => userService.updateUser(userId, data),
     onSuccess: () => {
@@ -95,10 +95,10 @@ function UpdateUserButton({ userId }) {
 Common hooks for pagination, debouncing, and local storage:
 
 ```typescript
-import { 
-  usePagination, 
-  useDebounce, 
-  useLocalStorage 
+import {
+  usePagination,
+  useDebounce,
+  useLocalStorage
 } from '@packages/spark-tools/hooks';
 
 // Pagination
@@ -108,7 +108,7 @@ function UsersList() {
     initialPageSize: 10,
     totalItems: 100,
   });
-  
+
   return (
     <div>
       <UserTable page={page} pageSize={pageSize} />
@@ -122,20 +122,20 @@ function UsersList() {
 function SearchInput() {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  
+
   useEffect(() => {
     if (debouncedSearchTerm) {
       searchResults(debouncedSearchTerm);
     }
   }, [debouncedSearchTerm]);
-  
+
   return <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />;
 }
 
 // Persistent state
 function ThemeToggle() {
   const [theme, setTheme] = useLocalStorage('theme', 'light');
-  
+
   return (
     <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
       Toggle Theme ({theme})
@@ -154,7 +154,7 @@ import { usePrefetch, usePrefetchOnHover } from '@packages/spark-tools/query';
 // Manual prefetch
 function UserLink({ userId }) {
   const { prefetch } = usePrefetch();
-  
+
   return (
     <Link
       href={`/users/${userId}`}
@@ -174,7 +174,7 @@ function UserLinkAuto({ userId }) {
     queryKeys.users.detail(userId),
     () => userService.getUser(userId)
   );
-  
+
   return (
     <Link {...prefetchProps} href={`/users/${userId}`}>
       View Profile
@@ -188,21 +188,21 @@ function UserLinkAuto({ userId }) {
 Centralized query key management for consistent caching:
 
 ```typescript
-import { queryKeys } from '@packages/spark-tools/query';
+import { queryKeys } from "@packages/spark-tools/query";
 
 // Users
-queryKeys.users.all           // ['users']
-queryKeys.users.list()        // ['users', 'list']
-queryKeys.users.detail(id)    // ['users', 'detail', id]
+queryKeys.users.all; // ['users']
+queryKeys.users.list(); // ['users', 'list']
+queryKeys.users.detail(id); // ['users', 'detail', id]
 
 // Events
-queryKeys.events.list({ status: 'active' })  // ['events', 'list', { status: 'active' }]
-queryKeys.events.attendees(id)               // ['events', 'detail', id, 'attendees']
+queryKeys.events.list({ status: "active" }); // ['events', 'list', { status: 'active' }]
+queryKeys.events.attendees(id); // ['events', 'detail', id, 'attendees']
 
 // Custom query keys
-import { createQueryKeys } from '@packages/frontend-utils/query';
+import { createQueryKeys } from "@packages/frontend-utils/query";
 
-const customKeys = createQueryKeys('feature', {
+const customKeys = createQueryKeys("feature", {
   item: (id: string) => [id] as const,
 });
 ```
@@ -210,7 +210,11 @@ const customKeys = createQueryKeys('feature', {
 ### Error Handling
 
 ```typescript
-import { ApiError, ValidationError, processError } from '@packages/frontend-utils/errors';
+import {
+  ApiError,
+  ValidationError,
+  processError,
+} from "@packages/frontend-utils/errors";
 
 try {
   await someApiCall();
@@ -223,14 +227,14 @@ try {
 ### Base Service
 
 ```typescript
-import { BaseApiService } from '@packages/frontend-utils/services';
-import { callEndpoint } from '@packages/typed-rest';
+import { BaseApiService } from "@packages/frontend-utils/services";
+import { callEndpoint } from "@packages/typed-rest";
 
 class UserService extends BaseApiService {
   async getUsers() {
     return this.get(apiContract.users.getAll, {});
   }
-  
+
   async createUser(data) {
     return this.post(apiContract.users.create, data);
   }
@@ -242,17 +246,18 @@ class UserService extends BaseApiService {
 The old hooks are still available for backwards compatibility:
 
 ```typescript
-import { useApiQuery, useApiMutation, usePagination } from '@packages/frontend-utils/hooks';
+import {
+  useApiQuery,
+  useApiMutation,
+  usePagination,
+} from "@packages/frontend-utils/hooks";
 
 // Data fetching
-const { data, loading, error } = useApiQuery(
-  () => userService.getUsers(),
-  []
-);
+const { data, loading, error } = useApiQuery(() => userService.getUsers(), []);
 
 // Mutations
-const { mutate, loading } = useApiMutation(
-  (userId) => userService.deleteUser(userId)
+const { mutate, loading } = useApiMutation((userId) =>
+  userService.deleteUser(userId),
 );
 
 // Pagination
@@ -285,9 +290,9 @@ import { usePrefetch } from '@packages/frontend-utils/query';
 
 function UserLink({ userId }) {
   const { prefetch } = usePrefetch();
-  
+
   return (
-    <Link 
+    <Link
       href={`/users/${userId}`}
       onMouseEnter={() => prefetch(
         queryKeys.users.detail(userId),
@@ -303,11 +308,13 @@ function UserLink({ userId }) {
 ## Testing
 
 Run tests:
+
 ```bash
 pnpm test
 ```
 
 Run tests in watch mode:
+
 ```bash
 pnpm test:watch
 ```
@@ -315,6 +322,7 @@ pnpm test:watch
 ## Architecture
 
 This package follows the principle of shared infrastructure extraction:
+
 - Code that's reusable across multiple apps lives here
 - App-specific code stays in the respective app directories
 - Clean separation of concerns for better maintainability

@@ -2,16 +2,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Skeleton - Loading placeholder
- * 
+ *
  * Animated placeholder for content that is loading.
  * Uses theme tokens for colors and consistent animation.
  */
 export const skeletonVariants = cva(
-  [
-    "animate-pulse",
-    "rounded-md",
-    "bg-muted",
-  ],
+  ["animate-pulse", "rounded-md", "bg-muted"],
   {
     variants: {
       /**
@@ -26,7 +22,7 @@ export const skeletonVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 export type SkeletonVariants = VariantProps<typeof skeletonVariants>;

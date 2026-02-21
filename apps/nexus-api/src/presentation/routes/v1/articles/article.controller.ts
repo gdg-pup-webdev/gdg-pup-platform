@@ -1,12 +1,10 @@
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { ArticleService } from "@/modules/publicationSystem/articles/article.service";
 
 export class ArticlesHttpController {
-  constructor(
-    private articleService: ArticleService ,
-  ) {}
+  constructor(private articleService: ArticleService) {}
 
   list: RequestHandler = createExpressController(
     contract.api.publication_system.articles.GET,
@@ -143,4 +141,3 @@ export class ArticlesHttpController {
     },
   );
 }
- 

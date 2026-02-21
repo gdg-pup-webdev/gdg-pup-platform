@@ -1,7 +1,5 @@
 import { Router } from "express";
-import {
-  MembersHttpController, 
-} from "./member.controller.js";
+import { MembersHttpController } from "./member.controller.js";
 
 export class MembersRouter {
   router: Router;

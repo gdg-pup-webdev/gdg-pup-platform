@@ -1,6 +1,6 @@
 /**
  * Main Activation Card Component
- * 
+ *
  * This is the main component that brings together all the smaller pieces
  * of the card activation feature. It handles the different states:
  * - Loading (checking authentication)
@@ -16,7 +16,7 @@ import { ActivationHeader } from "./ActivationHeader";
 import { LoadingState } from "./LoadingState";
 import { AuthPrompt } from "./AuthPrompt";
 import { UserConfirmation } from "./UserConfirmation";
-import { Text } from '@packages/spark-ui';
+import { Text } from "@packages/spark-ui";
 
 interface ActivationCardProps {
   /** The unique identifier of the card to activate */
@@ -25,13 +25,13 @@ interface ActivationCardProps {
 
 /**
  * Complete card activation interface
- * 
+ *
  * This component orchestrates the entire card activation flow:
  * 1. Checks if user is authenticated
  * 2. Shows login prompt if not authenticated
  * 3. Shows confirmation screen if authenticated
  * 4. Handles the activation process
- * 
+ *
  * @example
  * ```tsx
  * <ActivationCard cardUid="ABC123" />
@@ -47,7 +47,7 @@ export const ActivationCard: React.FC<ActivationCardProps> = ({ cardUid }) => {
 
   /**
    * Handle the activation confirmation
-   * 
+   *
    * Called when the user clicks "Confirm Activation".
    * Validates that we have all required data, then calls the activation API.
    */

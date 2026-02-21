@@ -1,20 +1,21 @@
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import {
   buildPaginationMeta,
-  normalizeOptionalText
+  normalizeOptionalText,
 } from "@/presentation/utils/controller.utils.js";
-import { StudyJamListFilters, StudyJamService } from "@/modules/learningResourceSystem/studyJams/studyJam.service";
+import {
+  StudyJamListFilters,
+  StudyJamService,
+} from "@/modules/learningResourceSystem/studyJams/studyJam.service";
 
 /**
  * Controller for handling study jam-related requests.
  * Manages the flow of data between the client and the StudyJamService.
  */
 export class StudyJamsHttpController {
-  constructor(
-    private readonly resourceService: StudyJamService ,
-  ) {}
+  constructor(private readonly resourceService: StudyJamService) {}
 
   /**
    * Handles the creation of a new study jam.
@@ -132,4 +133,4 @@ export class StudyJamsHttpController {
       });
     },
   );
-} 
+}

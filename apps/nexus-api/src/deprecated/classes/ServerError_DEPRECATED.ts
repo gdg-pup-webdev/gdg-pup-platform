@@ -1,6 +1,6 @@
 import { extend } from "zod/mini";
 /**
- * @deprecated 
+ * @deprecated
  */
 type ServerErrorProps_DEPRECATED = {
   statusCode: number;

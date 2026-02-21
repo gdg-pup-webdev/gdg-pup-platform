@@ -64,11 +64,13 @@ Add a clear deprecation comment or decorator:
 /**
  * @deprecated Use `SubmitButtonHoveredDynamicColor` instead.
  * This component will be removed in v2.0.0
- * 
+ *
  * Migration guide: Replace `color="green"` with `color` prop
  */
 export function SubmitButtonHoveredGreen_DEPRECATED(props: OldProps) {
-  console.warn('SubmitButtonHoveredGreen is deprecated. Use SubmitButtonHoveredDynamicColor instead.');
+  console.warn(
+    "SubmitButtonHoveredGreen is deprecated. Use SubmitButtonHoveredDynamicColor instead.",
+  );
   // Implementation
 }
 ```
@@ -84,6 +86,7 @@ export function SubmitButtonHoveredGreen_DEPRECATED(props: OldProps) {
 ### ✅ Good: Fork and Deprecate Approach
 
 **Before:**
+
 ```typescript
 // components/SubmitButton.tsx
 export function SubmitButton({ label }: { label: string }) {
@@ -106,11 +109,11 @@ export function SubmitButton_DEPRECATED({ label }: { label: string }) {
 }
 
 // NEW: Improved version with color customization
-export function SubmitButtonDynamic({ 
-  label, 
-  color = 'green' 
-}: { 
-  label: string; 
+export function SubmitButtonDynamic({
+  label,
+  color = 'green'
+}: {
+  label: string;
   color?: 'green' | 'blue' | 'red';
 }) {
   return <button className={`${color}-bg`}>{label}</button>;
@@ -127,15 +130,14 @@ export function SubmitButtonDynamic({
 <SubmitButtonDynamic label="Submit" color="blue" />
 ```
 
-
 ### ❌ Bad: Breaking Change Without Deprecation
 
 ```typescript
 // Before: function signature
-export function calculatePrice(amount: number): number
+export function calculatePrice(amount: number): number;
 
 // After: breaking change with no deprecation period
-export function calculatePrice(amount: number, currency: string): number
+export function calculatePrice(amount: number, currency: string): number;
 //                                              ^^^^^^^^^^^^^^^^ BREAKING!
 
 // This immediately breaks all existing consumers!

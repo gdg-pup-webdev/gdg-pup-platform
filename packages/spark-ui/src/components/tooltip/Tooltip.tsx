@@ -15,15 +15,8 @@ import type { TooltipProps } from "./Tooltip.types";
  */
 export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
   (
-    {
-      content,
-      children,
-      side = "top",
-      showArrow = false,
-      className,
-      ...props
-    },
-    ref
+    { content, children, side = "top", showArrow = false, className, ...props },
+    ref,
   ) => {
     const [isVisible, setIsVisible] = useState(false);
     const triggerRef = useRef<HTMLDivElement>(null);
@@ -47,7 +40,7 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
           className={cn(
             tooltipStyles({ side }),
             isVisible && "opacity-100 visible",
-            className
+            className,
           )}
           {...props}
         >
@@ -55,7 +48,7 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 Tooltip.displayName = "Tooltip";

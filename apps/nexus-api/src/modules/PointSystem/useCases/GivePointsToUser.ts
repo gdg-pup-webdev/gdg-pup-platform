@@ -1,6 +1,6 @@
 import { ITransactionRepository } from "../domain/ITransactionRepository";
 import { IWalletRepository } from "../domain/IWalletRepository";
-import { TransactionRecordPrototype } from "../domain/TransactionRecord"; 
+import { TransactionRecordPrototype } from "../domain/TransactionRecord";
 
 export class GivePointsToUser {
   constructor(

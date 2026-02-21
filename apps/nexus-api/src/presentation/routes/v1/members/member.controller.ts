@@ -1,10 +1,10 @@
 import { createExpressController } from "@packages/typed-rest/serverExpress";
-import { contract } from "@packages/nexus-api-contracts"; 
+import { contract } from "@packages/nexus-api-contracts";
 import { RequestHandler } from "express";
-import { MemberService  } from "@/modules/memberSystem";
+import { MemberService } from "@/modules/memberSystem";
 
 export class MembersHttpController {
-  constructor(private readonly service : MemberService) {}
+  constructor(private readonly service: MemberService) {}
 
   checkMembership: RequestHandler = createExpressController(
     contract.api.member_system.check_membership.GET,
@@ -22,4 +22,4 @@ export class MembersHttpController {
       });
     },
   );
-} 
+}

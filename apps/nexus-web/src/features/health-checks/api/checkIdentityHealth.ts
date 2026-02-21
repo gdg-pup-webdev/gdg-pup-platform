@@ -1,21 +1,21 @@
 /**
  * API function for checking Identity API health
- * 
+ *
  * This function calls the Identity API health endpoint to verify
  * that the API is running and responding correctly.
  */
 
-import { callEndpoint } from '@packages/typed-rest/clientReact';
-import { contract as identityApiContract } from '@packages/identity-api-contracts';
-import { configs } from '@/configs/servers.config';
-import { HealthCheckResponse, HealthCheckException } from '../types';
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { contract as identityApiContract } from "@packages/identity-api-contracts";
+import { configs } from "@/configs/servers.config";
+import { HealthCheckResponse, HealthCheckException } from "../types";
 
 /**
  * Checks the health status of the Identity API
- * 
+ *
  * @returns Promise<HealthCheckResponse> - The health status information
  * @throws {HealthCheckException} - When the health check fails
- * 
+ *
  * @example
  * ```typescript
  * try {
@@ -44,8 +44,8 @@ export async function checkIdentityHealth(): Promise<HealthCheckResponse> {
 
     // Handle non-200 responses
     throw new HealthCheckException(
-      'SERVER_ERROR',
-      `Identity API returned status ${result.status}: ${result.body.message || 'Unknown error'}`
+      "SERVER_ERROR",
+      `Identity API returned status ${result.status}: ${result.body.message || "Unknown error"}`,
     );
   } catch (error) {
     // If it's already a HealthCheckException, re-throw it
@@ -54,25 +54,25 @@ export async function checkIdentityHealth(): Promise<HealthCheckResponse> {
     }
 
     // Handle network errors (fetch failures, CORS issues, etc.)
-    if (error instanceof TypeError && error.message.includes('fetch')) {
+    if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new HealthCheckException(
-        'NETWORK_ERROR',
-        `Failed to connect to Identity API at ${configs.identityApiBaseUrl}. Please check if the API is running.`
+        "NETWORK_ERROR",
+        `Failed to connect to Identity API at ${configs.identityApiBaseUrl}. Please check if the API is running.`,
       );
     }
 
     // Handle timeout errors
-    if (error instanceof Error && error.message.includes('timeout')) {
+    if (error instanceof Error && error.message.includes("timeout")) {
       throw new HealthCheckException(
-        'TIMEOUT_ERROR',
-        'Identity API health check timed out. The server may be slow or unresponsive.'
+        "TIMEOUT_ERROR",
+        "Identity API health check timed out. The server may be slow or unresponsive.",
       );
     }
 
     // Handle unknown errors
     throw new HealthCheckException(
-      'UNKNOWN_ERROR',
-      `An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`
+      "UNKNOWN_ERROR",
+      `An unexpected error occurred: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }

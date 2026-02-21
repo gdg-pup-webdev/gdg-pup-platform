@@ -16,11 +16,11 @@ Our commit messages strictly follow the **Conventional Commits** standard for co
 
 ### Components
 
-| Component | Description | Required |
-|-----------|-------------|----------|
-| `<type>` | What you did generally to the codebase | ✅ Yes |
-| `(<project>)` | Name of the project mostly affected | ✅ Yes |
-| `<description>` | Summary of the change | ✅ Yes |
+| Component       | Description                            | Required |
+| --------------- | -------------------------------------- | -------- |
+| `<type>`        | What you did generally to the codebase | ✅ Yes   |
+| `(<project>)`   | Name of the project mostly affected    | ✅ Yes   |
+| `<description>` | Summary of the change                  | ✅ Yes   |
 
 ---
 
@@ -28,15 +28,15 @@ Our commit messages strictly follow the **Conventional Commits** standard for co
 
 Use these standard commit types:
 
-| Type | When to Use | Example |
-|------|-------------|---------|
-| `feat` | A new feature for the user | `feat(nexus-web): add event registration form` |
-| `fix` | A bug fix (matches `bug/` or `hotfix/` branches) | `fix(nexus-api): resolve user validation error` |
-| `enhance` | An improvement to existing code | `enhance(nexus-web): improve search performance` |
-| `refactor` | Code change that neither fixes a bug nor adds a feature | `refactor(nexus-api): restructure user service` |
-| `docs` | Documentation changes only | `docs(repository): update README with setup steps` |
-| `chore` | Maintenance tasks (dependency updates, config changes) | `chore(nexus-api): update dependencies` |
-| `release` | Release commits used to bump versions | `release(nexus-api): v1.2.0` |
+| Type       | When to Use                                             | Example                                            |
+| ---------- | ------------------------------------------------------- | -------------------------------------------------- |
+| `feat`     | A new feature for the user                              | `feat(nexus-web): add event registration form`     |
+| `fix`      | A bug fix (matches `bug/` or `hotfix/` branches)        | `fix(nexus-api): resolve user validation error`    |
+| `enhance`  | An improvement to existing code                         | `enhance(nexus-web): improve search performance`   |
+| `refactor` | Code change that neither fixes a bug nor adds a feature | `refactor(nexus-api): restructure user service`    |
+| `docs`     | Documentation changes only                              | `docs(repository): update README with setup steps` |
+| `chore`    | Maintenance tasks (dependency updates, config changes)  | `chore(nexus-api): update dependencies`            |
+| `release`  | Release commits used to bump versions                   | `release(nexus-api): v1.2.0`                       |
 
 ---
 
@@ -44,15 +44,15 @@ Use these standard commit types:
 
 The `<project>` should match one of our monorepo packages:
 
-| Scope | Description |
-|-------|-------------|
-| `repository` | Root-level changes (CI/CD, configs, global docs) |
-| `nexus-api` | Nexus backend service |
-| `nexus-web` | Nexus frontend application |
-| `identity-api` | Identity/authentication service |
-| `nexus-api-contracts` | Nexus API contracts package |
-| `identity-api-contracts` | Identity API contracts package |
-| `typed-rest` | Typed REST utility package |
+| Scope                    | Description                                      |
+| ------------------------ | ------------------------------------------------ |
+| `repository`             | Root-level changes (CI/CD, configs, global docs) |
+| `nexus-api`              | Nexus backend service                            |
+| `nexus-web`              | Nexus frontend application                       |
+| `identity-api`           | Identity/authentication service                  |
+| `nexus-api-contracts`    | Nexus API contracts package                      |
+| `identity-api-contracts` | Identity API contracts package                   |
+| `typed-rest`             | Typed REST utility package                       |
 
 ---
 
@@ -65,12 +65,14 @@ The `<project>` should match one of our monorepo packages:
 ### Examples
 
 ✅ **Good Descriptions:**
+
 - `add user registration validation`
 - `fix event capacity check bug`
 - `improve database query performance`
 - `update API documentation for auth endpoints`
 
 ❌ **Bad Descriptions:**
+
 - `added stuff` (past tense, vague)
 - `Fixes.` (has period)
 - `this commit updates the user service to use the new layered architecture pattern` (too long)
@@ -80,6 +82,7 @@ The `<project>` should match one of our monorepo packages:
 ## Complete Examples
 
 ### Feature Commits
+
 ```
 feat(nexus-web): add event search functionality
 feat(nexus-api): implement tier-based pricing
@@ -87,6 +90,7 @@ feat(nexus-api-contracts): add event registration contract
 ```
 
 ### Bug Fix Commits
+
 ```
 fix(nexus-api): prevent duplicate event registrations
 fix(nexus-web): resolve form validation error
@@ -94,12 +98,14 @@ fix(identity-api): correct token expiration logic
 ```
 
 ### Refactor Commits
+
 ```
 refactor(nexus-api): extract validation logic to utilities
 refactor(nexus-web): reorganize component file structure
 ```
 
 ### Documentation Commits
+
 ```
 docs(repository): add troubleshooting guide
 docs(nexus-api): update API endpoint documentation
@@ -107,6 +113,7 @@ docs(repository): revise coding guidelines structure
 ```
 
 ### Chore Commits
+
 ```
 chore(nexus-api): upgrade Express to v5
 chore(repository): update ESLint configuration
@@ -126,6 +133,7 @@ merge: <branch-name>
 ```
 
 **Examples:**
+
 ```
 merge: dev
 merge: feat/user-registration-#102
@@ -153,12 +161,14 @@ Existing users must verify their email before accessing the platform.
 ## Tips for Writing Good Commits
 
 ✅ **Do:**
+
 - Commit logical units of work
 - Keep commits small and focused
 - Write clear, descriptive messages
 - Reference issue numbers in the description when relevant
 
 ❌ **Don't:**
+
 - Mix multiple unrelated changes in one commit
 - Use vague messages like "fix bug" or "update code"
 - Include work-in-progress commits in PRs (squash them)

@@ -182,7 +182,7 @@ export class PostController {
         message: "Post fetched successfully",
         data: post,
       });
-    }
+    },
   );
 }
 ```
