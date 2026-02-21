@@ -1,4 +1,4 @@
-import { RepositoryError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
+import { RepositoryError_DEPRECATED } from "@/deprecated/classes/ServerError_DEPRECATED.js";
 import {
   externalResourceRepositoryInstance,
   ExternalResourceRepository,

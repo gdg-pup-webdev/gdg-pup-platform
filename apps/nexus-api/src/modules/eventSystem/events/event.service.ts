@@ -6,11 +6,8 @@ import {
 import {
   AttendanceService,
   attendanceServiceInstance,
-} from "../attendance/attendance.service.js";
-import {
-  WalletService,
-  walletServiceInstance,
-} from "@/modules/economySystem/wallets/wallet.service.js";
+} from "../attendance/attendance.service.js";  
+import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/wallets/wallet.service.js";
 
 /**
  * Service for managing event business logic.

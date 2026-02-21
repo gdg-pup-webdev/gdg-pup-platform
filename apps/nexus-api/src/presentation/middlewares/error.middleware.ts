@@ -1,4 +1,4 @@
-import { ServerError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
+import { ServerError_DEPRECATED } from "@/deprecated/classes/ServerError_DEPRECATED.js";
 import { HttpError } from "@/errors/HttpError";
 import { ServerError } from "@/errors/ServerError";
 import { ContractError } from "@packages/typed-rest/serverExpress";
