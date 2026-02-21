@@ -50,7 +50,7 @@ function EmptyState() {
         <div className="text-6xl">📅</div>
         <Stack gap="xs" align="center">
           <Text variant="heading-2">No Events Found</Text>
-          <Text variant="body" color="secondary" className="max-w-md">
+          <Text variant="body" color="secondary">
             There are no events matching your filters. Try adjusting your search or
             check back later for new events.
           </Text>
