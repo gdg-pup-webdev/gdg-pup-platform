@@ -19,7 +19,7 @@
     "#*": "./dist/*"
   },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.4.0",
+    "@asteasolutions/zod-to-openapi": "^8.4.1",
     "@configs/typescript-config": "workspace:*",
     "chokidar": "^5.0.0",
     "commander": "11.0.0",
