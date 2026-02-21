@@ -2,7 +2,7 @@ import { Express } from "express";
 import { healthCheckModuleRouterInstance } from "@/modules/healthCheck/index.js";
 import { learningResourceSystemRouterInstance } from "@/modules/learningResourceSystem/index.js";
 import { userResourceSystemRouter } from "@/modules/userResourceSystem/index.js"; 
-import { eventSystemRouterInstance } from "@/modules/eventSystem/index.js";
+import { eventSystemRouterInstance } from "@/modules/eventSystem/deprecated/index.js";
 import { publicationSystemRouterInstance } from "@/modules/publicationSystem/index.js";
 import { userSystemRouterInstance } from "@/modules/userSystem/index.js";
 import { teamSystemRouterInstance } from "@/modules/teamsSystem/index.js";
@@ -23,10 +23,9 @@ import { AuthRouter } from "../routes/v1/auth/auth.route";
 import { AuthHttpController } from "../routes/v1/auth/auth.controller";
 import { supabase } from "@/lib/supabase";
 import { EventsRouter } from "../routes/v1/events/event.route";
-import { EventsHttpController } from "../routes/v1/events/event.controller";
-import { EventService } from "@/modules/eventSystem/events/event.service";
+import { EventsHttpController } from "../routes/v1/events/event.controller"; 
 import { authMiddlewareInstance } from "../middlewares/auth.middleware";
-import { AttendanceService } from "@/modules/eventSystem/attendance/attendance.service";
+import { AttendanceService } from "@/modules/eventSystem/deprecated/attendance/attendance.service";
 import { HealthRouter } from "../routes/v1/health/healthCheck.route";
 import { HealthHttpController } from "../routes/v1/health/healthCheck.controller";
 import { LearningResourcesRouter } from "../routes/v1/learning-resources/learningResources.route";
@@ -71,6 +70,7 @@ import { ProjectService } from "@/modules/userResourceSystem/projects/project.se
 import { TransactionsHttpController } from "../routes/v1/users/points/transactions/transaction.controller";   
 import { TransactionService } from "@/deprecated/walletSystem/transactions/transaction.service";
 import { economySystemRouterInstance } from "@/deprecated";
+import { EventService } from "@/modules/eventSystem/deprecated/events/event.service";
 
 export const routesLoader = (app: Express) => {
   ///////////////////////////////////////////////
