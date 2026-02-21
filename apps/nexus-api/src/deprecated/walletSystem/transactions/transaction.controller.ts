@@ -1,25 +1,20 @@
-  
-import { TransactionService } from "@/deprecated/walletSystem/transactions/transaction.service";
+ 
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
+import { TransactionService, transactionServiceInstance } from "./transaction.service";
 
 /**
- * Controller for handling transaction-related HTTP requests.
- * Implements endpoints defined in the economy system contract.
+ * @deprecated 
  */
-export class TransactionsHttpController {
+export class TransactionController {
   constructor(
-    private readonly transactionService: TransactionService  ,
+    private readonly transactionService: TransactionService = transactionServiceInstance,
   ) {}
 
   /**
-   * Lists transactions with optional filtering and pagination.
-   *
-   * @route GET /api/economy-system/transactions
-   * @returns JSON response containing the list of transactions and pagination metadata.
-   * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
-   */
+ * @deprecated 
+ */
   listTransactions: RequestHandler = createExpressController(
     contract.api.economy_system.transactions.GET,
     async ({ input, output }) => {
@@ -55,4 +50,7 @@ export class TransactionsHttpController {
     },
   );
 }
- 
+/**
+ * @deprecated 
+ */
+export const transactionControllerInstance = new TransactionController();

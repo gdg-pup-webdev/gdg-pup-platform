@@ -1,4 +1,4 @@
-import { ServerError_DEPRECATED } from "../../classes/ServerError_DEPRECATED.js";
+import { ServerError_DEPRECATED } from "../../deprecated/classes/ServerError_DEPRECATED.js";
 import { TooManyRequestError } from "@/errors/HttpError.js";
 import { rateLimit } from "express-rate-limit";
 

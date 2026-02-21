@@ -1,6 +1,6 @@
 import { models } from "@packages/nexus-api-contracts";
 import { tryCatch_deprecated } from "@/presentation/utils/tryCatch.util.js";
-import { RepositoryError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
+import { RepositoryError_DEPRECATED } from "@/deprecated/classes/ServerError_DEPRECATED.js";
 import {
   MemberRepository,
   memberRepositoryInstance,

@@ -1,14 +1,13 @@
-  
-import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/wallets/wallet.service";
+ 
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
+import { WalletService, walletServiceInstance } from "./wallet.service";
 
 /**
- * Controller for handling wallet-related HTTP requests.
- * Implements endpoints defined in the economy system contract.
+ * @deprecated 
  */
-export class PointsHttpController {
+export class WalletController {
   constructor(
     private readonly walletService: WalletService = walletServiceInstance,
   ) {}
@@ -66,5 +65,7 @@ export class PointsHttpController {
     },
   );
 }
-
-export const walletControllerInstance = new PointsHttpController();
+/**
+ * @deprecated 
+ */
+export const walletControllerInstance = new WalletController();

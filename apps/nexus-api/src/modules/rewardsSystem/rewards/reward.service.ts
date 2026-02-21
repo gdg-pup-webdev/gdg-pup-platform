@@ -1,9 +1,9 @@
+import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/wallets/wallet.service.js";
 import {
   RewardRepository,
   rewardRepositoryInstance,
 } from "./reward.repository.js";
-import { ConflictError, NotFoundError } from "@/errors/HttpError.js";
-import { WalletService, walletServiceInstance } from "@/modules/PointSystem/DEPRECATED/wallets/wallet.service.js";
+import { ConflictError, NotFoundError } from "@/errors/HttpError.js"; 
 import { models } from "@packages/nexus-api-contracts"; 
 
 type rewardInsertDTO = models.rewardSystem.reward.insert;

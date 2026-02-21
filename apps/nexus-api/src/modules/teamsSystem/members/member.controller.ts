@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { contract } from "@packages/nexus-api-contracts";
-import { ServiceError_DEPRECATED } from "@/classes/ServerError_DEPRECATED.js";
+import { ServiceError_DEPRECATED } from "@/deprecated/classes/ServerError_DEPRECATED.js";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { tryCatch_deprecated } from "@/presentation/utils/tryCatch.util.js";
 import { MemberService, memberServiceInstance } from "./member.service.js";
