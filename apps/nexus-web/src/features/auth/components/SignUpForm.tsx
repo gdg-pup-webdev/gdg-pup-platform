@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { GoogleSignInButton } from "./GoogleSignInButton";
+import { Stack, Text } from '@packages/spark-ui';
 
 export const SignUpForm = () => {
   const router = useRouter();
@@ -51,24 +52,26 @@ export const SignUpForm = () => {
 
   if (success) {
     return (
-      <div className="text-center py-8">
-        <div className="text-green-500 text-6xl mb-4">✓</div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
+      <Stack gap="md" className="text-center py-8">
+        <div className="text-green-500 text-6xl">✓</div>
+        <Text variant="heading-1" className="text-gray-800">
           Account Created!
-        </h1>
-        <p className="text-gray-600 mb-4">
+        </Text>
+        <Text variant="body" className="text-gray-600">
           Please check your email to verify your account.
-        </p>
-        <p className="text-sm text-gray-500">Redirecting to sign in page...</p>
-      </div>
+        </Text>
+        <Text variant="body-sm" className="text-gray-500">
+          Redirecting to sign in page...
+        </Text>
+      </Stack>
     );
   }
 
   return (
-    <div className="w-full">
+    <Stack gap="lg" className="w-full">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700 text-sm">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <Text variant="body-sm" className="text-red-700">{error}</Text>
         </div>
       )}
 
@@ -108,9 +111,9 @@ export const SignUpForm = () => {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
             placeholder="••••••••"
           />
-          <p className="mt-1 text-xs text-gray-500">
+          <Text variant="caption" className="text-gray-500">
             Must be at least 8 characters
-          </p>
+          </Text>
         </div>
 
         <div>
@@ -140,24 +143,22 @@ export const SignUpForm = () => {
         </button>
       </form>
 
-      <div className="mt-6">
+      <Stack gap="md">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">
+          <div className="relative flex justify-center">
+            <Text variant="body-sm" className="px-2 bg-white text-gray-500">
               Or continue with
-            </span>
+            </Text>
           </div>
         </div>
 
-        <div className="mt-4">
-          <GoogleSignInButton text="Sign up with Google" />
-        </div>
-      </div>
+        <GoogleSignInButton text="Sign up with Google" />
+      </Stack>
 
-      <p className="mt-6 text-center text-sm text-gray-600">
+      <Text variant="body-sm" className="text-center text-gray-600">
         Already have an account?{" "}
         <a
           href="/signin"
@@ -165,7 +166,7 @@ export const SignUpForm = () => {
         >
           Sign in
         </a>
-      </p>
-    </div>
+      </Text>
+    </Stack>
   );
 };

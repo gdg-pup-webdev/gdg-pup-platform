@@ -1,5 +1,6 @@
 # --- System Files ---
 
+*.code-workspace
 .contract.ts
 typedrest.contract.ts
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { GoogleSignInButton } from "./GoogleSignInButton";
+import { Stack, Text } from '@packages/spark-ui';
 
 export const SignInForm = () => {
   const router = useRouter();
@@ -29,10 +30,10 @@ export const SignInForm = () => {
   };
 
   return (
-    <div className="w-full">
+    <Stack gap="lg" className="w-full">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-700 text-sm">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <Text variant="body-sm" className="text-red-700">{error}</Text>
         </div>
       )}
 
@@ -82,24 +83,22 @@ export const SignInForm = () => {
         </button>
       </form>
 
-      <div className="mt-6">
+      <Stack gap="md">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
           </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">
+          <div className="relative flex justify-center">
+            <Text variant="body-sm" className="px-2 bg-white text-gray-500">
               Or continue with
-            </span>
+            </Text>
           </div>
         </div>
 
-        <div className="mt-4">
-          <GoogleSignInButton text="Sign in with Google" />
-        </div>
-      </div>
+        <GoogleSignInButton text="Sign in with Google" />
+      </Stack>
 
-      <p className="mt-6 text-center text-sm text-gray-600">
+      <Text variant="body-sm" className="text-center text-gray-600">
         Don't have an account?{" "}
         <a
           href="/signup"
@@ -107,7 +106,7 @@ export const SignInForm = () => {
         >
           Sign up
         </a>
-      </p>
-    </div>
+      </Text>
+    </Stack>
   );
 };

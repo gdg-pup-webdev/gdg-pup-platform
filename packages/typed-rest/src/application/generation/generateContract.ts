@@ -30,6 +30,14 @@ export async function generateContract(
   mytsfile.addImport(
     new TsImportStatement("cz", "z", false, `${configs.packageName}/shared`),
   );
+  mytsfile.addImport(
+    new TsImportStatement("OpenApiGeneratorV3", "OpenApiGeneratorV3", false, `${configs.packageName}/shared`),
+  );
+
+  mytsfile.addImport(
+    new TsImportStatement("OpenAPIRegistry", "OpenAPIRegistry", false, `${configs.packageName}/shared`),
+  );
+
 
   /**
    * scanning files and generating structures

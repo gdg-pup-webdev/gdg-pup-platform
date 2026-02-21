@@ -8,6 +8,7 @@
 
 import React from "react";
 import type { Card, User, RoutingDecision } from "../types";
+import { Stack, Text } from '@packages/spark-ui';
 
 interface DebugCardProps {
   /** Card information from the API */
@@ -38,19 +39,19 @@ export const DebugCard: React.FC<DebugCardProps> = ({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 text-white gap-6 p-4">
       {/* Header */}
-      <h1 className="text-3xl font-bold text-green-500">Testing Mode</h1>
+      <Text variant="heading-1" className="text-green-500">Testing Mode</Text>
 
       {/* Info card */}
-      <div className="w-full max-w-md space-y-4 rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+      <Stack gap="md" className="w-full max-w-md rounded-lg border border-zinc-800 bg-zinc-900 p-6">
         {/* Status message */}
-        <div>
-          <h2 className="text-sm font-medium text-zinc-400">Status</h2>
-          <p className="text-lg font-semibold">{routingDecision.message}</p>
-        </div>
+        <Stack gap="xs">
+          <Text variant="body-sm" className="text-zinc-400">Status</Text>
+          <Text variant="heading-3">{routingDecision.message}</Text>
+        </Stack>
 
         {/* Card status */}
-        <div>
-          <h2 className="text-sm font-medium text-zinc-400">Card Status</h2>
+        <Stack gap="xs">
+          <Text variant="body-sm" className="text-zinc-400">Card Status</Text>
           <span
             className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
               card.status === "READY"
@@ -62,19 +63,19 @@ export const DebugCard: React.FC<DebugCardProps> = ({
           >
             {card.status}
           </span>
-        </div>
+        </Stack>
 
         {/* Redirect target */}
-        <div>
-          <h2 className="text-sm font-medium text-zinc-400">Redirect Target</h2>
+        <Stack gap="xs">
+          <Text variant="body-sm" className="text-zinc-400">Redirect Target</Text>
           <code className="block rounded bg-zinc-950 p-2 text-blue-400 break-all">
             {routingDecision.path}
           </code>
-        </div>
+        </Stack>
 
         {/* Raw data */}
-        <div>
-          <h2 className="text-sm font-medium text-zinc-400 mb-2">Raw Data</h2>
+        <Stack gap="xs">
+          <Text variant="body-sm" className="text-zinc-400">Raw Data</Text>
           <details className="group">
             <summary className="cursor-pointer text-sm text-blue-400 hover:text-blue-300">
               Click to view JSON
@@ -83,7 +84,7 @@ export const DebugCard: React.FC<DebugCardProps> = ({
               {JSON.stringify({ card, user }, null, 2)}
             </pre>
           </details>
-        </div>
+        </Stack>
 
         {/* Proceed button */}
         <button
@@ -92,12 +93,12 @@ export const DebugCard: React.FC<DebugCardProps> = ({
         >
           Proceed to Redirect
         </button>
-      </div>
+      </Stack>
 
       {/* Helper text */}
-      <p className="text-xs text-zinc-600 max-w-md text-center">
+      <Text variant="caption" className="text-zinc-600 max-w-md text-center">
         This is a debug view. In production, the redirect happens automatically.
-      </p>
+      </Text>
     </div>
   );
 };

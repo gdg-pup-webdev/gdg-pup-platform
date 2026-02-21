@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import { Card } from '@/components/ui/Card';
+import { Card, Stack, Container } from '@packages/spark-ui';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { BackgroundGradients } from './BackgroundGradients';
 import { LoadingState } from './LoadingState';
@@ -75,16 +75,16 @@ export function ProfileCard({
   // SUCCESS STATE
   // Render the full profile page with all components
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Animated background gradients */}
       <BackgroundGradients />
 
       {/* Main content */}
-      <div className="relative z-10 container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+      <div className="relative z-10">
+        <Container maxWidth="lg" className="py-12">
           {/* Profile card with glass morphism effect */}
           <Card>
-            <div className="p-8 md:p-12 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20">
+            <Stack gap="xl" className="p-8 md:p-12">
               {/* Avatar with gradient border */}
               <ProfileAvatar 
                 avatarUrl={profile.avatarUrl}
@@ -111,12 +111,12 @@ export function ProfileCard({
                 links={profile.socialLinks}
                 portfolioUrl={profile.portfolioUrl}
               />
-            </div>
+            </Stack>
           </Card>
 
           {/* Additional profile sections can be added here */}
           {/* For example: Activity feed, recent events, badges, etc. */}
-        </div>
+        </Container>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Stack, Text } from '@packages/spark-ui';
 
 const NEXUS_API_URL =
   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
@@ -106,34 +107,34 @@ function ConfirmPageContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 to-blue-50">
       <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full">
-        <div className="text-center">
+        <Stack gap="md" className="text-center">
           {status === "loading" && (
             <>
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
-              <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
+              <Text variant="heading-2" className="text-gray-800">
                 Verifying Email
-              </h1>
-              <p className="text-gray-600">{message}</p>
+              </Text>
+              <Text variant="body" className="text-gray-600">{message}</Text>
             </>
           )}
 
           {status === "success" && (
             <>
-              <div className="text-green-500 text-6xl mb-4">✓</div>
-              <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              <div className="text-green-500 text-6xl">✓</div>
+              <Text variant="heading-2" className="text-gray-800">
                 Email Verified!
-              </h1>
-              <p className="text-gray-600">{message}</p>
+              </Text>
+              <Text variant="body" className="text-gray-600">{message}</Text>
             </>
           )}
 
           {status === "error" && (
             <>
-              <div className="text-red-500 text-6xl mb-4">✗</div>
-              <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              <div className="text-red-500 text-6xl">✗</div>
+              <Text variant="heading-2" className="text-gray-800">
                 Verification Failed
-              </h1>
-              <p className="text-gray-600 mb-4">{message}</p>
+              </Text>
+              <Text variant="body" className="text-gray-600">{message}</Text>
               <button
                 onClick={() => router.push("/")}
                 className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
@@ -142,7 +143,7 @@ function ConfirmPageContent() {
               </button>
             </>
           )}
-        </div>
+        </Stack>
       </div>
     </div>
   );
@@ -154,8 +155,10 @@ export default function ConfirmPage() {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 to-blue-50">
           <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading verification...</p>
+            <Stack gap="md">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
+              <Text variant="body" className="text-gray-600">Loading verification...</Text>
+            </Stack>
           </div>
         </div>
       }

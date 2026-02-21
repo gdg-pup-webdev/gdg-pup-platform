@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Avatar, Badge } from "@/components/ui";
+import { Card, Avatar, Badge } from "@packages/spark-ui";
 
 export default function MemberShowcasePage() {
   //   Dummy data pa lang

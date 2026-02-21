@@ -1,9 +1,9 @@
-import { tryCatch_deprecated } from "@/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/presentation/utils/tryCatch.util.js";
 import {
   AttendanceRepository,
   attendanceRepositoryInstance,
 } from "./attendance.repository.js";
-import { RepositoryError_DEPRECATED } from "@/classes/ServerError.js";
+import { RepositoryError_DEPRECATED } from "@/deprecated/classes/ServerError_DEPRECATED.js";
 
 /**
  * Service for managing attendance business logic.

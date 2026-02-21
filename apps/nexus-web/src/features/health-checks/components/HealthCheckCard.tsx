@@ -6,10 +6,7 @@
  */
 
 import React from 'react';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Spinner } from '@/components/ui/Spinner';
-import { Badge } from '@/components/ui/Badge';
+import { Button, Card, Spinner, Badge, Stack, Text, Inline } from '@packages/spark-ui';
 import { HealthCheckResponse } from '../types';
 
 interface HealthCheckCardProps {
@@ -45,16 +42,16 @@ export function HealthCheckCard({
 }: HealthCheckCardProps) {
   return (
     <Card>
-      <div className="p-6 space-y-4 min-w-[320px]">
+      <Stack gap="md" className="p-6 min-w-[320px]">
         {/* Header with API name */}
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-gray-900">
+        <Stack gap="xs" className="text-center">
+          <Text variant="heading-2" className="text-gray-900">
             {apiName}
-          </h2>
-          <p className="text-sm text-gray-500">
+          </Text>
+          <Text variant="body-sm" className="text-gray-500">
             Health Status Monitor
-          </p>
-        </div>
+          </Text>
+        </Stack>
 
         {/* Check button */}
         <Button
@@ -65,10 +62,10 @@ export function HealthCheckCard({
           className="w-full"
         >
           {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
+            <Inline gap="xs" align="center" justify="center">
               <Spinner size="sm" />
-              Checking...
-            </span>
+              <span>Checking...</span>
+            </Inline>
           ) : (
             'Check API Health'
           )}
@@ -76,59 +73,59 @@ export function HealthCheckCard({
 
         {/* Status display */}
         {isFetched && (
-          <div className="space-y-3">
+          <Stack gap="xs">
             {/* Success state */}
             {!isLoading && !error && data && (
-              <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-green-900 dark:text-green-100">
+              <Stack gap="xs" className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                <Inline align="center" justify="between">
+                  <Text variant="label" className="text-green-900 dark:text-green-100">
                     ✓ Healthy
-                  </h3>
+                  </Text>
                   <Badge variant="success" size="sm">
                     {data.status}
                   </Badge>
-                </div>
+                </Inline>
                 
-                <div className="space-y-2 text-sm text-green-800 dark:text-green-200">
-                  <p>
+                <Stack gap="xs" className="text-sm text-green-800 dark:text-green-200">
+                  <Text variant="body-sm">
                     <strong>Message:</strong> {data.message}
-                  </p>
+                  </Text>
                   {data.timestamp && (
-                    <p className="text-xs text-green-600 dark:text-green-400">
+                    <Text variant="caption" className="text-green-600 dark:text-green-400">
                       <strong>Timestamp:</strong> {new Date(data.timestamp).toLocaleString()}
-                    </p>
+                    </Text>
                   )}
                   {data.version && (
-                    <p className="text-xs text-green-600 dark:text-green-400">
+                    <Text variant="caption" className="text-green-600 dark:text-green-400">
                       <strong>Version:</strong> {data.version}
-                    </p>
+                    </Text>
                   )}
-                </div>
-              </div>
+                </Stack>
+              </Stack>
             )}
 
             {/* Error state */}
             {!isLoading && error && (
-              <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-red-900 dark:text-red-100">
+              <Stack gap="xs" className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                <Inline align="center" justify="between">
+                  <Text variant="label" className="text-red-900 dark:text-red-100">
                     ✗ Unhealthy
-                  </h3>
-                  <Badge variant="danger" size="sm">
+                  </Text>
+                  <Badge variant="destructive" size="sm">
                     Error
                   </Badge>
-                </div>
+                </Inline>
                 
-                <div className="space-y-2">
-                  <p className="text-sm text-red-800 dark:text-red-200 font-medium">
+                <Stack gap="xs">
+                  <Text variant="body-sm" className="text-red-800 dark:text-red-200 font-medium">
                     {error}
-                  </p>
+                  </Text>
                   
                   {/* Helpful suggestions based on error */}
-                  <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-800">
-                    <p className="text-xs text-red-700 dark:text-red-300 font-semibold mb-1">
+                  <Stack gap="xs" className="pt-3 border-t border-red-200 dark:border-red-800">
+                    <Text variant="caption" className="text-red-700 dark:text-red-300 font-semibold">
                       Troubleshooting:
-                    </p>
+                    </Text>
                     <ul className="text-xs text-red-600 dark:text-red-400 space-y-1 list-disc list-inside">
                       {error.includes('Failed to connect') && (
                         <>
@@ -152,13 +149,13 @@ export function HealthCheckCard({
                         </>
                       )}
                     </ul>
-                  </div>
-                </div>
-              </div>
+                  </Stack>
+                </Stack>
+              </Stack>
             )}
-          </div>
+          </Stack>
         )}
-      </div>
+      </Stack>
     </Card>
   );
 }

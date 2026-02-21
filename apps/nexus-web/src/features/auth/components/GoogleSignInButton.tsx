@@ -1,5 +1,6 @@
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useState } from "react";
+import { Stack, Inline, Text } from '@packages/spark-ui';
 
 interface GoogleSignInButtonProps {
   text?: string;
@@ -27,10 +28,10 @@ export const GoogleSignInButton = ({
   };
 
   return (
-    <div className={`w-full ${className}`}>
+    <Stack gap="xs" className={`w-full ${className}`}>
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-2 mb-2 text-center">
-          <p className="text-red-700 text-xs">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-center">
+          <Text variant="caption" className="text-red-700">{error}</Text>
         </div>
       )}
       <button
@@ -58,6 +59,6 @@ export const GoogleSignInButton = ({
         </svg>
         {loading ? "Connecting..." : text}
       </button>
-    </div>
+    </Stack>
   );
 };

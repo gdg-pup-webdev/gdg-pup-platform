@@ -24,7 +24,8 @@ export const createExpressController = <T extends Contract>(
         files: {} as any,
       };
 
-      if (contract.request.body && contract.request.files) {
+
+      if (contract.request.files) {
         const filesContract = contract.request.files;
         const bodyContract = contract.request.body;
 
@@ -107,11 +108,16 @@ export const createExpressController = <T extends Contract>(
       }
 
       // parse body
+      // console.log("hello?", req.body);
       if (!contract.request.files && req.body) {
+        // console.log("djfalskdfjalkdfjadklfjadlkf", JSON.stringify(req.body));
         request.body = req.body;
       }
 
-      let parsedInput: ValidatedInputObject<T> = await validateInput(request, contract);
+      let parsedInput: ValidatedInputObject<T> = await validateInput(
+        request,
+        contract,
+      );
 
       const output: OutputFunction<T> = (status, body) => {
         return { status, body };

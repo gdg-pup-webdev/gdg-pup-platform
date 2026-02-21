@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { Badge } from '@/components/ui/Badge';
+import { Badge, Stack, Text, Inline } from '@packages/spark-ui';
 
 interface ProfileHeaderProps {
   // User's display name
@@ -24,27 +24,27 @@ interface ProfileHeaderProps {
  */
 export function ProfileHeader({ name, role, bio }: ProfileHeaderProps) {
   return (
-    <div className="text-center space-y-4 mb-8">
+    <Stack gap="md" className="text-center">
       {/* User's name */}
-      <h1 className="text-5xl font-bold text-black bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">
+      <Text variant="heading-1" className="text-5xl bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-400 to-blue-400">
         {name}
-      </h1>
+      </Text>
 
       {/* User's role (if provided) */}
       {role && (
-        <div className="flex justify-center">
-          <Badge variant="info" size="md">
+        <Inline justify="center">
+          <Badge variant="default" size="md">
             {role}
           </Badge>
-        </div>
+        </Inline>
       )}
 
       {/* User's bio (if provided) */}
       {bio && (
-        <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        <Text variant="body-lg" className="text-gray-300 max-w-2xl mx-auto">
           {bio}
-        </p>
+        </Text>
       )}
-    </div>
+    </Stack>
   );
 }

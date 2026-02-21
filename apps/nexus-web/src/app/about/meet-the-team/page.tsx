@@ -1,7 +1,7 @@
 "use client";
 
 import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Avatar } from "@/components/ui";
+import { Card, Avatar } from "@packages/spark-ui";
 
 export default function MeetTheTeamPage() {
   //   Dummy data pa lang

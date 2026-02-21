@@ -4,7 +4,7 @@ import { Command } from "commander";
 import path from "path";
 import chokidar from "chokidar";
 import { execSync } from "child_process";
-import fs from "fs"; 
+import fs from "fs";
 import { logger } from "#utils/logger.utils.js";
 import { generateContract } from "#application/index.js";
 import { debounce } from "#utils/core.utils.js";
@@ -49,8 +49,16 @@ async function syncAndGenerate() {
 
 program.command("build").action(async () => {
   try {
+    if (!fs.existsSync(DIST_DIR_ABSOLUTE)) {
+      fs.mkdirSync(DIST_DIR_ABSOLUTE, { recursive: true });
+    }
+
     if (fs.existsSync(DIST_DIR_ABSOLUTE)) {
       fs.rmSync(DIST_DIR_ABSOLUTE, { recursive: true, force: true });
+    }
+
+    if (!fs.existsSync(DIST_DIR_ABSOLUTE)) {
+      fs.mkdirSync(DIST_DIR_ABSOLUTE, { recursive: true });
     }
 
     await syncAndGenerate();
