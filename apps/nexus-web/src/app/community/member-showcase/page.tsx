@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Avatar, Badge } from "@packages/spark-ui";
+import { Card, Avatar, Badge, Button, Container, Grid, Stack } from "@packages/spark-ui";
 
 export default function MemberShowcasePage() {
   //   Dummy data pa lang
@@ -57,16 +56,11 @@ export default function MemberShowcasePage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="Member Showcase"
-          description="Celebrating the achievements and contributions of our amazing community members"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-white">
+      <Container className="py-12">
+        <Stack gap="2xl">
         {/* Introduction */}
-        <section className="mb-12 text-center">
+        <section className="text-center">
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
             Our community thrives because of the incredible people who make it
             up. Here are some of the outstanding members who inspire us every
@@ -75,11 +69,11 @@ export default function MemberShowcasePage() {
         </section>
 
         {/* Featured Members Grid */}
-        <section className="mb-16">
+        <section>
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
             Featured Members
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <Grid gap="xl" className="md:grid-cols-2 lg:grid-cols-3">
             {featuredMembers.map((member, idx) => (
               <Card key={idx} className="hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center mb-4">
@@ -125,7 +119,7 @@ export default function MemberShowcasePage() {
                 </div>
               </Card>
             ))}
-          </div>
+          </Grid>
         </section>
 
         {/* Call to Action */}
@@ -136,13 +130,11 @@ export default function MemberShowcasePage() {
               Stay active in the community, contribute to projects, and share
               your knowledge. Your achievements could be highlighted next!
             </p>
-            <button className="px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold">
-              Get Started Today
-            </button>
+              <Button variant="secondary">Get Started Today</Button>
           </div>
         </Card>
-        </div>
-      </div>
-    </PageLayout>
+        </Stack>
+      </Container>
+    </div>
   );
 }
