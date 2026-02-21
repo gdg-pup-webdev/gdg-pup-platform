@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Badge } from "@packages/spark-ui";
+import { Card, Badge, Stack, Grid } from "@packages/spark-ui";
 
 export default function GDGOnTopPage() {
   //   Dummy data pa lang
@@ -37,20 +36,13 @@ export default function GDGOnTopPage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="GDG on Top"
-          description="Celebrating our achievements and community excellence"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <Stack gap="2xl">
         {/* Stats Grid */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+        <Stack gap="lg">
+          <h2 className="text-3xl font-bold text-gray-900 text-center">
             By the Numbers
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Grid gap="lg" className="grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {achievements.map((achievement, idx) => (
               <Card
                 key={idx}
@@ -65,25 +57,25 @@ export default function GDGOnTopPage() {
                 <p className="text-gray-700">{achievement.description}</p>
               </Card>
             ))}
-          </div>
-        </section>
+          </Grid>
+        </Stack>
 
         {/* Highlights */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
+        <Stack gap="lg">
+          <h2 className="text-3xl font-bold text-gray-900">
             Key Highlights
           </h2>
           <Card>
-            <ul className="space-y-4">
+            <Stack as="ul" gap="md">
               {highlights.map((highlight, idx) => (
                 <li key={idx} className="flex items-start">
                   <span className="text-2xl mr-4">🏆</span>
                   <span className="text-lg text-gray-700">{highlight}</span>
                 </li>
               ))}
-            </ul>
+            </Stack>
           </Card>
-        </section>
+        </Stack>
 
         {/* Impact Statement */}
         <Card className="bg-blue-600 text-white border-blue-700">
@@ -96,8 +88,6 @@ export default function GDGOnTopPage() {
             </p>
           </div>
         </Card>
-        </div>
-      </div>
-    </PageLayout>
+    </Stack>
   );
 }

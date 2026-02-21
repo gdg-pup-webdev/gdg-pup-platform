@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from "@packages/spark-ui";
+import { Card, Grid, Stack } from "@packages/spark-ui";
 import Link from "next/link";
 
 export default function AboutPage() {
@@ -43,13 +42,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <PageHeader
-            title="About GDG PUP"
-            description="Learn more about our community, mission, and the people behind it all."
-          />
+    <Stack gap="2xl">
 
           {/* Hero Introduction */}
           <section className="mb-16 mt-8">
@@ -76,17 +69,12 @@ export default function AboutPage() {
           </section>
 
           {/* Quick Links with Modern Cards */}
-          <section className="mb-16">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Explore More
-              </h2>
-              <p className="text-gray-700">
-                Dive deeper into what makes GDG PUP special
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <section>
+            <Stack align="center" gap="xs" className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">Explore More</h2>
+              <p className="text-gray-700">Dive deeper into what makes GDG PUP special</p>
+            </Stack>
+            <Grid gap="lg" className="md:grid-cols-2 lg:grid-cols-3">
               {sections.map((section, index) => (
                 <Link key={index} href={section.link}>
                   <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 overflow-hidden">
@@ -101,11 +89,11 @@ export default function AboutPage() {
                   </Card>
                 </Link>
               ))}
-            </div>
+            </Grid>
           </section>
 
           {/* Mission & Vision */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          <Grid gap="xl" className="lg:grid-cols-2">
             <Card className="bg-blue-50 border-2 border-blue-200 hover:shadow-lg transition-shadow">
               <h3 className="text-2xl font-bold text-blue-900 mb-4">
                 Our Mission
@@ -130,20 +118,15 @@ export default function AboutPage() {
                 next generation of innovators and leaders in tech.
               </p>
             </Card>
-          </section>
+          </Grid>
 
           {/* Core Values */}
-          <section className="mb-16">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Our Core Values
-              </h2>
-              <p className="text-gray-700">
-                The principles that guide everything we do
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <section>
+            <Stack align="center" gap="xs" className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">Our Core Values</h2>
+              <p className="text-gray-700">The principles that guide everything we do</p>
+            </Stack>
+            <Grid gap="lg" className="md:grid-cols-3">
               <Card className="text-center hover:shadow-lg transition-shadow bg-green-50 border border-green-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
                   Collaboration
@@ -172,10 +155,8 @@ export default function AboutPage() {
                   We welcome everyone regardless of background or skill level.
                 </p>
               </Card>
-            </div>
+            </Grid>
           </section>
-        </div>
-      </div>
-    </PageLayout>
+    </Stack>
   );
 }

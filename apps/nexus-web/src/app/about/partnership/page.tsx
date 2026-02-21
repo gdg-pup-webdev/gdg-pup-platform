@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Button, Input } from "@packages/spark-ui";
+import { Card, Button, Input, Stack, Grid } from "@packages/spark-ui";
 import { useState } from "react";
 
 export default function PartnershipPage() {
@@ -36,29 +35,22 @@ export default function PartnershipPage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="Partnership Opportunities"
-          description="Let's work together to empower the next generation of tech leaders"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <Stack gap="2xl">
         {/* Introduction */}
-        <section className="mb-16 text-center">
+        <div className="text-center">
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
             We're always looking for organizations that share our passion for
             technology education and community development. Partner with us to
             make a lasting impact.
           </p>
-        </section>
+        </div>
 
         {/* Benefits */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+        <Stack gap="lg">
+          <h2 className="text-3xl font-bold text-gray-900 text-center">
             Partnership Benefits
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Grid gap="lg" className="grid-cols-1 md:grid-cols-2">
             {benefits.map((benefit, idx) => (
               <Card key={idx} className="hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-blue-600 mb-3">
@@ -67,15 +59,15 @@ export default function PartnershipPage() {
                 <p className="text-gray-700">{benefit.description}</p>
               </Card>
             ))}
-          </div>
-        </section>
+          </Grid>
+        </Stack>
 
         {/* Partnership Types */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+        <Stack gap="lg">
+          <h2 className="text-3xl font-bold text-gray-900 text-center">
             Ways to Partner
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Grid gap="lg" className="grid-cols-1 md:grid-cols-3">
             <Card className="text-center">
               <div className="text-4xl mb-4">🎓</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -105,17 +97,17 @@ export default function PartnershipPage() {
                 Support our events and initiatives as a sponsor
               </p>
             </Card>
-          </div>
-        </section>
+          </Grid>
+        </Stack>
 
         {/* Contact Form */}
-        <section>
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+        <Stack gap="lg">
+          <h2 className="text-3xl font-bold text-gray-900 text-center">
             Get in Touch
           </h2>
           <Card className="max-w-2xl mx-auto">
             <form className="space-y-6">
-              <div className="flex flex-col gap-1">
+              <Stack gap="xs">
                 <label className="text-sm font-medium text-gray-700">
                   Organization Name
                 </label>
@@ -126,9 +118,9 @@ export default function PartnershipPage() {
                     setFormData({ ...formData, organization: e.target.value })
                   }
                 />
-              </div>
+              </Stack>
 
-              <div className="flex flex-col gap-1">
+              <Stack gap="xs">
                 <label className="text-sm font-medium text-gray-700">
                   Email Address
                 </label>
@@ -140,9 +132,9 @@ export default function PartnershipPage() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                 />
-              </div>
+              </Stack>
 
-              <div className="flex flex-col gap-1">
+              <Stack gap="xs">
                 <label className="text-sm font-medium text-gray-700">
                   Message
                 </label>
@@ -155,16 +147,14 @@ export default function PartnershipPage() {
                     setFormData({ ...formData, message: e.target.value })
                   }
                 />
-              </div>
+              </Stack>
 
               <Button variant="primary" size="lg" className="w-full">
                 Submit Partnership Inquiry
               </Button>
             </form>
           </Card>
-        </section>
-        </div>
-      </div>
-    </PageLayout>
+        </Stack>
+    </Stack>
   );
 }

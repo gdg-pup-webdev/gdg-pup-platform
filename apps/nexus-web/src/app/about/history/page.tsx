@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from "@packages/spark-ui";
+import { Card, Stack } from "@packages/spark-ui";
 
 export default function HistoryPage() {
   //   Dummy data pa lang
@@ -33,16 +32,9 @@ export default function HistoryPage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="Our History"
-          description="A journey of growth, innovation, and community building"
-        />
-
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+    <Stack gap="2xl">
+        <Stack gap="md">
+          <h2 className="text-3xl font-bold text-gray-900">
             The Beginning
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-4">
@@ -55,13 +47,13 @@ export default function HistoryPage() {
             a thriving community that continues to inspire and empower students
             across PUP.
           </p>
-        </div>
+        </Stack>
 
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+        <Stack gap="md">
+          <h2 className="text-3xl font-bold text-gray-900">
             Key Milestones
           </h2>
-          <div className="space-y-6">
+          <Stack gap="lg">
             {milestones.map((milestone, index) => (
               <Card key={index} className="border-l-4 border-blue-600">
                 <div className="flex items-start gap-4">
@@ -81,8 +73,8 @@ export default function HistoryPage() {
                 </div>
               </Card>
             ))}
-          </div>
-        </div>
+          </Stack>
+        </Stack>
 
         <Card className="bg-blue-50 border-2 border-blue-200">
           <h3 className="text-2xl font-bold text-blue-900 mb-4">
@@ -94,8 +86,6 @@ export default function HistoryPage() {
             meaningful impact through technology. The best is yet to come!
           </p>
         </Card>
-        </div>
-      </div>
-    </PageLayout>
+    </Stack>
   );
 }
