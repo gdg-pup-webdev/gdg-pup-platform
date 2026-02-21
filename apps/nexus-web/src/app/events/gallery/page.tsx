@@ -8,9 +8,7 @@
 "use client";
 
 import React from "react";
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from '@packages/spark-ui';
-import { Button } from '@packages/spark-ui';
+import { Card, Button, Container, Grid, Stack, Inline } from '@packages/spark-ui';
 import Link from "next/link";
 
 export default function EventsGalleryPage() {
@@ -39,15 +37,9 @@ export default function EventsGalleryPage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Page Header */}
-          <PageHeader
-            title="Event Gallery"
-            description="Relive the moments from our past events"
-          />
-
+    <div className="min-h-screen bg-white">
+      <Container className="py-12">
+        <Stack gap="xl">
           {/* Hero Section */}
           <div className="mt-8 bg-red-600 rounded-lg p-8 text-white border border-red-700">
             <div className="max-w-3xl">
@@ -63,7 +55,7 @@ export default function EventsGalleryPage() {
           </div>
 
           {/* Categories */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Grid gap="lg" className="md:grid-cols-2 lg:grid-cols-4">
             {galleryCategories.map((category) => (
               <Card
                 key={category.title}
@@ -81,7 +73,7 @@ export default function EventsGalleryPage() {
                 </div>
               </Card>
             ))}
-          </div>
+          </Grid>
 
           {/* Coming Soon Notice */}
           <Card className="mt-8 bg-yellow-50 border-yellow-300 border-2">
@@ -94,7 +86,7 @@ export default function EventsGalleryPage() {
                 be able to browse through photos, videos, and highlights from all
                 our past events. Check back soon!
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Inline gap="sm" justify="center" wrap className="flex-col sm:flex-row">
                 <Link href="/events">
                   <Button
                     variant="primary"
@@ -108,16 +100,16 @@ export default function EventsGalleryPage() {
                     Visit Community Page
                   </Button>
                 </Link>
-              </div>
+              </Inline>
             </div>
           </Card>
 
           {/* Placeholder Gallery Grid */}
-          <div className="mt-8">
+          <div>
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               Recent Highlights
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <Grid gap="md" className="grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <div
                   key={i}
@@ -126,10 +118,10 @@ export default function EventsGalleryPage() {
                   Image {i}
                 </div>
               ))}
-            </div>
+            </Grid>
           </div>
-        </div>
-      </div>
-    </PageLayout>
+        </Stack>
+      </Container>
+    </div>
   );
 }
