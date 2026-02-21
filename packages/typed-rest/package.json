@@ -22,7 +22,7 @@
     "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@configs/typescript-config": "workspace:*",
     "chokidar": "^5.0.0",
-    "commander": "11.0.0",
+    "commander": "14.0.3",
     "express": "5.2.1",
     "multer": "2.0.2",
     "ts-morph": "^27.0.2",
