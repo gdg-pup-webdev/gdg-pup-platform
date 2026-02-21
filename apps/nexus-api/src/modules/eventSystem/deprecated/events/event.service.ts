@@ -4,7 +4,7 @@ import {
   eventRepositoryInstance,
 } from "./event.repository.js"; 
 import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/wallets/wallet.service.js";
-import { AttendanceService } from "../attendance/attendance.service.js";
+import { AttendanceService, attendanceServiceInstance } from "../attendance/attendance.service.js";
 
 /**
  * Service for managing event business logic.
@@ -13,7 +13,7 @@ import { AttendanceService } from "../attendance/attendance.service.js";
 export class EventService {
   constructor(
     private readonly eventRepository: EventRepository = eventRepositoryInstance,
-    private readonly attendanceService: AttendanceService = attendanceService,
+    private readonly attendanceService: AttendanceService = attendanceServiceInstance,
     private readonly walletService: WalletService = walletServiceInstance,
   ) {}
 
