@@ -3,7 +3,7 @@ import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress"; 
 import { UnauthorizedError } from "@/errors/HttpError.js";
 import { EventService } from "@/modules/eventSystem/events/event.service";
-import { AttendanceService } from "@/modules/eventSystem/attendance/attendance.service";
+import { AttendanceService } from "@/modules/eventSystem/deprecated/attendance/attendance.service";
 
 /**
  * Controller for handling event-related HTTP requests.

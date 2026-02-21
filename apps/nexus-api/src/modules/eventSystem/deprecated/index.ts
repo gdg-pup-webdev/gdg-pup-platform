@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from "express"; 
 import { EventRouter, eventRouterInstance } from "./events/event.route";
 
 export class EventSystemRouter {

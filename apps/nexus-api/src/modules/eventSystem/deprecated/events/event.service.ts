@@ -6,7 +6,7 @@ import {
 import {
   AttendanceService,
   attendanceServiceInstance,
-} from "../attendance/attendance.service.js";  
+} from "../deprecated/attendance/attendance.service.js";  
 import { WalletService, walletServiceInstance } from "@/deprecated/walletSystem/wallets/wallet.service.js";
 
 /**
