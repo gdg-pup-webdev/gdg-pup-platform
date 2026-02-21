@@ -2,7 +2,8 @@ export type TransactionRecordProps = {
   id: string;
   createdAt: string;
 
-  amount: number;
+  pointsChange: number;
+  pointsType: string;
   sourceReference: string;
   sourceType: string;
   userId: string;
@@ -20,7 +21,7 @@ export abstract class TransactionRecord {
   }
 }
 
-export abstract class TransactionRecordPrototype {
+export  class TransactionRecordPrototype {
   props: TransactionRecordPrototypeProps;
   constructor(props: TransactionRecordPrototypeProps) {
     this.props = props;
