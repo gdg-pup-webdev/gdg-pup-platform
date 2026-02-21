@@ -19,3 +19,15 @@ variable "database_type" {
   type        = string
   default     = "FIRESTORE_NATIVE"
 }
+
+variable "database_name" {
+  description = "The Firestore database name. Use (default) for the standard Firestore database."
+  type        = string
+  default     = "(default)"
+}
+
+variable "create_database" {
+  description = "Whether to create the Firestore database. Set false when the database already exists."
+  type        = bool
+  default     = false
+}

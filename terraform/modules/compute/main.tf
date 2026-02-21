@@ -1,24 +1,48 @@
 # =============================================================================
 # Compute Module - Main Configuration
 # =============================================================================
-# Define compute resources (e.g., Cloud Run, GCE instances, GKE clusters).
+# Deploy multiple Cloud Run services from a services map.
 # =============================================================================
 
-resource "google_cloud_run_service" "default" {
-  name     = var.service_name
+resource "google_cloud_run_service" "services" {
+  for_each = var.services
+
+  name     = "${each.key}-${var.environment}"
   location = var.region
   project  = var.project_id
 
   template {
+    metadata {
+      annotations = {
+        "autoscaling.knative.dev/minScale" = tostring(each.value.min_instances)
+        "autoscaling.knative.dev/maxScale" = tostring(each.value.max_instances)
+        "run.googleapis.com/cpu-throttling" = "true"
+      }
+    }
+
     spec {
+      container_concurrency = each.value.container_concurrency
+      timeout_seconds       = each.value.timeout_seconds
+
       containers {
-        image = var.image_url
-        
-        # Optional: Add resource limits or env vars here if needed
+        image = each.value.image_url
+
+        ports {
+          container_port = each.value.container_port
+        }
+
+        dynamic "env" {
+          for_each = each.value.env_vars
+          content {
+            name  = env.key
+            value = env.value
+          }
+        }
+
         resources {
           limits = {
-            cpu    = "1000m"
-            memory = "512Mi"
+            cpu    = each.value.cpu
+            memory = each.value.memory
           }
         }
       }
@@ -31,12 +55,15 @@ resource "google_cloud_run_service" "default" {
   }
 }
 
-# Optional: Make the service public
+# Allow unauthenticated access per service (when enabled)
 resource "google_cloud_run_service_iam_member" "public_access" {
-  count    = var.allow_unauthenticated ? 1 : 0
-  service  = google_cloud_run_service.default.name
-  location = google_cloud_run_service.default.location
-  project  = google_cloud_run_service.default.project
+  for_each = {
+    for k, v in var.services : k => v if v.allow_unauthenticated
+  }
+
+  service  = google_cloud_run_service.services[each.key].name
+  location = google_cloud_run_service.services[each.key].location
+  project  = google_cloud_run_service.services[each.key].project
   role     = "roles/run.invoker"
   member   = "allUsers"
 }

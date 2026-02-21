@@ -1,15 +1,19 @@
 # =============================================================================
 # Compute Module - Outputs
 # =============================================================================
-# Outputs for instance IPs, service URLs, and other compute values.
+# Outputs for service URLs and names.
 # =============================================================================
 
-output "service_url" {
-  description = "The URL of the deployed Cloud Run service."
-  value       = google_cloud_run_service.default.status[0].url
+output "service_urls" {
+  description = "Map of service name to deployed Cloud Run URL."
+  value = {
+    for k, svc in google_cloud_run_service.services : k => svc.status[0].url
+  }
 }
 
-output "service_name" {
-  description = "The name of the deployed Cloud Run service."
-  value       = google_cloud_run_service.default.name
+output "service_names" {
+  description = "Map of service key to deployed Cloud Run service name."
+  value = {
+    for k, svc in google_cloud_run_service.services : k => svc.name
+  }
 }

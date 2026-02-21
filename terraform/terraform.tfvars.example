@@ -11,3 +11,46 @@
 # Optional
 # region      = "asia-southeast1"
 # environment = "dev"
+# firestore_database_name  = "(default)"
+# create_firestore_database = false
+
+# Services — one entry per Cloud Run service
+# services = {
+#   "identity-api" = {
+#     image_url             = "docker.io/gdgpup/gdg-pup-platform-identity-api:dev"
+#     allow_unauthenticated = false
+#     container_port        = 8100
+#     env_vars = {
+#       DEV_MODE            = "true"
+#       SUPABASE_URL        = "REPLACE_ME"
+#       SUPABASE_SECRET_KEY = "REPLACE_ME"
+#     }
+#     min_instances         = 0
+#     max_instances         = 2
+#     container_concurrency = 80
+#     timeout_seconds       = 60
+#   }
+#   "nexus-api" = {
+#     image_url             = "docker.io/gdgpup/gdg-pup-platform-nexus-api:dev"
+#     allow_unauthenticated = false
+#     container_port        = 8000
+#     env_vars = {
+#       DEV_MODE            = "true"
+#       SUPABASE_URL        = "REPLACE_ME"
+#       SUPABASE_SECRET_KEY = "REPLACE_ME"
+#     }
+#     min_instances         = 0
+#     max_instances         = 2
+#     container_concurrency = 80
+#     timeout_seconds       = 60
+#   }
+#   "nexus-web" = {
+#     image_url             = "docker.io/gdgpup/gdg-pup-platform-nexus-web:dev"
+#     allow_unauthenticated = true
+#     container_port        = 3000
+#     min_instances         = 0
+#     max_instances         = 2
+#     container_concurrency = 80
+#     timeout_seconds       = 60
+#   }
+# }
