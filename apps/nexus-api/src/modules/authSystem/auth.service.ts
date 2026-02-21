@@ -49,8 +49,6 @@ export class AuthService {
     display_name?: string,
   ): Promise<any> {
     // 1. Check if email exists in gdg_members table via MemberService
-    console.log("Checking if email exists in gdg_members table via MemberService");
-    console.log(email);
     const member = await memberService.checkMemberByEmail(email);
     if (!member) {
       throw new BadRequestError(
