@@ -10,7 +10,7 @@ import {
 import {
   WalletService,
   walletServiceInstance,
-} from "@/modules/economySystem/wallets/wallet.service.js";
+} from "@/modules/economySystem/archive/wallets/wallet.service.js";
 
 /**
  * Service for managing event business logic.

@@ -18,8 +18,8 @@ vi.mock("@/modules/economySystem/transactions/transaction.service", () => ({
   TransactionService: class {},
 }));
 
-import app from "../../../../app.js";
-import { testListEconomyResources } from "../../__tests__/test-helpers.js";
+import app from "../../../../../app.js";
+import { testListEconomyResources } from "../../../__tests__/test-helpers.js";
 
 describe("TransactionController unit", () => {
   const transaction = {

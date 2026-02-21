@@ -7,7 +7,7 @@ import { models } from "@packages/nexus-api-contracts";
 import {
   WalletService,
   walletServiceInstance,
-} from "@/modules/economySystem/wallets/wallet.service.js";
+} from "@/modules/economySystem/archive/wallets/wallet.service.js";
 
 type rewardInsertDTO = models.rewardSystem.reward.insert;
 type rewardUpdateDTO = models.rewardSystem.reward.update;

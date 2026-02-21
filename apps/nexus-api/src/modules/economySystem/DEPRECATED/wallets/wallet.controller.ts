@@ -1,7 +1,7 @@
 import {
   WalletService,
   walletServiceInstance,
-} from "@/modules/economySystem/wallets/wallet.service";
+} from "@/modules/economySystem/archive/wallets/wallet.service";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";

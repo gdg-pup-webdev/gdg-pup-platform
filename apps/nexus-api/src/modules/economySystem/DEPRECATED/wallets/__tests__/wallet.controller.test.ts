@@ -21,7 +21,7 @@ vi.mock("@/modules/economySystem/transactions/transaction.service", () => ({
   TransactionService: class {},
 }));
 
-import app from "../../../../app.js";
+import app from "../../../../../app.js";
 
 describe("WalletController integration", () => {
   const wallet = {

@@ -70,7 +70,7 @@ import { AchievementService } from "@/modules/userResourceSystem/achievements/ac
 import { ProjectsHttpController } from "../routes/v1/users/projects/project.controller";
 import { ProjectService } from "@/modules/userResourceSystem/projects/project.service";
 import { TransactionsHttpController } from "../routes/v1/users/points/transactions/transaction.controller";
-import { TransactionService } from "@/modules/economySystem/transactions/transaction.service";
+import { TransactionService } from "@/modules/economySystem/archive/transactions/transaction.service";
 
 export const routesLoader = (app: Express) => {
   ///////////////////////////////////////////////

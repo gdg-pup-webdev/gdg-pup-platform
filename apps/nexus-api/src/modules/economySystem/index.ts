@@ -1,9 +1,6 @@
-import { Router } from "express";
-import {
-  TransactionRouter,
-  transactionRouterInstance,
-} from "./transactions/transaction.route";
-import { WalletRouter, walletRouterInstance } from "./wallets/wallet.route";
+import { Router } from "express"; 
+import { TransactionRouter, transactionRouterInstance } from "./DEPRECATED/transactions/transaction.route";
+import { WalletRouter, walletRouterInstance } from "./DEPRECATED/wallets/wallet.route";
 
 export class EconomySystemRouter {
   constructor(
