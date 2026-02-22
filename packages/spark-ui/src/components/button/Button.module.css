@@ -1,0 +1,106 @@
+/**
+ * Button Component Custom Styles
+ * Handles gradient borders with border-radius using pseudo-element technique
+ */
+
+:root {
+  --google-gradient: linear-gradient(90deg, #EA4335 0%, #F9AB00 50%, #97AA2A 75%, #4285F4 100%);
+  --button-shadow-outer: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  --button-shadow-inner: 0px 4px 32px 0px rgba(255, 255, 255, 0.25) inset;
+  --button-shadow-glow: 0px 4px 46.1px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* Base button with gradient border */
+.button-gradient-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.button-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--google-gradient);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Default variant with shadows */
+.button-default {
+  box-shadow: 
+    var(--button-shadow-outer),
+    var(--button-shadow-inner),
+    var(--button-shadow-glow);
+}
+
+.button-default-light {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(65, 65, 65, 0.45) 100%);
+}
+
+.button-default-dark {
+  background: #000000CC;
+}
+
+/* Outline variant with dashed gradient border */
+.button-outline {
+  background: transparent;
+}
+
+.button-outline::before {
+  /* Use SVG for dashed effect */
+  background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%23EA4335;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23F9AB00;stop-opacity:1' /%3E%3Cstop offset='75%25' style='stop-color:%2397AA2A;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%234285F4;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='none' stroke='url(%23grad)' stroke-width='1' stroke-dasharray='4,4' rx='8'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 0;
+  -webkit-mask: none;
+  mask: none;
+}
+
+/* Stroke variant */
+.button-stroke {
+  background: transparent;
+}
+
+/* Link variant with bottom border only */
+.button-link {
+  background: transparent;
+  border-radius: 0 !important;
+}
+
+.button-link::before {
+  inset: auto 0 0 0;
+  height: 1px;
+  border-radius: 0;
+}
+
+/* Icon sizing */
+.button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon-sm {
+  width: 14px;
+  height: 14px;
+}
+
+.button-icon-md {
+  width: 16px;
+  height: 16px;
+}
+
+.button-icon-lg {
+  width: 20px;
+  height: 20px;
+}
