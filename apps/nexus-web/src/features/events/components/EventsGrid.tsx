@@ -57,13 +57,13 @@ function EmptyState() {
         </Stack>
         <Inline gap="sm" justify="center" wrap={true}>
           <Button
-            variant="primary"
+            variant="default"
             onClick={() => window.location.href = "/events"}
           >
             View All Events
           </Button>
           <Button
-            variant="secondary"
+            variant="default"
             onClick={() => window.location.reload()}
           >
             Refresh Page
@@ -96,7 +96,7 @@ function ErrorState({ error, onRetry }: { error: Error; onRetry?: () => void }) 
         </Stack>
         {onRetry && (
           <Button
-            variant="primary"
+            variant="default"
             onClick={onRetry}
           >
             <Inline gap="xs" align="center">

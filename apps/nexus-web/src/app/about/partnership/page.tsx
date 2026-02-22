@@ -149,7 +149,7 @@ export default function PartnershipPage() {
                 />
               </Stack>
 
-              <Button variant="primary" size="lg" className="w-full">
+              <Button variant="default" size="lg" className="w-full">
                 Submit Partnership Inquiry
               </Button>
             </form>

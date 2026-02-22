@@ -65,7 +65,7 @@ export function EventsFilters({
             )}
           </Stack>
           <Button
-            variant="secondary"
+            variant="default"
             size="sm"
             onClick={onReset}
           >
@@ -97,7 +97,7 @@ export function EventsFilters({
               <Button
                 key={cat.value}
                 onClick={() => onFilterChange("category", cat.value)}
-                variant={filters.category === cat.value ? "primary" : "secondary"}
+                variant="default"
                 size="sm"
               >
                 {cat.icon} {cat.label}
@@ -116,7 +116,7 @@ export function EventsFilters({
               <Button
                 key={time.value}
                 onClick={() => onFilterChange("timeFilter", time.value)}
-                variant={filters.timeFilter === time.value ? "primary" : "secondary"}
+                variant="default"
                 size="sm"
                 className="flex-1"
               >

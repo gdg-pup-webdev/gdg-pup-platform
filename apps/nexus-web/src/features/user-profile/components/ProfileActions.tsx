@@ -55,7 +55,7 @@ export function ProfileActions({ userId, isOwnProfile, onShare }: ProfileActions
       {/* Edit Profile button (only for own profile) */}
       {isOwnProfile && (
         <Button
-          variant="primary"
+          variant="default"
           size="md"
           onClick={() => {
             // Navigate to edit profile page (to be implemented)
@@ -71,7 +71,7 @@ export function ProfileActions({ userId, isOwnProfile, onShare }: ProfileActions
 
       {/* Share Profile button */}
       <Button
-        variant="secondary"
+        variant="default"
         size="md"
         onClick={handleShare}
       >
@@ -84,7 +84,7 @@ export function ProfileActions({ userId, isOwnProfile, onShare }: ProfileActions
       {/* Follow/Message button (for other users' profiles) */}
       {!isOwnProfile && (
         <Button
-          variant="primary"
+          variant="default"
           size="md"
           onClick={() => {
             // Implement follow/message functionality

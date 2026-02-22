@@ -93,7 +93,7 @@ export default function CommunityPage() {
                 Ready to start your journey with us? Connect with like-minded
                 peers and grow your skills together.
               </p>
-              <Button className="w-full">Become a Member</Button>
+              <Button variant="default">Become a Member</Button>
             </Card>
           </Grid>
         </section>
@@ -131,7 +131,7 @@ export default function CommunityPage() {
                 our talented community members.
               </p>
               <Link href="/community/member-showcase">
-              <Button>View Member Showcase</Button>
+              <Button variant="default">View Member Showcase</Button>
               </Link>
             </div>
           </Card>

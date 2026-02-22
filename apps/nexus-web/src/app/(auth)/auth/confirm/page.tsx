@@ -138,7 +138,7 @@ function ConfirmPageContent() {
               <Text variant="body" className="text-gray-600">{message}</Text>
               <Button
                 onClick={() => router.push("/")}
-                variant="primary"
+                variant="default"
               >
                 Go to Home
               </Button>

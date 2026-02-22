@@ -89,14 +89,13 @@ export default function EventsGalleryPage() {
               <Inline gap="sm" justify="center" wrap className="flex-col sm:flex-row">
                 <Link href="/events">
                   <Button
-                    variant="primary"
-                    className="bg-blue-600 hover:bg-blue-700"
+                    variant="default"
                   >
                     View Upcoming Events
                   </Button>
                 </Link>
                 <Link href="/community">
-                  <Button variant="secondary">
+                  <Button variant="default">
                     Visit Community Page
                   </Button>
                 </Link>
