@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
+import { TEXT_GRADIENTS } from "./Text.tokens";
 
 /**
  * Text - Typography primitive
@@ -82,6 +83,10 @@ export const textVariants = cva([], {
       none: "",
       "white-blue":
         "bg-linear-to-b from-white from-[27.56%] to-[#4285F4] to-100% bg-clip-text text-transparent",
+      red: "bg-linear-[360deg,#EA4335_0%,#84261E_100%] bg-clip-text text-transparent",
+      green: "bg-linear-[360deg,#5CDB6D_0%,#31753A_100%] bg-clip-text text-transparent",
+      yellow: "bg-linear-[360deg,#FFD427_0%,#997F17_100%] bg-clip-text text-transparent",
+      blue: "bg-linear-[0deg,#57CAFF_0%,#347999_100%] bg-clip-text text-transparent",
     },
   },
   defaultVariants: {
