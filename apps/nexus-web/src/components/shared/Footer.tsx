@@ -18,7 +18,8 @@ export const Footer: React.FC = () => {
       { href: "/community/showcase", label: "Community Showcase" },
       { href: "/community/members", label: "Member Showcase" },
     ],
-    events: [
+    nexus: [
+      { href: "/events", label: "Events" },
       { href: "/leaderboards", label: "Leaderboards" },
       { href: "/products", label: "Products" },
       { href: "#", label: "GetID" },
@@ -122,7 +123,7 @@ export const Footer: React.FC = () => {
 
           {/* About */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="blue">
               About
             </Text>
             <Stack gap="xs">
@@ -142,7 +143,7 @@ export const Footer: React.FC = () => {
 
           {/* Network */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="yellow">
               Network
             </Text>
             <Stack gap="xs">
@@ -160,13 +161,13 @@ export const Footer: React.FC = () => {
             </Stack>
           </Box>
 
-          {/* Events */}
+          {/* Nexus */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
-              Events
+            <Text variant="body" weight="semibold" gradient="green">
+              Nexus
             </Text>
             <Stack gap="xs">
-              {footerSections.events.map((link) => (
+              {footerSections.nexus.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -182,7 +183,7 @@ export const Footer: React.FC = () => {
 
           {/* Address */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="red">
               Address
             </Text>
             <Text variant="body-sm" className="text-gray-300 mb-4">
@@ -205,7 +206,7 @@ export const Footer: React.FC = () => {
 
           {/* Contact */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="red">
               Contact
             </Text>
             <Link
