@@ -273,7 +273,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {!hideAuth && (
                   <Inline gap="md" align="center">
                     <Link href="#">
-                      <Button variant="primary" size="md" className="bg-blue-600 hover:bg-blue-700 transition-colors">
+                      <Button variant="default" size="md">
                         Get ID
                       </Button>
                     </Link>
@@ -399,7 +399,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <Box className="px-4 py-3 mt-2 border-t border-slate-700">
                           <Stack gap="sm">
                             <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
-                              <Button variant="primary" size="md" className="w-full bg-blue-600 hover:bg-blue-700 transition-colors">
+                              <Button variant="default" size="md" >
                                 Get ID
                               </Button>
                             </Link>
