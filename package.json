@@ -6,6 +6,7 @@
     "dev:nexus": "turbo dev --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
     "dev:nexusapi": "turbo dev --filter=nexus-api...",
     "dev:backend": "turbo dev --filter=identity-api... --filter=nexus-api...",
+    "dev:storybook": "turbo dev --filter=storybook...",
     "build": "turbo run build --filter=!storybook",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
     "start": "turbo run start",
