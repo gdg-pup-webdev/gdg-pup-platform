@@ -131,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     height={40}
                     className="w-8 h-8 lg:w-10 lg:h-10"
                   />
-                  <Text variant="heading-4" weight="bold" className="text-white tracking-tight">
+                  <Text variant="heading-6" weight="bold" className="text-white tracking-tight">
                     GDG PUP NEXUS
                   </Text>
                 </Inline>
