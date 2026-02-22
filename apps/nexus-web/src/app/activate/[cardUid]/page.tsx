@@ -21,8 +21,17 @@ export default function ActivateCardPage() {
   // Get the cardUid from the URL parameters
   // For example: /activate/ABC123 -> cardUid will be "ABC123"
   const { cardUid } = useParams();
+  const router = useRouter();
+
+  const {
+    user,
+    token,
+    status: authStatus,
+    loginWithGoogle,
+  } = useAuthContext();
 
   const [isActivating, setIsActivating] = useState(false);
+
 
   const handleActivate = async () => {
     if (!user) return;

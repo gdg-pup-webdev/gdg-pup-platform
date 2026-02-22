@@ -13,8 +13,7 @@
 
 "use client";
 
-import { useParams } from "next/navigation";
-import { CardTapRouter } from "@/features/card-tap";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { configs } from "@/configs/servers.config";
 
@@ -28,6 +27,11 @@ export default function TapRouterPage() {
   // Get the cardUid from the URL parameters
   // For example: /tap/ABC123 -> cardUid will be "ABC123"
   const { cardUid } = useParams();
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [debugData, setDebugData] = useState<any>(null);
 
   useEffect(() => {
     const checkCardStatus = async () => {

@@ -8,18 +8,18 @@
  * Example: /id/user-123
  */
 
-'use client ';
+"use client";
 
-import { useParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { configs } from "@/configs/servers.config";
-
-import { use } from 'react';
-import { ProfileCard } from '@/features/user-profile';
 
 export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
   // Unwrap the params Promise (required in Next.js 15+)
-  const { id } = use(params);
+  const { id } = React.use(params);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [userData, setUserData] = useState<any>(null);
 
   React.useEffect(() => {
     const fetchUserProfile = async () => {
