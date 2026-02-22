@@ -47,7 +47,7 @@ const meta = {
     },
     gradient: {
       control: "select",
-      options: ["none", "white-blue"],
+      options: ["none", "white-blue", "red", "green", "yellow", "blue"],
     },
     truncate: {
       control: "boolean",
@@ -284,22 +284,58 @@ export const GradientHeadings: Story = {
           White to Blue Gradient
         </Text>
         <Text variant="heading-1" gradient="white-blue">
-          H1 White to Blue
+          Gradient Heading
         </Text>
         <Text variant="heading-2" gradient="white-blue">
-          H2 White to Blue
+          White to Blue Gradient
         </Text>
-        <Text variant="heading-3" gradient="white-blue">
-          H3 White to Blue
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Red Gradient
         </Text>
-        <Text variant="heading-4" gradient="white-blue">
-          H4 White to Blue
+        <Text variant="heading-1" gradient="red">
+          Gradient Heading
         </Text>
-        <Text variant="heading-5" gradient="white-blue">
-          H5 White to Blue
+        <Text variant="heading-2" gradient="red">
+          Red Gradient
         </Text>
-        <Text variant="heading-6" gradient="white-blue">
-          H6 White to Blue
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Green Gradient
+        </Text>
+        <Text variant="heading-1" gradient="green">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="green">
+          Green Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Yellow Gradient
+        </Text>
+        <Text variant="heading-1" gradient="yellow">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="yellow">
+          Yellow Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Blue Gradient
+        </Text>
+        <Text variant="heading-1" gradient="blue">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="blue">
+          Blue Gradient
         </Text>
       </Stack>
     </Stack>
