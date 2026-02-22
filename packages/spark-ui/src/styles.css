@@ -177,4 +177,29 @@
     width: 20px;
     height: 20px;
   }
+
+  /* ===== Card Component Styles ===== */
+  :root {
+    --card-radius: 28px;
+    --card-border-width: 1px;
+    --card-padding: 20px;
+    --card-gap: 10px;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border-color: #FFFFFF;
+  }
+
+  .card-base {
+    border-radius: var(--card-radius);
+    border: var(--card-border-width) solid var(--card-border-color);
+    background: var(--card-bg);
+    padding: var(--card-padding);
+    gap: var(--card-gap);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .card-base:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.9);
+  }
 }
