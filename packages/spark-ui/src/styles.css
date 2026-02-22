@@ -7,9 +7,23 @@
   /* CSS Custom Properties for Button */
   :root {
     --google-gradient: linear-gradient(90deg, #EA4335 0%, #F9AB00 50%, #97AA2A 75%, #4285F4 100%);
+    --google-gradient-animated: linear-gradient(90deg, #EA4335 0%, #F9AB00 25%, #97AA2A 50%, #4285F4 75%, #EA4335 100%);
     --button-shadow-outer: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     --button-shadow-inner: 0px 4px 32px 0px rgba(255, 255, 255, 0.25) inset;
     --button-shadow-glow: 0px 4px 46.1px 0px rgba(0, 0, 0, 0.25);
+    --button-shadow-hover-outer: 0px 6px 6px 0px rgba(0, 0, 0, 0.3);
+    --button-shadow-hover-inner: 0px 6px 40px 0px rgba(255, 255, 255, 0.35) inset;
+    --button-shadow-hover-glow: 0px 6px 52px 0px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Shimmer animation keyframes */
+  @keyframes shimmer {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
   }
 
   /* Base button with gradient border */
@@ -25,6 +39,7 @@
     border-radius: inherit;
     padding: 1px;
     background: var(--google-gradient);
+    background-size: 200% 100%;
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -35,6 +50,14 @@
     mask-composite: exclude;
     pointer-events: none;
     z-index: -1;
+    transition: all 0.3s ease;
+  }
+
+  /* Animated gradient border on hover - not disabled */
+  .button-gradient-border:not(:disabled):hover::before {
+    background: var(--google-gradient-animated);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
   }
 
   /* Default variant with shadows */
@@ -43,19 +66,45 @@
       var(--button-shadow-outer),
       var(--button-shadow-inner),
       var(--button-shadow-glow);
+    transition: all 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .button-default:not(:disabled):hover {
+    box-shadow: 
+      var(--button-shadow-hover-outer),
+      var(--button-shadow-hover-inner),
+      var(--button-shadow-hover-glow);
+    transform: translateY(-1px);
+  }
+
+  .button-default:not(:disabled):active {
+    transform: translateY(0px);
   }
 
   .button-default-light {
     background: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(65, 65, 65, 0.45) 100%);
   }
 
+  .button-default-light:not(:disabled):hover {
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(65, 65, 65, 0.55) 100%);
+  }
+
   .button-default-dark {
     background: #000000CC;
+  }
+
+  .button-default-dark:not(:disabled):hover {
+    background: #000000E6;
   }
 
   /* Outline variant with dashed gradient border */
   .button-outline {
     background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  .button-outline:not(:disabled):hover {
+    background: rgba(0, 0, 0, 0.02);
   }
 
   .button-outline::before {
@@ -66,23 +115,45 @@
     padding: 0;
     -webkit-mask: none;
     mask: none;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Override shimmer for outline - use different effect */
+  .button-outline:not(:disabled):hover::before {
+    animation: none;
+    opacity: 0.8;
   }
 
   /* Stroke variant */
   .button-stroke {
     background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  .button-stroke:not(:disabled):hover {
+    background: rgba(0, 0, 0, 0.03);
   }
 
   /* Link variant with bottom border only */
   .button-link {
     background: transparent;
     border-radius: 0 !important;
+    transition: all 0.3s ease;
+  }
+
+  .button-link:not(:disabled):hover {
+    opacity: 0.8;
   }
 
   .button-link::before {
     inset: auto 0 0 0;
     height: 1px;
     border-radius: 0;
+    transition: height 0.3s ease;
+  }
+
+  .button-link:not(:disabled):hover::before {
+    height: 2px;
   }
 
   /* Icon sizing */
