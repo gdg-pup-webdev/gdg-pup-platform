@@ -8,39 +8,25 @@ This directory contains all Terraform configurations for provisioning and managi
 
 ```
 terraform/
-├── terraform.tfvars.example # Example variable values (copy to terraform.tfvars)
-├── environments/          # Per-environment configurations
-│   ├── dev/               # Development environment
-│   │   ├── main.tf        # Core resource definitions (module calls)
-│   │   ├── variables.tf   # Input variable declarations
-│   │   ├── provider.tf    # GCP provider & backend configuration
-│   │   └── outputs.tf     # Output values for this environment
-│   ├── staging/           # Staging environment (same structure as dev)
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   ├── provider.tf
-│   │   └── outputs.tf
-│   └── prod/              # Production environment (same structure as dev)
-│       ├── main.tf
-│       ├── variables.tf
-│       ├── provider.tf
-│       └── outputs.tf
-├── scripts/                # Helper scripts (optional)
-│   ├── create/
-│   └── destroy/
-└── modules/               # Reusable Terraform modules
-  ├── network/           # Networking resources (VPC, subnets, firewall rules)
-  │   ├── main.tf
-  │   ├── variables.tf
-  │   └── outputs.tf
-  ├── compute/           # Compute resources (Cloud Run, GCE, GKE, etc.)
-  │   ├── main.tf
-  │   ├── variables.tf
-  │   └── outputs.tf
-  └── data/              # Data & storage resources (Cloud SQL, GCS, Firestore, etc.)
-    ├── main.tf
-    ├── variables.tf
-    └── outputs.tf
+├── .env                     # Terraform secrets (Cloudflare API token, etc.)
+├── terraform.tfvars.example # Example variable values
+├── terraform.<env>.tfvars   # Per-environment variable values (not committed)
+├── environments/            # Per-environment configurations
+│   ├── dev/                 # Development environment
+│   │   ├── main.tf          # Core resource definitions (module calls)
+│   │   ├── variables.tf     # Input variable declarations
+│   │   ├── provider.tf      # GCP + Cloudflare provider configuration
+│   │   └── outputs.tf       # Output values for this environment
+│   ├── staging/             # Staging environment (same structure)
+│   └── prod/                # Production environment (same structure)
+├── scripts/
+│   ├── create/apply.sh      # Initialize, plan, and apply
+│   └── destroy/destroy.sh   # Destroy resources
+└── modules/                 # Reusable Terraform modules
+    ├── compute/             # Cloud Run services + domain mappings
+    ├── data/                # Firestore / Firebase
+    ├── dns/                 # Cloudflare DNS records (CNAME → ghs.googlehosted.com)
+    └── network/             # VPC, subnets, firewall rules
 ```
 
 ---
@@ -65,9 +51,10 @@ Modules are **reusable building blocks** that define a logical group of resource
 
 | Module      | Responsibility                                                          |
 | ----------- | ----------------------------------------------------------------------- |
+| `compute`   | Cloud Run services, IAM bindings, and **domain mappings**.              |
+| `data`      | Firebase / Firestore database provisioning.                             |
+| `dns`       | Cloudflare CNAME records pointing custom domains to Cloud Run.          |
 | `network`   | VPC, subnets, firewall rules, Cloud NAT, etc.                          |
-| `compute`   | Compute workloads — Cloud Run services, GCE instances, GKE clusters.   |
-| `data`      | Data stores — Cloud SQL, Cloud Storage buckets, Firestore databases.   |
 
 Each module follows the standard three-file convention:
 
@@ -86,43 +73,106 @@ Each module follows the standard three-file convention:
 - [Terraform](https://developer.hashicorp.com/terraform/install) >= 1.0
 - [Google Cloud SDK (`gcloud`)](https://cloud.google.com/sdk/docs/install)
 - Authenticated GCP account with appropriate project permissions
+- Domain verified in [Google Search Console](https://search.google.com/search-console) (for custom domain mappings)
+- Cloudflare API token with `Zone:DNS:Edit` permissions
 
-### Authenticate with GCP
+### 1. Authenticate with GCP
 
 ```bash
 gcloud auth application-default login
 ```
 
-### Create a tfvars file
+### 2. Set up secrets
 
-Copy the example and fill in real values per environment:
-
-```bash
-cp terraform/terraform.tfvars.example terraform/environments/dev/terraform.tfvars
-```
-
-### Initialize & Plan (example: dev)
+Create `terraform/.env` with your Cloudflare API token (auto-loaded by scripts):
 
 ```bash
-cd terraform/environments/dev
-
-# Initialize Terraform (downloads providers, sets up backend)
-terraform init
-
-# Preview what will be created
-terraform plan -var-file="terraform.tfvars"
-
-# Apply changes
-terraform apply -var-file="terraform.tfvars"
+TF_VAR_cloudflare_api_token=your-cloudflare-api-token
 ```
 
-Replace `dev` with `staging` or `prod` and use the corresponding `terraform.tfvars` file for other environments.
+> This file is in `.gitignore` and will never be committed.
 
-### Destroy Resources
+### 3. Apply infrastructure
+
+Use the helper scripts from the **project root**:
 
 ```bash
-terraform destroy -var-file="terraform.tfvars"
+# Apply a single environment
+./terraform/scripts/create/apply.sh dev
+./terraform/scripts/create/apply.sh staging
+./terraform/scripts/create/apply.sh prod
+
+# Apply all environments
+./terraform/scripts/create/apply.sh all
+
+# With flags
+./terraform/scripts/create/apply.sh dev --auto-approve --skip-plan
 ```
+
+### 4. Destroy resources
+
+```bash
+./terraform/scripts/destroy/destroy.sh dev
+```
+
+---
+
+## Custom Domains
+
+Each Cloud Run service is mapped to a custom subdomain on `gdgpup.org` using **Cloud Run domain mapping** + **Cloudflare DNS**.
+
+### Domain Mapping
+
+| Service | Dev | Staging | Prod |
+|---|---|---|---|
+| nexus-web | `dev.gdgpup.org` | `staging.gdgpup.org` | `gdgpup.org` |
+| nexus-api | `api.dev.gdgpup.org` | `api.staging.gdgpup.org` | `api.gdgpup.org` |
+| identity-api | `identity.dev.gdgpup.org` | `identity.staging.gdgpup.org` | `identity.gdgpup.org` |
+
+### How It Works
+
+1. **`dns` module** creates Cloudflare CNAME records pointing each subdomain to `ghs.googlehosted.com`
+2. **`compute` module** creates `google_cloud_run_domain_mapping` resources that link each domain to its Cloud Run service
+3. **Google automatically provisions SSL certificates** (takes ~10-15 minutes after first apply)
+
+### Configuration
+
+Domains are configured in each environment's `terraform.<env>.tfvars`:
+
+```hcl
+# Cloudflare DNS records
+domain_mappings = {
+  "nexus-web"    = { subdomain = "dev" }
+  "nexus-api"    = { subdomain = "api.dev" }
+  "identity-api" = { subdomain = "identity.dev" }
+}
+
+# Cloud Run domain mapping (inside each service block)
+services = {
+  "nexus-web" = {
+    custom_domain = "dev.gdgpup.org"
+    # ... other config
+  }
+}
+```
+
+### Check SSL Status
+
+```bash
+make domain-status              # dev (default)
+make domain-status ENV=staging
+make domain-status ENV=prod
+```
+
+All conditions should show `True` when SSL is ready.
+
+### First-Time Setup
+
+Before domain mappings will work, you must **verify domain ownership**:
+
+1. Go to [Google Search Console](https://search.google.com/search-console) → Add `gdgpup.org`
+2. Add the TXT verification record in Cloudflare
+3. Run `gcloud domains verify gdgpup.org` to associate with your GCP project
 
 ---
 
@@ -130,10 +180,9 @@ terraform destroy -var-file="terraform.tfvars"
 
 1. **Never apply directly to prod** without a reviewed plan. Always run `terraform plan` first and have it reviewed.
 2. **Do not hardcode values** in `main.tf` — use variables and `terraform.tfvars` files.
-3. **Keep modules generic.** Modules should not reference a specific environment. Environment-specific values are passed in as variables.
-4. **State isolation.** Each environment has its own Terraform state (configured in `provider.tf`). Never share state between environments.
-5. **Sensitive values.** Do not commit secrets or service account keys. Use GCP Secret Manager or environment variables.
-6. **`terraform.tfvars`.** This file contains environment-specific values. Add it to `.gitignore` if it contains sensitive data.
+3. **Keep modules generic.** Modules should not reference a specific environment.
+4. **State isolation.** Each environment has its own Terraform state. Never share state between environments.
+5. **Sensitive values.** Store secrets in `terraform/.env` (auto-loaded by scripts), never in tfvars.
 
 ---
 
@@ -159,5 +208,11 @@ module "iam" {
 
 1. Copy an existing environment directory (e.g., `cp -r environments/dev environments/preview`).
 2. Update `provider.tf` with the correct backend bucket and project.
-3. Create or update `terraform.tfvars` with environment-specific values.
+3. Create `terraform.<env>.tfvars` with environment-specific values.
 4. Run `terraform init` and `terraform plan`.
+
+---
+
+## Additional Learning Resources
+
+Check out the [official Terraform documentation](https://developer.hashicorp.com/terraform) and Google Skills Boost's [Terraform course](https://www.skills.google/paths/11/course_templates/636).

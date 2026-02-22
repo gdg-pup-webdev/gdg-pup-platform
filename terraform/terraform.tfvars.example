@@ -1,8 +1,11 @@
 # =============================================================================
 # Terraform Variables Example
 # =============================================================================
-# Copy this file to terraform.tfvars and fill in real values.
+# Copy this file to terraform.<env>.tfvars and fill in real values.
 # NOTE: Do not commit terraform.tfvars if it contains sensitive data.
+#
+# Cloudflare API token is passed via env var (not in tfvars):
+#   export TF_VAR_cloudflare_api_token="your-cloudflare-api-token"
 # =============================================================================
 
 # Required
@@ -11,3 +14,64 @@
 # Optional
 # region      = "asia-southeast1"
 # environment = "dev"
+# firestore_database_name  = "(default)"
+# create_firestore_database = false
+
+# --- Cloudflare DNS ---
+# cloudflare_zone_id = "your-cloudflare-zone-id"
+#
+# domain_mappings = {
+#   "nexus-web"    = { subdomain = "dev" }
+#   "nexus-api"    = { subdomain = "api.dev" }
+#   "identity-api" = { subdomain = "identity.dev" }
+# }
+
+# --- Cloud Run Services ---
+# services = {
+#   "identity-api" = {
+#     image_url             = "docker.io/gdgpup/gdg-pup-platform-identity-api:dev"
+#     allow_unauthenticated = false
+#     container_port        = 8100
+#     custom_domain         = "identity.dev.gdgpup.org"
+#     env_vars = {
+#       DEV_MODE            = "true"
+#       CLIENT_URL          = "https://dev.gdgpup.org"
+#       SUPABASE_URL        = "REPLACE_ME"
+#       SUPABASE_SECRET_KEY = "REPLACE_ME"
+#     }
+#     min_instances         = 0
+#     max_instances         = 2
+#     container_concurrency = 80
+#     timeout_seconds       = 60
+#   }
+#   "nexus-api" = {
+#     image_url             = "docker.io/gdgpup/gdg-pup-platform-nexus-api:dev"
+#     allow_unauthenticated = false
+#     container_port        = 8000
+#     custom_domain         = "api.dev.gdgpup.org"
+#     env_vars = {
+#       DEV_MODE            = "true"
+#       CLIENT_URL          = "https://dev.gdgpup.org"
+#       SUPABASE_URL        = "REPLACE_ME"
+#       SUPABASE_SECRET_KEY = "REPLACE_ME"
+#     }
+#     min_instances         = 0
+#     max_instances         = 2
+#     container_concurrency = 80
+#     timeout_seconds       = 60
+#   }
+#   "nexus-web" = {
+#     image_url             = "docker.io/gdgpup/gdg-pup-platform-nexus-web:dev"
+#     allow_unauthenticated = true
+#     container_port        = 3000
+#     custom_domain         = "dev.gdgpup.org"
+#     env_vars = {
+#       NEXT_PUBLIC_NEXUS_API_URL    = "https://api.dev.gdgpup.org"
+#       NEXT_PUBLIC_IDENTITY_API_URL = "https://identity.dev.gdgpup.org"
+#     }
+#     min_instances         = 0
+#     max_instances         = 2
+#     container_concurrency = 80
+#     timeout_seconds       = 60
+#   }
+# }
