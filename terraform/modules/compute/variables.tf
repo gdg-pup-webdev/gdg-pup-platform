@@ -32,5 +32,6 @@ variable "services" {
     max_instances         = optional(number, 2)
     container_concurrency = optional(number, 80)
     timeout_seconds       = optional(number, 60)
+    custom_domain         = optional(string)
   }))
 }

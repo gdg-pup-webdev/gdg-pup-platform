@@ -67,3 +67,24 @@ resource "google_cloud_run_service_iam_member" "public_access" {
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
+
+# Map custom domains to Cloud Run services
+resource "google_cloud_run_domain_mapping" "mappings" {
+  for_each = {
+    for k, v in var.services : k => v if v.custom_domain != null
+  }
+
+  name     = each.value.custom_domain
+  location = var.region
+  project  = var.project_id
+
+  metadata {
+    namespace = var.project_id
+  }
+
+  spec {
+    route_name = google_cloud_run_service.services[each.key].name
+  }
+
+  depends_on = [google_cloud_run_service.services]
+}

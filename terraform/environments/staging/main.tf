@@ -29,3 +29,12 @@ module "data" {
   create_database = var.create_firestore_database
 }
 
+# -----------------------------------------------------------------------------
+# DNS Module (Cloudflare DNS records for custom domains)
+# -----------------------------------------------------------------------------
+module "dns" {
+  source = "../../modules/dns"
+
+  cloudflare_zone_id = var.cloudflare_zone_id
+  domain_mappings    = var.domain_mappings
+}

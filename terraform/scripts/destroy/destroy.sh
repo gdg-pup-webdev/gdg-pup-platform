@@ -91,6 +91,14 @@ destroy_env() {
   echo "Var file: ${var_file}"
   echo "============================================================"
 
+  # Auto-load Terraform secrets (e.g. TF_VAR_cloudflare_api_token)
+  local env_file="${TERRAFORM_DIR}/.env"
+  if [[ -f "${env_file}" ]]; then
+    set -a
+    source "${env_file}"
+    set +a
+  fi
+
   terraform -chdir="${env_dir}" init
 
   if [[ "${SKIP_PLAN}" != true ]]; then

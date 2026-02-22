@@ -46,5 +46,27 @@ variable "services" {
     max_instances         = optional(number, 4)
     container_concurrency = optional(number, 80)
     timeout_seconds       = optional(number, 60)
+    custom_domain         = optional(string)
   }))
+}
+
+# --- Cloudflare DNS ---
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token with Zone:DNS:Edit permissions."
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_zone_id" {
+  description = "Cloudflare Zone ID for the domain (gdgpup.org)."
+  type        = string
+}
+
+variable "domain_mappings" {
+  description = "Map of service key to subdomain for Cloudflare DNS records."
+  type = map(object({
+    subdomain = string
+  }))
+  default = {}
 }

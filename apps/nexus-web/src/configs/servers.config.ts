@@ -17,7 +17,7 @@ const getSafeUrl = (envUrl: string | undefined, fallback: string) => {
     const inferredNexus = inferCloudRunUrl("nexus-api");
     const inferredIdentity = inferCloudRunUrl("identity-api");
 
-    if (window.location.host.includes(".run.app") && normalizedEnv.includes("localhost")) {
+    if (window.location.host.includes(".run.app") && (!normalizedEnv || normalizedEnv.includes("localhost"))) {
       if (fallback.includes("8000") && inferredNexus) return inferredNexus;
       if (fallback.includes("8100") && inferredIdentity) return inferredIdentity;
     }

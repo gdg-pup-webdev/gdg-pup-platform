@@ -91,6 +91,18 @@ apply_env() {
   echo "Var file: ${var_file}"
   echo "============================================================"
 
+  # Auto-load Terraform secrets (e.g. TF_VAR_cloudflare_api_token)
+  local env_file="${TERRAFORM_DIR}/.env"
+  if [[ -f "${env_file}" ]]; then
+    set -a
+    source "${env_file}"
+    set +a
+  else
+    echo "WARNING: ${env_file} not found."
+    echo "         Create it with: TF_VAR_cloudflare_api_token=<your-token>"
+    echo ""
+  fi
+
   terraform -chdir="${env_dir}" init
 
   if [[ "${SKIP_PLAN}" != true ]]; then
