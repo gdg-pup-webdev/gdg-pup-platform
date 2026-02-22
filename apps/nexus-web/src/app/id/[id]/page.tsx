@@ -199,5 +199,3 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
     </div>
   );
 };
-
-export default PortfolioPage;
