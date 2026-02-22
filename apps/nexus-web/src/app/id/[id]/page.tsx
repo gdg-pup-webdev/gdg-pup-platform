@@ -8,6 +8,8 @@
  * Example: /id/user-123
  */
 
+'use client ';
+
 import { useParams } from "next/navigation";
 import React from "react";
 import { configs } from "@/configs/servers.config";
