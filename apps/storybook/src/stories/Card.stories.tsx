@@ -106,8 +106,8 @@ export const WithFooter: Story = {
         </div>
       </CardContent>
       <CardFooter className="gap-2">
-        <Button variant="primary">Register</Button>
-        <Button variant="ghost">Learn More</Button>
+        <Button variant="default">Register</Button>
+        <Button variant="outline">Learn More</Button>
       </CardFooter>
     </Card>
   ),
@@ -147,7 +147,7 @@ export const UserProfile: Story = {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="primary" className="w-full">
+        <Button variant="default" className="w-full">
           View Profile
         </Button>
       </CardFooter>
@@ -183,10 +183,10 @@ export const EventCard: Story = {
         </div>
       </CardContent>
       <CardFooter className="flex gap-2">
-        <Button variant="primary" className="flex-1">
+        <Button variant="default" className="flex-1">
           Register
         </Button>
-        <Button variant="ghost">Share</Button>
+        <Button variant="stroke">Share</Button>
       </CardFooter>
     </Card>
   ),
