@@ -114,7 +114,7 @@ export const Footer: React.FC = () => {
                 height={40}
                 className="w-10 h-10 group-hover:scale-110 transition-transform duration-300"
               />
-              <Text variant="heading-4" weight="bold" className="text-white">
+              <Text variant="heading-6" weight="bold" className="text-white">
                 GDG PUP NEXUS
               </Text>
             </Link>
