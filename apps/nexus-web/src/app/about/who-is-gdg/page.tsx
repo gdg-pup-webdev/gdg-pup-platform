@@ -1,6 +1,14 @@
 "use client";
 
-import { Box, Stack, Grid, Container, Text, Button } from "@packages/spark-ui";
+import {
+  Box,
+  Stack,
+  Grid,
+  Container,
+  Text,
+  Button,
+  Card,
+} from "@packages/spark-ui";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
@@ -117,18 +125,20 @@ export default function WhoIsGDGPage() {
                 Who is GDG PUP?
               </Text>
 
-              <Box className="max-w-4xl">
-                <Text
-                  variant="body"
-                  align="center"
-                  className="text-blue-400 text-lg md:text-xl"
-                >
-                  Google Developer Groups on Campus are community groups for
-                  college and university students interested in Google developer
-                  technologies. Students from all undergraduate or graduate
-                  programs with an interest in growing as a developer are
-                  welcome.
-                </Text>
+              <Box>
+                <Card>
+                  <Text
+                    variant="body"
+                    align="center"
+                    className="text-white text-lg md:text-xl"
+                  >
+                    <span className="text-blue-600 font-semibold">Google Developer Groups on Campus Polytechnic University of
+                    the Philippines (GDG PUP)</span> is a student-driven organization
+                    supported by <span className="text-green-600 font-semibold">Google Developers</span>. We exist to create a
+                    collaborative space where students can learn, build, and
+                    grow through technology.
+                  </Text>
+                </Card>
               </Box>
             </Stack>
           </FadeInSection>
@@ -202,15 +212,17 @@ export default function WhoIsGDGPage() {
                   Mission
                 </Text>
 
-                <Text
-                  variant="body"
-                  className="text-gray-300 text-base md:text-lg leading-relaxed"
-                >
-                  To build an inclusive and supportive student community that
-                  empowers learners to transform technical knowledge into
-                  real-world impact through collaboration, innovation, and
-                  continuous learning.
-                </Text>
+                <Card>
+                  <Text
+                    variant="body"
+                    className="text-gray-300 text-base md:text-lg leading-relaxed"
+                  >
+                    To build an inclusive and supportive student community that
+                    empowers learners to transform technical knowledge into
+                    real-world impact through collaboration, innovation, and
+                    continuous learning.
+                  </Text>
+                </Card>
               </Stack>
             </Grid>
           </FadeInSection>
@@ -224,15 +236,17 @@ export default function WhoIsGDGPage() {
                   Our Values
                 </Text>
 
-                <Text
-                  variant="body"
-                  className="text-gray-300 text-base md:text-lg leading-relaxed"
-                >
-                  To build an inclusive and supportive student community that
-                  empowers learners to transform technical knowledge into
-                  real-world impact through collaboration, innovation, and
-                  continuous learning.
-                </Text>
+                <Card>
+                  <Text
+                    variant="body"
+                    className="text-gray-300 text-base md:text-lg leading-relaxed"
+                  >
+                    To build an inclusive and supportive student community that
+                    empowers learners to transform technical knowledge into
+                    real-world impact through collaboration, innovation, and
+                    continuous learning.
+                  </Text>
+                </Card>
               </Stack>
 
               {/* Right: Image/Illustration */}
