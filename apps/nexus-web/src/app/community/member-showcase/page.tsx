@@ -130,7 +130,7 @@ export default function MemberShowcasePage() {
               Stay active in the community, contribute to projects, and share
               your knowledge. Your achievements could be highlighted next!
             </p>
-              <Button variant="secondary">Get Started Today</Button>
+              <Button variant="default">Get Started Today</Button>
           </div>
         </Card>
         </Stack>

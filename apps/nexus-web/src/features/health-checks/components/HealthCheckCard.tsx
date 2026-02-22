@@ -55,7 +55,7 @@ export function HealthCheckCard({
 
         {/* Check button */}
         <Button
-          variant="primary"
+          variant="default"
           size="md"
           onClick={onCheck}
           disabled={isLoading}

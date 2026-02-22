@@ -1,4 +1,5 @@
 @import "../../../../configs/tailwind-config/shared-styles.css";
+@import "../../../../packages/spark-ui/src/styles.css";
 @source "../../../../packages/spark-ui/src";
 
 :root {

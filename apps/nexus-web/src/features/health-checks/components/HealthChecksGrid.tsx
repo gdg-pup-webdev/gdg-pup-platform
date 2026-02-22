@@ -47,7 +47,7 @@ export function HealthChecksGrid() {
         {/* Optional: Add a "Check All" button */}
         <Stack align="center">
           <Button
-            variant="ghost"
+            variant="default"
             size="sm"
             onClick={() => {
               nexusHealth.refetch();

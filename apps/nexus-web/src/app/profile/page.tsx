@@ -40,7 +40,7 @@ export default function ProfilePage() {
                 Please sign in with your Google account to view and manage your
                 profile.
               </p>
-              <Button onClick={loginWithGoogle} size="lg">
+              <Button variant="default" onClick={loginWithGoogle} size="lg">
                 Sign In with Google
               </Button>
             </div>

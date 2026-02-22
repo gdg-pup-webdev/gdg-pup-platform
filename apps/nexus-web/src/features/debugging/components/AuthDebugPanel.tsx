@@ -112,7 +112,7 @@ export function AuthDebugPanel() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Button
               onClick={loginWithGoogle}
-              variant="primary"
+              variant="default"
             >
               <Inline gap="xs" align="center">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -139,14 +139,14 @@ export function AuthDebugPanel() {
 
           <Button
             onClick={logout}
-            variant="destructive"
+            variant="default"
           >
             Logout
           </Button>
 
           <Button
             onClick={handleCopyToken}
-            variant="secondary"
+            variant="default"
             disabled={!authState.token}
           >
             Copy Backend Token
@@ -154,7 +154,7 @@ export function AuthDebugPanel() {
 
           <Button
             onClick={handleCopyGoogleAccessToken}
-            variant="secondary"
+            variant="default"
             disabled={!authState.googleAccessToken}
           >
             Copy Google Token

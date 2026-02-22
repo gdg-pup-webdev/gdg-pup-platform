@@ -77,7 +77,7 @@ export default function MeetTheTeamPage() {
             We're always looking for passionate students to join our team and
             help build an even stronger community.
           </p>
-          <Button variant="primary">
+          <Button variant="default">
             Get Involved
           </Button>
         </Card>

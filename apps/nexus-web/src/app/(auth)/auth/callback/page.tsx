@@ -266,6 +266,7 @@ function AuthCallbackContent() {
           </div>
 
           <Button
+            variant="default"
             onClick={() => router.push("/")}
             className="w-full"
           >
