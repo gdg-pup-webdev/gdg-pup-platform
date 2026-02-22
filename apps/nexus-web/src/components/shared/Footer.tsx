@@ -221,7 +221,7 @@ export const Footer: React.FC = () => {
         </Box>
 
         {/* White divider line */}
-        <Box className="border-t border-white/20 mb-8"> </Box>
+        <div className="border-t border-white mb-8"> </div>
 
         {/* Bottom Section: Copyright & Social */}
         <Inline
