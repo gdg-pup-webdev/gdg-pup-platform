@@ -1,20 +1,12 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from "@packages/spark-ui";
+import { Card, Grid, Stack } from "@packages/spark-ui";
 
 export default function WhoIsGDGPage() {
   //   Dummy data pa lang
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="What is GDG?"
-          description="Understanding the Google Developer Group program and community"
-        />
-
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Card className="mb-8">
+    <Stack gap="xl">
+        <Card>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Google Developer Groups
           </h2>
@@ -31,7 +23,7 @@ export default function WhoIsGDGPage() {
           </p>
         </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <Grid gap="lg" className="md:grid-cols-2">
           <Card>
             <h3 className="text-xl font-semibold text-blue-600 mb-3">Learn</h3>
             <p className="text-gray-700">
@@ -65,7 +57,7 @@ export default function WhoIsGDGPage() {
               problems and local community needs.
             </p>
           </Card>
-        </div>
+        </Grid>
 
         <Card>
           <h3 className="text-xl font-semibold text-gray-900 mb-4">
@@ -96,8 +88,6 @@ export default function WhoIsGDGPage() {
             </li>
           </ul>
         </Card>
-        </div>
-      </div>
-    </PageLayout>
+    </Stack>
   );
 }

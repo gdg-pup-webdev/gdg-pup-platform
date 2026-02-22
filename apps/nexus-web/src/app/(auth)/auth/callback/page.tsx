@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setCookie } from "cookies-next";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text, Button, Container } from '@packages/spark-ui';
 
 import { useAuthContext } from "@/providers/AuthProvider";
 
@@ -217,8 +217,8 @@ function AuthCallbackContent() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <Stack gap="md" className="max-w-2xl w-full">
+      <Stack justify="center" align="center" className="min-h-screen px-4">
+        <Container maxWidth="2xl" padding="none">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
             <Stack gap="md">
               <Text variant="heading-2" className="text-red-600">
@@ -265,14 +265,14 @@ function AuthCallbackContent() {
             </Stack>
           </div>
 
-          <button
+          <Button
             onClick={() => router.push("/")}
-            className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="w-full"
           >
             Return Home
-          </button>
-        </Stack>
-      </div>
+          </Button>
+        </Container>
+      </Stack>
     );
   }
 

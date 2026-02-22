@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Badge } from "@packages/spark-ui";
+import { Card, Badge, Container, Grid, Stack } from "@packages/spark-ui";
 
 export default function ProductsPage() {
   //   Dummy data pa lang
@@ -106,16 +105,11 @@ export default function ProductsPage() {
   };
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="Our Products"
-          description="Tools and platforms we've built to empower our community"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-white">
+      <Container className="py-12">
+        <Stack gap="2xl">
           {/* Introduction */}
-          <section className="mb-16 text-center">
+          <section className="text-center">
             <p className="text-lg text-gray-700 max-w-3xl mx-auto">
               Our community doesn't just learn about technology—we build it.
               Here are some of the products and services we've developed to
@@ -124,8 +118,8 @@ export default function ProductsPage() {
           </section>
 
           {/* Products Grid */}
-          <section className="mb-16">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <section>
+            <Grid gap="xl" className="md:grid-cols-2 lg:grid-cols-3">
               {products.map((product, idx) => (
                 <Card
                   key={idx}
@@ -167,15 +161,15 @@ export default function ProductsPage() {
                   </div>
                 </Card>
               ))}
-            </div>
+            </Grid>
           </section>
 
           {/* Product Categories */}
-          <section className="mb-16">
+          <section>
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
               Product Categories
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <Grid gap="lg" className="grid-cols-2 md:grid-cols-4">
               <Card className="text-center">
                 <div className="text-4xl mb-3">🛠️</div>
                 <h4 className="font-semibold text-gray-900">Utilities</h4>
@@ -199,10 +193,10 @@ export default function ProductsPage() {
                 <h4 className="font-semibold text-gray-900">Professional</h4>
                 <p className="text-sm text-gray-700 mt-2">Career tools</p>
               </Card>
-            </div>
+            </Grid>
           </section>
-        </div>
-      </div>
-    </PageLayout>
+        </Stack>
+      </Container>
+    </div>
   );
 }

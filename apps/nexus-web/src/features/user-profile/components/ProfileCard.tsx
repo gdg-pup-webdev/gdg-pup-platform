@@ -81,7 +81,7 @@ export function ProfileCard({
 
       {/* Main content */}
       <div className="relative z-10">
-        <Container maxWidth="lg" className="py-12">
+        <Container className="py-12">
           {/* Profile card with glass morphism effect */}
           <Card>
             <Stack gap="xl" className="p-8 md:p-12">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text, Button, Container } from '@packages/spark-ui';
 
 const NEXUS_API_URL =
   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
@@ -105,8 +105,9 @@ function ConfirmPageContent() {
   }, [searchParams, router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 to-blue-50">
-      <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full">
+    <Stack justify="center" align="center" className="min-h-screen bg-linear-to-br from-purple-50 to-blue-50 px-4">
+      <Container maxWidth="sm" padding="none">
+        <div className="bg-white p-8 rounded-2xl shadow-xl">
         <Stack gap="md" className="text-center">
           {status === "loading" && (
             <>
@@ -135,17 +136,18 @@ function ConfirmPageContent() {
                 Verification Failed
               </Text>
               <Text variant="body" className="text-gray-600">{message}</Text>
-              <button
+              <Button
                 onClick={() => router.push("/")}
-                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+                variant="primary"
               >
                 Go to Home
-              </button>
+              </Button>
             </>
           )}
         </Stack>
-      </div>
-    </div>
+        </div>
+      </Container>
+    </Stack>
   );
 }
 
@@ -153,14 +155,16 @@ export default function ConfirmPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-50 to-blue-50">
-          <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center">
+        <Stack justify="center" align="center" className="min-h-screen bg-linear-to-br from-purple-50 to-blue-50 px-4">
+          <Container maxWidth="sm" padding="none">
+            <div className="bg-white p-8 rounded-2xl shadow-xl text-center">
             <Stack gap="md">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
               <Text variant="body" className="text-gray-600">Loading verification...</Text>
             </Stack>
-          </div>
-        </div>
+            </div>
+          </Container>
+        </Stack>
       }
     >
       <ConfirmPageContent />

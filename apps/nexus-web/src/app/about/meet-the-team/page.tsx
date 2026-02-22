@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Avatar } from "@packages/spark-ui";
+import { Card, Avatar, Stack, Grid, Button } from "@packages/spark-ui";
 
 export default function MeetTheTeamPage() {
   //   Dummy data pa lang
@@ -31,15 +30,8 @@ export default function MeetTheTeamPage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="Meet the Team"
-          description="The passionate individuals driving our community forward"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
+    <Stack gap="2xl">
+        <div className="text-center">
           <p className="text-lg text-gray-700 max-w-3xl mx-auto">
             Our team is composed of dedicated students who volunteer their time
             and energy to make GDG PUP a welcoming and enriching community for
@@ -47,13 +39,13 @@ export default function MeetTheTeamPage() {
           </p>
         </div>
 
-        <div className="space-y-12">
+        <Stack gap="2xl">
           {teams.map((team, idx) => (
-            <section key={idx}>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            <Stack key={idx} gap="lg">
+              <h2 className="text-3xl font-bold text-gray-900">
                 {team.category}
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Grid gap="lg" className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {team.members.map((member, memberIdx) => (
                   <Card key={memberIdx} className="text-center">
                     <div className="flex flex-col items-center">
@@ -72,12 +64,12 @@ export default function MeetTheTeamPage() {
                     </div>
                   </Card>
                 ))}
-              </div>
-            </section>
+              </Grid>
+            </Stack>
           ))}
-        </div>
+        </Stack>
 
-        <Card className="mt-12 bg-blue-50 text-center">
+        <Card className="bg-blue-50 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
             Join Our Team
           </h3>
@@ -85,12 +77,10 @@ export default function MeetTheTeamPage() {
             We're always looking for passionate students to join our team and
             help build an even stronger community.
           </p>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <Button variant="primary">
             Get Involved
-          </button>
+          </Button>
         </Card>
-        </div>
-      </div>
-    </PageLayout>
+    </Stack>
   );
 }

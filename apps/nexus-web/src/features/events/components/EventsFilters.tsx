@@ -50,7 +50,7 @@ export function EventsFilters({
   ];
 
   return (
-    <Card>
+    <Card className="p-8">
       <Stack gap="lg">
         {/* Header */}
         <Inline align="center" justify="between">

@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Avatar, Badge } from "@packages/spark-ui";
+import { Card, Avatar, Badge, Container, Grid, Stack } from "@packages/spark-ui";
 
 export default function LeaderboardsPage() {
   //   Dummy data pa lang
@@ -102,17 +101,12 @@ export default function LeaderboardsPage() {
   };
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="Leaderboards"
-          description="Community rankings based on participation, contributions, and achievements"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-white">
+      <Container className="py-12">
+        <Stack gap="2xl">
           {/* Stats Overview */}
-          <section className="mb-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <section>
+            <Grid gap="lg" className="md:grid-cols-3">
               <Card className="text-center bg-yellow-50 border-2 border-yellow-200">
                 <div className="text-4xl mb-2">🏆</div>
                 <div className="text-3xl font-bold text-yellow-800 mb-1">
@@ -136,16 +130,16 @@ export default function LeaderboardsPage() {
                 </div>
                 <div className="text-sm text-purple-700">Highest Score</div>
               </Card>
-            </div>
+            </Grid>
           </section>
 
           {/* How Points Work */}
-          <section className="mb-12">
+          <section>
             <Card className="bg-blue-50 border-2 border-blue-200">
               <h3 className="text-xl font-semibold text-blue-900 mb-4">
                 How Points Work
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <Grid gap="md" className="md:grid-cols-3 text-sm">
                 <div>
                   <span className="font-semibold text-blue-700">
                     Event Attendance:
@@ -166,7 +160,7 @@ export default function LeaderboardsPage() {
                     25 points per contribution
                   </span>
                 </div>
-              </div>
+              </Grid>
             </Card>
           </section>
 
@@ -175,8 +169,7 @@ export default function LeaderboardsPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-8">
               Top 10 Members
             </h2>
-
-            <div className="space-y-4">
+            <Stack gap="md">
               {leaderboardData.map((member) => (
                 <Card
                   key={member.rank}
@@ -265,10 +258,10 @@ export default function LeaderboardsPage() {
                   </div>
                 </Card>
               ))}
-            </div>
+            </Stack>
           </section>
-        </div>
-      </div>
-    </PageLayout>
+        </Stack>
+      </Container>
+    </div>
   );
 }

@@ -1,3 +1,8 @@
+/**
+ * @deprecated Do not use. The root app/layout.tsx already wraps all pages with Navbar and Footer.
+ * Wrapping pages in this component causes Footer to render twice.
+ * Scheduled for removal.
+ */
 import React from "react";
 import { Footer } from "./Footer";
 

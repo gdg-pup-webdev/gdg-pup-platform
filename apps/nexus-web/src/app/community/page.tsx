@@ -1,7 +1,6 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Badge } from "@packages/spark-ui";
+import { Card, Badge, Container, Grid, Inline, Stack, Button } from "@packages/spark-ui";
 import Link from "next/link";
 
 export default function CommunityPage() {
@@ -41,17 +40,12 @@ export default function CommunityPage() {
   ];
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <PageHeader
-          title="Our Community"
-          description="A vibrant ecosystem of learners, builders, and innovators"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-white">
+      <Container className="py-12">
+        <Stack gap="2xl">
         {/* Community Stats */}
-        <section className="mb-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <section>
+          <Grid gap="lg" className="grid-cols-2 md:grid-cols-4">
             {stats.map((stat, idx) => (
               <Card
                 key={idx}
@@ -64,12 +58,12 @@ export default function CommunityPage() {
                 <div className="text-sm text-gray-700">{stat.label}</div>
               </Card>
             ))}
-          </div>
+          </Grid>
         </section>
 
         {/* About Community */}
-        <section className="mb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <section>
+          <Grid gap="xl" align="center" className="md:grid-cols-2">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">
                 What Makes Us Special
@@ -84,12 +78,12 @@ export default function CommunityPage() {
                 or an experienced developer looking to share knowledge, there's
                 a place for you here.
               </p>
-              <div className="flex gap-3 flex-wrap">
+              <Inline gap="sm" wrap>
                 <Badge variant="default">Inclusive</Badge>
                 <Badge variant="success">Collaborative</Badge>
                 <Badge variant="warning">Innovative</Badge>
                 <Badge variant="default">Student-Led</Badge>
-              </div>
+              </Inline>
             </div>
             <Card className="bg-blue-50 border-2 border-blue-200">
               <h3 className="text-xl font-semibold text-blue-900 mb-4">
@@ -99,19 +93,17 @@ export default function CommunityPage() {
                 Ready to start your journey with us? Connect with like-minded
                 peers and grow your skills together.
               </p>
-              <button className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                Become a Member
-              </button>
+              <Button className="w-full">Become a Member</Button>
             </Card>
-          </div>
+          </Grid>
         </section>
 
         {/* Activities */}
-        <section className="mb-16">
+        <section>
           <h2 className="text-3xl font-bold text-gray-900 mb-8">
             Community Activities
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Grid gap="lg" className="md:grid-cols-2">
             {activities.map((activity, idx) => (
               <Card key={idx} className="hover:shadow-lg transition-shadow">
                 <h3 className="text-xl font-semibold text-blue-600 mb-2">
@@ -124,7 +116,7 @@ export default function CommunityPage() {
                 </div>
               </Card>
             ))}
-          </div>
+          </Grid>
         </section>
 
         {/* Member Showcase Link */}
@@ -139,15 +131,13 @@ export default function CommunityPage() {
                 our talented community members.
               </p>
               <Link href="/community/member-showcase">
-                <button className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                  View Member Showcase
-                </button>
+              <Button>View Member Showcase</Button>
               </Link>
             </div>
           </Card>
         </section>
-        </div>
-      </div>
-    </PageLayout>
+        </Stack>
+      </Container>
+    </div>
   );
 }

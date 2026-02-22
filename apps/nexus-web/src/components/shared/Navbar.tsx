@@ -95,10 +95,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <Box 
       className="fixed top-0 left-0 right-0 z-50 px-16 lg:px-20 pt-10 pointer-events-none transition-all duration-700 ease-out"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateY(0) scale(1)" : "translateY(-2rem) scale(0.95)",
-      }}
+      // style={{
+      //   opacity: isVisible ? 1 : 0,
+      //   transform: isVisible ? "translateY(0) scale(1)" : "translateY(-2rem) scale(0.95)",
+      // }}
     >
       <Box
         style={{
