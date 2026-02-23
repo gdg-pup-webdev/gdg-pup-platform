@@ -95,18 +95,54 @@ export default function WhoIsGDGPage() {
           width: "100vw",
           left: "50%",
           transform: "translateX(-50%)",
-          bottom: 950,
+          top: "calc(43rem + 400px)",
+          opacity: 0.9,
+          zIndex: 0,
         }}
       >
         <Image
           src="/pages/who-is-gdg/Spiral.png"
           alt="Spiral decoration"
-          width={1200}
-          height={800}
-          className="w-full h-auto opacity-90"
-          style={{
-            objectFit: "contain",
-          }}
+          width={1400}
+          height={900}
+          className="w-full h-auto"
+        />
+      </div>
+
+      {/* Decorative Element 1 - Right Side */}
+      <div
+        className="absolute pointer-events-none hidden md:block"
+        style={{
+          right: "max(calc((100vw - 60rem) / 2 - 250px), 20px)",
+          top: "calc(8rem + 50px)", 
+          opacity: 0.8,
+          zIndex: 1,
+        }}
+      >
+        <Image
+          src="/pages/who-is-gdg/decors/decor-element1.png"
+          alt="Decorative element 1"
+          width={120}
+          height={120}
+        />
+      </div>
+
+      {/* Decorative Element 2 - Right Side Lower */}
+      <div
+        className="absolute pointer-events-none hidden md:block"
+        style={{
+          width: "min(350px, 20vw)", 
+          right: "max(calc((100vw - 90rem) / 2 - 500px), 30px)",
+          top: "calc(1rem + 1300px)", 
+          zIndex: 1,
+        }}
+      >
+        <Image
+          src="/pages/who-is-gdg/decors/element2.png"
+          alt="Decorative element 2"
+          width={250}
+          height={250}
+          style={{ opacity: 0.75 }}
         />
       </div>
 
@@ -132,11 +168,16 @@ export default function WhoIsGDGPage() {
                     align="center"
                     className="text-white text-lg md:text-xl"
                   >
-                    <span className="text-blue-600 font-semibold">Google Developer Groups on Campus Polytechnic University of
-                    the Philippines (GDG PUP)</span> is a student-driven organization
-                    supported by <span className="text-green-600 font-semibold">Google Developers</span>. We exist to create a
-                    collaborative space where students can learn, build, and
-                    grow through technology.
+                    <span className="text-blue-600 font-semibold">
+                      Google Developer Groups on Campus Polytechnic University
+                      of the Philippines (GDG PUP)
+                    </span>{" "}
+                    is a student-driven organization supported by{" "}
+                    <span className="text-green-600 font-semibold">
+                      Google Developers
+                    </span>
+                    . We exist to create a collaborative space where students
+                    can learn, build, and grow through technology.
                   </Text>
                 </Card>
               </Box>
@@ -236,17 +277,119 @@ export default function WhoIsGDGPage() {
                   Our Values
                 </Text>
 
-                <Card>
-                  <Text
-                    variant="body"
-                    className="text-gray-300 text-base md:text-lg leading-relaxed"
-                  >
-                    To build an inclusive and supportive student community that
-                    empowers learners to transform technical knowledge into
-                    real-world impact through collaboration, innovation, and
-                    continuous learning.
-                  </Text>
-                </Card>
+                <div className="flex gap-4 items-center">
+                  <div className="shrink-0 pt-2 pointer-events-none">
+                    <Image
+                      src="/pages/who-is-gdg/card-bullet.png"
+                      alt="Bullet"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                  </div>
+                  <Card>
+                    <Text variant="heading-5" gradient="blue" weight="bold">
+                      Community-Driven Learning
+                    </Text>
+                    <Text
+                      variant="body"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                    >
+                      <span className="italic font-bold">
+                        We believe learning is most powerful when it's
+                        shared.{" "}
+                      </span>
+                      GDG PUP fosters a culture of peer-to-peer growth where
+                      students collaborate, exchange ideas openly, and grow
+                      together. Through Study Jams, workshops, departmental
+                      skill-shares, mini-hackathons, and industry-partnered
+                      experiences, we create spaces where everyone contributes,
+                      everyone learns, and every breakthrough is a shared win.
+                    </Text>
+                  </Card>
+                </div>
+                <div className="flex gap-4 items-center">
+                  <div className="shrink-0 pt-2 pointer-events-none">
+                    <Image
+                      src="/pages/who-is-gdg/card-bullet.png"
+                      alt="Bullet"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                  </div>
+                  <Card>
+                    <Text variant="heading-5" gradient="blue" weight="bold">
+                      Learning by Doing
+                    </Text>
+                    <Text
+                      variant="body"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                    >
+                      <span className="italic font-bold">
+                        We turn concepts into real solutions.{" "}
+                      </span>
+                      GDG PUP emphasizes hands-on experiences—workshops,
+                      projects, and real applications—so students can turn
+                      theory into practice and build confidence in their skills.
+                    </Text>
+                  </Card>
+                </div>
+                <div className="flex gap-4 items-center">
+                  <div className="shrink-0 pt-2 pointer-events-none">
+                    <Image
+                      src="/pages/who-is-gdg/card-bullet.png"
+                      alt="Bullet"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                  </div>
+                  <Card>
+                    <Text variant="heading-5" gradient="blue" weight="bold">
+                      Inclusivity and Growth
+                    </Text>
+                    <Text
+                      variant="body"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                    >
+                      <span className="italic font-bold">
+                        We build an inclusive community for all learners.{" "}
+                      </span>
+                      GDG PUP is open to students of all skill levels. Whether
+                      you're a beginner or an experienced developer, there's a
+                      place for you to learn, contribute, and grow. confidence
+                      in their skills.
+                    </Text>
+                  </Card>
+                </div>
+                <div className="flex gap-4 items-center">
+                  <div className="shrink-0 pt-2 pointer-events-none">
+                    <Image
+                      src="/pages/who-is-gdg/card-bullet.png"
+                      alt="Bullet"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                  </div>
+                  <Card>
+                    <Text variant="heading-5" gradient="blue" weight="bold">
+                      Innovation with Purpose
+                    </Text>
+                    <Text
+                      variant="body"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                    >
+                      <span className="italic font-bold">
+                        We build and design for the people.{" "}
+                      </span>
+                      GDG PUP encourages creativity and problem-solving, guiding
+                      students to develop technological solutions that can
+                      positively impact communities and society.
+                    </Text>
+                  </Card>
+                </div>
               </Stack>
 
               {/* Right: Image/Illustration */}
