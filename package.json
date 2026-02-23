@@ -18,9 +18,9 @@
   "devDependencies": {
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
-    "prettier": "3.7.4",
-    "syncpack": "13.0.4",
-    "turbo": "2.7.4",
+    "prettier": "3.8.1",
+    "syncpack": "14.0.0",
+    "turbo": "2.8.10",
     "typescript": "5.9.3"
   },
   "packageManager": "pnpm@10.28.0",
