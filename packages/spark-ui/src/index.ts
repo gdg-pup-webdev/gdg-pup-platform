@@ -16,6 +16,7 @@ export * from "./components/tabs";
 export * from "./components/tooltip";
 export * from "./components/toast";
 export * from "./components/dropdown";
+export * from "./components/sidebar";
 
 // Layout Primitives
 export * from "./primitives/Stack/";

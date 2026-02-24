@@ -255,4 +255,55 @@
   .dropdown-content[data-state="closed"] {
     animation: dropdown-out 150ms ease-in;
   }
+
+  /* ===== Sidebar Component Styles ===== */
+  .sidebar-base {
+    position: relative;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(65, 65, 65, 0.45) 100%);
+    padding: 30px 30px 30px 50px;
+    gap: 19px;
+    border-radius: 0.5rem;
+    box-shadow: 
+      0px 4px 4px 0px rgba(0, 0, 0, 0.25),
+      0px 4px 36px 0px rgba(255, 255, 255, 0.25) inset,
+      0px 4px 46px 0px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Gradient border effect using ::before pseudo-element */
+  .sidebar-base::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(180deg, #F9AB00 0%, #EA4335 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .sidebar-item {
+    user-select: none;
+    outline: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .sidebar-item:focus-visible {
+    outline: 2px solid #F9AB00;
+    outline-offset: 2px;
+  }
+
+  .sidebar-group {
+    gap: 19px;
+  }
 }
