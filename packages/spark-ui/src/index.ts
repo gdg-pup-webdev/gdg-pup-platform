@@ -15,6 +15,7 @@ export * from "./components/textarea";
 export * from "./components/tabs";
 export * from "./components/tooltip";
 export * from "./components/toast";
+export * from "./components/dropdown";
 
 // Layout Primitives
 export * from "./primitives/Stack/";
