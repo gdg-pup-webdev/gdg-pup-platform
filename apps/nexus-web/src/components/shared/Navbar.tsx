@@ -4,7 +4,18 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { Box, Inline, Text, Button, Avatar, Stack } from "@packages/spark-ui";
+import { 
+  Box, 
+  Inline, 
+  Text, 
+  Button, 
+  Avatar, 
+  Stack,
+  Dropdown,
+  DropdownTrigger,
+  DropdownContent,
+  DropdownItem,
+} from "@packages/spark-ui";
 
 interface NavbarProps {
   transparent?: boolean;
@@ -16,15 +27,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   hideAuth = false,
 }) => {
   const { user, status } = useAuthContext();
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isCommunityOpen, setIsCommunityOpen] = useState(false);
-  const [isDebuggingOpen, setIsDebuggingOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  const aboutRef = useRef<HTMLDivElement>(null);
-  const communityRef = useRef<HTMLDivElement>(null);
-  const debuggingRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   // Handle scroll to show/hide navbar
@@ -47,18 +52,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Click outside handler to close dropdowns
+  // Click outside handler to close mobile menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (aboutRef.current && !aboutRef.current.contains(event.target as Node)) {
-        setIsAboutOpen(false);
-      }
-      if (communityRef.current && !communityRef.current.contains(event.target as Node)) {
-        setIsCommunityOpen(false);
-      }
-      if (debuggingRef.current && !debuggingRef.current.contains(event.target as Node)) {
-        setIsDebuggingOpen(false);
-      }
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
       }
@@ -141,82 +137,50 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Inline gap="lg" align="center" className="hidden md:flex">
                 <Inline gap="md" align="center">
                   {/* About Dropdown */}
-                  <Box className="relative" ref={aboutRef}>
-                    <button
-                      onClick={() => {
-                        setIsAboutOpen(!isAboutOpen);
-                        setIsCommunityOpen(false);
-                        setIsDebuggingOpen(false);
-                      }}
-                      className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
-                    >
-                      <Text variant="body" className="text-inherit">About</Text>
-                      <svg
-                        className={`w-4 h-4 transition-transform duration-200 ${isAboutOpen ? "rotate-180" : ""}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-
-                    {isAboutOpen && (
-                      <Box className="absolute left-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <Stack gap="none">
-                          {dropdownLinks.about.map((link) => (
-                            <Link
-                              key={link.href}
-                              href={link.href}
-                              className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
-                              onClick={() => setIsAboutOpen(false)}
-                            >
-                              {link.label}
-                            </Link>
-                          ))}
-                        </Stack>
-                      </Box>
-                    )}
-                  </Box>
+                  <Dropdown>
+                    <DropdownTrigger asChild>
+                      <button className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer">
+                        <Text variant="body" weight="bold" className="text-inherit">About</Text>
+                        <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </DropdownTrigger>
+                    <DropdownContent>
+                      {dropdownLinks.about.map((link) => (
+                        <DropdownItem
+                          key={link.href}
+                          href={link.href}
+                          linkComponent={Link}
+                        >
+                          {link.label}
+                        </DropdownItem>
+                      ))}
+                    </DropdownContent>
+                  </Dropdown>
 
                   {/* Community Dropdown */}
-                  <Box className="relative" ref={communityRef}>
-                    <button
-                      onClick={() => {
-                        setIsCommunityOpen(!isCommunityOpen);
-                        setIsAboutOpen(false);
-                        setIsDebuggingOpen(false);
-                      }}
-                      className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
-                    >
-                      <Text variant="body" className="text-inherit">Community</Text>
-                      <svg
-                        className={`w-4 h-4 transition-transform duration-200 ${isCommunityOpen ? "rotate-180" : ""}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-
-                    {isCommunityOpen && (
-                      <Box className="absolute left-0 mt-2 w-56 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <Stack gap="none">
-                          {dropdownLinks.community.map((link) => (
-                            <Link
-                              key={link.href}
-                              href={link.href}
-                              className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
-                              onClick={() => setIsCommunityOpen(false)}
-                            >
-                              {link.label}
-                            </Link>
-                          ))}
-                        </Stack>
-                      </Box>
-                    )}
-                  </Box>
+                  <Dropdown>
+                    <DropdownTrigger asChild>
+                      <button className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer">
+                        <Text variant="body" weight="bold" className="text-inherit">Community</Text>
+                        <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </DropdownTrigger>
+                    <DropdownContent size="md">
+                      {dropdownLinks.community.map((link) => (
+                        <DropdownItem
+                          key={link.href}
+                          href={link.href}
+                          linkComponent={Link}
+                        >
+                          {link.label}
+                        </DropdownItem>
+                      ))}
+                    </DropdownContent>
+                  </Dropdown>
 
                   {/* Nav Links */}
                   {navLinks.map((link) => (
@@ -225,48 +189,32 @@ export const Navbar: React.FC<NavbarProps> = ({
                       href={link.href}
                       className="text-gray-300 hover:text-white transition-colors py-2"
                     >
-                      <Text variant="body" className="text-inherit">{link.label}</Text>
+                      <Text variant="body" weight="bold" className="text-inherit">{link.label}</Text>
                     </Link>
                   ))}
 
                   {/* Debugging Dropdown */}
-                  <Box className="relative" ref={debuggingRef}>
-                    <button
-                      onClick={() => {
-                        setIsDebuggingOpen(!isDebuggingOpen);
-                        setIsAboutOpen(false);
-                        setIsCommunityOpen(false);
-                      }}
-                      className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer"
-                    >
-                      <Text variant="body" className="text-inherit">🛠️</Text>
-                      <svg
-                        className={`w-4 h-4 transition-transform duration-200 ${isDebuggingOpen ? "rotate-180" : ""}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-
-                    {isDebuggingOpen && (
-                      <Box className="absolute left-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <Stack gap="none">
-                          {dropdownLinks.debugging.map((link) => (
-                            <Link
-                              key={link.href}
-                              href={link.href}
-                              className="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
-                              onClick={() => setIsDebuggingOpen(false)}
-                            >
-                              {link.label}
-                            </Link>
-                          ))}
-                        </Stack>
-                      </Box>
-                    )}
-                  </Box>
+                  <Dropdown>
+                    <DropdownTrigger asChild>
+                      <button className="flex items-center gap-1 text-gray-300 hover:text-white transition-colors py-2 cursor-pointer">
+                        <Text variant="body" weight="bold" className="text-inherit">🛠️</Text>
+                        <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </DropdownTrigger>
+                    <DropdownContent>
+                      {dropdownLinks.debugging.map((link) => (
+                        <DropdownItem
+                          key={link.href}
+                          href={link.href}
+                          linkComponent={Link}
+                        >
+                          {link.label}
+                        </DropdownItem>
+                      ))}
+                    </DropdownContent>
+                  </Dropdown>
                 </Inline>
 
                 {/* Auth Section */}
