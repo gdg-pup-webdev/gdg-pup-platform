@@ -1,41 +1,12 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "motion/react";
+import { Box, Button, Stack } from "@packages/spark-ui";
+
 
 export default function HomePage() {
-  const { scrollY } = useScroll();
-
-  const backgroundY = useTransform(scrollY, [0, 500], [0, 150]);
-
-  const textY = useTransform(scrollY, [0, 200], [30, 0]);
-
-  const textOpacity = useTransform(scrollY, [0, 200], [0, 1]);
-
   return (
-    <div className="relative min-h-[150vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image with Parallax */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "url(/pages/hero.png)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          y: backgroundY,
-        }}
-      >
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40"></div>
-      </motion.div>
-
-      {/* Hero Content with Fade In */}
-      <motion.div
-        className="relative z-10 text-center px-6 max-w-4xl"
-        style={{
-          opacity: textOpacity,
-          y: textY,
-        }}
-      >
+    <Stack align="center" justify="center" className="h-screen">
+      <Box className="relative z-10 text-center px-6 max-w-4xl">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
           Bridging the gap between theory and practice.
         </h1>
@@ -43,7 +14,11 @@ export default function HomePage() {
           GDG PUP helps student developers grow through real projects, events,
           and mentorship connecting classroom learning to industry practice.
         </p>
-      </motion.div>
-    </div>
+        {/* Insert an Icon here */}
+        <Button variant="default" size="lg" className="mt-8">
+          Spark your Journey
+        </Button>
+      </Box>
+    </Stack>
   );
 }
