@@ -8,28 +8,28 @@ export const Footer: React.FC = () => {
 
   const footerSections = {
     about: [
-      { href: "/about/who-is-gdg", label: "Who is GDG" },
+      { href: "/about", label: "Who is GDG" },
       { href: "/about/team", label: "Our Team" },
       { href: "/about/history", label: "History" },
       { href: "/about/partnership", label: "Partnership" },
-      { href: "/about/gdg-on-top", label: "GDG on TOP" },
+      { href: "/about/benefits", label: "Benefits" },
     ],
     network: [
-      { href: "/community/showcase", label: "Community Showcase" },
-      { href: "/community/members", label: "Member Showcase" },
+      { href: "/community-showcase", label: "Community Showcase" },
+      { href: "/member-showcase", label: "Member Showcase" },
     ],
     nexus: [
       { href: "/events", label: "Events" },
-      { href: "/leaderboards", label: "Leaderboards" },
+      { href: "/leaderboard", label: "Leaderboard" },
       { href: "/products", label: "Products" },
-      { href: "#", label: "GetID" },
-      { href: "/profile", label: "Sparkmates" },
+      { href: "/id", label: "Get ID" },
+      { href: "/profile", label: "Profile" },
     ],
   };
 
   const socialLinks = [
     {
-      href: "#",
+      href: "https://www.youtube.com/@gdgpupmnl",
       label: "YouTube",
       icon: (
         <path
@@ -239,6 +239,8 @@ export const Footer: React.FC = () => {
               <a
                 key={social.label}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-300 hover:text-white hover:scale-110 transition-all duration-200"
                 aria-label={social.label}
               >
