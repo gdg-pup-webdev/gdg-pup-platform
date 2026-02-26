@@ -58,6 +58,16 @@ export const TEXT_GRADIENTS = {
     css: "linear-gradient(0deg, #57CAFF 0%, #347999 100%)",
     tailwind: "bg-linear-[0deg,#57CAFF_0%,#347999_100%]",
   },
+
+  /**
+   * White to Yellow gradient
+   * Direction: 189.74deg (~top to bottom)
+   * Colors: #FFFFFF 28.59% → #F9AB00 99.17%
+   */
+  whiteYellow: {
+    css: "linear-gradient(189.74deg, #FFFFFF 28.59%, #F9AB00 99.17%)",
+    tailwind: "bg-linear-to-b from-white from-[28.59%] to-[#F9AB00] to-[99%]",
+  },
 } as const;
 
 /**
