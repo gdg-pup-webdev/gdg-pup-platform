@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ProfilePage() {
-  const { user, status, loginWithGoogle } = useAuthContext();
+  const { user, status } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <Container maxWidth="2xl" className="py-12">
+      <Container className="py-44">
           <Card className="text-center">
             <div className="py-12">
               <div className="text-6xl mb-6">🔐</div>
@@ -40,9 +40,14 @@ export default function ProfilePage() {
                 Please sign in with your Google account to view and manage your
                 profile.
               </p>
-              <Button variant="default" onClick={loginWithGoogle} size="lg">
-                Sign In with Google
-              </Button>
+              <div className="flex gap-4 justify-center">
+                <Button variant="default" onClick={() => router.push("/signin")} size="lg">
+                  Sign In
+                </Button>
+                <Button variant="outline" onClick={() => router.push("/signup")} size="lg">
+                  Sign Up
+                </Button>
+              </div>
             </div>
           </Card>
 
