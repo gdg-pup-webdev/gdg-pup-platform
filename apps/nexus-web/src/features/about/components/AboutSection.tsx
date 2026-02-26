@@ -6,7 +6,6 @@ import {
   Grid,
   Container,
   Text,
-  Button,
   Card,
 } from "@packages/spark-ui";
 import Image from "next/image";
@@ -36,7 +35,7 @@ const FadeInSection = ({
   );
 };
 
-export default function WhoIsGDGPage() {
+export function AboutSection() {
   return (
     <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
       {/* Decorative Ellipse - Top Left */}
@@ -114,7 +113,7 @@ export default function WhoIsGDGPage() {
         className="absolute pointer-events-none hidden md:block"
         style={{
           right: "max(calc((100vw - 60rem) / 2 - 250px), 20px)",
-          top: "calc(8rem + 50px)", 
+          top: "calc(8rem + 50px)",
           opacity: 0.8,
           zIndex: 1,
         }}
@@ -131,9 +130,9 @@ export default function WhoIsGDGPage() {
       <div
         className="absolute pointer-events-none hidden md:block"
         style={{
-          width: "min(350px, 20vw)", 
+          width: "min(350px, 20vw)",
           right: "max(calc((100vw - 90rem) / 2 - 500px), 30px)",
-          top: "calc(1rem + 1300px)", 
+          top: "calc(1rem + 1300px)",
           zIndex: 1,
         }}
       >
@@ -296,7 +295,7 @@ export default function WhoIsGDGPage() {
                       className="text-gray-300 text-base md:text-lg leading-relaxed"
                     >
                       <span className="italic font-bold">
-                        We believe learning is most powerful when it's
+                        We believe learning is most powerful when it&apos;s
                         shared.{" "}
                       </span>
                       GDG PUP fosters a culture of peer-to-peer growth where
@@ -357,9 +356,9 @@ export default function WhoIsGDGPage() {
                         We build an inclusive community for all learners.{" "}
                       </span>
                       GDG PUP is open to students of all skill levels. Whether
-                      you're a beginner or an experienced developer, there's a
-                      place for you to learn, contribute, and grow. confidence
-                      in their skills.
+                      you&apos;re a beginner or an experienced developer,
+                      there&apos;s a place for you to learn, contribute, and
+                      grow. confidence in their skills.
                     </Text>
                   </Card>
                 </div>
