@@ -5,6 +5,8 @@
  * caching, and state management.
  */
 
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { getEvents } from "../api/getEvents";

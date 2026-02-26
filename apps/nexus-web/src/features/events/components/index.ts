@@ -7,3 +7,4 @@
 export { EventCard } from "./EventCard";
 export { EventsGrid } from "./EventsGrid";
 export { EventsFilters } from "./EventsFilters";
+export { EventsSection } from "./EventsSection";
