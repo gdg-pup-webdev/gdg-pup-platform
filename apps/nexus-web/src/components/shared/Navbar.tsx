@@ -66,15 +66,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const dropdownLinks = {
     about: [
-      { href: "/about/who-is-gdg", label: "Who is GDG" },
+      { href: "/about", label: "Who is GDG" },
       { href: "/about/team", label: "Our Team" },
       { href: "/about/history", label: "History" },
       { href: "/about/partnership", label: "Partnership" },
-      { href: "/about/gdg-on-top", label: "GDG on TOP" },
+      { href: "/about/benefits", label: "Benefits" },
     ],
     community: [
-      { href: "/community/showcase", label: "Community Showcase" },
-      { href: "/community/members", label: "Member Showcase" },
+      { href: "/community-showcase", label: "Community Showcase" },
+      { href: "/member-showcase", label: "Member Showcase" },
     ],
     debugging: [
       { href: "/debugging", label: "Debug Tools" },
@@ -84,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { href: "/events", label: "Events" },
-    { href: "/leaderboards", label: "Leaderboards" },
+    { href: "/leaderboard", label: "Leaderboard" },
     { href: "/products", label: "Products" },
   ];
 
@@ -220,7 +220,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {/* Auth Section */}
                 {!hideAuth && (
                   <Inline gap="md" align="center">
-                    <Link href="#">
+                    <Link href="/id">
                       <Button variant="default" size="md">
                         Get ID
                       </Button>
@@ -346,7 +346,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {!hideAuth && (
                         <Box className="px-4 py-3 mt-2 border-t border-slate-700">
                           <Stack gap="sm">
-                            <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/id" onClick={() => setIsMobileMenuOpen(false)}>
                               <Button variant="default" size="md" >
                                 Get ID
                               </Button>
