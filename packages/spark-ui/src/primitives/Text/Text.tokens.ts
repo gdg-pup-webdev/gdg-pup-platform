@@ -68,6 +68,16 @@ export const TEXT_GRADIENTS = {
     css: "linear-gradient(189.74deg, #FFFFFF 28.59%, #F9AB00 99.17%)",
     tailwind: "bg-linear-to-b from-white from-[28.59%] to-[#F9AB00] to-[99%]",
   },
+
+  /**
+   * White to Green gradient
+   * Direction: 180deg (top to bottom)
+   * Colors: #FFFFFF 1.41% → #34A853 100%
+   */
+  whiteGreen: {
+    css: "linear-gradient(180deg, #FFFFFF 1.41%, #34A853 100%)",
+    tailwind: "bg-linear-to-b from-white from-[1.41%] to-[#34A853] to-100%",
+  },
 } as const;
 
 /**
