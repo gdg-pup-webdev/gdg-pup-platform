@@ -1,5 +1,5 @@
 import { models } from "@packages/nexus-api-contracts";
-import { tryCatch_deprecated } from "@/v0/presentation/utils/tryCatch.util.js";
+import { tryCatch_deprecated } from "@/v0/utils/tryCatch.util.js";
 import { RepositoryError_DEPRECATED } from "@/v0/deprecated/classes/ServerError_DEPRECATED.js";
 import {
   MemberRepository,
@@ -8,7 +8,7 @@ import {
 import {
   TablesInsert,
   TablesUpdate,
-} from "@/v0/presentation/types/supabase.types.js";
+} from "@/v0/types/supabase.types.js";
 
 type insertDTO = TablesInsert<"team">;
 type updateDTO = TablesUpdate<"team">;

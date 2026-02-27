@@ -1,9 +1,6 @@
 import { Router } from "express";
-import { TeamController, teamControllerInstance } from "./team.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "@/v0/presentation/middlewares/auth.middleware.js";
+import { TeamController, teamControllerInstance } from "./team.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class TeamRouter {
   constructor(

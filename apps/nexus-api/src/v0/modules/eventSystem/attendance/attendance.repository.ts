@@ -1,7 +1,7 @@
 import { DatabaseError_DONT_USE } from "@/v0/errors/HttpError";
 import { supabase } from "@/v0/lib/supabase.js";
 import { handlePostgresError } from "@/v0/lib/supabase.utils";
-import { RepositoryResultList } from "@/v0/presentation/types/repository.types.js";
+import { RepositoryResultList } from "@/v0/types/repository.types.js";
 import { models } from "@packages/nexus-api-contracts";
 import {
   AttendanceInsertDTO,

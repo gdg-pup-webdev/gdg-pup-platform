@@ -1,4 +1,4 @@
-import { Tables } from "../../../presentation/types/supabase.types";
+import { Tables } from "../../../types/supabase.types";
 
 type userRolePermission = Tables<"user_role_permission">;
 

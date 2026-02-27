@@ -1,5 +1,5 @@
-import { RequestHandler } from "express";
-import { supabase } from "../../lib/supabase.js";
+import { RequestHandler } from "express"; 
+import { supabase } from "../lib/supabase";
 
 /**
  * parse tokens from the header instead of cookies

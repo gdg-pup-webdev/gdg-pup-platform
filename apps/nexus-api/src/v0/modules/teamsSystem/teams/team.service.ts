@@ -1,6 +1,6 @@
 import { models } from "@packages/nexus-api-contracts";
 import { TeamRepository, teamRepositoryInstance } from "./team.repository.js";
-import { TablesInsert, TablesUpdate } from "@/v0/presentation/types/supabase.types.js";
+import { TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
 
 type insertDTO = TablesInsert<"team">;
 type updateDTO = TablesUpdate<"team">;

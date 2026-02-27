@@ -8,11 +8,8 @@ import { Router } from "express";
 import {
   AchievementController,
   achievementControllerInstance,
-} from "./achievement.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "../../../presentation/middlewares/auth.middleware.js";
+} from "./achievement.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class AchievementRouter {
   constructor(

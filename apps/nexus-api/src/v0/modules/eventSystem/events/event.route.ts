@@ -1,9 +1,9 @@
 import { Router } from "express";
+import { EventController, eventControllerInstance } from "../event.controller";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
-} from "@/v0/presentation/middlewares/auth.middleware.js"; 
-import { EventController, eventControllerInstance } from "../event.controller";
+} from "@/v0/middlewares/auth.middleware";
 
 export class EventRouter {
   constructor(

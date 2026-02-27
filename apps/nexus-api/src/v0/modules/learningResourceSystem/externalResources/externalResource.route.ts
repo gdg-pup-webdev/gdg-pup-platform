@@ -2,11 +2,8 @@ import { Router } from "express";
 import {
   ExternalResourceController,
   externalResourceControllerInstance,
-} from "./externalResource.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "../../../presentation/middlewares/auth.middleware.js";
+} from "./externalResource.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class ExternalResourceRouter {
   constructor(

@@ -9,11 +9,8 @@ import { Router } from "express";
 import {
   CertificateController,
   certificateControllerInstance,
-} from "./certificate.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "@/v0/presentation/middlewares/auth.middleware.js";
+} from "./certificate.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 /**
  * CertificateRouter

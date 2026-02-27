@@ -1,4 +1,4 @@
-import { Tables, TablesInsert, TablesUpdate } from "@/v0/presentation/types/supabase.types";
+import { Tables, TablesInsert, TablesUpdate } from "@/v0/types/supabase.types";
 
 
 

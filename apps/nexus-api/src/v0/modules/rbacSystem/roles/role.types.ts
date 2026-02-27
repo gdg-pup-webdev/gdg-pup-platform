@@ -1,4 +1,4 @@
-import { Tables, TablesInsert, TablesUpdate } from "@/v0/presentation/types/supabase.types";
+import { Tables, TablesInsert, TablesUpdate } from "@/v0/types/supabase.types";
 
 export type roleRow = Tables<"user_role">;
 export type roleInsert = Omit<TablesInsert<"user_role">, "id">;

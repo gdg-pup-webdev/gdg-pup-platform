@@ -2,11 +2,8 @@ import { Router } from "express";
 import {
   StudyJamController,
   studyJamControllerInstance,
-} from "./studyJam.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "../../../presentation/middlewares/auth.middleware.js";
+} from "./studyJam.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class StudyJamRouter {
   constructor(

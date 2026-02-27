@@ -2,11 +2,8 @@ import { Router } from "express";
 import {
   ProjectController,
   projectControllerInstance,
-} from "./project.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "@/v0/presentation/middlewares/auth.middleware.js";
+} from "./project.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class ProjectRouter {
   constructor(

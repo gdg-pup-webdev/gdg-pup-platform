@@ -2,7 +2,7 @@ import {
   Tables,
   TablesInsert,
   TablesUpdate,
-} from "@/v0/presentation/types/supabase.types";
+} from "@/v0/types/supabase.types";
 
 export type TransactionRowType = Tables<"wallet_transaction">;
 

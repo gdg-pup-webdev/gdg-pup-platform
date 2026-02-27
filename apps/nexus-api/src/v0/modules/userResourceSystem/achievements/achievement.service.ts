@@ -4,7 +4,7 @@
  * orchestration and error mapping between the controller and repository.
  */
 
-import { TablesInsert, TablesUpdate } from "@/v0/presentation/types/supabase.types.js";
+import { TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
 import {
   AchievementRepository,
   achievementRepositoryInstance,

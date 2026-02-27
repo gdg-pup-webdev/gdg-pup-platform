@@ -9,7 +9,7 @@ import { createExpressController } from "@packages/typed-rest/serverExpress";
 import {
   buildPaginationMeta,
   normalizeOptionalText
-} from "@/v0/presentation/utils/controller.utils.js";
+} from "@/v0/utils/controller.utils.js";
 
 /**
  * Controller for handling study jam-related requests.

@@ -1,5 +1,4 @@
-import { ServerError_DEPRECATED } from "../../deprecated/classes/ServerError_DEPRECATED.js";
-import { TooManyRequestError } from "@/v0/errors/HttpError.js";
+ import { TooManyRequestError } from "@/v0/errors/HttpError.js";
 import { rateLimit } from "express-rate-limit";
 
 export const rateLimiter = rateLimit({

@@ -6,8 +6,8 @@
 
 import { supabase } from "@/v0/lib/supabase.js";
 import { handlePostgresError } from "@/v0/lib/supabase.utils";
-import { RepositoryResult } from "@/v0/presentation/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/v0/presentation/types/supabase.types.js";
+import { RepositoryResult } from "@/v0/types/repository.types.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
 
 type userRow = Tables<"user">;
 type userInsert = TablesInsert<"user">;

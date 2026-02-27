@@ -7,11 +7,8 @@ import { Router } from "express";
 import {
   SettingsController,
   settingsControllerInstance,
-} from "./settings.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "@/v0/presentation/middlewares/auth.middleware.js";
+} from "./settings.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class SettingsRouter {
   constructor(

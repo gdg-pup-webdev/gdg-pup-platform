@@ -1,4 +1,4 @@
-import { Tables, TablesInsert } from "@/v0/presentation/types/supabase.types";
+import { Tables, TablesInsert } from "@/v0/types/supabase.types";
 
 
 export type AttendanceType = Tables<"event_attendance">;

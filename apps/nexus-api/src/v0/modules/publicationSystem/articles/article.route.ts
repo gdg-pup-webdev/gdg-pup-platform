@@ -2,11 +2,8 @@ import { Router } from "express";
 import {
   ArticleController,
   articleControllerInstance,
-} from "./article.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "../../../presentation/middlewares/auth.middleware.js";
+} from "./article.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class ArticleRouter {
   constructor(

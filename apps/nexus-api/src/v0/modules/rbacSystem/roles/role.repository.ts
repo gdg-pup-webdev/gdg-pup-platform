@@ -8,8 +8,8 @@ import { supabase } from "@/v0/lib/supabase.js";
 import {
   RepositoryResultList,
   RepositoryResult,
-} from "@/v0/presentation/types/repository.types.js";
-import { TablesInsert, TablesUpdate } from "@/v0/presentation/types/supabase.types.js";
+} from "@/v0/types/repository.types.js";
+import { TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
 import { handlePostgresError } from "@/v0/lib/supabase.utils";
 import {
   roleWithPermission,

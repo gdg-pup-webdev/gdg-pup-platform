@@ -11,7 +11,7 @@ import { models } from "@packages/nexus-api-contracts";
 import {
   TablesInsert,
   TablesUpdate,
-} from "@/v0/presentation/types/supabase.types.js";
+} from "@/v0/types/supabase.types.js";
 
 type rewardInsertDTO = TablesInsert<"reward">;
 type rewardUpdateDTO = TablesUpdate<"reward">;

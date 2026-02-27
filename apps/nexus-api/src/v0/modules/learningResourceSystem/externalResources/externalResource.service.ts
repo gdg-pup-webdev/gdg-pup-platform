@@ -5,7 +5,7 @@ import {
 } from "./externalResource.repository.js";
 import type { ExternalResourceListFilters } from "./externalResource.repository.js";
 import { models } from "@packages/nexus-api-contracts";
-import { Tables, TablesInsert, TablesUpdate } from "@/v0/presentation/types/supabase.types.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
 
 type updateDTO = TablesUpdate<"external_resource">;
 type insertDTO = TablesInsert<"external_resource">;

@@ -6,7 +6,7 @@
 import {
   TablesInsert,
   TablesUpdate,
-} from "@/v0/presentation/types/supabase.types.js";
+} from "@/v0/types/supabase.types.js";
 import {
   SettingsRepository,
   settingsRepositoryInstance,

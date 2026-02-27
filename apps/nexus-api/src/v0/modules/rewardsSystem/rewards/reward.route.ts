@@ -2,11 +2,8 @@ import { Router } from "express";
 import {
   rewardControllerInstance,
   RewardController,
-} from "./reward.controller.js";
-import {
-  AuthMiddleware,
-  authMiddlewareInstance,
-} from "@/v0/presentation/middlewares/auth.middleware.js";
+} from "./reward.controller.js"; 
+import { AuthMiddleware, authMiddlewareInstance } from "@/v0/middlewares/auth.middleware.js";
 
 export class RewardRouter {
   constructor(

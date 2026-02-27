@@ -8,7 +8,7 @@ import {
   Tables,
   TablesInsert,
   TablesUpdate,
-} from "@/v0/presentation/types/supabase.types.js";
+} from "@/v0/types/supabase.types.js";
 
 type updateDTO = TablesUpdate<"study_jam">;
 type insertDTO = TablesInsert<"study_jam">;
