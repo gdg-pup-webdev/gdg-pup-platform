@@ -22,6 +22,14 @@ export namespace OpenApiSchemas {
       });
     };
 
+    export const boolean = () => {
+      return cz.object({
+        status: cz.string(),
+        message: cz.string(),
+        data: cz.boolean(),
+      });
+    };
+
     export const single = <T extends cz.ZodTypeAny>(dataSchema: T) => {
       return cz.object({
         status: cz.string(),
@@ -82,9 +90,13 @@ export namespace OpenApiSchemas {
   export namespace Request {
     export namespace Query {
       export const paginated = () => {
+        // return cz.object({
+        //   pageNumber: cz.coerce.number().int().positive().default(1).optional(),
+        //   pageSize: cz.coerce.number().int().positive().default(10).optional(),
+        // });
         return cz.object({
-          pageNumber: cz.coerce.number().int().positive().default(1).optional(),
-          pageSize: cz.coerce.number().int().positive().default(10).optional(),
+          pageNumber: cz.coerce.number().int().positive().default(1),
+          pageSize: cz.coerce.number().int().positive().default(10),
         });
       };
     }

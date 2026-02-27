@@ -49,10 +49,49 @@ export const generateOpenApiOptions = ({
   };
 
   const formatTagFromPath = (path: string) => {
-    const segments = path.split("/").filter(Boolean);
-    const domainIndex = segments[0] === "api" ? 1 : 0;
-    const tag = segments[domainIndex] || "api";
-    return tag.replace(/-/g, " ");
+    // const segments = path.split("/").filter(Boolean);
+    // const domainIndex = segments[0] === "api" ? 1 : 0;
+    // const tag = segments[domainIndex] || "api";
+    // return tag.replace(/-/g, " ");
+
+    const prefixRegex = /^\/?(api\/)?(v\d+\/)?/;
+    const match = path.match(prefixRegex);
+
+    // Extract the version (group 2), removing the trailing slash if it exists
+    const version = match && match[2] ? match[2].replace("/", "") : "";
+
+    // Clean the path as before
+    const cleanPath = path.replace(prefixRegex, "");
+    const segments = cleanPath.split("/").filter(Boolean);
+
+    const domainIndex = 0;
+    const segmentTag = (segments[domainIndex] || "api").replace(/-/g, " ");
+
+    // Combine version and segment if version exists
+    const tag = version ? `${version}: ${segmentTag}` : segmentTag;
+
+    return tag;
+  };
+
+  const getTagAndVersion = (path: string) => {
+    const prefixRegex = /^\/?(api\/)?(v\d+\/)?/;
+    const match = path.match(prefixRegex);
+
+    // Use "noversion" as a internal key if no version found
+    const version = match && match[2] ? match[2].replace("/", "") : "noversion";
+
+    const cleanPath = path.replace(prefixRegex, "");
+    const segments = cleanPath.split("/").filter(Boolean);
+    const tagName = (segments[0] || "api").replace(/-/g, " ");
+
+    let tagNameWithVersion = "";
+    if (version !== "noversion") {
+      tagNameWithVersion = `${version}: ${tagName}`;
+    } else {
+      tagNameWithVersion = tagName;
+    }
+
+    return { tagName, version, tagNameWithVersion };
   };
 
   const extractResourceName = (path: string) => {
@@ -134,9 +173,16 @@ export const generateOpenApiOptions = ({
     return `Error responses: ${errorCodes.join(", ")}.`;
   };
 
+  const versionGroups: Record<string, Set<string>> = {};
+
   // Iterating through the global openapiendpoints variable
   openapiendpoints.forEach((endpoint: any) => {
+    const {  version, tagNameWithVersion : tagName } = getTagAndVersion(endpoint.path);
     let formattedResponses: any = {};
+
+    if (!versionGroups[version]) versionGroups[version] = new Set();
+    // versionGroups[version].add(tagName);
+    versionGroups[version].add(`${tagName}`);
 
     if (endpoint.response) {
       formattedResponses = Object.fromEntries(
@@ -292,7 +338,8 @@ export const generateOpenApiOptions = ({
     registry.registerPath({
       method: endpoint.method.replace(".ts", "").toLowerCase() as any,
       path: endpoint.path,
-      tags: [formatTagFromPath(endpoint.path)],
+      tags: [`${tagName}`],
+      // tags: [formatTagFromPath(endpoint.path)],
       summary,
       description,
       request: requestConfig,
@@ -319,6 +366,37 @@ export const generateOpenApiOptions = ({
     security,
     tags,
   });
+
+  // openApiObject["x-tagGroups"] = Object.entries(versionGroups).map(([version, tagsSet]) => ({
+  //   name: version.toUpperCase(), // e.g., "V1"
+  //   tags: Array.from(tagsSet),    // e.g., ["users", "files"]
+  // }));
+
+  openApiObject["x-tagGroups"] = Object.entries(versionGroups)
+    .sort(([verA], [verB]) => {
+      // 1. Handle the "noversion" case to ensure it's always last
+      if (verA === "noversion") return 1;
+      if (verB === "noversion") return -1;
+
+      // 2. Otherwise, sort versions descending (v2, v1)
+      return verB.localeCompare(verA, undefined, { numeric: true });
+    })
+    .map(([version, tagsSet]) => {
+  let groupName: string;
+
+  if (version === "noversion") {
+    groupName = "NO VERSION";
+  } else {
+    // Regex matches 'v' at the start followed by digits
+    // Replaces 'v1' with 'Version 1'
+    groupName = version.replace(/^v(\d+)$/, "VERSION $1");
+  }
+
+  return {
+    name: groupName,
+    tags: Array.from(tagsSet),
+  };
+});
 
   // Remove examples
   // remove examples flag is added to prevent openapi-postmanv2 converter from generating default values to parameters.
