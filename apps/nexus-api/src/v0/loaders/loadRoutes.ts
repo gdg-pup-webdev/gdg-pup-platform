@@ -16,22 +16,22 @@ import { getDeprecationWarningInterceptor } from "../middlewares/deprecatedWarni
 export const loadRoutes = (router: Router) => {
   router.use(getDeprecationWarningInterceptor("v1"));
 
-  router.use("/api/health", healthCheckModuleRouterInstance.getRouter());
-  router.use("/api/user-resource-system", userResourceSystemRouter.getRouter());
-  router.use("/api/economy-system", economySystemRouterInstance.getRouter());
-  router.use("/api/user-system", userSystemRouterInstance.getRouter());
+  router.use("/health", healthCheckModuleRouterInstance.getRouter());
+  router.use("/user-resource-system", userResourceSystemRouter.getRouter());
+  router.use("/economy-system", economySystemRouterInstance.getRouter());
+  router.use("/user-system", userSystemRouterInstance.getRouter());
   router.use(
-    "/api/publication-system",
+    "/publication-system",
     publicationSystemRouterInstance.getRouter(),
   );
-  router.use("/api/event-system", eventSystemRouterInstance.getRouter());
-  router.use("/api/team-system", teamSystemRouterInstance.getRouter());
-  router.use("/api/reward-system", rewardSystemRouterInstance.getRouter());
+  router.use("/event-system", eventSystemRouterInstance.getRouter());
+  router.use("/team-system", teamSystemRouterInstance.getRouter());
+  router.use("/reward-system", rewardSystemRouterInstance.getRouter());
   router.use(
-    "/api/learning-resource-system",
+    "/learning-resource-system",
     learningResourceSystemRouterInstance.getRouter(),
   );
-  router.use("/api/rbac-system", rbacSystemRouterInstance.getRouter());
-  router.use("/api/auth-system", authSystemRouterInstance.getRouter());
-  router.use("/api/member-system", memberSystemRouterInstance.getRouter());
+  router.use("/rbac-system", rbacSystemRouterInstance.getRouter());
+  router.use("/auth-system", authSystemRouterInstance.getRouter());
+  router.use("/member-system", memberSystemRouterInstance.getRouter());
 };

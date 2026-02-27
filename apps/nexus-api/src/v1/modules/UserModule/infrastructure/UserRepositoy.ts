@@ -1,5 +1,5 @@
  
-import { Tables } from "@/v1/presentation/types/supabase.types";
+import { Tables } from "@/v1/types/supabase.types";
 import { IUserRepository } from "../domain/IUserRepository";
 import { User, UserProps } from "../domain/User"; 
 import { supabase } from "@/v1/lib/supabase";

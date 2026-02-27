@@ -3,7 +3,7 @@
  * loaders, and global settings for the Nexus API.
  */
 
-import express, { Express, Router } from "express"; 
+import express, { Express, Router } from "express";
 import { loadLogger } from "./loaders/loadLogger";
 import { loadRateLimiter } from "./loaders/loadRateLimiter";
 import { loadParsers } from "./loaders/loadParsers";

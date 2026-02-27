@@ -1,7 +1,7 @@
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
-import { Tables } from "@/v1/presentation/types/supabase.types";
-import { RepositoryResult } from "@/v1/presentation/types/repository.types";
+import { Tables } from "@/v1/types/supabase.types";
+import { RepositoryResult } from "@/v1/types/repository.types";
 
  
 

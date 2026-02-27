@@ -1,7 +1,7 @@
  
 import { IEventRepository } from "../domain/IEventRepository";
 import { Event } from "../domain/Event";  
-import { Tables, TablesInsert, TablesUpdate } from "@/v1/presentation/types/supabase.types";
+import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 

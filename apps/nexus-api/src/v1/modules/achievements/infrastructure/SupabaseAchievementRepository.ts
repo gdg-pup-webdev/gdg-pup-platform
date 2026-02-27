@@ -1,6 +1,6 @@
 import { IAchievementRepository } from "../domain/IAchievementRepository";
 import { Achievement, AchievementProps } from "../domain/Achievement"; 
-import { Tables, TablesInsert, TablesUpdate } from "@/v1/presentation/types/supabase.types";
+import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
 import { supabase } from "@/v1/lib/supabase";
 
 type AchievementRow = Tables<"user_achievement">;

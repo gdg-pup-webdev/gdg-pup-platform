@@ -25,12 +25,12 @@ export const loadDocs = (app: Express) => {
   /**
    * EXPOSE THE OPENAPI DOCUMENT
    */
-  app.use("/openapispec.json", (req, res) => {
+  app.use("/docs/openapispec.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.send(swaggerSpec);
   });
 
-  app.use("/postman-import.json", (req, res) => {
+  app.use("/docs/postman-import.json", (req, res) => {
     res.setHeader(
       "Content-Disposition",
       "attachment; filename=collection.postman_collection.json",
@@ -121,7 +121,7 @@ export const loadDocs = (app: Express) => {
     ],
   };
   app.use(
-    "/swagger",
+    "/docs/swagger",
     swaggerUi.serve,
     swaggerUi.setup(swaggerSpec, assetOptions),
   );
@@ -129,7 +129,7 @@ export const loadDocs = (app: Express) => {
   /**
    * LOAD STOPLIGHT DOCUMENTATION
    */
-  app.get("/stoplight", (req, res) => {
+  app.get("/docs/stoplight", (req, res) => {
     res.send(`
     <!doctype html>
     <html lang="en">
@@ -182,7 +182,7 @@ export const loadDocs = (app: Express) => {
   /**
    * LOAD RAPI-DOC DOCUMENTATION
    */
-  app.get("/rapidoc", (req, res) => {
+  app.get("/docs/rapidoc", (req, res) => {
     res.send(`
  <!doctype html> <!-- Important: must specify -->
 <html>
@@ -203,7 +203,7 @@ export const loadDocs = (app: Express) => {
    * (DEFAULT) LOAD SCALAR DOCUMENTATION
    */
   app.use(
-    "/",
+    "/docs/",
     apiReference({
       // Top-level properties
       theme: "default",

@@ -3,15 +3,25 @@
  * loaders, and global settings for the Nexus API.
  */
 
-import { Express } from "express";
-import { setupLoader } from "./presentation/loaders/setup.loader";
-import { errorHandlerLoader } from "./presentation/loaders/errorHandlers.loader";
-import { parsersLoader } from "./presentation/loaders/parsers.loader";
-import { routesLoader } from "./presentation/loaders/routes.loader";
+import express, { Express, Router } from "express";
+import { loadLogger } from "./loaders/loadLogger";
+import { loadRateLimiter } from "./loaders/loadRateLimiter";
+import { loadParsers } from "./loaders/loadParsers";
+import { loadErrorHandler } from "./loaders/loadErrorHandler";
+import { loadRoutes } from "./loaders/loadRoutes";
+import { loadCors } from "./loaders/loadCors";
 
-export const loadV1 = (app: Express) => {
-  setupLoader(app);
-  parsersLoader(app);
-  routesLoader(app);
-  errorHandlerLoader(app);
-};
+export class Version1 {
+  app: Express;
+
+  constructor() {
+    this.app = express();
+
+    loadCors(this.app);
+    loadLogger(this.app);
+    loadRateLimiter(this.app);
+    loadParsers(this.app);
+    loadRoutes(this.app);
+    loadErrorHandler(this.app);
+  }
+}

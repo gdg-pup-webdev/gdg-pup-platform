@@ -5,6 +5,7 @@ import { loadDocs } from "./loaders/loadDocs";
 const app: Express = express();
 
 loadDocs(app);
+
 loadApps(app);
 
 export default app;
