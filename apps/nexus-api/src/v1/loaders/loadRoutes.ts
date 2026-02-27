@@ -9,12 +9,6 @@ import { filesModuleController } from "@/v1/modules/filesModule";
 import { FilesHttpController } from "../routes/files/files.controller";
 import { FilesRouter } from "../routes/files/files.router";
 export const loadRoutes = (app: Express) => {
-  ///////////////////////////////////////////////
-  //
-  // VERSION 1 ROUTES
-  //
-  ///////////////////////////////////////////////
-
   const supabaseClient = supabase;
 
   const filesHttpController = new FilesHttpController(filesModuleController);
