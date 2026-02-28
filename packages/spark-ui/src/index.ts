@@ -17,6 +17,8 @@ export * from "./components/tooltip";
 export * from "./components/toast";
 export * from "./components/dropdown";
 export * from "./components/sidebar";
+export * from "./components/shine-border/";
+export * from "./components/team-card/";
 
 // Layout Primitives
 export * from "./primitives/Stack/";
