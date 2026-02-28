@@ -367,6 +367,8 @@
       var(--team-card-shadow),
       0px 8px 32px 0px rgba(66, 133, 244, 0.25);
   }
+
+  /* ===== Avatar Glow Ring ===== */
 }
 
 /* ===== Shine Animation ===== */
@@ -386,4 +388,5 @@
       background-position: 0% 0%;
     }
   }
+
 }

@@ -12,12 +12,9 @@ export const avatarVariants = cva(
     "inline-flex",
     "items-center",
     "justify-center",
-    "overflow-hidden",
     "rounded-full",
-    "bg-muted",
-    "text-muted-foreground",
-    "font-medium",
     "select-none",
+    "overflow-hidden",
   ],
   {
     variants: {
@@ -42,6 +39,19 @@ export const avatarImageVariants = cva([
   "h-full",
   "w-full",
   "object-cover",
+]);
+
+/** Applied to fallback text/initials — keeps the bg circle when no image. */
+export const avatarFallbackVariants = cva([
+  "inline-flex",
+  "items-center",
+  "justify-center",
+  "size-full",
+  "rounded-full",
+  "overflow-hidden",
+  "bg-muted",
+  "text-muted-foreground",
+  "font-medium",
 ]);
 
 export type AvatarVariants = VariantProps<typeof avatarVariants>;
