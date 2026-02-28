@@ -7,9 +7,9 @@ import { cn } from "../../utils/cn";
 
 /**
  * SidebarItem component
- * 
+ *
  * An individual item in the sidebar navigation.
- * 
+ *
  * @example
  * ```tsx
  * <SidebarItem active>Administrative</SidebarItem>
@@ -17,8 +17,23 @@ import { cn } from "../../utils/cn";
  * <SidebarItem nested>Web Development</SidebarItem>
  * ```
  */
-export const SidebarItem = React.forwardRef<HTMLButtonElement, SidebarItemProps>(
-  ({ children, className, active, nested, href, linkComponent: LinkComponent, onClick, ...props }, ref) => {
+export const SidebarItem = React.forwardRef<
+  HTMLButtonElement,
+  SidebarItemProps
+>(
+  (
+    {
+      children,
+      className,
+      active,
+      nested,
+      href,
+      linkComponent: LinkComponent,
+      onClick,
+      ...props
+    },
+    ref,
+  ) => {
     const itemClasses = cn(sidebarItemVariants({ active, nested }), className);
 
     // If href is provided, render as a link
@@ -27,7 +42,7 @@ export const SidebarItem = React.forwardRef<HTMLButtonElement, SidebarItemProps>
         <LinkComponent href={href} className={itemClasses}>
           <button
             ref={ref}
-            className="w-full text-left"
+            className="w-full text-left cursor-pointer"
             onClick={onClick}
             {...props}
           >
@@ -43,7 +58,7 @@ export const SidebarItem = React.forwardRef<HTMLButtonElement, SidebarItemProps>
         <a href={href} className={itemClasses}>
           <button
             ref={ref}
-            className="w-full text-left"
+            className="w-full text-left cursor-pointer"
             onClick={onClick}
             {...props}
           >
@@ -55,16 +70,11 @@ export const SidebarItem = React.forwardRef<HTMLButtonElement, SidebarItemProps>
 
     // Otherwise render as button
     return (
-      <button
-        ref={ref}
-        className={itemClasses}
-        onClick={onClick}
-        {...props}
-      >
+      <button ref={ref} className={itemClasses} onClick={onClick} {...props}>
         {children}
       </button>
     );
-  }
+  },
 );
 
 SidebarItem.displayName = "SidebarItem";

@@ -66,7 +66,7 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="relative overflow-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-clip pt-60 pb-48 px-4 md:px-8 lg:px-16">
       {/* Decorative Image - Upper ellipse */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -138,10 +138,10 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
           </FadeInSection>
 
           {/* Sidebar + Content */}
-          {/* overflow-visible here so 3D-tilted cards are not clipped by the flex container */}
           <div className="flex flex-col lg:flex-row gap-8 items-start flex-1 min-h-0 pb-8">
-            {/* Sidebar */}
-            <div className="w-full lg:w-auto lg:sticky lg:top-24">
+            {/* Sidebar — sticky to viewport; max-h + overflow-y-auto lets it
+                scroll internally when it's taller than the visible area */}
+            <div className="w-full lg:w-auto lg:sticky lg:top-40 lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pb-4">
               <Sidebar>
                 {TOP_LEVEL_ITEMS.map(({ href, label }) => (
                   <SidebarItem
@@ -170,9 +170,9 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
             </div>
 
             {/* Main content */}
-            {/* overflow-y-auto for vertical scroll; overflow-x-clip prevents horizontal
-                scrollbar from tilt transforms without creating a new scroll context */}
-            <div className="flex-1 min-w-0 overflow-y-auto overflow-x-clip">{children}</div>
+            {/* overflow-x-clip prevents horizontal scrollbar from tilt transforms
+                without creating a scroll container (unlike overflow-x-hidden) */}
+            <div className="flex-1 min-w-0 overflow-x-clip">{children}</div>
           </div>
         </Stack>
       </Container>

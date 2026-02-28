@@ -36,7 +36,7 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
           {label}
         </button>
         {isOpen && (
-          <div className="flex flex-col">
+          <div className="flex flex-col ">
             {children}
           </div>
         )}
