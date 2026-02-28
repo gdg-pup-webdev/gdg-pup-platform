@@ -306,4 +306,84 @@
   .sidebar-group {
     gap: 19px;
   }
+
+  /* ===== TeamCard Component Styles ===== */
+  :root {
+    --team-card-bg: linear-gradient(
+      180deg,
+      #241631 0%,
+      #211f35 25%,
+      #54729f 50%,
+      rgba(33, 31, 53, 0.96) 75%,
+      rgba(36, 22, 49, 0.92) 100%
+    );
+    --team-card-border-width: 4.5px;
+    --team-card-shadow: 0px 4px 4px 0px #00000040;
+    --team-card-radius: 28px;
+    --team-card-shine-duration: 10s;
+    --team-card-tilt-max: 10deg;
+    --team-card-perspective: 800px;
+  }
+
+  .team-card-base {
+    position: relative;
+    border-radius: var(--team-card-radius);
+    background: var(--team-card-bg);
+    box-shadow: var(--team-card-shadow);
+    transition: transform 0.15s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    /* Gradient border via pseudo-element (static fallback; ShineBorder overlays the animated version) */
+    isolation: isolate;
+    will-change: transform;
+  }
+
+  .team-card-base::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--team-card-border-width);
+    background: linear-gradient(92.56deg, #4285f4 -7.33%, #34a853 33.65%, #f9ab00 72.08%, #ea4335 109.62%);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    /* z-index intentionally unset — ShineBorder (z-index 2) animates on top */
+  }
+
+  /* ===== ShineBorder Component Styles ===== */
+  /* Ensures the animated ring always renders above the ::before static gradient */
+  .shine-border-ring {
+    z-index: 2;
+  }
+
+  .team-card-base:hover {
+    box-shadow:
+      var(--team-card-shadow),
+      0px 8px 32px 0px rgba(66, 133, 244, 0.25);
+  }
+}
+
+/* ===== Shine Animation ===== */
+/* @keyframes inside @theme inline so Tailwind v4 generates the animate-shine utility
+   referencing --duration, which is set as an inline CSS variable on the ShineBorder element */
+@theme inline {
+  --animate-shine: shine var(--duration) infinite linear;
+
+  @keyframes shine {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
+    }
+  }
 }
