@@ -14,6 +14,7 @@ import {
 import {
   TEAM_CARD_SHINE_COLORS,
   TEAM_CARD_SHINE_DURATION,
+  TEAM_CARD_SHINE_DURATION_HOVER,
   TEAM_CARD_BORDER_WIDTH,
   TEAM_CARD_TILT_MAX,
   TEAM_CARD_PERSPECTIVE,
@@ -137,6 +138,8 @@ export const TeamCard = React.forwardRef<HTMLDivElement, TeamCardProps>(
     const cardRef = React.useRef<HTMLDivElement>(null);
     // Ref for direct DOM mutation of the mascot tilt — avoids React re-renders on mousemove
     const mascotRef = React.useRef<HTMLImageElement>(null);
+    // Ref to ShineBorder element for direct --duration manipulation on hover
+    const shineRef = React.useRef<HTMLDivElement>(null);
 
     // Merge forwarded ref + internal ref
     const setRef = React.useCallback(
@@ -178,6 +181,11 @@ export const TeamCard = React.forwardRef<HTMLDivElement, TeamCardProps>(
         // Apply directly to DOM to avoid React re-render on every mousemove
         Object.assign(cardRef.current.style, nextStyle);
 
+        // Speed up the shine border on hover for emphasis
+        if (shineRef.current) {
+          shineRef.current.style.setProperty("--duration", `${TEAM_CARD_SHINE_DURATION_HOVER}s`);
+        }
+
         // Tilt the mascot slightly based on horizontal cursor position
         if (mascotRef.current) {
           const mascotRotate = nx * 18; // max ±18deg
@@ -201,6 +209,11 @@ export const TeamCard = React.forwardRef<HTMLDivElement, TeamCardProps>(
 
         tiltStyle.current = resetStyle;
         Object.assign(cardRef.current.style, resetStyle);
+
+        // Slow the shine border back to idle speed
+        if (shineRef.current) {
+          shineRef.current.style.setProperty("--duration", `${shineDuration}s`);
+        }
 
         // Reset mascot back to neutral
         if (mascotRef.current) {
@@ -226,8 +239,9 @@ export const TeamCard = React.forwardRef<HTMLDivElement, TeamCardProps>(
         onMouseLeave={handleMouseLeave}
         {...props}
       >
-        {/* Animated ShineBorder ring */}
+        {/* Animated ShineBorder ring — ref lets us update --duration directly on hover */}
         <ShineBorder
+          ref={shineRef}
           borderWidth={TEAM_CARD_BORDER_WIDTH}
           duration={shineDuration}
           shineColor={shineColor}

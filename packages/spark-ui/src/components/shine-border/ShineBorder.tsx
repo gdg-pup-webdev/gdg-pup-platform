@@ -48,12 +48,14 @@ export function ShineBorder({
   shineColor = GOOGLE_SHINE_COLORS as unknown as string[],
   className,
   style,
+  ref,
   ...props
-}: ShineBorderProps) {
+}: ShineBorderProps & { ref?: React.Ref<HTMLDivElement> }) {
   const colors = Array.isArray(shineColor) ? shineColor.join(",") : shineColor;
 
   return (
     <div
+      ref={ref}
       style={
         {
           "--border-width": `${borderWidth}px`,
