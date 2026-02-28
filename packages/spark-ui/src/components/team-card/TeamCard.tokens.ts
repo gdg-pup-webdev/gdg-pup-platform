@@ -25,7 +25,15 @@ export const TEAM_CARD_BORDER_WIDTH = 4.5;
 export const TEAM_CARD_RADIUS = 28;
 
 /** Animation duration for ShineBorder sweep (seconds). */
-export const TEAM_CARD_SHINE_DURATION = 10;
+export const TEAM_CARD_SHINE_DURATION = 14;
+
+/**
+ * Animation duration for ShineBorder sweep while the card is hovered (seconds).
+ * Set lower than TEAM_CARD_SHINE_DURATION for a fast, emphatic spin on hover.
+ * 2  → fast and punchy ← default
+ * 4  → moderate
+ */
+export const TEAM_CARD_SHINE_DURATION_HOVER = 3;
 
 /** Maximum 3D tilt rotation capped at this value (degrees). */
 export const TEAM_CARD_TILT_MAX = 6;
