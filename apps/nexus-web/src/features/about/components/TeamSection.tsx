@@ -46,8 +46,8 @@ const TOP_LEVEL_ITEMS = [
   { href: "/about/team/administrative", label: "Administrative" },
   { href: "/about/team/marketing", label: "Marketing" },
   { href: "/about/team/creatives", label: "Creatives" },
-  { href: "/about/team/operation", label: "Operation" },
-  { href: "/about/team/community-relation", label: "Community Relation" },
+  { href: "/about/team/operations", label: "Operations" },
+  { href: "/about/team/community-relations", label: "Community Relations" },
   { href: "/about/team/partnership", label: "Partnership" },
 ];
 
@@ -57,7 +57,7 @@ const TECH_ITEMS = [
   { href: "/about/team/web-development", label: "Web Development" },
   { href: "/about/team/ui-ux", label: "UI/UX" },
   { href: "/about/team/cybersecurity", label: "Cybersecurity" },
-  { href: "/about/team/cloud-solution", label: "Cloud Solution" },
+  { href: "/about/team/cloud-solutions", label: "Cloud Solutions" },
   { href: "/about/team/data-ml", label: "Data and ML" },
   { href: "/about/team/internet-of-things", label: "Internet of Things" },
 ];
