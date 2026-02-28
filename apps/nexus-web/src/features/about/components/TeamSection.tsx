@@ -138,7 +138,8 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
           </FadeInSection>
 
           {/* Sidebar + Content */}
-          <div className="flex flex-col lg:flex-row gap-8 items-start flex-1 min-h-0 overflow-hidden pb-8">
+          {/* overflow-visible here so 3D-tilted cards are not clipped by the flex container */}
+          <div className="flex flex-col lg:flex-row gap-8 items-start flex-1 min-h-0 pb-8">
             {/* Sidebar */}
             <div className="w-full lg:w-auto lg:sticky lg:top-24">
               <Sidebar>
@@ -169,7 +170,9 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
             </div>
 
             {/* Main content */}
-            <div className="flex-1 min-w-0 overflow-y-auto">{children}</div>
+            {/* overflow-y-auto for vertical scroll; overflow-x-clip prevents horizontal
+                scrollbar from tilt transforms without creating a new scroll context */}
+            <div className="flex-1 min-w-0 overflow-y-auto overflow-x-clip">{children}</div>
           </div>
         </Stack>
       </Container>
