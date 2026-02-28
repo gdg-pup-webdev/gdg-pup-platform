@@ -1,7 +1,7 @@
 # =============================================================================
 # Production Environment - Provider Configuration
 # =============================================================================
-# Configure the Google Cloud provider for the production environment.
+# Configure the Google Cloud and Cloudflare providers for the production environment.
 # =============================================================================
 
 terraform {
@@ -11,6 +11,10 @@ terraform {
     google = {
       source  = "hashicorp/google"
       version = "~> 5.0"
+    }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
     }
   }
 
@@ -23,4 +27,8 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = var.region
+}
+
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }

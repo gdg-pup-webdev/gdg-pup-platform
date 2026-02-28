@@ -149,7 +149,7 @@ export function EventCard({ event }: EventCardProps) {
 
           {/* Action Button */}
           <Button
-            variant="primary"
+            variant="default"
             size="sm"
             className="w-full"
           >

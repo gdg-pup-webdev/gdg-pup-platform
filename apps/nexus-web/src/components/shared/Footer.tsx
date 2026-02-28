@@ -8,27 +8,28 @@ export const Footer: React.FC = () => {
 
   const footerSections = {
     about: [
-      { href: "/about/who-is-gdg", label: "Who is GDG" },
+      { href: "/about", label: "Who is GDG" },
       { href: "/about/team", label: "Our Team" },
       { href: "/about/history", label: "History" },
       { href: "/about/partnership", label: "Partnership" },
-      { href: "/about/gdg-on-top", label: "GDG on TOP" },
+      { href: "/about/benefits", label: "Benefits" },
     ],
     network: [
-      { href: "/community/showcase", label: "Community Showcase" },
-      { href: "/community/members", label: "Member Showcase" },
+      { href: "/community-showcase", label: "Community Showcase" },
+      { href: "/member-showcase", label: "Member Showcase" },
     ],
-    events: [
-      { href: "/leaderboards", label: "Leaderboards" },
+    nexus: [
+      { href: "/events", label: "Events" },
+      { href: "/leaderboard", label: "Leaderboard" },
       { href: "/products", label: "Products" },
-      { href: "#", label: "GetID" },
-      { href: "/profile", label: "Sparkmates" },
+      { href: "/id", label: "Get ID" },
+      { href: "/profile", label: "Profile" },
     ],
   };
 
   const socialLinks = [
     {
-      href: "#",
+      href: "https://www.youtube.com/@gdgpupmnl",
       label: "YouTube",
       icon: (
         <path
@@ -114,7 +115,7 @@ export const Footer: React.FC = () => {
                 height={40}
                 className="w-10 h-10 group-hover:scale-110 transition-transform duration-300"
               />
-              <Text variant="heading-4" weight="bold" className="text-white">
+              <Text variant="heading-6" weight="bold" className="text-white">
                 GDG PUP NEXUS
               </Text>
             </Link>
@@ -122,7 +123,7 @@ export const Footer: React.FC = () => {
 
           {/* About */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="blue">
               About
             </Text>
             <Stack gap="xs">
@@ -142,7 +143,7 @@ export const Footer: React.FC = () => {
 
           {/* Network */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="yellow">
               Network
             </Text>
             <Stack gap="xs">
@@ -160,13 +161,13 @@ export const Footer: React.FC = () => {
             </Stack>
           </Box>
 
-          {/* Events */}
+          {/* Nexus */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
-              Events
+            <Text variant="body" weight="semibold" gradient="green">
+              Nexus
             </Text>
             <Stack gap="xs">
-              {footerSections.events.map((link) => (
+              {footerSections.nexus.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -182,7 +183,7 @@ export const Footer: React.FC = () => {
 
           {/* Address */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="red">
               Address
             </Text>
             <Text variant="body-sm" className="text-gray-300 mb-4">
@@ -205,7 +206,7 @@ export const Footer: React.FC = () => {
 
           {/* Contact */}
           <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-            <Text variant="body" weight="semibold" className="text-white mb-4">
+            <Text variant="body" weight="semibold" gradient="red">
               Contact
             </Text>
             <Link
@@ -220,7 +221,7 @@ export const Footer: React.FC = () => {
         </Box>
 
         {/* White divider line */}
-        <Box className="border-t border-white/20 mb-8"> </Box>
+        <div className="border-t border-white mb-8"> </div>
 
         {/* Bottom Section: Copyright & Social */}
         <Inline
@@ -238,6 +239,8 @@ export const Footer: React.FC = () => {
               <a
                 key={social.label}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-300 hover:text-white hover:scale-110 transition-all duration-200"
                 aria-label={social.label}
               >

@@ -1,13 +1,12 @@
 "use client";
 
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Avatar, Badge, Button } from "@packages/spark-ui";
+import { Card, Avatar, Badge, Button, Container, Grid, Stack } from "@packages/spark-ui";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ProfilePage() {
-  const { user, status, loginWithGoogle } = useAuthContext();
+  const { user, status } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -19,29 +18,18 @@ export default function ProfilePage() {
 
   if (status === "checking") {
     return (
-      <PageLayout>
-        <div className="min-h-screen bg-white">
-          <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin text-4xl mb-4">⏳</div>
-            <p className="text-gray-600">Loading...</p>
-          </div>
+      <Stack align="center" justify="center" className="min-h-screen bg-white">
+        <div className="text-center">
+          <div className="animate-spin text-4xl mb-4">⏳</div>
+          <p className="text-gray-600">Loading...</p>
         </div>
-        </div>
-      </PageLayout>
+      </Stack>
     );
   }
 
   if (!user) {
     return (
-      <PageLayout>
-        <div className="min-h-screen bg-white">
-          <PageHeader
-            title="Your Profile"
-            description="Sign in to view and manage your profile"
-          />
-
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Container className="py-44">
           <Card className="text-center">
             <div className="py-12">
               <div className="text-6xl mb-6">🔐</div>
@@ -52,9 +40,14 @@ export default function ProfilePage() {
                 Please sign in with your Google account to view and manage your
                 profile.
               </p>
-              <Button onClick={loginWithGoogle} size="lg">
-                Sign In with Google
-              </Button>
+              <div className="flex gap-4 justify-center">
+                <Button variant="default" onClick={() => router.push("/signin")} size="lg">
+                  Sign In
+                </Button>
+                <Button variant="outline" onClick={() => router.push("/signup")} size="lg">
+                  Sign Up
+                </Button>
+              </div>
             </div>
           </Card>
 
@@ -62,7 +55,7 @@ export default function ProfilePage() {
             <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">
               What You'll Get
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Grid gap="lg" className="md:grid-cols-3">
               <Card className="text-center">
                 <div className="text-4xl mb-3">📊</div>
                 <h4 className="font-semibold text-gray-900 mb-2">
@@ -88,11 +81,9 @@ export default function ProfilePage() {
                   Network with other community members
                 </p>
               </Card>
-            </div>
+            </Grid>
           </div>
-        </div>
-      </div>
-      </PageLayout>
+        </Container>
     );
   }
 

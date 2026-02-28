@@ -1,3 +1,8 @@
+/**
+ * @deprecated Do not use. This component is redundant with Next.js route-level layout.tsx files.
+ * Pages should define their own heading structure or hero sections inline.
+ * Scheduled for removal.
+ */
 import React from "react";
 
 interface PageHeaderProps {

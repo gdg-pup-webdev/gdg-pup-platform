@@ -123,7 +123,7 @@ export function TokenDisplay({
         <Inline gap="xs">
           <Button
             onClick={() => setIsVisible(!isVisible)}
-            variant="secondary"
+            variant="default"
             size="sm"
             disabled={!token}
             className="flex-1"
@@ -136,7 +136,7 @@ export function TokenDisplay({
           
           <Button
             onClick={handleCopy}
-            variant="primary"
+            variant="default"
             size="sm"
             disabled={!token}
             className="flex-1"

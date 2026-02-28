@@ -37,7 +37,9 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <Navbar />
-            {children}
+            <main>
+              {children}
+            </main>
             <Footer />
           </AuthProvider>
         </QueryProvider>

@@ -15,6 +15,7 @@ const meta = {
         "heading-3",
         "heading-4",
         "heading-5",
+        "heading-6",
         "body",
         "body-lg",
         "body-sm",
@@ -43,6 +44,10 @@ const meta = {
     weight: {
       control: "select",
       options: ["normal", "medium", "semibold", "bold"],
+    },
+    gradient: {
+      control: "select",
+      options: ["none", "white-blue", "white-yellow", "white-green", "red", "green", "yellow", "blue"],
     },
     truncate: {
       control: "boolean",
@@ -95,7 +100,8 @@ export const Body: Story = {
 export const BodyLarge: Story = {
   args: {
     variant: "body-lg",
-    children: "This is large body text. Use for introductory paragraphs or emphasis.",
+    children:
+      "This is large body text. Use for introductory paragraphs or emphasis.",
   },
 };
 
@@ -150,8 +156,9 @@ export const Alignment: Story = {
       <Text align="center">Center aligned text</Text>
       <Text align="right">Right aligned text</Text>
       <Text align="justify">
-        Justified text that spans multiple lines. Lorem ipsum dolor sit amet, consectetur
-        adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Justified text that spans multiple lines. Lorem ipsum dolor sit amet,
+        consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+        et dolore magna aliqua.
       </Text>
     </Stack>
   ),
@@ -189,18 +196,20 @@ export const LineClamping: Story = {
       <Stack gap="sm">
         <Text variant="label">Clamp to 2 lines:</Text>
         <Text clamp={2}>
-          This text will be clamped to 2 lines maximum. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-          enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+          This text will be clamped to 2 lines maximum. Lorem ipsum dolor sit
+          amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris.
         </Text>
       </Stack>
       <Stack gap="sm">
         <Text variant="label">Clamp to 3 lines:</Text>
         <Text clamp={3}>
-          This text will be clamped to 3 lines maximum. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-          enim ad minim veniam, quis nostrud exercitation ullamco laboris. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore.
+          This text will be clamped to 3 lines maximum. Lorem ipsum dolor sit
+          amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
+          labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris. Duis aute irure dolor in reprehenderit
+          in voluptate velit esse cillum dolore.
         </Text>
       </Stack>
     </Stack>
@@ -220,15 +229,20 @@ export const TypographyHierarchy: Story = {
       <Text variant="heading-4">Heading 4: Minor Heading</Text>
       <Text variant="heading-5">Heading 5: Small Heading</Text>
       <Text variant="body-lg">
-        Body Large: Introductory paragraph or emphasis text that stands out from regular body copy.
+        Body Large: Introductory paragraph or emphasis text that stands out from
+        regular body copy.
       </Text>
       <Text variant="body">
-        Body: Regular paragraph text. Perfect for main content, descriptions, and general reading.
+        Body: Regular paragraph text. Perfect for main content, descriptions,
+        and general reading.
       </Text>
       <Text variant="body-sm">
-        Body Small: Secondary information or less important text that still needs to be readable.
+        Body Small: Secondary information or less important text that still
+        needs to be readable.
       </Text>
-      <Text variant="caption">Caption: Small text for image captions, footnotes, or metadata.</Text>
+      <Text variant="caption">
+        Caption: Small text for image captions, footnotes, or metadata.
+      </Text>
       <Text variant="label">Label: Form labels and UI labels</Text>
     </Stack>
   ),
@@ -255,6 +269,99 @@ export const SemanticElements: Story = {
       <Text as="div" variant="body-sm">
         Div element with body-sm style
       </Text>
+    </Stack>
+  ),
+};
+
+export const GradientHeadings: Story = {
+  args: {
+    children: <></>,
+  },
+  render: () => (
+    <Stack gap="lg">
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          White to Blue Gradient
+        </Text>
+        <Text variant="heading-1" gradient="white-blue">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="white-blue">
+          White to Blue Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Red Gradient
+        </Text>
+        <Text variant="heading-1" gradient="red">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="red">
+          Red Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Green Gradient
+        </Text>
+        <Text variant="heading-1" gradient="green">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="green">
+          Green Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Yellow Gradient
+        </Text>
+        <Text variant="heading-1" gradient="yellow">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="yellow">
+          Yellow Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Blue Gradient
+        </Text>
+        <Text variant="heading-1" gradient="blue">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="blue">
+          Blue Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          White to Yellow Gradient
+        </Text>
+        <Text variant="heading-1" gradient="white-yellow">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="white-yellow">
+          White to Yellow Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          White to Green Gradient
+        </Text>
+        <Text variant="heading-1" gradient="white-green">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="white-green">
+          White to Green Gradient
+        </Text>
+      </Stack>
     </Stack>
   ),
 };

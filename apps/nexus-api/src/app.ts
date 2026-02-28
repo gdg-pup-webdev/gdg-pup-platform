@@ -1,7 +1,11 @@
 import express, { Express } from "express";
-import { initializeApp } from "./presentation";
+import { loadApps } from "./loaders/loadApps";
+import { loadDocs } from "./loaders/loadDocs";
 
 const app: Express = express();
-initializeApp(app);
+
+loadDocs(app);
+
+loadApps(app);
 
 export default app;

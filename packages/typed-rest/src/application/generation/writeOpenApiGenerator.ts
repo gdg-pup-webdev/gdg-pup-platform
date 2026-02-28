@@ -22,7 +22,10 @@ export function writeOpenApiGenerator(
     routeRootDirRelative,
   );
 
-  const tsFiles = listTsFilesOfDirectorySync(routeRootDirAbsolute);
+  const tsFiles = listTsFilesOfDirectorySync(routeRootDirAbsolute, [
+    "**/(__deprecated__)", // Matches the folder (v0) anywhere
+    "**/(__deprecated__)/**", // Matches anything inside (v0) anywhere
+  ]);
   const routeFiles = tsFiles.map((f) =>
     RouteEndpointFile.fromTsFile(f, routeRootDirAbsolute),
   );
@@ -31,7 +34,9 @@ export function writeOpenApiGenerator(
   const routeObjects = routeFiles.map((routeFile) => {
     const obj = new TsObjectLiteral({
       method: new TsRawValue(`'${routeFile.method}'`.toLocaleLowerCase()),
-      path: new TsRawValue(`'${routeFile.urlPath}'`.replace(/\[/g, "{").replace(/\]/g, "}")),
+      path: new TsRawValue(
+        `'${routeFile.urlPath}'`.replace(/\[/g, "{").replace(/\]/g, "}"),
+      ),
     });
 
     routeFile.exports.forEach((e) => {
@@ -67,7 +72,6 @@ export function writeOpenApiGenerator(
   tsFile.addStatement(new TsRawValue(generateOpenApiOptionsString));
 }
 
-
 export const generateOpenApiOptionsString = `
 export const generateOpenApiOptions = ({
   info = { title: "API Documentation", version: "1.0.0", description: "Generated Documentation" },
@@ -92,4 +96,3 @@ export const generateOpenApiOptions = ({
     });
 };
 `;
-
