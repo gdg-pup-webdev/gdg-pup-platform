@@ -11,6 +11,65 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* ===== Background Gradient Animation (Aceternity) ===== */
+  --animate-first: moveVertical 90s ease infinite;
+  --animate-second: moveInCircle 70s reverse infinite;
+  --animate-third: moveInCircle 110s linear infinite;
+  --animate-fourth: moveHorizontal 120s ease infinite;
+  --animate-fifth: moveInCircle 80s ease infinite;
+
+  /* ===== History page zoned blob drift ===== */
+  /* --travel controls the max drift distance per blob (set as inline style) */
+  @keyframes blobDriftV {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(var(--travel, 38px)); }
+  }
+  @keyframes blobDriftH {
+    0%, 100% { transform: translateX(0px); }
+    50%       { transform: translateX(var(--travel, 34px)); }
+  }
+  @keyframes blobDriftD {
+    0%, 100% { transform: translate(0px, 0px); }
+    33%       { transform: translate(var(--travel, 28px), calc(var(--travel, 28px) * 0.65)); }
+    66%       { transform: translate(calc(var(--travel, 28px) * -0.65), var(--travel, 28px)); }
+  }
+
+  @keyframes moveHorizontal {
+    0% {
+      transform: translateX(-50%) translateY(-10%);
+    }
+    50% {
+      transform: translateX(50%) translateY(10%);
+    }
+    100% {
+      transform: translateX(-50%) translateY(-10%);
+    }
+  }
+
+  @keyframes moveInCircle {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes moveVertical {
+    0% {
+      transform: translateY(-50%);
+    }
+    50% {
+      transform: translateY(50%);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
 }
 
 @media (prefers-color-scheme: dark) {
