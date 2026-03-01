@@ -172,20 +172,17 @@ export function PartnershipSection() {
 
               <Box className="w-full max-w-3xl mx-auto">
                 <Card>
-                  <Text variant="body" className="text-gray-300 text-center">
-                    <span className="bg-linear-[0deg,#57CAFF_0%,#347999_100%] bg-clip-text text-transparent font-semibold">
-                      Google Developer Group PUP Nexus
-                    </span>{" "}
-                    exists to cultivate a collaborative tech community where
-                    students and professionals grow together. Through
-                    partnerships built on{" "}
-                    <span className="bg-linear-[360deg,#FFD427_0%,#997F17_100%] bg-clip-text text-transparent font-semibold">
-                      trust and shared goals
-                    </span>
-                    , we create meaningful opportunities for{" "}
-                    <span className="bg-linear-[360deg,#5CDB6D_0%,#31753A_100%] bg-clip-text text-transparent font-semibold">
-                      learning, innovation, and real-world impact.
-                    </span>
+                  <Text
+                    variant="body"
+                    gradient="white-blue"
+                    align="center"
+                    weight="bold"
+                  >
+                    Google Developer Group PUP Nexus exists to cultivate a
+                    collaborative tech community where students and
+                    professionals grow together. Through partnerships built on
+                    trust and shared goals, we create meaningful opportunities
+                    for learning, innovation, and real-world impact.
                   </Text>
                 </Card>
               </Box>
