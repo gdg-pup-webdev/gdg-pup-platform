@@ -1,4 +1,5 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
+import { AnimatedTeamGrid } from "@/features/about";
 
 const MASCOT_SRC = "/pages/team/mascot.png";
 const BASE = "/pages/team/cybersecurity";
@@ -42,7 +43,7 @@ export default function CybersecurityPage() {
           Cybersecurity
         </Text>
       </Stack>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-8 p-3 pb-10 sm:grid-cols-3 lg:grid-cols-4">
+      <AnimatedTeamGrid>
         {CYBERSECURITY_MEMBERS.map((member) => (
           <TeamCard
             key={member.name}
@@ -53,7 +54,7 @@ export default function CybersecurityPage() {
             socials={member.socials}
           />
         ))}
-      </div>
+      </AnimatedTeamGrid>
     </Stack>
   );
 }
