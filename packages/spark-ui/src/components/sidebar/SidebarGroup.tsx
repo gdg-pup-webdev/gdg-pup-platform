@@ -35,11 +35,19 @@ export const SidebarGroup = React.forwardRef<HTMLDivElement, SidebarGroupProps>(
         >
           {label}
         </button>
-        {isOpen && (
-          <div className="flex flex-col ">
+        {/* CSS grid trick: animating grid-template-rows 0fr→1fr gives a
+            smooth height transition without needing to measure the element. */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateRows: isOpen ? "1fr" : "0fr",
+            transition: "grid-template-rows 300ms ease",
+          }}
+        >
+          <div className="overflow-hidden flex flex-col">
             {children}
           </div>
-        )}
+        </div>
       </div>
     );
   }
