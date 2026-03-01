@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "@packages/spark-ui/styles.css";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { LenisProvider } from "@/providers/LenisProvider";
 import { Navbar } from "@/components/shared/Navbar";
 import { QueryProvider } from "@packages/spark-tools/query";
 import { Footer } from "@/components/shared";
@@ -35,13 +36,15 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <AuthProvider>
-            <Navbar />
-            <main>
-              {children}
-            </main>
-            <Footer />
-          </AuthProvider>
+          <LenisProvider>
+            <AuthProvider>
+              <Navbar />
+              <main>
+                {children}
+              </main>
+              <Footer />
+            </AuthProvider>
+          </LenisProvider>
         </QueryProvider>
       </body>
     </html>
