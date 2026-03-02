@@ -1,5 +1,5 @@
 import { ServerError } from "@/classes/ServerError.js";
-import { ContractError } from "@packages/typed-rest";
+import { ContractError } from "@packages/typed-rest/serverExpress";
 import { Request, Response, NextFunction } from "express";
 import z, { ZodError } from "zod";
 

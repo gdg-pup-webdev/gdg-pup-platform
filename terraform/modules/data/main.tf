@@ -21,8 +21,10 @@ resource "google_project_service" "firebase" {
 
 # Provision the Firestore Database
 resource "google_firestore_database" "database" {
+  count = var.create_database ? 1 : 0
+
   project     = var.project_id
-  name        = "(default)"
+  name        = var.database_name
   location_id = var.region
   type        = var.database_type
 

@@ -1,24 +1,32 @@
+/**
+ * User Profile Page - Route Handler
+ * 
+ * This page displays a user's complete profile information.
+ * It extracts the user ID from the URL and renders the ProfileCard component.
+ * 
+ * Route: /id/[id]
+ * Example: /id/user-123
+ */
+
 "use client";
 
-import { useParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
+import { configs } from "@/configs/servers.config";
 
-const PortfolioPage = () => {
-  const params = useParams();
-  const id = params.id as string;
+export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  // Unwrap the params Promise (required in Next.js 15+)
+  const { id } = React.use(params);
 
-  const [userData, setUserData] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [userData, setUserData] = useState<any>(null);
 
   React.useEffect(() => {
     const fetchUserProfile = async () => {
       if (!id) return;
       try {
         setLoading(true);
-        // Default to localhost:8000 if env var is missing
-        const apiUrl =
-          process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000/";
+        const apiUrl = configs.nexusApiBaseUrl;
         const baseUrl = apiUrl.endsWith("/") ? apiUrl : `${apiUrl}/`;
 
         const res = await fetch(
@@ -191,5 +199,3 @@ const PortfolioPage = () => {
     </div>
   );
 };
-
-export default PortfolioPage;

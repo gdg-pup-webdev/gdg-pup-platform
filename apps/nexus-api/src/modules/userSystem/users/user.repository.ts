@@ -6,8 +6,8 @@
 
 import { supabase } from "@/lib/supabase.js";
 import { handlePostgresError } from "@/lib/supabase.utils";
-import { RepositoryResult } from "@/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
+import { RepositoryResult } from "@/presentation/types/repository.types.js";
+import { Tables, TablesInsert, TablesUpdate } from "@/presentation/types/supabase.types.js";
 
 type userRow = Tables<"user">;
 type userInsert = TablesInsert<"user">;
@@ -43,6 +43,20 @@ export class UserRepository {
       .select("*")
       .eq("id", userId)
       .single();
+    if (error) handlePostgresError(error);
+    return data;
+  };
+
+  /**
+   * getUserByEmail
+   * Fetches a single user record by their email.
+   */
+  getUserByEmail = async (email: string): RepositoryResult<userRow> => {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .eq("email", email)
+      .maybeSingle();
     if (error) handlePostgresError(error);
     return data;
   };

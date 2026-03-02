@@ -11,6 +11,13 @@ export function handlePostgresError(err: PostgrestError): never {
   const code = err.code;
   const message = err.message;
 
+  if (!(err instanceof PostgrestError))
+    throw new DatabaseError(
+      "An unknown error has been passed to handlePostgresError. ",
+      "Expected PostgrestError. Passed unknown error.",
+      { cause: err },
+    );
+
   switch (code) {
     case "23505": // Unique violation
       throw new UniqueConstraintError(`${code}: ${message}`, err);

@@ -5,22 +5,15 @@
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Compute Module (Cloud Run)
+# Compute Module (Cloud Run — identity-api, nexus-api, nexus-web)
 # -----------------------------------------------------------------------------
 module "compute" {
   source = "../../modules/compute"
 
-  project_id   = var.project_id
-  region       = var.region
-  service_name = "gdg-pup-platform-${var.environment}"
-  
-  # Image URL to be updated in CD pipeline or via tfvars. 
-  # For now, using a sample image to validate the plan.
-  image_url    = var.image_url != "" ? var.image_url : "us-docker.pkg.dev/cloudrun/container/hello"
-  
-  # Dev environment might want public access temporarily for testing? 
-  # Set to false by default for security, override in tfvars if needed.
-  allow_unauthenticated = var.allow_unauthenticated
+  project_id  = var.project_id
+  region      = var.region
+  environment = var.environment
+  services    = var.services
 }
 
 # -----------------------------------------------------------------------------
@@ -32,4 +25,16 @@ module "data" {
   project_id    = var.project_id
   region        = var.region
   database_type = "FIRESTORE_NATIVE"
+  database_name = var.firestore_database_name
+  create_database = var.create_firestore_database
+}
+
+# -----------------------------------------------------------------------------
+# DNS Module (Cloudflare DNS records for custom domains)
+# -----------------------------------------------------------------------------
+module "dns" {
+  source = "../../modules/dns"
+
+  cloudflare_zone_id = var.cloudflare_zone_id
+  domain_mappings    = var.domain_mappings
 }

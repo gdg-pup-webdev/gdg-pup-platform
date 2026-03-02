@@ -1,172 +1,49 @@
 "use client";
 
-import {
-  contract as identityApiContract,
-  models as identityApiModels,
-} from "@packages/identity-api-contracts";
-import {
-  contract as nexusApiContract,
-  models as nexusApiModels,
-} from "@packages/nexus-api-contracts";
-import { callEndpoint } from "@packages/typed-rest";
+import { motion, useScroll, useTransform } from "motion/react";
 
-import { configs } from "@/configs/servers.config";
-import Link from "next/link";
-import React from "react";
-import { Header, Button, Test } from "@packages/spark-ui";
+export default function HomePage() {
+  const { scrollY } = useScroll();
 
-const HomePage = () => {
-  return (
-    <>
-      <div className="w-full h-screen flex flex-col gap-8 justify-center items-center">
-        <Header>Nexus Web</Header>
-        <Test />
-        <div className="flex flex-row gap-4">
-          <NexusApiHealthCheckCard />
-          <IdentityApiHealthCheckCard />
-        </div>
-      </div>
-    </>
-  );
-};
+  const backgroundY = useTransform(scrollY, [0, 500], [0, 150]);
 
-const NexusApiHealthCheckCard = () => {
-  const [res, setRes] = React.useState<
-    nexusApiContract.api.health.GET.response[200] | null
-  >(null);
-  const [error, setError] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
+  const textY = useTransform(scrollY, [0, 200], [30, 0]);
 
-  const handleNexusApiHealthCheck = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const result = await callEndpoint(
-        configs.nexusApiBaseUrl,
-        nexusApiContract.api.health.GET,
-        {},
-      );
-
-      // await Promise.resolve(
-      //   new Promise((resolve) => setTimeout(resolve, 1000))
-      // );
-
-      if (result.status === 200) {
-        setRes(result.body);
-        console.log("Health Check Success:", result);
-      } else {
-        setError(result.body.message);
-        console.error("Health Check Failed:", result);
-      }
-    } catch (err) {
-      setError((err as Error).message);
-      console.error("Health Check Failed:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const textOpacity = useTransform(scrollY, [0, 200], [0, 1]);
 
   return (
-    <>
-      <div className="max-w-md p-6 rounded-2xl flex flex-col gap-4 shadow-lg border border-gray-200">
-        <h1 className="text-2xl font-bold mb-4 text-center">
-          Nexus Api Health Check
+    <div className="relative min-h-[150vh] flex items-center justify-center overflow-hidden">
+      {/* Background Image with Parallax */}
+      <motion.div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url(/pages/hero.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          y: backgroundY,
+        }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40"></div>
+      </motion.div>
+
+      {/* Hero Content with Fade In */}
+      <motion.div
+        className="relative z-10 text-center px-6 max-w-4xl"
+        style={{
+          opacity: textOpacity,
+          y: textY,
+        }}
+      >
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+          Bridging the gap between theory and practice.
         </h1>
-        <button
-          onClick={handleNexusApiHealthCheck}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-        >
-          Check API Health
-        </button>
-
-        {loading && !error && <p>Loading...</p>}
-        {error && (
-          <div className="bg-red-100 p-4 rounded">
-            <h2 className="font-semibold">Error:</h2>
-            <p>{error}</p>
-          </div>
-        )}
-        {!loading && !error && res && (
-          <div className="bg-green-100 p-4 rounded">
-            <h2 className="font-semibold">API Response:</h2>
-            <pre className="whitespace-pre-wrap">
-              {JSON.stringify(res, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
-    </>
+        <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          GDG PUP helps student developers grow through real projects, events,
+          and mentorship connecting classroom learning to industry practice.
+        </p>
+      </motion.div>
+    </div>
   );
-};
-
-const IdentityApiHealthCheckCard = () => {
-  const [res, setRes] = React.useState<
-    identityApiContract.api.health.GET.response[200] | null
-  >(null);
-  const [error, setError] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
-
-  const handleIdentityApiHealthCheck = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await callEndpoint(
-        configs.identityApiBaseUrl,
-        identityApiContract.api.health.GET,
-        {},
-      );
-
-      // await Promise.resolve(
-      //   new Promise((resolve) => setTimeout(resolve, 1000))
-      // );
-
-      if (result.status === 200) {
-        setRes(result.body);
-        console.log("Health Check Success:", result);
-      } else {
-        setError(result.body.message);
-        console.error("Health Check Failed:", result);
-      }
-    } catch (err) {
-      setError((err as Error).message);
-      console.error("Health Check Failed:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <>
-      <div className="max-w-md p-6 rounded-2xl flex flex-col gap-4 shadow-lg border border-gray-200">
-        <h1 className="text-2xl font-bold mb-4 text-center">
-          Identity Api Health Check
-        </h1>
-        <button
-          onClick={handleIdentityApiHealthCheck}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-        >
-          Check API Health
-        </button>
-
-        {loading && !error && <p>Loading...</p>}
-        {error && (
-          <div className="bg-red-100 p-4 rounded">
-            <h2 className="font-semibold">Error:</h2>
-            <p>{error}</p>
-          </div>
-        )}
-        {!loading && !error && res && (
-          <div className="bg-green-100 p-4 rounded">
-            <h2 className="font-semibold">API Response:</h2>
-            <pre className="whitespace-pre-wrap">
-              {JSON.stringify(res, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
-    </>
-  );
-};
-
-export default HomePage;
+}

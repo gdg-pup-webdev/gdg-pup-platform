@@ -5,6 +5,9 @@ import { configs } from "@/configs/configs.js";
 import cors from "cors";
 
 export const setupLoader = (app: Express) => {
+  // Trust the first proxy (Cloud Run / load balancer)
+  app.set("trust proxy", 1);
+
   // CORS config
   app.use(
     cors({

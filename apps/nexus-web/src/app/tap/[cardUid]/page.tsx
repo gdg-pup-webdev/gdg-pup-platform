@@ -1,7 +1,21 @@
+/**
+ * Card Tap Page (Route)
+ * 
+ * This page handles the /tap/[cardUid] route.
+ * It's triggered when someone scans an NFC card or QR code.
+ * 
+ * The page's responsibility is to:
+ * 1. Extract the cardUid from the URL
+ * 2. Render the CardTapRouter component
+ * 
+ * All logic has been moved to the card-tap feature for better organization.
+ */
+
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { configs } from "@/configs/servers.config";
 
 // Define the shape of the status response
 interface CardStatus {
@@ -10,22 +24,22 @@ interface CardStatus {
 }
 
 export default function TapRouterPage() {
+  // Get the cardUid from the URL parameters
+  // For example: /tap/ABC123 -> cardUid will be "ABC123"
+  const { cardUid } = useParams();
   const router = useRouter();
-  const params = useParams();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const cardUid = params.cardUid as string;
   const [debugData, setDebugData] = useState<any>(null);
 
   useEffect(() => {
     const checkCardStatus = async () => {
       try {
-        // TODO: Replace with env var for Identity API URL
-        const apiUrl =
-          process.env.NEXT_PUBLIC_IDENTITY_API_URL || "http://localhost:8100";
+        const apiUrl = configs.identityApiBaseUrl;
         // Ensure slash between host and api
         const res = await fetch(
-          `${apiUrl}api/card-system/cards/${cardUid}/status`,
+          `${apiUrl}/api/card-system/cards/${cardUid}/status`,
         );
         console.log("Card status response:", res.status);
 

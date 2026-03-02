@@ -5,11 +5,11 @@ import {
   resourceServiceInstance,
 } from "./studyJam.service.js";
 import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import {
   buildPaginationMeta,
   normalizeOptionalText
-} from "@/utils/controller.utils.js";
+} from "@/presentation/utils/controller.utils.js";
 
 /**
  * Controller for handling study jam-related requests.

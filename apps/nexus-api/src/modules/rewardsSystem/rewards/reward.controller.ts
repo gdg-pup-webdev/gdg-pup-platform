@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { RewardService, rewardServiceInstance } from "./reward.service.js";
-import { createExpressController } from "@packages/typed-rest";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 
 export class RewardController {

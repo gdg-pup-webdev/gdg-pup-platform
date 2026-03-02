@@ -1,6 +1,6 @@
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
 
-import { z } from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
 export const response = {
   200: z.object({ status: z.string(), message: z.string() }),
   ...SchemaFactory.Response.standardErrors(),

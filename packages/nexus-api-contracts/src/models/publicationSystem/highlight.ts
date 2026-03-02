@@ -4,7 +4,8 @@ import {
   safeOmit,
   standardMetadata,
 } from "#utils/model.utils.js";
-import z from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
+
 
 export const row = standardMetadata.extend({
   // event data

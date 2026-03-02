@@ -1,8 +1,8 @@
 import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { configs } from "../configs/configs.js";
-import { generateOpenApiOptions } from "@packages/identity-api-contracts";
+import { configs } from "../configs/configs.js"; 
+import { generateOpenApiOptions } from "@packages/identity-api-contracts"; 
 
 export const swaggerLoader = (app: Express) => {
   const options = generateOpenApiOptions({

@@ -1,24 +1,44 @@
+/**
+ * Card Activation Page (Route)
+ * 
+ * This page handles the /activate/[cardUid] route.
+ * All the logic has been moved to the feature module for better organization.
+ * 
+ * The page's only job is to:
+ * 1. Get the cardUid from the URL
+ * 2. Render the ActivationCard component
+ */
+
 "use client";
 
 import { useAuthContext } from "@/providers/AuthProvider";
+import { configs } from "@/configs/servers.config";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 export default function ActivateCardPage() {
+  // Get the cardUid from the URL parameters
+  // For example: /activate/ABC123 -> cardUid will be "ABC123"
   const { cardUid } = useParams();
-  const { user, loginWithGoogle, token, status: authStatus } = useAuthContext();
   const router = useRouter();
 
+  const {
+    user,
+    token,
+    status: authStatus,
+    loginWithGoogle,
+  } = useAuthContext();
+
   const [isActivating, setIsActivating] = useState(false);
+
 
   const handleActivate = async () => {
     if (!user) return;
 
     setIsActivating(true);
     try {
-      const apiUrl =
-        process.env.NEXT_PUBLIC_IDENTITY_API_URL || "http://localhost:8100";
+      const apiUrl = configs.identityApiBaseUrl;
       const baseUrl = apiUrl.endsWith("/") ? apiUrl : `${apiUrl}/`;
 
       const response = await fetch(

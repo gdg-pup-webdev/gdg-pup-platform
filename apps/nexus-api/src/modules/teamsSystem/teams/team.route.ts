@@ -3,7 +3,7 @@ import { TeamController, teamControllerInstance } from "./team.controller.js";
 import {
   AuthMiddleware,
   authMiddlewareInstance,
-} from "@/middlewares/auth.middleware.js";
+} from "@/presentation/middlewares/auth.middleware.js";
 
 export class TeamRouter {
   constructor(
