@@ -19,16 +19,16 @@
     "#*": "./dist/*"
   },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.4.0",
+    "@asteasolutions/zod-to-openapi": "^8.4.3",
     "@configs/typescript-config": "workspace:*",
     "chokidar": "^5.0.0",
-    "commander": "11.0.0",
+    "commander": "14.0.3",
     "express": "5.2.1",
     "minimatch": "^10.2.4",
-    "multer": "2.0.2",
+    "multer": "2.1.0",
     "ts-morph": "^27.0.2",
     "tsc-alias": "1.8.16",
-    "zod": "4.3.2"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/express": "5.0.6",

@@ -18,11 +18,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^8.4.0",
+    "@asteasolutions/zod-to-openapi": "^8.4.3",
     "@packages/typed-rest": "workspace:*",
     "concurrently": "9.2.1",
     "supazod": "^4.5.0",
-    "zod": "^4.3.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@configs/typescript-config": "workspace:*",
