@@ -1,12 +1,5 @@
-import { Container, Stack } from '@packages/spark-ui';
+import { LoadingScreen } from '@/components/shared';
 
 export default function Loading() {
-  return (
-    <Container className="py-12">
-      <Stack align="center" gap="lg">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p className="text-gray-600">Loading profile...</p>
-      </Stack>
-    </Container>
-  );
+  return <LoadingScreen message="Loading profile..." />;
 }

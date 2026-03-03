@@ -240,9 +240,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ) : (
                       <Link href="/signin" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
                         <Avatar
-                          fallback="?"
                           size="sm"
-                          className="opacity-70 border-2 border-dashed border-gray-500"
+                          className="opacity-70"
                         />
                       </Link>
                     )}

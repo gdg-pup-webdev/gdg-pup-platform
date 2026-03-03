@@ -3,7 +3,7 @@
 @source "../../../../packages/spark-ui/src";
 
 :root {
-  --background: #ffffff;
+  --background: #4286f4a8;
   --foreground: #171717;
 }
 
