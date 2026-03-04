@@ -40,7 +40,7 @@ export function WhoAreWeSection() {
               transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
             >
               <Image
-                src="/images/sparky-and-cirby.png"
+                src="/images/sparky-and-cirby.webp"
                 alt="Sparky and Cirby, the GDG PUP mascots"
                 width={612}
                 height={606}

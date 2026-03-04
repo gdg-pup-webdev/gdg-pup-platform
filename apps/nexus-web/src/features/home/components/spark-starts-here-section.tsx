@@ -18,7 +18,7 @@ export function SparkStartsHereSection() {
                     transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
                 >
                     <div className="flex items-start gap-11 w-full">
-                        {/* Left column: heading (30%) */}
+                        {/* Left column: heading */}
                         <Stack className="w-1/3 gap-11" align="start">
                             <Text
                                 as="h2"
@@ -34,7 +34,7 @@ export function SparkStartsHereSection() {
                             </Button>
                         </Stack>
 
-                        {/* Right column: rest of content (60%) */}
+                        {/* Right column: rest of content*/}
                         <Stack align="start" className="w-[65%] gap-11">
                             <Text
                                 as="h3"
@@ -49,7 +49,7 @@ export function SparkStartsHereSection() {
 
                             <Stack className="gap-3.5">
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" alt="" width={16} height={16} />
+                                    <Image src="/images/Group 215.svg" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
@@ -62,7 +62,7 @@ export function SparkStartsHereSection() {
                                 </Inline>
 
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" alt="" width={16} height={16} />
+                                    <Image src="/images/Group 215.svg" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
@@ -75,7 +75,7 @@ export function SparkStartsHereSection() {
                                 </Inline>
 
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" alt="" width={16} height={16} />
+                                    <Image src="/images/Group 215.svg" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
