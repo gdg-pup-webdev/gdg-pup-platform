@@ -42,7 +42,7 @@ export function WhatDrivesUsSection() {
                         </Text>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="Group 215" width={16} height={16} className="pointer-events-none" />
+                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"
@@ -55,7 +55,7 @@ export function WhatDrivesUsSection() {
                         </Inline>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="Group 215" width={16} height={16} className="pointer-events-none" />
+                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"
@@ -68,7 +68,7 @@ export function WhatDrivesUsSection() {
                         </Inline>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="Group 215" width={16} height={16} className="pointer-events-none" />
+                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"
@@ -81,7 +81,7 @@ export function WhatDrivesUsSection() {
                         </Inline>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="Group 215" width={16} height={16} className="pointer-events-none" />
+                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"

@@ -49,7 +49,7 @@ export function SparkStartsHereSection() {
 
                             <Stack className="gap-3.5">
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" width={16} height={16} className="pointer-events-none" />
+                                    <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
@@ -62,7 +62,7 @@ export function SparkStartsHereSection() {
                                 </Inline>
 
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" width={16} height={16} className="pointer-events-none" />
+                                    <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
@@ -75,7 +75,7 @@ export function SparkStartsHereSection() {
                                 </Inline>
 
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" width={16} height={16} className="pointer-events-none" />
+                                    <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
