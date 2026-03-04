@@ -1,12 +1,16 @@
 "use client";
 
-import { BelowHeroSection, HeroSection } from "@/features/home";
+import { WhoAreWeSection, HeroSection, WhatWeDoSection, WhatDrivesUsSection, ImpactSection, SparkStartsHereSection } from "@/features/home";
 
 export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <BelowHeroSection />
+      <WhoAreWeSection />
+      <WhatWeDoSection />
+      <WhatDrivesUsSection />
+      <ImpactSection />
+      <SparkStartsHereSection />
     </>
   );
 }
