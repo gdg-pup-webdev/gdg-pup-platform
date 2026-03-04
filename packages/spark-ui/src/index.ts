@@ -19,6 +19,8 @@ export * from "./components/dropdown";
 export * from "./components/sidebar";
 export * from "./components/shine-border/";
 export * from "./components/team-card/";
+export * from "./components/gdg-id-card/";
+export * from "./components/spotlight";
 
 // Layout Primitives
 export * from "./primitives/Stack/";
