@@ -1,20 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 
-export const createDeprecatedRouteMiddleware = (
-  latestStableVersion: string,
-) => {
-  return function deprecatedWarningInterceptor(
+export const createUnstableRouteMiddleware = (latestStableVersion: string) => {
+  return function unstableWarningInterceptor(
     req: Request,
     res: Response,
     next: NextFunction,
   ) {
-    // const cleanPath = req.originalUrl
-    //   .replace(/^\/?api\//, "") // Remove leading api/
-    //   .replace(/^v\d+\//, "") // Remove leading v1/, v2/, etc.
-    //   .replace(/\/+$/, ""); // Remove trailing slashes
-
-    // const recommendedUrl = `${req.protocol}://${req.get("host")}/api/${latestVersion}/${cleanPath}`;
-
     const originalJson = res.json.bind(res);
 
     res.json = (body: any) => {
@@ -26,9 +17,9 @@ export const createDeprecatedRouteMiddleware = (
       }
 
       const myWarning = {
-        type: "Deprecated Route Warning",
+        type: "Unstable Route Warning",
         message:
-          "This route is deprecated and will be removed in future releases. Please use the latest stable version of the API.",
+          "This route is unstable and is subject to change. Please use the latest stable version of the API.",
         latest_stable_version: latestStableVersion,
       };
 
