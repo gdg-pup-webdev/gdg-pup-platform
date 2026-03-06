@@ -8,13 +8,8 @@ import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import {
   buildPaginationMeta,
-<<<<<<< HEAD:apps/nexus-api/src/modules/learningResourceSystem/studyJams/studyJam.controller.ts
   normalizeOptionalText,
-} from "@/presentation/utils/controller.utils.js";
-=======
-  normalizeOptionalText
 } from "@/v0/utils/controller.utils.js";
->>>>>>> dev:apps/nexus-api/src/v0/modules/learningResourceSystem/studyJams/studyJam.controller.ts
 
 /**
  * Controller for handling study jam-related requests.

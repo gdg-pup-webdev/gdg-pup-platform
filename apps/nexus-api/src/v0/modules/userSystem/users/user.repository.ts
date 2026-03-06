@@ -4,21 +4,14 @@
  * This file handles direct interactions with the Supabase database for the User System.
  */
 
-<<<<<<< HEAD:apps/nexus-api/src/modules/userSystem/users/user.repository.ts
-import { supabase } from "@/lib/supabase.js";
-import { handlePostgresError } from "@/lib/supabase.utils";
-import { RepositoryResult } from "@/presentation/types/repository.types.js";
+import { supabase } from "@/v0/lib/supabase.js";
+import { handlePostgresError } from "@/v0/lib/supabase.utils";
+import { RepositoryResult } from "@/v0/types/repository.types.js";
 import {
   Tables,
   TablesInsert,
   TablesUpdate,
-} from "@/presentation/types/supabase.types.js";
-=======
-import { supabase } from "@/v0/lib/supabase.js";
-import { handlePostgresError } from "@/v0/lib/supabase.utils";
-import { RepositoryResult } from "@/v0/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
->>>>>>> dev:apps/nexus-api/src/v0/modules/userSystem/users/user.repository.ts
+} from "@/v0/types/supabase.types.js";
 
 type userRow = Tables<"user">;
 type userInsert = TablesInsert<"user">;

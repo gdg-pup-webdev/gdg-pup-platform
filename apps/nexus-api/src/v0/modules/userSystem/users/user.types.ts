@@ -1,12 +1,8 @@
-<<<<<<< HEAD:apps/nexus-api/src/modules/userSystem/users/user.types.ts
 import {
   Tables,
   TablesInsert,
   TablesUpdate,
-} from "@/presentation/types/supabase.types.js";
-=======
-import { Tables, TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
->>>>>>> dev:apps/nexus-api/src/v0/modules/userSystem/users/user.types.ts
+} from "@/v0/types/supabase.types.js";
 
 export type userRow = Tables<"user">;
 export type userInsert = TablesInsert<"user">;

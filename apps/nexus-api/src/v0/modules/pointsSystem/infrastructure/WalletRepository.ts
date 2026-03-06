@@ -1,13 +1,6 @@
-<<<<<<< HEAD:apps/nexus-api/src/modules/PointSystem/infrastructure/WalletRepository.ts
-import { supabase } from "@/lib/supabase.js";
-import { handlePostgresError } from "@/lib/supabase.utils";
-import { NotFoundError } from "@/errors/HttpError";
-=======
- 
 import { supabase } from "@/v0/lib/supabase.js";
 import { handlePostgresError } from "@/v0/lib/supabase.utils";
 import { NotFoundError } from "@/v0/errors/HttpError";
->>>>>>> dev:apps/nexus-api/src/v0/modules/pointsSystem/infrastructure/WalletRepository.ts
 import { IWalletRepository } from "../domain/IWalletRepository";
 import { Wallet } from "../domain/Wallet";
 

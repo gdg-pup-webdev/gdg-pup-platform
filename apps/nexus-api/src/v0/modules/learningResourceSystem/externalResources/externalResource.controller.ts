@@ -9,11 +9,7 @@ import { createExpressController } from "@packages/typed-rest/serverExpress";
 import {
   buildPaginationMeta,
   normalizeOptionalText,
-<<<<<<< HEAD:apps/nexus-api/src/modules/learningResourceSystem/externalResources/externalResource.controller.ts
-} from "@/presentation/utils/controller.utils.js";
-=======
 } from "@/v0/utils/controller.utils.js";
->>>>>>> dev:apps/nexus-api/src/v0/modules/learningResourceSystem/externalResources/externalResource.controller.ts
 
 /**
  * Controller for handling external resource-related requests.

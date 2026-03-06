@@ -2,22 +2,16 @@ import { models } from "@packages/nexus-api-contracts";
 import {
   EventRepository,
   eventRepositoryInstance,
-<<<<<<< HEAD:apps/nexus-api/src/modules/eventSystem/events/event.service.ts
 } from "./event.repository.js";
+import {
+  WalletService,
+  walletServiceInstance,
+} from "@/v0/modules/walletSystem/wallets/wallet.service.js";
 import {
   AttendanceService,
   attendanceServiceInstance,
 } from "../attendance/attendance.service.js";
-import {
-  WalletService,
-  walletServiceInstance,
-} from "@/deprecated/walletSystem/wallets/wallet.service.js";
-=======
-} from "./event.repository.js"; 
-import { WalletService, walletServiceInstance } from "@/v0/modules/walletSystem/wallets/wallet.service.js";
-import { AttendanceService, attendanceServiceInstance } from "../attendance/attendance.service.js";
 import { EventInsertDTO, EventUpdateDTO } from "./event.types.js";
->>>>>>> dev:apps/nexus-api/src/v0/modules/eventSystem/events/event.service.ts
 
 /**
  * Service for managing event business logic.
@@ -58,10 +52,7 @@ export class EventService {
    * @returns A promise resolving to the created event.
    * @throws {RepositoryError_DEPRECATED} If the repository operation fails.
    */
-  create = async (
-    dto: EventInsertDTO,
-    creatorId: string,
-  ) => {
+  create = async (dto: EventInsertDTO, creatorId: string) => {
     return await this.eventRepository.createEvent({
       ...dto,
       creator_id: creatorId,

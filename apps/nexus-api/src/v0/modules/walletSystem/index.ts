@@ -1,18 +1,9 @@
-<<<<<<< HEAD:apps/nexus-api/src/deprecated/index.ts
 import { Router } from "express";
 import {
   TransactionRouter,
   transactionRouterInstance,
-} from "./walletSystem/transactions/transaction.route";
-import {
-  WalletRouter,
-  walletRouterInstance,
-} from "./walletSystem/wallets/wallet.route";
-=======
-import { Router } from "express"; 
-import { TransactionRouter, transactionRouterInstance } from "./transactions/transaction.route";
+} from "./transactions/transaction.route";
 import { WalletRouter, walletRouterInstance } from "./wallets/wallet.route";
->>>>>>> dev:apps/nexus-api/src/v0/modules/walletSystem/index.ts
 /**
  * @deprecated
  */

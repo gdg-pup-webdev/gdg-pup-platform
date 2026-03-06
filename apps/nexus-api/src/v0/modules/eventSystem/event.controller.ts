@@ -1,19 +1,12 @@
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 import {
   AttendanceService,
   attendanceServiceInstance,
-<<<<<<< HEAD:apps/nexus-api/src/modules/eventSystem/events/event.controller.ts
-} from "../attendance/attendance.service.js";
+} from "./attendance/attendance.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
-import { UnauthorizedError } from "@/errors/HttpError.js";
-=======
-} from "./attendance/attendance.service.js"; 
-import { contract } from "@packages/nexus-api-contracts";
-import { createExpressController } from "@packages/typed-rest/serverExpress"; 
 import { UnauthorizedError } from "@/v0/errors/HttpError.js";
 import { EventService, eventServiceInstance } from "./events/event.service.js";
->>>>>>> dev:apps/nexus-api/src/v0/modules/eventSystem/event.controller.ts
 
 /**
  * Controller for handling event-related HTTP requests.

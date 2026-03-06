@@ -2,11 +2,7 @@ import {
   TransactionRepository,
   transactionRepositoryInstance,
 } from "./transaction.repository.js";
-<<<<<<< HEAD:apps/nexus-api/src/deprecated/walletSystem/transactions/transaction.service.ts
-import { NotFoundError } from "@/errors/HttpError.js";
-=======
-import { NotFoundError } from "@/v0/errors/HttpError.js"; 
->>>>>>> dev:apps/nexus-api/src/v0/modules/walletSystem/transactions/transaction.service.ts
+import { NotFoundError } from "@/v0/errors/HttpError.js";
 import { models } from "@packages/nexus-api-contracts";
 import { TransactionInsert } from "./transaction.types.js";
 

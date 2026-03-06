@@ -3,17 +3,12 @@ import { handlePostgresError } from "@/v0/lib/supabase.utils";
 import {
   RepositoryResult,
   RepositoryResultList,
-<<<<<<< HEAD:apps/nexus-api/src/modules/learningResourceSystem/externalResources/externalResource.repository.ts
-} from "@/presentation/types/repository.types.js";
+} from "@/v0/types/repository.types.js";
 import {
   Tables,
   TablesInsert,
   TablesUpdate,
-} from "@/presentation/types/supabase.types.js";
-=======
-} from "@/v0/types/repository.types.js";
-import { Tables, TablesInsert, TablesUpdate } from "@/v0/types/supabase.types.js";
->>>>>>> dev:apps/nexus-api/src/v0/modules/learningResourceSystem/externalResources/externalResource.repository.ts
+} from "@/v0/types/supabase.types.js";
 
 type tableRow = Tables<"external_resource">;
 type tableUpdate = TablesUpdate<"external_resource">;
