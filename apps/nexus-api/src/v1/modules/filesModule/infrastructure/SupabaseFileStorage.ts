@@ -1,4 +1,4 @@
- import { configs } from "@/v1/configs/configs";
+ import { configs } from "@/configs/configs";
 import { FileBuffer } from "../domain/FileBuffer";
 import { IFileStorage } from "../domain/IFileStorage";
 import { UploadedFileBuffer } from "../domain/UploadedFileBuffer";

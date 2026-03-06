@@ -1,6 +1,6 @@
 import { Express } from "express";
 import cors from "cors";
-import { configs } from "@/v0/configs/configs";
+import { configs } from "@/configs/configs";
 
 export const loadCors = (app: Express) => {
   // Trust the first proxy (Cloud Run / load balancer)

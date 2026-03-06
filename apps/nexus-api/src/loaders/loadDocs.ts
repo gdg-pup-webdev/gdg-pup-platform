@@ -1,4 +1,4 @@
-import { configs } from "@/v1/configs/configs";
+import { configs } from "@/configs/configs";
 import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
 import express, { Express } from "express";
 
