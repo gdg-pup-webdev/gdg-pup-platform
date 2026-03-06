@@ -1,60 +1,147 @@
-# why we need to properly structure the backend
+# Why we need to properly structure the backend
 
-- frontend are purely presentational. logic located on the frontend are very simple logic to process information from the backend. components also rarely couple with each other. logic of a component are contained within that component and rarely leaks outside it.
-- it is also easy to locate when there is something wrong on the frontend because you can see it.
-  on the backend however, it is full of business logic that often rely on one another. not architecturing the code properly will result in severe coupling between different parts of the codebase, which will make it hard to maintain and scale.
+Unlike the frontend, which is mostly presentational and contains only lightweight logic for displaying data, the backend is responsible for the majority of the system’s business logic. Frontend components are usually isolated and loosely coupled, making issues easier to detect since problems are often visible in the UI. The backend, however, coordinates multiple processes such as validation, persistence, and interactions between modules. These processes often depend on one another, which can quickly lead to tight coupling and hidden dependencies if the codebase is not properly structured. As the system grows, this makes the backend difficult to maintain, extend, and debug. Proper structure introduces clear separation of concerns and modular boundaries, allowing the system to scale without becoming unmanageable.
 
-# global structure
+# Global API Structure
 
-- the api is versioned.
-- at the top level, there is global configs, loaders, and middlewares that operate through the entire api, across all versions. these includes cors, loggers, parsers, and global rate limiter.
-- at the top level is where we load individual versions.
-- the loaders are called that the app.ts file
+The API is organized around versioned applications to allow the system to evolve without breaking existing clients. Each API version is treated as an independent Express application with its own configuration, routes, and internal architecture.
 
-- each version is their own express app. they have their own loaders, own middlewares, and other foldes such as error classes, error handler, types, and utils.
-- the version application loaders are call on the constructure of the version classs located in the versionfolder's index.ts file.
+At the top level, the project contains shared components that apply across all API versions. These include global configurations, loaders, and middlewares such as CORS, request parsers, logging, and global rate limiting. These global components are initialized in app.ts, where the main Express application is created and configured.
 
-# how the api is loaded
+API versions are also registered at the top level. Each version is mounted on its own route prefix (e.g., /api/v1, /api/v2), allowing multiple versions of the API to run simultaneously.
 
-- since each version is like an independent express app, we can talk about them separately. from hereon, each version folder will be referred to as an api. they can be used interchangeably
+Each API version is implemented as its own Express app instance. This allows every version to define its own loaders, middlewares, error classes, error handlers, utilities, and types without interfering with other versions.
 
-- each api has an index file which exposes a version class with an app member, which is initialized and loaded on the constructor. loaders are also called from the constructor.
+Within each version folder, an index.ts file exposes a Version class. The constructor of this class initializes the Express app and executes the version’s loaders, which attach routes and middlewares to the application.
 
-- loaders are functions that attach middlewares and routes to an application object. they are located on loaders folder.
+This structure isolates versions from each other while allowing the top-level application to manage shared infrastructure and mount each API version cleanly.
 
-- middlewares are functions that processes or handles a request. they are located on the middlewares folder. for simplicity, pure middlewares and middleware factory functions (e.g. createAuthMiddleware) are both referred to as middlewares.
+```
+src/
+├── configs/            # Global configurations (e.g., environment variables)
+├── loaders/            # Global Express loaders (CORS, parsers, rate limiters)
+├── middlewares/        # Global middlewares (error catching, logging)
+├── v0/                 # Legacy API version (Deprecated architecture)
+├── v1/                 # Current API version (Clean Architecture)
+├── app.ts              # Main Express application initialization
+└── index.ts            # Application entry point and server startup
+```
 
-- utilities are collection of function and classes that are design to accomplish a specific task. They MUST be context agnostic. Meaning, they must not be care on which context they are called, i.e, feature specific processes such as "createUserUtil".
+# API Initialization and Loading Flow
 
-- the types folder contains types used throughout the application. however, to make the code more maintainable, it is recommended that types are placed near where they are used. i.e. types used in just one module should be placed within that module instead on being at the top level types folder.
+Each API version behaves like an independent Express application. For clarity, the terms API and version folder are used interchangeably.
 
-- the routes folder contain the api endpoints. it is what exposes the external functionalities of the api.
+- Every API exposes a Version class through its index.ts file. The constructor initializes an Express app instance and calls the API’s loaders to configure it.
+- Loaders are responsible for attaching middlewares, routes, and other runtime configurations to the Express application. They are located in the loaders folder and are executed during the initialization of the Version class.
+- Middlewares are functions that process or handle incoming requests before they reach the route handlers. They may also be middleware factories (e.g., createAuthMiddleware). Both pure middlewares and middleware factories are collectively referred to as middlewares. These are located in the middlewares folder.
+- Utilities are reusable functions or classes designed to accomplish a specific task. They must remain context-agnostic, meaning they should not depend on feature-specific logic (e.g., avoid utilities like createUserUtil). Utilities should only perform generic operations.
+- The types folder contains shared type definitions used across the API. However, for better maintainability, types should be colocated with the modules that use them whenever possible. Types that are only used within a specific module should be defined inside that module rather than the global types folder.
+- The routes folder defines the API endpoints. This layer exposes the external functionality of the API and connects incoming HTTP requests to the appropriate controllers.
+- The modules folder contains the core API modules where the application’s business logic resides. These modules are responsible for processing data and implementing the main behaviors of the system.
 
-- the modules folder contains the api modules where all of the business logic happens. they are the parts of the api responsible for processing all kinds of data.
+```
+src/v1/
+├── errors/             # Version-specific custom error classes (HttpError, DatabaseError)
+├── lib/                # External library wrappers and clients (Supabase, Firebase)
+├── loaders/            # Version-specific loaders (attaching v1 routes and error handlers)
+├── middlewares/        # Version-specific middlewares (auth guards, token parsers)
+├── types/              # Version-wide TypeScript type definitions
+├── utils/              # Context-agnostic utilities (try-catch wrappers, formatting)
+├── routes/             # Presentation Layer: Express routes and HTTP controllers
+├── modules/            # Application Layer: Core business logic and use cases
+└── index.ts            # Version class initialization and loader execution
+```
 
 # clean architecture
 
-- our api follows the clean architecture.
-- we have the application layer, presentation layer, and the infrastructure layer.
-- application layers which contains the domains, use cases, and interfaces, and controllers.
-- the presentation layer is the only layer visible to consumers. it exposes the functionalities of the application.
-- the infrastructure layer is the layer that implements the interfaces defined in the application layer by interacting with external services.
+The API follows Clean Architecture to enforce clear separation of concerns, strong modularity, and maintainability. The system is divided into three primary layers:
 
-## application layer
+- Application Layer – Contains the core business logic of the system.
+- Infrastructure Layer – Implements external integrations and persistence.
+- Presentation Layer – Exposes the functionality of the application to external consumers.
 
-- contains absolutely all of the business logic of the api. not business logic must be located outside the application. everything that involves processing, managing, creating, modifying, deleting, etc. of a resource must be within the application layer.
-- the application layer is the modules folder. within the folder are several subfolders which are the individual modules designed for a very specific set of task.
-- each module is decoupled from each other, meaning, a module cannot directly call another module. instead, if a module needs another module, it needs to be treated as an external dependency.
-- each module contains the domain, use cases, and controllers.
-- inside each module folder are the following: domains folder containing all domain related files. Usecases folder containing all use cases. Controller file which contains the controller. And index.ts which bundles everything together. It also has the infrastructure folder which is not part of application layer, but is put there for better collocation.
-- each module has a index.ts file that bundles everything and instantiating a default instance of the module by building all dependencies. external consumers still has the ability to initialize their own instance and inject their own implementation of the dependencies.
+Each layer has a specific responsibility and depends only on layers inside it. This prevents business logic from depending on frameworks, databases, or external services.
+
+```
+# presentation layer
+
+src/v1/routes/
+├── auth-system/
+├── files/
+│   ├── files.controller.ts  # Handles req/res, formatting, and HTTP status codes
+│   └── files.router.ts      # Defines Express endpoints (GET, POST, etc.)
+├── gdg-scraped-events/
+└── health/
+```
+
+```
+# application and infrastructure layer
+
+src/v1/modules/filesModule/
+├── domain/                      # The Enterprise Business Rules
+│   ├── FileRecord.ts            # Domain entity with private state and validation
+│   ├── IFileRepository.ts       # Interface defining database operations
+│   └── IFileStorage.ts          # Interface defining file storage operations
+│
+├── useCases/                    # The Application Business Rules
+│   ├── UploadFile.ts            # Orchestrates storage, DB, and domain logic
+│   ├── DeleteFileById.ts
+│   └── ListFIlesWithPagination.ts
+│
+├── infrastructure/              # The External Implementations
+│   ├── GCPFileStorage.ts        # Concrete implementation of IFileStorage
+│   ├── SupabaseFileRepository.ts# Concrete implementation of IFileRepository
+│   ├── MockFileRepository.ts    # Mock implementation for testing
+│   └── MockFileStorage.ts
+│
+├── __tests__/                   # Isolated Unit Tests
+│   ├── UploadFile.test.ts       # Tests Use Case behavior using Mock Infrastructure
+│   └── DeleteFileById.test.ts
+│
+├── FilesModuleController.ts     # The Application Controller (adapts data for routes)
+└── index.ts                     # Dependency Injection: wires infrastructure to use cases
+```
+
+## Application Layer
+
+The application layer contains all business logic of the API. Any operation that processes, creates, modifies, or manages a resource must exist within this layer. Business logic must never be placed in the presentation or infrastructure layers.
+
+In the project structure, the application layer corresponds to the modules folder. Each module represents a focused domain of the system and is responsible for a specific set of functionality.
+
+Key design rules:
+
+- Each module is **self-contained and decoupled** from other modules.
+- A module **must not directly call another module**. If interaction is required, the dependency should be treated as an external dependency and injected through interfaces.
+- Every module bundles its components using an index.ts file, which constructs a default instance by wiring its dependencies together.
+- External consumers may still create their own instances and inject alternative implementations if needed.
+
+Each module typically contains:
+
+- **domains/** – Domain entities and interfaces
+- **usecases/** – Application actions and workflows
+- **Controller file** – Entry point for external callers
+- **infrastructure/** – Implementations of interfaces (collocated for convenience but logically separate)
+- **index.ts** – Dependency wiring and module export
 
 ### domains
 
-- within the domain is where we describe the resource we will be working on and the interfaces that we will need
-- a resource can be a class or a simple interface. it is only aware about itself and other resource classes. it can reference interfaces but is highly discouraged. a resource is responsible for making sure that it is always in a valid state. that means that it should have checks when it is created, updated, or loaded. that means that it cannot depend on external factors for id creation, creation dates, update dates, as those external factors might introduce invalid states that the domain class is unable to check.
+The domain layer defines the core resources and the contracts required to operate on them.
 
-- interfaces are abstract classes that specifies the actions that a the module need to accomplish its tasks. here we define methods such as saveResourceToRepository which will save the resource somewhere even though we do not know where it will be saved, or how it is beign saved. We just know that that function is saving is somewhere and that we can fetch it again later. note that interfaces are definition. the do not implement. implementing them will violate the dependency rule are the application layer will now be dependent on an external framework or library.
+A resource represents a domain entity (e.g., StudyJam). It may be implemented as a class or an interface but must only be aware of its own state and related domain concepts.
+
+Domain resources enforce valid state by validating data during:
+
+- creation
+- hydration
+- updates
+
+To guarantee integrity:
+
+- constructors are typically private
+- instances are created using factory methods such as create or hydrate
+- updates must go through controlled methods instead of directly mutating properties
+
+Domains should not rely on external systems for critical fields like IDs or timestamps if doing so could lead to invalid states or coupling between the application layer and the external libraries/frameworks.
 
 ```typescript
 // ./domains/StudyJam.ts
@@ -124,6 +211,25 @@ export class StudyJam {
 }
 ```
 
+### Interfaces (Ports)
+
+Interfaces define contracts for external dependencies required by the application layer.
+
+These interfaces describe what must happen, but not how it happens. For example, a repository interface may define methods like:
+
+- findById
+- saveNew
+- persistUpdates
+- delete
+
+The application layer only depends on these abstractions. Concrete implementations are provided later by the infrastructure layer.
+
+Important rules:
+
+- Interfaces must not contain implementations
+- They must remain independent of frameworks or libraries
+- They exist to enforce the dependency inversion principle
+
 ```typescript
 // ./domains/IStudyJamRepository.ts
 import { StudyJam } from "./StudyJam";
@@ -143,10 +249,27 @@ export abstract class IStudyJamRepository {
 }
 ```
 
-### use cases
+### Use Cases
 
-- use cases are the code that does a set of steps in order to do something.
-- use cases basically define all the things that can be done to the module. e.g. "checkinUserToEventUsingQrCodeUseCase". there is no limit to how many use case you can make. you can as many use case as you want, each doing exactly what the user wants to do.
+Use cases define the actions that can be performed within a module. Each use case represents a single operation or workflow that the system supports. It does the operation by orchestrating the domains and interfaces together.
+
+Examples:
+
+- CreateStudyJam
+
+- UpdateStudyJam
+
+- CheckInUserToEventUsingQRCode
+
+A use case:
+
+- Receives input data
+- Retrieves required resources through interfaces
+- Applies domain logic
+- Persists changes through repositories
+- Returns the resulting resource or outcome
+
+There is no limit to the number of use cases in a module. Each use case should perform a single clearly defined task.
 
 ```typescript
 // ./usecases/UpdateStudyJam.ts
@@ -178,10 +301,18 @@ export class UpdateStudyJam {
 }
 ```
 
-### controllers
+### Controllers (Application Controllers)
 
-- controllers bundles the use cases together.
-- it is also responsible for converting data structure from outside into data structure that is convenient to the use cases, and also the opposite where it converts data structure from the use cases into plain data structures that are more convenient to the outside world.
+Controllers serve as the entry point to the application layer.
+
+Their responsibilities include:
+
+- Accepting simple input parameters from external callers
+- Converting those inputs into structures expected by use cases
+- Executing the appropriate use case
+- Transforming the result into simple, external-friendly data structures
+
+Controllers should not contain business logic. They only orchestrate use cases and adapt data formats.
 
 ```typescript
 // ./StudyJamController.ts
@@ -235,11 +366,32 @@ const updateStudyJamUseCase = new UpdateStudyJam(repository);
 export const studyJamController = new StudyJamController(updateStudyJamUseCase);
 ```
 
-## infrastructure layer
+## Infrastructure Layer
 
-- for simplicity purposes, the infrastructure layer is placed within the modules folder to improve collocation. however, the infrastructure layer is still considered as a layer of its own.
-- the sole purpose of the infrastructure layer is to implement the interfaces from the application layer using any external libraries of its choice.
-- implmentations should never have business logic that directly modifies the state of the resources being passed into it. for example, it should not change the id of a resource passed to it before saving it. save methods should just write the information somewhere without doing any modifications to it. it can change the formatting, the name of the fields, but it should be reversible such that the fetch functions can translate it back into a format that the application layer understands.
+The infrastructure layer implements the interfaces defined in the application layer.
+
+Its purpose is to connect the system to external services such as:
+
+- databases
+- third-party APIs
+- messaging systems
+- storage services
+
+For convenience, infrastructure code is placed within each module under an infrastructure folder. This improves collocation, although it is conceptually a separate architectural layer.
+
+Key rules:
+
+- Infrastructure classes implement application interfaces
+- They may use external libraries or frameworks
+- They must not introduce business logic
+
+Infrastructure code should only:
+
+- store data
+- retrieve data
+- translate data formats between external systems and domain objects
+
+Any transformation must remain reversible, allowing data retrieved from storage to be converted back into valid domain objects.
 
 ```typescript
 // ./infrastructure/SupabaseStudyJamRepository.ts
@@ -289,10 +441,27 @@ export class SupabaseStudyJamRepository implements IStudyJamRepository {
 }
 ```
 
-## presentation layer
+## Presentation Layer
 
-- similarly to the infrastructure layer, the presentation is part of the outermost layers of the architecture. it is implemented on top of the application layer.
-- the main purpose of the presentation layer is to expose the functionalities of the application layer. presentation layers could be a UI, cli, or an api.
+The presentation layer exposes the functionality of the application layer to external consumers.
+
+This layer may take several forms, such as:
+
+- an HTTP API
+- a CLI
+- a user interface
+- background jobs
+
+In this project, the presentation layer is implemented as HTTP routes using Express.
+
+Its responsibilities include:
+
+- handling HTTP requests
+- validating request structures
+- calling the appropriate application controller
+- formatting responses for the client
+
+The presentation layer must not contain business logic. It only exposes the capabilities already defined in the application layer.
 
 ```typescript
 // ./routes/gdg-scraped-events/gdgScrapedEvents.controller.ts
@@ -372,12 +541,40 @@ export const loadRoutes = (app: Express) => {
 };
 ```
 
-# tests
+## How it all works together
 
-- dependency injection and the modularity of clean architecture makes it easy to implement tests.
-- tests must be put within folders names **tests**. test files must follow the naming format doSomethingUseCase.test.ts.
-- within the test, initialize the mock dependencies, and use that initialize the test subject.
-- each use case must have its own test file.
-- each domain class must have its own test file.
-- each interface must have its own test file.
-- a controller must have its own test file.
+graph TD
+A[HTTP Request]
+B[Express Route]
+C[HTTP Controller]
+D[Use Case]
+E[Domain Logic]
+F[Repository Port]
+G[Infrastructure Adapter]
+H[Database]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+
+# Testing Strategy
+
+The modular design and dependency injection used throughout the architecture make the system highly testable. Because modules depend on interfaces rather than concrete implementations, external dependencies such as databases or APIs can easily be replaced with mock implementations during testing. This allows tests to focus on verifying the behavior of the component being tested without relying on real infrastructure.
+
+General testing guidelines:
+
+- All tests must be placed inside folders named **tests**.
+- Test files must follow the naming format <ComponentName>.test.ts (e.g., UpdateStudyJamUseCase.test.ts).
+- Each test should initialize mock dependencies, then use those mocks to construct the test subject.
+- Tests should verify the behavior of the component in isolation, without relying on real databases or services.
+
+Testing responsibilities by component:
+
+- **Use Cases** – Each use case must have its own test file that verifies its workflow and interactions with dependencies.
+- **Domain Classes** – Each domain entity must have tests validating creation, hydration, state updates, and rule enforcement.
+- **Interfaces** – Interface contracts should have tests verifying that implementations conform to the expected behavior.
+- **Controllers** – Each controller must have tests ensuring that inputs are correctly transformed and that the appropriate use cases are executed.
