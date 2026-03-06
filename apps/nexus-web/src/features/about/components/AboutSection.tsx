@@ -4,6 +4,7 @@ import { Box, Stack, Grid, Container, Text, Card } from "@packages/spark-ui";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 // Animation wrapper component for fade-in on scroll
 const FadeInSection = ({
@@ -93,7 +94,7 @@ export function AboutSection() {
         }}
       >
         <Image
-          src="/pages/who-is-gdg/Spiral.png"
+          src={ASSETS.ABOUT.WHO.SPIRAL}
           alt="Spiral decoration"
           width={1400}
           height={900}
@@ -112,7 +113,7 @@ export function AboutSection() {
         }}
       >
         <Image
-          src="/pages/who-is-gdg/decors/decor-element1.png"
+          src={ASSETS.ABOUT.WHO.DECOR_ELEMENT_1}
           alt="Decorative element 1"
           width={120}
           height={120}
@@ -130,7 +131,7 @@ export function AboutSection() {
         }}
       >
         <Image
-          src="/pages/who-is-gdg/decors/element2.png"
+          src={ASSETS.ABOUT.WHO.DECOR_ELEMENT_2}
           alt="Decorative element 2"
           width={250}
           height={250}
@@ -233,7 +234,7 @@ export function AboutSection() {
               <Box className="flex justify-center lg:col-span-1 lg:justify-start">
                 <Box className="relative w-40 h-40 md:w-80 md:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
                   <Image
-                    src="/pages/who-is-gdg/mascot1.png"
+                    src={ASSETS.ABOUT.WHO.MASCOT_1}
                     alt="Mission - Cirby"
                     width={400}
                     height={400}
@@ -281,7 +282,7 @@ export function AboutSection() {
                 {/* mobile mascot above values */}
                 <Box className="mb-4 md:hidden">
                   <Image
-                    src="/pages/who-is-gdg/mascot2.png"
+                    src={ASSETS.ABOUT.WHO.MASCOT_2}
                     alt="Our Values - Sparky Flying"
                     width={200}
                     height={200}
@@ -298,7 +299,7 @@ export function AboutSection() {
                 <div className="flex gap-4 items-center">
                   <div className="shrink-0 pt-2 pointer-events-none hidden sm:block">
                     <Image
-                      src="/pages/who-is-gdg/card-bullet.png"
+                      src={ASSETS.ABOUT.WHO.CARD_BULLET}
                       alt="Bullet"
                       width={24}
                       height={24}
@@ -330,7 +331,7 @@ export function AboutSection() {
                   {/* bullet icon only on sm+ */}
                   <div className="shrink-0 pt-2 pointer-events-none hidden sm:block">
                     <Image
-                      src="/pages/who-is-gdg/card-bullet.png"
+                      src={ASSETS.ABOUT.WHO.CARD_BULLET}
                       alt="Bullet"
                       width={24}
                       height={24}
@@ -358,7 +359,7 @@ export function AboutSection() {
                   {/* bullet icon only on sm+ */}
                   <div className="shrink-0 pt-2 pointer-events-none hidden sm:block">
                     <Image
-                      src="/pages/who-is-gdg/card-bullet.png"
+                      src={ASSETS.ABOUT.WHO.CARD_BULLET}
                       alt="Bullet"
                       width={24}
                       height={24}
@@ -387,7 +388,7 @@ export function AboutSection() {
                   {/* bullet icon only on sm+ */}
                   <div className="shrink-0 pt-2 pointer-events-none hidden sm:block">
                     <Image
-                      src="/pages/who-is-gdg/card-bullet.png"
+                      src={ASSETS.ABOUT.WHO.CARD_BULLET}
                       alt="Bullet"
                       width={24}
                       height={24}
@@ -420,7 +421,7 @@ export function AboutSection() {
                   style={{ transform: "translateX(15%)" }}
                 >
                   <Image
-                    src="/pages/who-is-gdg/mascot2.png"
+                    src={ASSETS.ABOUT.WHO.MASCOT_2}
                     alt="Our Values - Sparky Flying"
                     width={400}
                     height={400}

@@ -4,6 +4,7 @@ import { Button, Container, Stack, Text, Inline } from "@packages/spark-ui";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 export function SparkStartsHereSection() {
     const ref = useRef(null);
@@ -49,7 +50,7 @@ export function SparkStartsHereSection() {
 
                             <Stack className="gap-3.5">
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
+                                    <Image src={ASSETS.HOME.BULLET_DIAMOND} alt="bullet point" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
@@ -62,7 +63,7 @@ export function SparkStartsHereSection() {
                                 </Inline>
 
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
+                                    <Image src={ASSETS.HOME.BULLET_DIAMOND} alt="bullet point" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"
@@ -75,7 +76,7 @@ export function SparkStartsHereSection() {
                                 </Inline>
 
                                 <Inline>
-                                    <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
+                                    <Image src={ASSETS.HOME.BULLET_DIAMOND} alt="bullet point" width={16} height={16} className="pointer-events-none" />
                                     <Text
                                         align="left"
                                         variant="body"

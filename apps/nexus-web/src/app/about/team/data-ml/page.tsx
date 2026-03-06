@@ -1,42 +1,43 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/data-ml";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
+const BASE = "/team/team-data-ml";
 
 const DATA_ML_MEMBERS = [
   {
     name: "Kian Angelo Florendo",
     role: "Data and Machine Learning Lead",
-    imageSrc: `${BASE}/kian-angelo-florendo.png`,
+    imageSrc: `${BASE}/kian-angelo-florendo.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Francen Venisse Red",
     role: "Data and Machine Learning Co-Lead",
-    imageSrc: `${BASE}/francen-venisse-red.png`,
+    imageSrc: `${BASE}/francen-venisse-red.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Yhasmen Nogales",
     role: "Data and Machine Learning Co-Lead",
-    imageSrc: `${BASE}/yhasmen-nogales.png`,
+    imageSrc: `${BASE}/yhasmen-nogales.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Kurt Anthony Cruz",
     role: "Data and ML Learning Head Committee",
-    imageSrc: `${BASE}/kurt-anthony-cruz.png`,
+    imageSrc: `${BASE}/kurt-anthony-cruz.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Ram Luis Marmol",
     role: "Data and ML Learning Head Committee",
-    imageSrc: `${BASE}/ram-luis-marmol.png`,
+    imageSrc: `${BASE}/ram-luis-marmol.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

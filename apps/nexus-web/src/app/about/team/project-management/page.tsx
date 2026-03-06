@@ -1,35 +1,36 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/project-management";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
+const BASE = "/team/team-project-management";
 
 const PROJECT_MANAGEMENT_MEMBERS = [
   {
     name: "Patricia Anne Panlilio",
     role: "Project Management Lead",
-    imageSrc: `${BASE}/patricia-anne-panlilio.png`,
+    imageSrc: `${BASE}/patricia-anne-panlilio.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Lance Gabriel P. Vargas",
     role: "Project Management Co-Lead",
-    imageSrc: `${BASE}/lance-gabriel-p-vargas.png`,
+    imageSrc: `${BASE}/lance-gabriel-p-vargas.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Trishia Sai Mejia",
     role: "Project Management Co-Lead",
-    imageSrc: `${BASE}/trishia-sai-mejia.png`,
+    imageSrc: `${BASE}/trishia-sai-mejia.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Abielle Viktoria Dig",
     role: "Project Management Secretary",
-    imageSrc: `${BASE}/abielle-viktoria-dig.png`,
+    imageSrc: `${BASE}/abielle-viktoria-dig.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

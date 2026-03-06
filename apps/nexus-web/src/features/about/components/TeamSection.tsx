@@ -16,6 +16,7 @@ import {
   SidebarGroup,
 } from "@packages/spark-ui";
 import Image from "next/image";
+import { ASSETS } from "@/lib/constants/assets";
 
 const FadeInSection = ({
   children,
@@ -331,7 +332,7 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
         aria-hidden
       >
         <Image
-          src="/pages/team/ellipse-upper.png"
+          src={ASSETS.TEAM.ELLIPSE_UPPER}
           alt=""
           fill
           className="object-contain"
@@ -348,7 +349,7 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
         aria-hidden
       >
         <Image
-          src="/pages/team/ellipse-lower.png"
+          src={ASSETS.TEAM.ELLIPSE_LOWER}
           alt=""
           fill
           className="object-contain"
@@ -365,7 +366,7 @@ export function TeamSection({ children }: { children?: React.ReactNode }) {
           <FadeInSection className="mb-8">
             <Stack gap="md" align="center">
               <Image
-                src="/pages/team/hero-icon.png"
+                src={ASSETS.TEAM.HERO_ICON}
                 width={128}
                 height={128}
                 alt="GDG Logo"

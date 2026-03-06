@@ -25,6 +25,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "motion/react";
 import { useEffect, useRef } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 // ─── Zoned blob background (history page only) ───────────────────────────────
 // Each blob is pinned to its own vertical region and drifts independently.
@@ -101,8 +102,8 @@ function motionToAnimation(motion: BlobMotion, duration: number, delay: string):
   if (motion === "none") return {};
   const keyframe =
     motion === "vertical" ? "blobDriftV" :
-    motion === "horizontal" ? "blobDriftH" :
-    "blobDriftD";
+      motion === "horizontal" ? "blobDriftH" :
+        "blobDriftD";
   return {
     animation: `${keyframe} ${duration}s ease-in-out infinite`,
     animationDelay: delay,
@@ -327,7 +328,7 @@ const MilestoneCard = ({
   <Card>
     <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
       <Image
-        src="/pages/hero/BG2.png"
+        src={ASSETS.HOME.HERO.LAYER_BG}
         alt={milestone.title}
         fill
         className="object-cover"
