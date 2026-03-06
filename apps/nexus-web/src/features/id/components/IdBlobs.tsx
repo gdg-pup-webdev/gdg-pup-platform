@@ -2,7 +2,6 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Spotlight } from "@packages/spark-ui";
 
 // --- Shared Team Blob Logic ---
 type BlobMotion = "vertical" | "horizontal" | "diagonal" | "none";
@@ -26,17 +25,20 @@ interface BlobConfig {
   fixedLeft?: string;
 }
 
+// ── Edit these to tune the spotlight-amplifier blobs ──────────────────────────
+// All four are small, interactive (follow the cursor), and positioned to
+// cluster around the hero card / spotlight beam zone.
 const TEAM_BLOBS: Record<string, BlobConfig> = {
   blue: {
-    width: 680,
-    height: 680,
-    top: -430,
-    left: "calc(50% - 340px)",
-    color: "#4286f4a8",
-    blur: 210,
-    motion: "vertical" as BlobMotion,
-    duration: 92,
-    travel: 36,
+    width: 350,
+    height: 350,
+    top: 550,
+    left: "calc(60% - 30px)",
+    color: "#4285F455",
+    blur: 100,
+    motion: "horizontal" as BlobMotion,
+    duration: 70,
+    travel: 32,
     delay: "0s",
     interactive: true,
     interactiveStrength: 0.25,
@@ -45,56 +47,55 @@ const TEAM_BLOBS: Record<string, BlobConfig> = {
     fixedLeft: undefined,
   },
   red: {
-    width: 620,
-    height: 620,
-    top: 560,
-    left: "calc(20% - 200px)",
-    color: "#ea44354f",
-    blur: 120,
+    width: 370,
+    height: 370,
+    top: 750,
+    left: "calc(50% - 450px)",
+    color: "#EA433555",
+    blur: 65,
     motion: "diagonal" as BlobMotion,
-    duration: 75,
-    travel: 30,
-    delay: "-20s",
-    interactive: false,
-    interactiveStrength: 0.04,
-    fixed: true,
-    fixedTop: "28vh",
-    fixedLeft: "-20vw",
+    duration: 60,
+    travel: 28,
+    delay: "-8s",
+    interactive: true,
+    interactiveStrength: 0.22,
+    fixed: false,
+    fixedTop: undefined,
+    fixedLeft: undefined,
   },
   yellow: {
-    width: 640,
-    height: 640,
-    top: 540,
-    left: "calc(55%)",
-    color: "#f9aa0021",
-    blur: 130,
-    motion: "horizontal" as BlobMotion,
-    duration: 85,
-    travel: 32,
-    delay: "-10s",
-    interactive: false,
-    interactiveStrength: 0.04,
-    fixed: true,
-    fixedTop: "36vh",
-    fixedLeft: "72vw",
+    width: 400,
+    height: 400,
+    top: 850,
+    left: "calc(60% + 60px)",
+    color: "#F9AB0048",
+    blur: 70,
+    motion: "diagonal" as BlobMotion,
+    duration: 65,
+    travel: 25,
+    delay: "-15s",
+    interactive: true,
+    interactiveStrength: 0.20,
+    fixed: false,
+    fixedTop: undefined,
+    fixedLeft: undefined,
   },
   green: {
-    width: 500,
-    height: 500,
-    top: 200,
-    left: "auto",
-    right: "-100px",
-    color: "#34a85322",
-    blur: 150,
-    motion: "diagonal" as BlobMotion,
-    duration: 80,
-    travel: 40,
-    delay: "-5s",
-    interactive: false,
-    interactiveStrength: 0,
-    fixed: true,
-    fixedTop: "50vh",
-    fixedLeft: "80vw",
+    width: 400,
+    height: 400,
+    top: 500,
+    left: "calc(35% + 50px)",
+    color: "#34A85348",
+    blur: 60,
+    motion: "vertical" as BlobMotion,
+    duration: 55,
+    travel: 22,
+    delay: "-3s",
+    interactive: true,
+    interactiveStrength: 0.18,
+    fixed: false,
+    fixedTop: undefined,
+    fixedLeft: undefined,
   },
 };
 
@@ -171,7 +172,7 @@ export function IdBlobs(): React.ReactNode {
   function blobStyle(cfg: BlobConfig): React.CSSProperties {
     const base: React.CSSProperties = {
       position: cfg.fixed ? "fixed" : "absolute",
-      zIndex: -2,
+      zIndex: 2,
       borderRadius: "50%",
       pointerEvents: "none",
       willChange: "transform",
@@ -198,9 +199,6 @@ export function IdBlobs(): React.ReactNode {
   return (
     <div ref={containerRef} className="absolute inset-0 pointer-events-none">
 
-      {/* --- Team Blobs --- */}
-
-      {/* --- Team Blobs --- */}
       <motion.div
         ref={blueRef}
         style={blobStyle(TEAM_BLOBS.blue)}
