@@ -11,6 +11,7 @@ export default function HomePage() {
       <WhatDrivesUsSection />
       <ImpactSection />
       <SparkStartsHereSection />
+      <h2>Hello</h2>
     </>
   );
 }
