@@ -8,8 +8,7 @@
   },
   "scripts": { 
     "dev": "typed-rest dev",
-    "build": "typed-rest build",
-    "gen-types:rebuild": "pnpm run gen-types && pnpm run build"
+    "build": "typed-rest build"  
   },
   "dependencies": {
     "@configs/typescript-config": "workspace:*",

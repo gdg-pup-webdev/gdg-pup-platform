@@ -6,8 +6,7 @@
   "imports": {
     "#*": "./dist/*"
   },
-  "scripts": { 
-    "gen-contract": "typed-rest",
+  "scripts": {  
     "dev": "typed-rest dev",
     "build": "typed-rest build"
   },
