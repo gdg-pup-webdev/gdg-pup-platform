@@ -199,6 +199,33 @@
   }
 }
 
+/* ── IdInfoCard — gradient border (1px top/right/left, 0px bottom) ────────── */
+.id-info-card {
+  position: relative;
+  isolation: isolate;
+  border-radius: 28px;
+  background: #FFFFFF14;
+}
+
+.id-info-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px 1px 0 1px;
+  background: linear-gradient(90deg, #EA4335 0%, #F9AB00 33%, #34A853 66%, #4285F4 100%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0F0E0E;
