@@ -1,11 +1,11 @@
-import { configs } from "@/configs/configs";
-import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
-import express, { Express } from "express";
-
+import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { apiReference } from "@scalar/express-api-reference";
-import converter from "openapi-to-postmanv2";
+import { configs } from "../configs/configs.js";
+import { generateOpenApiOptions } from "@packages/nexus-api-contracts"; 
+import converter from "openapi-to-postmanv2"; 
+
+let scalarMiddleware: any = null;
 
 export const loadDocs = (app: Express) => {
   const options = generateOpenApiOptions({
@@ -202,21 +202,25 @@ export const loadDocs = (app: Express) => {
   /**
    * (DEFAULT) LOAD SCALAR DOCUMENTATION
    */
-  app.use(
-    "/docs/",
-    apiReference({
-      // Top-level properties
-      theme: "default",
-      content: swaggerSpec,
-      darkMode: true,
-      hideTestRequestButton: false,
-      pageTitle: "Nexus Api Documentation",
-      defaultHttpClient: {
-        targetKey: "node",
-        clientKey: "fetch", // you can also use "fetch" or "undici"
-      },
-    }),
-  );
+  app.use("/docs", async (req, res, next) => {
+    try {
+      if (!scalarMiddleware) {
+        // Dynamic import happens here, only when user visits /docs
+        const { apiReference } = await import("@scalar/express-api-reference");
+        scalarMiddleware = apiReference({
+          theme: "default",
+          content: swaggerSpec,
+          darkMode: true,
+          hideTestRequestButton: false,
+          pageTitle: "Nexus Api Documentation",
+        });
+      }
+      return scalarMiddleware(req, res, next);
+    } catch (error) {
+      console.error("Failed to load Scalar:", error);
+      next(error);
+    }
+  });
 
   console.log(
     `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
