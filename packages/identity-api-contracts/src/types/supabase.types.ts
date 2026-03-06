@@ -109,6 +109,7 @@ export type Database = {
           creator_id: string | null
           description: string | null
           end_date: string | null
+          gdg_event_id: number | null
           id: string
           start_date: string | null
           title: string
@@ -123,6 +124,7 @@ export type Database = {
           creator_id?: string | null
           description?: string | null
           end_date?: string | null
+          gdg_event_id?: number | null
           id?: string
           start_date?: string | null
           title: string
@@ -137,6 +139,7 @@ export type Database = {
           creator_id?: string | null
           description?: string | null
           end_date?: string | null
+          gdg_event_id?: number | null
           id?: string
           start_date?: string | null
           title?: string
@@ -144,6 +147,13 @@ export type Database = {
           venue?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "event_gdg_event_id_fkey"
+            columns: ["gdg_event_id"]
+            isOneToOne: true
+            referencedRelation: "scraped_gdg_events"
+            referencedColumns: ["gdg_id"]
+          },
           {
             foreignKeyName: "events_creator_id_fkey"
             columns: ["creator_id"]
@@ -434,6 +444,78 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      scraped_gdg_events: {
+        Row: {
+          attendee_virtual_venue_link: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          description_short: string | null
+          end_date: string
+          event_type: string | null
+          event_type_slug: string | null
+          gdg_id: number
+          is_virtual_event: boolean | null
+          last_scraped_at: string | null
+          location: string | null
+          start_date: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          total_attendees: number | null
+          total_capacity: number | null
+          updated_at: string | null
+          url: string
+          video_url: string | null
+        }
+        Insert: {
+          attendee_virtual_venue_link?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          description_short?: string | null
+          end_date: string
+          event_type?: string | null
+          event_type_slug?: string | null
+          gdg_id: number
+          is_virtual_event?: boolean | null
+          last_scraped_at?: string | null
+          location?: string | null
+          start_date: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          total_attendees?: number | null
+          total_capacity?: number | null
+          updated_at?: string | null
+          url: string
+          video_url?: string | null
+        }
+        Update: {
+          attendee_virtual_venue_link?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          description_short?: string | null
+          end_date?: string
+          event_type?: string | null
+          event_type_slug?: string | null
+          gdg_id?: number
+          is_virtual_event?: boolean | null
+          last_scraped_at?: string | null
+          location?: string | null
+          start_date?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          total_attendees?: number | null
+          total_capacity?: number | null
+          updated_at?: string | null
+          url?: string
+          video_url?: string | null
+        }
+        Relationships: []
       }
       study_jam: {
         Row: {
