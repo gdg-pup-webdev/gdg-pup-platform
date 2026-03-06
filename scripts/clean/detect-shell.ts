@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// filepath: scripts/clean/detect-shell.js
+// filepath: scripts/clean/detect-shell.ts
+// Ignore the type errors
 
 const { execSync } = require("child_process");
 const { existsSync } = require("fs");
