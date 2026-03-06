@@ -93,12 +93,12 @@ export function ErrorState({ error, errorType, onRetry }: ErrorStateProps) {
 
             {/* Action buttons */}
             <Inline gap="md" justify="center" className="pt-6">
-              <Button variant="primary" size="md" onClick={onRetry}>
+              <Button variant="default" size="md" onClick={onRetry}>
                 Try Again
               </Button>
 
               <Button
-                variant="secondary"
+                variant="default"
                 size="md"
                 onClick={() => window.history.back()}
               >

@@ -15,33 +15,23 @@ import {
   DebugNavigation,
   useDebugAuth,
 } from "@/features/debugging";
-import { PageLayout, PageHeader } from "@/components/shared";
+import { Container, Stack, Grid } from "@packages/spark-ui";
 
 export default function AuthDebugPage() {
   const { authState } = useDebugAuth();
 
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Page Header */}
-          <PageHeader
-            title="🔐 Authentication Debugger"
-            description="Test authentication flows and inspect tokens"
-          />
+    <Container className="py-12">
+      <Stack gap="xl">
 
           {/* Navigation */}
-          <div className="mt-8">
-            <DebugNavigation activePage="auth" />
-          </div>
+          <DebugNavigation activePage="auth" />
 
           {/* Main Debug Panel */}
-          <div className="mt-8">
-            <AuthDebugPanel />
-          </div>
+          <AuthDebugPanel />
 
           {/* Token Displays */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          <Grid gap="lg" className="grid-cols-1 lg:grid-cols-2">
             <TokenDisplay
               token={authState.token}
               label="Backend Authentication Token"
@@ -55,14 +45,11 @@ export default function AuthDebugPage() {
               description="Token for Google API requests (Classroom, etc.)"
               variant="green"
             />
-          </div>
+          </Grid>
 
           {/* API Tester */}
-          <div className="mt-8">
-            <ApiTester token={authState.googleAccessToken} />
-          </div>
-        </div>
-      </div>
-    </PageLayout>
+          <ApiTester token={authState.googleAccessToken} />
+      </Stack>
+    </Container>
   );
 }

@@ -1,9 +1,7 @@
-"use client";
-
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card } from "@packages/spark-ui";
+import { HistorySection } from "@/features/about";
 
 export default function HistoryPage() {
+<<<<<<< HEAD
   //   Dummy data pa lang
   const milestones = [
     {
@@ -99,4 +97,7 @@ export default function HistoryPage() {
       </div>
     </PageLayout>
   );
+=======
+  return <HistorySection />;
+>>>>>>> dev
 }

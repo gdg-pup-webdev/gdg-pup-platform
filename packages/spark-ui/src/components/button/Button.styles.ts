@@ -3,30 +3,47 @@ import { cva, type VariantProps } from "class-variance-authority";
 export const buttonVariants = cva(
   [
     "inline-flex items-center justify-center",
-    "rounded-md text-sm font-medium",
-    "transition-colors",
-    "focus-visible:outline-none focus-visible:ring-2",
-    "disabled:pointer-events-none disabled:opacity-50",
+    "text-sm font-medium",
+    "transition-all duration-300",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+    "disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed",
+    "cursor-pointer",
+    "button-gradient-border",
   ],
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        default: "button-default rounded-2xl",
+        outline: "button-outline rounded-lg",
+        stroke: "button-stroke rounded-lg",
+        link: "button-link rounded-none",
       },
       size: {
-        sm: "h-8 px-3",
-        md: "h-9 px-4",
-        lg: "h-10 px-6",
+        sm: "h-8 px-3 text-xs gap-1.5",
+        md: "h-10 px-4 text-sm gap-2",
+        lg: "h-12 px-5 text-base gap-2.5",
+      },
+      theme: {
+        light: "",
+        dark: "",
       },
     },
+    compoundVariants: [
+      {
+        variant: "default",
+        theme: "light",
+        class: "button-default-light text-white",
+      },
+      {
+        variant: "default",
+        theme: "dark",
+        class: "button-default-dark text-white",
+      },
+    ],
     defaultVariants: {
-      variant: "primary",
+      variant: "default",
       size: "md",
+      theme: "light",
     },
   },
 );

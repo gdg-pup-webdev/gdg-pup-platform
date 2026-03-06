@@ -15,7 +15,13 @@ export class RouteEndpointFile extends TsRealFile {
   ) {
     super(rootDirAbsolute, dirRelative, baseName);
 
-    this.urlSegments = this.dirRelative.split("/").filter(Boolean);
+    // this.urlSegments = this.dirRelative.split("/").filter(Boolean);
+    this.urlSegments = this.dirRelative.split("/").filter((segment) => {
+      const isNotEmpty = Boolean(segment);
+      const isGroupFolder = segment.startsWith("(") && segment.endsWith(")");
+      return isNotEmpty && !isGroupFolder;
+    });
+
     this.urlSegmentsClean = this.urlSegments.map((segment) => {
       return segment.replace(/\[|\]/g, "");
     });

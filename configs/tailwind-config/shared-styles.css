@@ -13,7 +13,6 @@
  * - Border Radii
  * - Shadows
  * 
- * Last Updated: February 18, 2026
  */
 
 @theme {
@@ -139,6 +138,22 @@
   --font-size-4xl: 2.25rem;     /* 36px */
   --font-size-5xl: 3rem;        /* 48px */
 
+  /* Responsive Heading Sizes - Mobile First */
+  --font-size-h1-mobile: 3.5rem;      /* 56px */
+  --font-size-h1-desktop: 4.5rem;     /* 72px */
+  --font-size-h2-mobile: 3rem;        /* 48px */
+  --font-size-h2-desktop: 3.75rem;    /* 60px */
+  --font-size-h3-mobile: 2.5rem;      /* 40px */
+  --font-size-h3-desktop: 3rem;       /* 48px */
+  --font-size-h4-mobile: 2rem;        /* 32px */
+  --font-size-h4-desktop: 2.5rem;     /* 40px */
+  --font-size-h5-mobile: 1.5rem;      /* 24px */
+  --font-size-h5-desktop: 2rem;       /* 32px */
+  --font-size-h6-mobile: 1.25rem;     /* 20px */
+  --font-size-h6-desktop: 1.5rem;     /* 24px */
+  --font-size-large-mobile: 1.25rem;  /* 20px */
+  --font-size-large-desktop: 1.5rem;  /* 24px */
+
   /* Font Weights */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -152,6 +167,10 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.625;
   --line-height-loose: 2;
+  --line-height-120: 1.2;     /* 120% for H1-H3 */
+  --line-height-130: 1.3;     /* 130% for H4 */
+  --line-height-140: 1.4;     /* 140% for H5-H6 */
+  --line-height-150: 1.5;     /* 150% for Text/Large */
 
   /* Letter Spacing */
   --letter-spacing-tighter: -0.05em;

@@ -1,7 +1,7 @@
 {
   "name": "@packages/typed-rest",
   "version": "1.0.0",
-  "private": false, 
+  "private": false,
   "bin": {
     "typed-rest": "./src/presentation/cli/index.ts"
   },
@@ -24,6 +24,7 @@
     "chokidar": "^5.0.0",
     "commander": "11.0.0",
     "express": "5.2.1",
+    "minimatch": "^10.2.4",
     "multer": "2.0.2",
     "ts-morph": "^27.0.2",
     "tsc-alias": "1.8.16",

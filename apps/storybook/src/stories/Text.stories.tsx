@@ -15,6 +15,7 @@ const meta = {
         "heading-3",
         "heading-4",
         "heading-5",
+        "heading-6",
         "body",
         "body-lg",
         "body-sm",
@@ -43,6 +44,10 @@ const meta = {
     weight: {
       control: "select",
       options: ["normal", "medium", "semibold", "bold"],
+    },
+    gradient: {
+      control: "select",
+      options: ["none", "white-blue", "white-yellow", "white-green", "red", "green", "yellow", "blue"],
     },
     truncate: {
       control: "boolean",
@@ -264,6 +269,99 @@ export const SemanticElements: Story = {
       <Text as="div" variant="body-sm">
         Div element with body-sm style
       </Text>
+    </Stack>
+  ),
+};
+
+export const GradientHeadings: Story = {
+  args: {
+    children: <></>,
+  },
+  render: () => (
+    <Stack gap="lg">
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          White to Blue Gradient
+        </Text>
+        <Text variant="heading-1" gradient="white-blue">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="white-blue">
+          White to Blue Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Red Gradient
+        </Text>
+        <Text variant="heading-1" gradient="red">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="red">
+          Red Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Green Gradient
+        </Text>
+        <Text variant="heading-1" gradient="green">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="green">
+          Green Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Yellow Gradient
+        </Text>
+        <Text variant="heading-1" gradient="yellow">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="yellow">
+          Yellow Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          Blue Gradient
+        </Text>
+        <Text variant="heading-1" gradient="blue">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="blue">
+          Blue Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          White to Yellow Gradient
+        </Text>
+        <Text variant="heading-1" gradient="white-yellow">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="white-yellow">
+          White to Yellow Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          White to Green Gradient
+        </Text>
+        <Text variant="heading-1" gradient="white-green">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="white-green">
+          White to Green Gradient
+        </Text>
+      </Stack>
     </Stack>
   ),
 };

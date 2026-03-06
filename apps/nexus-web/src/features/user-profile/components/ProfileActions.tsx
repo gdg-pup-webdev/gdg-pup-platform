@@ -59,7 +59,7 @@ export function ProfileActions({
       {/* Edit Profile button (only for own profile) */}
       {isOwnProfile && (
         <Button
-          variant="primary"
+          variant="default"
           size="md"
           onClick={() => {
             // Navigate to edit profile page (to be implemented)
@@ -84,7 +84,7 @@ export function ProfileActions({
       )}
 
       {/* Share Profile button */}
-      <Button variant="secondary" size="md" onClick={handleShare}>
+      <Button variant="default" size="md" onClick={handleShare}>
         <svg
           className="w-5 h-5"
           fill="none"
@@ -104,7 +104,7 @@ export function ProfileActions({
       {/* Follow/Message button (for other users' profiles) */}
       {!isOwnProfile && (
         <Button
-          variant="primary"
+          variant="default"
           size="md"
           onClick={() => {
             // Implement follow/message functionality

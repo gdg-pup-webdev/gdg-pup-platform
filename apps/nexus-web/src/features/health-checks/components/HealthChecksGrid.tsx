@@ -22,7 +22,7 @@ export function HealthChecksGrid() {
   const identityHealth = useIdentityHealthCheck();
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="3xl">
       <Stack gap="lg">
         {/* Grid container - responsive: 1 column on mobile, 2 on desktop */}
         <Grid gap="lg" className="grid-cols-1 md:grid-cols-2">
@@ -50,7 +50,7 @@ export function HealthChecksGrid() {
         {/* Optional: Add a "Check All" button */}
         <Stack align="center">
           <Button
-            variant="ghost"
+            variant="default"
             size="sm"
             onClick={() => {
               nexusHealth.refetch();

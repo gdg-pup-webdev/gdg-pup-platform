@@ -148,7 +148,7 @@ export function EventCard({ event }: EventCardProps) {
           </Stack>
 
           {/* Action Button */}
-          <Button variant="primary" size="sm" className="w-full">
+          <Button variant="default" size="sm" className="w-full">
             {isUpcoming ? "Register Now" : "View Details"}
           </Button>
         </Stack>

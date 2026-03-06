@@ -22,7 +22,10 @@ export function writeOpenApiGenerator(
     routeRootDirRelative,
   );
 
-  const tsFiles = listTsFilesOfDirectorySync(routeRootDirAbsolute);
+  const tsFiles = listTsFilesOfDirectorySync(routeRootDirAbsolute, [
+    "**/(__deprecated__)", // Matches the folder (v0) anywhere
+    "**/(__deprecated__)/**", // Matches anything inside (v0) anywhere
+  ]);
   const routeFiles = tsFiles.map((f) =>
     RouteEndpointFile.fromTsFile(f, routeRootDirAbsolute),
   );

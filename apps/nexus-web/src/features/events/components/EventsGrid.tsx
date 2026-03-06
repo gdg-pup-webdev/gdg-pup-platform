@@ -59,19 +59,19 @@ function EmptyState() {
         <div className="text-6xl">📅</div>
         <Stack gap="xs" align="center">
           <Text variant="heading-2">No Events Found</Text>
-          <Text variant="body" color="secondary" className="max-w-md">
+          <Text variant="body" color="secondary">
             There are no events matching your filters. Try adjusting your search
             or check back later for new events.
           </Text>
         </Stack>
         <Inline gap="sm" justify="center" wrap={true}>
           <Button
-            variant="primary"
+            variant="default"
             onClick={() => (window.location.href = "/events")}
           >
             View All Events
           </Button>
-          <Button variant="secondary" onClick={() => window.location.reload()}>
+          <Button variant="default" onClick={() => window.location.reload()}>
             Refresh Page
           </Button>
         </Inline>
@@ -117,7 +117,7 @@ function ErrorState({
           <li>Contact support if the issue persists</li>
         </Stack>
         {onRetry && (
-          <Button variant="primary" onClick={onRetry}>
+          <Button variant="default" onClick={onRetry}>
             <Inline gap="xs" align="center">
               <span>🔄</span>
               <span>Try Again</span>

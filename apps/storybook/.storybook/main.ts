@@ -1,6 +1,6 @@
 import type { StorybookConfig } from "@storybook/nextjs-vite";
 
-import { dirname } from "path";
+import { dirname, join } from "path";
 
 import { fileURLToPath } from "url";
 
@@ -22,5 +22,25 @@ const config: StorybookConfig = {
   ],
   framework: getAbsolutePath("@storybook/nextjs-vite"),
   staticDirs: ["../public"],
+  viteFinal: async (config) => {
+    const currentDir = dirname(fileURLToPath(import.meta.url));
+    const sparkUiPath = join(currentDir, "../../../packages/spark-ui/src");
+
+    // Watch spark-ui source files for changes
+    config.server = config.server || {};
+    config.server.watch = {
+      ...(config.server.watch || {}),
+      ignored: ["!**/node_modules/@packages/spark-ui/**"],
+    };
+
+    // Resolve spark-ui to source files instead of dist
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      "@packages/spark-ui": sparkUiPath,
+    };
+
+    return config;
+  },
 };
 export default config;

@@ -66,7 +66,7 @@ export function EventsFilters({
   ];
 
   return (
-    <Card>
+    <Card className="p-8">
       <Stack gap="lg">
         {/* Header */}
         <Inline align="center" justify="between">
@@ -80,7 +80,7 @@ export function EventsFilters({
               </Text>
             )}
           </Stack>
-          <Button variant="secondary" size="sm" onClick={onReset}>
+          <Button variant="default" size="sm" onClick={onReset}>
             🔄 Reset
           </Button>
         </Inline>
@@ -109,9 +109,7 @@ export function EventsFilters({
               <Button
                 key={cat.value}
                 onClick={() => onFilterChange("category", cat.value)}
-                variant={
-                  filters.category === cat.value ? "primary" : "secondary"
-                }
+                variant="default"
                 size="sm"
               >
                 {cat.icon} {cat.label}
@@ -130,9 +128,7 @@ export function EventsFilters({
               <Button
                 key={time.value}
                 onClick={() => onFilterChange("timeFilter", time.value)}
-                variant={
-                  filters.timeFilter === time.value ? "primary" : "secondary"
-                }
+                variant="default"
                 size="sm"
                 className="flex-1"
               >

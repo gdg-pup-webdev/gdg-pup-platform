@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "bindings": [
+    {
+      "role": "roles/resourcemanager.organizationIamAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/iam.securityAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/iam.roleAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/resourcemanager.organizationAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/resourcemanager.tagAdmin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/resourcemanager.tagUser",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    },
+    {
+      "role": "roles/cloudidentity.groups.admin",
+      "members": [
+        "user:gdg.pup.cloud@gmail.com"
+      ]
+    }
+  ]
+}

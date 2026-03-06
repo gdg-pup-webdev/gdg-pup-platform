@@ -50,7 +50,7 @@ export function HealthCheckCard({
 }: HealthCheckCardProps) {
   return (
     <Card>
-      <Stack gap="md" className="p-6 min-w-[320px]">
+      <Stack gap="md" className="p-6">
         {/* Header with API name */}
         <Stack gap="xs" className="text-center">
           <Text variant="heading-2" className="text-gray-900">
@@ -63,7 +63,7 @@ export function HealthCheckCard({
 
         {/* Check button */}
         <Button
-          variant="primary"
+          variant="default"
           size="md"
           onClick={onCheck}
           disabled={isLoading}

@@ -1,15 +1,15 @@
-import { file } from "#models/fileSystem/index.js";
-import { models } from "#typedrest.contract.js";
+import { fileRecordInsertDTO, fileRecord } from "#models/v1/fileSystem/file.js";
 import { cz, OpenApiSchemas } from "@packages/typed-rest/shared";
 
-export const body = OpenApiSchemas.Request.Body.withPayload(file.insertDTO);
+export const body =
+  OpenApiSchemas.Request.Body.withPayload(fileRecordInsertDTO);
 
 export const files = {
   file: OpenApiSchemas.Models.file(),
 };
 
 export const response = {
-  200: OpenApiSchemas.Response.single(file.row),
+  200: OpenApiSchemas.Response.single(fileRecord),
   ...OpenApiSchemas.Response.standardErrors(),
 };
 

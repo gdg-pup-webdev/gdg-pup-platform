@@ -28,6 +28,7 @@ export function ProfileHeader({ name, role, bio }: ProfileHeaderProps) {
       {/* User's name */}
       <Text
         variant="heading-1"
+        align="center"
         className="text-5xl bg-clip-text text-transparent bg-linear-to-r from-purple-400 via-pink-400 to-blue-400"
       >
         {name}
@@ -44,7 +45,7 @@ export function ProfileHeader({ name, role, bio }: ProfileHeaderProps) {
 
       {/* User's bio (if provided) */}
       {bio && (
-        <Text variant="body-lg" className="text-gray-300 max-w-2xl mx-auto">
+        <Text variant="body-lg" className="text-gray-300 mx-auto">
           {bio}
         </Text>
       )}

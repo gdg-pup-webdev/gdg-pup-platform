@@ -96,7 +96,7 @@ export function ApiTester({ token }: ApiTesterProps) {
         {/* Test Actions */}
         <Stack gap="xs">
           <Button
-            variant="primary"
+            variant="default"
             onClick={handleTestGoogleClassroom}
             disabled={!token || isLoading}
             className="w-full"

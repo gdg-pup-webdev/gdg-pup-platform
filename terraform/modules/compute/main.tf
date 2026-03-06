@@ -1,6 +1,90 @@
 # =============================================================================
 # Compute Module - Main Configuration
 # =============================================================================
-# Define compute resources (e.g., Cloud Run, GCE instances, GKE clusters).
+# Deploy multiple Cloud Run services from a services map.
 # =============================================================================
 
+resource "google_cloud_run_service" "services" {
+  for_each = var.services
+
+  name     = "${each.key}-${var.environment}"
+  location = var.region
+  project  = var.project_id
+
+  template {
+    metadata {
+      annotations = {
+        "autoscaling.knative.dev/minScale" = tostring(each.value.min_instances)
+        "autoscaling.knative.dev/maxScale" = tostring(each.value.max_instances)
+        "run.googleapis.com/cpu-throttling" = "true"
+      }
+    }
+
+    spec {
+      container_concurrency = each.value.container_concurrency
+      timeout_seconds       = each.value.timeout_seconds
+
+      containers {
+        image = each.value.image_url
+
+        ports {
+          container_port = each.value.container_port
+        }
+
+        dynamic "env" {
+          for_each = each.value.env_vars
+          content {
+            name  = env.key
+            value = env.value
+          }
+        }
+
+        resources {
+          limits = {
+            cpu    = each.value.cpu
+            memory = each.value.memory
+          }
+        }
+      }
+    }
+  }
+
+  traffic {
+    percent         = 100
+    latest_revision = true
+  }
+}
+
+# Allow unauthenticated access per service (when enabled)
+resource "google_cloud_run_service_iam_member" "public_access" {
+  for_each = {
+    for k, v in var.services : k => v if v.allow_unauthenticated
+  }
+
+  service  = google_cloud_run_service.services[each.key].name
+  location = google_cloud_run_service.services[each.key].location
+  project  = google_cloud_run_service.services[each.key].project
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
+# Map custom domains to Cloud Run services
+resource "google_cloud_run_domain_mapping" "mappings" {
+  for_each = {
+    for k, v in var.services : k => v if v.custom_domain != null
+  }
+
+  name     = each.value.custom_domain
+  location = var.region
+  project  = var.project_id
+
+  metadata {
+    namespace = var.project_id
+  }
+
+  spec {
+    route_name = google_cloud_run_service.services[each.key].name
+  }
+
+  depends_on = [google_cloud_run_service.services]
+}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * Home Page
  *
@@ -128,5 +129,21 @@ export default function HomePage() {
         <HealthChecksGrid />
       </div>
     </div>
+=======
+"use client";
+
+import { WhoAreWeSection, HeroSection, WhatWeDoSection, WhatDrivesUsSection, ImpactSection, SparkStartsHereSection } from "@/features/home";
+
+export default function HomePage() {
+  return (
+    <>
+      <HeroSection />
+      <WhoAreWeSection />
+      <WhatWeDoSection />
+      <WhatDrivesUsSection />
+      <ImpactSection />
+      <SparkStartsHereSection />
+    </>
+>>>>>>> dev
   );
 }

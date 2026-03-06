@@ -9,27 +9,24 @@
 
 import React from "react";
 import { DebugNavigation } from "@/features/debugging";
+<<<<<<< HEAD
 import { PageLayout, PageHeader } from "@/components/shared";
 import { Card } from "@packages/spark-ui";
+=======
+import { Card, Container, Stack, Grid } from '@packages/spark-ui';
+import { HealthChecksGrid } from '@/features/health-checks';
+>>>>>>> dev
 
 export default function DebugPage() {
   return (
-    <PageLayout>
-      <div className="min-h-screen bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {/* Page Header */}
-          <PageHeader
-            title="🛠️ Debug Tools"
-            description="Developer utilities for testing and debugging"
-          />
+    <Container className="py-12">
+      <Stack gap="xl">
 
           {/* Navigation */}
-          <div className="mt-8">
-            <DebugNavigation activePage="index" />
-          </div>
+          <DebugNavigation activePage="index" />
 
           {/* Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <Grid gap="lg" className="grid-cols-1 md:grid-cols-3">
             <Card className="bg-blue-50 border-2 border-blue-200">
               <div className="text-center">
                 <div className="text-4xl mb-3">🔐</div>
@@ -66,10 +63,10 @@ export default function DebugPage() {
                 </p>
               </div>
             </Card>
-          </div>
+          </Grid>
 
           {/* Developer Notes */}
-          <Card className="mt-8 bg-yellow-50 border-yellow-200">
+          <Card className="bg-yellow-50 border-yellow-200">
             <div className="flex items-start gap-4">
               <span className="text-3xl">⚠️</span>
               <div>
@@ -84,8 +81,20 @@ export default function DebugPage() {
               </div>
             </div>
           </Card>
-        </div>
-      </div>
-    </PageLayout>
+
+          {/* System Status */}
+          <Stack gap="md">
+            <Stack align="center" gap="sm">
+              <h2 className="text-2xl font-bold text-gray-900">
+                System Status
+              </h2>
+              <p className="text-gray-600">
+                Real-time monitoring of platform services
+              </p>
+            </Stack>
+            <HealthChecksGrid />
+          </Stack>
+      </Stack>
+    </Container>
   );
 }

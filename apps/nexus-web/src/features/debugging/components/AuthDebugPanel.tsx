@@ -124,7 +124,14 @@ export function AuthDebugPanel() {
         <Stack gap="md">
           <Text variant="heading-3">Authentication Controls</Text>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+<<<<<<< HEAD
             <Button onClick={loginWithGoogle} variant="primary">
+=======
+            <Button
+              onClick={loginWithGoogle}
+              variant="default"
+            >
+>>>>>>> dev
               <Inline gap="xs" align="center">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -148,6 +155,7 @@ export function AuthDebugPanel() {
               </Inline>
             </Button>
 
+<<<<<<< HEAD
             <Button onClick={logout} variant="destructive">
               Logout
             </Button>
@@ -168,6 +176,31 @@ export function AuthDebugPanel() {
               Copy Google Token
             </Button>
           </div>
+=======
+          <Button
+            onClick={logout}
+            variant="default"
+          >
+            Logout
+          </Button>
+
+          <Button
+            onClick={handleCopyToken}
+            variant="default"
+            disabled={!authState.token}
+          >
+            Copy Backend Token
+          </Button>
+
+          <Button
+            onClick={handleCopyGoogleAccessToken}
+            variant="default"
+            disabled={!authState.googleAccessToken}
+          >
+            Copy Google Token
+          </Button>
+        </div>
+>>>>>>> dev
         </Stack>
       </Card>
 

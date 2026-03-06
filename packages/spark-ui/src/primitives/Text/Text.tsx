@@ -46,6 +46,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
       weight,
       truncate,
       clamp,
+      gradient,
       as,
       children,
       ...props
@@ -66,6 +67,8 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
           return "h4";
         case "heading-5":
           return "h5";
+        case "heading-6":
+          return "h6";
         case "label":
           return "label";
         case "caption":
@@ -81,7 +84,15 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
       <Component
         ref={ref as any}
         className={cn(
-          textVariants({ variant, color, align, weight, truncate, clamp }),
+          textVariants({
+            variant,
+            color,
+            align,
+            weight,
+            truncate,
+            clamp,
+            gradient,
+          }),
           className,
         )}
         {...props}

@@ -6,6 +6,7 @@
     "dev:nexus": "turbo dev --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
     "dev:nexusapi": "turbo dev --filter=nexus-api...",
     "dev:backend": "turbo dev --filter=identity-api... --filter=nexus-api...",
+    "dev:storybook": "turbo dev --filter=storybook...",
     "build": "turbo run build --filter=!storybook",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
     "clean": "node -e \"process.platform === 'win32' ? require('child_process').execSync('.scripts\\\\clean.bat', {stdio: 'inherit'}) : require('child_process').execSync('sh .scripts/clean.sh', {stdio: 'inherit'})\"",
@@ -32,9 +33,11 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
     "clsx": "^2.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "tsx": "^4.21.0"
   }
 }

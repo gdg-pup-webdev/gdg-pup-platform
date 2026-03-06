@@ -1,10 +1,7 @@
-"use client";
-
-import { PageLayout, PageHeader } from "@/components/shared";
-import { Card, Button, Input } from "@packages/spark-ui";
-import { useState } from "react";
+import { PartnershipSection } from "@/features/about";
 
 export default function PartnershipPage() {
+<<<<<<< HEAD
   //   Dummy data pa lang
   const [formData, setFormData] = useState({
     organization: "",
@@ -167,4 +164,7 @@ export default function PartnershipPage() {
       </div>
     </PageLayout>
   );
+=======
+  return <PartnershipSection />;
+>>>>>>> dev
 }
