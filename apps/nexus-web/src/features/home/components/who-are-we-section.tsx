@@ -45,6 +45,7 @@ export function WhoAreWeSection() {
                 alt="Sparky and Cirby, the GDG PUP mascots"
                 width={612}
                 height={606}
+                className="pointer-events-none"
               />
             </motion.div>
 
