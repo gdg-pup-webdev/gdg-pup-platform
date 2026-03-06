@@ -541,26 +541,6 @@ export const loadRoutes = (app: Express) => {
 };
 ```
 
-## How it all works together
-
-graph TD
-A[HTTP Request]
-B[Express Route]
-C[HTTP Controller]
-D[Use Case]
-E[Domain Logic]
-F[Repository Port]
-G[Infrastructure Adapter]
-H[Database]
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    G --> H
-
 # Testing Strategy
 
 The modular design and dependency injection used throughout the architecture make the system highly testable. Because modules depend on interfaces rather than concrete implementations, external dependencies such as databases or APIs can easily be replaced with mock implementations during testing. This allows tests to focus on verifying the behavior of the component being tested without relying on real infrastructure.
