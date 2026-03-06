@@ -1,26 +1,24 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
-export const inputVariants = cva(
+export const inputContainerVariants = cva(
   [
-    "flex w-full rounded-md border",
-    "bg-background px-3 py-2",
+    "flex items-center w-full rounded-md border",
+    "bg-background py-2 px-3",
     "text-sm",
     "transition-colors",
-    "file:border-0 file:bg-transparent file:text-sm file:font-medium",
-    "placeholder:text-muted-foreground",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-    "disabled:cursor-not-allowed disabled:opacity-50",
+    "focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+    "has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
   ],
   {
     variants: {
       variant: {
         default: "border-input",
-        error: "border-destructive focus-visible:ring-destructive",
+        error: "border-destructive focus-within:ring-destructive",
       },
       inputSize: {
-        sm: "h-8 text-xs",
-        md: "h-9 text-sm",
-        lg: "h-10 text-base",
+        sm: "h-8 gap-1.5",
+        md: "h-9 gap-2",
+        lg: "h-10 gap-2.5",
       },
     },
     defaultVariants: {
@@ -30,4 +28,14 @@ export const inputVariants = cva(
   }
 );
 
-export type InputVariants = VariantProps<typeof inputVariants>;
+export const inputInnerVariants = cva([
+  "flex-1 min-w-0",
+  "bg-transparent",
+  "text-sm",
+  "placeholder:text-muted-foreground",
+  "focus-visible:outline-none",
+  "disabled:cursor-not-allowed",
+  "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+]);
+
+export type InputVariants = VariantProps<typeof inputContainerVariants>;

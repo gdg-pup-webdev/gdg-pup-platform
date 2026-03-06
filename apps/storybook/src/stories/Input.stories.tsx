@@ -143,6 +143,53 @@ export const Search: Story = {
   },
 };
 
+export const WithLeftIcon = {
+  render: () => (
+    <Input 
+        leftIcon = {
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        } 
+    />
+  )
+}
+
+export const WithRightIcon = {
+  render: () => (
+    <Input 
+        rightIcon = {
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        } 
+    />
+  )
+}
+
+export const WithBothIcons: Story = {
+  args: {
+    variant: "default",
+    placeholder: "Eurt",
+    type: "password"
+  },
+
+  render: () => (
+      <Input 
+        leftIcon = {
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        } 
+        rightIcon={
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        }
+      />
+  )
+}
+
 /**
  * Example showing all sizes side by side.
  */
@@ -168,7 +215,11 @@ export const FormExample: Story = {
       </div>
       <div>
         <label className="block text-sm font-medium mb-2">Email</label>
-        <Input type="email" placeholder="john@example.com" />
+        <Input type="email" placeholder="john@example.com" leftIcon={
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        } />
       </div>
       <div>
         <label className="block text-sm font-medium mb-2">Password</label>
