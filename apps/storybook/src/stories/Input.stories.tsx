@@ -168,12 +168,6 @@ export const WithRightIcon = {
 }
 
 export const WithBothIcons: Story = {
-  args: {
-    variant: "default",
-    placeholder: "Eurt",
-    type: "password"
-  },
-
   render: () => (
       <Input 
         leftIcon = {
