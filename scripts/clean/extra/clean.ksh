@@ -1,5 +1,7 @@
-#!/usr/bin/env sh
-# filepath: d:\Linux\GDG-PUP\gdg-pup-platform\.scripts\clean.sh
+#!/usr/bin/env ksh
+# filepath: scripts/clean/extra/clean.ksh
+# Korn Shell clean script for GDG PUP Platform
+
 set -e
 
 echo "=== Stopping Turbo daemon ==="
@@ -13,5 +15,8 @@ npx rimraf ".turbo" "**/.turbo" ".next" "**/.next" ".vite" "**/.vite" "node_modu
 
 echo "=== Cleaning log files ==="
 npx rimraf "*.log" "**/*.log" "logs" "**/logs"
+
+echo "=== Cleaning lock files ==="
+npx rimraf "pnpm-lock.yaml" "**/pnpm-lock.yaml"
 
 echo "✨ Clean complete! Run pnpm install to reinstall dependencies."

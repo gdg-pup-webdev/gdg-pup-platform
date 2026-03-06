@@ -1,4 +1,6 @@
 @echo off
+REM filepath: scripts/clean/clean.bat
+
 echo === Stopping Turbo daemon ===
 turbo daemon stop 2>nul || echo Turbo daemon already stopped
 
@@ -11,4 +13,7 @@ rimraf ".turbo" "**/.turbo" ".next" "**/.next" ".vite" "**/.vite" "node_modules/
 echo === Cleaning log files ===
 rimraf "*.log" "**/*.log" "logs" "**/logs"
 
-echo Clean complete! Run pnpm install to reinstall dependencies.
+echo === Cleaning lock files ===
+rimraf "pnpm-lock.yaml" "**/pnpm-lock.yaml"
+
+echo ✨ Clean complete! Run pnpm install to reinstall dependencies.
