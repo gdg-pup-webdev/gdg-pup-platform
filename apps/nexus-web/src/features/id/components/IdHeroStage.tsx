@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Button, GdgIdCard } from "@packages/spark-ui";
 import { IdHeroBeams } from "./IdHeroBeams";
+import { ASSETS } from "@/lib/constants/assets";
 
 /**
  * CSS custom properties that control spiral depths and beam geometry.
@@ -60,7 +61,7 @@ export function IdHeroStage() {
         transition={{ duration: 1.1, ease: "easeOut", delay: 0.7 }}
       >
         <div className="relative" style={{ width: "clamp(300px, 83.6vw, 1204px)", aspectRatio: "1204 / 188" }}>
-          <Image src="/pages/id/spiral-outer.png" alt="" aria-hidden fill className="object-contain" />
+          <Image src={ASSETS.ID.SPIRAL_OUTER} alt="" aria-hidden fill className="object-contain" />
         </div>
       </motion.div>
 
@@ -73,7 +74,7 @@ export function IdHeroStage() {
         transition={{ duration: 1.0, ease: "easeOut", delay: 0.35 }}
       >
         <div className="relative" style={{ width: "clamp(250px, 70.7vw, 1018px)", aspectRatio: "1018 / 125" }}>
-          <Image src="/pages/id/spiral-center.png" alt="" aria-hidden fill className="object-contain" />
+          <Image src={ASSETS.ID.SPIRAL_CENTER} alt="" aria-hidden fill className="object-contain" />
         </div>
       </motion.div>
 
@@ -86,7 +87,7 @@ export function IdHeroStage() {
         transition={{ duration: 0.9, ease: "easeOut", delay: 0 }}
       >
         <div className="relative" style={{ width: "clamp(180px, 48.4vw, 697px)", aspectRatio: "697 / 66" }}>
-          <Image src="/pages/id/spiral-inner.png" alt="" aria-hidden fill className="object-contain" />
+          <Image src={ASSETS.ID.SPIRAL_INNER} alt="" aria-hidden fill className="object-contain" />
         </div>
       </motion.div>
 
@@ -103,7 +104,7 @@ export function IdHeroStage() {
           transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
         >
           <Image
-            src="/pages/id/decorative-element-left.png"
+            src={ASSETS.ID.DECOR_LEFT}
             alt=""
             aria-hidden
             width={250}
@@ -126,7 +127,7 @@ export function IdHeroStage() {
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
         >
           <Image
-            src="/pages/id/decorative-element-right.png"
+            src={ASSETS.ID.DECOR_RIGHT}
             alt=""
             aria-hidden
             width={250}

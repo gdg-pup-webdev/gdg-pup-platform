@@ -4,6 +4,7 @@ import { Container, Stack, Text } from "@packages/spark-ui";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 export function WhoAreWeSection() {
   const sectionRef = useRef(null);
@@ -40,7 +41,7 @@ export function WhoAreWeSection() {
               transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
             >
               <Image
-                src="/images/sparky-and-cirby.webp"
+                src={ASSETS.HOME.WHO.SPARKY_CIRBY}
                 alt="Sparky and Cirby, the GDG PUP mascots"
                 width={612}
                 height={606}

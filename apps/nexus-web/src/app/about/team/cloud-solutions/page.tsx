@@ -1,35 +1,36 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/cloud-solutions";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
+const BASE = "/team/team-cloud-solutions";
 
 const CLOUD_SOLUTION_MEMBERS = [
   {
     name: "Kyla Marie Agapito",
     role: "Cloud Solutions Lead",
-    imageSrc: `${BASE}/kyla-marie-agapito.png`,
+    imageSrc: `${BASE}/kyla-marie-agapito.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "James Gabriele Torzar",
     role: "Cloud Solutions Co-Lead",
-    imageSrc: `${BASE}/james-gabriele-torzar.png`,
+    imageSrc: `${BASE}/james-gabriele-torzar.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Justin Royse Solomon",
     role: "Cloud Solutions Learning Head Committee",
-    imageSrc: `${BASE}/justin-royse-solomon.png`,
+    imageSrc: `${BASE}/justin-royse-solomon.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Raphael Johnathan Flores",
     role: "Cloud Solutions Learning Head Committee",
-    imageSrc: `${BASE}/raphael-johnathan-flores.png`,
+    imageSrc: `${BASE}/raphael-johnathan-flores.webp`,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

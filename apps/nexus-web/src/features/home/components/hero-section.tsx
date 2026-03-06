@@ -9,23 +9,24 @@ import {
   type MotionValue,
 } from "motion/react";
 import { Button, Container, Stack, Text } from "@packages/spark-ui";
+import { ASSETS } from "@/lib/constants/assets";
 
 /* ------------------------------------------------------------------ */
 /*  Layer config — front (high z) to back (low z)                     */
 /* ------------------------------------------------------------------ */
 
 const HERO_LAYERS = [
-  { src: "/pages/hero/A1-1.png", speed: 0.7, zIndex: 10 },
-  { src: "/pages/hero/C-1.png", speed: 0.05, zIndex: 9 },
-  { src: "/pages/hero/B1-1.png", speed: 0.5, zIndex: 8 },
-  { src: "/pages/hero/B1-2.png", speed: 0.5, zIndex: 7 },
-  { src: "/pages/hero/D-E1.png", speed: 0.4, zIndex: 6 },
-  { src: "/pages/hero/F1-1.png", speed: 0.04, zIndex: 5 },
-  { src: "/pages/hero/F2-1.png", speed: 0.05, zIndex: 4 },
-  { src: "/pages/hero/F3-1.png", speed: 0.06, zIndex: 3 },
-  { src: "/pages/hero/F4-1.png", speed: 0.07, zIndex: 2 },
-  { src: "/pages/hero/F5-1.png", speed: 0.08, zIndex: 1 },
-  { src: "/pages/hero/BG2.png", speed: 0.1, zIndex: 0 },
+  { src: ASSETS.HOME.HERO.LAYER_SPARKY, speed: 0.7, zIndex: 10 },
+  { src: ASSETS.HOME.HERO.LAYER_CLOUDS, speed: 0.05, zIndex: 9 },
+  { src: ASSETS.HOME.HERO.LAYER_B1, speed: 0.5, zIndex: 8 },
+  { src: ASSETS.HOME.HERO.LAYER_B2, speed: 0.5, zIndex: 7 },
+  { src: ASSETS.HOME.HERO.LAYER_DE, speed: 0.4, zIndex: 6 },
+  { src: ASSETS.HOME.HERO.LAYER_F1, speed: 0.04, zIndex: 5 },
+  { src: ASSETS.HOME.HERO.LAYER_F2, speed: 0.05, zIndex: 4 },
+  { src: ASSETS.HOME.HERO.LAYER_F3, speed: 0.06, zIndex: 3 },
+  { src: ASSETS.HOME.HERO.LAYER_F4, speed: 0.07, zIndex: 2 },
+  { src: ASSETS.HOME.HERO.LAYER_F5, speed: 0.08, zIndex: 1 },
+  { src: ASSETS.HOME.HERO.LAYER_BG, speed: 0.1, zIndex: 0 },
 ] as const;
 
 /* ------------------------------------------------------------------ */

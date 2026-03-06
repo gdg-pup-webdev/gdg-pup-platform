@@ -4,6 +4,7 @@ import { Container, Stack, Text, Inline } from "@packages/spark-ui";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 export function WhatDrivesUsSection() {
     const ref = useRef(null);
@@ -42,7 +43,7 @@ export function WhatDrivesUsSection() {
                         </Text>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
+                            <Image src={ASSETS.HOME.BULLET_DIAMOND} alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"
@@ -55,7 +56,7 @@ export function WhatDrivesUsSection() {
                         </Inline>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
+                            <Image src={ASSETS.HOME.BULLET_DIAMOND} alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"
@@ -68,7 +69,7 @@ export function WhatDrivesUsSection() {
                         </Inline>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
+                            <Image src={ASSETS.HOME.BULLET_DIAMOND} alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"
@@ -81,7 +82,7 @@ export function WhatDrivesUsSection() {
                         </Inline>
 
                         <Inline>
-                            <Image src="/images/Group 215.svg" alt="bullet point" width={16} height={16} className="pointer-events-none" />
+                            <Image src={ASSETS.HOME.BULLET_DIAMOND} alt="bullet point" width={16} height={16} className="pointer-events-none" />
                             <Text
                                 align="left"
                                 variant="body"

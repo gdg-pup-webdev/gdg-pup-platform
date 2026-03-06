@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "motion/react";
 import { IdInfoCard } from "./IdInfoCard";
+import { ASSETS } from "@/lib/constants/assets";
 
 /**
  * "How it works" section: Cirby mascot (left, behind) overlapped by the
@@ -22,7 +23,7 @@ export function IdHowItWorks() {
         {/* Cirby mascot — positioned behind the card */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[55%] z-10 pointer-events-none">
           <Image
-            src="/pages/id/cirby2.png"
+            src={ASSETS.ID.CIRBY}
             alt="Cirby mascot"
             width={320}
             height={320}

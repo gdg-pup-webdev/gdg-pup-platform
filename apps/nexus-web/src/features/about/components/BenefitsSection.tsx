@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "motion/react";
 import { useRef, useState, useEffect } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 const FadeInSection = ({
   children,
@@ -41,49 +42,49 @@ const FadeInSection = ({
   );
 };
 
-{/* Card Colors */}
+{/* Card Colors */ }
 const CARD_COLORS: Record<string, string> = {
-  blue:   "#4285F4",
-  green:  "#34A853",
+  blue: "#4285F4",
+  green: "#34A853",
   yellow: "#FBBC05",
-  red:    "#EA4335",
+  red: "#EA4335",
 };
 
 const benefits = [
   {
     title: "Google Access",
     body: "Access to Google-backed learning resources, tools, and technologies.",
-    image: "/pages/about/benefits/GoogleAccess.png",
+    image: ASSETS.ABOUT.BENEFITS.GOOGLE_ACCESS,
     color: "blue",
   },
   {
     title: "Hands-On",
     body: "Hands-on workshops, Study Jams, Departmental skill-shares and real-world projects.",
-    image: "/pages/about/benefits/Hands-On.png",
+    image: ASSETS.ABOUT.BENEFITS.HANDS_ON,
     color: "green",
   },
   {
     title: "Mentorship",
     body: "Opportunities to connect with industry professionals and mentors through our partnered initiatives.",
-    image: "/pages/about/benefits/Mentorship.png",
+    image: ASSETS.ABOUT.BENEFITS.MENTORSHIP,
     color: "yellow",
   },
   {
     title: "Growth Network",
     body: "A global GDG network you can grow with—even after graduation.",
-    image: "/pages/about/benefits/GrowthNetwork.png",
+    image: ASSETS.ABOUT.BENEFITS.GROWTH_NETWORK,
     color: "red",
   },
   {
     title: "Leadership",
     body: "Leadership, collaboration, and career-building experiences.",
-    image: "/pages/about/benefits/Leadership.png",
+    image: ASSETS.ABOUT.BENEFITS.LEADERSHIP,
     color: "yellow",
   },
   {
     title: "Community",
     body: "Vibrant community where meaningful connections, valuable networks, and unforgettable experiences happen naturally. We grow, laugh, and build together.",
-    image: "/pages/about/benefits/Community.png",
+    image: ASSETS.ABOUT.BENEFITS.COMMUNITY,
     color: "blue",
   },
 ];
@@ -128,7 +129,7 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
     return () => cancelAnimationFrame(rafRef.current);
   }, [hovered]);
 
-  {/* Constants for snake animation pattern*/}
+  {/* Constants for snake animation pattern*/ }
   const { w, h } = dims;
   const perimeter = w > 0 ? 2 * (w + h) - 8 * R + 2 * Math.PI * R : 0;
   const snakes = [0, 0.25, 0.5, 0.75].map(frac => frac * perimeter);
@@ -345,7 +346,7 @@ export function BenefitsSection() {
         }}
       >
         <Image
-          src="/pages/about/benefits/Asset1.4 1.svg"
+          src={ASSETS.ABOUT.BENEFITS.DECOR_RIGHT}
           alt="Decorative top-left asset"
           width={280}
           height={280}
@@ -369,7 +370,7 @@ export function BenefitsSection() {
         }}
       >
         <Image
-          src="/pages/about/benefits/Asset1.3 1.svg"
+          src={ASSETS.ABOUT.BENEFITS.DECOR_LEFT}
           alt="Decorative bottom-right asset"
           width={250}
           height={250}
