@@ -9,17 +9,22 @@
     "dev:storybook": "turbo dev --filter=storybook...",
     "build": "turbo run build --filter=!storybook",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=identity-api... --filter=nexus-web...",
+    "clean": "node scripts/clean/detect-shell.ts",
+    "clean:help": "node scripts/clean/detect-shell.ts --help",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "gen-types": "turbo run gen-types",
+    "gen-types:rebuild": "pnpm gen-types && pnpm build",
     "test": "turbo run test"
   },
   "devDependencies": {
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
+    "npm-run-all": "^4.1.5",
     "prettier": "3.7.4",
+    "rimraf": "^6.1.2",
     "syncpack": "13.0.4",
     "turbo": "2.7.4",
     "typescript": "5.9.3"
