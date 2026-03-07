@@ -3,6 +3,9 @@ packages:
   - packages/*
   - configs/*
 
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@scarf/scarf'
