@@ -1,14 +1,7 @@
- import { Express, Router } from "express";
-import express from "express";
+import express, { Express, Router } from "express";
 import { tokenParserFromHeaders } from "../middlewares/tokenParser";
 
-export const loadParsers = (router: Router) => {
-  router.use(express.json());
-  router.use(express.urlencoded({ extended: true }));
-
-  // parse query with extended param to parse object queries
-  //   router.set("query parser", "extended");
-
+export const loadParsers = (app: Express) => {
   // parse authentication token
-  router.use(tokenParserFromHeaders);
+  app.use(tokenParserFromHeaders);
 };

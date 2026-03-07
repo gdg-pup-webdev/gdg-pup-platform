@@ -4,7 +4,7 @@
  * ==========================================
  */
 
-import { z } from "zod";
+import { cz as z } from "@packages/typed-rest/shared";
 import { type Json } from "./supabase.types";
 
 export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
@@ -117,6 +117,7 @@ export const publicEventRowSchema = z.object({
   creator_id: z.string().nullable(),
   description: z.string().nullable(),
   end_date: z.string().nullable(),
+  gdg_event_id: z.number().nullable(),
   id: z.string(),
   start_date: z.string().nullable(),
   title: z.string(),
@@ -132,6 +133,7 @@ export const publicEventInsertSchema = z.object({
   creator_id: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   end_date: z.string().optional().nullable(),
+  gdg_event_id: z.number().optional().nullable(),
   id: z.string().optional(),
   start_date: z.string().optional().nullable(),
   title: z.string(),
@@ -147,6 +149,7 @@ export const publicEventUpdateSchema = z.object({
   creator_id: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   end_date: z.string().optional().nullable(),
+  gdg_event_id: z.number().optional().nullable(),
   id: z.string().optional(),
   start_date: z.string().optional().nullable(),
   title: z.string().optional(),
@@ -155,6 +158,13 @@ export const publicEventUpdateSchema = z.object({
 });
 
 export const publicEventRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("event_gdg_event_id_fkey"),
+    columns: z.tuple([z.literal("gdg_event_id")]),
+    isOneToOne: z.literal(true),
+    referencedRelation: z.literal("scraped_gdg_events"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
+  }),
   z.object({
     foreignKeyName: z.literal("events_creator_id_fkey"),
     columns: z.tuple([z.literal("creator_id")]),
@@ -457,6 +467,78 @@ export const publicRewardRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
+
+export const publicScrapedGdgEventsRowSchema = z.object({
+  attendee_virtual_venue_link: z.string().nullable(),
+  cover_image_url: z.string().nullable(),
+  created_at: z.string().nullable(),
+  description: z.string().nullable(),
+  description_short: z.string().nullable(),
+  end_date: z.string(),
+  event_type: z.string().nullable(),
+  event_type_slug: z.string().nullable(),
+  gdg_id: z.number(),
+  is_virtual_event: z.boolean().nullable(),
+  last_scraped_at: z.string().nullable(),
+  location: z.string().nullable(),
+  start_date: z.string(),
+  status: z.string().nullable(),
+  tags: z.array(z.string()).nullable(),
+  title: z.string(),
+  total_attendees: z.number().nullable(),
+  total_capacity: z.number().nullable(),
+  updated_at: z.string().nullable(),
+  url: z.string(),
+  video_url: z.string().nullable(),
+});
+
+export const publicScrapedGdgEventsInsertSchema = z.object({
+  attendee_virtual_venue_link: z.string().optional().nullable(),
+  cover_image_url: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  description_short: z.string().optional().nullable(),
+  end_date: z.string(),
+  event_type: z.string().optional().nullable(),
+  event_type_slug: z.string().optional().nullable(),
+  gdg_id: z.number(),
+  is_virtual_event: z.boolean().optional().nullable(),
+  last_scraped_at: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  start_date: z.string(),
+  status: z.string().optional().nullable(),
+  tags: z.array(z.string()).optional().nullable(),
+  title: z.string(),
+  total_attendees: z.number().optional().nullable(),
+  total_capacity: z.number().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+  url: z.string(),
+  video_url: z.string().optional().nullable(),
+});
+
+export const publicScrapedGdgEventsUpdateSchema = z.object({
+  attendee_virtual_venue_link: z.string().optional().nullable(),
+  cover_image_url: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  description_short: z.string().optional().nullable(),
+  end_date: z.string().optional(),
+  event_type: z.string().optional().nullable(),
+  event_type_slug: z.string().optional().nullable(),
+  gdg_id: z.number().optional(),
+  is_virtual_event: z.boolean().optional().nullable(),
+  last_scraped_at: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  start_date: z.string().optional(),
+  status: z.string().optional().nullable(),
+  tags: z.array(z.string()).optional().nullable(),
+  title: z.string().optional(),
+  total_attendees: z.number().optional().nullable(),
+  total_capacity: z.number().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+  url: z.string().optional(),
+  video_url: z.string().optional().nullable(),
+});
 
 export const publicStudyJamRowSchema = z.object({
   created_at: z.string(),

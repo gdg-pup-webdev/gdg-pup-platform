@@ -4,12 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { 
-  Box, 
-  Inline, 
-  Text, 
-  Button, 
-  Avatar, 
+import { ASSETS } from "@/lib/constants/assets";
+import {
+  Box,
+  Inline,
+  Text,
+  Button,
+  Avatar,
   Stack,
   Dropdown,
   DropdownTrigger,
@@ -38,13 +39,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > 100) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
-      
+
       lastScrollY = currentScrollY;
     };
 
@@ -89,12 +90,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <Box 
+    <Box
       className="fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 pointer-events-none transition-all duration-700 ease-out"
-      // style={{
-      //   opacity: isVisible ? 1 : 0,
-      //   transform: isVisible ? "translateY(0) scale(1)" : "translateY(-2rem) scale(0.95)",
-      // }}
+    // style={{
+    //   opacity: isVisible ? 1 : 0,
+    //   transform: isVisible ? "translateY(0) scale(1)" : "translateY(-2rem) scale(0.95)",
+    // }}
     >
       <Box
         className="mx-auto pointer-events-auto animate-in fade-in zoom-in-95 duration-700 bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_50%,#97AA2A_75%,#4285F4_100%)] md:p-0.5 max-w-7xl md:rounded-4xl shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040]"
@@ -109,7 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Link href="/" className="hover:opacity-80 transition-opacity">
                 <Inline gap="sm" align="center">
                   <Image
-                    src="/images/logos/GDG.webp"
+                    src={ASSETS.BRANDING.GDG_LOGO_WEBP}
                     alt="GDG Logo"
                     width={40}
                     height={40}
@@ -239,7 +240,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Mobile Menu Button */}
               <Box className="min-[75rem]:hidden" ref={mobileMenuRef}>
-                <button 
+                <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="text-gray-300 hover:text-white p-2 transition-colors"
                   aria-label="Toggle menu"
@@ -257,7 +258,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {/* Mobile Menu Dropdown */}
                 {isMobileMenuOpen && (
-                  <Box 
+                  <Box
                     className="absolute right-4 top-full mt-4 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                   >
                     <Stack gap="none">
@@ -341,8 +342,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                             {status === "checking" ? (
                               <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse"> </Box>
                             ) : user ? (
-                              <Link 
-                                href={`/id/${user.id}`} 
+                              <Link
+                                href={`/id/${user.id}`}
                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
@@ -362,8 +363,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 </Stack>
                               </Link>
                             ) : (
-                              <Link 
-                                href="/signin" 
+                              <Link
+                                href="/signin"
                                 className="block text-center py-2 px-4 rounded-lg border border-gray-500 text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >

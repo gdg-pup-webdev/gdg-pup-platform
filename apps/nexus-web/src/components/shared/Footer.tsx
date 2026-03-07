@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Box, Inline, Stack, Text } from "@packages/spark-ui";
+import { ASSETS } from "@/lib/constants/assets";
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -109,7 +110,7 @@ export const Footer: React.FC = () => {
           <Box className="lg:col-span-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Link href="/" className="flex items-center gap-3 mb-6 group">
               <Image
-                src="/images/logos/GDG.webp"
+                src={ASSETS.BRANDING.GDG_LOGO_WEBP}
                 alt="GDG Logo"
                 width={40}
                 height={40}
