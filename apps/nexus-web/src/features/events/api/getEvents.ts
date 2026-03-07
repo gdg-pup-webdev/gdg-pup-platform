@@ -1,13 +1,18 @@
 /**
- * API function to fetch events from Nexus API
- * 
- * Retrieves a paginated list of events with optional filtering.
+ * API function to fetch events from Nexus API via Next.js proxy route.
  */
 
-import { callEndpoint } from "@packages/typed-rest/clientReact";
-import { contract } from "@packages/nexus-api-contracts";
-import { configs } from "@/configs/servers.config";
 import { EventsException, EventsQueryParams, EventsResponse } from "../types";
+
+const buildQueryString = (params: Record<string, unknown>) => {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      searchParams.append(key, String(value));
+    }
+  });
+  return searchParams.toString();
+};
 
 /**
  * Fetch events from the Nexus API
@@ -37,32 +42,36 @@ export async function getEvents(
       ...params,
     };
 
-    // Call the events endpoint
-    const result = await callEndpoint(
-      configs.nexusApiBaseUrl,
-      contract.api.event_system.events.GET,
-      {
-        query: queryParams,
-      }
-    );
+    const qs = buildQueryString(queryParams as Record<string, unknown>);
+    const response = await fetch(`/api/events?${qs}`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    const payload = await response.json();
 
     // Check for successful response
-    if (result.status == 200 && result.body) {
-      return result.body as EventsResponse;
+    if (
+      response.ok &&
+      payload?.status === "success" &&
+      Array.isArray(payload?.data)
+    ) {
+      return payload as EventsResponse;
     }
 
     // Handle error responses
+    const detail =
+      payload?.errors?.[0]?.detail || payload?.message || `Received status ${response.status}`;
     throw new EventsException(
       "Failed to fetch events",
       "FETCH_ERROR",
-      `Received status ${result.status}`
+      detail
     );
 
   } catch (error) {
     // Network errors
     if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new EventsException(
-        `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`,
+        "Failed to connect to events proxy. Please check if Nexus Web and Nexus API are running.",
         "NETWORK_ERROR",
         error.message
       );
