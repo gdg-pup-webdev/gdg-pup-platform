@@ -11,6 +11,7 @@ import { FilesRouter } from "../routes/files/files.router";
 import { GdgScrapedEventsHttpController } from "../routes/gdg-scraped-events/gdgScrapedEvents.controller";
 import { bevyEventController } from "../modules/bevyEvents";
 import { GdgScrapedEventsRouter } from "../routes/gdg-scraped-events/gdgScrapedEvents.router";
+
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
 

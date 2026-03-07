@@ -1,4 +1,4 @@
- import { AuthService } from "@/v1/modules/authSystem";
+import { AuthService } from "@/v1/modules/authSystem";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
