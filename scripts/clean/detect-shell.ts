@@ -468,3 +468,5 @@ if (process.argv.includes("--debug")) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 runCleanScript();
+
+// Just for the update
