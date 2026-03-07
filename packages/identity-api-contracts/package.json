@@ -6,7 +6,7 @@
   "imports": {
     "#*": "./dist/*"
   },
-  "scripts": {  
+  "scripts": {
     "dev": "typed-rest dev",
     "build": "typed-rest build"
   },
@@ -18,7 +18,7 @@
     "@packages/typed-rest": "workspace:*",
     "concurrently": "9.2.1",
     "supazod": "^4.5.0",
-    "zod": "^4.3.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@configs/typescript-config": "workspace:*",
