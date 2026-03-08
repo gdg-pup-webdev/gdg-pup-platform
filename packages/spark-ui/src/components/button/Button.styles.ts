@@ -73,8 +73,8 @@ export const buttonVariants = cva(
         variant: "default",
         subVariant: "plain",
         class: [
-          "border border-white",
-          "hover:[box-shadow:inset_0_0_0_1px_white]"
+          "ring",
+          "hover:ring-2"
         ],
       },
       {
