@@ -17,13 +17,13 @@ export class SupabaseCertificateRepository implements ICertificateRepository {
   }
 
   async findById(id: string): Promise<Certificate | null> {
-    const { data, error } = await supabase.from(this.tableName).select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabase.from("user_certificate").select("*").eq("id", id).maybeSingle();
     if (error) throw new Error(`Database error: ${error.message}`);
     return data ? this.mapToDomain(data) : null;
   }
 
   async findAll(filters: { userId?: string } = {}, pageNumber = 1, pageSize = 10): Promise<{ list: Certificate[]; count: number }> {
-    let query = supabase.from(this.tableName).select("*", { count: "exact" }).order("created_at", { ascending: false });
+    let query = supabase.from("user_certificate").select("*", { count: "exact" }).order("created_at", { ascending: false });
 
     if (filters.userId) query = query.eq("user_id", filters.userId);
 
@@ -40,7 +40,7 @@ export class SupabaseCertificateRepository implements ICertificateRepository {
 
   async saveNew(certificate: Certificate): Promise<Certificate> {
     const props = certificate.props;
-    const { data, error } = await supabase.from(this.tableName).insert({
+    const { data, error } = await supabase.from("user_certificate").insert({
       id: props.id,
       user_id: props.userId,
       title: props.title,
@@ -55,7 +55,7 @@ export class SupabaseCertificateRepository implements ICertificateRepository {
 
   async persistUpdates(certificate: Certificate): Promise<Certificate> {
     const props = certificate.props;
-    const { data, error } = await supabase.from(this.tableName).update({
+    const { data, error } = await supabase.from("user_certificate").update({
       title: props.title,
       description: props.description,
       image_url: props.imageUrl,
@@ -66,7 +66,7 @@ export class SupabaseCertificateRepository implements ICertificateRepository {
   }
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase.from(this.tableName).delete().eq("id", id);
+    const { error } = await supabase.from("user_certificate").delete().eq("id", id);
     if (error) throw new Error(`Failed to delete certificate: ${error.message}`);
   }
 }

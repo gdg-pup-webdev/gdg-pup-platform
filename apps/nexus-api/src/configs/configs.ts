@@ -7,5 +7,4 @@ export const configs = {
   supabase: {
     storageBucket: process.env.SUPABASE_STORAGE_BUCKET || "public",
   },
-  bootstrapSecret: process.env.BOOTSTRAP_SECRET,
 };

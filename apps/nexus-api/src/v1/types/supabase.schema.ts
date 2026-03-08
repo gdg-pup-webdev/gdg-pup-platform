@@ -258,6 +258,33 @@ export const publicExternalResourceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicFileRecordRowSchema = z.object({
+  file_description: z.string().nullable(),
+  file_name: z.string().nullable(),
+  file_path: z.string().nullable(),
+  id: z.string(),
+  preview_url: z.string().nullable(),
+  storage_ref: z.string().nullable(),
+});
+
+export const publicFileRecordInsertSchema = z.object({
+  file_description: z.string().optional().nullable(),
+  file_name: z.string().optional().nullable(),
+  file_path: z.string().optional().nullable(),
+  id: z.string().optional(),
+  preview_url: z.string().optional().nullable(),
+  storage_ref: z.string().optional().nullable(),
+});
+
+export const publicFileRecordUpdateSchema = z.object({
+  file_description: z.string().optional().nullable(),
+  file_name: z.string().optional().nullable(),
+  file_path: z.string().optional().nullable(),
+  id: z.string().optional(),
+  preview_url: z.string().optional().nullable(),
+  storage_ref: z.string().optional().nullable(),
+});
+
 export const publicGdgMembersRowSchema = z.object({
   created_at: z.string().nullable(),
   department: z.string().nullable(),
@@ -542,27 +569,30 @@ export const publicScrapedGdgEventsUpdateSchema = z.object({
 
 export const publicStudyJamRowSchema = z.object({
   created_at: z.string(),
+  creator_id: z.string().nullable(),
   description: z.string(),
   id: z.string(),
-  recording_url: z.string(),
+  recording_url: z.string().nullable(),
   summary: z.string(),
   title: z.string(),
 });
 
 export const publicStudyJamInsertSchema = z.object({
   created_at: z.string().optional(),
+  creator_id: z.string().optional().nullable(),
   description: z.string(),
   id: z.string().optional(),
-  recording_url: z.string(),
+  recording_url: z.string().optional().nullable(),
   summary: z.string(),
   title: z.string(),
 });
 
 export const publicStudyJamUpdateSchema = z.object({
   created_at: z.string().optional(),
+  creator_id: z.string().optional().nullable(),
   description: z.string().optional(),
   id: z.string().optional(),
-  recording_url: z.string().optional(),
+  recording_url: z.string().optional().nullable(),
   summary: z.string().optional(),
   title: z.string().optional(),
 });
@@ -708,7 +738,7 @@ export const publicUserAchievementRelationshipsSchema = z.tuple([
 export const publicUserCertificateRowSchema = z.object({
   description: z.string(),
   id: z.string(),
-  image_url: z.string(),
+  image_url: z.string().nullable(),
   title: z.string(),
   user_id: z.string(),
 });
@@ -716,7 +746,7 @@ export const publicUserCertificateRowSchema = z.object({
 export const publicUserCertificateInsertSchema = z.object({
   description: z.string(),
   id: z.string().optional(),
-  image_url: z.string(),
+  image_url: z.string().optional().nullable(),
   title: z.string(),
   user_id: z.string(),
 });
@@ -724,7 +754,7 @@ export const publicUserCertificateInsertSchema = z.object({
 export const publicUserCertificateUpdateSchema = z.object({
   description: z.string().optional(),
   id: z.string().optional(),
-  image_url: z.string().optional(),
+  image_url: z.string().optional().nullable(),
   title: z.string().optional(),
   user_id: z.string().optional(),
 });
@@ -947,24 +977,30 @@ export const publicWalletRowSchema = z.object({
   balance: z.number(),
   created_at: z.string(),
   id: z.string(),
+  spark_points: z.number(),
   updated_at: z.string(),
   user_id: z.string(),
+  webdev_points: z.number().nullable(),
 });
 
 export const publicWalletInsertSchema = z.object({
   balance: z.number(),
   created_at: z.string().optional(),
   id: z.string().optional(),
+  spark_points: z.number().optional(),
   updated_at: z.string().optional(),
   user_id: z.string(),
+  webdev_points: z.number().optional().nullable(),
 });
 
 export const publicWalletUpdateSchema = z.object({
   balance: z.number().optional(),
   created_at: z.string().optional(),
   id: z.string().optional(),
+  spark_points: z.number().optional(),
   updated_at: z.string().optional(),
   user_id: z.string().optional(),
+  webdev_points: z.number().optional().nullable(),
 });
 
 export const publicWalletRelationshipsSchema = z.tuple([
@@ -981,35 +1017,38 @@ export const publicWalletTransactionRowSchema = z.object({
   amount: z.number(),
   created_at: z.string(),
   id: z.string(),
+  point_type: z.string().nullable(),
   source_id: z.string(),
   source_type: z.string(),
-  wallet_id: z.string(),
+  user_id: z.string(),
 });
 
 export const publicWalletTransactionInsertSchema = z.object({
   amount: z.number().optional(),
   created_at: z.string().optional(),
   id: z.string().optional(),
+  point_type: z.string().optional().nullable(),
   source_id: z.string(),
   source_type: z.string(),
-  wallet_id: z.string(),
+  user_id: z.string(),
 });
 
 export const publicWalletTransactionUpdateSchema = z.object({
   amount: z.number().optional(),
   created_at: z.string().optional(),
   id: z.string().optional(),
+  point_type: z.string().optional().nullable(),
   source_id: z.string().optional(),
   source_type: z.string().optional(),
-  wallet_id: z.string().optional(),
+  user_id: z.string().optional(),
 });
 
 export const publicWalletTransactionRelationshipsSchema = z.tuple([
   z.object({
-    foreignKeyName: z.literal("wallet_transaction_wallet_id_fkey"),
-    columns: z.tuple([z.literal("wallet_id")]),
+    foreignKeyName: z.literal("wallet_transaction_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
     isOneToOne: z.literal(false),
-    referencedRelation: z.literal("wallet"),
+    referencedRelation: z.literal("user"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);

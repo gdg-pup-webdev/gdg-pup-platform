@@ -243,6 +243,33 @@ export type Database = {
           },
         ]
       }
+      file_record: {
+        Row: {
+          file_description: string | null
+          file_name: string | null
+          file_path: string | null
+          id: string
+          preview_url: string | null
+          storage_ref: string | null
+        }
+        Insert: {
+          file_description?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          preview_url?: string | null
+          storage_ref?: string | null
+        }
+        Update: {
+          file_description?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          preview_url?: string | null
+          storage_ref?: string | null
+        }
+        Relationships: []
+      }
       gdg_members: {
         Row: {
           created_at: string | null
@@ -520,25 +547,28 @@ export type Database = {
       study_jam: {
         Row: {
           created_at: string
+          creator_id: string | null
           description: string
           id: string
-          recording_url: string
+          recording_url: string | null
           summary: string
           title: string
         }
         Insert: {
           created_at?: string
+          creator_id?: string | null
           description: string
           id?: string
-          recording_url: string
+          recording_url?: string | null
           summary: string
           title: string
         }
         Update: {
           created_at?: string
+          creator_id?: string | null
           description?: string
           id?: string
-          recording_url?: string
+          recording_url?: string | null
           summary?: string
           title?: string
         }
@@ -682,21 +712,21 @@ export type Database = {
         Row: {
           description: string
           id: string
-          image_url: string
+          image_url: string | null
           title: string
           user_id: string
         }
         Insert: {
           description: string
           id?: string
-          image_url: string
+          image_url?: string | null
           title: string
           user_id: string
         }
         Update: {
           description?: string
           id?: string
-          image_url?: string
+          image_url?: string | null
           title?: string
           user_id?: string
         }
@@ -909,22 +939,28 @@ export type Database = {
           balance: number
           created_at: string
           id: string
+          spark_points: number
           updated_at: string
           user_id: string
+          webdev_points: number | null
         }
         Insert: {
           balance: number
           created_at?: string
           id?: string
+          spark_points?: number
           updated_at?: string
           user_id: string
+          webdev_points?: number | null
         }
         Update: {
           balance?: number
           created_at?: string
           id?: string
+          spark_points?: number
           updated_at?: string
           user_id?: string
+          webdev_points?: number | null
         }
         Relationships: [
           {
@@ -941,32 +977,35 @@ export type Database = {
           amount: number
           created_at: string
           id: string
+          point_type: string | null
           source_id: string
           source_type: string
-          wallet_id: string
+          user_id: string
         }
         Insert: {
           amount?: number
           created_at?: string
           id?: string
+          point_type?: string | null
           source_id: string
           source_type: string
-          wallet_id: string
+          user_id: string
         }
         Update: {
           amount?: number
           created_at?: string
           id?: string
+          point_type?: string | null
           source_id?: string
           source_type?: string
-          wallet_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "wallet_transaction_wallet_id_fkey"
-            columns: ["wallet_id"]
+            foreignKeyName: "wallet_transaction_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "wallet"
+            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]

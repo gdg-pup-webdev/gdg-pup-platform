@@ -5,6 +5,7 @@ import {
 } from "@/v1/errors/HttpError";
 import { supabase } from "@/v1/lib/supabase";
 import { RequestHandler } from "express";
+import { rbacController } from "../modules/rbacSystem";
 
 type UserPermission = {
   resource: string;
@@ -30,83 +31,6 @@ type UserAccessProfile = {
 export class AuthMiddleware {
   constructor() {}
 
-  private getAuthenticatedUserId = (req: Express.Request): string => {
-    const userId = req.user?.id;
-
-    if (!userId) {
-      throw new UnauthorizedError(
-        "Authentication required. No authenticated user found in request context.",
-      );
-    }
-
-    return userId;
-  };
-
-  private loadUserAccessProfile = async (
-    userId: string,
-  ): Promise<UserAccessProfile> => {
-    const { data, error } = await supabase
-      .from("user_role_junction")
-      .select(
-        `
-          user_role!inner(
-            name,
-            user_role_permission(
-              resource,
-              action
-            )
-          )
-        `,
-      )
-      .eq("user_id", userId);
-
-    if (error) {
-      throw new InternalServerError(
-        `Unable to load roles and permissions for user '${userId}'.`,
-        error,
-      );
-    }
-
-    const roleNames = Array.from(
-      new Set(
-        (data || [])
-          .map((row: any) => row.user_role?.name)
-          .filter((name: unknown): name is string => typeof name === "string"),
-      ),
-    );
-
-    const permissions = (data || []).flatMap((row: any) => {
-      const rows = row.user_role?.user_role_permission || [];
-
-      return rows
-        .filter(
-          (p: any) =>
-            typeof p?.resource === "string" && typeof p?.action === "string",
-        )
-        .map((p: any) => ({
-          resource: p.resource,
-          action: p.action,
-        }));
-    });
-
-    return {
-      roleNames,
-      permissions,
-    };
-  };
-
-  private hasPermission = (
-    permissions: UserPermission[],
-    resourceName: string,
-    actionName: string,
-  ): boolean => {
-    return permissions.some(
-      (permission) =>
-        (permission.resource === resourceName || permission.resource === "*") &&
-        (permission.action === actionName || permission.action === "*"),
-    );
-  };
-
   requireAuth = (): RequestHandler => (req, res, next) => {
     const user = req.user;
 
@@ -126,8 +50,19 @@ export class AuthMiddleware {
     (allowedRoles: string[]): RequestHandler =>
     async (req, res, next) => {
       try {
-        const userId = this.getAuthenticatedUserId(req);
-        const { roleNames } = await this.loadUserAccessProfile(userId);
+        const userId = req.user?.id;
+
+        if (!userId) {
+          throw new UnauthorizedError(
+            "Authentication required. No authenticated user found in request context.",
+          );
+        }
+
+        const roleNames = (
+          await rbacController.getRolesAndPermissionsOfUser(userId)
+        ).map((role) => role.name);
+
+        // const { roleNames } = await this.loadUserAccessProfile(userId);
 
         const allowedSet = new Set(allowedRoles);
         const hasAllowedRole = roleNames.some((roleName) =>
@@ -148,16 +83,32 @@ export class AuthMiddleware {
       }
     };
 
-  requirePermissions =
+  /**
+   * @deprecated
+   */
+  requirePermissions_deprecated =
     (
       resourceName: string,
       requiredActions: string | string[],
     ): RequestHandler =>
     async (req, res, next) => {
       try {
-        const userId = this.getAuthenticatedUserId(req);
-        const { roleNames, permissions } =
-          await this.loadUserAccessProfile(userId);
+        const userId = req.user?.id;
+        if (!userId) {
+          throw new UnauthorizedError(
+            "Authentication required. No authenticated user found in request context.",
+          );
+        }
+
+        const rolesAndPermissions =
+          await rbacController.getRolesAndPermissionsOfUser(userId);
+        const roleNames = rolesAndPermissions.map((role) => role.name);
+        const permissions = rolesAndPermissions.flatMap(
+          (role) => role.permissions,
+        );
+
+        // const { roleNames, permissions } =
+        //   await this.loadUserAccessProfile(userId);
         const actions = Array.from(
           new Set(
             (Array.isArray(requiredActions)
@@ -173,9 +124,20 @@ export class AuthMiddleware {
           );
         }
 
+        const hasPermission = (
+          permissions: UserPermission[],
+          resourceName: string,
+          actionName: string,
+        ): boolean => {
+          return permissions.some(
+            (permission) =>
+              (permission.resource === resourceName ||
+                permission.resource === "*") &&
+              (permission.action === actionName || permission.action === "*"),
+          );
+        };
         const missingActions = actions.filter(
-          (actionName) =>
-            !this.hasPermission(permissions, resourceName, actionName),
+          (actionName) => !hasPermission(permissions, resourceName, actionName),
         );
 
         if (missingActions.length > 0) {
@@ -190,6 +152,52 @@ export class AuthMiddleware {
       } catch (error) {
         next(error);
       }
+    };
+
+  requirePermissions =
+    (
+      requiredPermissions: Record<string, string[]>,
+    ): RequestHandler =>
+    async (req, res, next) => {
+      const userId = req.user?.id;
+      if (!userId) {
+        throw new UnauthorizedError(
+          "Authentication required. No authenticated user found in request context.",
+        );
+      }
+
+      const rolesAndPermissions =
+        await rbacController.getRolesAndPermissionsOfUser(userId);
+
+      const userPermissions = rolesAndPermissions.flatMap(
+        (role) => role.permissions,
+      );
+
+      const missingPermissions = Object.entries(requiredPermissions).flatMap(
+        ([resource, actions]) =>
+          actions.filter((action) => {
+            return !userPermissions.some(
+              (userPermission) =>
+                userPermission.action === action &&
+                userPermission.resource === resource,
+            );
+          }).map((action) => ({
+            resource: resource,
+            action,
+          })),
+      );
+
+      if (missingPermissions.length > 0) {
+        throw new ForbiddenError(
+          `Access denied. Missing required permission(s): [${missingPermissions
+            .map((permission) => `${permission.resource}:${permission.action}`)
+            .join(", ")}]. User roles: [${rolesAndPermissions
+            .map((role) => role.name)
+            .join(", ")}].`,
+        );
+      }
+
+      next();
     };
 }
 
