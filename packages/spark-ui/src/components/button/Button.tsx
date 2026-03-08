@@ -24,15 +24,13 @@ import type { ButtonProps } from "./Button.types";
  * ```
  *
  * @param props - The button component props
- * @param props.className - Additional CSS class names to apply
- * @param props.variant - Visual style variant of the button
- * @param props.subVariant - Sub-variant styling option
- * @param props.size - The size of the button ("sm" | "md" | "lg")
- * @param props.iconLeft - Left icon element or true for default icon
- * @param props.iconRight - Right icon element or true for default icon
- * @param props.asChild - If true, renders as a Slot component for composition (default: false)
- * @param props.children - The button content
- * @param ref - Forward reference to the underlying HTMLButtonElement
+ * @param {"default" | "tag" | "colored" | "link" | "dashed-outline" | "stroke-outline" | "ghost" | "attribute" | "disabled"} [props.variant="default"] - Visual style variant of the button
+ * @param {"colored" | "plain" | "blue" | "yellow" | "green" | "red" | "dark-blue"} [props.subVariant="colored"] - Sub-variant styling option
+ * @param {"sm" | "md" | "lg"} [props.size="md"] - The size of the button ("sm" | "md" | "lg") 
+ * @param {React.ReactNode | boolean} props.iconLeft - Left icon element or true for default icon
+ * @param {React.ReactNode | boolean} props.iconRight - Right icon element or true for default icon
+ * @param {boolean} [props.asChild=false] - If true, renders as a Slot component for composition (default: false)
+ * @param {React.ReactNode} props.children - The button content
  *
  * @returns A button element with optional icons and flexible styling
  */
