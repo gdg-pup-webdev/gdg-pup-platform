@@ -1,4 +1,8 @@
 import { Router } from "express";
+import {
+  AuthMiddleware,
+  authMiddlewareInstance,
+} from "@/v0/middlewares/auth.middleware.js";
 import { RoleController, roleControllerInstance } from "./role.controller";
 // import { RoleController, roleControllerInstance } from "./role.controller.js";
 
@@ -38,36 +42,61 @@ import { RoleController, roleControllerInstance } from "./role.controller";
 export class RoleRouter {
   constructor(
     private roleController: RoleController = roleControllerInstance,
+    private authMiddleware: AuthMiddleware = authMiddlewareInstance,
   ) {}
 
   getRouter = (): Router => {
     const router = Router();
-    router.get("/", this.roleController.listRoles);
+    router.get(
+      "/",
+      this.authMiddleware.requirePermissions("rbac-system", ["read"]),
+      this.roleController.listRoles,
+    );
 
-    router.post("/", this.roleController.createOneRole);
+    router.post(
+      "/",
+      this.authMiddleware.requirePermissions("rbac-system", ["create"]),
+      this.roleController.createOneRole,
+    );
 
-    router.delete("/:roleId", this.roleController.deleteOneRole);
+    router.delete(
+      "/:roleId",
+      this.authMiddleware.requirePermissions("rbac-system", ["delete"]),
+      this.roleController.deleteOneRole,
+    );
 
-    router.get("/:roleId", this.roleController.getOneRole);
+    router.get(
+      "/:roleId",
+      this.authMiddleware.requirePermissions("rbac-system", ["read"]),
+      this.roleController.getOneRole,
+    );
 
-    router.patch("/:roleId", this.roleController.updateOneRole);
+    router.patch(
+      "/:roleId",
+      this.authMiddleware.requirePermissions("rbac-system", ["update"]),
+      this.roleController.updateOneRole,
+    );
 
     router.patch(
       "/:roleId/assign-to-users",
+      this.authMiddleware.requirePermissions("rbac-system", ["assign"]),
       this.roleController.assignOneRoleToManyUsers,
     );
     router.patch(
       "/:roleId/attach-permissions",
+      this.authMiddleware.requirePermissions("rbac-system", ["update"]),
       this.roleController.attachManyPermissionsToOneRole,
     );
 
     router.patch(
       "/:roleId/detach-permissions",
+      this.authMiddleware.requirePermissions("rbac-system", ["update"]),
       this.roleController.detachManyPermissionsFromOneRole,
     );
 
     router.patch(
       "/:roleId/remove-from-user",
+      this.authMiddleware.requirePermissions("rbac-system", ["assign"]),
       this.roleController.removeOneRoleFromOneUser,
     );
 

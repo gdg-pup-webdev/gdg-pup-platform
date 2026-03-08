@@ -7,16 +7,21 @@ import {
 } from "@/v0/errors/DatabaseError";
 import { PostgrestError } from "@supabase/supabase-js";
 
+/**
+ * @deprecated This utility is part of the v0 legacy API and will not be maintained.
+ * Use the v1 equivalent instead.
+ */
 export function handlePostgresError(err: PostgrestError): never {
   const code = err.code;
   const message = err.message;
 
-  if (!(err instanceof PostgrestError))
-    throw new DatabaseError(
-      "An unknown error has been passed to handlePostgresError. ",
-      "Expected PostgrestError. Passed unknown error.",
-      { cause: err },
-    );
+  // @deprecated - instanceof check was unreliable since Supabase returns plain objects, not class instances
+  // if (!(err instanceof PostgrestError))
+  //   throw new DatabaseError(
+  //     "An unknown error has been passed to handlePostgresError. ",
+  //     "Expected PostgrestError. Passed unknown error.",
+  //     { cause: err },
+  //   );
 
   switch (code) {
     case "23505": // Unique violation

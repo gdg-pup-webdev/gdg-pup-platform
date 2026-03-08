@@ -14,7 +14,7 @@ export class MemberRepository {
    * getMemberByEmail
    * Fetches a single member record by their email.
    */
-  getMemberByEmail = async (email: string): RepositoryResult<memberRow> => {
+  getMemberByEmail = async (email: string): RepositoryResult<memberRow | null> => {
     // Escape wildcards for ILIKE to prevent pattern injection
     const escapedEmail = email.replace(/[%_]/g, "\\$&");
 
@@ -25,7 +25,7 @@ export class MemberRepository {
       .maybeSingle();
 
     if (error) {
-      handlePostgresError(error);
+      return handlePostgresError(error);
     }
 
     return data;

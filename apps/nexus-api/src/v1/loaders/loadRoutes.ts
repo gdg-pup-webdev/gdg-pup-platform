@@ -11,6 +11,12 @@ import { FilesRouter } from "../routes/files/files.router";
 import { GdgScrapedEventsHttpController } from "../routes/gdg-scraped-events/gdgScrapedEvents.controller";
 import { bevyEventController } from "../modules/bevyEvents";
 import { GdgScrapedEventsRouter } from "../routes/gdg-scraped-events/gdgScrapedEvents.router";
+import { RolesRouter } from "../routes/roles/roles.router";
+import { RolesHttpController } from "../routes/roles/roles.controller";
+import { rbacController } from "../modules/rbacSystem";
+import { UsersRouter } from "../routes/users/users.router";
+import { UsersHttpController } from '../routes/users/users.controller';
+
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
 
@@ -31,10 +37,22 @@ export const loadRoutes = (app: Express) => {
     gdgScrapedEventsHttpController,
   );
 
+
+  const rolesHttpController=  new RolesHttpController(rbacController);
+  const rolesRouter=  new RolesRouter(rolesHttpController);
+
+
+  const usersHttpController = new UsersHttpController(rbacController);
+  const usersRouter = new UsersRouter(usersHttpController);
+
   app.use("/files", filesRouter.router);
   app.use("/auth-system", authRouter.router);
   app.use("/health", healthRouter.router);
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);
+  app.use("/roles", rolesRouter.router);
+  app.use("/users", usersRouter.router);
+
+
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });
