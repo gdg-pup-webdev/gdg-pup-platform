@@ -45,22 +45,6 @@ const PlusIcon = () => (
   </svg>
 );
 
-const DownloadIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="7 10 12 15 17 10" />
-    <line x1="12" y1="15" x2="12" y2="3" />
-  </svg>
-);
-
 const meta = {
   title: 'Components/Button',
   component: Button,
@@ -124,7 +108,7 @@ export const Default: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <Button variant="default" >Default</Button>
         <Button variant="tag">Tag</Button>
         <Button variant="colored">Colored</Button>
@@ -156,9 +140,9 @@ export const DefaultVariants: Story = {
     <div className="flex flex-col gap-4 items-center">
       <div className="flex gap-4">
         <div className="flex flex-col gap-3">
-          <Button size="sm">Blue</Button>
-          <Button size="md">Blue</Button>
-          <Button size="lg">Blue</Button>
+          <Button size="sm">Colored</Button>
+          <Button size="md">Colored</Button>
+          <Button size="lg">Colored</Button>
         </div>
         <div className="flex flex-col gap-3">
           <Button subVariant="plain" size="sm">Plain</Button>
@@ -300,19 +284,19 @@ export const States: Story = {
 // Real-world examples
 export const ActionButtons: Story = {
   render: () => (
-    <div className="flex flex-col gap-4 p-6 bg-gray-50 rounded-lg">
+    <div className="flex flex-col gap-4 p-6 bg-neutral-500 rounded-lg">
       <h3 className="text-lg font-semibold">Common Actions</h3>
       <div className="flex flex-wrap gap-3">
-        <Button variant="colored" subVariant="blue" iconLeft={<PlusIcon />}>
+        <Button variant="colored" subVariant="blue">
           Create New
         </Button>
-        <Button variant="colored" subVariant="green" iconLeft={<CheckIcon />}>
+        <Button variant="colored" subVariant="green">
           Save Changes
         </Button>
         <Button variant="colored" subVariant="red">
           Delete
         </Button>
-        <Button variant="ghost" iconLeft={<DownloadIcon />}>
+        <Button variant="ghost">
           Download
         </Button>
         <Button variant="link">Learn More</Button>
