@@ -130,7 +130,7 @@ export const AllVariants: Story = {
         <Button variant="colored">Colored</Button>
         <Button variant="link">Link</Button>
         <Button variant="dashed-outline">Dashed Outline</Button>
-        <Button variant="stroke-outline">Stroke Outline</Button>
+        <Button variant="outline">Stroke Outline</Button>
         <Button variant="ghost">Ghost</Button>
         <Button variant="attribute">Attribute</Button>
         <Button variant="disabled" disabled>Disabled</Button>
@@ -345,7 +345,7 @@ export const ButtonGroup: Story = {
   ),
 };
 
-type variants = "disabled" | "default" | "tag" | "colored" | "link" | "dashed-outline" | "stroke-outline" | "ghost" | "attribute" | null | undefined;
+type variants = "disabled" | "default" | "tag" | "colored" | "link" | "dashed-outline" | "outline" | "ghost" | "attribute" | null | undefined;
 
 // Size comparison across variants
 export const SizeComparison: Story = {

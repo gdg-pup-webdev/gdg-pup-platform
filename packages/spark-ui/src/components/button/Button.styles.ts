@@ -38,7 +38,7 @@ export const buttonVariants = cva(
           "not-active:hover:before:h-0.5 not-active:hover:before:bottom-[-1px]",
         ],
         "dashed-outline": "button-dashed-outline",
-        "stroke-outline": "ring-1 hover:ring-2 active:ring-2 md:active:ring-1",
+        "outline": "ring-1 hover:ring-2 active:ring-2 md:active:ring-1",
         ghost: "origin-center not-active:hover:transform-[scale(1.04)]",
         attribute: [
           "rounded-full",
