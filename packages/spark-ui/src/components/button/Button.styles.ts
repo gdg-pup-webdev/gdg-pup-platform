@@ -16,6 +16,8 @@ export const buttonVariants = cva(
       variant: {
         default: [
           "bg-[linear-gradient(180deg,rgba(0,0,0,0.8)_0%,rgba(65,65,65,0.8)_100%)]", 
+          "not-active:shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040,0px_2px_0px_0px_#FFFFFF66_inset]",
+          "not-active:hover:shadow-[0px_6px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040,0px_4px_0px_0px_#FFFFFF66_inset,0px_-4px_0px_0px_#0000004D_inset]",
           "hover:bg-[linear-gradient(90deg,rgba(0,0,0,0.8)_0%,rgba(65,65,65,0.8)_50%,rgba(0,0,0,0.8)_100%)]",
           "active:bg-[linear-gradient(180deg,rgba(0,0,0,0.8)_0%,rgba(65,65,65,0.8)_100%)]",
           ],
