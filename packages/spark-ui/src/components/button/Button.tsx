@@ -6,39 +6,43 @@ import { buttonVariants } from "./Button.styles";
 import type { ButtonProps } from "./Button.types";
 
 /**
- * Button component with Google-style gradient borders and multiple variants.
- * 
+ * A flexible button component that supports multiple variants, sizes, and icon placement.
+ *
  * @component
  * @example
  * ```tsx
- * // Default button
- * <Button variant="default" size="md">Click me</Button>
- * 
- * // Outline button with icon
- * <Button variant="outline" iconLeft={<Icon />}>Submit</Button>
- * 
- * // Dark themed button
- * <Button variant="default" theme="dark" size="lg">Get Started</Button>
+ * <Button variant="default" size="md">
+ *   Click me
+ * </Button>
  * ```
- * 
- * @param {Object} props - Component props
- * @param {"default" | "outline" | "stroke" | "link"} [props.variant="default"] - Visual variant of the button
- * @param {"sm" | "md" | "lg"} [props.size="md"] - Size of the button
- * @param {"light" | "dark"} [props.theme="light"] - Theme for default variant (only applies to default)
- * @param {React.ReactNode | boolean} [props.iconLeft] - Icon to display on the left side
- * @param {React.ReactNode | boolean} [props.iconRight] - Icon to display on the right side
- * @param {boolean} [props.asChild=false] - Render as child element using Radix Slot
- * @param {React.ReactNode} props.children - Button content/text
- * 
- * @returns {React.ForwardRefExoticComponent} Button component
+ *
+ * @example
+ * ```tsx
+ * <Button variant="colored" subVariant="dark-blue" size="lg" iconLeft={<IconComponent />}>
+ *   Button with icon
+ * </Button>
+ * ```
+ *
+ * @param props - The button component props
+ * @param props.className - Additional CSS class names to apply
+ * @param props.variant - Visual style variant of the button
+ * @param props.subVariant - Sub-variant styling option
+ * @param props.size - The size of the button ("sm" | "md" | "lg")
+ * @param props.iconLeft - Left icon element or true for default icon
+ * @param props.iconRight - Right icon element or true for default icon
+ * @param props.asChild - If true, renders as a Slot component for composition (default: false)
+ * @param props.children - The button content
+ * @param ref - Forward reference to the underlying HTMLButtonElement
+ *
+ * @returns A button element with optional icons and flexible styling
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
       variant,
+      subVariant,
       size,
-      theme,
       iconLeft,
       iconRight,
       asChild = false,
@@ -64,6 +68,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {iconLeft === true ? (
             // Default icon if true is passed - could be replaced with a default icon
             <svg
+              width={"16px"}
+              height={"16px"}
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
@@ -96,6 +102,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           {iconRight === true ? (
             // Default icon if true is passed - could be replaced with a default icon
             <svg
+              width={"16px"}
+              height={"16px"}
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
@@ -116,7 +124,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         ref={ref}
-        className={cn(buttonVariants({ variant, size, theme }), className)}
+        className={cn(buttonVariants({ variant, subVariant, size }), className)}
         {...props}
       >
         {renderLeftIcon()}

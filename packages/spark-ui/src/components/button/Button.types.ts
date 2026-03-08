@@ -6,7 +6,6 @@ export interface ButtonProps
   asChild?: boolean;
   iconLeft?: React.ReactNode | boolean;
   iconRight?: React.ReactNode | boolean;
-  theme?: "light" | "dark";
 }
 
 export type { ButtonVariants };
