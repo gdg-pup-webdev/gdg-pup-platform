@@ -19,4 +19,12 @@ export interface GdgIdCardProps extends React.HTMLAttributes<HTMLDivElement> {
     tiltMax?: number;
     /** Enable / disable the 3D tilt effect. */
     tiltEnabled?: boolean;
+    /** Card texture overlay image path (Layer 2). */
+    textureSrc?: string;
+    /** Upper-zone background image path (Layer 4). */
+    bgSrc?: string;
+    /** Sparky mascot image path (Layer 5). */
+    sparkySrc?: string;
+    /** Name-frame pill image path (Layer 6). */
+    nameFrameSrc?: string;
 }
