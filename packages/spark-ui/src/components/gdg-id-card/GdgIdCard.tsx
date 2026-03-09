@@ -46,6 +46,10 @@ export const GdgIdCard = React.forwardRef<HTMLDivElement, GdgIdCardProps>(
             shineDuration = GDG_ID_CARD_SHINE_DURATION,
             tiltMax = GDG_ID_CARD_TILT_MAX,
             tiltEnabled = true,
+            textureSrc = "/id/id-card-texture.webp",
+            bgSrc = "/id/id-bg.webp",
+            sparkySrc = "/id/id-card-sparky.webp",
+            nameFrameSrc = "/id/id-card-name-frame.webp",
             className,
             style,
             onMouseMove,
@@ -126,10 +130,10 @@ export const GdgIdCard = React.forwardRef<HTMLDivElement, GdgIdCardProps>(
             >
                 {/* ── Layer 1: card body gradient (via CSS background on .gdg-id-card-base) */}
 
-                {/* ── Layer 2: front-card-texture.jpg @ 10% opacity — covers full card */}
+                {/* ── Layer 2: card texture @ 10% opacity — covers full card */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                    src="/pages/id/front-card-texture.jpg"
+                    src={textureSrc}
                     alt=""
                     aria-hidden
                     draggable={false}
@@ -147,11 +151,11 @@ export const GdgIdCard = React.forwardRef<HTMLDivElement, GdgIdCardProps>(
                 {/* ── Upper zone (75%) — Background.png + sparky + name frame ── */}
                 <div className="gdg-id-card-upper">
 
-                    {/* Layer 4: Background.png — wrapped in a padded div to prevent cutoff */}
+                    {/* Layer 4: card background — wrapped in a padded div to prevent cutoff */}
                     <div className="gdg-id-card-bg-wrapper">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                            src="/pages/id/Background.png"
+                            src={bgSrc}
                             alt=""
                             aria-hidden
                             draggable={false}
@@ -165,7 +169,7 @@ export const GdgIdCard = React.forwardRef<HTMLDivElement, GdgIdCardProps>(
                         {/* Sparky mascot */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                            src="/pages/id/front-card-sparky.png"
+                            src={sparkySrc}
                             alt="GDG Sparky"
                             draggable={false}
                             className="gdg-id-card-sparky pointer-events-none select-none"
@@ -175,7 +179,7 @@ export const GdgIdCard = React.forwardRef<HTMLDivElement, GdgIdCardProps>(
                         <div className="gdg-id-card-name-frame-wrapper">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src="/pages/id/front-card-name-frame.png"
+                                src={nameFrameSrc}
                                 alt=""
                                 aria-hidden
                                 draggable={false}

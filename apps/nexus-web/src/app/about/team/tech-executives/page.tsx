@@ -3,41 +3,40 @@ import { AnimatedTeamGrid } from "@/features/about";
 import { ASSETS } from "@/lib/constants/assets";
 
 const MASCOT_SRC = ASSETS.TEAM.MASCOT;
-const BASE = "/team/team-tech-executives";
 
 const TECH_EXECUTIVES_MEMBERS = [
   {
     name: "Carlos Jerico Dela Torre",
     role: "Chief Technology Officer (CTO)",
-    imageSrc: `${BASE}/carlos-jerico-dela-torre.webp`,
+    imageSrc: ASSETS.TEAM.TECH_EXECUTIVES.CARLOS_DE_LA_TORRE,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Aurold John Sadullo",
     role: "DCTO for Infrastructure and Intelligence",
-    imageSrc: `${BASE}/aurold-john-sadullo.webp`,
+    imageSrc: ASSETS.TEAM.TECH_EXECUTIVES.AUROLD_SADULLO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Nyzel Cayat",
     role: "DCTO for Development and Experience",
-    imageSrc: `${BASE}/nyzel-cayat.webp`,
+    imageSrc: ASSETS.TEAM.TECH_EXECUTIVES.NYZEL_CAYAT,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Mhyca Monterola",
     role: "Technology Communications Officer (TCO)",
-    imageSrc: `${BASE}/mhyca-monterola.webp`,
+    imageSrc: ASSETS.TEAM.TECH_EXECUTIVES.MHYCA_MONTEROLA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Strawberry Pink Balasbas",
     role: "Technical Documentations Officer (TDO)",
-    imageSrc: `${BASE}/strawberry-pink-balasbas.webp`,
+    imageSrc: ASSETS.TEAM.TECH_EXECUTIVES.STRAWBERRY_BALASBAS,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

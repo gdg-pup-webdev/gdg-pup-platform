@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Container, Stack, Text } from "@packages/spark-ui";
+import { ASSETS } from "@/lib/constants/assets";
 
 export function LeaderboardSection() {
   return (
@@ -58,7 +59,7 @@ export function LeaderboardSection() {
 
           <div className="mt-8">
             <Image
-              src="/placeholder.svg"
+              src={ASSETS.TEAM.MASCOT}
               alt="GDG Sparky mascot"
               width={400}
               height={450}

@@ -3,34 +3,33 @@ import { AnimatedTeamGrid } from "@/features/about";
 import { ASSETS } from "@/lib/constants/assets";
 
 const MASCOT_SRC = ASSETS.TEAM.MASCOT;
-const BASE = "/team/team-web-development";
 
 const WEB_DEVELOPMENT_MEMBERS = [
   {
     name: "Erwin Daguinotas",
     role: "Web Development Lead",
-    imageSrc: `${BASE}/erwin-daguinotas.webp`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.ERWIN_DAGUINOTAS,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Rhandie Sales Jr.",
     role: "Web Development Co-Lead",
-    imageSrc: `${BASE}/rhandie-sales-jr.webp`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.RHANDIE_SALES,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Daniella Simara",
     role: "Web Development Learning Head Committee",
-    imageSrc: `${BASE}/daniella-simara.webp`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.DANIELLA_SIMARA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Gerald Berongoy",
     role: "Web Development Learning Head Committee",
-    imageSrc: `${BASE}/gerald-berongoy.webp`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.GERALD_BERONGOY,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
