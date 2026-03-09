@@ -220,7 +220,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ) : user ? (
                       <Link href={`/id/${user.id}`} className="hover:opacity-80 hover:scale-105 transition-all duration-200">
                         <Avatar
-                          src={user.user_metadata?.avatar_url}
+                          src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
                           alt={user.user_metadata?.full_name || user.email || "User"}
                           size="sm"
                           fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
@@ -348,7 +348,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 <Avatar
-                                  src={user.user_metadata?.avatar_url}
+                                  src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
                                   alt={user.user_metadata?.full_name || user.email || "User"}
                                   size="sm"
                                   fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
