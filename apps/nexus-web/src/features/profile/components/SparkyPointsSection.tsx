@@ -215,8 +215,8 @@ function HistoryItem({type, data, avatar}: HistoryItemProps & {
         <Text as="div" variant="body-sm" color={type === "plus" ? "success" : "error"} className="flex items-center gap-2">
           {
             type === "plus"
-              ? CircledPlusSvg()
-              : CircledMinusSvg()
+              ? <CircledPlusSvg/>
+              : <CircledMinusSvg/>
           }
           {type === "plus" ? data.points : data.cost} pts
         </Text>
@@ -401,7 +401,7 @@ export function SparkyPointsSection() {
                       Quick Actions
                     </Text>
                     <Grid gap={"xs"} columns={3}>
-                      <QuickAction text="Reedem Rewards" onNavigate={() => setCurrentMobileSection("redeem")}/>
+                      <QuickAction text="Redeem Rewards" onNavigate={() => setCurrentMobileSection("redeem")}/>
                       <QuickAction text="How to Earn Points" onNavigate={() => setCurrentMobileSection("guide")}/>
                       <QuickAction text="Points History"  onNavigate={() => setCurrentMobileSection("history")}/>
                     </Grid>
@@ -414,7 +414,7 @@ export function SparkyPointsSection() {
                       {/* TODO - Add link to all tasks */}
                       <a className="flex gap-4 items-center ">
                         <Text className="text-inherit">View All</Text>
-                        {RightIconSvg()}
+                        <RightIconSvg/>
                       </a>
                     </div>
                     <Stack>
