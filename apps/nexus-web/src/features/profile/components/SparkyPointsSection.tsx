@@ -451,6 +451,7 @@ export function SparkyPointsSection() {
                             All
                           </Button>
                         </DropdownTrigger>
+                        {/* TODO - Add filters */}
                         <DropdownContent position="bottom-end">
                           <DropdownItem>Test</DropdownItem>
                         </DropdownContent>
@@ -492,42 +493,6 @@ export function SparkyPointsSection() {
               </>
             }
             {
-              currentMobileSection === "redeem" &&
-              <>
-                <div className="flex justify-between items-center">
-                  <a className="inline-flex w-6 h-6 items-center justify-center" onClick={() => setCurrentMobileSection("main")}>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3.41503 7.66929L7.36503 11.6193C7.54269 11.8087 7.63967 12.0599 7.63545 12.3196C7.63124 12.5792 7.52615 12.8271 7.34244 13.0107C7.15873 13.1943 6.9108 13.2992 6.65111 13.3032C6.39143 13.3072 6.14036 13.2101 5.95103 13.0323L0.294035 7.37629C0.20085 7.28363 0.1269 7.17347 0.076439 7.05214C0.0259776 6.93081 0 6.8007 0 6.66929C0 6.53788 0.0259776 6.40777 0.076439 6.28644C0.1269 6.1651 0.20085 6.05494 0.294035 5.96229L5.95103 0.305288C6.04328 0.209778 6.15363 0.133596 6.27563 0.0811868C6.39763 0.0287778 6.52885 0.00119157 6.66163 3.77567e-05C6.79441 -0.00111606 6.92609 0.0241857 7.04899 0.0744665C7.17189 0.124747 7.28354 0.199001 7.37743 0.292893C7.47132 0.386786 7.54558 0.498438 7.59586 0.621334C7.64614 0.744231 7.67144 0.87591 7.67029 1.00869C7.66913 1.14147 7.64155 1.27269 7.58914 1.39469C7.53673 1.5167 7.46054 1.62704 7.36503 1.71929L3.41503 5.66929H13.001C13.2663 5.66929 13.5206 5.77464 13.7081 5.96218C13.8957 6.14972 14.001 6.40407 14.001 6.66929C14.001 6.9345 13.8957 7.18886 13.7081 7.37639C13.5206 7.56393 13.2663 7.66929 13.001 7.66929H3.41503Z" fill="#FAFAFA"/>
-                    </svg>
-                  </a>
-                  <Text gradient="white-blue" variant="heading-5" align="center" weight="bold">Redeem Points</Text>
-                  <a className="inline-flex w-6 h-6"></a>
-                </div>
-                <Stack gap="xl">
-                  <PointsDisplay points={userPoints}/>
-                  <Stack className="gap-1.5">
-                    <div className="flex w-full justify-between items-center">
-                      <Text gradient="white-blue" variant="heading-6" weight="bold">
-                        Rewards
-                      </Text>
-                      <Button className="text-lg py-1 font-medium rounded-xl">All</Button>
-                    </div>
-                    <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
-                      {rewards.map(reward => <RewardItem key={reward.id} {...reward} onRedeem={() => {
-                        setItemRedeemed(reward);
-                        if (reward.cost <= userPoints) {
-                          setIsRedeemModalOpen(true);
-                        }
-                        else {
-                          setIsDeniedModalOpen(true);
-                        }
-                      }}/>)}
-                    </div>
-                  </Stack>
-                </Stack>
-              </>
-            }
-            {
               currentMobileSection === "guide" &&
               <>
                 <div className="flex justify-between items-center">
@@ -555,10 +520,10 @@ export function SparkyPointsSection() {
             <Stack className="col-span-2">
                 <Stack gap="sm">
                   <Stack gap="none" className="z-1">
-                    <Text gradient="white-blue" variant="heading-6" weight="bold">
+                    <Text gradient="white-blue" variant="heading-5" weight="bold">
                       Sparky Points
                     </Text>
-                    <Text variant="label" color="muted" className="w-full" >
+                    <Text variant="body" color="muted" className="w-full" >
                       Track your engagement. Celebrate your effort.
                     </Text>
                   </Stack>
@@ -577,6 +542,7 @@ export function SparkyPointsSection() {
                           All
                         </Button>
                       </DropdownTrigger>
+                      {/* TODO - Add filters */}
                       <DropdownContent position="bottom-end">
                         <DropdownItem>Test</DropdownItem>
                       </DropdownContent>
