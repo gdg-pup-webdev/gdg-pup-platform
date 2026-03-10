@@ -265,7 +265,10 @@ export const ASSETS = {
             CIRBY_DISPLAY: "/profile/sparky-points/sparkypoints-cirby-display.webp",
             CIRBY_CONFIRM: "/profile/sparky-points/sparkypoints-cirby-confirm.webp",
             CIRBY_DENIED: "/profile/sparky-points/sparkypoints-cirby-denied.webp",
-            ELLIPSES: "/profile/sparky-points/sparkypoints-ellipses.webp"
+            ELLIPSES_BIG: "/profile/sparky-points/sparkypoints-ellipses-big.webp",
+            ELLIPSES_SMALL: "/profile/sparky-points/sparkypoints-ellipses-small.webp",
+            SPARKS_BIG: "/profile/sparky-points/sparkypoints-sparks-big.webp",
+            SPARKS_SMALL: "/profile/sparky-points/sparkypoints-sparks-small.webp",
         }
     }
 } as const;
