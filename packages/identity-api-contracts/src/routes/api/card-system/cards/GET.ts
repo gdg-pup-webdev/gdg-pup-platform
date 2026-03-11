@@ -1,10 +1,10 @@
 import { card } from "#models/cardSystem/index.js";
 import { SchemaFactory } from "#utils/schemaFactory.utils.js";
-import z from "zod";
+import { cz } from "@packages/typed-rest/shared";
 
 export const query = SchemaFactory.Request.Paginated.query().extend({
-  userId : z.string().optional(),
-  status : z.enum(["READY", "ACTIVATED", "INACTIVE"]).optional(),
+  userId : cz.string().optional(),
+  status : cz.enum(["READY", "ACTIVATED", "INACTIVE"]).optional(),
 });
 
 export const response = {

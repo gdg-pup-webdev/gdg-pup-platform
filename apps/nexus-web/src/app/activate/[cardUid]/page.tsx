@@ -16,6 +16,7 @@ import { configs } from "@/configs/servers.config";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { ASSETS } from "@/lib/constants/assets";
 
 export default function ActivateCardPage() {
   // Get the cardUid from the URL parameters
@@ -132,10 +133,7 @@ export default function ActivateCardPage() {
           <div className="space-y-6">
             <div className="bg-zinc-800/50 rounded-xl p-4 flex items-center gap-4">
               <img
-                src={
-                  user.user_metadata?.avatar_url ||
-                  `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`
-                }
+                src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
                 alt="User"
                 className="w-12 h-12 rounded-full bg-zinc-700"
               />

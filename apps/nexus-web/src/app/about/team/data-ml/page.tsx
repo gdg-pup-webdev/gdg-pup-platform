@@ -3,41 +3,40 @@ import { AnimatedTeamGrid } from "@/features/about";
 import { ASSETS } from "@/lib/constants/assets";
 
 const MASCOT_SRC = ASSETS.TEAM.MASCOT;
-const BASE = "/team/team-data-ml";
 
 const DATA_ML_MEMBERS = [
   {
     name: "Kian Angelo Florendo",
     role: "Data and Machine Learning Lead",
-    imageSrc: `${BASE}/kian-angelo-florendo.webp`,
+    imageSrc: ASSETS.TEAM.DATA_ML.KIAN_FLORENDO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Francen Venisse Red",
     role: "Data and Machine Learning Co-Lead",
-    imageSrc: `${BASE}/francen-venisse-red.webp`,
+    imageSrc: ASSETS.TEAM.DATA_ML.FRANCEN_RED,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Yhasmen Nogales",
     role: "Data and Machine Learning Co-Lead",
-    imageSrc: `${BASE}/yhasmen-nogales.webp`,
+    imageSrc: ASSETS.TEAM.DATA_ML.YHASMEN_NOGALES,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Kurt Anthony Cruz",
     role: "Data and ML Learning Head Committee",
-    imageSrc: `${BASE}/kurt-anthony-cruz.webp`,
+    imageSrc: ASSETS.TEAM.DATA_ML.KURT_CRUZ,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Ram Luis Marmol",
     role: "Data and ML Learning Head Committee",
-    imageSrc: `${BASE}/ram-luis-marmol.webp`,
+    imageSrc: ASSETS.TEAM.DATA_ML.RAM_MARMOL,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

@@ -52,6 +52,7 @@ export class SupabaseStudyJamRepository implements IStudyJamRepository {
       summary: props.summary,
       description: props.description,
       created_at: props.createdAt.toISOString(),
+      recording_url: null,
     }).select().single();
 
     if (error) throw new Error(`Failed to create Study Jam: ${error.message}`);

@@ -2,25 +2,26 @@
 import { supabase } from "@/v1/lib/supabase";
 import { ILearningResourceRepository, LearningResourceFilters } from "../domain/ILearningResourceRepository";
 import { LearningResource } from "../domain/LearningResource";
+import { Tables } from "@/v0/types/supabase.types";
 
 export class SupabaseLearningResourceRepository implements ILearningResourceRepository {
   // Assuming the table is renamed to match the domain, adjust if it remains "external_resource"
-  private readonly tableName = "learning_resource"; 
+  private readonly tableName = "external_resource"; 
 
-  private mapToDomain(row: any, tagIds: string[] = []): LearningResource {
+  private mapToDomain(row: Tables<"external_resource">, tagIds: string[] = []): LearningResource {
     return LearningResource.hydrate({
       id: row.id,
       uploaderId: row.uploader_id,
       title: row.title || "",
       description: row.description || "",
-      url: row.url || "",
+      url: row.resource_url || "",
       tagIds: tagIds,
       createdAt: new Date(row.created_at || Date.now()),
     });
   }
 
   async findById(id: string): Promise<LearningResource | null> {
-    const { data, error } = await supabase.from(this.tableName).select("*").eq("id", id).maybeSingle();
+    const { data, error } = await supabase.from("external_resource").select("*").eq("id", id).maybeSingle();
     if (error) throw new Error(error.message);
     if (!data) return null;
 
@@ -31,7 +32,7 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
   }
 
   async findAll(pageNumber: number, pageSize: number, filters: LearningResourceFilters = {}): Promise<{ list: LearningResource[]; count: number }> {
-    let query = supabase.from(this.tableName).select("*", { count: "exact" });
+    let query = supabase.from("external_resource").select("*", { count: "exact" });
 
     if (filters.search) {
       const term = filters.search.trim();
@@ -63,12 +64,12 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
 
   async saveNew(resource: LearningResource): Promise<LearningResource> {
     const props = resource.props;
-    const { data, error } = await supabase.from(this.tableName).insert({
+    const { data, error } = await supabase.from("external_resource").insert({
       id: props.id,
       uploader_id: props.uploaderId,
       title: props.title,
       description: props.description,
-      url: props.url,
+      resource_url: props.url,
       created_at: props.createdAt.toISOString(),
     }).select().single();
 
@@ -85,7 +86,7 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
 
   async persistUpdates(resource: LearningResource): Promise<LearningResource> {
     const props = resource.props;
-    const { data, error } = await supabase.from(this.tableName).update({
+    const { data, error } = await supabase.from("external_resource").update({
       title: props.title,
       description: props.description,
       url: props.url,
@@ -104,7 +105,7 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
   }
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase.from(this.tableName).delete().eq("id", id);
+    const { error } = await supabase.from("external_resource").delete().eq("id", id);
     if (error) throw new Error(error.message);
   }
 }

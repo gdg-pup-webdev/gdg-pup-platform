@@ -1,21 +1,20 @@
 // ============================================================================
 // 1. IMPORTS
 // ============================================================================
- 
+
 import { RoleRepository } from "./infratructure/RoleRepository";
 import { UserRepository } from "./infratructure/UserRepository";
-import { RbacModuleController } from "./RbacModuleController"; 
+import { RbacModuleController } from "./RbacModuleController";
 import { AssignRoleToUserUseCase } from "./useCase/AssignRoleToUserUseCase";
 import { AttachPermissionToRoleUseCase } from "./useCase/AttachPermissionToRoleUseCase";
 import { CreateRoleUseCase } from "./useCase/CreateRoleUseCase";
 import { DeleteRoleUseCase } from "./useCase/DeleteRoleUseCase";
+import { GetRolesAndPermissionsOfUser } from "./useCase/GetRolesAndPermissionsOfUser";
 import { GetRoleUseCase } from "./useCase/GetRoleUseCase";
 import { ListRoleUseCase } from "./useCase/ListRolesUseCase";
 import { RemovePermissionFromRoleUseCase } from "./useCase/RemovePermissionFromRoleUseCase";
 import { RemoveRoleFromUserUserCase } from "./useCase/RemoveRoleFromUserUserCase";
 import { UpdateRoleUseCase } from "./useCase/UpdateRoleUseCase";
-
- 
 
 // ============================================================================
 // 2. DEPENDENCY INJECTION & INITIALIZATION
@@ -48,6 +47,10 @@ const removeRoleFromUserUseCase = new RemoveRoleFromUserUserCase(
 );
 const updateRoleUseCase = new UpdateRoleUseCase(roleRepositoryAdapter);
 
+const getRolesAndPermissionsOfUserUseCase = new GetRolesAndPermissionsOfUser(
+  userRepositoryAdapter,
+);
+
 // C. Initialize Controller (Presentation/Interface Layer)
 // We inject all the configured use cases into the primary controller
 export const rbacController = new RbacModuleController(
@@ -60,4 +63,5 @@ export const rbacController = new RbacModuleController(
   removePermissionFromRoleUseCase,
   removeRoleFromUserUseCase,
   updateRoleUseCase,
+  getRolesAndPermissionsOfUserUseCase,
 );

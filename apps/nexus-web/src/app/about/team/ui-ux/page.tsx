@@ -3,34 +3,33 @@ import { AnimatedTeamGrid } from "@/features/about";
 import { ASSETS } from "@/lib/constants/assets";
 
 const MASCOT_SRC = ASSETS.TEAM.MASCOT;
-const BASE = "/team/team-ui-ux";
 
 const UI_UX_MEMBERS = [
   {
     name: "Jedia Nicole Sagun",
     role: "UI/UX Lead",
-    imageSrc: `${BASE}/jedia-nicole-sagun.webp`,
+    imageSrc: ASSETS.TEAM.UI_UX.JEDIA_SAGUN,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Kassandra Rychelle Balona",
     role: "UI/UX Co-Lead",
-    imageSrc: `${BASE}/kassandra-rychelle-balona.webp`,
+    imageSrc: ASSETS.TEAM.UI_UX.KASSANDRA_BALONA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Joyrel Baladjay",
     role: "UI/UX Learning Head Committee",
-    imageSrc: `${BASE}/joyrel-baladjay.webp`,
+    imageSrc: ASSETS.TEAM.UI_UX.JOYREL_BALADJAY,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Kacey Michaela Solis",
     role: "UI/UX Learning Head Committee",
-    imageSrc: `${BASE}/kacey-michaela-solis.webp`,
+    imageSrc: ASSETS.TEAM.UI_UX.KACEY_SOLIS,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

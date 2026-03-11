@@ -3,55 +3,54 @@ import { AnimatedTeamGrid } from "@/features/about";
 import { ASSETS } from "@/lib/constants/assets";
 
 const MASCOT_SRC = ASSETS.TEAM.MASCOT;
-const BASE = "/team/team-administrative";
 
 const ADMINISTRATIVE_MEMBERS = [
   {
     name: "Randy Carlo Lorenzo",
     role: "Chapter Lead and President",
-    imageSrc: `${BASE}/randy-carlo-lorenzo.webp`,
+    imageSrc: ASSETS.TEAM.ADMINISTRATIVE.RANDY_CARLO_LORENZO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Shunrenn Locaylocay",
     role: "Chief Executive Officer (CEO)",
-    imageSrc: `${BASE}/shunrenn-locaylocay.webp`,
+    imageSrc: ASSETS.TEAM.ADMINISTRATIVE.SHUNRENN_LOCAYLOCAY,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Syruz Ken Domingo",
     role: "Placeholder",
-    imageSrc: `${BASE}/syruz-ken-domingo.webp`,
+    imageSrc: ASSETS.TEAM.ADMINISTRATIVE.SYRUZ_KEN_DOMINGO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Kurt Lopez",
     role: "Deputy Chief Secretariat (DCSec)",
-    imageSrc: `${BASE}/kurt-lopez.webp`,
+    imageSrc: ASSETS.TEAM.ADMINISTRATIVE.KURT_LOPEZ,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Cathyren Sacatani",
     role: "Chief Finance Officer (CFO)",
-    imageSrc: `${BASE}/cathyren-sacatani.webp`,
+    imageSrc: ASSETS.TEAM.ADMINISTRATIVE.CATHYREN_SACATANI,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Irah Markeisha Jose",
     role: "Deputy Chief Finance Officer (DCFO)",
-    imageSrc: `${BASE}/irah-markeisha-jose.webp`,
+    imageSrc: ASSETS.TEAM.ADMINISTRATIVE.IRAH_JOSE,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Maryrose Marquez",
     role: "Treasurer",
-    imageSrc: `${BASE}/maryrose-marquez.webp`,
+    imageSrc: ASSETS.TEAM.ADMINISTRATIVE.MARYROSE_MARQUEZ,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

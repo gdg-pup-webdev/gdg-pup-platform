@@ -152,6 +152,10 @@ export function IdHeroStage() {
             fullName="Sparky Batumbakal"
             email="sparky.batumbakal@gmail.com"
             course="BS in Information Technology"
+            textureSrc={ASSETS.ID.CARD_TEXTURE}
+            bgSrc={ASSETS.ID.BG}
+            sparkySrc={ASSETS.ID.CARD_SPARKY}
+            nameFrameSrc={ASSETS.ID.CARD_NAME_FRAME}
           />
         </div>
 

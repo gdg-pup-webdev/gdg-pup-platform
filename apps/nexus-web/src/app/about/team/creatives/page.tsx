@@ -3,62 +3,61 @@ import { AnimatedTeamGrid } from "@/features/about";
 import { ASSETS } from "@/lib/constants/assets";
 
 const MASCOT_SRC = ASSETS.TEAM.MASCOT;
-const BASE = "/team/team-creatives";
 
 const CREATIVES_MEMBERS = [
   {
     name: "Ayen Mejorada",
     role: "Chief Creatives Officer (CCO)",
-    imageSrc: `${BASE}/ayen-mejorada.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.AYEN_MEJORADA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Hesed Suñga",
     role: "Deputy Chief Creatives Officer (DCCO)",
-    imageSrc: `${BASE}/hesed-sunga.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.HESED_SUNGA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Daniella J. Mendoza",
     role: "Graphic Design Lead",
-    imageSrc: `${BASE}/daniella-j-mendoza.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.DANIELLA_MENDOZA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Michael Marquez",
     role: "Social Media Manager Co-Lead",
-    imageSrc: `${BASE}/michael-marquez.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.MICHAEL_MARQUEZ,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Alecza Patrice Bonifacio",
     role: "Branding & Assets Lead",
-    imageSrc: `${BASE}/alecza-patrice-bonifacio.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.ALECZA_BONIFACIO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Cyruz Cordero Arcan",
     role: "Branding & Assets Co-Lead",
-    imageSrc: `${BASE}/cyruz-cordero-arcan.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.CYRUZ_ARCAN,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Matthew Erivera Cucio",
     role: "Audio & Visuals Lead",
-    imageSrc: `${BASE}/matthew-erivera-cucio.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.MATTHEW_CUCIO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Emanuel Jabon",
     role: "Audio & Visuals Co-Lead",
-    imageSrc: `${BASE}/emanuel-jabon.webp`,
+    imageSrc: ASSETS.TEAM.CREATIVES.EMANUEL_JABON,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

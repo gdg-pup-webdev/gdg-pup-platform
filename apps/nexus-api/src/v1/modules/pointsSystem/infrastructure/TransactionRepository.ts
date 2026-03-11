@@ -68,9 +68,9 @@ export class TransactionRepository extends ITransactionRepository {
       .from(this.tableName)
       .insert({
         user_id: prototype.props.userId,
-        points_change: prototype.props.pointsChange,
-        points_type: prototype.props.pointsType,
-        source_reference: prototype.props.sourceReference,
+        amount: prototype.props.pointsChange,
+        point_type: prototype.props.pointsType,
+        source_id: prototype.props.sourceReference,
         source_type: prototype.props.sourceType,
       })
       .select("*")
