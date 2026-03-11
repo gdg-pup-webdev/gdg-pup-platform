@@ -14,7 +14,7 @@ export type RewardItem = {
   src: string,
 }
 
-export type HistoryItemProps = {
+export type PointsTransaction = {
   type: "plus",
   data: TaskItem & { timestamp: Date }
 } | {

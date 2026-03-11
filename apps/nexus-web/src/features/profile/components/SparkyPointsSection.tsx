@@ -7,7 +7,7 @@ import {  Button, Container, Dropdown, DropdownContent, DropdownItem, DropdownTr
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { HistoryItemProps, TaskItem, RewardItem } from "../types";
+import type { PointsTransaction, TaskItem, RewardItem } from "../types";
 import { useSparkyPoints } from "../hooks/useSparkyPoints";
 
 type mobileSections = "main" | "guide" | "redeem" | "history";
@@ -177,7 +177,7 @@ function GuideItem({title, children, clamp}: {title: string, children: string, c
   )
 }
 
-function HistoryItem({type, data, avatar}: HistoryItemProps & {
+function HistoryItem({type, data, avatar}: PointsTransaction & {
   avatar: string
 }) {
   const isEarned = type === "plus";
@@ -263,6 +263,11 @@ export function SparkyPointsSection() {
     else {
       setModalState("denied");
     }
+  }
+
+  const closeModal = () => {
+    setModalState(null);
+    setItemRedeemed(null);
   }
 
   // TODO - Implement redeeming logic
@@ -476,10 +481,7 @@ export function SparkyPointsSection() {
             </Stack>
           </div>
         </Container>
-        <Modal isOpen={modalState !== null} onClose={() => {
-          setModalState(null);
-          setItemRedeemed(null);
-        }}>
+        <Modal isOpen={modalState !== null} onClose={closeModal}>
           <div className="w-full aspect-square grid">
             {
               isModalRedeem
@@ -514,10 +516,7 @@ export function SparkyPointsSection() {
               )
           }
           <div className="flex gap-4 w-full">
-            <Button subVariant="plain" className="grow m-auto" onClick={() => {
-              setModalState(null);
-              setItemRedeemed(null);
-            }}>
+            <Button subVariant="plain" className="grow m-auto" onClick={closeModal}>
               Cancel
             </Button>
             {
@@ -525,16 +524,14 @@ export function SparkyPointsSection() {
                 ? (
                   <Button variant="colored" subVariant="dark-blue" className="grow" onClick={() => {
                     const item = itemRedeemed!;
-                    setModalState(null);
-                    setItemRedeemed(null);
+                    closeModal();
                     onRewardRedeem(item);
                   }}>
                     Redeem
                   </Button>
                 ) : (
                 <Button variant="colored" subVariant="dark-blue" className="grow" onClick={() => {
-                  setModalState(null);
-                  setItemRedeemed(null);
+                  closeModal();
                   setCurrentMobileSection("guide");
                   guideButtonRef.current?.click()
                 }}>

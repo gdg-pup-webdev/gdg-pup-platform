@@ -1,9 +1,9 @@
-import type { HistoryItemProps, TaskItem, RewardItem } from "../types";
+import type { PointsTransaction, TaskItem, RewardItem } from "../types";
 
 // TODO: REVISIT WHEN THE REAL API IS IMPLEMENTED
 export function useSparkyPoints(): {
   userPoints: number,
-  userHistory: HistoryItemProps[],
+  userHistory: PointsTransaction[],
   tasks: TaskItem[],
   rewards: RewardItem[]
 } {
