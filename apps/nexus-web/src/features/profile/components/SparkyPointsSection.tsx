@@ -508,7 +508,7 @@ export function SparkyPointsSection() {
                     Insufficient Points
                   </Text>
                   <Text variant="body" align="center" className="text-inherit">
-                    Need <strong>{itemRedeemed?.cost ?? 0 - userPoints}</strong> more points.
+                    Need <strong>{(itemRedeemed?.cost ?? 0) - userPoints}</strong> more points.
                   </Text>
                 </>
               )
