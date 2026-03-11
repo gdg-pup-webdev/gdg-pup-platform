@@ -160,7 +160,7 @@ export function EventsSection() {
           </Stack>
 
           {/* Events Gallery */}
-          <Stack gap="lg" className="items-center mt-8 md:mt-24 !gap-3 md:!gap-6">
+          <Stack id="events-gallery" gap="lg" className="items-center mt-8 md:mt-24 !gap-3 md:!gap-6">
             <Text
               variant="heading-1"
               gradient="white-blue"

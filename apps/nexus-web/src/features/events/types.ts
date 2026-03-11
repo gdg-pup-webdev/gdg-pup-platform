@@ -18,6 +18,9 @@ export interface Event {
   /** Event description (optional) */
   description: string | null;
   
+  /** Short event description (optional) */
+  short_description?: string | null;
+  
   /** Event start date-time (ISO string) */
   start_date: string;
   
@@ -30,6 +33,9 @@ export interface Event {
   /** Event category (workshop, meetup, hackathon, etc.) */
   category: string | null;
   
+  /** Event tags for key themes */
+  tags?: string[];
+  
   /** Creator user ID */
   creator_id?: string;
   
@@ -38,6 +44,9 @@ export interface Event {
   
   /** Registration link  */
   registration_url?: string;
+  
+  /** External Bevy event URL */
+  bevy_url?: string;
   
   /** Current attendee count */
   attendee_count?: number;

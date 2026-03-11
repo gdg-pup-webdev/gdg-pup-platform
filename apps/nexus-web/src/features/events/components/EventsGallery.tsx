@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 
 type GalleryItem = {
@@ -112,9 +113,10 @@ export function EventsGallery() {
               }}
             >
               {visibleItems.map((item) => (
-                <div
+                <Link
                   key={`${item.id}-${safeStartIndex}`}
-                  className="group relative rounded-2xl p-[1px] transition-all duration-300 ease-out hover:shadow-[0_12px_36px_rgba(0,0,0,0.42)]"
+                  href={`/events/gallery/${item.year}`}
+                  className="group relative rounded-2xl p-[1px] transition-all duration-300 ease-out hover:shadow-[0_12px_36px_rgba(0,0,0,0.42)] cursor-pointer"
                   style={{ backgroundImage: BORDER_GRADIENT }}
                 >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[15px] bg-black">
@@ -168,7 +170,7 @@ export function EventsGallery() {
                       </svg>
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </motion.div>
           </AnimatePresence>

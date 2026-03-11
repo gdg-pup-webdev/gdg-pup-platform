@@ -14,6 +14,62 @@ const buildQueryString = (params: Record<string, unknown>) => {
   return searchParams.toString();
 };
 
+type RawEvent = {
+  venue?: string | null;
+  location?: string | null;
+  url?: string | null;
+  registration_url?: string | null;
+  attendee_virtual_venue_url?: string | null;
+  attendee_virtual_venue_link?: string | null;
+  bevy_url?: string | null;
+  is_virtual_event?: boolean;
+  banner_url?: string;
+  cover_image_url?: string;
+  short_description?: string | null;
+  description_short?: string | null;
+  tags?: string[] | null;
+  category?: string | null;
+  event_type?: string | null;
+  attendee_count?: number;
+  attendees?: number;
+  max_capacity?: number;
+  total_capacity?: number;
+} & Record<string, unknown>;
+
+const firstNonEmptyString = (...values: Array<unknown>): string | null => {
+  for (const value of values) {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) return trimmed;
+    }
+  }
+  return null;
+};
+
+const normalizeEvent = (event: RawEvent) => ({
+  ...event,
+  short_description: firstNonEmptyString(
+    event?.short_description,
+    event?.description_short,
+  ),
+  venue: firstNonEmptyString(
+    event?.venue,
+    event?.location,
+    event?.attendee_virtual_venue_url,
+    event?.attendee_virtual_venue_link,
+  ) ?? (event?.is_virtual_event ? "Online" : null),
+  banner_url: event?.banner_url ?? event?.cover_image_url,
+  category: event?.category ?? event?.event_type ?? null,
+  tags: Array.isArray(event?.tags) ? event.tags : [],
+  registration_url: firstNonEmptyString(
+    event?.registration_url,
+    event?.bevy_url,
+    event?.url,
+  ),
+  attendee_count: event?.attendee_count ?? event?.attendees,
+  max_capacity: event?.max_capacity ?? event?.total_capacity,
+});
+
 /**
  * Fetch events from the Nexus API
  * 
@@ -55,7 +111,10 @@ export async function getEvents(
       payload?.status === "success" &&
       Array.isArray(payload?.data)
     ) {
-      return payload as EventsResponse;
+      return {
+        ...payload,
+        data: payload.data.map(normalizeEvent),
+      } as EventsResponse;
     }
 
     // Handle error responses

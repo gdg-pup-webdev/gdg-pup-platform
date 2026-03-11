@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
   const suffix = query ? `?${query}` : "";
 
   const candidatePaths = [
+    `/api/v1/gdg-scraped-events${suffix}`,
     `/api/event-system/events${suffix}`,
     `/api/v0/event-system/events${suffix}`,
   ];

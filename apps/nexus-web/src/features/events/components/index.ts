@@ -10,3 +10,6 @@ export { EventsGrid } from "./EventsGrid";
 export { EventsFilters } from "./EventsFilters";
 export { EventsSection } from "./EventsSection";
 export { EventsGallery } from "./EventsGallery";
+export { EventDetailSection } from "./EventDetailSection";
+export { GalleryYearSection } from "./GalleryYearSection";
+export { EventHighlightsGallerySection } from "./EventHighlightsGallerySection";
