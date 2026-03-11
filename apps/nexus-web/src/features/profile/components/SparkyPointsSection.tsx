@@ -7,30 +7,10 @@ import {  Button, Container, Dropdown, DropdownContent, DropdownItem, DropdownTr
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import type { HistoryItemProps, TaskItem, RewardItem } from "../types";
+import { useSparkyPoints } from "../hooks/useSparkyPoints";
 
 type mobileSections = "main" | "guide" | "redeem" | "history";
-
-type TaskItem = {
-  id: string,
-  name: string,
-  points: number,
-  description: string,
-}
-
-type RewardItem = {
-  id: string,
-  name: string,
-  cost: number,
-  src: string,
-}
-
-type HistoryItemProps = {
-  type: "plus",
-  data: TaskItem & {timestamp: Date}
-} | {
-  type: "minus",
-  data: RewardItem & {timestamp: Date}
-}
 
 function formatDate(date:Date) {
   const days = String(date.getDate()).padStart(2, '0');
@@ -48,6 +28,7 @@ function formatDate(date:Date) {
 
 const GRADIENT_BORDER_BASE = "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-px before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude";
 const RAINBOW_GRADIENT_COLOR = "before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]";
+const RAINBOW_BORDER = cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR);
 
 function LeftArrowSvg() {
   return <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -106,7 +87,7 @@ function GuideIconSvg(): import("react").ReactNode {
 function PointsDisplay({points}: {points: number}) {
   return (
     <Stack>
-      <div className={cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR, "flex rounded-lg gap-4 p-4 shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}
+      <div className={cn(RAINBOW_BORDER, "flex rounded-lg gap-4 p-4 shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}
         >
         <Inline gap={"xs"} className="flex-1">
           <Text variant={"heading-3"} gradient={"white-yellow"}>{points}</Text>
@@ -121,7 +102,7 @@ function PointsDisplay({points}: {points: number}) {
   )
 }
 
-function MobileSubHeader({sectionTitle, onGoBack}:{sectionTitle:React.ReactNode, onGoBack: () => void}) {
+function MobileSubHeader({sectionTitle, onGoBack}:{sectionTitle:string, onGoBack: () => void}) {
   return <>
     <div className="flex justify-between items-center">
     <a className="inline-flex w-6 h-6 items-center justify-center" onClick={onGoBack}>
@@ -135,7 +116,7 @@ function MobileSubHeader({sectionTitle, onGoBack}:{sectionTitle:React.ReactNode,
 
 function QuickAction({text, onNavigate}: {text: string, onNavigate: () => void}) {
   return (
-    <div className={cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR, "h-25 px-3 py-2 flex items-end rounded-lg shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}>
+    <div className={cn(RAINBOW_BORDER, "h-25 px-3 py-2 flex items-end rounded-lg shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}>
       <a className="flex justify-between items-end gap-4 cursor-pointer w-full" onClick={onNavigate}>
         <Text weight={"bold"} className="text-inherit text-sm">{text}</Text>
         <p className="h-6 w-6 px-1 inline-flex justify-center items-center">
@@ -148,7 +129,7 @@ function QuickAction({text, onNavigate}: {text: string, onNavigate: () => void})
 
 function TaskItem({id, name, points, description}: TaskItem) {
   return (
-    <a className={cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR, "p-4 h-25 lg:h-auto flex flex-col relative isolate rounded-lg shadow-[0px_4px_16px_0px_#FFFFFF0D_inset]")}
+    <a className={cn(RAINBOW_BORDER, "p-4 h-25 lg:h-auto flex flex-col relative isolate rounded-lg shadow-[0px_4px_16px_0px_#FFFFFF0D_inset]")}
       id={`tasks-${id}`}
       >
       <span className="flex justify-between items-center">
@@ -162,7 +143,7 @@ function TaskItem({id, name, points, description}: TaskItem) {
 
 function RewardItem({id, name, cost, src, onRedeem}: RewardItem & {onRedeem: () => void}) {
   return (
-    <div className={cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR, "flex flex-col relative isolate rounded-2xl gap-4 p-4 shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}
+    <div className={cn(RAINBOW_BORDER, "flex flex-col relative isolate rounded-2xl gap-4 p-4 shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}
       id={`rewards-${id}`}
     >
       <div className="aspect-square w-full">
@@ -176,7 +157,7 @@ function RewardItem({id, name, cost, src, onRedeem}: RewardItem & {onRedeem: () 
 
 function GuideItem({title, children, clamp}: {title: string, children: string, clamp?: 1 | "none" | 2 | 3 | 4 | null | undefined}) {
   return (
-    <Stack gap="xs" className={cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR, "relative isolate rounded-lg p-4 shadow-[0px_4px_16px_0px_#FFFFFF40]")}>
+    <Stack gap="xs" className={cn(RAINBOW_BORDER, "relative isolate rounded-lg p-4 shadow-[0px_4px_16px_0px_#FFFFFF40]")}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 flex">
@@ -199,8 +180,9 @@ function GuideItem({title, children, clamp}: {title: string, children: string, c
 function HistoryItem({type, data, avatar}: HistoryItemProps & {
   avatar: string
 }) {
+  const isEarned = type === "plus";
   return (
-    <Stack gap="xs" className={cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR, "relative isolate rounded-lg p-4 shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}>
+    <Stack gap="xs" className={cn(RAINBOW_BORDER, "relative isolate rounded-lg p-4 shadow-[0px_4px_16px_0px_#FFFFFF40_inset]")}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 flex">
@@ -212,18 +194,18 @@ function HistoryItem({type, data, avatar}: HistoryItemProps & {
           </div>
           <Text variant="body-sm" color="muted">{formatDate(data.timestamp)}</Text>
         </div>
-        <Text as="div" variant="body-sm" color={type === "plus" ? "success" : "error"} className="flex items-center gap-2">
+        <Text as="div" variant="body-sm" color={isEarned ? "success" : "error"} className="flex items-center gap-2">
           {
-            type === "plus"
+            isEarned
               ? <CircledPlusSvg/>
               : <CircledMinusSvg/>
           }
-          {type === "plus" ? data.points : data.cost} pts
+          {isEarned ? data.points : data.cost} pts
         </Text>
       </div>
       <Text variant="body" className="text-inherit">
         {
-          type === "plus"
+          isEarned
             ? <>You earned <strong>+{data.points}</strong> Sparky Points after completing <strong>{data.name}</strong>.</>
             : <>You redeemed <strong>{data.name}</strong> for <strong>{data.cost}</strong> points.</>
         }
@@ -232,12 +214,27 @@ function HistoryItem({type, data, avatar}: HistoryItemProps & {
   )
 }
 
-function Modal({children, isOpen}: {isOpen: boolean, children?: React.ReactNode | null | undefined}) {
+type ModalProps = {
+  children?: React.ReactNode | null | undefined;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function Modal({children, isOpen, onClose}: ModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
     <>
-      {children}
+      <div className="fixed bg-[#000000A0] inset-0 z-50 grid place-items-center p-8" onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        onClose();
+      }}>
+        <Stack className="bg-[#010B1D] w-full max-w-112 p-4 lg:p-6 gap-4 rounded-t-2xl lg:rounded-2xl box-border" align="center" onClick={(e) => {
+              e.stopPropagation();
+            }}>{children}</Stack>
+        
+      </div>
     </>
   , document.body)
 
@@ -245,111 +242,12 @@ function Modal({children, isOpen}: {isOpen: boolean, children?: React.ReactNode 
 
 export function SparkyPointsSection() {
   const {user} = useAuthContext();
+  const { userPoints, userHistory, tasks, rewards } = useSparkyPoints();
   // TODO - pass user information
-  const { userPoints, userHistory }: {
-    userPoints: number,
-    userHistory: HistoryItemProps[],
-  } = {
-    userPoints: 10,
-    userHistory: [
-      {
-        type: "plus",
-        data: {
-          id: "1e27f485-c49f-460e-94d8-5319657719aa",
-          name: "Task Name",
-          points: 0,
-          description: "Lorem ipsum dolor sit amet, consectetur...",
-          timestamp: new Date()
-        }
-      },
-      {
-        type: "minus",
-        data: {
-          id: "ed08c748-9a9e-477f-a05e-f215df7286c7",
-          name: "Reward Name",
-          cost: 0,
-          src: "",
-          timestamp: new Date()
-        }
-      }
-    ]
-  };
-
-  // TODO - pass props for tasks and rewards
-  const {tasks, rewards}: {
-    tasks: TaskItem[],
-    rewards: RewardItem[]
-  } = {
-    tasks: [
-      {
-        id: "b40ca8ab-b10c-47d8-a371-5972dd604436",
-        name: "Task Name",
-        points: 0,
-        description: "Dolore enim et cupidatat pariatur ipsum laborum laborum. Deserunt est veniam aliqua culpa labore ut culpa proident. Et officia ea officia reprehenderit aute ex. Dolor dolore deserunt nostrud dolor sit laborum duis. Incididunt veniam sint duis reprehenderit aliqua laborum ad amet labore laborum ut do sint consequat. Deserunt quis est ullamco eu proident labore aute minim sit consequat fugiat tempor tempor."
-      },
-      {
-        id: "a3c8f573-6035-4553-a3a5-9f397e7298e0",
-        name: "Task Name",
-        points: 0,
-        description: "Pariatur laborum labore reprehenderit ipsum adipisicing duis aliquip deserunt. Incididunt commodo anim incididunt amet Lorem consequat ea nostrud sunt. Eu irure sit eu esse. Consectetur nulla minim esse est consequat deserunt minim."
-      },
-      {
-        id: "1d3cd6f0-e788-4507-b793-f90a3ff66732",
-        name: "Task Name",
-        points: 0,
-        description: "Adipisicing pariatur id ullamco occaecat incididunt labore occaecat. Deserunt amet esse proident dolore mollit deserunt reprehenderit. Ullamco ut id consectetur dolore exercitation aliqua sit duis sunt. Ea eu laboris laborum ad exercitation eiusmod dolore proident."
-      },
-    ],
-    rewards: [
-      {
-        id: "c963564d-0b5e-4c8d-a7d1-21b11ce42a93",
-        name: "Reward Name",
-        cost: 10,
-        src: ""
-      },
-      {
-        id: "391fb745-4294-40ba-9d16-28e583e85cee",
-        name: "Reward Name",
-        cost: 5,
-        src: ""
-      },
-      {
-        id: "31d8c7cb-d6a6-41b3-8409-589375cd8d35",
-        name: "Reward Name",
-        cost: 20,
-        src: ""
-      },
-      {
-        id: "e98580ea-9e1a-41c1-933e-12ccde6a1b11",
-        name: "Reward Name",
-        cost: 0,
-        src: ""
-      },
-      {
-        id: "dec42b2f-47a2-4994-9929-c4370e1b70bb",
-        name: "Reward Name",
-        cost: 0,
-        src: ""
-      },
-      {
-        id: "2c19479b-bc93-42bf-87ed-4598b1aced01",
-        name: "Reward Name",
-        cost: 0,
-        src: ""
-      },
-      {
-        id: "27c3796f-e016-4da4-97ff-f4df1641ecf4",
-        name: "Reward Name",
-        cost: 0,
-        src: ""
-      },
-    ]
-  }
 
   const guideButtonRef = useRef<HTMLButtonElement>(null);
   
-  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
-  const [isDeniedModalOpen, setIsDeniedModalOpen] = useState(false);
+  const [modalState, setModalState] = useState<"redeem"|"denied"|null>(null);
   const [itemRedeemed, setItemRedeemed] = useState<null | RewardItem>(null);
   const [currentMobileSection, setCurrentMobileSection] = useState<mobileSections>("main");
   
@@ -360,16 +258,17 @@ export function SparkyPointsSection() {
   const handleRedeemClick = (reward: RewardItem) => {
     setItemRedeemed(reward);
     if (reward.cost <= userPoints) {
-      setIsRedeemModalOpen(true);
+      setModalState("redeem");
     }
     else {
-      setIsDeniedModalOpen(true);
+      setModalState("denied");
     }
   }
 
   // TODO - Implement redeeming logic
   const onRewardRedeem = (item: RewardItem) => {}
 
+  const isModalRedeem = modalState === "redeem";
   return (
       <>
         <div className="absolute w-full mt-20 z-0 lg:hidden">
@@ -427,7 +326,7 @@ export function SparkyPointsSection() {
             {
               currentMobileSection === "redeem" &&
               <>
-                <MobileSubHeader onGoBack={() => setCurrentMobileSection("main")} sectionTitle={<>Redeem Points</>} />
+                <MobileSubHeader onGoBack={() => setCurrentMobileSection("main")} sectionTitle="Redeem Points" />
                 <Stack gap="xl">
                   <PointsDisplay points={userPoints}/>
                   <Stack className="gap-1.5">
@@ -459,7 +358,7 @@ export function SparkyPointsSection() {
             {
               currentMobileSection === "history" &&
               <>
-                <MobileSubHeader onGoBack={() => setCurrentMobileSection("main")} sectionTitle={<>Points History</>} />
+                <MobileSubHeader onGoBack={() => setCurrentMobileSection("main")} sectionTitle="Points History" />
                 <Stack gap="xl">
                   <PointsDisplay points={userPoints}/>
                   <Stack>
@@ -471,7 +370,7 @@ export function SparkyPointsSection() {
             {
               currentMobileSection === "guide" &&
               <>
-                <MobileSubHeader onGoBack={() => setCurrentMobileSection("main")} sectionTitle={<>How to Earn Points</>} />
+                <MobileSubHeader onGoBack={() => setCurrentMobileSection("main")} sectionTitle="How to Earn Points" />
                 <Stack gap="xl">
                   <PointsDisplay points={userPoints}/>
                   <Stack>
@@ -577,70 +476,72 @@ export function SparkyPointsSection() {
             </Stack>
           </div>
         </Container>
-        <Modal isOpen={isRedeemModalOpen}>
-          <div className="fixed bg-[#000000A0] inset-0 z-50 grid place-items-center p-8" onClick={(e) => {
-            e.stopPropagation();
-            setIsRedeemModalOpen(false);
-            setItemRedeemed(null);
-          }}>
-            <Stack className="bg-[#010B1D] w-full max-w-112 p-4 lg:p-6 gap-4 rounded-t-2xl lg:rounded-2xl box-border" align="center" onClick={(e) => {
-              e.stopPropagation();
-            }}>
-              <div className="w-full aspect-square grid">
-                <img src={ASSETS.PROFILE.SPARKY_POINTS.CIRBY_CONFIRM} alt="Confirm?" className="w-full h-full" />
-              </div>
-              <Text gradient="white-blue" variant="heading-6" weight="bold" align="center">
-                Confirm Redemption
-              </Text>
-              <Text variant="body" align="center" className="text-inherit">
-                Redeem <strong>{itemRedeemed?.name}</strong> for <strong>{itemRedeemed?.cost}</strong> points? This action cannot be undone.
-              </Text>
-              <div className="flex gap-4 w-full">
-                <Button subVariant="plain" className="grow m-auto" onClick={() => {
-                  setIsRedeemModalOpen(false);
-                  setItemRedeemed(null);
-                }}>Cancel</Button>
-                <Button variant="colored" subVariant="dark-blue" className="grow" onClick={() => {
-                  const item = itemRedeemed!;
-                  setIsRedeemModalOpen(false);
-                  setItemRedeemed(null);
-                  onRewardRedeem(item);
-                }}>Redeem</Button>
-              </div>
-            </Stack>
+        <Modal isOpen={modalState !== null} onClose={() => {
+          setModalState(null);
+          setItemRedeemed(null);
+        }}>
+          <div className="w-full aspect-square grid">
+            {
+              isModalRedeem
+                ? (
+                  <img src={ASSETS.PROFILE.SPARKY_POINTS.CIRBY_CONFIRM} alt="Confirm?" className="w-full h-full" />
+                )
+                : (
+                  <img src={ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DENIED} alt="Denied." className="w-full h-full" />
+                )
+            }
           </div>
-        </Modal>
-        <Modal isOpen={isDeniedModalOpen}>
-          <div className="fixed bg-[#00000080] inset-0 z-50 grid place-items-center p-8" onClick={(e) => {
-            e.stopPropagation();
-            setIsRedeemModalOpen(false);
-            setItemRedeemed(null);
-          }}>
-            <Stack className="bg-[#010B1D] w-full max-w-112 p-4 lg:p-6 gap-4 rounded-t-2xl lg:rounded-2xl box-border" align="center" onClick={(e) => {
-              e.stopPropagation();
+          {
+            isModalRedeem
+              ? (
+                <>
+                  <Text gradient="white-blue" variant="heading-6" weight="bold" align="center">
+                    Confirm Redemption
+                  </Text>
+                  <Text variant="body" align="center" className="text-inherit">
+                    Redeem <strong>{itemRedeemed?.name}</strong> for <strong>{itemRedeemed?.cost}</strong> points? This action cannot be undone.
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text gradient="white-red" variant="heading-6" weight="bold" align="center">
+                    Insufficient Points
+                  </Text>
+                  <Text variant="body" align="center" className="text-inherit">
+                    Need <strong>{itemRedeemed?.cost ?? 0 - userPoints}</strong> more points.
+                  </Text>
+                </>
+              )
+          }
+          <div className="flex gap-4 w-full">
+            <Button subVariant="plain" className="grow m-auto" onClick={() => {
+              setModalState(null);
+              setItemRedeemed(null);
             }}>
-              <div className="w-full aspect-square grid">
-                <img src={ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DENIED} alt="Confirm?" className="w-full h-full" />
-              </div>
-              <Text gradient="white-red" variant="heading-6" weight="bold" align="center">
-                Insufficient Points
-              </Text>
-              <Text variant="body" align="center" className="text-inherit">
-                Need <strong>{itemRedeemed?.cost ?? 0 - userPoints}</strong> more points.
-              </Text>
-              <div className="flex gap-4 w-full">
-                <Button subVariant="plain" className="grow m-auto" onClick={() => {
-                  setIsDeniedModalOpen(false);
-                  setItemRedeemed(null);
-                }}>Cancel</Button>
+              Cancel
+            </Button>
+            {
+              isModalRedeem
+                ? (
+                  <Button variant="colored" subVariant="dark-blue" className="grow" onClick={() => {
+                    const item = itemRedeemed!;
+                    setModalState(null);
+                    setItemRedeemed(null);
+                    onRewardRedeem(item);
+                  }}>
+                    Redeem
+                  </Button>
+                ) : (
                 <Button variant="colored" subVariant="dark-blue" className="grow" onClick={() => {
-                  setIsDeniedModalOpen(false);
+                  setModalState(null);
                   setItemRedeemed(null);
                   setCurrentMobileSection("guide");
                   guideButtonRef.current?.click()
-                }}>How to Earn</Button>
-              </div>
-            </Stack>
+                }}>
+                  How to Earn
+                </Button>
+                )
+            }
           </div>
         </Modal>
       </>
