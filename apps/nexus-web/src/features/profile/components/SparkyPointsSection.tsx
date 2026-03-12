@@ -340,10 +340,8 @@ export function SparkyPointsSection() {
                         Rewards
                       </Text>
                       <Dropdown>
-                        <DropdownTrigger>
-                          <Button className="text-lg py-1 font-medium rounded-xl" iconRight={
-                            DownChevronSvg()
-                          }>
+                        <DropdownTrigger asChild>
+                          <Button className="text-lg py-1 font-medium rounded-xl" iconRight={<DownChevronSvg/>}>
                             All
                           </Button>
                         </DropdownTrigger>
@@ -405,7 +403,7 @@ export function SparkyPointsSection() {
                   <div className="flex items-center justify-between">
                     <Text variant="heading-6" gradient="white-blue" weight="semibold">Rewards</Text>
                     <Dropdown>
-                      <DropdownTrigger>
+                      <DropdownTrigger asChild>
                         <Button className="text-lg py-1 font-medium rounded-xl" iconRight={
                           <DownChevronSvg/>
                         }>
@@ -428,10 +426,10 @@ export function SparkyPointsSection() {
                 <Text variant="heading-6" gradient="white-blue" weight="semibold">Earn Points</Text>
                 <div className="flex gap-2">
                   <Dropdown>
-                    <DropdownTrigger>
-                      <Button ref={guideButtonRef} variant="colored" subVariant="blue" size="lg" iconLeft={
-                        GuideIconSvg()
-                      }/>
+                    <DropdownTrigger asChild>
+                      <Button ref={guideButtonRef} variant="colored" subVariant="blue" size="lg">
+                        <GuideIconSvg/>
+                      </Button>
                     </DropdownTrigger>
                     <DropdownContent 
                       position="bottom-end" 
@@ -454,10 +452,10 @@ export function SparkyPointsSection() {
                     </DropdownContent>
                   </Dropdown>
                   <Dropdown>
-                    <DropdownTrigger>
-                      <Button aria-label="history" variant="colored" subVariant="blue" size="lg" iconLeft={
-                        HistoryIconSvg()
-                      }/>
+                    <DropdownTrigger asChild>
+                      <Button aria-label="history" variant="colored" subVariant="blue" size="lg">
+                        <HistoryIconSvg/>
+                      </Button>  
                     </DropdownTrigger>
                     <DropdownContent 
                       position="bottom-end" 
