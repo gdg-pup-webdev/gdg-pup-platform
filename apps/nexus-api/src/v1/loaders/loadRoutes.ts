@@ -15,7 +15,10 @@ import { RolesRouter } from "../routes/roles/roles.router";
 import { RolesHttpController } from "../routes/roles/roles.controller";
 import { rbacController } from "../modules/rbacSystem";
 import { UsersRouter } from "../routes/users/users.router";
-import { UsersHttpController } from '../routes/users/users.controller';
+import { UsersHttpController } from "../routes/users/users.controller";
+import { portfolioModuleController } from "../modules/portfolioModule";
+import { PortfoliosHttpController } from "../routes/portfolios/portfolios.controller";
+import { PortfoliosRouter } from "../routes/portfolios/portfolios.router";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
@@ -37,13 +40,16 @@ export const loadRoutes = (app: Express) => {
     gdgScrapedEventsHttpController,
   );
 
-
-  const rolesHttpController=  new RolesHttpController(rbacController);
-  const rolesRouter=  new RolesRouter(rolesHttpController);
-
+  const rolesHttpController = new RolesHttpController(rbacController);
+  const rolesRouter = new RolesRouter(rolesHttpController);
 
   const usersHttpController = new UsersHttpController(rbacController);
   const usersRouter = new UsersRouter(usersHttpController);
+
+  const portfoliosHttpController = new PortfoliosHttpController(
+    portfolioModuleController,
+  );
+  const portfoliosRouter = new PortfoliosRouter(portfoliosHttpController);
 
   app.use("/files", filesRouter.router);
   app.use("/auth-system", authRouter.router);
@@ -51,8 +57,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);
   app.use("/roles", rolesRouter.router);
   app.use("/users", usersRouter.router);
-
-
+  app.use("/portfolios", portfoliosRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });
