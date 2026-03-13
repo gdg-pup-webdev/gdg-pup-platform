@@ -1,8 +1,11 @@
 import { NotFoundError, InternalServerError } from "@/v1/errors/HttpError";
 import { supabase } from "@/v1/lib/supabase";
 import { Tables } from "@/v1/types/supabase.types";
-import { IPortfolioRepository } from "../domain/IPortfolioRepository";
-import { Portfolio, PortfolioProps } from "../domain/Portfolio";
+import { IPortfolioRepository } from "@/v1/modules/portfolioModule/domain/IPortfolioRepository";
+import {
+  Portfolio,
+  PortfolioProps,
+} from "@/v1/modules/portfolioModule/domain/Portfolio";
 
 type UserProfileRow = Tables<"user_profile">;
 type UserRow = Tables<"user">;

@@ -16,8 +16,15 @@ export class UserRepository implements IUserRepository {
       .eq("id", userId)
       .single();
 
-    if (userError || !userRow) {
-      throw new NotFoundError(`User not found: ${userId}`, userError);
+    if (userError) {
+      throw new InternalServerError(
+        `Failed to query user '${userId}' from table '${this.userTable}'.`,
+        userError,
+      );
+    }
+
+    if (!userRow) {
+      throw new NotFoundError(`User not found: ${userId}`);
     }
 
     // Step 2: Load assigned roles and permissions from the junction table.
@@ -50,20 +57,20 @@ export class UserRepository implements IUserRepository {
 
     // Map role relations back into domain entities.
     const junctions = junctionRows || [];
-    
+
     for (const junction of junctions) {
       const roleData = junction.user_role as any;
 
       if (roleData) {
         roleNames.push(roleData.name);
-        
+
         rolesWithPermissions.push(
           Role.hydrate({
             id: roleData.id,
             name: roleData.name,
             description: roleData.description,
             permissions: roleData.user_role_permission || [],
-          })
+          }),
         );
       }
     }
@@ -97,7 +104,9 @@ export class UserRepository implements IUserRepository {
         .in("name", roleNames);
 
       if (roleLookupError) {
-        throw new Error(`Failed to lookup role IDs: ${roleLookupError.message}`);
+        throw new Error(
+          `Failed to lookup role IDs: ${roleLookupError.message}`,
+        );
       }
 
       // Construct rows according to your schema: user_role_junction uses role_id and user_id
@@ -112,7 +121,7 @@ export class UserRepository implements IUserRepository {
 
       if (insertError)
         throw new Error(
-          `Failed to insert new user roles: ${insertError.message}`
+          `Failed to insert new user roles: ${insertError.message}`,
         );
     }
 
