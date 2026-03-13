@@ -43,6 +43,7 @@ USER nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/.next/static ./apps/nexus-web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/public ./apps/nexus-web/public
 
 EXPOSE 3000
 CMD ["node", "apps/nexus-web/server.js"]
