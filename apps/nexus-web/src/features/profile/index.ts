@@ -5,5 +5,4 @@
  */
 
 export { PortfolioSection } from "./components/PortfolioSection";
-export { SparkyPointsSection } from "./components/SparkyPointsSection";
 export { SettingsSection } from "./components/SettingsSection";

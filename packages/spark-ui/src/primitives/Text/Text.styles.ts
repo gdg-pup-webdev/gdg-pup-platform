@@ -89,6 +89,7 @@ export const textVariants = cva([], {
       blue: "bg-linear-[0deg,#57CAFF_0%,#347999_100%] bg-clip-text text-transparent",
       "white-yellow": "bg-linear-to-b from-white from-[28.59%] to-[#F9AB00] to-[99%] bg-clip-text text-transparent",
       "white-green": "bg-linear-to-b from-white from-[1.41%] to-[#34A853] to-100% bg-clip-text text-transparent",
+      "white-red": "bg-linear-to-b from-white from-[25%] to-[#F7847F] to-100% bg-clip-text text-transparent",
     },
   },
   defaultVariants: {

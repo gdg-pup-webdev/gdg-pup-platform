@@ -1,0 +1,40 @@
+name: Test (Disabled)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  disabled:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disabled
+        run: echo "This workflow is intentionally disabled and delegated."
+
+# =============================================================================
+# CI — Build & Test (TEMPORARILY DISABLED) (DRAFT)
+# =============================================================================
+# Owner: Other DevOps engineer
+# Note: This workflow is intentionally commented out for delegation.
+# Re-enable by uncommenting this file once ownership handoff is complete.
+# =============================================================================
+#
+# name: Test
+#
+# on:
+#   push:
+#     branches: [deploy-develop, staging, main]
+#   pull_request:
+#     branches: [deploy-develop, staging, main]
+#
+# concurrency:
+#   group: test-${{ github.ref }}
+#   cancel-in-progress: true
+#
+# jobs:
+#   test:
+#     name: Build & Test
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: ./.github/tests

@@ -1,4 +1,4 @@
-import { SparkyPointsSection } from "@/features/profile";
+import { SparkyPointsSection } from "@/features/sparky-points";
 
 export default function SparkyPointsPage() {
   return <SparkyPointsSection />;
