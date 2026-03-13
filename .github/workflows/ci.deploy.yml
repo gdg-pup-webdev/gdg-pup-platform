@@ -28,6 +28,9 @@ concurrency:
   group: deploy-${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.ref_name) || github.event.workflow_run.head_branch }}
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   deploy-nexus-web:
     name: nexus-web

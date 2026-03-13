@@ -3,6 +3,7 @@
 # =============================================================================
 # Trigger: push to deploy branches (or manual dispatch).
 # Mode:    non-selective (builds all services).
+# CONFIGURE TO USE SELECTIVE BUILDINGS
 # =============================================================================
 
 name: Docker Build & Push
@@ -16,6 +17,9 @@ concurrency:
   group: docker-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build-nexus-web:
     name: nexus-web
@@ -28,7 +32,7 @@ jobs:
           environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
           dockerfile: apps/nexus-web/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
           build-args: |
             NEXT_PUBLIC_NEXUS_API_URL=${{ github.ref_name == 'main' && 'https://api.gdgpup.org' || github.ref_name == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
             NEXT_PUBLIC_IDENTITY_API_URL=${{ github.ref_name == 'main' && 'https://identity.gdgpup.org' || github.ref_name == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
@@ -44,7 +48,7 @@ jobs:
           environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
           dockerfile: apps/nexus-api/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
 
   build-identity-api:
     name: identity-api
@@ -57,4 +61,4 @@ jobs:
           environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
           dockerfile: apps/identity-api/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
