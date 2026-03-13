@@ -3,6 +3,7 @@ import { Role } from "./Role";
 export type UserProps = {
   id: string;
   roles: string[];
+  rolesWithPermissions: Role[];
 };
 
 export class User {

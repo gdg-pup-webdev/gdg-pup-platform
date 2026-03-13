@@ -3,34 +3,33 @@ import { AnimatedTeamGrid } from "@/features/about";
 import { ASSETS } from "@/lib/constants/assets";
 
 const MASCOT_SRC = ASSETS.TEAM.MASCOT;
-const BASE = "/team/team-project-management";
 
 const PROJECT_MANAGEMENT_MEMBERS = [
   {
     name: "Patricia Anne Panlilio",
     role: "Project Management Lead",
-    imageSrc: `${BASE}/patricia-anne-panlilio.webp`,
+    imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.PATRICIA_PANLILIO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Lance Gabriel P. Vargas",
     role: "Project Management Co-Lead",
-    imageSrc: `${BASE}/lance-gabriel-p-vargas.webp`,
+    imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.LANCE_VARGAS,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Trishia Sai Mejia",
     role: "Project Management Co-Lead",
-    imageSrc: `${BASE}/trishia-sai-mejia.webp`,
+    imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.TRISHIA_MEJIA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Abielle Viktoria Dig",
     role: "Project Management Secretary",
-    imageSrc: `${BASE}/abielle-viktoria-dig.webp`,
+    imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.ABIELLE_DIG,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

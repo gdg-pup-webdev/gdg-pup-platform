@@ -1,0 +1,69 @@
+name: "Deploy to Cloud Run"
+description: "Authenticate with GCP, deploy a new image to Cloud Run, and verify health"
+
+inputs:
+  service:
+    description: "Service name (nexus-web, nexus-api, identity-api)"
+    required: true
+  environment:
+    description: "Target environment (dev, staging, prod)"
+    required: true
+  gcp-sa-key:
+    description: "GCP service account JSON key (base64 or raw JSON)"
+    required: true
+  gcp-project-id:
+    description: "GCP project ID"
+    required: true
+  region:
+    description: "Cloud Run region"
+    required: false
+    default: "asia-southeast1"
+  health-check-url:
+    description: "URL to curl after deployment to verify the service is up"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Authenticate with GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ inputs.gcp-sa-key }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ inputs.gcp-project-id }}
+
+    - name: Deploy to Cloud Run
+      shell: bash
+      run: |
+        SERVICE_NAME="${{ inputs.service }}-${{ inputs.environment }}"
+        IMAGE="docker.io/gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}"
+
+        echo "==> Deploying $SERVICE_NAME with image $IMAGE"
+
+        gcloud run deploy "$SERVICE_NAME" \
+          --image="$IMAGE" \
+          --region="${{ inputs.region }}" \
+          --project="${{ inputs.gcp-project-id }}" \
+          --quiet
+
+        echo "==> Deployment complete."
+
+    - name: Health check
+      if: ${{ inputs.health-check-url != '' }}
+      shell: bash
+      run: |
+        echo "==> Waiting for service to be ready..."
+        sleep 10
+
+        STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 15 "${{ inputs.health-check-url }}")
+
+        if [[ "$STATUS" -ge 200 && "$STATUS" -lt 400 ]]; then
+          echo "==> Health check passed (HTTP $STATUS)"
+        else
+          echo "::error::Health check failed for ${{ inputs.health-check-url }} (HTTP $STATUS)"
+          exit 1
+        fi

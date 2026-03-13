@@ -13,8 +13,8 @@ import { UploadFile } from "./useCases/UploadFile";
 /**
  * infrastructure dependencies
  */
-const fileRepository = new SupabaseFileRepository();
-const fileStorage = new SupabaseFileStorage();
+const fileRepository = new MockFileRepository();
+const fileStorage = new MockFileStorage();
 
 /**
  * use cases
