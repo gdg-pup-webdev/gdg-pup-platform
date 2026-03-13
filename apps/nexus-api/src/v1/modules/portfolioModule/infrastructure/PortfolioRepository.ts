@@ -1,7 +1,18 @@
 import { NotFoundError, InternalServerError } from "@/v1/errors/HttpError";
 import { supabase } from "@/v1/lib/supabase";
+import { Tables } from "@/v1/types/supabase.types";
 import { IPortfolioRepository } from "../domain/IPortfolioRepository";
 import { Portfolio, PortfolioProps } from "../domain/Portfolio";
+
+type UserProfileRow = Tables<"user_profile">;
+type UserRow = Tables<"user">;
+
+type PortfolioSelectRow = UserProfileRow & {
+  user: Pick<
+    UserRow,
+    "id" | "first_name" | "last_name" | "display_name" | "gdg_id"
+  > | null;
+};
 
 export class PortfolioRepository implements IPortfolioRepository {
   private readonly profileTable = "user_profile";
@@ -16,15 +27,12 @@ export class PortfolioRepository implements IPortfolioRepository {
     github_url,
     linkedin_url,
     portfolio_url,
-    other_links,
-    technical_skills,
-    learning_interests,
-    tools_and_technologies,
-    membership_type,
-    department,
-    year_and_program,
+    program,
+    skills_summary,
+    year_level,
     is_public,
     user:user_id (
+      id,
       first_name,
       last_name,
       display_name,
@@ -32,8 +40,37 @@ export class PortfolioRepository implements IPortfolioRepository {
     )
   `;
 
-  private rowToPortfolio(row: any): Portfolio {
-    const user = row.user ?? {};
+  private toSkillsArray(value: string | null): string[] {
+    if (!value) return [];
+    return value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  private toYearAndProgram(
+    program: string | null,
+    yearLevel: number | null,
+  ): string | null {
+    if (!program && (yearLevel === null || yearLevel === undefined))
+      return null;
+    if (yearLevel === null || yearLevel === undefined) return program;
+    if (!program) return `${yearLevel}`;
+    return `${yearLevel} - ${program}`;
+  }
+
+  private toYearLevel(yearAndProgram: string | null): number | null {
+    if (!yearAndProgram) return null;
+    const match = yearAndProgram.match(/\d+/);
+    if (!match) return null;
+    const parsed = Number(match[0]);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private rowToPortfolio(row: PortfolioSelectRow): Portfolio {
+    const user = row.user;
+    const skills = this.toSkillsArray(row.skills_summary ?? null);
+
     return Portfolio.hydrate({
       id: row.id,
       userId: row.user_id,
@@ -41,23 +78,26 @@ export class PortfolioRepository implements IPortfolioRepository {
       updatedAt: row.updated_at,
 
       fullName:
-        [user.first_name, user.last_name].filter(Boolean).join(" ") || null,
-      nickname: user.display_name ?? null,
-      gdgId: user.gdg_id ?? null,
-      membershipType: row.membership_type ?? null,
-      department: row.department ?? null,
-      yearAndProgram: row.year_and_program ?? null,
+        [user?.first_name, user?.last_name].filter(Boolean).join(" ") || null,
+      nickname: user?.display_name ?? null,
+      gdgId: user?.gdg_id ?? null,
+      membershipType: null,
+      department: null,
+      yearAndProgram: this.toYearAndProgram(
+        row.program ?? null,
+        row.year_level ?? null,
+      ),
 
       bio: row.bio ?? null,
 
       githubUrl: row.github_url ?? null,
       linkedinUrl: row.linkedin_url ?? null,
       portfolioWebsiteUrl: row.portfolio_url ?? null,
-      otherLinks: row.other_links ?? [],
+      otherLinks: [],
 
-      technicalSkills: row.technical_skills ?? [],
-      learningInterests: row.learning_interests ?? [],
-      toolsAndTechnologies: row.tools_and_technologies ?? [],
+      technicalSkills: skills,
+      learningInterests: [],
+      toolsAndTechnologies: [],
 
       isPublic: row.is_public ?? false,
     });
@@ -74,35 +114,55 @@ export class PortfolioRepository implements IPortfolioRepository {
       throw new NotFoundError(`Portfolio not found for ID: ${portfolioId}`);
     }
 
-    return this.rowToPortfolio(data);
+    return this.rowToPortfolio(data as PortfolioSelectRow);
   }
 
   async findByName(displayName: string): Promise<Portfolio> {
+    const { data: userRow, error: userError } = await supabase
+      .from(this.userTable)
+      .select("id")
+      .eq("display_name", displayName)
+      .single();
+
+    if (userError || !userRow) {
+      throw new NotFoundError(`Portfolio not found for name: ${displayName}`);
+    }
+
     const { data, error } = await supabase
       .from(this.profileTable)
       .select(this.selectClause)
-      .eq("user.display_name", displayName)
+      .eq("user_id", userRow.id)
       .single();
 
     if (error || !data) {
       throw new NotFoundError(`Portfolio not found for name: ${displayName}`);
     }
 
-    return this.rowToPortfolio(data);
+    return this.rowToPortfolio(data as PortfolioSelectRow);
   }
 
   async findByGdgId(gdgId: string): Promise<Portfolio> {
+    const { data: userRow, error: userError } = await supabase
+      .from(this.userTable)
+      .select("id")
+      .eq("gdg_id", gdgId)
+      .single();
+
+    if (userError || !userRow) {
+      throw new NotFoundError(`Portfolio not found for GDG ID: ${gdgId}`);
+    }
+
     const { data, error } = await supabase
       .from(this.profileTable)
       .select(this.selectClause)
-      .eq("user.gdg_id", gdgId)
+      .eq("user_id", userRow.id)
       .single();
 
     if (error || !data) {
       throw new NotFoundError(`Portfolio not found for GDG ID: ${gdgId}`);
     }
 
-    return this.rowToPortfolio(data);
+    return this.rowToPortfolio(data as PortfolioSelectRow);
   }
 
   async listPortfolios(
@@ -122,7 +182,10 @@ export class PortfolioRepository implements IPortfolioRepository {
     }
 
     return {
-      list: (data ?? []).map((row) => this.rowToPortfolio(row)),
+      list:
+        (data as PortfolioSelectRow[] | null)?.map((row) =>
+          this.rowToPortfolio(row),
+        ) ?? [],
       count: count ?? 0,
     };
   }
@@ -134,15 +197,23 @@ export class PortfolioRepository implements IPortfolioRepository {
       githubUrl,
       linkedinUrl,
       portfolioWebsiteUrl,
-      otherLinks,
       technicalSkills,
       learningInterests,
       toolsAndTechnologies,
-      membershipType,
-      department,
       yearAndProgram,
       isPublic,
     } = portfolio.props;
+
+    const mergedSkills = Array.from(
+      new Set([
+        ...technicalSkills,
+        ...learningInterests,
+        ...toolsAndTechnologies,
+      ]),
+    );
+    const skillsSummary =
+      mergedSkills.length > 0 ? mergedSkills.join(", ") : null;
+    const yearLevel = this.toYearLevel(yearAndProgram);
 
     const { error } = await supabase
       .from(this.profileTable)
@@ -151,13 +222,9 @@ export class PortfolioRepository implements IPortfolioRepository {
         github_url: githubUrl,
         linkedin_url: linkedinUrl,
         portfolio_url: portfolioWebsiteUrl,
-        other_links: otherLinks,
-        technical_skills: technicalSkills,
-        learning_interests: learningInterests,
-        tools_and_technologies: toolsAndTechnologies,
-        membership_type: membershipType,
-        department,
-        year_and_program: yearAndProgram,
+        program: yearAndProgram,
+        skills_summary: skillsSummary,
+        year_level: yearLevel,
         is_public: isPublic,
       })
       .eq("id", id);

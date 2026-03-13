@@ -1,4 +1,5 @@
 import { supabase } from "@/v1/lib/supabase";
+import { InternalServerError, NotFoundError } from "@/v1/errors/HttpError";
 import { IUserRepository } from "../domain/IUserRepository";
 import { User } from "../domain/User";
 import { Role } from "../domain/Role";
@@ -8,38 +9,49 @@ export class UserRepository implements IUserRepository {
   private readonly junctionTable = "user_role_junction";
 
   async findById(userId: string): Promise<User> {
-    const { data, error } = await supabase
+    // Step 1: Ensure the user exists in the app user table.
+    const { data: userRow, error: userError } = await supabase
       .from(this.userTable)
-      .select(
-        `
-        id,
-        user_role_junction(
-          user_role(
-            id,
-            name,
-            description,
-            user_role_permission(
-              resource,
-              action
-            )
-          )
-        )
-      `
-      )
+      .select("id")
       .eq("id", userId)
       .single();
 
-    if (error || !data) throw new Error(`User not found: ${userId}`);
+    if (userError || !userRow) {
+      throw new NotFoundError(`User not found: ${userId}`, userError);
+    }
+
+    // Step 2: Load assigned roles and permissions from the junction table.
+    const { data: junctionRows, error: junctionError } = await supabase
+      .from(this.junctionTable)
+      .select(
+        `
+        user_role(
+          id,
+          name,
+          description,
+          user_role_permission(
+            resource,
+            action
+          )
+        )
+      `,
+      )
+      .eq("user_id", userId);
+
+    if (junctionError) {
+      throw new InternalServerError(
+        `Failed to load roles and permissions for user: ${userId}`,
+        junctionError,
+      );
+    }
 
     const roleNames: string[] = [];
     const rolesWithPermissions: Role[] = [];
 
-    // Map the deep-joined data back into strings and Role domain entities
-    const junctions = data.user_role_junction || [];
+    // Map role relations back into domain entities.
+    const junctions = junctionRows || [];
     
     for (const junction of junctions) {
-      // Supabase returns referenced relations as objects or arrays of objects.
-      // Type assertion handles the potential single/array return depending on exact PostgREST types.
       const roleData = junction.user_role as any;
 
       if (roleData) {
@@ -58,7 +70,7 @@ export class UserRepository implements IUserRepository {
 
     // Reconstruct the User domain entity with all required props
     return User.hydrate({
-      id: data.id,
+      id: userRow.id,
       roles: roleNames,
       rolesWithPermissions,
     });
