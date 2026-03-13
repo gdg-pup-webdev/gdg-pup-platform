@@ -47,7 +47,7 @@ const meta = {
     },
     gradient: {
       control: "select",
-      options: ["none", "white-blue", "white-yellow", "white-green", "red", "green", "yellow", "blue"],
+      options: ["none", "white-blue", "white-yellow", "white-green", "white-red", "red", "green", "yellow", "blue"],
     },
     truncate: {
       control: "boolean",
@@ -360,6 +360,18 @@ export const GradientHeadings: Story = {
         </Text>
         <Text variant="heading-2" gradient="white-green">
           White to Green Gradient
+        </Text>
+      </Stack>
+
+      <Stack gap="sm">
+        <Text variant="label" color="muted">
+          White to Red Gradient
+        </Text>
+        <Text variant="heading-1" gradient="white-red">
+          Gradient Heading
+        </Text>
+        <Text variant="heading-2" gradient="white-red">
+          White to Red Gradient
         </Text>
       </Stack>
     </Stack>
