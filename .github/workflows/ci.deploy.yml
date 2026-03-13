@@ -11,7 +11,8 @@
 # CONFIGURE TO USE SELECTIVE DEPLOYMENTS
 # =============================================================================
 
-name: Deploy
+name: Deploy [Environment]
+run-name: Deploy [${{ github.event_name == 'workflow_dispatch' && 'dev' || github.event.workflow_run.head_branch == 'main' && 'prod' || github.event.workflow_run.head_branch == 'staging' && 'staging' || 'dev' }}]
 
 on:
   workflow_run:
