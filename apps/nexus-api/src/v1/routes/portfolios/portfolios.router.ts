@@ -14,15 +14,21 @@ export class PortfoliosRouter {
   ) {
     this.router = Router();
 
-    this.router.get("/", this.portfoliosHttpController.listPortfolios);
+    this.router.get(
+      "/",
+      this.authMiddleware.requirePermissions({ portfolios: ["read"] }),
+      this.portfoliosHttpController.listPortfolios,
+    );
 
     this.router.get(
       "/:portfolioId",
+      this.authMiddleware.requirePermissions({ portfolios: ["read"] }),
       this.portfoliosHttpController.getPortfolioById,
     );
 
     this.router.patch(
       "/:portfolioId",
+      this.authMiddleware.requirePermissions({ portfolios: ["update"] }),
       this.portfoliosHttpController.updatePortfolioProperty,
     );
   }
