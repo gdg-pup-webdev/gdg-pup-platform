@@ -1,0 +1,60 @@
+# =============================================================================
+# Docker Build & Push
+# =============================================================================
+# Trigger: push to deploy branches (or manual dispatch).
+# Mode:    non-selective (builds all services).
+# =============================================================================
+
+name: Docker Build & Push
+
+on:
+  push:
+    branches: [deploy-develop, staging, main]
+  workflow_dispatch:
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-nexus-web:
+    name: nexus-web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/builds
+        with:
+          service: nexus-web
+          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          dockerfile: apps/nexus-web/Dockerfile
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          build-args: |
+            NEXT_PUBLIC_NEXUS_API_URL=${{ github.ref_name == 'main' && 'https://api.gdgpup.org' || github.ref_name == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
+            NEXT_PUBLIC_IDENTITY_API_URL=${{ github.ref_name == 'main' && 'https://identity.gdgpup.org' || github.ref_name == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
+
+  build-nexus-api:
+    name: nexus-api
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/builds
+        with:
+          service: nexus-api
+          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          dockerfile: apps/nexus-api/Dockerfile
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  build-identity-api:
+    name: identity-api
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/builds
+        with:
+          service: identity-api
+          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          dockerfile: apps/identity-api/Dockerfile
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}

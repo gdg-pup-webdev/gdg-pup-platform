@@ -1,0 +1,80 @@
+# =============================================================================
+# Shared: Detect Changed Services & Resolve Environment
+# =============================================================================
+# Called by docker-build-push.yml and deploy.yml via workflow_call.
+# Outputs which services changed and which environment to target.
+# =============================================================================
+
+name: Detect Changes
+
+on:
+  workflow_call:
+    inputs:
+      head-sha:
+        description: "The commit SHA to check changes against"
+        required: true
+        type: string
+      head-branch:
+        description: "The branch name to map to an environment"
+        required: true
+        type: string
+    outputs:
+      nexus-web:
+        description: "Whether nexus-web changed"
+        value: ${{ jobs.detect.outputs.nexus-web }}
+      nexus-api:
+        description: "Whether nexus-api changed"
+        value: ${{ jobs.detect.outputs.nexus-api }}
+      identity-api:
+        description: "Whether identity-api changed"
+        value: ${{ jobs.detect.outputs.identity-api }}
+      environment:
+        description: "Resolved environment (dev | staging | prod)"
+        value: ${{ jobs.detect.outputs.environment }}
+
+jobs:
+  detect:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      nexus-web: ${{ steps.filter.outputs.nexus-web }}
+      nexus-api: ${{ steps.filter.outputs.nexus-api }}
+      identity-api: ${{ steps.filter.outputs.identity-api }}
+      environment: ${{ steps.env.outputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.head-sha }}
+          fetch-depth: 0
+
+      - name: Resolve environment from branch
+        id: env
+        shell: bash
+        run: |
+          case "${{ inputs.head-branch }}" in
+            deploy-develop) echo "environment=dev"     >> $GITHUB_OUTPUT ;;
+            staging)        echo "environment=staging" >> $GITHUB_OUTPUT ;;
+            main)           echo "environment=prod"    >> $GITHUB_OUTPUT ;;
+          esac
+
+      - name: Filter changed services
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            nexus-web:
+              - 'apps/nexus-web/**'
+              - 'packages/**'
+              - 'docker-compose.yml'
+              - 'docker-compose.*.yml'
+            nexus-api:
+              - 'apps/nexus-api/**'
+              - 'packages/**'
+              - 'docker-compose.yml'
+              - 'docker-compose.*.yml'
+            identity-api:
+              - 'apps/identity-api/**'
+              - 'packages/**'
+              - 'docker-compose.yml'
+              - 'docker-compose.*.yml'
