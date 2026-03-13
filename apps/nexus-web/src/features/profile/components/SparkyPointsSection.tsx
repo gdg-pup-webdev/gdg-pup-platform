@@ -1,7 +1,7 @@
 "use client";
 
 import { ASSETS } from "@/lib/constants/assets";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { useAuthContext } from "@/providers/AuthProvider";
 import {  Button, Container, Dropdown, DropdownContent, DropdownItem, DropdownTrigger, Grid, Inline, Stack, Text } from "@packages/spark-ui";
 import Image from "next/image";
@@ -11,20 +11,6 @@ import type { PointsTransaction, TaskItem, RewardItem } from "../types";
 import { useSparkyPoints } from "../hooks/useSparkyPoints";
 
 type mobileSections = "main" | "guide" | "redeem" | "history";
-
-function formatDate(date:Date) {
-  const days = String(date.getDate()).padStart(2, '0');
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-
-  let hours: string | number = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = String(hours % 12 || 12).padStart(2, '0');
-
-  return `${days}, ${month} ${year} . ${hours}:${minutes} ${ampm}`;
-}
 
 const GRADIENT_BORDER_BASE = "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-px before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude";
 const RAINBOW_GRADIENT_COLOR = "before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]";
