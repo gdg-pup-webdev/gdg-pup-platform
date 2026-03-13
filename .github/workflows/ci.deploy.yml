@@ -1,0 +1,83 @@
+# =============================================================================
+# Deploy to Cloud Run
+# =============================================================================
+# Trigger: after Docker Build & Push succeeds.
+# Manual:  workflow_dispatch for pre-merge branch testing (deploys to dev).
+# Mode:    non-selective (deploys all services).
+# Logic:   deploy → .github/deployments/action.yml
+# Note:    never cancel in-progress deploys (cancel-in-progress: false)
+# Note:    Storybook deploy is intentionally disabled until Cloud Run resources
+#          and the Storybook subdomain/DNS are provisioned.
+# CONFIGURE TO USE SELECTIVE DEPLOYMENTS
+# =============================================================================
+
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Docker Build & Push"]
+    types: [completed]
+    branches: [deploy-develop, staging, main]
+  workflow_dispatch:
+    inputs:
+      test_ref:
+        description: "Branch, tag, or SHA to deploy to dev for testing"
+        required: false
+        type: string
+        default: "feat/ci-cd-implementation"
+
+concurrency:
+  group: deploy-${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.ref_name) || github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  deploy-nexus-web:
+    name: nexus-web
+    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
+      - uses: ./.github/deployments
+        with:
+          service: nexus-web
+          environment: ${{ github.event_name == 'workflow_dispatch' && 'dev' || github.event.workflow_run.head_branch == 'main' && 'prod' || github.event.workflow_run.head_branch == 'staging' && 'staging' || 'dev' }}
+          gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
+          gcp-project-id: ${{ secrets.GCP_PROJECT_ID }}
+          health-check-url: ${{ github.event_name == 'workflow_dispatch' && 'https://dev.gdgpup.org' || github.event.workflow_run.head_branch == 'main' && 'https://gdgpup.org' || github.event.workflow_run.head_branch == 'staging' && 'https://staging.gdgpup.org' || 'https://dev.gdgpup.org' }}
+
+  deploy-nexus-api:
+    name: nexus-api
+    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
+      - uses: ./.github/deployments
+        with:
+          service: nexus-api
+          environment: ${{ github.event_name == 'workflow_dispatch' && 'dev' || github.event.workflow_run.head_branch == 'main' && 'prod' || github.event.workflow_run.head_branch == 'staging' && 'staging' || 'dev' }}
+          gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
+          gcp-project-id: ${{ secrets.GCP_PROJECT_ID }}
+          health-check-url: ${{ github.event_name == 'workflow_dispatch' && 'https://api.dev.gdgpup.org/api/health' || github.event.workflow_run.head_branch == 'main' && 'https://api.gdgpup.org/api/health' || github.event.workflow_run.head_branch == 'staging' && 'https://api.staging.gdgpup.org/api/health' || 'https://api.dev.gdgpup.org/api/health' }}
+
+  deploy-identity-api:
+    name: identity-api
+    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
+      - uses: ./.github/deployments
+        with:
+          service: identity-api
+          environment: ${{ github.event_name == 'workflow_dispatch' && 'dev' || github.event.workflow_run.head_branch == 'main' && 'prod' || github.event.workflow_run.head_branch == 'staging' && 'staging' || 'dev' }}
+          gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
+          gcp-project-id: ${{ secrets.GCP_PROJECT_ID }}
+          health-check-url: ${{ github.event_name == 'workflow_dispatch' && 'https://identity.dev.gdgpup.org/api/health' || github.event.workflow_run.head_branch == 'main' && 'https://identity.gdgpup.org/api/health' || github.event.workflow_run.head_branch == 'staging' && 'https://identity.staging.gdgpup.org/api/health' || 'https://identity.dev.gdgpup.org/api/health' }}
