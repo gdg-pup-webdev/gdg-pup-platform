@@ -17,12 +17,12 @@
   "dependencies": {
     "@packages/identity-api-contracts": "workspace:*",
     "@packages/typed-rest": "workspace:*",
-    "@supabase/supabase-js": "^2.86.0",
+    "@supabase/supabase-js": "^2.99.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "express-rate-limit": "^8.2.1",
+    "express-rate-limit": "^8.3.1",
     "firebase-admin": "^13.6.0",
     "module-alias": "^2.2.3",
     "nanoid": "^5.1.6",
@@ -32,7 +32,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "tsc-alias": "^1.8.16",
-    "zod": "^4.1.12"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
