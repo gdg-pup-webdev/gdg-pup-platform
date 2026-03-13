@@ -2,7 +2,7 @@
 # Docker Build & Push
 # =============================================================================
 # Trigger: push to deploy branches (or manual dispatch).
-# Mode:    non-selective (builds all services).
+# Mode:    non-selective (builds all services, including storybook).
 # CONFIGURE TO USE SELECTIVE BUILDINGS
 # =============================================================================
 
@@ -60,5 +60,18 @@ jobs:
           service: identity-api
           environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
           dockerfile: apps/identity-api/Dockerfile
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
+
+  build-storybook:
+    name: storybook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/builds
+        with:
+          service: storybook
+          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          dockerfile: apps/storybook/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}

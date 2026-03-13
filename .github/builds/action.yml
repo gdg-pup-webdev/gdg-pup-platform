@@ -3,7 +3,7 @@ description: "Build a Docker image and push to Docker Hub"
 
 inputs:
   service:
-    description: "Service name (nexus-web, nexus-api, identity-api)"
+    description: "Service name (nexus-web, nexus-api, identity-api, storybook)"
     required: true
   environment:
     description: "Target environment (dev, staging, prod)"
