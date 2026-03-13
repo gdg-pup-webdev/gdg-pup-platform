@@ -11,6 +11,9 @@ import { FilesRouter } from "../routes/files/files.router";
 import { GdgScrapedEventsHttpController } from "../routes/gdg-scraped-events/gdgScrapedEvents.controller";
 import { bevyEventController } from "../modules/bevyEvents";
 import { GdgScrapedEventsRouter } from "../routes/gdg-scraped-events/gdgScrapedEvents.router";
+import { taskModuleController } from "../modules/tasksModule";
+import { TasksHttpController } from "../routes/tasks/tasks.controller";
+import { TasksRouter } from "../routes/tasks/tasks.router";
 import { RolesRouter } from "../routes/roles/roles.router";
 import { RolesHttpController } from "../routes/roles/roles.controller";
 import { rbacController } from "../modules/rbacSystem";
@@ -42,6 +45,12 @@ export const loadRoutes = (app: Express) => {
 
   const rolesHttpController = new RolesHttpController(rbacController);
   const rolesRouter = new RolesRouter(rolesHttpController);
+  const tasksHttpController = new TasksHttpController(taskModuleController);
+  const tasksRouter = new TasksRouter(tasksHttpController);
+
+  const rolesHttpController=  new RolesHttpController(rbacController);
+  const rolesRouter=  new RolesRouter(rolesHttpController);
+
 
   const usersHttpController = new UsersHttpController(rbacController);
   const usersRouter = new UsersRouter(usersHttpController);
@@ -55,6 +64,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/auth-system", authRouter.router);
   app.use("/health", healthRouter.router);
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);
+  app.use("/tasks", tasksRouter.router);
   app.use("/roles", rolesRouter.router);
   app.use("/users", usersRouter.router);
   app.use("/portfolios", portfoliosRouter.router);
