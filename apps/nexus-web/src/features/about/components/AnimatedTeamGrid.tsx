@@ -71,13 +71,30 @@ export function AnimatedTeamGrid({ children }: AnimatedTeamGridProps) {
       variants={gridVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      className="grid grid-cols-2 gap-x-4 gap-y-8 p-3 pb-10 sm:grid-cols-3 lg:grid-cols-4"
+      className="grid grid-cols-1 justify-items-center gap-x-4 gap-y-8 p-3 pb-10 md:grid-cols-3 md:justify-items-stretch lg:grid-cols-4"
     >
-      {React.Children.map(children, (child) =>
-        child == null ? null : (
-          <motion.div variants={cardVariants}>{child}</motion.div>
-        )
-      )}
+      {React.Children.map(children, (child) => {
+        if (child == null) return null;
+
+        const isFullRow =
+          React.isValidElement(child) &&
+          child.props &&
+          child.props["data-grid-span"] === "full";
+
+        return (
+          <motion.div
+            variants={cardVariants}
+            className={
+              isFullRow
+                ? "col-span-1 md:col-span-3 lg:col-span-4"
+                : "w-full flex justify-center md:block"
+            }
+          >
+            {child}
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 }
+

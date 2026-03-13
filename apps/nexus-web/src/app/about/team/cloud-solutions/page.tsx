@@ -37,13 +37,15 @@ const CLOUD_SOLUTION_MEMBERS = [
 
 export default function CloudSolutionPage() {
   return (
-    <Stack gap="xl">
+    <Stack gap="xl" className="w-full max-md:items-center">
       <Stack gap="xs">
-        <Text variant="heading-3" weight="bold" gradient="white-yellow">
+        <Text
+          variant="heading-4"
+          weight="bold"
+          gradient="white-yellow"
+          className="ml-3 max-md:w-full max-md:ml-0 max-md:text-center max-md:self-center max-md:text-[40px] max-md:leading-[1.1]"
+        >
           Cloud Solutions
-        </Text>
-        <Text variant="body" className="text-white/50">
-          Exploring and building on cloud platforms and infrastructure.
         </Text>
       </Stack>
       <AnimatedTeamGrid>
@@ -61,3 +63,7 @@ export default function CloudSolutionPage() {
     </Stack>
   );
 }
+
+
+
+
