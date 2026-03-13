@@ -6,6 +6,33 @@ export class RoleRepository implements IRoleRepository {
   private readonly roleTable = "user_role";
   private readonly permissionTable = "user_role_permission";
 
+  async deleteById(id: string): Promise<void> {
+    const { error } = await supabase
+      .from(this.roleTable)
+      .delete()
+      .eq("id", id);
+
+    if (error) throw new Error(`Failed to delete role: ${error.message}`);
+  }
+
+  async findById(id: string): Promise<Role> {
+    const { data, error } = await supabase
+      .from(this.roleTable)
+      .select(`*, user_role_permission(resource, action)`)
+      .eq("id", id)
+      .single();
+
+    if (error || !data) throw new Error(`Role not found: ${id}`);
+
+    // Reconstruct the domain entity
+    return Role.hydrate({
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      permissions: data.user_role_permission || [],
+    });
+  }
+
   async saveNew(role: Role): Promise<Role> {
     const { id, name, description, permissions } = role.props;
 

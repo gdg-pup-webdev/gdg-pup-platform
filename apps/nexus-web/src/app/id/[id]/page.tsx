@@ -12,6 +12,7 @@
 
 import React, { useState } from "react";
 import { configs } from "@/configs/servers.config";
+import { ASSETS } from "@/lib/constants/assets";
 
 export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
   // Unwrap the params Promise (required in Next.js 15+)
@@ -87,10 +88,10 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
     bio: profile?.bio || "No bio available.",
     company: "Polytechnic University of the Philippines",
     location: "Manila, Philippines",
-    // Use user's avatar_url if available, fallback to deterministic avatar
+    // Use user's avatar_url if available, fallback to the default avatar asset
     avatar:
       userData?.avatar_url ||
-      `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}`,
+      ASSETS.AUTH.AVATAR_DEFAULT,
     socials: [
       profile?.github_url && {
         name: "GitHub",

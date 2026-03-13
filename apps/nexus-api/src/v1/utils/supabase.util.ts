@@ -1,11 +1,18 @@
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
+import { Database } from "../types/supabase.types";
 
- 
+ type TableWithId = {
+  [K in keyof Database["public"]["Tables"]]: Database["public"]["Tables"][K]["Row"] extends { id: any } 
+    ? K 
+    : never
+}[keyof Database["public"]["Tables"]];
 
 export namespace SupabaseUtils {
-  export const listRowsByFilter = async (
-    tableName: string,
+  export const listRowsByFilter = async <
+    T extends keyof Database["public"]["Tables"]
+  >(
+    tableName: T,
     pageNumber: number,
     pageSize: number,
     filters?: Record<string, any>,
@@ -45,8 +52,10 @@ export namespace SupabaseUtils {
     return { list: data, count: count || 0 };
   };
 
-  export const listRows = async (
-    tablename: string,
+  export const listRows = async <
+    T extends keyof Database["public"]["Tables"]
+  >(
+    tablename: T,
     pageNumber: number,
     pageSize: number,
   ) => {
@@ -58,17 +67,19 @@ export namespace SupabaseUtils {
     return { list: data, count: count || 0 };
   };
 
-  export const getOneRow = async (tablename: string, id: string) => {
+  export const getOneRow = async <T extends TableWithId>(tablename: T, id: string) => {
     const { data, error } = await supabase
       .from(tablename)
       .select("*")
-      .eq("id", id)
+      .eq("id" as any, id)
       .single();
     if (error) handlePostgresError(error);
     return data;
   };
 
-  export const createRow = async (tablename: string, dto: any) => {
+  export const createRow = async <
+    T extends keyof Database["public"]["Tables"]
+  >(tablename: T, dto: any) => {
     const { data, error } = await supabase
       .from(tablename)
       .insert(dto)
@@ -78,24 +89,34 @@ export namespace SupabaseUtils {
     return data;
   };
 
-  export const updateRow = async (tablename: string, id: string, dto: any) => {
+  export const updateRow = async <T extends TableWithId>(
+    tablename: T,
+    id: string,
+    dto: Database["public"]["Tables"][T]["Update"]
+  ) => {
     const { data, error } = await supabase
       .from(tablename)
-      .update(dto)
-      .eq("id", id)
+      // We cast the column name to any to satisfy the complex internal Supabase Filter type
+      .update(dto as any)
+      .eq("id" as any, id) 
       .select("*")
       .maybeSingle();
+
     if (error) handlePostgresError(error);
     return data;
   };
 
-  export const deleteRow = async (tablename: string, id: string) => {
+  export const deleteRow = async <T extends TableWithId>(
+    tablename: T,
+    id: string
+  ) => {
     const { data, error } = await supabase
       .from(tablename)
       .delete()
-      .eq("id", id)
+      .eq("id" as any, id)
       .select("*")
       .single();
+
     if (error) handlePostgresError(error);
     return data;
   };

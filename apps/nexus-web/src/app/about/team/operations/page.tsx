@@ -1,91 +1,91 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/operations";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
 
 const OPERATION_MEMBERS = [
   {
     name: "Elija Cabaddu",
     role: "Chief Operations Officer (COO)",
-    imageSrc: `${BASE}/elija-cabaddu.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.ELIJA_CABADDU,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Aifah Mae Maddie",
     role: "Deputy Chief Operations Officer (DCOO)",
-    imageSrc: `${BASE}/aifah-mae-maddie.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.AIFAH_MADDIE,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Jinrikisha Omela",
     role: "Technicals Lead",
-    imageSrc: `${BASE}/jinrikisha-omela.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.JINRIKISHA_OMELA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Danielle Pauleen Labasa",
     role: "Technicals Co-Lead",
-    imageSrc: `${BASE}/danielle-pauleen-labasa.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.DANIELLE_LABASA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Charles Lalata",
     role: "Technicals Senior Lead",
-    imageSrc: `${BASE}/charles-lalata.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.CHARLES_LALATA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Eugene Gonzaga",
     role: "Technicals Junior Lead",
-    imageSrc: `${BASE}/eugene-gonzaga.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.EUGENE_GONZAGA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Maria Angeline Aguirre",
     role: "Programs Lead",
-    imageSrc: `${BASE}/maria-angeline-aguirre.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.MARIA_AGUIRRE,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Jade Micah Lazaro",
     role: "Programs Co-Lead",
-    imageSrc: `${BASE}/jade-micah-lazaro.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.JADE_LAZARO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Kishey Ibañez",
     role: "Logistics Lead",
-    imageSrc: `${BASE}/kishey-ibanez.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.KISHEY_IBANEZ,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Alessa Estaras",
     role: "Logistics Co-Lead",
-    imageSrc: `${BASE}/alessa-estaras.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.ALESSA_ESTARAS,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Hans Ezekiel Naperi",
     role: "Documentations Lead",
-    imageSrc: `${BASE}/hans-ezekiel-naperi.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.HANS_NAPERI,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Cali Dominic Ranjo",
     role: "Documentations Co-Lead",
-    imageSrc: `${BASE}/cali-dominic-ranjo.png`,
+    imageSrc: ASSETS.TEAM.OPERATIONS.CALI_RANJO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

@@ -109,6 +109,7 @@ export type Database = {
           creator_id: string | null
           description: string | null
           end_date: string | null
+          gdg_event_id: number | null
           id: string
           start_date: string | null
           title: string
@@ -123,6 +124,7 @@ export type Database = {
           creator_id?: string | null
           description?: string | null
           end_date?: string | null
+          gdg_event_id?: number | null
           id?: string
           start_date?: string | null
           title: string
@@ -137,6 +139,7 @@ export type Database = {
           creator_id?: string | null
           description?: string | null
           end_date?: string | null
+          gdg_event_id?: number | null
           id?: string
           start_date?: string | null
           title?: string
@@ -144,6 +147,13 @@ export type Database = {
           venue?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "event_gdg_event_id_fkey"
+            columns: ["gdg_event_id"]
+            isOneToOne: true
+            referencedRelation: "scraped_gdg_events"
+            referencedColumns: ["gdg_id"]
+          },
           {
             foreignKeyName: "events_creator_id_fkey"
             columns: ["creator_id"]
@@ -232,6 +242,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      file_record: {
+        Row: {
+          file_description: string | null
+          file_name: string | null
+          file_path: string | null
+          id: string
+          preview_url: string | null
+          storage_ref: string | null
+        }
+        Insert: {
+          file_description?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          preview_url?: string | null
+          storage_ref?: string | null
+        }
+        Update: {
+          file_description?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          preview_url?: string | null
+          storage_ref?: string | null
+        }
+        Relationships: []
       }
       gdg_members: {
         Row: {
@@ -435,28 +472,103 @@ export type Database = {
           },
         ]
       }
+      scraped_gdg_events: {
+        Row: {
+          attendee_virtual_venue_link: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          description_short: string | null
+          end_date: string
+          event_type: string | null
+          event_type_slug: string | null
+          gdg_id: number
+          is_virtual_event: boolean | null
+          last_scraped_at: string | null
+          location: string | null
+          start_date: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          total_attendees: number | null
+          total_capacity: number | null
+          updated_at: string | null
+          url: string
+          video_url: string | null
+        }
+        Insert: {
+          attendee_virtual_venue_link?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          description_short?: string | null
+          end_date: string
+          event_type?: string | null
+          event_type_slug?: string | null
+          gdg_id: number
+          is_virtual_event?: boolean | null
+          last_scraped_at?: string | null
+          location?: string | null
+          start_date: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          total_attendees?: number | null
+          total_capacity?: number | null
+          updated_at?: string | null
+          url: string
+          video_url?: string | null
+        }
+        Update: {
+          attendee_virtual_venue_link?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          description_short?: string | null
+          end_date?: string
+          event_type?: string | null
+          event_type_slug?: string | null
+          gdg_id?: number
+          is_virtual_event?: boolean | null
+          last_scraped_at?: string | null
+          location?: string | null
+          start_date?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          total_attendees?: number | null
+          total_capacity?: number | null
+          updated_at?: string | null
+          url?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       study_jam: {
         Row: {
           created_at: string
+          creator_id: string | null
           description: string
           id: string
-          recording_url: string
+          recording_url: string | null
           summary: string
           title: string
         }
         Insert: {
           created_at?: string
+          creator_id?: string | null
           description: string
           id?: string
-          recording_url: string
+          recording_url?: string | null
           summary: string
           title: string
         }
         Update: {
           created_at?: string
+          creator_id?: string | null
           description?: string
           id?: string
-          recording_url?: string
+          recording_url?: string | null
           summary?: string
           title?: string
         }
@@ -600,21 +712,21 @@ export type Database = {
         Row: {
           description: string
           id: string
-          image_url: string
+          image_url: string | null
           title: string
           user_id: string
         }
         Insert: {
           description: string
           id?: string
-          image_url: string
+          image_url?: string | null
           title: string
           user_id: string
         }
         Update: {
           description?: string
           id?: string
-          image_url?: string
+          image_url?: string | null
           title?: string
           user_id?: string
         }
@@ -827,22 +939,28 @@ export type Database = {
           balance: number
           created_at: string
           id: string
+          spark_points: number
           updated_at: string
           user_id: string
+          webdev_points: number | null
         }
         Insert: {
           balance: number
           created_at?: string
           id?: string
+          spark_points?: number
           updated_at?: string
           user_id: string
+          webdev_points?: number | null
         }
         Update: {
           balance?: number
           created_at?: string
           id?: string
+          spark_points?: number
           updated_at?: string
           user_id?: string
+          webdev_points?: number | null
         }
         Relationships: [
           {
@@ -859,32 +977,35 @@ export type Database = {
           amount: number
           created_at: string
           id: string
+          point_type: string | null
           source_id: string
           source_type: string
-          wallet_id: string
+          user_id: string
         }
         Insert: {
           amount?: number
           created_at?: string
           id?: string
+          point_type?: string | null
           source_id: string
           source_type: string
-          wallet_id: string
+          user_id: string
         }
         Update: {
           amount?: number
           created_at?: string
           id?: string
+          point_type?: string | null
           source_id?: string
           source_type?: string
-          wallet_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "wallet_transaction_wallet_id_fkey"
-            columns: ["wallet_id"]
+            foreignKeyName: "wallet_transaction_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "wallet"
+            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]

@@ -1,35 +1,35 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/web-development";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
 
 const WEB_DEVELOPMENT_MEMBERS = [
   {
     name: "Erwin Daguinotas",
     role: "Web Development Lead",
-    imageSrc: `${BASE}/erwin-daguinotas.png`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.ERWIN_DAGUINOTAS,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Rhandie Sales Jr.",
     role: "Web Development Co-Lead",
-    imageSrc: `${BASE}/rhandie-sales-jr.png`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.RHANDIE_SALES,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Daniella Simara",
     role: "Web Development Learning Head Committee",
-    imageSrc: `${BASE}/daniella-simara.png`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.DANIELLA_SIMARA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Gerald Berongoy",
     role: "Web Development Learning Head Committee",
-    imageSrc: `${BASE}/gerald-berongoy.png`,
+    imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.GERALD_BERONGOY,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

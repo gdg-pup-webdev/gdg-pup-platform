@@ -11,6 +11,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
 
   /* ===== Background Gradient Animation (Aceternity) ===== */
   --animate-first: moveVertical 90s ease infinite;
@@ -22,26 +23,148 @@
   /* ===== History page zoned blob drift ===== */
   /* --travel controls the max drift distance per blob (set as inline style) */
   @keyframes blobDriftV {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(var(--travel, 38px)); }
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(var(--travel, 38px));
+    }
   }
+
   @keyframes blobDriftH {
-    0%, 100% { transform: translateX(0px); }
-    50%       { transform: translateX(var(--travel, 34px)); }
+
+    0%,
+    100% {
+      transform: translateX(0px);
+    }
+
+    50% {
+      transform: translateX(var(--travel, 34px));
+    }
   }
+
   @keyframes blobDriftD {
-    0%, 100% { transform: translate(0px, 0px); }
-    33%       { transform: translate(var(--travel, 28px), calc(var(--travel, 28px) * 0.65)); }
-    66%       { transform: translate(calc(var(--travel, 28px) * -0.65), var(--travel, 28px)); }
+
+    0%,
+    100% {
+      transform: translate(0px, 0px);
+    }
+
+    33% {
+      transform: translate(var(--travel, 28px), calc(var(--travel, 28px) * 0.65));
+    }
+
+    66% {
+      transform: translate(calc(var(--travel, 28px) * -0.65), var(--travel, 28px));
+    }
   }
+
+  /* ===== GDG ID Page animations ===== */
+
+  @keyframes spotlight {
+    0% {
+      opacity: 0;
+      transform: translate(-72%, -62%) scale(0.5);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -40%) scale(1);
+    }
+  }
+
+  /* Spiral layers: fade-in + subtle scale up */
+  @keyframes spiralFadeIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.92) rotate(-4deg);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  /* Left decorative element: slides from center to the left */
+  @keyframes decorSplitLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(40%);
+    }
+
+    20% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateX(0%);
+    }
+  }
+
+  /* Right decorative element: slides from center to the right */
+  @keyframes decorSplitRight {
+    0% {
+      opacity: 0;
+      transform: translateX(-40%);
+    }
+
+    20% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateX(0%);
+    }
+  }
+
+  /* Card: scale + fade in once the split opens */
+  @keyframes cardReveal {
+    0% {
+      opacity: 0;
+      transform: scale(0.8) translateY(20px);
+    }
+
+    60% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0px);
+    }
+  }
+
+  /* Platform glow ring beneath the card */
+  @keyframes platformGlow {
+
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: translateX(-50%) scaleX(1);
+    }
+
+    50% {
+      opacity: 1;
+      transform: translateX(-50%) scaleX(1.06);
+    }
+  }
+
 
   @keyframes moveHorizontal {
     0% {
       transform: translateX(-50%) translateY(-10%);
     }
+
     50% {
       transform: translateX(50%) translateY(10%);
     }
+
     100% {
       transform: translateX(-50%) translateY(-10%);
     }
@@ -51,9 +174,11 @@
     0% {
       transform: rotate(0deg);
     }
+
     50% {
       transform: rotate(180deg);
     }
+
     100% {
       transform: rotate(360deg);
     }
@@ -63,13 +188,42 @@
     0% {
       transform: translateY(-50%);
     }
+
     50% {
       transform: translateY(50%);
     }
+
     100% {
       transform: translateY(-50%);
     }
   }
+}
+
+/* ── IdInfoCard — gradient border (1px top/right/left, 0px bottom) ────────── */
+.id-info-card {
+  position: relative;
+  isolation: isolate;
+  border-radius: 28px;
+  background: #FFFFFF14;
+}
+
+.id-info-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px 1px 0 1px;
+  background: linear-gradient(90deg, #EA4335 0%, #F9AB00 33%, #34A853 66%, #4285F4 100%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {

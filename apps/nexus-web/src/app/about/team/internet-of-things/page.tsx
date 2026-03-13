@@ -1,28 +1,28 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/internet-of-things";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
 
 const IOT_MEMBERS = [
   {
     name: "Daniel Rein Cosare",
     role: "IoT Lead",
-    imageSrc: `${BASE}/daniel-rein-cosare.png`,
+    imageSrc: ASSETS.TEAM.INTERNET_OF_THINGS.DANIEL_COSARE,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Carl Melvin A. Erosa",
     role: "IoT Co-Lead",
-    imageSrc: `${BASE}/carl-melvin-a-erosa.png`,
+    imageSrc: ASSETS.TEAM.INTERNET_OF_THINGS.CARL_EROSA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Shan Allen T. Rivera",
     role: "IoT Learning Head Committee",
-    imageSrc: `${BASE}/shan-allen-t-rivera.png`,
+    imageSrc: ASSETS.TEAM.INTERNET_OF_THINGS.SHAN_ALLEN_RIVERA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

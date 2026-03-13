@@ -31,8 +31,9 @@ export default function RootLayout({
 }>) {
   console.log("Rendering RootLayout");
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>

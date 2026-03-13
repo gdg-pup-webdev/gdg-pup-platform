@@ -1,63 +1,63 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/creatives";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
 
 const CREATIVES_MEMBERS = [
   {
     name: "Ayen Mejorada",
     role: "Chief Creatives Officer (CCO)",
-    imageSrc: `${BASE}/ayen-mejorada.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.AYEN_MEJORADA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Hesed Suñga",
     role: "Deputy Chief Creatives Officer (DCCO)",
-    imageSrc: `${BASE}/hesed-sunga.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.HESED_SUNGA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Daniella J. Mendoza",
     role: "Graphic Design Lead",
-    imageSrc: `${BASE}/daniella-j-mendoza.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.DANIELLA_MENDOZA,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Michael Marquez",
     role: "Social Media Manager Co-Lead",
-    imageSrc: `${BASE}/michael-marquez.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.MICHAEL_MARQUEZ,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Alecza Patrice Bonifacio",
     role: "Branding & Assets Lead",
-    imageSrc: `${BASE}/alecza-patrice-bonifacio.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.ALECZA_BONIFACIO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Cyruz Cordero Arcan",
     role: "Branding & Assets Co-Lead",
-    imageSrc: `${BASE}/cyruz-cordero-arcan.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.CYRUZ_ARCAN,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Matthew Erivera Cucio",
     role: "Audio & Visuals Lead",
-    imageSrc: `${BASE}/matthew-erivera-cucio.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.MATTHEW_CUCIO,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Emanuel Jabon",
     role: "Audio & Visuals Co-Lead",
-    imageSrc: `${BASE}/emanuel-jabon.png`,
+    imageSrc: ASSETS.TEAM.CREATIVES.EMANUEL_JABON,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

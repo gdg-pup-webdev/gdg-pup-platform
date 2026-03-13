@@ -6,8 +6,9 @@ import { DeleteRoleUseCase } from "./useCase/DeleteRoleUseCase";
 import { GetRoleUseCase } from "./useCase/GetRoleUseCase";
 import { ListRoleUseCase } from "./useCase/ListRolesUseCase";
 import { RemovePermissionFromRoleUseCase } from "./useCase/RemovePermissionFromRoleUseCase";
-import { RemoveRoleFromUserUserCase } from "./useCase/RemoveRoleFromUserUserCase"; 
+import { RemoveRoleFromUserUserCase } from "./useCase/RemoveRoleFromUserUserCase";
 import { UpdateRoleUseCase } from "./useCase/UpdateRoleUseCase";
+import { GetRolesAndPermissionsOfUser } from "./useCase/GetRolesAndPermissionsOfUser";
 
 export class RbacModuleController {
   constructor(
@@ -20,7 +21,23 @@ export class RbacModuleController {
     private removePermissionFromRoleUseCase: RemovePermissionFromRoleUseCase,
     private removeRoleFromUserUseCase: RemoveRoleFromUserUserCase,
     private updateRoleUseCase: UpdateRoleUseCase,
+    private getRolesAndPermissionsOfUserUseCase: GetRolesAndPermissionsOfUser,
   ) {}
+
+  async getRolesAndPermissionsOfUser(userId: string) {
+    const result =
+      await this.getRolesAndPermissionsOfUserUseCase.execute(userId);
+
+    return result.map((role) => ({
+      name: role.props.name,
+      description: role.props.description,
+      id: role.props.id,
+      permissions: role.props.permissions.map((permission) => ({
+        resource: permission.resource,
+        action: permission.action,
+      })),
+    }));
+  }
 
   async assignRoleToUser(userId: string, roleName: string) {
     const result = await this.assignRoleToUserUseCase.execute(userId, roleName);

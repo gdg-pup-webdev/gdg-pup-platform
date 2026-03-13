@@ -1,35 +1,35 @@
 import { Stack, Text, TeamCard } from "@packages/spark-ui";
 import { AnimatedTeamGrid } from "@/features/about";
+import { ASSETS } from "@/lib/constants/assets";
 
-const MASCOT_SRC = "/pages/team/mascot.png";
-const BASE = "/pages/team/cybersecurity";
+const MASCOT_SRC = ASSETS.TEAM.MASCOT;
 
 const CYBERSECURITY_MEMBERS = [
   {
     name: "Clarisse Jem Salazar",
     role: "Cybersecurity Lead",
-    imageSrc: `${BASE}/clarisse-jem-salazar.png`,
+    imageSrc: ASSETS.TEAM.CYBERSECURITY.CLARISSE_SALAZAR,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "John Victor Claudio Duatin",
     role: "Cybersecurity Co-Lead",
-    imageSrc: `${BASE}/john-victor-claudio-duatin.png`,
+    imageSrc: ASSETS.TEAM.CYBERSECURITY.JOHN_DUATIN,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Salvador Vincent Javier",
     role: "Cybersecurity Learning Head Committee",
-    imageSrc: `${BASE}/salvador-vincent-javier.png`,
+    imageSrc: ASSETS.TEAM.CYBERSECURITY.SALVADOR_JAVIER,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },
   {
     name: "Emmanuel Mutas",
     role: "Cybersecurity Learning Head Committee",
-    imageSrc: `${BASE}/emmanuel-mutas.png`,
+    imageSrc: ASSETS.TEAM.CYBERSECURITY.EMMANUEL_MUTAS,
     mascotSrc: MASCOT_SRC,
     socials: { linkedin: "#", twitter: "#", instagram: "#", facebook: "#" },
   },

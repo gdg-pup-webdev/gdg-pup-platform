@@ -24,35 +24,38 @@ export class EventController {
    * @route GET /api/event-system/events
    * @returns JSON response containing the list of events and pagination metadata.
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
+   * 
+   * @deprecated
    */
   listEvents: RequestHandler = createExpressController(
     contract.api.event_system.events.GET,
     async ({ input, output }) => {
-      const pageNumber = input.query.pageNumber;
-      const pageSize = input.query.pageSize;
-      const filters = {
-        creator_id: input.query.creator_id,
-        category: input.query.category,
-        venue: input.query.venue,
-        start_date_gte: input.query.start_date_gte,
-        start_date_lte: input.query.start_date_lte,
-        end_date_gte: input.query.end_date_gte,
-        end_date_lte: input.query.end_date_lte,
-      };
+      throw new Error("This endpoint is deprecated an no longer work.");
+      // const pageNumber = input.query.pageNumber;
+      // const pageSize = input.query.pageSize;
+      // const filters = {
+      //   creator_id: input.query.creator_id,
+      //   category: input.query.category,
+      //   venue: input.query.venue,
+      //   start_date_gte: input.query.start_date_gte,
+      //   start_date_lte: input.query.start_date_lte,
+      //   end_date_gte: input.query.end_date_gte,
+      //   end_date_lte: input.query.end_date_lte,
+      // };
 
-      const data = await this.eventService.list(pageNumber, pageSize, filters);
+      // const data = await this.eventService.list(pageNumber, pageSize, filters);
 
-      return output(200, {
-        status: "success",
-        message: "Events fetched successfully",
-        data: data.list,
-        meta: {
-          totalRecords: data.count,
-          currentPage: pageNumber,
-          pageSize,
-          totalPages: Math.ceil(data.count / pageSize),
-        },
-      });
+      // return output(200, {
+      //   status: "success",
+      //   message: "Events fetched successfully",
+      //   data: data.list,
+      //   meta: {
+      //     totalRecords: data.count,
+      //     currentPage: pageNumber,
+      //     pageSize,
+      //     totalPages: Math.ceil(data.count / pageSize),
+      //   },
+      // });
     },
   );
 
@@ -62,23 +65,26 @@ export class EventController {
    * @route POST /api/event-system/events
    * @returns JSON response containing the created event.
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
+   * 
+   * @deprecated
    */
   createEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.POST,
     async ({ input, output, ctx }) => {
-      const { req } = ctx;
-      const userId = req.user?.id;
-      if (!userId) throw new UnauthorizedError("User ID is required");
+      throw new Error("This endpoint is deprecated and no longer work.");
+      // const { req } = ctx;
+      // const userId = req.user?.id;
+      // if (!userId) throw new UnauthorizedError("User ID is required");
 
-      const dto = input.body.data;
+      // const dto = input.body.data;
 
-      const data = await this.eventService.create(dto, userId);
+      // const data = await this.eventService.create(dto, userId);
 
-      return output(200, {
-        status: "success",
-        message: "Event created successfully",
-        data,
-      });
+      // return output(200, {
+      //   status: "success",
+      //   message: "Event created successfully",
+      //   data,
+      // });
     },
   );
 
@@ -88,20 +94,23 @@ export class EventController {
    * @route PATCH /api/event-system/events/:eventId
    * @returns JSON response containing the updated event.
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
+   * 
+   * @deprecated
    */
   updateEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.PATCH,
     async ({ input, output }) => {
-      const eventId = input.params.eventId;
-      const dto = input.body.data;
+      throw new Error("This endpoint is deprecated and no longer work.");
+      // const eventId = input.params.eventId;
+      // const dto = input.body.data;
 
-      const data = await this.eventService.update(eventId, dto);
+      // const data = await this.eventService.update(eventId, dto);
 
-      return output(200, {
-        status: "success",
-        message: "Event updated successfully",
-        data,
-      });
+      // return output(200, {
+      //   status: "success",
+      //   message: "Event updated successfully",
+      //   data,
+      // });
     },
   );
 
@@ -111,19 +120,23 @@ export class EventController {
    * @route DELETE /api/event-system/events/:eventId
    * @returns JSON response confirming deletion.
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
+   * 
+   * @deprecated
    */
   delete: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.DELETE,
     async ({ input, output }) => {
-      const eventId = input.params.eventId;
+      throw new Error("This endpoint is deprecated and no longer work.");
+      
+      // const eventId = input.params.eventId;
 
-      const data = await this.eventService.delete(eventId);
+      // const data = await this.eventService.delete(eventId);
 
-      return output(200, {
-        status: "success",
-        message: "Event deleted successfully",
-        data,
-      });
+      // return output(200, {
+      //   status: "success",
+      //   message: "Event deleted successfully",
+      //   data,
+      // });
     },
   );
 
@@ -133,19 +146,22 @@ export class EventController {
    * @route GET /api/event-system/events/:eventId
    * @returns JSON response containing the event data.
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
+   * 
+   * @deprecated
    */
   getOneEvent: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.GET,
     async ({ input, output }) => {
-      const eventId = input.params.eventId;
+      throw new Error("This endpoint is deprecated and no longer work.");
+      // const eventId = input.params.eventId;
 
-      const data = await this.eventService.getById(eventId);
+      // const data = await this.eventService.getById(eventId);
 
-      return output(200, {
-        status: "success",
-        message: "Event fetched successfully",
-        data,
-      });
+      // return output(200, {
+      //   status: "success",
+      //   message: "Event fetched successfully",
+      //   data,
+      // });
     },
   );
 
@@ -155,24 +171,27 @@ export class EventController {
    * @route POST /api/event-system/checkin
    * @returns JSON response containing attendance record.
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
+   * 
+   * @deprecated
    */
   checkinToAnEvent: RequestHandler = createExpressController(
     contract.api.event_system.checkin.POST,
     async ({ input, output }) => {
-      const body = input.body;
-      const { eventId, checkinMethod, attendeeId } = body.data;
+      throw new Error("This endpoint is deprecated and no longer work.");
+      // const body = input.body;
+      // const { eventId, checkinMethod, attendeeId } = body.data;
 
-      const data = await this.eventService.checkInToEvent(
-        eventId,
-        attendeeId,
-        checkinMethod,
-      );
+      // const data = await this.eventService.checkInToEvent(
+      //   eventId,
+      //   attendeeId,
+      //   checkinMethod,
+      // );
 
-      return output(200, {
-        status: "success",
-        message: "Attendee checked in successfully",
-        data: data.attendance,
-      });
+      // return output(200, {
+      //   status: "success",
+      //   message: "Attendee checked in successfully",
+      //   data: data.attendance,
+      // });
     },
   );
 
@@ -182,38 +201,41 @@ export class EventController {
    * @route GET /api/event-system/events/:eventId/attendees
    * @returns JSON response containing list of attendees.
    * @throws {ServiceError_DEPRECATED} If the service layer encounters an error.
+   * 
+   * @deprecated
    */
   listEventAttendees: RequestHandler = createExpressController(
     contract.api.event_system.events.eventId.attendees.GET,
     async ({ input, output }) => {
-      const pageNumber = input.query.pageNumber;
-      const pageSize = input.query.pageSize;
-      const eventId = input.params.eventId;
-      const filters = {
-        event_id: eventId,
-        user_id: input.query.user_id,
-        checkin_method: input.query.checkin_method,
-        is_present: input.query.is_present,
-        created_at_gte: input.query.created_at_gte,
-        created_at_lte: input.query.created_at_lte,
-      };
-      const data = await this.attendanceService.listEventAttendees(
-        pageNumber,
-        pageSize,
-        filters,
-      );
+      throw new Error("This endpoint is deprecated and no longer work.");
+      // const pageNumber = input.query.pageNumber;
+      // const pageSize = input.query.pageSize;
+      // const eventId = input.params.eventId;
+      // const filters = {
+      //   event_id: eventId,
+      //   user_id: input.query.user_id,
+      //   checkin_method: input.query.checkin_method,
+      //   is_present: input.query.is_present,
+      //   created_at_gte: input.query.created_at_gte,
+      //   created_at_lte: input.query.created_at_lte,
+      // };
+      // const data = await this.attendanceService.listEventAttendees(
+      //   pageNumber,
+      //   pageSize,
+      //   filters,
+      // );
 
-      return output(200, {
-        status: "success",
-        message: "Attendees fetched successfully",
-        data: data.list,
-        meta: {
-          totalRecords: data.count,
-          currentPage: pageNumber,
-          pageSize,
-          totalPages: Math.ceil(data.count / pageSize),
-        },
-      });
+      // return output(200, {
+      //   status: "success",
+      //   message: "Attendees fetched successfully",
+      //   data: data.list,
+      //   meta: {
+      //     totalRecords: data.count,
+      //     currentPage: pageNumber,
+      //     pageSize,
+      //     totalPages: Math.ceil(data.count / pageSize),
+      //   },
+      // });
     },
   );
 }

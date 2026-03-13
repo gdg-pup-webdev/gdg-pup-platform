@@ -22,6 +22,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 // Animation wrapper — same pattern as AboutSection
 const FadeInSection = ({
@@ -49,21 +50,21 @@ const FadeInSection = ({
   );
 };
 
-const partners = [
-  { name: "Acadarena", slug: "acadarena", ext: "png" },
-  { name: "DataCamp", slug: "datacamp", ext: "png" },
-  { name: "YSpace", slug: "yspace", ext: "png" },
-  { name: "Pocky", slug: "pocky", ext: "png" },
-  { name: "PLDT", slug: "pldt", ext: "png" },
-  { name: "Globe", slug: "globe", ext: "png" },
-  { name: "Mountain Dew", slug: "mountain-dew", ext: "png" },
-  { name: "Whitecloak", slug: "whitecloak", ext: "png" },
-  { name: "FlowerStore.ph", slug: "flowerstore", ext: "png" },
-  { name: "Potico.ph", slug: "potico", ext: "png" },
-  { name: "v0", slug: "v0", ext: "png" },
-  { name: "Hey Roomie", slug: "hey-roomie", ext: "png" },
-  { name: "Homeroom", slug: "homeroom", ext: "jpg" },
-  { name: "Gen AI Philippines", slug: "gen-ai-philippines", ext: "jpg" },
+const partners: Array<{ name: string; src: string }> = [
+  { name: "Acadarena", src: ASSETS.PARTNERS.ACADARENA },
+  { name: "DataCamp", src: ASSETS.PARTNERS.DATACAMP },
+  { name: "YSpace", src: ASSETS.PARTNERS.YSPACE },
+  { name: "Pocky", src: ASSETS.PARTNERS.POCKY },
+  { name: "PLDT", src: ASSETS.PARTNERS.PLDT },
+  { name: "Globe", src: ASSETS.PARTNERS.GLOBE },
+  { name: "Mountain Dew", src: ASSETS.PARTNERS.MOUNTAIN_DEW },
+  { name: "Whitecloak", src: ASSETS.PARTNERS.WHITECLOAK },
+  { name: "FlowerStore.ph", src: ASSETS.PARTNERS.FLOWERSTORE },
+  { name: "Potico.ph", src: ASSETS.PARTNERS.POTICO },
+  { name: "v0", src: ASSETS.PARTNERS.V0 },
+  { name: "Hey Roomie", src: ASSETS.PARTNERS.HEY_ROOMIE },
+  { name: "Homeroom", src: ASSETS.PARTNERS.HOMEROOM },
+  { name: "Gen AI Philippines", src: ASSETS.PARTNERS.GEN_AI_PH },
 ];
 
 export function PartnershipSection() {
@@ -207,12 +208,12 @@ export function PartnershipSection() {
               <Grid className="grid-cols-2 sm:grid-cols-4 gap-4 w-full">
                 {partners.map((partner) => (
                   <Box
-                    key={partner.slug}
+                    key={partner.name}
                     className="flex items-center justify-center rounded-xl bg-white/10 p-4 aspect-[3/2]"
                   >
                     <div className="relative w-full h-12">
                       <Image
-                        src={`/pages/about/partnership/${partner.slug}.${partner.ext}`}
+                        src={partner.src}
                         alt={partner.name}
                         fill
                         className="object-contain"
@@ -263,7 +264,7 @@ export function PartnershipSection() {
                 <Box className="flex justify-center">
                   <div className="relative w-72 h-72">
                     <Image
-                      src="/pages/about/partnership/cirby-sticker.png"
+                      src={ASSETS.PARTNERS.CIRBY_STICKER}
                       alt="GDG PUP Mascot"
                       fill
                       className="object-contain"

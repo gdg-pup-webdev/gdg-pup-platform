@@ -8,6 +8,7 @@
 import React from "react";
 import type { User } from "@supabase/supabase-js";
 import { Stack, Inline, Text } from '@packages/spark-ui';
+import { ASSETS } from "@/lib/constants/assets";
 
 interface UserConfirmationProps {
   /** The authenticated user object from Supabase */
@@ -35,10 +36,10 @@ export const UserConfirmation: React.FC<UserConfirmationProps> = ({
     user.user_metadata?.name ||
     user.email;
 
-  // Get user's avatar URL or generate one using DiceBear API
+  // Get user's avatar URL or fall back to the default avatar asset
   const avatarUrl =
     user.user_metadata?.avatar_url ||
-    `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`;
+    ASSETS.AUTH.AVATAR_DEFAULT;
 
   return (
     <Stack gap="lg">

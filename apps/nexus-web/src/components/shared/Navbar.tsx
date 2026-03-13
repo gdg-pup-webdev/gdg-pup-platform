@@ -4,12 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { 
-  Box, 
-  Inline, 
-  Text, 
-  Button, 
-  Avatar, 
+import { ASSETS } from "@/lib/constants/assets";
+import {
+  Box,
+  Inline,
+  Text,
+  Button,
+  Avatar,
   Stack,
   Dropdown,
   DropdownTrigger,
@@ -38,13 +39,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > 100) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
-      
+
       lastScrollY = currentScrollY;
     };
 
@@ -89,52 +90,40 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <Box 
-      className="fixed top-0 left-0 right-0 z-50 px-16 lg:px-20 pt-10 pointer-events-none transition-all duration-700 ease-out"
-      // style={{
-      //   opacity: isVisible ? 1 : 0,
-      //   transform: isVisible ? "translateY(0) scale(1)" : "translateY(-2rem) scale(0.95)",
-      // }}
+    <Box
+      className="fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 pointer-events-none transition-all duration-700 ease-out"
+    // style={{
+    //   opacity: isVisible ? 1 : 0,
+    //   transform: isVisible ? "translateY(0) scale(1)" : "translateY(-2rem) scale(0.95)",
+    // }}
     >
       <Box
-        style={{
-          background: "linear-gradient(90deg, #EA4335 0%, #F9AB00 50%, #97AA2A 75%, #4285F4 100%)",
-          padding: "2px",
-          maxWidth: "80rem",
-          borderRadius: "2rem",
-          boxShadow: "0px 4px 4px 0px #00000040, 0px 4px 46.1px 0px #00000040",
-        }}
-        className="mx-auto pointer-events-auto animate-in fade-in zoom-in-95 duration-700"
+        className="mx-auto pointer-events-auto animate-in fade-in zoom-in-95 duration-700 bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_50%,#97AA2A_75%,#4285F4_100%)] md:p-0.5 max-w-7xl md:rounded-4xl shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040]"
       >
         <Box
           as="nav"
-          style={{
-            background: "linear-gradient(90deg, #000000 0%, #414141 100%)",
-            height: "5.5rem",
-            borderRadius: "1.875rem",
-            boxShadow: "0px 4px 36px 0px #FFFFFF40 inset",
-          }}
+          className="bg-[linear-gradient(90deg,#000000_0%,#414141_100%)]! h-22! md:rounded-[1.875rem]! shadow-[0px_4px_36px_0px_#FFFFFF40_inset]!"
         >
-          <Box className="h-full px-12 lg:px-20 flex items-center">
+          <Box className="h-full px-8 md:px-12 lg:px-20 flex items-center">
             <Inline justify="between" align="center" gap="lg" className="w-full">
               {/* Brand */}
               <Link href="/" className="hover:opacity-80 transition-opacity">
                 <Inline gap="sm" align="center">
                   <Image
-                    src="/images/logos/GDG.webp"
+                    src={ASSETS.BRANDING.GDG_LOGO_WEBP}
                     alt="GDG Logo"
                     width={40}
                     height={40}
                     className="w-8 h-8 lg:w-10 lg:h-10"
                   />
-                  <Text variant="heading-6" weight="bold" className="text-white tracking-tight">
+                  <h1 className="text-white tracking-tight text-[1.25rem] md:text-[1.5rem] leading-[1.4] font-bold text-nowrap">
                     GDG PUP NEXUS
-                  </Text>
+                  </h1>
                 </Inline>
               </Link>
 
               {/* Navigation */}
-              <Inline gap="lg" align="center" className="hidden md:flex">
+              <Inline gap="lg" align="center" className="hidden min-[75rem]:flex">
                 <Inline gap="md" align="center">
                   {/* About Dropdown */}
                   <Dropdown>
@@ -231,7 +220,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ) : user ? (
                       <Link href={`/id/${user.id}`} className="hover:opacity-80 hover:scale-105 transition-all duration-200">
                         <Avatar
-                          src={user.user_metadata?.avatar_url}
+                          src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
                           alt={user.user_metadata?.full_name || user.email || "User"}
                           size="sm"
                           fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
@@ -250,8 +239,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               </Inline>
 
               {/* Mobile Menu Button */}
-              <Box className="md:hidden" ref={mobileMenuRef}>
-                <button 
+              <Box className="min-[75rem]:hidden" ref={mobileMenuRef}>
+                <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="text-gray-300 hover:text-white p-2 transition-colors"
                   aria-label="Toggle menu"
@@ -269,7 +258,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {/* Mobile Menu Dropdown */}
                 {isMobileMenuOpen && (
-                  <Box 
+                  <Box
                     className="absolute right-4 top-full mt-4 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
                   >
                     <Stack gap="none">
@@ -353,13 +342,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                             {status === "checking" ? (
                               <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse"> </Box>
                             ) : user ? (
-                              <Link 
-                                href={`/id/${user.id}`} 
+                              <Link
+                                href={`/id/${user.id}`}
                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 <Avatar
-                                  src={user.user_metadata?.avatar_url}
+                                  src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
                                   alt={user.user_metadata?.full_name || user.email || "User"}
                                   size="sm"
                                   fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
@@ -374,8 +363,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 </Stack>
                               </Link>
                             ) : (
-                              <Link 
-                                href="/signin" 
+                              <Link
+                                href="/signin"
                                 className="block text-center py-2 px-4 rounded-lg border border-gray-500 text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
