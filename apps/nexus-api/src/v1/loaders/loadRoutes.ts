@@ -11,6 +11,10 @@ import { FilesRouter } from "../routes/files/files.router";
 import { GdgScrapedEventsHttpController } from "../routes/gdg-scraped-events/gdgScrapedEvents.controller";
 import { bevyEventController } from "../modules/bevyEvents";
 import { GdgScrapedEventsRouter } from "../routes/gdg-scraped-events/gdgScrapedEvents.router";
+import { taskModuleController } from "../modules/tasksModule";
+import { TasksHttpController } from "../routes/tasks/tasks.controller";
+import { TasksRouter } from "../routes/tasks/tasks.router";
+
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
 
@@ -31,10 +35,14 @@ export const loadRoutes = (app: Express) => {
     gdgScrapedEventsHttpController,
   );
 
+  const tasksHttpController = new TasksHttpController(taskModuleController);
+  const tasksRouter = new TasksRouter(tasksHttpController);
+
   app.use("/files", filesRouter.router);
   app.use("/auth-system", authRouter.router);
   app.use("/health", healthRouter.router);
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);
+  app.use("/tasks", tasksRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });
