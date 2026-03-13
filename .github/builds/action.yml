@@ -1,0 +1,46 @@
+name: "Docker Build & Push"
+description: "Build a Docker image and push to Docker Hub"
+
+inputs:
+  service:
+    description: "Service name (nexus-web, nexus-api, identity-api)"
+    required: true
+  environment:
+    description: "Target environment (dev, staging, prod)"
+    required: true
+  dockerfile:
+    description: "Path to the Dockerfile"
+    required: true
+  dockerhub-username:
+    description: "Docker Hub username"
+    required: true
+  dockerhub-token:
+    description: "Docker Hub access token"
+    required: true
+  build-args:
+    description: "Docker build args (newline-separated KEY=VALUE)"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.dockerhub-username }}
+        password: ${{ inputs.dockerhub-token }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ${{ inputs.dockerfile }}
+        push: true
+        tags: gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}
+        build-args: ${{ inputs.build-args }}
+        cache-from: type=gha,scope=${{ inputs.service }}-${{ inputs.environment }}
+        cache-to: type=gha,mode=max,scope=${{ inputs.service }}-${{ inputs.environment }}

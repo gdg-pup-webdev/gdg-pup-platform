@@ -5,9 +5,9 @@ import type { AvatarProps } from "./Avatar.types";
 
 /**
  * Default avatar shown when the user is unauthenticated or no src is provided.
- * Points to a transparent PNG in the Next.js public folder.
+ * Points to the app's public avatar asset.
  */
-const DEFAULT_AVATAR_SRC = "/images/auth/avatar-default.png";
+const DEFAULT_AVATAR_SRC = "/auth/auth-avatar-default.webp";
 
 /**
  * Avatar Component
