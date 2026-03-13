@@ -259,6 +259,17 @@ export const ASSETS = {
         SIGNIN_LOGO: "/auth/auth-signin-logo.webp",
         SIGNIN_HORIZON: "/auth/auth-signin-horizon.webp",
     },
+    PROFILE: {},
+    SPARKY_POINTS: {
+      SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
+      CIRBY_DISPLAY: "/sparky-points/sparkypoints-cirby-display.webp",
+      CIRBY_CONFIRM: "/sparky-points/sparkypoints-cirby-confirm.webp",
+      CIRBY_DENIED: "/sparky-points/sparkypoints-cirby-denied.webp",
+      ELLIPSES_BIG: "/sparky-points/sparkypoints-ellipses-big.webp",
+      ELLIPSES_SMALL: "/sparky-points/sparkypoints-ellipses-small.webp",
+      SPARKS_BIG: "/sparky-points/sparkypoints-sparks-big.webp",
+      SPARKS_SMALL: "/sparky-points/sparkypoints-sparks-small.webp",
+    }
 } as const;
 
 /** Convenience type for any value in the ASSETS tree */
