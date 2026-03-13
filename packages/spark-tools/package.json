@@ -20,7 +20,7 @@
   "dependencies": {
     "@packages/typed-rest": "workspace:*",
     "@tanstack/react-query": "^5.90.20",
-    "react": "^19.0.0"
+    "react": "^19.2.4"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.91.3",
