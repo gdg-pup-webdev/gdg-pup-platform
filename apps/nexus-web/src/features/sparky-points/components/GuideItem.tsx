@@ -12,7 +12,7 @@ export function GuideItem({ title, children, clamp }: { title: string; children:
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 flex">
                         <img
-                            src={ASSETS.PROFILE.SPARKY_POINTS.SPARKY_FACE}
+                            src={ASSETS.SPARKY_POINTS.SPARKY_FACE}
                             alt="sparky"
                             className="w-full h-full" />
                     </div>

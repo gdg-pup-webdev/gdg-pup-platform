@@ -58,19 +58,18 @@ export function SparkyPointsSection() {
   }
 
   // TODO - Implement redeeming logic
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onRewardRedeem = (item: RewardItemType) => {}
 
   const isModalRedeem = modalState === "redeem";
   return (
       <>
         <div className="absolute w-full mt-20 z-0 lg:hidden">
-          <img alt="ellipses" src={ASSETS.PROFILE.SPARKY_POINTS.ELLIPSES_SMALL} className="w-full absolute"/>
-          <img alt="sparks" src={ASSETS.PROFILE.SPARKY_POINTS.SPARKS_SMALL} className="w-95/100 mx-auto absolute"/>
+          <img alt="ellipses" src={ASSETS.SPARKY_POINTS.ELLIPSES_SMALL} className="w-full absolute"/>
+          <img alt="sparks" src={ASSETS.SPARKY_POINTS.SPARKS_SMALL} className="w-95/100 mx-auto absolute"/>
         </div>
         <div className="absolute w-full z-0 mt-28 hidden lg:block">
-          <img alt="ellipses" src={ASSETS.PROFILE.SPARKY_POINTS.ELLIPSES_BIG} className="w-full absolute"/>
-          <img alt="sparks" src={ASSETS.PROFILE.SPARKY_POINTS.SPARKS_BIG} className="w-1/2 left-1/2 transform-[translate(-45%,50%)] top- mx-auto absolute"/>
+          <img alt="ellipses" src={ASSETS.SPARKY_POINTS.ELLIPSES_BIG} className="w-full absolute"/>
+          <img alt="sparks" src={ASSETS.SPARKY_POINTS.SPARKS_BIG} className="w-1/2 left-1/2 transform-[translate(-45%,50%)] top- mx-auto absolute"/>
         </div>
         <Container className="pt-26 md:pt-38 bg-[#010B1D] pb-4 max-w-none">
           
@@ -272,10 +271,10 @@ export function SparkyPointsSection() {
             {
               isModalRedeem
                 ? (
-                  <img src={ASSETS.PROFILE.SPARKY_POINTS.CIRBY_CONFIRM} alt="Confirm?" className="w-full h-full" />
+                  <img src={ASSETS.SPARKY_POINTS.CIRBY_CONFIRM} alt="Confirm?" className="w-full h-full" />
                 )
                 : (
-                  <img src={ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DENIED} alt="Denied." className="w-full h-full" />
+                  <img src={ASSETS.SPARKY_POINTS.CIRBY_DENIED} alt="Denied." className="w-full h-full" />
                 )
             }
           </div>

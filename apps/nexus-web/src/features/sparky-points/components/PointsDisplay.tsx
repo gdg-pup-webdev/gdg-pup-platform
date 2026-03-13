@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 import { ASSETS } from "@/lib/constants/assets";
 import { cn } from "@/lib/utils";
@@ -15,7 +14,7 @@ export function PointsDisplay({ points }: { points: number; }) {
                     <Text gradient={"white-yellow"} variant={"body-lg"}>point{points === 1 ? "" : "s"}</Text>
                 </Inline>
                 <div className="aspect-square h-full max-h-25">
-                    <img src={ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY} alt="CIRBY STICKER" className="w-full h-full" />
+                    <img src={ASSETS.SPARKY_POINTS.CIRBY_DISPLAY} alt="CIRBY STICKER" className="w-full h-full" />
                 </div>
             </div>
             <Text variant="body-sm" color="muted">Spark Points reflect your participation and contributions across GDG PUP events and activities. They’re designed to recognize effort, not competition.</Text>

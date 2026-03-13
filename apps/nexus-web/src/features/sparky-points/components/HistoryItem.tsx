@@ -18,7 +18,7 @@ export function HistoryItem({ type, data, avatar }: PointsTransactionType & {
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 flex">
                         <img
-                            src={avatar || ASSETS.PROFILE.SPARKY_POINTS.SPARKY_FACE}
+                            src={avatar || ASSETS.SPARKY_POINTS.SPARKY_FACE}
                             alt="sparky"
                             className={`w-full h-full ${avatar !== "" ? "rounded-full" : ""}`} />
                     </div>

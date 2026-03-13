@@ -27,7 +27,7 @@ export function useSparkyPoints(): {
           id: "ed08c748-9a9e-477f-a05e-f215df7286c7",
           name: "Reward Name",
           cost: 0,
-          src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY,
+          src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY,
           timestamp: new Date()
         }
       }
@@ -57,43 +57,43 @@ export function useSparkyPoints(): {
         id: "c963564d-0b5e-4c8d-a7d1-21b11ce42a93",
         name: "Reward Name",
         cost: 10,
-        src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY
+        src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY
       },
       {
         id: "391fb745-4294-40ba-9d16-28e583e85cee",
         name: "Reward Name",
         cost: 5,
-        src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY
+        src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY
       },
       {
         id: "31d8c7cb-d6a6-41b3-8409-589375cd8d35",
         name: "Reward Name",
         cost: 20,
-        src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY
+        src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY
       },
       {
         id: "e98580ea-9e1a-41c1-933e-12ccde6a1b11",
         name: "Reward Name",
         cost: 0,
-        src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY
+        src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY
       },
       {
         id: "dec42b2f-47a2-4994-9929-c4370e1b70bb",
         name: "Reward Name",
         cost: 0,
-        src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY
+        src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY
       },
       {
         id: "2c19479b-bc93-42bf-87ed-4598b1aced01",
         name: "Reward Name",
         cost: 0,
-        src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY
+        src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY
       },
       {
         id: "27c3796f-e016-4da4-97ff-f4df1641ecf4",
         name: "Reward Name",
         cost: 0,
-        src: ASSETS.PROFILE.SPARKY_POINTS.CIRBY_DISPLAY
+        src: ASSETS.SPARKY_POINTS.CIRBY_DISPLAY
       },
     ]
   }
