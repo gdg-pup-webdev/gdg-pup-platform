@@ -42,8 +42,10 @@ RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/.next/static ./apps/nexus-web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/nexus-web/public ./apps/nexus-web/public
 
 EXPOSE 3000
-CMD ["node", "apps/nexus-web/server.js"]
+CMD ["sh", "-c", "if [ -f ./apps/nexus-web/server.js ]; then node ./apps/nexus-web/server.js; elif [ -f ./server.js ]; then node ./server.js; else echo 'No Next standalone server.js found' >&2; ls -la; exit 1; fi"]
