@@ -21,7 +21,7 @@ COPY --from=pruner /app/out/full/ .
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
   pnpm install --frozen-lockfile
 
-RUN apk add --no-cache dos2unix && dos2unix packages/typed-rest/src/cli.ts
+RUN apk add --no-cache dos2unix && if [ -d packages/typed-rest/src ]; then find packages/typed-rest/src -type f -name '*.ts' -exec dos2unix {} +; fi
 RUN pnpm turbo run build --filter=identity-api
 
 FROM node:20-alpine AS runner

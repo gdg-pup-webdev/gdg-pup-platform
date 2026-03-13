@@ -31,7 +31,7 @@ ENV NEXT_PUBLIC_IDENTITY_API_URL=$NEXT_PUBLIC_IDENTITY_API_URL
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_PUB_KEY=$NEXT_PUBLIC_SUPABASE_PUB_KEY
 
-RUN apk add --no-cache dos2unix && dos2unix packages/typed-rest/src/cli.ts
+RUN apk add --no-cache dos2unix && if [ -d packages/typed-rest/src ]; then find packages/typed-rest/src -type f -name '*.ts' -exec dos2unix {} +; fi
 RUN pnpm turbo run build --filter=nexus-web
 
 FROM node:20-alpine AS runner
