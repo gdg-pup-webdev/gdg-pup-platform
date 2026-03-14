@@ -449,30 +449,27 @@ export function EventDetailSection({
                       </button>
                     </div>
                   ) : null}
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-[140px_1fr] gap-5 md:gap-8">
-                <div className="hidden md:block" />
-                <div>
-                  {registerHref ? (
-                    <a
-                      href={registerHref}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-1 h-10 md:h-11 w-full rounded-md border border-[#4285F4] bg-[linear-gradient(90deg,rgba(20,57,132,0.95)_0%,rgba(43,127,255,0.95)_50%,rgba(20,57,132,0.95)_100%)] text-white text-sm md:text-base font-medium inline-flex items-center justify-center"
-                    >
-                      Register
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      disabled
-                      className="mt-1 h-10 md:h-11 w-full rounded-md border border-white/15 bg-white/5 text-white/50 text-sm md:text-base font-medium"
-                    >
-                      Register
-                    </button>
-                  )}
+                  <div className="mt-6 md:mt-7">
+                    {registerHref ? (
+                      <a
+                        href={registerHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="h-10 md:h-11 w-full rounded-md border border-[#4285F4] bg-[linear-gradient(90deg,rgba(20,57,132,0.95)_0%,rgba(43,127,255,0.95)_50%,rgba(20,57,132,0.95)_100%)] text-white text-sm md:text-base font-medium inline-flex items-center justify-center"
+                      >
+                        Register
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        className="h-10 md:h-11 w-full rounded-md border border-white/15 bg-white/5 text-white/50 text-sm md:text-base font-medium"
+                      >
+                        Register
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </Stack>

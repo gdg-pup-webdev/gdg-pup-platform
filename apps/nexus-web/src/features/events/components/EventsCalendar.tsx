@@ -23,10 +23,6 @@ function toLocalDateKey(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
-function getEventColorKey(event: Event): string {
-  return `${event.id ?? ""}::${event.start_date ?? ""}::${event.title ?? ""}`;
-}
-
 function getEventRouteId(event: Event): string {
   const rawId =
     event.id ||
@@ -173,21 +169,24 @@ export function EventsCalendar() {
     return map;
   }, [data]);
 
-  const eventColorById = useMemo(() => {
-    const list = [...(data?.data ?? [])].sort(
-      (a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
-    );
+  const eventColorByDate = useMemo(() => {
+    const dateKeys = Array.from(eventsByDate.keys())
+      .filter((key) => {
+        const [y, m] = key.split("-");
+        return Number(y) === year && Number(m) === monthIndex + 1;
+      })
+      .sort((a, b) => (a < b ? -1 : 1));
 
     const map = new Map<
       string,
       { default: string; hover: string; border: string; mobileLabelColor: string }
     >();
-    list.forEach((event, index) => {
-      map.set(getEventColorKey(event), EVENT_SEQUENCE_GRADIENTS[index % EVENT_SEQUENCE_GRADIENTS.length]);
+    dateKeys.forEach((key, index) => {
+      map.set(key, EVENT_SEQUENCE_GRADIENTS[index % EVENT_SEQUENCE_GRADIENTS.length]);
     });
 
     return map;
-  }, [data]);
+  }, [eventsByDate, year, monthIndex]);
 
   useEffect(() => {
     if (!selectedMobileEvent) return;
@@ -250,15 +249,13 @@ export function EventsCalendar() {
               const firstEvent = dayEvents[0];
               const hasEvent = Boolean(firstEvent);
               const extraCount = dayEvents.length > 1 ? dayEvents.length - 1 : 0;
-              const accentStyle = firstEvent
-                ? eventColorById.get(getEventColorKey(firstEvent))
-                : undefined;
+              const accentStyle = firstEvent ? eventColorByDate.get(cell.key) : undefined;
 
               return (
                 <div
                   key={cell.key}
                   className={cn(
-                    "relative min-h-16 md:min-h-32 p-1 md:p-2 border-r border-b border-white/20",
+                    "relative h-16 md:h-32 p-1 md:p-2 border-r border-b border-white/20 overflow-hidden",
                     hasEvent && "group cursor-pointer",
                     cell.isCurrentMonth ? "bg-[rgba(23,23,23,1)]" : "bg-[rgba(38,38,38,1)]",
                   )}
@@ -309,10 +306,19 @@ export function EventsCalendar() {
                     </span>
 
                     {firstEvent && (
-                      <div className="mt-auto">
-                        <p className="hidden md:block text-[9px] md:text-sm font-semibold text-black leading-tight line-clamp-2 group-hover:hidden">
-                          {formatCalendarTitle(firstEvent.title)}
-                        </p>
+                      <div className="mt-auto min-h-0">
+                        <div className="hidden md:block group-hover:hidden">
+                          <p
+                            className="text-[9px] md:text-sm font-semibold text-black leading-tight overflow-hidden"
+                            style={{
+                              display: "-webkit-box",
+                              WebkitLineClamp: 4,
+                              WebkitBoxOrient: "vertical",
+                            }}
+                          >
+                            {formatCalendarTitle(firstEvent.title)}
+                          </p>
+                        </div>
                         <p
                           className="text-[9px] font-semibold leading-tight truncate px-1 py-0.5 rounded-sm bg-white/55 group-hover:hidden md:hidden"
                           style={{ color: accentStyle?.mobileLabelColor }}
