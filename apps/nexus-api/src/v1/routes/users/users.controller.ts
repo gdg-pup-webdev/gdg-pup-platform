@@ -40,12 +40,12 @@ export class UsersHttpController {
   );
 
   unassignRole : RequestHandler = createExpressController(
-    contract.api.v1.users.userId.roles.roleName.DELETE,
+    contract.api.v1.users.userId.roles.roleId.DELETE,
     async ({ input, output, ctx }) => {
       const { req } = ctx; 
       const result = await this.rbacModule.removeRoleFromUser(
         input.params.userId,
-        input.params.roleName,
+        input.params.roleId,
       );
       return output(200, {
         status: "success",

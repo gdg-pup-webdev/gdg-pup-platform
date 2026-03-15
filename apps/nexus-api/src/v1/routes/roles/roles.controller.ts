@@ -7,10 +7,10 @@ export class RolesHttpController {
   constructor(private rbacController :RbacModuleController) {}
 
   getOne : RequestHandler = createExpressController(
-    contract.api.v1.roles.roleName.GET, 
+    contract.api.v1.roles.roleId.GET, 
     async ({ input, output, ctx }) => {
       const { req } = ctx; 
-      const data = await this.rbacController.getRole(input.params.roleName);
+      const data = await this.rbacController.getRole(input.params.roleId);
       return output(200, {
         status: "success",
         message: "Role fetched successfully",
@@ -58,11 +58,11 @@ export class RolesHttpController {
   )
 
   deleteRole : RequestHandler = createExpressController(
-    contract.api.v1.roles.roleName.DELETE, 
+    contract.api.v1.roles.roleId.DELETE, 
     async ({ input, output, ctx }) => {
       const { req } = ctx;
       const user = req.user!;
-      const data = await this.rbacController.deleteRole(input.params.roleName);
+      const data = await this.rbacController.deleteRole(input.params.roleId);
       return output(200, {
         status: "success",
         message: "Role deleted successfully",
@@ -72,12 +72,12 @@ export class RolesHttpController {
   )
 
   addPermission : RequestHandler = createExpressController(
-    contract.api.v1.roles.roleName.permissions.POST, 
+    contract.api.v1.roles.roleId.permissions.POST, 
     async ({ input, output, ctx }) => {
       const { req } = ctx;
       const user = req.user!;
       const data = await this.rbacController.attachPermissionToRole(
-        input.params.roleName,
+        input.params.roleId,
         input.body.data.resource_name, input.body.data.action)
       return output(200, {
         status: "success",
@@ -93,12 +93,12 @@ export class RolesHttpController {
   ) 
  
   deletePermission : RequestHandler = createExpressController(
-    contract.api.v1.roles.roleName.permissions.PATCH, 
+    contract.api.v1.roles.roleId.permissions.PATCH, 
     async ({ input, output, ctx }) => {
       const { req } = ctx;
       const user = req.user!;
       const data = await this.rbacController.removePermissionFromRole(
-        input.params.roleName,
+        input.params.roleId,
         input.body.data.resource, 
         input.body.data.action)
 

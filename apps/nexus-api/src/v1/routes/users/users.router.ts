@@ -11,6 +11,6 @@ export class UsersRouter {
 
     this.router.get("/:userId/roles", this.usersHttpController.listRoles);
     this.router.post("/:userId/roles", this.usersHttpController.assignRole);
-    this.router.delete("/:userId/roles/:id", this.usersHttpController.unassignRole);
+    this.router.delete("/:userId/roles/:roleId", this.usersHttpController.unassignRole);
   }
 }
