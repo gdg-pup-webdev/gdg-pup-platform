@@ -597,6 +597,52 @@ export const publicStudyJamUpdateSchema = z.object({
   title: z.string().optional(),
 });
 
+export const publicTaskRowSchema = z.object({
+  completed_at: z.string().nullable(),
+  created_at: z.string().nullable(),
+  description: z.string().nullable(),
+  id: z.string(),
+  is_completed: z.boolean().nullable(),
+  name: z.string().nullable(),
+  points_on_completion: z.number().nullable(),
+  updated_at: z.string().nullable(),
+  user_id: z.string(),
+});
+
+export const publicTaskInsertSchema = z.object({
+  completed_at: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  is_completed: z.boolean().optional().nullable(),
+  name: z.string().optional().nullable(),
+  points_on_completion: z.number().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+  user_id: z.string(),
+});
+
+export const publicTaskUpdateSchema = z.object({
+  completed_at: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  is_completed: z.boolean().optional().nullable(),
+  name: z.string().optional().nullable(),
+  points_on_completion: z.number().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+  user_id: z.string().optional(),
+});
+
+export const publicTaskRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("task_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicTeamRowSchema = z.object({
   description: z.string(),
   id: z.string(),

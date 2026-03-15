@@ -47,9 +47,7 @@ export const loadRoutes = (app: Express) => {
   const rolesRouter = new RolesRouter(rolesHttpController);
   const tasksHttpController = new TasksHttpController(taskModuleController);
   const tasksRouter = new TasksRouter(tasksHttpController);
-
-  const rolesHttpController=  new RolesHttpController(rbacController);
-  const rolesRouter=  new RolesRouter(rolesHttpController);
+ 
 
 
   const usersHttpController = new UsersHttpController(rbacController);
