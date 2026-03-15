@@ -28,7 +28,7 @@ export abstract class ISparkmatesRepository {
     }>;
   }): Promise<SparkmatesBulkRegistrationResult>;
 
-  abstract getPublicPortfolioByGdgId(
+  abstract getPortfolioByGdgId(
     gdgId: string,
   ): Promise<SparkmatesPublicPortfolio>;
 

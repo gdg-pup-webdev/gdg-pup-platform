@@ -188,6 +188,7 @@ export class SparkmatesRepository implements ISparkmatesRepository {
       if (nfcData.status === "activated") {
         return {
           gdgId,
+          ownerUserId: userId,
           status: isPublic ? "activated" : "issued",
           isPublic: Boolean(isPublic),
         };
@@ -195,6 +196,7 @@ export class SparkmatesRepository implements ISparkmatesRepository {
 
       return {
         gdgId,
+        ownerUserId: userId,
         status: nfcData.status,
         isPublic: false,
       };
@@ -206,6 +208,7 @@ export class SparkmatesRepository implements ISparkmatesRepository {
 
     return {
       gdgId,
+      ownerUserId: userId,
       status: isPublic ? "activated" : "issued",
       isPublic,
     };
@@ -265,21 +268,19 @@ export class SparkmatesRepository implements ISparkmatesRepository {
 
     return {
       gdgId,
+      ownerUserId: userId,
       status: "activated",
       isPublic: true,
     };
   }
 
-  async getPublicPortfolioByGdgId(
-    gdgId: string,
-  ): Promise<SparkmatesPublicPortfolio> {
+  async getPortfolioByGdgId(gdgId: string): Promise<SparkmatesPublicPortfolio> {
     const userId = await this.getUserIdByGdgId(gdgId);
 
     const { data, error } = await supabase
       .from(this.profileTable)
       .select(this.publicPortfolioSelectClause)
       .eq("user_id", userId)
-      .eq("is_public", true)
       .order("updated_at", { ascending: false })
       .limit(1);
 
@@ -289,9 +290,7 @@ export class SparkmatesRepository implements ISparkmatesRepository {
 
     const firstRow = data?.[0];
     if (!firstRow) {
-      throw new NotFoundError(
-        `Public portfolio not found for GDG ID: ${gdgId}`,
-      );
+      throw new NotFoundError(`Portfolio not found for GDG ID: ${gdgId}`);
     }
 
     return this.rowToPublicPortfolio(firstRow as SparkmatesPortfolioSelectRow);

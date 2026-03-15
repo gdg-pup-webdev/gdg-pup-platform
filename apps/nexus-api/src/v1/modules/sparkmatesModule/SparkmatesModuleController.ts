@@ -1,8 +1,8 @@
-import { PortfolioProps } from "@/v1/modules/portfolioModule/domain/Portfolio";
 import {
   SparkmatesBulkRegistrationResult,
   SparkmatesCardRegistration,
   SparkmatesCardStatus,
+  SparkmatesPublicPortfolio,
   SparkmatesPublicRecord,
   SparkmatesSource,
 } from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
@@ -14,15 +14,17 @@ import { RegisterCardsBulkUseCase } from "@/v1/modules/sparkmatesModule/useCase/
 
 export type SparkmatesCardStateDTO = {
   gdgId: string;
+  ownerUserId: string;
   status: SparkmatesCardStatus;
   isPublic: boolean;
 };
 
 export type SparkmatesPublicRecordDTO = {
   gdgId: string;
+  ownerUserId: string;
   source: SparkmatesSource;
   status: SparkmatesCardStatus;
-  portfolio: PortfolioProps | null;
+  portfolio: SparkmatesPublicPortfolio | null;
 };
 
 export type SparkmatesCardRegistrationDTO = SparkmatesCardRegistration;

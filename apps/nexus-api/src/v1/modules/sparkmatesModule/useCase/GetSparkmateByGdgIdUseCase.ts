@@ -23,21 +23,21 @@ export class GetSparkmateByGdgIdUseCase {
       })
       .catch(() => undefined);
 
-    if (cardState.status !== "activated") {
+    if (input.source === "nfc_card" && cardState.status !== "activated") {
       return {
         gdgId: input.gdgId,
+        ownerUserId: cardState.ownerUserId,
         source: input.source,
         status: cardState.status,
         portfolio: null,
       };
     }
 
-    const portfolio = await this.repository.getPublicPortfolioByGdgId(
-      input.gdgId,
-    );
+    const portfolio = await this.repository.getPortfolioByGdgId(input.gdgId);
 
     return {
       gdgId: input.gdgId,
+      ownerUserId: cardState.ownerUserId,
       source: input.source,
       status: cardState.status,
       portfolio,

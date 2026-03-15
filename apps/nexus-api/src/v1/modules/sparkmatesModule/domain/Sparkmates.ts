@@ -8,6 +8,7 @@ export type SparkmatesCardStatus =
 
 export type SparkmatesCardState = {
   gdgId: string;
+  ownerUserId: string;
   status: SparkmatesCardStatus;
   isPublic: boolean;
 };
@@ -52,6 +53,7 @@ export type SparkmatesPublicPortfolio = {
 
 export type SparkmatesPublicRecord = {
   gdgId: string;
+  ownerUserId: string;
   source: SparkmatesSource;
   status: SparkmatesCardStatus;
   portfolio: SparkmatesPublicPortfolio | null;

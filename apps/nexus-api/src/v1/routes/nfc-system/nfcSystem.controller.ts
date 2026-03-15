@@ -21,6 +21,7 @@ export class NfcSystemHttpController {
         message: "NFC status fetched successfully",
         data: {
           gdg_id: card.gdgId,
+          owner_user_id: card.ownerUserId,
           status: card.status,
           is_public: card.isPublic,
         },
@@ -48,6 +49,7 @@ export class NfcSystemHttpController {
         message: "NFC activated successfully",
         data: {
           gdg_id: card.gdgId,
+          owner_user_id: card.ownerUserId,
           status: "activated",
           is_public: true,
         },

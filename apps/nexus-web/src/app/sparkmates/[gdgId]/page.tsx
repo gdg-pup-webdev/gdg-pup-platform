@@ -23,6 +23,7 @@ type SparkmatesResponse = {
   message: string;
   data?: {
     gdg_id: string;
+    owner_user_id: string;
     source: SparkmatesSource;
     status: SparkmatesStatus;
     portfolio: SparkmatesPortfolio | null;
@@ -55,10 +56,13 @@ export default function SparkmatesPage({
     null,
   );
 
+  console.log("testomg", user?.id);
+
   const isOwner = useMemo(() => {
-    const authGdgId = user?.user_metadata?.gdg_id;
-    return Boolean(authGdgId && authGdgId === gdgId);
-  }, [user?.user_metadata?.gdg_id, gdgId]);
+    return Boolean(
+      user?.id && payload?.owner_user_id && user.id === payload.owner_user_id,
+    );
+  }, [user?.id, payload?.owner_user_id]);
 
   const fetchSparkmates = React.useCallback(async () => {
     try {
@@ -78,7 +82,7 @@ export default function SparkmatesPage({
       if (!response.ok || json.status !== "success" || !json.data) {
         throw new Error(json.message || "Failed to fetch Sparkmates profile");
       }
-
+      console.log("Fetched Sparkmates data:", json.data);
       setPayload(json.data);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Unknown error";
@@ -165,8 +169,10 @@ export default function SparkmatesPage({
   }
 
   const isActivated = payload.status === "activated";
+  const requiresActivation = payload.source === "nfc_card";
+  const showActivationGate = requiresActivation && !isActivated;
 
-  if (!isActivated) {
+  if (showActivationGate) {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center p-6">
         <div className="max-w-md rounded-xl border border-zinc-800 bg-zinc-900 p-6">

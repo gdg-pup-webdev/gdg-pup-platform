@@ -58,6 +58,7 @@ export class SparkmatesHttpController {
         message: "Sparkmates profile resolved successfully",
         data: {
           gdg_id: record.gdgId,
+          owner_user_id: record.ownerUserId,
           source: record.source,
           status: record.status,
           portfolio: record.portfolio ? toRow(record.portfolio) : null,
