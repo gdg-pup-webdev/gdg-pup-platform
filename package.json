@@ -12,11 +12,12 @@
     "start": "turbo run start",
     "clean": "node scripts/clean/detect-shell.ts",
     "reinstall": "pnpm clean && pnpm install",
+    "gen-types": "turbo run gen-types",
+    "gen-types:rebuild": "pnpm gen-types && pnpm build",
+    "rebuild-install": "pnpm reinstall && pnpm gen-types:rebuild",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "gen-types": "turbo run gen-types",
-    "gen-types:rebuild": "pnpm gen-types && pnpm build",
     "test": "turbo run test"
   },
   "devDependencies": {
