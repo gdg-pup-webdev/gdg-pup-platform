@@ -37,7 +37,7 @@ function AuthCallbackContent() {
         if (accessToken) {
           // Verify with backend
           const response = await fetch(
-            `${NEXUS_API_URL}api/auth-system/exchange`,
+            `${NEXUS_API_URL}/api/v1/auth-system/exchange`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -136,7 +136,7 @@ function AuthCallbackContent() {
 
         // Exchange code for session
         const response = await fetch(
-          `${NEXUS_API_URL}api/auth-system/exchange`,
+          `${NEXUS_API_URL}/api/v1/auth-system/exchange`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
