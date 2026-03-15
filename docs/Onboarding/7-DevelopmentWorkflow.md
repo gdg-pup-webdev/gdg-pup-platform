@@ -1,4 +1,4 @@
-**[⬅️ Previous: Frontend Development](./6-FrontendDevelopment.md)** | **[Back to Onboarding](./README.md)** | **[Next: Best Practices ➡️](./99.1-BestPractices.md)**
+**[⬅️ Previous: Public Assets](./6.1-PublicAssets.md)** | **[Back to Onboarding](./README.md)** | **[Next: Best Practices ➡️](./99.1-BestPractices.md)**
 
 ---
 

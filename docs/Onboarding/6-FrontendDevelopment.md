@@ -1,4 +1,4 @@
-**[⬅️ Previous: Error Handling](./5-ErrorHandling.md)** | **[Back to Onboarding](./README.md)** | **[Next: Development Workflow ➡️](./7-DevelopmentWorkflow.md)**
+**[⬅️ Previous: Error Handling](./5-ErrorHandling.md)** | **[Back to Onboarding](./README.md)** | **[Next: Public Assets ➡️](./6.1-PublicAssets.md)**
 
 ---
 
@@ -352,7 +352,3 @@ export default function UserPage({ params }: { params: { userId: string } }) {
   return <UserProfileCard profile={profile} />;
 }
 ```
-
----
-
-**[⬅️ Previous: Error Handling](./5-ErrorHandling.md)** | **[Back to Onboarding](./README.md)** | **[Next: Development Workflow ➡️](./7-DevelopmentWorkflow.md)**
