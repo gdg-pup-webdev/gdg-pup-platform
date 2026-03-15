@@ -9,13 +9,25 @@ type SparkmatesStatus = "issued" | "activated" | "suspended" | "revoked";
 type SparkmatesSource = "nfc_card" | "qr_code" | "direct_link";
 
 type SparkmatesPortfolio = {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
   full_name: string | null;
   nickname: string | null;
   gdg_id: string | null;
+  membership_type: string | null;
+  department: string | null;
+  year_and_program: string | null;
   bio: string | null;
   github_url: string | null;
   linkedin_url: string | null;
   portfolio_website_url: string | null;
+  other_links: string[];
+  technical_skills: string[];
+  learning_interests: string[];
+  tools_and_technologies: string[];
+  is_public: boolean;
 };
 
 type SparkmatesResponse = {
@@ -56,8 +68,6 @@ export default function SparkmatesPage({
     null,
   );
 
-  console.log("testomg", user?.id);
-
   const isOwner = useMemo(() => {
     return Boolean(
       user?.id && payload?.owner_user_id && user.id === payload.owner_user_id,
@@ -82,7 +92,7 @@ export default function SparkmatesPage({
       if (!response.ok || json.status !== "success" || !json.data) {
         throw new Error(json.message || "Failed to fetch Sparkmates profile");
       }
-      console.log("Fetched Sparkmates data:", json.data);
+
       setPayload(json.data);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Unknown error";
@@ -210,9 +220,34 @@ export default function SparkmatesPage({
         </h1>
         <p className="mt-1 text-sm text-zinc-500">GDG ID: {payload.gdg_id}</p>
 
+        <div className="mt-4 space-y-1 text-sm text-zinc-400">
+          {portfolio?.year_and_program ? (
+            <p>Year and Program: {portfolio.year_and_program}</p>
+          ) : null}
+          {portfolio?.department ? (
+            <p>Department: {portfolio.department}</p>
+          ) : null}
+        </div>
+
         <p className="mt-6 text-zinc-300">
           {portfolio?.bio || "No bio available yet."}
         </p>
+
+        {portfolio?.technical_skills?.length ? (
+          <div className="mt-6">
+            <p className="mb-2 text-sm text-zinc-400">Technical Skills</p>
+            <div className="flex flex-wrap gap-2">
+              {portfolio.technical_skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-300"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <div className="mt-8 grid gap-3">
           {portfolio?.github_url ? (
@@ -245,6 +280,17 @@ export default function SparkmatesPage({
               Website
             </a>
           ) : null}
+          {portfolio?.other_links?.map((link) => (
+            <a
+              key={link}
+              className="rounded-lg border border-zinc-700 px-4 py-2 hover:border-zinc-500"
+              href={link}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Other Link
+            </a>
+          ))}
         </div>
       </main>
     </div>
