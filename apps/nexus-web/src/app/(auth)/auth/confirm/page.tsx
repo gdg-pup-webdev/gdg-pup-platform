@@ -35,7 +35,7 @@ function ConfirmPageContent() {
         }
 
         // Call backend API to verify
-        const url = `${NEXUS_API_URL}api/auth-system/verify`;
+        const url = `${NEXUS_API_URL}/api/v1/auth-system/verify`;
         console.log("Calling API:", url);
 
         const response = await fetch(url, {
