@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Fetch current user from backend
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/me`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -175,7 +175,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setAuthState((prev) => ({ ...prev, error: null }));
 
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/signup`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { email, password } }),
@@ -209,7 +209,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setAuthState((prev) => ({ ...prev, error: null }));
 
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/signin`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { email, password } }),
@@ -242,7 +242,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setAuthState((prev) => ({ ...prev, error: null }));
 
       // Call backend to initiate OAuth
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/oauth`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/oauth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -279,7 +279,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       // 1. Call backend to invalidate session (if we have a token)
       if (authState.token) {
-        await fetch(`${NEXUS_API_URL}api/auth-system/logout`, {
+        await fetch(`${NEXUS_API_URL}/api/v1/auth-system/logout`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
