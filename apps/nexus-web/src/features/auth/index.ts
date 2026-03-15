@@ -12,3 +12,4 @@ export * from "./components/GoogleSignInButton";
 
 // Export types (if any)
 export * from "./types";
+export * from "./components/AuthParallaxBackground";

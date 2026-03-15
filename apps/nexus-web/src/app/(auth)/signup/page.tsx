@@ -1,24 +1,23 @@
 "use client";
 
 import { SignUpForm } from "@/features/auth";
-import { Stack, Container } from "@packages/spark-ui";
+import { ShineBorder } from "@packages/spark-ui";
 
 export default function SignUpPage() {
   return (
-    <Stack
-      justify="center"
-      align="center"
-      className="min-h-screen bg-linear-to-br from-purple-50 to-blue-50 px-4"
-    >
-      <Container padding="none">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <Stack gap="xs" align="center" className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Create Account</h1>
-            <p className="text-gray-600">Sign up to get started</p>
-          </Stack>
-          <SignUpForm />
-        </div>
-      </Container>
-    </Stack>
+    <div className="bg-[rgba(255,255,255,0.08)] backdrop-blur-[64px] shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] relative isolate w-full max-w-[500px] flex flex-col items-center gap-[48px] p-[32px] sm:px-[24px] rounded-[16px]">
+      <ShineBorder shineColor={["#FB2C36", "#F0B100", "#00C950", "#2B7FFF"]} borderWidth={1.5} duration={40} className="opacity-80" />
+      <div className="flex flex-col gap-[16px] text-center w-full z-10 relative">
+        <h2 className="text-[32px] font-bold leading-[1.4] bg-clip-text text-transparent bg-gradient-to-b from-white to-[#4285f4]" style={{ fontFamily: 'var(--font-google-sans, "Google Sans", sans-serif)' }}>
+          Welcome, Sparkmate!
+        </h2>
+        <p className="text-[#e5e5e5] text-[18px] leading-[1.5]" style={{ fontFamily: 'var(--font-google-sans, "Google Sans", sans-serif)' }}>
+          Sign up using your GDG ID to access your profile, XPark Points, and account settings.
+        </p>
+      </div>
+      <div className="w-full z-10 relative">
+        <SignUpForm />
+      </div>
+    </div>
   );
 }
