@@ -1,4 +1,4 @@
-import { MockGdgMerchRepository } from "./infrastructure/MockGdgMerchRepository";
+import { SupabaseGdgMerchRepository } from "./infrastructure/SupabaseGdgMerchRepository";
 import { PointsSystemAdapter } from "./infrastructure/PointsSystemAdapter";
 import { GdgMerchController } from "./GdgMerchController";
 import { CreateGdgMerch } from "./useCases/CreateGdgMerch";
@@ -9,7 +9,7 @@ import { RedeemGdgMerch } from "./useCases/RedeemGdgMerch";
 import { RestockGdgMerch } from "./useCases/RestockGdgMerch";
 import { UpdateGdgMerchInfo } from "./useCases/UpdateGdgMerchInfo";
 
-const gdgMerchRepository = new MockGdgMerchRepository();
+const gdgMerchRepository = new SupabaseGdgMerchRepository();
 const pointsSystemAdapter = new PointsSystemAdapter();
 
 const createGdgMerchUseCase = new CreateGdgMerch(gdgMerchRepository);
