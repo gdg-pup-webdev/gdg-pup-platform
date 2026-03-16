@@ -5,6 +5,7 @@ import { AddTeamMember } from "./useCases/AddTeamMember";
 import { CreateTeam } from "./useCases/CreateTeam";
 import { DeleteTeam } from "./useCases/DeleteTeam";
 import { GetOneTeam } from "./useCases/GetOneTeam";
+import { GetOneTeamMember } from "./useCases/GetOneTeamMember";
 import { ListTeamMembers } from "./useCases/ListTeamMembers";
 import { ListTeams } from "./useCases/ListTeams";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
@@ -22,7 +23,9 @@ export interface TeamMemberResponseDTO {
   id: string;
   teamId: string;
   userId: string;
-  role: string;
+  name: string | null;
+  position: string;
+  image: string | null;
   joinedAt: string;
 }
 
@@ -37,7 +40,8 @@ export class TeamModuleController {
     // Team Member Use Cases
     private readonly addMemberUC: AddTeamMember,
     private readonly removeMemberUC: RemoveTeamMember,
-    private readonly listMembersUC: ListTeamMembers
+    private readonly listMembersUC: ListTeamMembers,
+    private readonly getOneMemberUC: GetOneTeamMember,
   ) {}
 
   /** * DTO Mappers 
@@ -58,7 +62,9 @@ export class TeamModuleController {
       id: p.id,
       teamId: p.teamId,
       userId: p.userId,
-      role: p.role,
+      name: p.name,
+      position: p.role,
+      image: p.image,
       joinedAt: p.joinedAt.toISOString(),
     };
   }
@@ -107,5 +113,10 @@ export class TeamModuleController {
   async listMembers(pageNumber: number, pageSize: number, filters: TeamMemberFilters) {
     const { list, count } = await this.listMembersUC.execute(pageNumber, pageSize, filters);
     return { list: list.map((m) => this.toMemberDTO(m)), count };
+  }
+
+  async getMember(id: string) {
+    const member = await this.getOneMemberUC.execute(id);
+    return this.toMemberDTO(member);
   }
 }
