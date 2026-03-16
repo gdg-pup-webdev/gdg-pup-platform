@@ -22,6 +22,13 @@ import { UsersHttpController } from "../routes/users/users.controller";
 import { portfolioModuleController } from "../modules/portfolioModule";
 import { PortfoliosHttpController } from "../routes/portfolios/portfolios.controller";
 import { PortfoliosRouter } from "../routes/portfolios/portfolios.router";
+import { GdgTeamsHttpController } from "../routes/gdg-teams/gdgTeams.controller";
+import { GdgTeamsRouter } from "../routes/gdg-teams/gdgTeams.router";
+import { sparkmatesModuleController } from "../modules/sparkmatesModule";
+import { SparkmatesHttpController } from "../routes/sparkmates/sparkmates.controller";
+import { SparkmatesRouter } from "../routes/sparkmates/sparkmates.router";
+import { NfcSystemHttpController } from "@/v1/routes/nfc-system/nfcSystem.controller";
+import { NfcSystemRouter } from "@/v1/routes/nfc-system/nfcSystem.router";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
@@ -47,8 +54,6 @@ export const loadRoutes = (app: Express) => {
   const rolesRouter = new RolesRouter(rolesHttpController);
   const tasksHttpController = new TasksHttpController(taskModuleController);
   const tasksRouter = new TasksRouter(tasksHttpController);
- 
-
 
   const usersHttpController = new UsersHttpController(rbacController);
   const usersRouter = new UsersRouter(usersHttpController);
@@ -58,6 +63,18 @@ export const loadRoutes = (app: Express) => {
   );
   const portfoliosRouter = new PortfoliosRouter(portfoliosHttpController);
 
+  const gdgTeamsHttpController = new GdgTeamsHttpController();
+  const gdgTeamsRouter = new GdgTeamsRouter(gdgTeamsHttpController);
+  const sparkmatesHttpController = new SparkmatesHttpController(
+    sparkmatesModuleController,
+  );
+  const sparkmatesRouter = new SparkmatesRouter(sparkmatesHttpController);
+
+  const nfcSystemHttpController = new NfcSystemHttpController(
+    sparkmatesModuleController,
+  );
+  const nfcSystemRouter = new NfcSystemRouter(nfcSystemHttpController);
+
   app.use("/files", filesRouter.router);
   app.use("/auth-system", authRouter.router);
   app.use("/health", healthRouter.router);
@@ -66,6 +83,9 @@ export const loadRoutes = (app: Express) => {
   app.use("/roles", rolesRouter.router);
   app.use("/users", usersRouter.router);
   app.use("/portfolios", portfoliosRouter.router);
+  app.use("/gdg-teams", gdgTeamsRouter.router);
+  app.use("/sparkmates", sparkmatesRouter.router);
+  app.use("/nfc-system", nfcSystemRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

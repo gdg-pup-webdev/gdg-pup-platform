@@ -7,6 +7,7 @@ import { DeleteTeam } from "./useCases/DeleteTeam";
 import { ListTeams } from "./useCases/ListTeams";
 
 import { AddTeamMember } from "./useCases/AddTeamMember";
+import { GetOneTeamMember } from "./useCases/GetOneTeamMember";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
 import { ListTeamMembers } from "./useCases/ListTeamMembers";
 import { SupabaseUserRepository } from "../UserModule/infrastructure/UserRepositoy";
@@ -27,6 +28,7 @@ const listTeamsUC = new ListTeams(teamRepo);
 const addMemberUC = new AddTeamMember(memberRepo, teamRepo, userRepo);
 const removeMemberUC = new RemoveTeamMember(memberRepo);
 const listMembersUC = new ListTeamMembers(memberRepo);
+const getOneMemberUC = new GetOneTeamMember(memberRepo);
 
 // 3. Controller Assembly (Presentation)
 export const teamModuleController = new TeamModuleController(
@@ -37,5 +39,6 @@ export const teamModuleController = new TeamModuleController(
   listTeamsUC,
   addMemberUC,
   removeMemberUC,
-  listMembersUC
+  listMembersUC,
+  getOneMemberUC
 );
