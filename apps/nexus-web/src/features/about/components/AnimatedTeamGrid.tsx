@@ -76,10 +76,11 @@ export function AnimatedTeamGrid({ children }: AnimatedTeamGridProps) {
       {React.Children.map(children, (child) => {
         if (child == null) return null;
 
-        const isFullRow =
-          React.isValidElement(child) &&
-          child.props &&
-          child.props["data-grid-span"] === "full";
+        const childProps: Record<string, unknown> | null = React.isValidElement(child)
+          ? (child.props as Record<string, unknown>)
+          : null;
+
+        const isFullRow = childProps?.["data-grid-span"] === "full";
 
         return (
           <motion.div
