@@ -92,7 +92,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdg-teams", gdgTeamsRouter.router);
   app.use("/sparkmates", sparkmatesRouter.router);
   app.use("/nfc-system", nfcSystemRouter.router);
-  app.use("/merch", gdgMerchRouter.router);
+  app.use("/gdg-merch", gdgMerchRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });
