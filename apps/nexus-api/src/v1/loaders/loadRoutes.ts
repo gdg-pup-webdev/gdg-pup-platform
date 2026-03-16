@@ -22,6 +22,8 @@ import { UsersHttpController } from "../routes/users/users.controller";
 import { portfolioModuleController } from "../modules/portfolioModule";
 import { PortfoliosHttpController } from "../routes/portfolios/portfolios.controller";
 import { PortfoliosRouter } from "../routes/portfolios/portfolios.router";
+import { GdgTeamsHttpController } from "../routes/gdg-teams/gdgTeams.controller";
+import { GdgTeamsRouter } from "../routes/gdg-teams/gdgTeams.router";
 import { sparkmatesModuleController } from "../modules/sparkmatesModule";
 import { SparkmatesHttpController } from "../routes/sparkmates/sparkmates.controller";
 import { SparkmatesRouter } from "../routes/sparkmates/sparkmates.router";
@@ -61,6 +63,8 @@ export const loadRoutes = (app: Express) => {
   );
   const portfoliosRouter = new PortfoliosRouter(portfoliosHttpController);
 
+  const gdgTeamsHttpController = new GdgTeamsHttpController();
+  const gdgTeamsRouter = new GdgTeamsRouter(gdgTeamsHttpController);
   const sparkmatesHttpController = new SparkmatesHttpController(
     sparkmatesModuleController,
   );
@@ -79,6 +83,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/roles", rolesRouter.router);
   app.use("/users", usersRouter.router);
   app.use("/portfolios", portfoliosRouter.router);
+  app.use("/gdg-teams", gdgTeamsRouter.router);
   app.use("/sparkmates", sparkmatesRouter.router);
   app.use("/nfc-system", nfcSystemRouter.router);
 
