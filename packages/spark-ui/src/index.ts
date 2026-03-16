@@ -29,3 +29,4 @@ export * from "./primitives/Grid/";
 export * from "./primitives/Box/";
 export * from "./primitives/Container/";
 export * from "./primitives/Text/";
+export * from "./components/neon-gradient-card/";
