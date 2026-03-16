@@ -11,12 +11,12 @@ import { ListTeams } from "./useCases/ListTeams";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
 import { UpdateTeam } from "./useCases/UpdateTeam";
 
- 
 export interface TeamResponseDTO {
   id: string;
   name: string;
   description: string;
-  createdAt: string;
+  responsibilities: string | null;
+  parentTeamId: string | null;
 }
 
 export interface TeamMemberResponseDTO {
@@ -44,7 +44,7 @@ export class TeamModuleController {
     private readonly getOneMemberUC: GetOneTeamMember,
   ) {}
 
-  /** * DTO Mappers 
+  /** * DTO Mappers
    */
   private toTeamDTO(team: Team): TeamResponseDTO {
     const p = team.props;
@@ -52,7 +52,8 @@ export class TeamModuleController {
       id: p.id,
       name: p.name,
       description: p.description,
-      createdAt: p.createdAt.toISOString(),
+      responsibilities: p.responsibilities,
+      parentTeamId: p.parentTeamId,
     };
   }
 
@@ -72,8 +73,17 @@ export class TeamModuleController {
   /**
    * Team Endpoints
    */
-  async createTeam(data: { name: string; description: string }) {
-    const team = await this.createTeamUC.execute(data);
+  async createTeam(data: {
+    name: string;
+    description: string;
+    responsibilities?: string | null;
+    parentTeamId?: string | null;
+  }) {
+    const team = await this.createTeamUC.execute({
+      ...data,
+      responsibilities: data.responsibilities ?? null,
+      parentTeamId: data.parentTeamId ?? null,
+    });
     return this.toTeamDTO(team);
   }
 
@@ -82,7 +92,15 @@ export class TeamModuleController {
     return this.toTeamDTO(team);
   }
 
-  async updateTeam(id: string, data: { name?: string; description?: string }) {
+  async updateTeam(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      responsibilities?: string | null;
+      parentTeamId?: string | null;
+    },
+  ) {
     const team = await this.updateTeamUC.execute(id, data);
     return this.toTeamDTO(team);
   }
@@ -93,7 +111,10 @@ export class TeamModuleController {
   }
 
   async listTeams(pageNumber: number, pageSize: number) {
-    const { list, count } = await this.listTeamsUC.execute(pageNumber, pageSize);
+    const { list, count } = await this.listTeamsUC.execute(
+      pageNumber,
+      pageSize,
+    );
     return { list: list.map((t) => this.toTeamDTO(t)), count };
   }
 
@@ -110,8 +131,16 @@ export class TeamModuleController {
     return true;
   }
 
-  async listMembers(pageNumber: number, pageSize: number, filters: TeamMemberFilters) {
-    const { list, count } = await this.listMembersUC.execute(pageNumber, pageSize, filters);
+  async listMembers(
+    pageNumber: number,
+    pageSize: number,
+    filters: TeamMemberFilters,
+  ) {
+    const { list, count } = await this.listMembersUC.execute(
+      pageNumber,
+      pageSize,
+      filters,
+    );
     return { list: list.map((m) => this.toMemberDTO(m)), count };
   }
 

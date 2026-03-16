@@ -13,6 +13,8 @@ function toTeamRow(team: TeamResponseDTO, members: TeamMemberResponseDTO[]) {
     id: team.id,
     name: team.name,
     description: team.description,
+    responsibilities: team.responsibilities,
+    parent_team_id: team.parentTeamId,
     members: members.map((member) => ({
       id: member.id,
       team_id: member.teamId,
@@ -71,6 +73,8 @@ export class GdgTeamsHttpController {
       const team = await teamModuleController.createTeam({
         name: input.body.data.name,
         description: input.body.data.description,
+        responsibilities: input.body.data.responsibilities,
+        parentTeamId: input.body.data.parent_team_id,
       });
 
       const members = await Promise.all(
@@ -115,6 +119,8 @@ export class GdgTeamsHttpController {
         {
           name: input.body.data.name,
           description: input.body.data.description,
+          responsibilities: input.body.data.responsibilities,
+          parentTeamId: input.body.data.parent_team_id,
         },
       );
 
