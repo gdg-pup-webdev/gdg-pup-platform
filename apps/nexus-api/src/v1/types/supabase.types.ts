@@ -312,6 +312,30 @@ export type Database = {
         }
         Relationships: []
       }
+      gdg_merch: {
+        Row: {
+          id: string
+          image_url: string | null
+          name: string | null
+          points_cost: number | null
+          stock: string | null
+        }
+        Insert: {
+          id?: string
+          image_url?: string | null
+          name?: string | null
+          points_cost?: number | null
+          stock?: string | null
+        }
+        Update: {
+          id?: string
+          image_url?: string | null
+          name?: string | null
+          points_cost?: number | null
+          stock?: string | null
+        }
+        Relationships: []
+      }
       nfc_cards: {
         Row: {
           activated_at: string | null
