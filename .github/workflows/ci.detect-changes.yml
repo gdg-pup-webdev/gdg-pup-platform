@@ -59,7 +59,7 @@ jobs:
           esac
 
       - name: Filter changed services
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |
