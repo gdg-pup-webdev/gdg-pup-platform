@@ -58,7 +58,7 @@ The API uses versioned apps (e.g., `src/v1/`). Dependencies MUST point INWARD to
 - **Constraint:** Must be completely agnostic to external frameworks, databases, or HTTP contexts. Dependencies flow *inward*. Modules cannot directly call other modules (must use injected interfaces).
 - **Coupling:** To avoid coupling between modules, they should not directly depend on one another. Modules should treat other modules as an external services, which means that you have to create an interface to use the other modules. Interface implementations can only then use the controller of the module you need to use. and it must be injected as well.
 - **`useCases/`:** Orchestrates logic. One class per operation. Must accept required external dependencies via constructor injection (e.g., `constructor(private readonly repo: IStudyJamRepository) {}`). Must do everything needed to do its job (independent), meaning it should not depend on users having to do a separate operation before the useCase can be invoked.
-- **`<Module>Controller.ts`:** Adapts primitive inputs to Use Cases. NO BUSINESS LOGIC. This is what other modules and layers see. Everything must pass through the controller instead of directly to the use case or repositories.
+- **`<Module>Controller.ts`:** Adapts primitive inputs to Use Cases. NO BUSINESS LOGIC. This is what other modules and layers see. Everything must pass through the controller instead of directly to the use case or repositories. The methods of the controller should exactly match the names of the use cases, but not including the "useCase" words.
 - **`domain/I<Name>Repository.ts`:** Abstract contracts for persistence/external services.
 
 ### C. Domain Entities (`v1/modules/<ModuleName>/domain/`)
