@@ -88,7 +88,23 @@ export class SupabaseTeamMemberRepository implements ITeamMemberRepository {
       .single();
 
     if (error) throw new Error(`Failed to add team member: ${error.message}`);
-    return this.mapToDomain(data as TeamMemberSelectRow);
+    return this.mapToDomain(data as unknown as TeamMemberSelectRow);
+  }
+
+  async persistUpdates(member: TeamMember): Promise<TeamMember> {
+    const props = member.props;
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .update({
+        role: props.role,
+      })
+      .eq("id", props.id)
+      .select(this.selectClause)
+      .single();
+
+    if (error)
+      throw new Error(`Failed to update team member: ${error.message}`);
+    return this.mapToDomain(data as unknown as TeamMemberSelectRow);
   }
 
   async delete(id: string): Promise<void> {

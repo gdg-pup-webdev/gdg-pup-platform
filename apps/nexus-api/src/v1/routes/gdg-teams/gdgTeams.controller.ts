@@ -219,6 +219,24 @@ export class GdgTeamsHttpController {
     },
   );
 
+  updateMember: RequestHandler = createExpressController(
+    contract.api.v1.gdg_teams.gdgTeamId.members.memberId.PATCH,
+    async ({ input, output }) => {
+      const member = await teamModuleController.updateMember(
+        input.params.memberId,
+        {
+          role: input.body.data.position!,
+        },
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Team member updated successfully",
+        data: toMemberRow(member),
+      });
+    },
+  );
+
   deleteMember: RequestHandler = createExpressController(
     contract.api.v1.gdg_teams.gdgTeamId.members.memberId.DELETE,
     async ({ input, output }) => {

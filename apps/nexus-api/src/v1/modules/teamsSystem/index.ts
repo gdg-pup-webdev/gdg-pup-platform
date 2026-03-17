@@ -11,6 +11,7 @@ import { AddTeamMember } from "./useCases/AddTeamMember";
 import { GetOneTeamMember } from "./useCases/GetOneTeamMember";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
 import { ListTeamMembers } from "./useCases/ListTeamMembers";
+import { UpdateTeamMember } from "./useCases/UpdateTeamMember";
 import { SupabaseUserRepository } from "../UserModule/infrastructure/UserRepositoy";
 import { TeamModuleController } from "./TeamModuleController";
  
@@ -29,6 +30,7 @@ const checkTeamExistsByNameUC = new CheckTeamExistsByName(teamRepo);
 
 const addMemberUC = new AddTeamMember(memberRepo, teamRepo, userRepo);
 const removeMemberUC = new RemoveTeamMember(memberRepo);
+const updateMemberUC = new UpdateTeamMember(memberRepo);
 const listMembersUC = new ListTeamMembers(memberRepo);
 const getOneMemberUC = new GetOneTeamMember(memberRepo);
 
@@ -42,6 +44,7 @@ export const teamModuleController = new TeamModuleController(
   checkTeamExistsByNameUC,
   addMemberUC,
   removeMemberUC,
+  updateMemberUC,
   listMembersUC,
   getOneMemberUC
 );
