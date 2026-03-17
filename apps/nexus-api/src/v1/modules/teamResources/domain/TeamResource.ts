@@ -4,7 +4,8 @@ export type TeamResourceProps = {
   description: string;
   resourceLink: string;
   resourceType: string;
-  thumbnailImage: string; // linked to files module
+  thumbnailStorageReference: string;
+  thumbnailPublicUrl: string;
   teamName: string; // linked to teams module
   createdAt: Date;
   updatedAt: Date;

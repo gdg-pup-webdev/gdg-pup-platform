@@ -1,10 +1,10 @@
 import { TeamResourceFilters } from "./domain/ITeamResourceRepository";
 import { TeamResource } from "./domain/TeamResource";
-import { CreateTeamResource } from "./useCases/CreateTeamResource";
+import { CreateTeamResource, CreateTeamResourceInput } from "./useCases/CreateTeamResource";
 import { DeleteTeamResource } from "./useCases/DeleteTeamResource";
 import { GetTeamResource } from "./useCases/GetTeamResource";
 import { ListTeamResources } from "./useCases/ListTeamResources";
-import { UpdateTeamResource } from "./useCases/UpdateTeamResource";
+import { UpdateTeamResource, UpdateTeamResourceInput } from "./useCases/UpdateTeamResource";
 
 export interface TeamResourceDTO {
   id: string;
@@ -12,7 +12,7 @@ export interface TeamResourceDTO {
   description: string;
   resourceLink: string;
   resourceType: string;
-  thumbnailImage: string;
+  thumbnailPublicUrl: string;
   teamName: string;
   createdAt: string;
   updatedAt: string;
@@ -35,22 +35,15 @@ export class TeamResourceController {
       description: p.description,
       resourceLink: p.resourceLink,
       resourceType: p.resourceType,
-      thumbnailImage: p.thumbnailImage,
+      thumbnailPublicUrl: p.thumbnailPublicUrl,
       teamName: p.teamName,
       createdAt: p.createdAt.toISOString(),
       updatedAt: p.updatedAt.toISOString(),
     };
   }
 
-  async create(data: { 
-    title: string; 
-    description: string; 
-    resourceLink: string; 
-    resourceType: string; 
-    thumbnailImage: string; 
-    teamName: string; 
-  }) {
-    const resource = await this.createUseCase.execute(data);
+  async create(input: CreateTeamResourceInput) {
+    const resource = await this.createUseCase.execute(input);
     return this.toDTO(resource);
   }
 
@@ -67,14 +60,7 @@ export class TeamResourceController {
     };
   }
 
-  async updateResource(id: string, updates: { 
-    title?: string; 
-    description?: string; 
-    resourceLink?: string; 
-    resourceType?: string; 
-    thumbnailImage?: string; 
-    teamName?: string; 
-  }) {
+  async updateResource(id: string, updates: UpdateTeamResourceInput) {
     const resource = await this.updateUseCase.execute(id, updates);
     return this.toDTO(resource);
   }

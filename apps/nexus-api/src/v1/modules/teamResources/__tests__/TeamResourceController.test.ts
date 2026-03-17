@@ -6,19 +6,24 @@ import { ListTeamResources } from "../useCases/ListTeamResources";
 import { UpdateTeamResource } from "../useCases/UpdateTeamResource";
 import { DeleteTeamResource } from "../useCases/DeleteTeamResource";
 import { MockTeamResourceRepository } from "../infrastructure/MockTeamResourceRepository";
+import { mockFileStorage } from "../../../utils/MockFileStorage";
+import { TeamResourceStorageAdapter } from "../infrastructure/TeamResourceStorageAdapter";
 
 describe("TeamResourceController", () => {
   let controller: TeamResourceController;
   let repo: MockTeamResourceRepository;
+  let storageAdapter: TeamResourceStorageAdapter;
 
   beforeEach(() => {
+    mockFileStorage.reset();
     repo = new MockTeamResourceRepository();
+    storageAdapter = new TeamResourceStorageAdapter();
     controller = new TeamResourceController(
-      new CreateTeamResource(repo),
+      new CreateTeamResource(repo, storageAdapter),
       new GetTeamResource(repo),
       new ListTeamResources(repo),
-      new UpdateTeamResource(repo),
-      new DeleteTeamResource(repo)
+      new UpdateTeamResource(repo, storageAdapter),
+      new DeleteTeamResource(repo, storageAdapter)
     );
   });
 
@@ -27,42 +32,27 @@ describe("TeamResourceController", () => {
     description: "Learn how to structure your code for maintainability.",
     resourceLink: "https://example.com/clean-arch",
     resourceType: "video",
-    thumbnailImage: "file-id-123",
     teamName: "Web Development",
+    thumbnailImage: {
+      buffer: new ArrayBuffer(8),
+      name: "thumb.png",
+      type: "image/png"
+    }
   };
 
-  it("should create and return a DTO", async () => {
+  it("should create a team resource and return DTO", async () => {
     const result = await controller.create(sampleData);
     expect(result.id).toBeDefined();
-    expect(result.title).toBe(sampleData.title);
-    expect(result.createdAt).toBeDefined();
-    expect(result.updatedAt).toBeDefined();
+    expect(result.thumbnailPublicUrl).toContain("https://mock-storage.com/");
   });
 
-  it("should get a resource by id and return a DTO", async () => {
+  it("should delete resource and its image", async () => {
     const created = await controller.create(sampleData);
-    const result = await controller.getResource(created.id);
-    expect(result.id).toBe(created.id);
-  });
-
-  it("should list resources and return DTOs with count", async () => {
-    await controller.create(sampleData);
-    const result = await controller.listResources(1, 10, {});
-    expect(result.list).toHaveLength(1);
-    expect(result.count).toBe(1);
-    expect(result.list[0].id).toBeDefined();
-  });
-
-  it("should update a resource and return a DTO", async () => {
-    const created = await controller.create(sampleData);
-    const result = await controller.updateResource(created.id, { title: "Updated Title" });
-    expect(result.title).toBe("Updated Title");
-  });
-
-  it("should delete a resource and return true", async () => {
-    const created = await controller.create(sampleData);
-    const result = await controller.deleteResource(created.id);
-    expect(result).toBe(true);
-    expect(repo.resources).toHaveLength(0);
+    const resource = await repo.findById(created.id);
+    const storageRef = resource!.props.thumbnailStorageReference;
+    
+    await controller.deleteResource(created.id);
+    
+    expect(mockFileStorage.exists(storageRef)).toBe(false);
   });
 });

@@ -45,11 +45,14 @@ Files define HTTP methods. You MUST provide the following exports:
 The API uses versioned apps (e.g., `src/v1/`). Dependencies MUST point INWARD toward the Domain.
 
 ### A. Presentation Layer (`v1/routes/`)
-- **Role:** HTTP Routers and HTTP Controllers. Parses requests, formats responses.
+- **Role:** HTTP Routers (defines routes) and HTTP Controllers (Parses requests, formats responses).
 - **Constraint:** ABSOLUTELY NO BUSINESS LOGIC.
+- **Pattern:** Consists of `*.router.ts` and `*.controller.ts` (HTTP Controller).
 
 ### B. Application Layer (`v1/modules/<ModuleName>/`)
-- **`useCases/`:** Orchestrates logic. One class per operation.
+- **Role:** Core business logic.
+- **Constraint:** Must be completely agnostic to external frameworks, databases, or HTTP contexts. Dependencies flow *inward*. Modules cannot directly call other modules (must use injected interfaces).
+- **`useCases/`:** Orchestrates logic. One class per operation. Must accept required external dependencies via constructor injection (e.g., `constructor(private readonly repo: IStudyJamRepository) {}`). Must do everything needed to do its job (independent), meaning it should not depend on users having to do a separate operation before the useCase can be invoked.
 - **`<Module>Controller.ts`:** Adapts primitive inputs to Use Cases. NO BUSINESS LOGIC.
 - **`domain/I<Name>Repository.ts`:** Abstract contracts for persistence/external services.
 
@@ -57,6 +60,11 @@ The API uses versioned apps (e.g., `src/v1/`). Dependencies MUST point INWARD to
 - **Role:** Enforces state and validation securely. Agnostic to DBs/frameworks.
 - **Constraint:** MUST use `private constructor`. State mutation ONLY via controlled methods (`update(props)`). 
 - **Constraint:** MUST use static factories: `create(props)` for new entities, `hydrate(props)` for existing DB data.
+* Must encapsulate own state. Never rely on DB for ID or timestamp generation.
+* Must use `private _props` to prevent direct mutation.
+* Must use `private constructor`.
+* Must expose `static create(props: InsertProps)` (for new items) and `static hydrate(props: Props)` (for loading from DB).
+* Must handle mutations via controlled methods (e.g., `update(props: UpdateProps)`).
 
 ### D. Infrastructure Layer (`v1/modules/<ModuleName>/infrastructure/`)
 - **Role:** Implements Application Interfaces (e.g., Supabase Repositories).
@@ -78,3 +86,5 @@ The API uses versioned apps (e.g., `src/v1/`). Dependencies MUST point INWARD to
   - *Domains:* Test validation/mutations purely.
   - *Controllers:* Test input transformation only.
 - **Constraint:** NEVER hit a real DB or external API in unit tests. Use `Mock<Name>Repository.ts`.
+- **running tests:** ```pnpm test```
+* Test Use Cases by injecting Mock Repositories. Assert that Domain validation holds and Use Case orchestrates correctly.
