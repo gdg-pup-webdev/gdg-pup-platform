@@ -32,6 +32,9 @@ import { NfcSystemRouter } from "@/v1/routes/nfc-system/nfcSystem.router";
 import { gdgMerchController } from "@/v1/modules/gdgMerch";
 import { GdgMerchHttpController } from "../routes/gdg-merch/gdgMerch.controller";
 import { GdgMerchRouter } from "../routes/gdg-merch/gdgMerch.router";
+import { pointSystemController } from "@/v1/modules/pointsSystem";
+import { WalletHttpController } from "../routes/wallet/wallet.controller";
+import { WalletRouter } from "../routes/wallet/wallet.router";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
@@ -81,6 +84,9 @@ export const loadRoutes = (app: Express) => {
   const gdgMerchHttpController = new GdgMerchHttpController(gdgMerchController);
   const gdgMerchRouter = new GdgMerchRouter(gdgMerchHttpController);
 
+  const walletHttpController = new WalletHttpController(pointSystemController);
+  const walletRouter = new WalletRouter(walletHttpController);
+
   app.use("/files", filesRouter.router);
   app.use("/auth-system", authRouter.router);
   app.use("/health", healthRouter.router);
@@ -93,6 +99,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/sparkmates", sparkmatesRouter.router);
   app.use("/nfc-system", nfcSystemRouter.router);
   app.use("/gdg-merch", gdgMerchRouter.router);
+  app.use("/wallet", walletRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

@@ -1,20 +1,20 @@
 import { TransactionRecord, TransactionRecordPrototype } from "./TransactionRecord";
 
+/**
+ * ITransactionRepository
+ *
+ * Contract for persisting and retrieving TransactionRecord domain objects.
+ */
 export abstract class ITransactionRepository {
-  constructor() {}
-
   abstract findById(id: string): Promise<TransactionRecord | null>;
 
-  abstract listUserTransactions(
+  abstract listByUserId(
+    userId: string,
     pageNumber: number,
     pageSize: number,
-    userId: string,
-  ): Promise<{
-    list: TransactionRecord[];
-    count: number;
-  }>;
+  ): Promise<{ list: TransactionRecord[]; count: number }>;
 
   abstract savePrototype(
-    transaction: TransactionRecordPrototype,
+    prototype: TransactionRecordPrototype,
   ): Promise<TransactionRecord>;
 }

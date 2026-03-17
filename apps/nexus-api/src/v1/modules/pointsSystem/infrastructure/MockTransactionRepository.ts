@@ -1,51 +1,48 @@
 import { ITransactionRepository } from "../domain/ITransactionRepository";
 import {
   TransactionRecord,
-  TransactionRecordPrototype,
   TransactionRecordProps,
+  TransactionRecordPrototype,
 } from "../domain/TransactionRecord";
 
+/**
+ * MockTransactionRepository
+ *
+ * In-memory implementation used during testing.
+ */
 export class MockTransactionRepository extends ITransactionRepository {
   private transactions: TransactionRecord[] = [];
 
   async findById(id: string): Promise<TransactionRecord | null> {
-    const record = this.transactions.find((t) => t.props.id === id);
-    return record || null;
+    return this.transactions.find((t) => t.props.id === id) ?? null;
   }
 
-  async listUserTransactions(
+  async listByUserId(
+    userId: string,
     pageNumber: number,
     pageSize: number,
-    userId: string,
   ): Promise<{ list: TransactionRecord[]; count: number }> {
-    const userLogs = this.transactions.filter((t) => t.props.userId === userId);
-
-    // Simple pagination logic
+    const userTxs = this.transactions.filter((t) => t.props.userId === userId);
     const start = (pageNumber - 1) * pageSize;
-    const end = start + pageSize;
-    const list = userLogs.slice(start, end);
-
-    return {
-      list,
-      count: userLogs.length,
-    };
+    const list = userTxs.slice(start, start + pageSize);
+    return { list, count: userTxs.length };
   }
 
   async savePrototype(
     prototype: TransactionRecordPrototype,
   ): Promise<TransactionRecord> {
-    // Simulate DB behavior: adding ID and Timestamp
-    const fullProps: TransactionRecordProps = {
+    const props: TransactionRecordProps = {
       ...prototype.props,
-      id: `tx_${Math.random().toString(36).substr(2, 9)}`,
+      id: `tx_${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
     };
+    const record = TransactionRecord.hydrate(props);
+    this.transactions.push(record);
+    return record;
+  }
 
-    // Note: Since TransactionRecord is abstract in your snippet,
-    // you'll need a concrete class. Assuming a simple implementation:
-    const newRecord = new (class extends TransactionRecord {})(fullProps);
-
-    this.transactions.push(newRecord);
-    return newRecord;
+  /** Seed helper for tests */
+  __seed(record: TransactionRecord): void {
+    this.transactions.push(record);
   }
 }

@@ -1,114 +1,111 @@
+import { PointEntry } from "./domain/TransactionRecord";
+import { ConsumePointsFromUser } from "./useCases/ConsumePointsFromUser";
 import { GetOneTransaction } from "./useCases/GetOneTransaction";
 import { GetUserWallet } from "./useCases/GetUserWallet";
 import { GivePointsToUser } from "./useCases/GivePointsToUser";
 import { ListUserTransactions } from "./useCases/ListUserTransactions";
-import { TakePointsFromUser } from "./useCases/TakePointsFromUser";
 
+/**
+ * PointSystemController
+ *
+ * Application-layer controller. Adapts rich domain objects into
+ * simple plain-object DTOs suitable for the presentation (HTTP) layer.
+ */
 export class PointSystemController {
   constructor(
-    private getOneTransactionUseCase: GetOneTransaction,
-    private getUserWalletUseCase: GetUserWallet,
-    private givePointsToUserUseCase: GivePointsToUser,
-    private listUserTransactionsUseCase: ListUserTransactions,
-    private takePointsFromUserUseCase: TakePointsFromUser,
+    private readonly getOneTransactionUseCase: GetOneTransaction,
+    private readonly getUserWalletUseCase: GetUserWallet,
+    private readonly givePointsUseCase: GivePointsToUser,
+    private readonly listUserTransactionsUseCase: ListUserTransactions,
+    private readonly consumePointsUseCase: ConsumePointsFromUser,
   ) {}
 
-  async getOneTransaction(transactionId: string) {
-    const result = await this.getOneTransactionUseCase.execute(transactionId);
+  // ── Wallet ────────────────────────────────────────────────────────────────
 
-    if (!result) return null;
+  async getWallet(userId: string) {
+    const wallet = await this.getUserWalletUseCase.execute(userId);
+    if (!wallet) return null;
 
     return {
-      id: result.props.id,
-      createdAt: result.props.createdAt,
-      amount: result.props.pointsChange,
-      pointsType: result.props.pointsType,
-      sourceReference: result.props.sourceReference,
-      sourceType: result.props.sourceType,
-      userId: result.props.userId,
+      userId: wallet.props.userId,
+      totalPoints: wallet.props.totalPoints,
+      points: wallet.props.points,
+      updatedAt: wallet.props.updatedAt,
     };
   }
 
-  async getUserWallet(userId: string) {
-    const result = await this.getUserWalletUseCase.execute(userId);
+  // ── Transactions ──────────────────────────────────────────────────────────
 
-    if (!result) return null;
+  async getTransaction(transactionId: string) {
+    const tx = await this.getOneTransactionUseCase.execute(transactionId);
+    if (!tx) return null;
 
     return {
-      updatedAt: result.props.updatedAt,
-      points: result.props.points,
-      totalPoints: result.props.totalPoints,
+      transactionId: tx.props.id,
+      userId: tx.props.userId,
+      date: tx.props.createdAt,
+      entries: tx.props.entries,
     };
   }
 
-  async givePointsToUser(
-    userId: string,
-    pointsType: string,
-    points: number,
-    sourceReference: string,
-    sourceType: string,
-  ) {
-    const result = await this.givePointsToUserUseCase.execute(
-      userId,
-      pointsType,
-      points,
-      sourceReference,
-      sourceType,
-    );
-
-    if (!result) return null;
-
-    return {
-      updatedAt: result.updatedWallet.props.updatedAt,
-      points: result.updatedWallet.props.points,
-      totalPoints: result.updatedWallet.props.totalPoints,
-    };
-  }
-
-  async listUserTransactions(
-    pageNumber: number,
-    pageSize: number,
-    userId: string,
-  ) {
+  async getHistory(userId: string, pageNumber: number, pageSize: number) {
     const result = await this.listUserTransactionsUseCase.execute(
+      userId,
       pageNumber,
       pageSize,
-      userId,
     );
 
     return {
-      list: result.list.map((transaction) => ({
-        id: transaction.props.id,
-        createdAt: transaction.props.createdAt,
-        amount: transaction.props.pointsChange,
-        pointsType: transaction.props.pointsType,
-        sourceReference: transaction.props.sourceReference,
-        sourceType: transaction.props.sourceType,
-        userId: transaction.props.userId,
+      list: result.list.map((tx) => ({
+        transactionId: tx.props.id,
+        date: tx.props.createdAt,
+        entries: tx.props.entries,
       })),
       count: result.count,
     };
   }
 
-  async takePointsFromUser(
-    userId: string,
-    pointsType: string,
-    points: number,
-    sourceReference: string,
-    sourceType: string,
-  ) {
-    const result = await this.takePointsFromUserUseCase.execute(
+  // ── Point Operations ──────────────────────────────────────────────────────
+
+  async givePoints(userId: string, entries: PointEntry[]) {
+    const { wallet, transaction } = await this.givePointsUseCase.execute(
       userId,
-      pointsType,
-      points,
-      sourceReference,
-      sourceType,
+      entries,
     );
 
     return {
-      updatedAt: result.updatedWallet.props.updatedAt,
-      points: result.updatedWallet.props.points,
-      totalPoints: result.updatedWallet.props.totalPoints,
+      transaction: {
+        transactionId: transaction.props.id,
+        date: transaction.props.createdAt,
+        entries: transaction.props.entries,
+      },
+      wallet: {
+        userId: wallet.props.userId,
+        totalPoints: wallet.props.totalPoints,
+        points: wallet.props.points,
+        updatedAt: wallet.props.updatedAt,
+      },
+    };
+  }
+
+  async consumePoints(userId: string, entries: PointEntry[]) {
+    const { wallet, transaction } = await this.consumePointsUseCase.execute(
+      userId,
+      entries,
+    );
+
+    return {
+      transaction: {
+        transactionId: transaction.props.id,
+        date: transaction.props.createdAt,
+        entries: transaction.props.entries,
+      },
+      wallet: {
+        userId: wallet.props.userId,
+        totalPoints: wallet.props.totalPoints,
+        points: wallet.props.points,
+        updatedAt: wallet.props.updatedAt,
+      },
     };
   }
 }
