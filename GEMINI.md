@@ -37,6 +37,7 @@ Files define HTTP methods. You MUST provide the following exports:
 - **Actions:** `POST /.../:id/{action}` requires/recommends an `Idempotency-Key` header. No query params allowed.
 - **Filtering/Sorting:** Use `?sort=-field`, `?attr=val`, `?status[]=active`, `?price[lt]=50`.
 - **Status Codes:** 200 (OK/Delete), 201 (Created), 207 (Partial Batch Success), 400+ (Client Error), 500+ (Server Error).
+- **List endpoints:** Endpoints that lists resources must be paginated and never return all resource. Use pageNumber and pageSize queries to paginate results.
 
 ---
 
@@ -70,8 +71,10 @@ The API uses versioned apps (e.g., `src/v1/`). Dependencies MUST point INWARD to
 ---
 
 ## 5. TESTING STRATEGY
+- **Description:** Must be full coverage including all common cases and possible edge cases and weird cases. 
 - **Location:** `__tests__/<ComponentName>.test.ts` alongside the file.
-- **Isolation:** - *Use Cases:* Mock all Repositories/Services.
+- **Isolation:** 
+  - *Use Cases:* Mock all Repositories/Services. Each use case must have its own test file.
   - *Domains:* Test validation/mutations purely.
   - *Controllers:* Test input transformation only.
 - **Constraint:** NEVER hit a real DB or external API in unit tests. Use `Mock<Name>Repository.ts`.
