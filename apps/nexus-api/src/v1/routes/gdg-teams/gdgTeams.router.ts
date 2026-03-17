@@ -55,6 +55,11 @@ export class GdgTeamsRouter {
       // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
       this.controller.getMember,
     );
+    this.router.patch(
+      "/:gdgTeamId/members/:memberId",
+      // this.authMiddleware.requirePermissions({ "gdg-teams": ["update"] }),
+      this.controller.updateMember,
+    );
     this.router.delete(
       "/:gdgTeamId/members/:memberId",
       // this.authMiddleware.requirePermissions({ "gdg-teams": ["delete"] }),

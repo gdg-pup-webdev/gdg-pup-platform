@@ -11,6 +11,7 @@ import { ListTeamMembers } from "./useCases/ListTeamMembers";
 import { ListTeams } from "./useCases/ListTeams";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
 import { UpdateTeam } from "./useCases/UpdateTeam";
+import { UpdateTeamMember } from "./useCases/UpdateTeamMember";
 
 export interface TeamResponseDTO {
   id: string;
@@ -42,6 +43,7 @@ export class TeamModuleController {
     // Team Member Use Cases
     private readonly addMemberUC: AddTeamMember,
     private readonly removeMemberUC: RemoveTeamMember,
+    private readonly updateMemberUC: UpdateTeamMember,
     private readonly listMembersUC: ListTeamMembers,
     private readonly getOneMemberUC: GetOneTeamMember,
   ) {}
@@ -129,6 +131,11 @@ export class TeamModuleController {
    */
   async addMember(data: { teamId: string; userId: string; role: string }) {
     const member = await this.addMemberUC.execute(data);
+    return this.toMemberDTO(member);
+  }
+
+  async updateMember(id: string, data: { role: string }) {
+    const member = await this.updateMemberUC.execute(id, data);
     return this.toMemberDTO(member);
   }
 

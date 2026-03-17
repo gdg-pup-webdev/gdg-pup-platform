@@ -13,6 +13,8 @@ export type TeamMemberInsertProps = Omit<
   "id" | "joinedAt" | "name" | "image"
 >;
 
+export type TeamMemberUpdateProps = Partial<Pick<TeamMemberProps, "role">>;
+
 export class TeamMember {
   private _props: TeamMemberProps;
 
@@ -36,5 +38,12 @@ export class TeamMember {
 
   get props(): TeamMemberProps {
     return this._props;
+  }
+
+  update(props: TeamMemberUpdateProps): void {
+    this._props = {
+      ...this._props,
+      ...props,
+    };
   }
 }

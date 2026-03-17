@@ -3,5 +3,10 @@
     "footer": {
       "hideContextPercentage": false
     }
+  },
+  "mcpServers": {
+    "supabase": {
+      "httpUrl": "https://mcp.supabase.com/mcp"
+    }
   }
 }

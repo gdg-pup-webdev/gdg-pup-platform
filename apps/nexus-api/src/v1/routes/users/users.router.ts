@@ -9,6 +9,10 @@ export class UsersRouter {
     // private authMiddleware: AuthMiddleware = authMiddlewareInstance,
     this.router = Router();
 
+    this.router.get("/", this.usersHttpController.listUsers);
+    this.router.get("/search", this.usersHttpController.searchUsers);
+    this.router.get("/:userId", this.usersHttpController.getUser);
+
     this.router.get("/:userId/roles", this.usersHttpController.listRoles);
     this.router.post("/:userId/roles", this.usersHttpController.assignRole);
     this.router.delete("/:userId/roles/:id", this.usersHttpController.unassignRole);

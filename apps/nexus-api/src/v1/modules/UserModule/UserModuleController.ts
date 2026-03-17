@@ -1,19 +1,26 @@
 import { User } from "./domain/User";
 import { GetUserUseCase } from "./useCases/GetUserUseCase";
 import { ListUsersUseCase } from "./useCases/ListUsersUseCase";
+import { SearchUsersUseCase } from "./useCases/SearchUsersUseCase";
 
-interface UserResponseDTO {
+export interface UserResponseDTO {
   id: string;
   email: string;
   username: string;
+  firstName: string | null;
+  lastName: string | null;
+  displayName: string;
+  avatarUrl: string | null;
+  gdgId: string | null;
   roleId: string;
   createdAt: string;
 }
 
-export class UserController {
+export class UserModuleController {
   constructor(
     private readonly getUserUseCase: GetUserUseCase,
     private readonly listUsersUseCase: ListUsersUseCase,
+    private readonly searchUsersUseCase: SearchUsersUseCase,
   ) {}
 
   /**
@@ -25,6 +32,11 @@ export class UserController {
       id: props.id,
       email: props.email,
       username: props.username,
+      firstName: props.firstName,
+      lastName: props.lastName,
+      displayName: props.displayName,
+      avatarUrl: props.avatarUrl,
+      gdgId: props.gdgId,
       roleId: props.roleId,
       createdAt: props.createdAt.toISOString(),
     };
@@ -32,7 +44,6 @@ export class UserController {
 
   /**
    * Endpoint handler for getting a single user.
-   * In a framework like Express, the 'id' would come from req.params.id
    */
   async getUser(
     id: string,
@@ -44,7 +55,6 @@ export class UserController {
         data: this.toDTO(user),
       };
     } catch (error: any) {
-      // Handle the error (e.g., return a 404/400 status equivalent)
       return {
         error: error.message || "An unexpected error occurred.",
       };
@@ -53,14 +63,10 @@ export class UserController {
 
   /**
    * Endpoint handler for listing users with pagination.
-   * In a web framework, pageNumber and pageSize would come from req.query
    */
   async listUsers(pageNumber: number, pageSize: number) {
     try {
-      // Note: Using the signature from your implementation
       const result = await this.listUsersUseCase.execute(pageNumber, pageSize);
-
-      // Map the array of domain entities to an array of DTOs
       const usersDTO = result.list.map((user) => this.toDTO(user));
 
       return {
@@ -71,6 +77,22 @@ export class UserController {
       return {
         error:
           error.message || "An unexpected error occurred while fetching users.",
+      };
+    }
+  }
+
+  /**
+   * Endpoint handler for searching users.
+   */
+  async searchUsers(query: string, limit: number = 10) {
+    try {
+      const users = await this.searchUsersUseCase.execute(query, limit);
+      return {
+        list: users.map((user) => this.toDTO(user)),
+      };
+    } catch (error: any) {
+      return {
+        error: error.message || "An unexpected error occurred while searching users.",
       };
     }
   }
