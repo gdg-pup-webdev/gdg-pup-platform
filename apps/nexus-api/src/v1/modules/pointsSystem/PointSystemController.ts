@@ -1,9 +1,10 @@
-import { PointEntry } from "./domain/TransactionRecord";
-import { ConsumePointsFromUser } from "./useCases/ConsumePointsFromUser";
-import { GetOneTransaction } from "./useCases/GetOneTransaction";
-import { GetUserWallet } from "./useCases/GetUserWallet";
-import { GivePointsToUser } from "./useCases/GivePointsToUser";
-import { ListUserTransactions } from "./useCases/ListUserTransactions";
+import { PointEntry } from "./domain/TransactionRecord.js";
+import { ConsumePointsFromUser } from "./useCases/ConsumePointsFromUser.js";
+import { GetOneTransaction } from "./useCases/GetOneTransaction.js";
+import { GetUserWallet } from "./useCases/GetUserWallet.js";
+import { GivePointsToUser } from "./useCases/GivePointsToUser.js";
+import { ListUserTransactions } from "./useCases/ListUserTransactions.js";
+import { TakePointsFromUser } from "./useCases/TakePointsFromUser.js";
 
 /**
  * PointSystemController
@@ -18,6 +19,7 @@ export class PointSystemController {
     private readonly givePointsUseCase: GivePointsToUser,
     private readonly listUserTransactionsUseCase: ListUserTransactions,
     private readonly consumePointsUseCase: ConsumePointsFromUser,
+    private readonly takePointsFromUserUseCase: TakePointsFromUser,
   ) {}
 
   // ── Wallet ────────────────────────────────────────────────────────────────
@@ -67,10 +69,17 @@ export class PointSystemController {
 
   // ── Point Operations ──────────────────────────────────────────────────────
 
-  async givePoints(userId: string, entries: PointEntry[]) {
+  async givePoints(
+    userId: string,
+    entries: PointEntry[],
+    sourceReference?: string,
+    sourceType?: string,
+  ) {
     const { wallet, transaction } = await this.givePointsUseCase.execute(
       userId,
       entries,
+      sourceReference,
+      sourceType,
     );
 
     return {
@@ -105,6 +114,46 @@ export class PointSystemController {
         totalPoints: wallet.props.totalPoints,
         points: wallet.props.points,
         updatedAt: wallet.props.updatedAt,
+      },
+    };
+  }
+
+  async givePointsToUser(
+    userId: string,
+    pointType: string,
+    amount: number,
+    sourceReference?: string,
+    sourceType?: string,
+  ) {
+    return this.givePoints(userId, [{ pointType, amount }], sourceReference, sourceType);
+  }
+
+  async takePointsFromUser(
+    userId: string,
+    pointType: string,
+    amount: number,
+    reason: string,
+    sourceType: string,
+  ) {
+    const result = await this.takePointsFromUserUseCase.execute(
+      userId,
+      pointType,
+      amount,
+      reason,
+      sourceType,
+    );
+
+    return {
+      transaction: {
+        transactionId: result.transactionRecord.props.id,
+        date: result.transactionRecord.props.createdAt,
+        entries: result.transactionRecord.props.entries,
+      },
+      wallet: {
+        userId: result.updatedWallet.props.userId,
+        totalPoints: result.updatedWallet.props.totalPoints,
+        points: result.updatedWallet.props.points,
+        updatedAt: result.updatedWallet.props.updatedAt,
       },
     };
   }

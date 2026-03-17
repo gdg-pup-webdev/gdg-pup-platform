@@ -1,4 +1,4 @@
-import { Wallet } from "./Wallet";
+import { Wallet } from "./Wallet.js";
 
 /**
  * IWalletRepository

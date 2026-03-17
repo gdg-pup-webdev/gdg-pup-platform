@@ -1,12 +1,12 @@
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
-import { ITransactionRepository } from "../domain/ITransactionRepository";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
 import {
   PointEntry,
   TransactionRecord,
   TransactionRecordProps,
   TransactionRecordPrototype,
-} from "../domain/TransactionRecord";
+} from "../domain/TransactionRecord.js";
 
 /**
  * SupabaseTransactionRepository
@@ -128,7 +128,7 @@ export class SupabaseTransactionRepository extends ITransactionRepository {
       amount: entry.amount,
       point_type: entry.pointType,
       source_id: transactionId,
-      source_type: this.sourceType,
+      source_type: prototype.props.sourceType || this.sourceType,
       created_at: createdAt,
     }));
 

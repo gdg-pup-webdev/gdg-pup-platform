@@ -1,8 +1,8 @@
-import { ITransactionRepository } from "../domain/ITransactionRepository";
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { PointEntry, TransactionRecordPrototype } from "../domain/TransactionRecord";
-import { TransactionRecord } from "../domain/TransactionRecord";
-import { Wallet } from "../domain/Wallet";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { PointEntry, TransactionRecordPrototype } from "../domain/TransactionRecord.js";
+import { TransactionRecord } from "../domain/TransactionRecord.js";
+import { Wallet } from "../domain/Wallet.js";
 
 /**
  * ConsumePointsFromUser Use Case

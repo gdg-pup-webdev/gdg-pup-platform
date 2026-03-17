@@ -1,4 +1,4 @@
-import { TransactionRecord, TransactionRecordPrototype } from "./TransactionRecord";
+import { TransactionRecord, TransactionRecordPrototype } from "./TransactionRecord.js";
 
 /**
  * ITransactionRepository

@@ -1,5 +1,5 @@
-import { ITransactionRepository } from "../domain/ITransactionRepository";
-import { TransactionRecord } from "../domain/TransactionRecord";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
+import { TransactionRecord } from "../domain/TransactionRecord.js";
 
 /**
  * GetOneTransaction Use Case

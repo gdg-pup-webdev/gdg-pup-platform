@@ -1,9 +1,9 @@
-import { ITransactionRepository } from "../domain/ITransactionRepository";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
 import {
   TransactionRecord,
   TransactionRecordProps,
   TransactionRecordPrototype,
-} from "../domain/TransactionRecord";
+} from "../domain/TransactionRecord.js";
 
 /**
  * MockTransactionRepository

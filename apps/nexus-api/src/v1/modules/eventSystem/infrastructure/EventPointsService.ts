@@ -19,6 +19,6 @@ export class EventPointsService implements IEventPointsService {
       "EVENT_CHECKIN", // sourceType
     );
 
-    return result?.totalPoints || 0;
+    return result?.wallet.totalPoints || 0;
   }
 }

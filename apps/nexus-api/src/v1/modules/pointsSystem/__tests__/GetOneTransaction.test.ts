@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { GetOneTransaction } from "../../useCases/GetOneTransaction";
-import { MockTransactionRepository } from "../../infrastructure/MockTransactionRepository";
-import { TransactionRecord } from "../../domain/TransactionRecord";
+import { describe, it, expect, beforeEach } from "vitest"; 
+import { TransactionRecord } from "../domain/TransactionRecord";
+import { MockTransactionRepository } from "../infrastructure/MockTransactionRepository";
+import { GetOneTransaction } from "../useCases/GetOneTransaction";
 
 describe("GetOneTransaction Use Case", () => {
   let txRepo: MockTransactionRepository;

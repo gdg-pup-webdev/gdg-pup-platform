@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { Wallet } from "../../domain/Wallet";
+import { describe, it, expect, beforeEach } from "vitest"; 
+import { Wallet } from "../domain/Wallet";
 
 describe("Wallet Domain Entity", () => {
   const makeWallet = (overrides = {}) =>

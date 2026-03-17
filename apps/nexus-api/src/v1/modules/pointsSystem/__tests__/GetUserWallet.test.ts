@@ -1,7 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { GetUserWallet } from "../../useCases/GetUserWallet";
-import { MockWalletRepository } from "../../infrastructure/MockWalletRepository";
-import { Wallet } from "../../domain/Wallet";
+import { describe, it, expect, beforeEach } from "vitest"; 
+import { MockWalletRepository } from "../infrastructure/MockWalletRepository";
+import { GetUserWallet } from "../useCases/GetUserWallet";
 
 describe("GetUserWallet Use Case", () => {
   let walletRepo: MockWalletRepository;

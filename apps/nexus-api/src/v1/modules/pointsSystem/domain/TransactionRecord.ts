@@ -18,6 +18,9 @@ export type TransactionRecordProps = {
   createdAt: string;
   /** All point-type changes that belong to this transaction */
   entries: PointEntry[];
+
+  sourceReference?: string;
+  sourceType?: string;
 };
 
 /**

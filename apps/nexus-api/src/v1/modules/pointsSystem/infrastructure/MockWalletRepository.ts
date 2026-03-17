@@ -1,5 +1,5 @@
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { Wallet, WalletProps } from "../domain/Wallet";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { Wallet, WalletProps } from "../domain/Wallet.js";
 
 /**
  * MockWalletRepository

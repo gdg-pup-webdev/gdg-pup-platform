@@ -1,5 +1,5 @@
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { Wallet } from "../domain/Wallet";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { Wallet } from "../domain/Wallet.js";
 
 /**
  * GetUserWallet Use Case

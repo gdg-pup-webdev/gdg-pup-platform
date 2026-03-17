@@ -1,7 +1,7 @@
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { Wallet, PointsBalance } from "../domain/Wallet";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { Wallet, PointsBalance } from "../domain/Wallet.js";
 
 /**
  * SupabaseWalletRepository

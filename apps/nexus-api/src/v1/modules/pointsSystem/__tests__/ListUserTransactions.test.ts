@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { ListUserTransactions } from "../../useCases/ListUserTransactions";
-import { MockTransactionRepository } from "../../infrastructure/MockTransactionRepository";
-import { TransactionRecord } from "../../domain/TransactionRecord";
+import { describe, it, expect, beforeEach } from "vitest"; 
+import { TransactionRecord } from "../domain/TransactionRecord";
+import { MockTransactionRepository } from "../infrastructure/MockTransactionRepository";
+import { ListUserTransactions } from "../useCases/ListUserTransactions";
 
 describe("ListUserTransactions Use Case", () => {
   let txRepo: MockTransactionRepository;
@@ -55,7 +55,7 @@ describe("ListUserTransactions Use Case", () => {
 
     const { list, count } = await useCase.execute("user-2", 1, 10);
     expect(count).toBe(3);
-    list.forEach((tx) => expect(tx.props.userId).toBe("user-2"));
+    list.forEach((tx: TransactionRecord) => expect(tx.props.userId).toBe("user-2"));
   });
 
   it("should return empty list when page exceeds available records", async () => {

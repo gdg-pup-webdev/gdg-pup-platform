@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { GivePointsToUser } from "../../useCases/GivePointsToUser";
-import { MockWalletRepository } from "../../infrastructure/MockWalletRepository";
-import { MockTransactionRepository } from "../../infrastructure/MockTransactionRepository";
-import { Wallet } from "../../domain/Wallet";
+import { describe, it, expect, beforeEach } from "vitest"; 
+import { Wallet } from "../domain/Wallet";
+import { MockTransactionRepository } from "../infrastructure/MockTransactionRepository";
+import { MockWalletRepository } from "../infrastructure/MockWalletRepository";
+import { GivePointsToUser } from "../useCases/GivePointsToUser";
 
 describe("GivePointsToUser Use Case", () => {
   let walletRepo: MockWalletRepository;

@@ -1,8 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { ConsumePointsFromUser } from "../../useCases/ConsumePointsFromUser";
-import { MockWalletRepository } from "../../infrastructure/MockWalletRepository";
-import { MockTransactionRepository } from "../../infrastructure/MockTransactionRepository";
-import { Wallet } from "../../domain/Wallet";
+import { describe, it, expect, beforeEach } from "vitest"; 
+import { PointEntry } from "../domain/TransactionRecord";
+import { Wallet } from "../domain/Wallet";
+import { MockTransactionRepository } from "../infrastructure/MockTransactionRepository";
+import { MockWalletRepository } from "../infrastructure/MockWalletRepository";
+import { ConsumePointsFromUser } from "../useCases/ConsumePointsFromUser";
 
 describe("ConsumePointsFromUser Use Case", () => {
   let walletRepo: MockWalletRepository;
@@ -51,7 +52,7 @@ describe("ConsumePointsFromUser Use Case", () => {
     expect(wallet.props.points.webdevPoints).toBe(50);
     expect(wallet.props.totalPoints).toBe(150);
     expect(transaction.props.entries).toHaveLength(2);
-    expect(transaction.props.entries.every((e) => e.amount < 0)).toBe(true);
+    expect(transaction.props.entries.every((e: PointEntry) => e.amount < 0)).toBe(true);
   });
 
   it("should allow consuming the entire balance (down to zero)", async () => {

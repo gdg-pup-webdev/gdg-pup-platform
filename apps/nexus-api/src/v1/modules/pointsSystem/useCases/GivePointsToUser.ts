@@ -1,8 +1,8 @@
-import { ITransactionRepository } from "../domain/ITransactionRepository";
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { PointEntry, TransactionRecordPrototype } from "../domain/TransactionRecord";
-import { TransactionRecord } from "../domain/TransactionRecord";
-import { Wallet } from "../domain/Wallet";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { PointEntry, TransactionRecordPrototype } from "../domain/TransactionRecord.js";
+import { TransactionRecord } from "../domain/TransactionRecord.js";
+import { Wallet } from "../domain/Wallet.js";
 
 /**
  * GivePointsToUser Use Case
@@ -19,6 +19,8 @@ export class GivePointsToUser {
   async execute(
     userId: string,
     entries: PointEntry[],
+    sourceReference?: string,
+    sourceType?: string,
   ): Promise<{ wallet: Wallet; transaction: TransactionRecord }> {
     if (!entries || entries.length === 0) {
       throw new Error("At least one point entry is required.");
@@ -43,7 +45,12 @@ export class GivePointsToUser {
 
     const updatedWallet = await this.walletRepository.persistUpdates(wallet);
 
-    const prototype = new TransactionRecordPrototype({ userId, entries });
+    const prototype = new TransactionRecordPrototype({
+      userId,
+      entries,
+      sourceReference,
+      sourceType,
+    });
     const transaction =
       await this.transactionRepository.savePrototype(prototype);
 
