@@ -194,3 +194,17 @@ export const useUsers = (pageNumber = 1, pageSize = 20) => {
     },
   });
 };
+
+export const useSearchUsers = (query: string) => {
+  return useQuery({
+    queryKey: ["users", "search", query],
+    queryFn: async () => {
+      const res = await callEndpoint(API_URL, contract.api.v1.users.search.GET, {
+        query: { q: query, limit: "10" },
+      });
+      if (res.status !== 200) throw new Error(res.body.message);
+      return res;
+    },
+    enabled: query.length >= 2,
+  });
+};

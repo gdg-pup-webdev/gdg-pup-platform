@@ -10,6 +10,7 @@ export class UsersRouter {
     this.router = Router();
 
     this.router.get("/", this.usersHttpController.listUsers);
+    this.router.get("/search", this.usersHttpController.searchUsers);
     this.router.get("/:userId", this.usersHttpController.getUser);
 
     this.router.get("/:userId/roles", this.usersHttpController.listRoles);

@@ -9,11 +9,11 @@ function toContractUser(user: any) {
   return {
     id: user.id,
     email: user.email,
-    gdg_id: "", // Missing in UserModuleController DTO but required by contract
-    display_name: user.username,
-    first_name: null,
-    last_name: null,
-    avatar_url: null,
+    gdg_id: user.gdgId || null,
+    display_name: user.displayName,
+    first_name: user.firstName,
+    last_name: user.lastName,
+    avatar_url: user.avatarUrl,
     status: "active",
     created_at: user.createdAt,
     updated_at: user.createdAt,
@@ -73,6 +73,27 @@ export class UsersHttpController {
         data: toContractUser(result.data),
       });
     },
+  );
+
+  searchUsers: RequestHandler = createExpressController(
+    contract.api.v1.users.search.GET,
+    async ({ input, output }) => {
+      const limit = input.query.limit ? parseInt(input.query.limit) : 10;
+      const result = await this.userModule.searchUsers(input.query.q, limit);
+
+      if (result.error) {
+        return output(500, {
+          status: "error",
+          message: result.error,
+        });
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Users searched successfully",
+        data: result.list!.map(toContractUser),
+      });
+    }
   );
 
   listRoles: RequestHandler = createExpressController(

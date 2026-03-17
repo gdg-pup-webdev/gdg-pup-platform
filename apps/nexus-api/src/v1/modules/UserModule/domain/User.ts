@@ -2,12 +2,16 @@ export type UserProps = {
   id: string;
   email: string;
   username: string;
+  firstName: string | null;
+  lastName: string | null;
+  displayName: string;
+  avatarUrl: string | null;
   roleId: string;
   createdAt: Date;
 };
 
 export class User {
-  _props: UserProps;
+  private _props: UserProps;
 
   constructor(props: UserProps) {
     this._props = props;

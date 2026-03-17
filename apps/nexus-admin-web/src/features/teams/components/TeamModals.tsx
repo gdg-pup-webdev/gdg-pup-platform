@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Edit2, Check } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Edit2, Check, User as UserIcon } from "lucide-react";
 import { Team, TeamInsert, TeamUpdate, TeamMember } from "../types";
-import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useUsers, useTeam } from "../api/teams";
+import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useUsers, useTeam, useSearchUsers } from "../api/teams";
 import { toast } from "react-toastify";
 
 // ==========================================
@@ -162,30 +162,41 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
 
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [position, setPosition] = useState("");
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [editingPosition, setEditingPosition] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { data: usersResponse, isLoading: isLoadingUsers } = useUsers(1, 100);
+  const { data: usersResponse, isLoading: isSearching } = useSearchUsers(debouncedSearch);
   const addMemberMutation = useAddTeamMember();
   const removeMemberMutation = useRemoveTeamMember();
   const updateMemberMutation = useUpdateTeamMember();
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   if (!initialTeam) return null;
 
-  const users = usersResponse?.body?.data || [];
-  const filteredUsers = searchQuery.length > 0 
-    ? users.filter((user: any) => 
-        (user.first_name + " " + user.last_name + " " + user.email).toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !team?.members?.some((m: TeamMember) => m.user_id === user.id)
-      ) 
-    : [];
+  const searchResults = usersResponse?.body?.data?.filter((user: any) => 
+    !team?.members?.some((m: TeamMember) => m.user_id === user.id)
+  ) || [];
 
   const handleAddMember = async () => {
-    console.log("selectedUser", selectedUser);
-    console.log("position", position);
-    console.log("team", team);
     if (!selectedUser || !position || !team) return;
 
     try {
@@ -218,24 +229,15 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
     }
   };
 
-  const handleStartEdit = (member: TeamMember) => {
-    setEditingMemberId(member.id);
-    setEditingPosition(member.position);
+  const handleSelectUser = (user: any) => {
+    setSelectedUser(user);
+    setSearchQuery(`${user.display_name} (${user.email})`);
+    setShowDropdown(false);
   };
 
-  const handleUpdateMember = async (memberId: string) => {
-    if (!team) return;
-    try {
-      await updateMemberMutation.mutateAsync({
-        teamId: team.id,
-        memberId,
-        position: editingPosition,
-      });
-      setEditingMemberId(null);
-      toast.success("Position updated successfully");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update position");
-    }
+  const clearSelection = () => {
+    setSelectedUser(null);
+    setSearchQuery("");
   };
 
   return (
@@ -284,64 +286,74 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
 
             {isAddingMember && (
               <div className="mb-6 space-y-4 rounded-sm border border-teal-100 bg-teal-50/30 p-4 animate-in fade-in slide-in-from-top-2">
-                <div className="relative">
-                  <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search users by name..."
-                    className="w-full rounded-sm border border-gray-200 bg-white py-2 pr-4 pl-10 text-sm outline-none focus:border-teal-500"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+                <div className="relative" ref={dropdownRef}>
+                  <div className="relative">
+                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search users by name, email..."
+                      className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
+                        selectedUser ? "border-teal-500 bg-teal-50/50 font-bold text-teal-900" : "border-gray-200 bg-white"
+                      }`}
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        if (!selectedUser) setShowDropdown(true);
+                      }}
+                      onFocus={() => !selectedUser && setShowDropdown(true)}
+                      readOnly={!!selectedUser}
+                    />
+                    {selectedUser ? (
+                      <button 
+                        onClick={clearSelection}
+                        className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
+                      >
+                        <X size={16} />
+                      </button>
+                    ) : isSearching ? (
+                      <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                        <Loader2 size={16} className="animate-spin text-gray-400" />
+                      </div>
+                    ) : null}
+                  </div>
                   
-                  {searchQuery && filteredUsers.length > 0 && !selectedUser && (
-                    <div className="absolute z-10 mt-1 max-h-40 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-lg">
-                      {filteredUsers.map((user: any) => (
-                        <button
-                          key={user.id}
-                          onClick={() => setSelectedUser(user)}
-                          className="flex w-full items-center px-4 py-2 text-left text-sm hover:bg-gray-50"
-                        >
-                          {user.first_name} {user.last_name} ({user.email})
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {searchQuery && filteredUsers.length === 0 && !selectedUser && !isLoadingUsers && (
-                    <div className="absolute z-10 mt-1 w-full rounded-sm border border-gray-100 bg-white p-3 text-center text-xs text-gray-500 shadow-lg">
-                      No users found matching your search.
+                  {showDropdown && searchQuery.length >= 2 && (
+                    <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl animate-in fade-in zoom-in-95">
+                      {searchResults.length > 0 ? (
+                        searchResults.map((user: any) => (
+                          <button
+                            key={user.id}
+                            onClick={() => handleSelectUser(user)}
+                            className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
+                          >
+                            <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
+                            <span className="text-xs text-gray-500">{user.email}</span>
+                          </button>
+                        ))
+                      ) : !isSearching ? (
+                        <div className="p-4 text-center text-sm text-gray-500 italic">
+                          No matching users found.
+                        </div>
+                      ) : null}
                     </div>
                   )}
                 </div>
-
-                {selectedUser && (
-                  <div className="flex items-center justify-between rounded-sm bg-white p-2 border border-teal-200">
-                    <div className="text-sm">
-                      <span className="font-bold text-gray-900">{selectedUser.first_name} {selectedUser.last_name}</span>
-                      <span className="ml-2 text-xs text-gray-500">{selectedUser.email}</span>
-                    </div>
-                    <button onClick={() => setSelectedUser(null)} className="text-gray-400 hover:text-gray-600">
-                      <X size={14} />
-                    </button>
-                  </div>
-                )}
 
                 <div className="flex gap-2">
                   <input
                     type="text"
                     placeholder="Position (e.g. Lead Developer)"
-                    className="flex-1 rounded-sm border border-gray-200 bg-white py-2 px-3 text-sm outline-none focus:border-teal-500"
+                    className="flex-1 rounded-sm border border-gray-200 bg-white py-2.5 px-4 text-sm outline-none focus:border-teal-500 transition-all"
                     value={position}
                     onChange={(e) => setPosition(e.target.value)}
                   />
                   <button
                     onClick={handleAddMember}
                     disabled={!selectedUser || !position || addMemberMutation.isPending}
-                    className="flex items-center gap-2 rounded-sm bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50"
+                    className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition-all shadow-sm"
                   >
-                    {addMemberMutation.isPending ? <Loader2 size={14} className="animate-spin" /> : <UserPlus size={14} />}
-                    Add
+                    {addMemberMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
+                    Add Member
                   </button>
                 </div>
               </div>
@@ -352,11 +364,11 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
                 team.members.map((member: TeamMember) => (
                   <div key={member.id} className="group flex items-center justify-between gap-3 rounded-sm border border-gray-50 bg-white p-2.5 text-sm shadow-sm hover:border-teal-100 transition-colors">
                     <div className="flex items-center gap-3 flex-1">
-                      <div className="h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden border border-gray-200">
+                      <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 overflow-hidden border border-gray-200">
                         {member.image ? (
                           <img src={member.image} alt={member.name} className="h-full w-full object-cover" />
                         ) : (
-                          <Users size={16} />
+                          <UserIcon size={18} />
                         )}
                       </div>
                       <div className="flex-1">
@@ -393,7 +405,7 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
                     {editingMemberId !== member.id && (
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => handleStartEdit(member)}
+                          onClick={() => setEditingMemberId(member.id) || setEditingPosition(member.position)}
                           className="p-1.5 text-gray-300 hover:text-teal-500 transition-colors"
                           title="Edit position"
                         >
