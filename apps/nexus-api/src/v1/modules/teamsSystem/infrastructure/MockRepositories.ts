@@ -25,6 +25,7 @@ export class MockTeamMemberRepository implements ITeamMemberRepository {
     return { list: res.slice((p-1)*s, p*s), count: res.length };
   }
   async saveNew(m: TeamMember) { this.members.push(m); return m; }
+  async persistUpdates(m: TeamMember) { const i = this.members.findIndex(x => x.props.id === m.props.id); this.members[i] = m; return m; }
   async delete(id: string) { this.members = this.members.filter(m => m.props.id !== id); }
 }
 

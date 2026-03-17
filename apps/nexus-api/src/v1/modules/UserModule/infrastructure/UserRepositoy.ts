@@ -23,6 +23,7 @@ export class SupabaseUserRepository implements IUserRepository {
       lastName: row.last_name || null,
       displayName: row.display_name || "",
       avatarUrl: row.avatar_url || null,
+      gdgId: row.gdg_id || null,
       roleId: (row as any).role_id || (row as any).roleId || "",
       createdAt: new Date(row.created_at),
     };

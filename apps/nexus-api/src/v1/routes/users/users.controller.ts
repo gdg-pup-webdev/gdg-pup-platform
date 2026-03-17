@@ -46,7 +46,7 @@ export class UsersHttpController {
         message: "Users fetched successfully",
         data: result.list!.map(toContractUser),
         meta: {
-          pageNumber,
+          currentPage: pageNumber,
           pageSize,
           totalRecords: result.count!,
           totalPages: Math.ceil(result.count! / pageSize),

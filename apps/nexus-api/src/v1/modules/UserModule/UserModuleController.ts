@@ -11,6 +11,7 @@ export interface UserResponseDTO {
   lastName: string | null;
   displayName: string;
   avatarUrl: string | null;
+  gdgId: string | null;
   roleId: string;
   createdAt: string;
 }
@@ -35,6 +36,7 @@ export class UserModuleController {
       lastName: props.lastName,
       displayName: props.displayName,
       avatarUrl: props.avatarUrl,
+      gdgId: props.gdgId,
       roleId: props.roleId,
       createdAt: props.createdAt.toISOString(),
     };

@@ -229,6 +229,21 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
     }
   };
 
+  const handleUpdateMember = async (memberId: string) => {
+    if (!team) return;
+    try {
+      await updateMemberMutation.mutateAsync({
+        teamId: team.id,
+        memberId,
+        position: editingPosition,
+      });
+      setEditingMemberId(null);
+      toast.success("Position updated successfully");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update position");
+    }
+  };
+
   const handleSelectUser = (user: any) => {
     setSelectedUser(user);
     setSearchQuery(`${user.display_name} (${user.email})`);
@@ -405,7 +420,10 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
                     {editingMemberId !== member.id && (
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
-                          onClick={() => setEditingMemberId(member.id) || setEditingPosition(member.position)}
+                          onClick={() => {
+                            setEditingMemberId(member.id);
+                            setEditingPosition(member.position);
+                          }}
                           className="p-1.5 text-gray-300 hover:text-teal-500 transition-colors"
                           title="Edit position"
                         >

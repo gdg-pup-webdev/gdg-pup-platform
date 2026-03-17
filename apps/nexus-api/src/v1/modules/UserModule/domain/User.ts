@@ -6,6 +6,7 @@ export type UserProps = {
   lastName: string | null;
   displayName: string;
   avatarUrl: string | null;
+  gdgId: string | null;
   roleId: string;
   createdAt: Date;
 };
