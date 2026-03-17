@@ -177,7 +177,7 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
   const users = usersResponse?.body?.data || [];
   const filteredUsers = searchQuery.length > 0 
     ? users.filter((user: any) => 
-        (user.first_name + " " + user.last_name).toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (user.first_name + " " + user.last_name + " " + user.email).toLowerCase().includes(searchQuery.toLowerCase()) &&
         !team?.members?.some((m: TeamMember) => m.user_id === user.id)
       ) 
     : [];

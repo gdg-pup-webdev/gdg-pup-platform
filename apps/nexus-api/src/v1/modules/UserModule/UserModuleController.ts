@@ -10,7 +10,7 @@ interface UserResponseDTO {
   createdAt: string;
 }
 
-export class UserController {
+export class UserModuleController {
   constructor(
     private readonly getUserUseCase: GetUserUseCase,
     private readonly listUsersUseCase: ListUsersUseCase,
