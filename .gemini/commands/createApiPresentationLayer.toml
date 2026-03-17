@@ -1,0 +1,20 @@
+description = "Implements an api presentation layer that wraps around a module." 
+
+
+prompt = '''
+You will be making a new API presentation layer using express as described here - {{args}}
+
+You need to strictly follow the rules of clean architecture. 
+
+Your job is to: 
+
+1. Create the contracts on the correct contract project.
+
+2. Create the http controller.
+
+3. Create the router for the http controller.
+
+4. Load the router on the routes loader.
+
+5. Create a short and straight to the point summary of your changes.
+'''

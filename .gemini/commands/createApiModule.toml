@@ -1,0 +1,28 @@
+description = "Create a new api module using clean architecture" 
+
+
+prompt = '''
+You will be making a new API module as described here - {{args}}
+
+You need to strictly follow the rules of clean architecture. 
+
+Your job is to: 
+
+1. Create a new folder in the modules folder of the api. The name of the folder will be derived from the name of the module. 
+
+2. Create the Domain
+
+3. Create the Interfaces
+
+4. Create the Use Cases
+
+5. Create the Controller 
+
+6. Create the mock infrastructure 
+
+7. Create the index file which initializes and exports the classe and an instance of the controller, classes of the use cases, and classes of the interfaces. 
+
+8. Create the test cases for each use case and the controller using vitest. 
+
+9. Create a short and straight to the point summary of your changes.
+'''

@@ -5,12 +5,13 @@ import { TransactionRecord } from "../domain/TransactionRecord.js";
 import { Wallet } from "../domain/Wallet.js";
 
 /**
- * GivePointsToUser Use Case
+ * ConsumePointsFromUser Use Case
  *
  * Accepts an array of {pointType, amount} entries (each must be positive),
- * credits them to the user's wallet, and records a single transaction.
+ * debits them from the user's wallet, and records a single transaction
+ * (stored with negative amounts to indicate consumption).
  */
-export class GivePointsToUser {
+export class ConsumePointsFromUser {
   constructor(
     private readonly walletRepository: IWalletRepository,
     private readonly transactionRepository: ITransactionRepository,
@@ -19,8 +20,6 @@ export class GivePointsToUser {
   async execute(
     userId: string,
     entries: PointEntry[],
-    sourceReference?: string,
-    sourceType?: string,
   ): Promise<{ wallet: Wallet; transaction: TransactionRecord }> {
     if (!entries || entries.length === 0) {
       throw new Error("At least one point entry is required.");
@@ -39,17 +38,22 @@ export class GivePointsToUser {
       throw new Error(`Wallet not found for user "${userId}".`);
     }
 
+    // applyPointsDelta with negative delta – it will throw if balance is insufficient
     for (const entry of entries) {
-      wallet.applyPointsDelta(entry.pointType, entry.amount);
+      wallet.applyPointsDelta(entry.pointType, -entry.amount);
     }
 
     const updatedWallet = await this.walletRepository.persistUpdates(wallet);
 
+    // Store negative amounts so history shows consumption clearly
+    const negativeEntries: PointEntry[] = entries.map((e) => ({
+      pointType: e.pointType,
+      amount: -e.amount,
+    }));
+
     const prototype = new TransactionRecordPrototype({
       userId,
-      entries,
-      sourceReference,
-      sourceType,
+      entries: negativeEntries,
     });
     const transaction =
       await this.transactionRepository.savePrototype(prototype);
