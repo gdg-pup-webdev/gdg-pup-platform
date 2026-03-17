@@ -1,30 +1,43 @@
 {
 	"folders": [
 		{
-			"path": "apps/identity-api"
-		},
-		{
+			"name": "nexus-api",
 			"path": "apps/nexus-api"
 		},
 		{
-			"path": "apps/nexus-web"
-		},
-		{
-			"path": "packages/identity-api-contracts"
-		},
-		{
+			"name": "nexus-api-contracts",
 			"path": "packages/nexus-api-contracts"
 		},
 		{
+			"name": "nexus-admin-web",
+			"path": "apps/nexus-admin-web"
+		},
+		{
+			"name": "typed-rest",
 			"path": "packages/typed-rest"
 		},
 		{
+			"name": "identity-api",
+			"path": "apps/identity-api"
+		},
+		{
+			"name": "nexus-web",
+			"path": "apps/nexus-web"
+		},
+		{
+			"name": "identity-api-contracts",
+			"path": "packages/identity-api-contracts"
+		},
+		{
+			"name": "storybook",
 			"path": "apps/storybook"
 		},
 		{
+			"name": "spark-tools",
 			"path": "packages/spark-tools"
 		},
 		{
+			"name": "newestclone",
 			"path": "."
 		}
 	],
