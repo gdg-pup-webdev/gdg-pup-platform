@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "g": "tsx scripts/generate-feature.ts"
+    "g": "tsx scripts/generate-feature.ts",
+    "webp": "tsx scripts/convert-to-webp.ts"
   },
   "dependencies": {
     "@configs/tailwind-config": "workspace:*",
