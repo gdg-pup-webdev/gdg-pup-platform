@@ -21,7 +21,7 @@ export function IdHowItWorks() {
     >
       <div className="relative h-auto md:h-120 flex flex-col md:flex-row items-stretch">
         {/* Cirby mascot — positioned behind the card on desktop, above on mobile */}
-        <div className="static md:absolute left-0 top-1/2 md:-translate-y-1/2 w-full md:w-[55%] z-10 pointer-events-none flex justify-start md:justify-start -mt-50 md:mt-0 px-6 md:px-0">
+        <div className="static md:absolute left-0 top-1/2 md:-translate-y-1/2 w-full md:w-[55%] z-10 pointer-events-none flex justify-start md:justify-start -mt-80 md:mt-0 px-6 md:px-0">
           <div className="w-[60%] md:w-full">
             <Image
               src={ASSETS.ID.CIRBY}
