@@ -25,9 +25,14 @@ const NAV_ITEMS = [
     icon: LayoutDashboard,
   },
   {
+    label: "Teams",
+    href: INTERNAL_LINKS.TEAMS,
+    icon: Users,
+  },
+  {
     label: "Debug page",
     href: INTERNAL_LINKS.DEBUG_PAGE,
-    icon: Users,
+    icon: Award, // Changed to Award or something else to avoid conflict with Users
   },
 ];
 

@@ -6,10 +6,19 @@ import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 
 const SECTIONS = [
   {
+    title: "Teams",
+    description: "Manage GDG PUP teams and members",
+    href: INTERNAL_LINKS.TEAMS,
+    icon: Users,
+    gradient: "from-teal-500 to-teal-600",
+    bgLight: "bg-teal-50",
+    textColor: "text-teal-600",
+  },
+  {
     title: "Debug page",
     description: "System diagnostics and health checks",
     href: INTERNAL_LINKS.DEBUG_PAGE,
-    icon: Users,
+    icon: Award,
     gradient: "from-blue-500 to-blue-600",
     bgLight: "bg-blue-50",
     textColor: "text-blue-600",

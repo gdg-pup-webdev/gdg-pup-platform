@@ -6,6 +6,11 @@ export const catchAllErrorsMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
+  
+  console.log("CATCH ALL ERROR ///////////////////////////////////");
+  console.error(err);
+  console.log("///////////////////////////////////");
+
   if (err instanceof Error) {
     return res.status(500).json({
       errors: [
