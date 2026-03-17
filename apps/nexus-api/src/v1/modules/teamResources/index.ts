@@ -1,22 +1,25 @@
 import { MockTeamResourceRepository } from "./infrastructure/MockTeamResourceRepository";
-import { MockFileStorage } from "../../utils/MockFileStorage";
+import { mockFileStorage } from "../../utils/MockFileStorage";
 import { TeamResourceStorageAdapter } from "./infrastructure/TeamResourceStorageAdapter";
+import { TeamResourceTeamServiceAdapter } from "./infrastructure/TeamResourceTeamServiceAdapter";
 import { CreateTeamResource } from "./useCases/CreateTeamResource";
 import { DeleteTeamResource } from "./useCases/DeleteTeamResource";
 import { GetTeamResource } from "./useCases/GetTeamResource";
 import { ListTeamResources } from "./useCases/ListTeamResources";
 import { UpdateTeamResource } from "./useCases/UpdateTeamResource";
 import { TeamResourceController } from "./TeamResourceController";
+import { teamModuleController } from "../teamsSystem";
 
-// Using Mock for initial setup
+// Infrastructure
 const repository = new MockTeamResourceRepository();
 const storageAdapter = new TeamResourceStorageAdapter();
+const teamServiceAdapter = new TeamResourceTeamServiceAdapter(teamModuleController);
 
 // Use Cases
-export const createTeamResource = new CreateTeamResource(repository, storageAdapter);
+export const createTeamResource = new CreateTeamResource(repository, storageAdapter, teamServiceAdapter);
 export const getTeamResource = new GetTeamResource(repository);
 export const listTeamResources = new ListTeamResources(repository);
-export const updateTeamResource = new UpdateTeamResource(repository, storageAdapter);
+export const updateTeamResource = new UpdateTeamResource(repository, storageAdapter, teamServiceAdapter);
 export const deleteTeamResource = new DeleteTeamResource(repository, storageAdapter);
 
 // Controller
@@ -31,4 +34,4 @@ export const teamResourceController = new TeamResourceController(
 // Exports
 export { CreateTeamResource, DeleteTeamResource, GetTeamResource, ListTeamResources, UpdateTeamResource };
 export { TeamResourceController };
-export { MockTeamResourceRepository, MockFileStorage, TeamResourceStorageAdapter };
+export { MockTeamResourceRepository, mockFileStorage, TeamResourceStorageAdapter };

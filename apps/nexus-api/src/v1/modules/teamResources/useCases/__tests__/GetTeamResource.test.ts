@@ -18,7 +18,8 @@ describe("GetTeamResource Use Case", () => {
       description: "Test",
       resourceLink: "http://test.com",
       resourceType: "video",
-      thumbnailImage: "test",
+      thumbnailStorageReference: "ref",
+      thumbnailPublicUrl: "url",
       teamName: "Test",
     });
     await repo.saveNew(resource);

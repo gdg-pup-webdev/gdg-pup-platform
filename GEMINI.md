@@ -20,13 +20,17 @@ ALL API specifications MUST be defined here *before* implementation. The build s
 
 ### Models (`models/<moduleName>/<resource>.ts`)
 - MUST use the `cz` object from `@packages/typed-rest/shared`.
-- MUST export variations: Database Row, Insert DTO (`omit({id, created_at})`), Update DTO (`partial()`).
+- MUST export variations: The actual object type, Insert DTO (`omit({id, created_at})`), Update DTO (`partial()`).
+- MUST not depend on any external frameworks including database schemas. 
 
 ### Routes (`routes/<moduleName>/<resource>/[id]/<METHOD>.ts`)
 Files define HTTP methods. You MUST provide the following exports:
 - **`response` (Required):** Object mapping status codes to `cz` schemas (Must include `200`).
 - **`docs_summary` & `docs_description` (Required):** Endpoint documentation strings.
 - **`query`, `body`, `files` (Optional):** `cz.object` schemas. Use `OpenApiSchemas.Request.Body.withPayload(dto)` or `OpenApiSchemas.Request.Query.paginated()` when applicable.
+
+### Using the contract on the backend
+import the contract object. all characters not in range [a-z] are converted into underscores (_). There is also no two underscores consecutively. There is no underscores on beginning and end.
 
 ---
 
@@ -52,8 +56,9 @@ The API uses versioned apps (e.g., `src/v1/`). Dependencies MUST point INWARD to
 ### B. Application Layer (`v1/modules/<ModuleName>/`)
 - **Role:** Core business logic.
 - **Constraint:** Must be completely agnostic to external frameworks, databases, or HTTP contexts. Dependencies flow *inward*. Modules cannot directly call other modules (must use injected interfaces).
+- **Coupling:** To avoid coupling between modules, they should not directly depend on one another. Modules should treat other modules as an external services, which means that you have to create an interface to use the other modules. Interface implementations can only then use the controller of the module you need to use. and it must be injected as well.
 - **`useCases/`:** Orchestrates logic. One class per operation. Must accept required external dependencies via constructor injection (e.g., `constructor(private readonly repo: IStudyJamRepository) {}`). Must do everything needed to do its job (independent), meaning it should not depend on users having to do a separate operation before the useCase can be invoked.
-- **`<Module>Controller.ts`:** Adapts primitive inputs to Use Cases. NO BUSINESS LOGIC.
+- **`<Module>Controller.ts`:** Adapts primitive inputs to Use Cases. NO BUSINESS LOGIC. This is what other modules and layers see. Everything must pass through the controller instead of directly to the use case or repositories.
 - **`domain/I<Name>Repository.ts`:** Abstract contracts for persistence/external services.
 
 ### C. Domain Entities (`v1/modules/<ModuleName>/domain/`)

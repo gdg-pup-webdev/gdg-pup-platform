@@ -24,7 +24,8 @@ describe("ListTeamResources Use Case", () => {
         ...d,
         description: "Test description",
         resourceLink: "http://test.com",
-        thumbnailImage: "test",
+        thumbnailStorageReference: "ref",
+        thumbnailPublicUrl: "url",
       }));
     }
   };

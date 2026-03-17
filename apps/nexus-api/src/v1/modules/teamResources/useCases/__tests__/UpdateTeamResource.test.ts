@@ -4,17 +4,27 @@ import { TeamResource } from "../../domain/TeamResource";
 import { MockTeamResourceRepository } from "../../infrastructure/MockTeamResourceRepository";
 import { mockFileStorage } from "../../../../utils/MockFileStorage";
 import { TeamResourceStorageAdapter } from "../../infrastructure/TeamResourceStorageAdapter";
+import { ITeamResourceTeamService } from "../../domain/ITeamResourceTeamService";
+
+class MockTeamResourceTeamService implements ITeamResourceTeamService {
+  public existingTeams: Set<string> = new Set();
+  async existsByName(name: string): Promise<boolean> {
+    return this.existingTeams.has(name);
+  }
+}
 
 describe("UpdateTeamResource Use Case", () => {
   let repo: MockTeamResourceRepository;
+  let teamService: MockTeamResourceTeamService;
   let storageAdapter: TeamResourceStorageAdapter;
   let useCase: UpdateTeamResource;
 
   beforeEach(() => {
     mockFileStorage.reset();
     repo = new MockTeamResourceRepository();
+    teamService = new MockTeamResourceTeamService();
     storageAdapter = new TeamResourceStorageAdapter();
-    useCase = new UpdateTeamResource(repo, storageAdapter);
+    useCase = new UpdateTeamResource(repo, storageAdapter, teamService);
   });
 
   const setupResource = async () => {
@@ -34,6 +44,10 @@ describe("UpdateTeamResource Use Case", () => {
       teamName: "Initial Team",
     });
     await repo.saveNew(resource);
+    
+    // Setup team for initial team
+    teamService.existingTeams.add("Initial Team");
+    
     return resource;
   };
 
@@ -61,5 +75,18 @@ describe("UpdateTeamResource Use Case", () => {
     expect(updated.props.thumbnailStorageReference).not.toBe(oldRef);
     expect(mockFileStorage.exists(oldRef)).toBe(false);
     expect(mockFileStorage.exists(updated.props.thumbnailStorageReference)).toBe(true);
+  });
+
+  it("should throw error if updated teamName does not exist", async () => {
+    const resource = await setupResource();
+    await expect(useCase.execute(resource.props.id, { teamName: "Non Existent" })).rejects.toThrow('Team with name "Non Existent" not found.');
+  });
+
+  it("should update teamName if team exists", async () => {
+    const resource = await setupResource();
+    teamService.existingTeams.add("New Team");
+
+    const updated = await useCase.execute(resource.props.id, { teamName: "New Team" });
+    expect(updated.props.teamName).toBe("New Team");
   });
 });

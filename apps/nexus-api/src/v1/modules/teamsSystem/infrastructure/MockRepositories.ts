@@ -7,6 +7,7 @@ import { TeamMember } from "../domain/TeamMember";
 export class MockTeamRepository implements ITeamRepository {
   public teams: Team[] = [];
   async findById(id: string) { return this.teams.find(t => t.props.id === id) || null; }
+  async findByName(name: string) { return this.teams.find(t => t.props.name.toLowerCase() === name.toLowerCase()) || null; }
   async findAll(p: number, s: number) { return { list: this.teams.slice((p-1)*s, p*s), count: this.teams.length }; }
   async saveNew(t: Team) { this.teams.push(t); return t; }
   async persistUpdates(t: Team) { const i = this.teams.findIndex(x => x.props.id === t.props.id); this.teams[i] = t; return t; }

@@ -1,6 +1,7 @@
 import { ITeamResourceRepository } from "../domain/ITeamResourceRepository";
 import { TeamResource, TeamResourceUpdateProps } from "../domain/TeamResource";
 import { ITeamResourceStorage, TeamResourceFile } from "../domain/ITeamResourceStorage";
+import { ITeamResourceTeamService } from "../domain/ITeamResourceTeamService";
 
 export type UpdateTeamResourceInput = Omit<TeamResourceUpdateProps, "thumbnailStorageReference" | "thumbnailPublicUrl"> & {
   thumbnailImage?: TeamResourceFile;
@@ -9,13 +10,21 @@ export type UpdateTeamResourceInput = Omit<TeamResourceUpdateProps, "thumbnailSt
 export class UpdateTeamResource {
   constructor(
     private readonly repo: ITeamResourceRepository,
-    private readonly storage: ITeamResourceStorage
+    private readonly storage: ITeamResourceStorage,
+    private readonly teamService: ITeamResourceTeamService
   ) {}
 
   async execute(id: string, input: UpdateTeamResourceInput): Promise<TeamResource> {
     const resource = await this.repo.findById(id);
     if (!resource) {
       throw new Error("Team resource not found.");
+    }
+
+    if (input.teamName) {
+      const teamExists = await this.teamService.existsByName(input.teamName);
+      if (!teamExists) {
+        throw new Error(`Team with name "${input.teamName}" not found.`);
+      }
     }
 
     const updates: TeamResourceUpdateProps = { ...input } as TeamResourceUpdateProps;
