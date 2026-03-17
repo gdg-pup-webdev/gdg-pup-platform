@@ -10,9 +10,13 @@ export const useTeams = (pageNumber = 1, pageSize = 10) => {
   return useQuery({
     queryKey: ["teams", pageNumber, pageSize],
     queryFn: async () => {
-      return await callEndpoint(API_URL, contract.api.v1.gdg_teams.GET, {
+      const res = await callEndpoint(API_URL, contract.api.v1.gdg_teams.GET, {
         query: { pageNumber, pageSize },
       });
+
+      if (res.status==200) return res; 
+
+      throw new Error(res.body.message);
     },
   });
 };

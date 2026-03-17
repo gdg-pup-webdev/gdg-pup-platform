@@ -22,8 +22,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { X, GripVertical, Loader2, ArrowUpDown, AlertTriangle } from "lucide-react";
-import { extractApiError } from "@/lib/apiError";
-import { useSupabaseAuthContext } from "@/providers/SupabaseAuthProvider";
+// import { extractApiError } from "@/lib/apiError";
+// import { useSupabaseAuthContext } from "@/providers/SupabaseAuthProvider";
 
 // ==========================================
 // Types
@@ -75,7 +75,7 @@ export function SortContentsModal({
     const [activeId, setActiveId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const supabaseAuthContext = useSupabaseAuthContext();
+    // const supabaseAuthContext = useSupabaseAuthContext();
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -88,21 +88,21 @@ export function SortContentsModal({
     // Fetch all items on mount
     useEffect(() => {
         const fetchAll = async () => {
-            try {
-                setLoading(true);
-                const res = await fetch(`${apiPath}?all=true`, {
-                    headers: {
-                        Authorization: `Bearer ${supabaseAuthContext.supabaseAccessToken}`,
-                    },
-                });
-                if (!res.ok) throw new Error("Failed to fetch items");
-                const json = await res.json();
-                setItems(json.data || []);
-            } catch (err: any) {
-                setError("We couldn't load the items for sorting. Please close this window and try again.");
-            } finally {
-                setLoading(false);
-            }
+            // try {
+            //     setLoading(true);
+            //     const res = await fetch(`${apiPath}?all=true`, {
+            //         headers: {
+            //             Authorization: `Bearer ${supabaseAuthContext.supabaseAccessToken}`,
+            //         },
+            //     });
+            //     if (!res.ok) throw new Error("Failed to fetch items");
+            //     const json = await res.json();
+            //     setItems(json.data || []);
+            // } catch (err: any) {
+            //     setError("We couldn't load the items for sorting. Please close this window and try again.");
+            // } finally {
+            //     setLoading(false);
+            // }
         };
         fetchAll();
     }, [apiPath]);
@@ -126,20 +126,20 @@ export function SortContentsModal({
 
     const updateRankingIndex = useCallback(
         async (id: string, rankingIndex: number) => {
-            const formData = new FormData();
-            formData.append("rankingIndex", rankingIndex.toString());
+            // const formData = new FormData();
+            // formData.append("rankingIndex", rankingIndex.toString());
 
-            const res = await fetch(`${apiPath}/${id}`, {
-                method: "PATCH",
-                body: formData,
-                headers: {
-                    Authorization: `Bearer ${supabaseAuthContext.supabaseAccessToken}`,
-                },
-            });
+            // const res = await fetch(`${apiPath}/${id}`, {
+            //     method: "PATCH",
+            //     body: formData,
+            //     headers: {
+            //         Authorization: `Bearer ${supabaseAuthContext.supabaseAccessToken}`,
+            //     },
+            // });
 
-            if (!res.ok) {
-                throw await extractApiError(res, "We couldn't save the new order. Please try moving the item again.");
-            }
+            // if (!res.ok) {
+            //     throw await extractApiError(res, "We couldn't save the new order. Please try moving the item again.");
+            // }
         },
         [apiPath],
     );

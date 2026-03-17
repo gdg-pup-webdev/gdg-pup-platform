@@ -1,12 +1,12 @@
 "use client";
-
-import { useUserStore } from "@/store/useUserStore";
+ 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { INTERNAL_LINKS } from "@/lib/constants/links";
+import { LogOut } from "lucide-react";
 
 export function LogoutButton() {
-  const logout = useUserStore((state) => state.logout);
+  // const logout = useUserStore((state) => state.logout);
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -18,7 +18,7 @@ export function LogoutButton() {
       });
 
       if (res.ok) {
-        logout();
+        // logout();
         router.push(INTERNAL_LINKS.LOGIN);
         router.refresh();
       } else {
