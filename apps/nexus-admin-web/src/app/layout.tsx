@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "@packages/spark-ui/styles.css";
+import { Geist, Geist_Mono } from "next/font/google"; 
 import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 
