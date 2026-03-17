@@ -6,7 +6,7 @@
   },
   "mcpServers": {
     "supabase": {
-      "httpUrl": "https://mcp.supabase.com/mcp?project_ref=xrsmassoekhstkeuwozc"
+      "httpUrl": "https://mcp.supabase.com/mcp"
     }
   }
 }
