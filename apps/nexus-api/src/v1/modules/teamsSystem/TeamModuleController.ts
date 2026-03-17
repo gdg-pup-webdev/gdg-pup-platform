@@ -2,6 +2,7 @@ import { TeamMemberFilters } from "./domain/ITeamMemberRepository";
 import { Team } from "./domain/Team";
 import { TeamMember } from "./domain/TeamMember";
 import { AddTeamMember } from "./useCases/AddTeamMember";
+import { CheckTeamExistsByName } from "./useCases/CheckTeamExistsByName";
 import { CreateTeam } from "./useCases/CreateTeam";
 import { DeleteTeam } from "./useCases/DeleteTeam";
 import { GetOneTeam } from "./useCases/GetOneTeam";
@@ -37,6 +38,7 @@ export class TeamModuleController {
     private readonly updateTeamUC: UpdateTeam,
     private readonly deleteTeamUC: DeleteTeam,
     private readonly listTeamsUC: ListTeams,
+    private readonly checkTeamExistsByNameUC: CheckTeamExistsByName,
     // Team Member Use Cases
     private readonly addMemberUC: AddTeamMember,
     private readonly removeMemberUC: RemoveTeamMember,
@@ -116,6 +118,10 @@ export class TeamModuleController {
       pageSize,
     );
     return { list: list.map((t) => this.toTeamDTO(t)), count };
+  }
+
+  async existsByName(name: string): Promise<boolean> {
+    return await this.checkTeamExistsByNameUC.execute(name);
   }
 
   /**

@@ -25,6 +25,16 @@ export class SupabaseTeamRepository implements ITeamRepository {
     return data ? this.mapToDomain(data) : null;
   }
 
+  async findByName(name: string): Promise<Team | null> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .ilike("name", name)
+      .maybeSingle();
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return data ? this.mapToDomain(data) : null;
+  }
+
   async findAll(
     pageNumber: number,
     pageSize: number,
