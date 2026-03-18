@@ -156,7 +156,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
     onSubmit(formData, thumbnail);
   };
 
-  const searchResults = teamsResponse?.data || [];
+  const searchResults = teamsResponse?.body?.data || [];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Resource" : "Create New Resource"}>
