@@ -1,36 +1,72 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { Plus, Loader2, Search, AlertCircle, FileStack, Folder as FolderIcon, ChevronRight, Home, ArrowLeft } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { Plus, Loader2, Search, AlertCircle, FileStack, Folder as FolderIcon, ChevronRight, Home, ArrowLeft, FolderPlus } from "lucide-react";
 import { FileCard } from "./FileCard";
-import { FileFormModal, FileDetailsModal, DeleteConfirmModal } from "./FileModals";
-import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile, useGetFolders } from "../hooks";
-import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder } from "../types";
+import { FileFormModal, FileDetailsModal, DeleteConfirmModal, FolderFormModal } from "./FileModals";
+import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile, useGetFolders, useCreateFolder, useGetFolder } from "../hooks";
+import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert } from "../types";
 
 // Type for both files and folders to avoid 'any'
 type FileOrFolder = (FileRecord | Folder) & { isFolder: boolean };
 
 export function FileList() {
-  const [page, setPage] = useState(1);
-  const [currentFolder, setCurrentFolder] = useState<Folder | null>(null);
-  const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  const currentFolderId = currentFolder?.id || null;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
+  // URL State
+  const folderIdFromUrl = searchParams.get("folderId") || null;
+  const pageNumberFromUrl = parseInt(searchParams.get("pageNumber") || "1");
+  const pageSizeFromUrl = parseInt(searchParams.get("pageSize") || "10");
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
+  
   // API Hooks
-  const { data: filesResponse, isLoading: isFilesLoading, isError: isFilesError, error: filesError, refetch: refetchFiles } = useGetFiles(page, 100, currentFolderId);
-  const { data: foldersResponse, isLoading: isFoldersLoading, isError: isFoldersError, error: foldersError, refetch: refetchFolders } = useGetFolders(1, 100, currentFolderId);
+  const { data: currentFolder, isLoading: isCurrentFolderLoading } = useGetFolder(folderIdFromUrl);
+  const { data: filesResponse, isLoading: isFilesLoading, isError: isFilesError, error: filesError, refetch: refetchFiles } = useGetFiles(pageNumberFromUrl, pageSizeFromUrl, folderIdFromUrl);
+  const { data: foldersResponse, isLoading: isFoldersLoading, isError: isFoldersError, error: foldersError, refetch: refetchFolders } = useGetFolders(1, 100, folderIdFromUrl);
   
   const uploadMutation = useUploadFile();
   const updateMutation = useUpdateFile();
   const deleteMutation = useDeleteFile();
+  const createFolderMutation = useCreateFolder();
   
   // State for modals
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
+
+  // Sync breadcrumbs when currentFolder changes (especially on direct link load)
+  useEffect(() => {
+    if (currentFolder) {
+        // If we have a current folder but it's not the last in history, we might need to reconstruct history
+        // For now, let's at least make sure it's in history if it's the current one
+        setFolderHistory(prev => {
+            const exists = prev.some(f => f.id === currentFolder.id);
+            if (exists) return prev;
+            return [...prev, currentFolder];
+        });
+    } else if (folderIdFromUrl === null) {
+        setFolderHistory([]);
+    }
+  }, [currentFolder, folderIdFromUrl]);
+
+  const updateQueryParams = (params: Record<string, string | null>) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === null) {
+        newParams.delete(key);
+      } else {
+        newParams.set(key, value);
+      }
+    });
+    router.push(`${pathname}?${newParams.toString()}`);
+  };
 
   const refetch = () => {
     refetchFiles();
@@ -78,6 +114,10 @@ export function FileList() {
     setIsFormModalOpen(true);
   };
 
+  const handleCreateFolderClick = () => {
+    setIsFolderModalOpen(true);
+  };
+
   const handleEdit = (file: FileRecord) => {
     setSelectedFile(file);
     setIsFormModalOpen(true);
@@ -94,31 +134,18 @@ export function FileList() {
   };
 
   const handleFolderClick = (folder: Folder) => {
-    setFolderHistory(prev => [...prev, folder]);
-    setCurrentFolder(folder);
-    setPage(1);
+    updateQueryParams({ folderId: folder.id, pageNumber: "1" });
   };
 
   const handleBreadcrumbClick = (folder: Folder | null) => {
-    if (folder === null) {
-      setFolderHistory([]);
-      setCurrentFolder(null);
-    } else {
-      const index = folderHistory.findIndex(f => f.id === folder.id);
-      if (index !== -1) {
-        setFolderHistory(folderHistory.slice(0, index + 1));
-        setCurrentFolder(folder);
-      }
-    }
-    setPage(1);
+    updateQueryParams({ folderId: folder ? folder.id : null, pageNumber: "1" });
   };
 
   const handleBack = () => {
-    if (folderHistory.length > 0) {
-      const newHistory = folderHistory.slice(0, -1);
-      setFolderHistory(newHistory);
-      setCurrentFolder(newHistory.length > 0 ? newHistory[newHistory.length - 1] : null);
-      setPage(1);
+    if (currentFolder?.parentId !== undefined) {
+        updateQueryParams({ folderId: currentFolder.parentId, pageNumber: "1" });
+    } else if (folderIdFromUrl) {
+        updateQueryParams({ folderId: null, pageNumber: "1" });
     }
   };
 
@@ -129,7 +156,7 @@ export function FileList() {
         } else if (file) {
           const formData = { 
             ...data,
-            folderId: currentFolderId,
+            folderId: folderIdFromUrl,
           } as FileRecordInsert;
           
           await uploadMutation.mutateAsync({ data: formData, file });
@@ -138,6 +165,16 @@ export function FileList() {
         refetch();
     } catch (err) {
         console.error("Form submission failed:", err);
+    }
+  };
+
+  const handleFolderSubmit = async (data: FolderInsert) => {
+    try {
+        await createFolderMutation.mutateAsync(data);
+        setIsFolderModalOpen(false);
+        refetch();
+    } catch (err) {
+        console.error("Folder creation failed:", err);
     }
   };
 
@@ -153,7 +190,7 @@ export function FileList() {
     }
   };
 
-  const isLoading = isFilesLoading || isFoldersLoading;
+  const isLoading = isFilesLoading || isFoldersLoading || isCurrentFolderLoading;
   const isError = isFilesError || isFoldersError;
   const error = filesError || foldersError;
 
@@ -188,7 +225,7 @@ export function FileList() {
       <div className="flex flex-wrap items-center gap-2 rounded-sm bg-gray-50 p-3 text-sm text-gray-600 border border-gray-100">
         <button 
             onClick={handleBack}
-            disabled={folderHistory.length === 0}
+            disabled={!folderIdFromUrl}
             className="flex items-center gap-1 rounded-sm bg-white px-2 py-1 text-xs font-bold border border-gray-200 disabled:opacity-30 hover:bg-gray-100"
         >
             <ArrowLeft size={14} />
@@ -200,7 +237,7 @@ export function FileList() {
         <button
           onClick={() => handleBreadcrumbClick(null)}
           className={`flex items-center gap-1.5 transition-colors hover:text-teal-600 ${
-            currentFolder === null ? "font-bold text-teal-700" : ""
+            !folderIdFromUrl ? "font-bold text-teal-700" : ""
           }`}
         >
           <Home size={14} />
@@ -213,7 +250,7 @@ export function FileList() {
             <button
               onClick={() => handleBreadcrumbClick(folder)}
               className={`flex items-center gap-1.5 transition-colors hover:text-teal-600 ${
-                index === folderHistory.length - 1 ? "font-bold text-teal-700" : ""
+                folder.id === folderIdFromUrl ? "font-bold text-teal-700" : ""
               }`}
             >
               {folder.name}
@@ -236,6 +273,13 @@ export function FileList() {
         </div>
         
         <div className="flex w-full gap-2 md:w-auto">
+            <button 
+                onClick={handleCreateFolderClick}
+                className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-teal-600 text-teal-600 px-6 py-3 text-sm font-bold transition-all hover:bg-teal-50 md:w-auto"
+            >
+                <FolderPlus size={18} />
+                New Folder
+            </button>
             <button 
                 onClick={handleUpload}
                 className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 px-8 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-lg md:w-auto"
@@ -265,37 +309,87 @@ export function FileList() {
           <FileStack size={64} className="mb-4 text-gray-200" />
           <h3 className="text-lg font-bold text-gray-900">Folder is empty</h3>
           <p className="mt-1 text-sm text-gray-500">No files or subfolders found in the current folder.</p>
-          <button 
-            onClick={handleUpload}
-            className="mt-8 rounded-sm bg-teal-600 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md"
-          >
-            Upload Now
-          </button>
+          <div className="mt-8 flex items-center justify-center gap-3">
+            <button 
+                onClick={handleCreateFolderClick}
+                className="rounded-sm border border-teal-600 text-teal-600 px-6 py-2.5 text-sm font-bold transition-all hover:bg-teal-50"
+            >
+                Create Folder
+            </button>
+            <button 
+                onClick={handleUpload}
+                className="rounded-sm bg-teal-600 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md"
+            >
+                Upload Now
+            </button>
+          </div>
         </div>
       )}
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-8">
-            <button 
-                disabled={page === 1}
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50"
-            >
-                Previous
-            </button>
-            <span className="text-sm font-medium text-gray-500">
-                Page {page} of {totalPages}
-            </span>
-            <button 
-                disabled={page === totalPages}
-                onClick={() => setPage(p => p + 1)}
-                className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50"
-            >
-                Next
-            </button>
+      <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-8 md:flex-row">
+        <div className="flex items-center gap-3">
+          <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Items per page</label>
+          <select
+            value={pageSizeFromUrl}
+            onChange={(e) => updateQueryParams({ pageSize: e.target.value, pageNumber: "1" })}
+            className="rounded-sm border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium focus:border-teal-500 focus:outline-none"
+          >
+            {[10, 20, 50, 100].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2">
+            <button
+              disabled={pageNumberFromUrl === 1}
+              onClick={() => updateQueryParams({ pageNumber: Math.max(1, pageNumberFromUrl - 1).toString() })}
+              className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+            >
+              Previous
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) pageNum = i + 1;
+                else if (pageNumberFromUrl <= 3) pageNum = i + 1;
+                else if (pageNumberFromUrl >= totalPages - 2) pageNum = totalPages - 4 + i;
+                else pageNum = pageNumberFromUrl - 2 + i;
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => updateQueryParams({ pageNumber: pageNum.toString() })}
+                    className={`h-9 w-9 rounded-sm text-sm font-bold transition-all ${
+                        pageNumberFromUrl === pageNum
+                        ? "bg-teal-600 text-white shadow-md"
+                        : "bg-white text-gray-600 border border-gray-100 hover:bg-gray-50"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              disabled={pageNumberFromUrl === totalPages}
+              onClick={() => updateQueryParams({ pageNumber: (pageNumberFromUrl + 1).toString() })}
+              className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50 hover:bg-gray-50 transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        )}
+
+        <div className="text-xs font-medium text-gray-500">
+          Showing <span className="font-bold text-gray-900">{items.length}</span> of{" "}
+          <span className="font-bold text-gray-900">{meta?.totalRecords || items.length}</span> items
+        </div>
+      </div>
 
       {/* Modals */}
       <FileFormModal 
@@ -308,7 +402,7 @@ export function FileList() {
         } : {
             fileName: "",
             fileDescription: "",
-            folderId: currentFolderId,
+            folderId: folderIdFromUrl,
             path: "",
             fileType: "",
             createdAt: "",
@@ -320,6 +414,14 @@ export function FileList() {
             id: ""
         } as FileRecord}
         isSubmitting={uploadMutation.isPending || updateMutation.isPending}
+      />
+
+      <FolderFormModal
+        isOpen={isFolderModalOpen}
+        onClose={() => setIsFolderModalOpen(false)}
+        onSubmit={handleFolderSubmit}
+        currentParentId={folderIdFromUrl}
+        isSubmitting={createFolderMutation.isPending}
       />
 
       <FileDetailsModal 

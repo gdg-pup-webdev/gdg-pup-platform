@@ -11,6 +11,7 @@ import { UpdateFileById } from "./useCases/UpdateFileById";
 import { UploadFile } from "./useCases/UploadFile";
 import { CreateFolder } from "./useCases/CreateFolder";
 import { ListFoldersByParent } from "./useCases/ListFoldersByParent";
+import { GetOneFolderById } from "./useCases/GetOneFolderById";
 
 export class FilesModuleController {
   constructor(
@@ -24,6 +25,7 @@ export class FilesModuleController {
     private deleteFileByPreviewUrlUseCase: DeleteFileByPreviewUrl,
     private createFolderUseCase: CreateFolder,
     private listFoldersByParentUseCase: ListFoldersByParent,
+    private getOneFolderByIdUseCase: GetOneFolderById,
   ) {}
 
   async deleteFileByPreviewUrl(publicUrl: string) {
@@ -191,5 +193,10 @@ export class FilesModuleController {
       list: result.list.map(f => f.props),
       count: result.count
     };
+  }
+
+  async getOneFolderById(id: string) {
+    const result = await this.getOneFolderByIdUseCase.execute(id);
+    return result.props;
   }
 }

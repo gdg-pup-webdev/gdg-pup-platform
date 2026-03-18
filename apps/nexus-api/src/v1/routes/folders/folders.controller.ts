@@ -45,4 +45,17 @@ export class FoldersHttpController {
       });
     },
   );
+
+  getOneFolderById: RequestHandler = createExpressController(
+    contract.api.v1.folders.folderId.GET,
+    async ({ input, output, ctx }) => {
+      const id = input.params.folderId;
+      const result = await this.filesModuleController.getOneFolderById(id);
+      return output(200, {
+        status: "success",
+        message: "Folder fetched successfully",
+        data: result,
+      });
+    },
+  );
 }

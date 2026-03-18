@@ -16,7 +16,7 @@ import {
   FileJson,
   Folder as FolderIcon
 } from "lucide-react";
-import { FileRecord, FileRecordInsert, FileRecordUpdate } from "../types";
+import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
 
 // ==========================================
 // Modal Wrapper
@@ -58,6 +58,107 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+// ==========================================
+// Folder Form Modal (Create / Update)
+// ==========================================
+interface FolderFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: FolderInsert | FolderUpdate) => void;
+  initialData?: Folder;
+  isSubmitting: boolean;
+  currentParentId: string | null;
+}
+
+export function FolderFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting, currentParentId }: FolderFormModalProps) {
+  const [formData, setFormData] = useState<any>({
+    name: "",
+    description: "",
+    parentId: null,
+  });
+
+  useEffect(() => {
+    if (initialData?.id) {
+      setFormData({
+        name: initialData.name || "",
+        description: initialData.description || "",
+        parentId: initialData.parentId || null,
+      });
+    } else {
+      setFormData({
+        name: "",
+        description: "",
+        parentId: currentParentId,
+      });
+    }
+  }, [initialData, isOpen, currentParentId]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const isEditing = !!initialData?.id;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={isEditing ? "Update Folder" : "Create New Folder"}>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Folder Name</label>
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <FolderIcon size={18} />
+            </div>
+            <input
+                required
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full rounded-sm border border-gray-200 pl-10 pr-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                placeholder="e.g. Project Documents"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description (Optional)</label>
+          <textarea
+            rows={3}
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+            placeholder="What will be stored in this folder?"
+          />
+        </div>
+
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-sm bg-gray-100 px-6 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 rounded-sm bg-teal-600 px-8 py-2 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md disabled:opacity-70"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                {isEditing ? "Updating..." : "Creating..."}
+              </>
+            ) : (
+              <>{isEditing ? "Update Folder" : "Create Folder"}</>
+            )}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }
 

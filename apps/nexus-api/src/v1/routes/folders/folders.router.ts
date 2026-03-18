@@ -24,5 +24,11 @@ export class FoldersRouter {
       // this.authMiddleware.requirePermissions({ "folders": ["create"] }),
       this.foldersHttpController.createFolder,
     );
+
+    this.router.get(
+      "/:folderId",
+      // this.authMiddleware.requirePermissions({ "folders": ["read"] }),
+      this.foldersHttpController.getOneFolderById,
+    );
   }
 }
