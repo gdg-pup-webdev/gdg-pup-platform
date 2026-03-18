@@ -54,4 +54,18 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
       count: count || 0,
     };
   }
+
+  async findById(id: string): Promise<BevyEvent | undefined> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      throw new Error(`Database error fetching Bevy event ${id}: ${error.message}`);
+    }
+
+    return data ? this.mapToDomain(data) : undefined;
+  }
 }

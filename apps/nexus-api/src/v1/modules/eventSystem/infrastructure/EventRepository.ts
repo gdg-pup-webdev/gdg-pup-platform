@@ -28,6 +28,7 @@ export class EventRepository implements IEventRepository {
       attendees_count: row.attendees_count,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
+      bevy_event_id: row.bevy_event_id ?? null,
     });
   }
 
@@ -48,10 +49,11 @@ export class EventRepository implements IEventRepository {
       attendees_count: props.attendees_count,
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString(),
+      bevy_event_id: props.bevy_event_id,
     };
   }
 
-  async saveNewEvent(event: Event): Promise<Event> {
+  async saveNew(event: Event): Promise<Event> {
     const dto = this.mapToDTO(event);
     
     const { data, error } = await supabase
@@ -100,6 +102,18 @@ export class EventRepository implements IEventRepository {
     if (!data) throw new Error("Event not found");
 
     return this.mapToDomain(data);
+  }
+
+  async findByBevyId(bevyEventId: string): Promise<Event | undefined> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .eq("bevy_event_id", bevyEventId)
+      .maybeSingle();
+
+    if (error) handlePostgresError(error);
+
+    return data ? this.mapToDomain(data) : undefined;
   }
 
   async listEvents(

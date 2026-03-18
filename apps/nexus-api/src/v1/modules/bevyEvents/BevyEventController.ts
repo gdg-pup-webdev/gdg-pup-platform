@@ -1,11 +1,13 @@
 import { ListBevyEvents } from "./useCases/ListBevyEvents";
+import { GetBevyEvent } from "./useCases/GetBevyEvent";
 import { BevyEvent, BevyEventProps } from "./domain/BevyEvent";
 
 export type BevyEventDTO = BevyEventProps;
 
 export class BevyEventController {
   constructor(
-    private readonly listUseCase: ListBevyEvents
+    private readonly listUseCase: ListBevyEvents,
+    private readonly getBevyEventUseCase: GetBevyEvent,
   ) {}
 
   private toDTO(bevyEvent: BevyEvent): BevyEventDTO {
@@ -20,5 +22,9 @@ export class BevyEventController {
       list: list.map(event => this.toDTO(event)),
       count,
     };
+  }
+
+  async getById(id: string): Promise<BevyEvent | undefined> {
+    return this.getBevyEventUseCase.execute(id);
   }
 }

@@ -26,8 +26,9 @@ describe("ListEvents Use Case", () => {
       start_date: new Date("2026-06-01T10:00:00Z"),
       end_date: new Date("2026-06-01T12:00:00Z"),
       attendance_points: 10,
+      bevy_event_id: null,
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should return a list of events and the total count", async () => {

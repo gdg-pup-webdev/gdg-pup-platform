@@ -1,6 +1,7 @@
 import { EventUpdateProps } from "./domain/Event";
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
 import { CreateEvent } from "./useCases/CreateEvent";
+import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
 import { DeleteEvent } from "./useCases/DeleteEvent";
 import { GetOneEvent } from "./useCases/GetOneEvent";
 import { ListEventAttendees } from "./useCases/ListEventAttendees";
@@ -11,6 +12,7 @@ export class EventSystemController {
   constructor(
     private checkinToEventUseCase: CheckinToEvent,
     private createEventUseCase: CreateEvent,
+    private createEventFromBevyEventUseCase: CreateEventFromBevyEventUseCase,
     private DeleteEventUseCase: DeleteEvent,
     private getOneEventUseCase: GetOneEvent,
     private listEventAttendeesUseCase: ListEventAttendees,
@@ -52,6 +54,7 @@ export class EventSystemController {
       start_date: new Date(start_date),
       end_date: new Date(end_date),
       attendance_points: attendance_points,
+      bevy_event_id: null,
     });
 
     return {
@@ -66,6 +69,27 @@ export class EventSystemController {
       end_date: result.props.end_date.toISOString(),
       attendance_points: result.props.attendance_points,
       attendees_count: result.props.attendees_count,
+      bevy_event_id: result.props.bevy_event_id,
+    };
+  }
+
+  async createEventFromBevyEvent(bevyEventId: string) {
+    const result =
+      await this.createEventFromBevyEventUseCase.execute(bevyEventId);
+
+    return {
+      id: result.props.id,
+      createdAt: result.props.createdAt.toISOString(),
+      updatedAt: result.props.updatedAt.toISOString(),
+      title: result.props.title,
+      description: result.props.description,
+      category: result.props.category,
+      venue: result.props.venue,
+      start_date: result.props.start_date.toISOString(),
+      end_date: result.props.end_date.toISOString(),
+      attendance_points: result.props.attendance_points,
+      attendees_count: result.props.attendees_count,
+      bevy_event_id: result.props.bevy_event_id,
     };
   }
 
@@ -88,6 +112,7 @@ export class EventSystemController {
       end_date: result.props.end_date.toISOString(),
       attendance_points: result.props.attendance_points,
       attendees_count: result.props.attendees_count,
+      bevy_event_id: result.props.bevy_event_id,
     };
   }
 
@@ -127,6 +152,7 @@ export class EventSystemController {
         end_date: event.props.end_date.toISOString(),
         attendance_points: event.props.attendance_points,
         attendees_count: event.props.attendees_count,
+        bevy_event_id: event.props.bevy_event_id,
       })),
       count: result.count,
     };
@@ -146,6 +172,7 @@ export class EventSystemController {
       end_date: result.props.end_date.toISOString(),
       attendance_points: result.props.attendance_points,
       attendees_count: result.props.attendees_count,
+      bevy_event_id: result.props.bevy_event_id,
     };
   }
 }

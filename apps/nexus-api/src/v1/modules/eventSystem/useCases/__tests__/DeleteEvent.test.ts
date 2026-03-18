@@ -26,8 +26,9 @@ describe("DeleteEvent Use Case", () => {
       start_date: new Date(),
       end_date: new Date(Date.now() + 3600000),
       attendance_points: 30,
+      bevy_event_id: null,
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should successfully delete an existing event and return true", async () => {

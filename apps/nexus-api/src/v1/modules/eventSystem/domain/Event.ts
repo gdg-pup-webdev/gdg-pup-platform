@@ -14,6 +14,7 @@ export type EventProps = {
 
   attendance_points: number;
   attendees_count: number;
+  bevy_event_id: string | null;
 };
 
 export type EventPrototypeProps = Omit<
@@ -45,6 +46,7 @@ export class Event {
       createdAt: new Date(),
       updatedAt: new Date(),
       attendees_count: 0,
+      bevy_event_id: props.bevy_event_id ?? null,
     });
   }
 

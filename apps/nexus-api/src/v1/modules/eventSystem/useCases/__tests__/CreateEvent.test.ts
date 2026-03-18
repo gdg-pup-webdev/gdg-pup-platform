@@ -25,6 +25,7 @@ describe("CreateEvent Use Case", () => {
     start_date: new Date("2026-03-01T10:00:00Z"), // Using future dates for consistency
     end_date: new Date("2026-03-01T12:00:00Z"),
     attendance_points: 50,
+    bevy_event_id: null,
   };
 
   it("should successfully create and return a new event", async () => {

@@ -37,8 +37,9 @@ describe("CheckinToEvent Use Case", () => {
       start_date: new Date(),
       end_date: new Date(Date.now() + 3600000),
       attendance_points: points,
+      bevy_event_id: null,
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should successfully check in a user, persist records, and award points", async () => {

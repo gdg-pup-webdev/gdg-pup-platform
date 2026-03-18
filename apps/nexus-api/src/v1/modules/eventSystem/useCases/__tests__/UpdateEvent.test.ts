@@ -26,8 +26,9 @@ describe("UpdateEvent Use Case", () => {
       start_date: new Date("2026-05-01T10:00:00Z"),
       end_date: new Date("2026-05-01T12:00:00Z"),
       attendance_points: 20,
+      bevy_event_id: null,
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should successfully update an event and return the updated entity", async () => {
