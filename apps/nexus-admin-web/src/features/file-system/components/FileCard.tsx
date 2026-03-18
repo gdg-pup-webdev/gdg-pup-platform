@@ -1,7 +1,21 @@
 "use client";
 
 import React from "react";
-import { File as FileIcon, Edit2, Trash2, ExternalLink, Download, Folder } from "lucide-react";
+import { 
+  File as FileIcon, 
+  Edit2, 
+  Trash2, 
+  ExternalLink, 
+  Download, 
+  Folder,
+  Image as ImageIcon,
+  Video as VideoIcon,
+  FileText,
+  Archive,
+  Music,
+  FileCode,
+  FileJson
+} from "lucide-react";
 import { FileRecord } from "../types";
 
 interface FileCardProps {
@@ -12,13 +26,64 @@ interface FileCardProps {
 }
 
 export function FileCard({ file, onEdit, onDelete, onView }: FileCardProps) {
+  const renderThumbnail = () => {
+    const type = file.fileType?.toLowerCase() || "";
+    
+    if (type.startsWith("image/")) {
+      return (
+        <div className="relative h-full w-full overflow-hidden">
+          <img 
+            src={file.previewUrl} 
+            alt={file.fileName}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
+        </div>
+      );
+    }
+
+    let Icon = FileIcon;
+    let bgColor = "bg-white";
+    let iconColor = "text-teal-600";
+
+    if (type.startsWith("video/")) {
+      Icon = VideoIcon;
+      bgColor = "bg-purple-50";
+      iconColor = "text-purple-600";
+    } else if (type === "application/pdf") {
+      Icon = FileText;
+      bgColor = "bg-red-50";
+      iconColor = "text-red-600";
+    } else if (type.startsWith("audio/")) {
+      Icon = Music;
+      bgColor = "bg-amber-50";
+      iconColor = "text-amber-600";
+    } else if (type.includes("zip") || type.includes("archive") || type.includes("tar") || type.includes("rar")) {
+      Icon = Archive;
+      bgColor = "bg-blue-50";
+      iconColor = "text-blue-600";
+    } else if (type.includes("json")) {
+      Icon = FileJson;
+      bgColor = "bg-yellow-50";
+      iconColor = "text-yellow-600";
+    } else if (type.includes("javascript") || type.includes("typescript") || type.includes("html") || type.includes("css") || type.includes("markdown")) {
+      Icon = FileCode;
+      bgColor = "bg-emerald-50";
+      iconColor = "text-emerald-600";
+    }
+
+    return (
+      <div className={`flex h-16 w-16 items-center justify-center rounded-sm ${bgColor} ${iconColor} shadow-sm transition-transform duration-300 group-hover:scale-110`}>
+        <Icon size={32} />
+      </div>
+    );
+  };
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white transition-all hover:border-teal-100 hover:shadow-md">
       {/* Icon Area */}
-      <div className="flex h-32 items-center justify-center bg-gray-50 transition-colors group-hover:bg-teal-50/30">
-        <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-white text-teal-600 shadow-sm transition-transform group-hover:scale-110">
-          <FileIcon size={32} />
-        </div>
+      <div className="flex h-32 items-center justify-center bg-gray-50 transition-colors group-hover:bg-teal-50/20">
+        {renderThumbnail()}
       </div>
 
       {/* Content Area */}

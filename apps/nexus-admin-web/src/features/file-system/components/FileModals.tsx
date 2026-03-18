@@ -1,7 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Loader2, AlertTriangle, File as FileIcon, Upload } from "lucide-react";
+import { 
+  X, 
+  Loader2, 
+  AlertTriangle, 
+  File as FileIcon, 
+  Upload,
+  Image as ImageIcon,
+  Video as VideoIcon,
+  FileText,
+  Archive,
+  Music,
+  FileCode,
+  FileJson
+} from "lucide-react";
 import { FileRecord, FileRecordInsert, FileRecordUpdate } from "../types";
 
 // ==========================================
@@ -190,12 +203,26 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
 export function FileDetailsModal({ isOpen, onClose, file }: { isOpen: boolean; onClose: () => void; file: FileRecord | null }) {
   if (!file) return null;
 
+  const getFileIcon = () => {
+    const type = file.fileType?.toLowerCase() || "";
+    if (type.startsWith("image/")) return ImageIcon;
+    if (type.startsWith("video/")) return VideoIcon;
+    if (type === "application/pdf") return FileText;
+    if (type.startsWith("audio/")) return Music;
+    if (type.includes("zip") || type.includes("archive")) return Archive;
+    if (type.includes("json")) return FileJson;
+    if (type.includes("javascript") || type.includes("typescript") || type.includes("html") || type.includes("css")) return FileCode;
+    return FileIcon;
+  };
+
+  const Icon = getFileIcon();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="File Details">
       <div className="space-y-6">
         <div className="flex items-start gap-4 rounded-sm border border-teal-50 bg-teal-50/30 p-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-teal-100 text-teal-600">
-            <FileIcon size={24} />
+            <Icon size={24} />
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="truncate text-lg font-bold text-gray-900">{file.fileName}</h3>
@@ -209,8 +236,16 @@ export function FileDetailsModal({ isOpen, onClose, file }: { isOpen: boolean; o
             <p className="mt-1 text-sm font-medium text-gray-900">{file.filePath}</p>
           </div>
           <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Type</h4>
+            <p className="mt-1 text-sm font-medium text-gray-900">{file.fileType || "Unknown"}</p>
+          </div>
+          <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Created At</h4>
             <p className="mt-1 text-sm font-medium text-gray-900">{new Date(file.createdAt).toLocaleString()}</p>
+          </div>
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Updated At</h4>
+            <p className="mt-1 text-sm font-medium text-gray-900">{new Date(file.updatedAt).toLocaleString()}</p>
           </div>
         </div>
 
