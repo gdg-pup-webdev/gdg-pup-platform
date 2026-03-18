@@ -23,8 +23,8 @@ export function FileList() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
 
-  const files = filesResponse?.body?.data?.list || [];
-  const meta = filesResponse?.body?.data?.meta;
+  const files = filesResponse?.body?.data || [];
+  const meta = filesResponse?.body?.meta;
   const totalPages = meta?.totalPages || 1;
 
   // Handlers
