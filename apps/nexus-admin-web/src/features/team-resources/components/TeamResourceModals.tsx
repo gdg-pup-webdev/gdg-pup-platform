@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { X, Loader2, AlertTriangle, Link2, ExternalLink, Image as ImageIcon, Upload } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { X, Loader2, AlertTriangle, Link2, ExternalLink, Image as ImageIcon, Upload, Search, Users } from "lucide-react";
 import { TeamResource, CreateTeamResourceDTO, UpdateTeamResourceDTO } from "../types";
+import { useSearchTeams } from "@/features/teams/api/teams";
 import Image from "next/image";
 
 // ==========================================
@@ -69,6 +70,30 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
   });
   const [thumbnail, setThumbnail] = useState<File | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  
+  // Team search state
+  const [teamSearchQuery, setTeamSearchQuery] = useState("");
+  const [debouncedTeamSearch, setDebouncedTeamSearch] = useState("");
+  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<{ id: string; name: string } | null>(null);
+  const teamDropdownRef = useRef<HTMLDivElement>(null);
+
+  const { data: teamsResponse, isLoading: isSearchingTeams } = useSearchTeams(debouncedTeamSearch);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedTeamSearch(teamSearchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [teamSearchQuery]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (teamDropdownRef.current && !teamDropdownRef.current.contains(event.target as Node)) {
+        setShowTeamDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (initialData) {
@@ -80,6 +105,8 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
         team_name: initialData.team_name,
       });
       setPreviewUrl(initialData.thumbnail_public_url);
+      setTeamSearchQuery(initialData.team_name);
+      setSelectedTeam({ id: "", name: initialData.team_name }); // ID not strictly needed for just the name display
     } else {
       setFormData({
         title: "",
@@ -89,6 +116,8 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
         team_name: "",
       });
       setPreviewUrl(null);
+      setTeamSearchQuery("");
+      setSelectedTeam(null);
     }
     setThumbnail(undefined);
   }, [initialData, isOpen]);
@@ -105,10 +134,29 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
     }
   };
 
+  const handleSelectTeam = (team: any) => {
+    setSelectedTeam({ id: team.id, name: team.name });
+    setTeamSearchQuery(team.name);
+    setFormData(prev => ({ ...prev, team_name: team.name }));
+    setShowTeamDropdown(false);
+  };
+
+  const clearTeamSelection = () => {
+    setSelectedTeam(null);
+    setTeamSearchQuery("");
+    setFormData(prev => ({ ...prev, team_name: "" }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.team_name) {
+      alert("Please select a team");
+      return;
+    }
     onSubmit(formData, thumbnail);
   };
+
+  const searchResults = teamsResponse?.data || [];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Resource" : "Create New Resource"}>
@@ -126,6 +174,65 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
             />
           </div>
 
+          <div className="md:col-span-2">
+            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Managing Team</label>
+            <div className="relative" ref={teamDropdownRef}>
+              <div className="relative">
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  required
+                  type="text"
+                  placeholder="Search and select a team..."
+                  className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
+                    selectedTeam ? "border-teal-500 bg-teal-50/30 font-bold text-teal-900" : "border-gray-200 bg-white"
+                  }`}
+                  value={teamSearchQuery}
+                  onChange={(e) => {
+                    setTeamSearchQuery(e.target.value);
+                    if (!selectedTeam) setShowTeamDropdown(true);
+                  }}
+                  onFocus={() => !selectedTeam && setShowTeamDropdown(true)}
+                  readOnly={!!selectedTeam}
+                />
+                {selectedTeam ? (
+                  <button 
+                    type="button"
+                    onClick={clearTeamSelection}
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
+                  >
+                    <X size={16} />
+                  </button>
+                ) : isSearchingTeams ? (
+                  <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                    <Loader2 size={16} className="animate-spin text-gray-400" />
+                  </div>
+                ) : null}
+              </div>
+              
+              {showTeamDropdown && teamSearchQuery.length >= 2 && (
+                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl animate-in fade-in zoom-in-95">
+                  {searchResults.length > 0 ? (
+                    searchResults.map((team: any) => (
+                      <button
+                        key={team.id}
+                        type="button"
+                        onClick={() => handleSelectTeam(team)}
+                        className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
+                      >
+                        <span className="text-sm font-bold text-gray-900">{team.name}</span>
+                        <span className="text-xs text-gray-500 line-clamp-1">{team.description}</span>
+                      </button>
+                    ))
+                  ) : !isSearchingTeams ? (
+                    <div className="p-4 text-center text-sm text-gray-500 italic">
+                      No matching teams found.
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div>
             <label className="mb-1.5 block text-sm font-semibold text-gray-700">Resource Type</label>
             <input
@@ -135,18 +242,6 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
               placeholder="e.g. Documentation, Tool, Asset"
               value={formData.resource_type}
               onChange={(e) => setFormData({ ...formData, resource_type: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Team Name</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="e.g. Design Team"
-              value={formData.team_name}
-              onChange={(e) => setFormData({ ...formData, team_name: e.target.value })}
             />
           </div>
 
