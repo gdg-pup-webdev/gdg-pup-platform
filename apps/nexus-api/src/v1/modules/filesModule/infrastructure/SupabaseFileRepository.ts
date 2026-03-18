@@ -24,6 +24,7 @@ export class SupabaseFileRepository implements IFileRepository {
       file_path: props.filePath,
       preview_url: props.previewUrl,
       storage_ref: props.storageReference,
+      file_type: props.fileType,
     };
   }
 
@@ -40,6 +41,7 @@ export class SupabaseFileRepository implements IFileRepository {
       ...(props.storageReference !== undefined && {
         storage_ref: props.storageReference,
       }),
+      ...(props.fileType !== undefined && { file_type: props.fileType }),
       ...(props.id !== undefined && { id: props.id }),
       ...(props.createdAt !== undefined && { created_at: props.createdAt }),
       ...(props.updatedAt !== undefined && { updated_at: props.updatedAt }),
@@ -56,6 +58,7 @@ export class SupabaseFileRepository implements IFileRepository {
       filePath: row.file_path,
       previewUrl: row.preview_url,
       storageReference: row.storage_ref,
+      fileType: row.file_type || "",
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       deletedAt: row.deleted_at,

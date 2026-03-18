@@ -4,6 +4,7 @@ export const fileRecord = cz.object({
   fileName: cz.string(),
   fileDescription: cz.string(),
   filePath: cz.string(),
+  fileType: cz.string(),
 
   // metadata
   id: cz.string(),

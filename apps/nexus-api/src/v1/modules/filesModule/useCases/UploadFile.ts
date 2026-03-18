@@ -31,6 +31,7 @@ export class UploadFile {
       filePath,
       previewUrl: uploadedFile.public_url,
       storageReference: uploadedFile.storage_reference,
+      fileType: file.type,
     });
 
     const createdFileRecord: FileRecord =

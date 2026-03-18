@@ -4,6 +4,7 @@ export type FileRecordPrototypeProps = {
   filePath: string;
   previewUrl: string;
   storageReference: string;
+  fileType: string;
 };
 
 export type FileRecordMetadataProps = {
