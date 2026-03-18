@@ -2,8 +2,7 @@
 # Docker Build & Push
 # =============================================================================
 # Trigger: push to deploy branches (or manual dispatch).
-# Mode:    non-selective (builds all services, including storybook).
-# CONFIGURE TO USE SELECTIVE BUILDINGS
+# Mode:    selective (builds only changed services, including storybook).
 # =============================================================================
 
 name: Docker Build & Push
@@ -21,9 +20,46 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  detect-changes:
+    name: Detect Changed Services
+    runs-on: ubuntu-latest
+    outputs:
+      nexus-web: ${{ steps.filter.outputs.nexus-web }}
+      nexus-api: ${{ steps.filter.outputs.nexus-api }}
+      identity-api: ${{ steps.filter.outputs.identity-api }}
+      storybook: ${{ steps.filter.outputs.storybook }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            nexus-web:
+              - 'apps/nexus-web/**'
+              - 'apps/shared/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            nexus-api:
+              - 'apps/nexus-api/**'
+              - 'apps/shared/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            identity-api:
+              - 'apps/identity-api/**'
+              - 'apps/shared/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            storybook:
+              - 'apps/storybook/**'
+              - 'apps/shared/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+
   build-nexus-web:
     name: nexus-web
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.nexus-web == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
@@ -40,6 +76,8 @@ jobs:
   build-nexus-api:
     name: nexus-api
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.nexus-api == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
@@ -53,6 +91,8 @@ jobs:
   build-identity-api:
     name: identity-api
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.identity-api == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
@@ -66,6 +106,8 @@ jobs:
   build-storybook:
     name: storybook
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.storybook == 'true' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
