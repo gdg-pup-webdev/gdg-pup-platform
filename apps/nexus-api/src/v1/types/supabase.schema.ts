@@ -122,6 +122,36 @@ export const publicArticleCommentRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicDpDownloadAnalyticsRowSchema = z.object({
+  created_at: z.string(),
+  downloaded_at: z.string(),
+  event_slug: z.string(),
+  frame_id: z.string(),
+  id: z.number(),
+  source_path: z.string().nullable(),
+  user_agent: z.string().nullable(),
+});
+
+export const publicDpDownloadAnalyticsInsertSchema = z.object({
+  created_at: z.string().optional(),
+  downloaded_at: z.string().optional(),
+  event_slug: z.string(),
+  frame_id: z.string(),
+  id: z.never().optional(),
+  source_path: z.string().optional().nullable(),
+  user_agent: z.string().optional().nullable(),
+});
+
+export const publicDpDownloadAnalyticsUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  downloaded_at: z.string().optional(),
+  event_slug: z.string().optional(),
+  frame_id: z.string().optional(),
+  id: z.never().optional(),
+  source_path: z.string().optional().nullable(),
+  user_agent: z.string().optional().nullable(),
+});
+
 export const publicEventRowSchema = z.object({
   attendance_points: z.number(),
   attendees_count: z.number(),
@@ -272,31 +302,93 @@ export const publicExternalResourceRelationshipsSchema = z.tuple([
 ]);
 
 export const publicFileRecordRowSchema = z.object({
+  created_at: z.string(),
+  deleted_at: z.string().nullable(),
   file_description: z.string().nullable(),
   file_name: z.string().nullable(),
   file_path: z.string().nullable(),
+  file_type: z.string(),
+  folder_id: z.string().nullable(),
   id: z.string(),
   preview_url: z.string().nullable(),
   storage_ref: z.string().nullable(),
+  updated_at: z.string(),
 });
 
 export const publicFileRecordInsertSchema = z.object({
+  created_at: z.string().optional(),
+  deleted_at: z.string().optional().nullable(),
   file_description: z.string().optional().nullable(),
   file_name: z.string().optional().nullable(),
   file_path: z.string().optional().nullable(),
+  file_type: z.string().optional(),
+  folder_id: z.string().optional().nullable(),
   id: z.string().optional(),
   preview_url: z.string().optional().nullable(),
   storage_ref: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
 
 export const publicFileRecordUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  deleted_at: z.string().optional().nullable(),
   file_description: z.string().optional().nullable(),
   file_name: z.string().optional().nullable(),
   file_path: z.string().optional().nullable(),
+  file_type: z.string().optional(),
+  folder_id: z.string().optional().nullable(),
   id: z.string().optional(),
   preview_url: z.string().optional().nullable(),
   storage_ref: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
+
+export const publicFileRecordRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("file_record_folder_id_fkey"),
+    columns: z.tuple([z.literal("folder_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("filesystem_folder"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicFilesystemFolderRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string().nullable(),
+  id: z.string(),
+  name: z.string(),
+  parent_id: z.string().nullable(),
+  updated_at: z.string(),
+});
+
+export const publicFilesystemFolderInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  name: z.string(),
+  parent_id: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
+});
+
+export const publicFilesystemFolderUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  parent_id: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
+});
+
+export const publicFilesystemFolderRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("filesystem_folder_parent_id_fkey"),
+    columns: z.tuple([z.literal("parent_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("filesystem_folder"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicGdgMembersRowSchema = z.object({
   created_at: z.string().nullable(),
@@ -769,6 +861,63 @@ export const publicTeamMemberRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
+
+export const publicTeamResourceRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string().nullable(),
+  id: z.string(),
+  resource_link: z.string(),
+  resource_type: z.string(),
+  team_name: z.string(),
+  thumbnail_public_url: z.string(),
+  thumbnail_storage_reference: z.string(),
+  title: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicTeamResourceInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  resource_link: z.string(),
+  resource_type: z.string(),
+  team_name: z.string(),
+  thumbnail_public_url: z.string(),
+  thumbnail_storage_reference: z.string(),
+  title: z.string(),
+  updated_at: z.string().optional(),
+});
+
+export const publicTeamResourceUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  resource_link: z.string().optional(),
+  resource_type: z.string().optional(),
+  team_name: z.string().optional(),
+  thumbnail_public_url: z.string().optional(),
+  thumbnail_storage_reference: z.string().optional(),
+  title: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
+export const publicTestRowSchema = z.object({
+  description: z.string().nullable(),
+  id: z.string(),
+  title: z.string(),
+});
+
+export const publicTestInsertSchema = z.object({
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  title: z.string(),
+});
+
+export const publicTestUpdateSchema = z.object({
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  title: z.string().optional(),
+});
 
 export const publicUserRowSchema = z.object({
   avatar_url: z.string().nullable(),
