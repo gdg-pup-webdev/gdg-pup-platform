@@ -126,6 +126,47 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             );
           })}
 
+          <p className="mb-3 mt-4 px-3 text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
+            Events
+          </p>
+          {[
+            {
+              label: "Bevy Events",
+              href: INTERNAL_LINKS.BEVY_EVENTS,
+              icon: MessageSquareQuote,
+            },
+          ].map((item) => {
+            const active = isActive(item.href);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={`
+                  group flex items-center gap-3 rounded px-3 py-2.5
+                  text-sm font-medium transition-all duration-200
+                  ${
+                    active
+                      ? "bg-[#0B1F3B] text-white shadow-md shadow-[#0B1F3B]/20"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  }
+                `}
+              >
+                <Icon
+                  size={20}
+                  className={`shrink-0 transition-colors ${
+                    active
+                      ? "text-[#2FB7A8]"
+                      : "text-gray-400 group-hover:text-gray-600"
+                  }`}
+                />
+                {item.label}
+              </Link>
+            );
+          })}
+
+
           {/* Divider */}
           <div className="my-4 border-t border-gray-200" />
 
