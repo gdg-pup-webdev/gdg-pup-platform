@@ -6,19 +6,19 @@ import { z } from "zod";
  */
 
 /** Full Team Resource object from the API */
-export type TeamResource = typeof contract.api.v1.team_resources.GET.response[200]["data"]["list"][number];
+export type TeamResource = contract.api.v1.team_resources.GET.response[200]["data"][number];
 
 /** Paginated response from the Team Resource API */
-export type TeamResourcesResponse = typeof contract.api.v1.team_resources.GET.response[200];
+export type TeamResourcesResponse = contract.api.v1.team_resources.GET.response[200];
 
 /** Query parameters for filtering and pagination */
-export type TeamResourcesQueryParams = typeof contract.api.v1.team_resources.GET.query;
+export type TeamResourcesQueryParams = z.infer<typeof contract.api.v1.team_resources.GET.request.query>;
 
 /** Payload for creating a new team resource */
-export type CreateTeamResourceDTO = typeof contract.api.v1.team_resources.POST.body;
+export type CreateTeamResourceDTO = z.infer<typeof contract.api.v1.team_resources.POST.request.body>["data"];
 
 /** Payload for updating an existing team resource */
-export type UpdateTeamResourceDTO = typeof contract.api.v1.team_resources.PATCH.body;
+export type UpdateTeamResourceDTO = z.infer<typeof contract.api.v1.team_resources.teamResourceId.PATCH.request.body>["data"];
 
 /**
  * Custom exception class for team resource-related errors

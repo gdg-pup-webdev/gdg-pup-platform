@@ -24,8 +24,8 @@ export async function createTeamResource(
       configs.nexusApiBaseUrl,
       contract.api.v1.team_resources.POST,
       {
-        body: data,
-        files:   { thumbnail_image: thumbnail } ,
+        body: { data: data },
+        files: { thumbnail_image: thumbnail },
       }
     );
 

@@ -17,7 +17,7 @@ import { TeamResourcesQueryParams } from "../types";
  * @param params - Query parameters for filtering team resources
  * @returns Query result with team resources data, loading state, and error
  */
-export function useTeamResources(params: TeamResourcesQueryParams = {}) {
+export function useTeamResources(params: Partial<TeamResourcesQueryParams> = {}) {
   return useQuery({
     queryKey: ["team-resources", params],
     queryFn: () => getTeamResources(params),

@@ -26,8 +26,8 @@ export async function updateTeamResource(
       configs.nexusApiBaseUrl,
       contract.api.v1.team_resources.teamResourceId.PATCH,
       {
-        body: data,
-        files:{ thumbnail_image: thumbnail },
+        body: { data: data },
+        files: { thumbnail_image: thumbnail },
         params: { teamResourceId: id },
       }
     );

@@ -17,7 +17,7 @@ import { configs } from "@/lib/constants/configs";
  * @throws TeamResourcesException if the request fails
  */
 export async function getTeamResources(
-  params: TeamResourcesQueryParams = {}
+  params: Partial<TeamResourcesQueryParams> = {}
 )  {
   try {
     // Set default pagination

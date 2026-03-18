@@ -23,8 +23,8 @@ export function TeamResourceList() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<TeamResource | null>(null);
 
-  const resources = response?.data?.list || [];
-  const meta = response?.data?.meta;
+  const resources = response?.data || [];
+  const meta = response?.meta;
 
   // Handlers
   const handleAdd = () => {
