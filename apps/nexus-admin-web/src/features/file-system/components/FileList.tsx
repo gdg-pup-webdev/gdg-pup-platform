@@ -6,7 +6,7 @@ import { Plus, Loader2, Search, AlertCircle, FileStack, Folder as FolderIcon, Ch
 import { FileCard } from "./FileCard";
 import { FileFormModal, FileDetailsModal, DeleteConfirmModal, FolderFormModal } from "./FileModals";
 import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile, useGetFolders, useCreateFolder, useGetFolder, useDeleteFolder } from "../hooks";
-import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert } from "../types";
+import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
 
 // Type for both files and folders to avoid 'any'
 type FileOrFolder = (FileRecord | Folder) & { isFolder: boolean };
@@ -173,18 +173,19 @@ export function FileList() {
     }
   };
 
-  const handleFolderSubmit = async (data: FolderInsert) => {
+  const handleFolderSubmit = async (data: FolderInsert | FolderUpdate) => {
     try {
         if (selectedItem && (selectedItem as any).isFolder) {
-            // Update folder (though hook for this isn't in FileList currently, assuming just create for now)
-            await createFolderMutation.mutateAsync(data); 
+            // This is an update, which is not implemented.
+            throw new Error("Update folder functionality is not implemented yet.");
         } else {
-            await createFolderMutation.mutateAsync(data);
+            // This is a create.
+            await createFolderMutation.mutateAsync(data as FolderInsert);
         }
         setIsFolderModalOpen(false);
         refetch();
     } catch (err) {
-        console.error("Folder creation failed:", err);
+        console.error("Folder creation/update failed:", err);
     }
   };
 
