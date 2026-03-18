@@ -58,4 +58,16 @@ export class FoldersHttpController {
       });
     },
   );
+
+  deleteFolderById: RequestHandler = createExpressController(
+    contract.api.v1.folders.folderId.DELETE,
+    async ({ input, output, ctx }) => {
+      const id = input.params.folderId;
+      await this.filesModuleController.deleteFolderById(id);
+      return output(200, {
+        status: "success",
+        message: "Folder deleted successfully",
+      });
+    },
+  );
 }

@@ -13,6 +13,7 @@ import { UploadFile } from "./useCases/UploadFile";
 import { CreateFolder } from "./useCases/CreateFolder";
 import { ListFoldersByParent } from "./useCases/ListFoldersByParent";
 import { GetOneFolderById } from "./useCases/GetOneFolderById";
+import { DeleteFolderById } from "./useCases/DeleteFolderById";
 
 /**
  * infrastructure dependencies
@@ -51,6 +52,11 @@ const deleteFileByPreviewUrlUseCase: DeleteFileByPreviewUrl =
 const createFolderUseCase = new CreateFolder(folderRepository);
 const listFoldersByParentUseCase = new ListFoldersByParent(folderRepository);
 const getOneFolderByIdUseCase = new GetOneFolderById(folderRepository);
+const deleteFolderByIdUseCase = new DeleteFolderById(
+  folderRepository,
+  fileRepository,
+  fileStorage,
+);
 
 /**
  * exporting default controller
@@ -67,5 +73,7 @@ export const filesModuleController = new FilesModuleController(
   createFolderUseCase,
   listFoldersByParentUseCase,
   getOneFolderByIdUseCase,
+  deleteFolderByIdUseCase,
 );
+
 export * from "./FilesModuleController";

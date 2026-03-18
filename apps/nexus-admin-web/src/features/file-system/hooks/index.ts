@@ -6,3 +6,4 @@ export * from "./useUploadFile";
 export * from "./useGetFolders";
 export * from "./useCreateFolder";
 export * from "./useGetFolder";
+export * from "./useDeleteFolder";

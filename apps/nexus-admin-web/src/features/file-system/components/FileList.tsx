@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Plus, Loader2, Search, AlertCircle, FileStack, Folder as FolderIcon, ChevronRight, Home, ArrowLeft, FolderPlus } from "lucide-react";
 import { FileCard } from "./FileCard";
 import { FileFormModal, FileDetailsModal, DeleteConfirmModal, FolderFormModal } from "./FileModals";
-import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile, useGetFolders, useCreateFolder, useGetFolder } from "../hooks";
+import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile, useGetFolders, useCreateFolder, useGetFolder, useDeleteFolder } from "../hooks";
 import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert } from "../types";
 
 // Type for both files and folders to avoid 'any'
@@ -32,6 +32,7 @@ export function FileList() {
   const uploadMutation = useUploadFile();
   const updateMutation = useUpdateFile();
   const deleteMutation = useDeleteFile();
+  const deleteFolderMutation = useDeleteFolder();
   const createFolderMutation = useCreateFolder();
   
   // State for modals
@@ -87,7 +88,6 @@ export function FileList() {
       // For compatibility with FileCard which expects FileRecord
       fileName: f.name,
       fileDescription: f.description || "Folder",
-      fileType: "folder",
     } as unknown as FileOrFolder));
 
     const combinedFiles: FileOrFolder[] = rawFiles.map(f => ({
@@ -121,7 +121,7 @@ export function FileList() {
 
   const handleEdit = (item: FileRecord | Folder) => {
     setSelectedItem(item);
-    if ("fileType" in item) {
+    if (!(item as any).isFolder) {
       setIsFormModalOpen(true);
     } else {
       setIsFolderModalOpen(true);
@@ -156,7 +156,7 @@ export function FileList() {
 
   const handleFormSubmit = async (data: any, file?: File) => {
     try {
-        if (selectedItem && "fileType" in selectedItem) {
+        if (selectedItem && !(selectedItem as any).isFolder) {
           await updateMutation.mutateAsync({ id: selectedItem.id, data: data as FileRecordUpdate });
         } else if (file) {
           const formData = { 
@@ -175,7 +175,7 @@ export function FileList() {
 
   const handleFolderSubmit = async (data: FolderInsert) => {
     try {
-        if (selectedItem && !("fileType" in selectedItem)) {
+        if (selectedItem && (selectedItem as any).isFolder) {
             // Update folder (though hook for this isn't in FileList currently, assuming just create for now)
             await createFolderMutation.mutateAsync(data); 
         } else {
@@ -191,16 +191,18 @@ export function FileList() {
   const handleDeleteConfirm = async () => {
     if (selectedItem) {
       try {
-        // Handle folder delete vs file delete if needed. 
-        // For now assuming deleteMutation handles both or we only delete files this way.
-        await deleteMutation.mutateAsync(selectedItem.id);
+        if ((selectedItem as any).isFolder) {
+          await deleteFolderMutation.mutateAsync(selectedItem.id);
+        } else {
+          await deleteMutation.mutateAsync(selectedItem.id);
+        }
         setIsDeleteModalOpen(false);
         refetch();
-      } catch (err) {
-          console.error("Delete failed:", err);
-      }
+    } catch (err) {
+        console.error("Delete failed:", err);
     }
-  };
+  }
+};
 
   const isLoading = isFilesLoading || isFoldersLoading || isCurrentFolderLoading;
   const isError = isFilesError || isFoldersError;
@@ -410,7 +412,7 @@ export function FileList() {
         onClose={() => setIsFormModalOpen(false)}
         onSubmit={handleFormSubmit}
         currentPath={currentFolder?.name || "Root"}
-        initialData={selectedItem && "fileType" in selectedItem ? selectedItem : undefined}
+        initialData={selectedItem && !(selectedItem as any).isFolder ? (selectedItem as FileRecord) : undefined}
         isSubmitting={uploadMutation.isPending || updateMutation.isPending}
       />
 
@@ -419,7 +421,7 @@ export function FileList() {
         onClose={() => setIsFolderModalOpen(false)}
         onSubmit={handleFolderSubmit}
         currentParentId={folderIdFromUrl}
-        initialData={selectedItem && !("fileType" in selectedItem) ? selectedItem : undefined}
+        initialData={selectedItem && (selectedItem as any).isFolder ? (selectedItem as Folder) : undefined}
         isSubmitting={createFolderMutation.isPending}
       />
 
@@ -437,7 +439,8 @@ export function FileList() {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
         fileName={(selectedItem as any)?.fileName || (selectedItem as any)?.name || ""}
-        isDeleting={deleteMutation.isPending}
+        isDeleting={deleteMutation.isPending || deleteFolderMutation.isPending}
+        isFolder={(selectedItem as any)?.isFolder}
       />
     </div>
   );

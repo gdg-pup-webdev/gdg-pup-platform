@@ -30,5 +30,10 @@ export class FoldersRouter {
       // this.authMiddleware.requirePermissions({ "folders": ["read"] }),
       this.foldersHttpController.getOneFolderById,
     );
+    this.router.delete(
+      "/:folderId",
+      // this.authMiddleware.requirePermissions({ "folders": ["delete"] }),
+      this.foldersHttpController.deleteFolderById,
+    );
   }
 }

@@ -353,7 +353,7 @@ interface FileDetailsModalProps {
 export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOpen }: FileDetailsModalProps) {
   if (!item) return null;
 
-  const isFolder = !("fileType" in item);
+  const isFolder = (item as any).isFolder;
   
   const getFileIcon = () => {
     if (isFolder) return FolderIcon;
@@ -477,9 +477,18 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
 // ==========================================
 // Delete Confirm Modal
 // ==========================================
-export function DeleteConfirmModal({ isOpen, onClose, onConfirm, fileName, isDeleting }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; fileName: string; isDeleting: boolean }) {
+interface DeleteConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  fileName: string;
+  isDeleting: boolean;
+  isFolder?: boolean;
+}
+
+export function DeleteConfirmModal({ isOpen, onClose, onConfirm, fileName, isDeleting, isFolder }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delete File">
+    <Modal isOpen={isOpen} onClose={onClose} title={isFolder ? "Delete Folder" : "Delete File"}>
       <div className="flex flex-col items-center text-center">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
           <AlertTriangle size={32} />
@@ -487,7 +496,9 @@ export function DeleteConfirmModal({ isOpen, onClose, onConfirm, fileName, isDel
         <h3 className="text-xl font-bold text-gray-900">Are you sure?</h3>
         <p className="mt-2 text-gray-600">
           You are about to delete <span className="font-bold text-gray-900">"{fileName}"</span>.
-          This action cannot be undone and will permanently remove the file from storage.
+          {isFolder 
+            ? " This will permanently remove the folder and ALL of its contents (files and subfolders). This action cannot be undone."
+            : " This action cannot be undone and will permanently remove the file from storage."}
         </p>
 
         <div className="mt-8 flex w-full items-center gap-3">
