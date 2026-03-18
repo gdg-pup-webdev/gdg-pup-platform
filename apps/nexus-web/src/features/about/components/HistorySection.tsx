@@ -285,39 +285,59 @@ const milestones = [
     slug: "the-spark",
     title: "The Spark",
     excerpt:
-      "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.",
+      "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.", buttonColor: "green" as const, 
   },
   {
     slug: "year-one",
     title: "Year One: Everything at Once",
     excerpt:
-      "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.",
+      "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.", buttonColor: "yellow" as const, 
   },
   {
     slug: "year-two",
-    title: "Year Two: The Test",
+    title: "Year Two: The Test", 
     excerpt:
-      "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.",
+      "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.", buttonColor: "red" as const, 
   },
   {
     slug: "year-three",
     title: "Year Three: The Turnaround",
     excerpt:
-      "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.",
+      "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.", buttonColor: "blue" as const, 
   },
   {
     slug: "the-impact",
     title: "The Impact",
     excerpt:
-      "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.",
+      "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.", buttonColor: "green" as const, 
   },
   {
     slug: "living-community",
     title: "The Living Community",
     excerpt:
-      "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.",
+      "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.", buttonColor: "yellow" as const,
   },
+  {
+  slug: "your-chapter",
+  title: "Your Chapter Hasn't Been Written Yet",
+  excerpt: "Three years and counting proved something important: this community is built by the people who show up. That includes you.",
+  buttonColor: "red" as const,
+},
 ];
+
+const buttonColorMap: Record<string, string> = {
+  green: "bg-gradient-to-b from-[#016630] to-[#00C950] hover:brightness-110 text-white",
+  yellow: "bg-gradient-to-b from-[#8E7200] to-[#F0B100] hover:brightness-110 text-black",
+  red: "bg-gradient-to-b from-[#82181A] to-[#EA4335] hover:brightness-110 text-white",
+  blue: "bg-gradient-to-b from-[#162456] to-[#2B7FFF] hover:brightness-110 text-white",
+};
+
+const borderGradientMap: Record<string, string> = {
+  green:  "bg-gradient-to-r from-[#016630] via-[#00C950] to-[#016630]",
+  yellow: "bg-gradient-to-r from-[#8E7200] via-[#F0B100] to-[#8E7200]",
+  red:    "bg-gradient-to-r from-[#82181A] via-[#EA4335] to-[#82181A]",
+  blue:   "bg-gradient-to-r from-[#162456] via-[#2B7FFF] to-[#162456]",
+};
 
 // Single milestone card — thumbnail + title + excerpt + Read More button
 const MilestoneCard = ({
@@ -325,34 +345,47 @@ const MilestoneCard = ({
 }: {
   milestone: (typeof milestones)[number];
 }) => (
-  <Card>
-    <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
-      <Image
-        src={ASSETS.HOME.HERO.LAYER_BG}
-        alt={milestone.title}
-        fill
-        className="object-cover"
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.display = "none";
-        }}
-      />
-    </div>
-    <CardHeader>
-      <CardTitle>{milestone.title}</CardTitle>
+  <div className="relative">
+    {/* Gradient border overlay */}
+    <div
+      className={`absolute inset-0 rounded-3xl p-[1px] pointer-events-none z-10 ${borderGradientMap[milestone.buttonColor]}`}
+      style={{
+        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+        WebkitMaskComposite: "xor",
+        maskComposite: "exclude",
+      }}
+    />
+    <Card className="border-0">
+      <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
+        <Image
+          src={ASSETS.HOME.HERO.LAYER_BG}
+          alt={milestone.title}
+          fill
+          className="object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+      </div>
+      <CardHeader>
+      <CardTitle className="text-3xl font-bold text-center">{milestone.title}</CardTitle>
     </CardHeader>
     <CardContent>
-      <Text variant="body-sm" className="text-gray-300">
+      <Text variant="body-sm" className="text-gray-300 line-clamp-3 text-center">
         {milestone.excerpt}
       </Text>
     </CardContent>
-    <CardFooter>
+    <CardFooter className="justify-center">
       <Link href="#">
-        <Button variant="default" size="sm">
+        <button
+          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
+        >
           Read More
-        </Button>
+        </button>
       </Link>
     </CardFooter>
-  </Card>
+    </Card>
+  </div>
 );
 
 export function HistorySection() {
@@ -413,28 +446,13 @@ export function HistorySection() {
           <FadeInSection delay={0.1} className="mb-32">
             <Stack gap="xl" align="center">
               {/* ── Mobile layout ────────────────────────────────────── */}
-              <div className="grid grid-cols-2 gap-4 w-full lg:hidden">
+             <div className="grid grid-cols-2 gap-4 w-full lg:hidden">
                 {milestones.map((milestone) => (
                   <AnimatedCard key={milestone.slug}>
                     <MilestoneCard milestone={milestone} />
                   </AnimatedCard>
                 ))}
-                <AnimatedCard>
-                  <Card className="opacity-50">
-                    <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2 bg-white/5" />
-                    <CardHeader>
-                      <CardTitle>More Coming Soon</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text variant="body-sm" className="text-gray-400">
-                        The journey doesn&apos;t stop here. New chapters are
-                        still being written.
-                      </Text>
-                    </CardContent>
-                  </Card>
-                </AnimatedCard>
               </div>
-
               {/* ── Desktop staircase ─────────────────────────────────── */}
               <div className="hidden lg:grid lg:grid-cols-4 gap-6 w-full items-start">
                 {/* Col 1 — Year Three: deepest */}
@@ -475,24 +493,13 @@ export function HistorySection() {
                   </AnimatedCard>
                   <div className="lg:mt-[52rem]">
                     <AnimatedCard>
-                      <Card className="opacity-50">
-                        <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2 bg-white/5" />
-                        <CardHeader>
-                          <CardTitle>More Coming Soon</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <Text variant="body-sm" className="text-gray-400">
-                            The journey doesn&apos;t stop here. New chapters are
-                            still being written.
-                          </Text>
-                        </CardContent>
-                      </Card>
+                      <MilestoneCard milestone={milestones[6]} />
                     </AnimatedCard>
                   </div>
                 </div>
-              </div>
-            </Stack>
-          </FadeInSection>
+                </div>
+                </Stack>
+                </FadeInSection>
 
           {/* Section 3 — Statistics */}
           <FadeInSection delay={0.2}>
