@@ -245,14 +245,14 @@ export function FileDetailsModal({ isOpen, onClose, file }: { isOpen: boolean; o
     return FileIcon;
   };
 
-  const Icon = getFileIcon();
+  const IconComponent = getFileIcon();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="File Details">
       <div className="space-y-6">
         <div className="flex items-start gap-4 rounded-sm border border-teal-50 bg-teal-50/30 p-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-teal-100 text-teal-600">
-            <Icon size={24} />
+            <IconComponent size={24} />
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="truncate text-lg font-bold text-gray-900">{file.fileName}</h3>

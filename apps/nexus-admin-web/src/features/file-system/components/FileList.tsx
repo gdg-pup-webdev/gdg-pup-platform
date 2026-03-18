@@ -7,14 +7,18 @@ import { FileFormModal, FileDetailsModal, DeleteConfirmModal } from "./FileModal
 import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile } from "../hooks";
 import { FileRecord, FileRecordInsert, FileRecordUpdate } from "../types";
 
+// Type for both files and folders to avoid 'any'
+type FileOrFolder = FileRecord & { isFolder?: boolean };
+
 export function FileList() {
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100); // Increased for folder grouping
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [pageSize, _setPageSize] = useState(100); // Increased for folder grouping
   const [currentPath, setCurrentPath] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   
   // API Hooks
-  const { data: filesResponse, isLoading, isError, error, refetch } = useGetFiles(page, pageSize, currentPath);
+  const { data: filesResponse, isLoading, isError, error, refetch } = useGetFiles(page, 100, currentPath);
   const uploadMutation = useUploadFile();
   const updateMutation = useUpdateFile();
   const deleteMutation = useDeleteFile();
@@ -25,65 +29,76 @@ export function FileList() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
 
+  // Helper to normalize paths: remove leading/trailing slashes and handle "." or "./"
+  const normalizePath = (p: string) => {
+    if (!p) return "";
+    let normalized = p.trim();
+    if (normalized === "." || normalized === "./" || normalized === "/") return "";
+    
+    // Remove leading slashes
+    while (normalized.startsWith("/")) normalized = normalized.substring(1);
+    // Remove trailing slashes
+    while (normalized.endsWith("/")) normalized = normalized.substring(0, normalized.length - 1);
+    
+    return normalized;
+  };
+
   const rawFiles = filesResponse?.body?.data || [];
   const meta = filesResponse?.body?.meta;
   const totalPages = meta?.totalPages || 1;
 
   // Group files into folders and files for the current level
   const items = useMemo(() => {
-    const folders = new Map<string, any>();
+    const folders = new Map<string, FileOrFolder>();
     const displayedFiles: FileRecord[] = [];
+    const normalizedCurrentPath = normalizePath(currentPath);
 
     rawFiles.forEach((file) => {
-      // Remove currentPath from the beginning of filePath
-      let relativePath = file.filePath;
+      const normalizedFilePath = normalizePath(file.filePath);
       
-      // Normalize paths to ensure correct matching
-      const normalizedCurrentPath = currentPath.endsWith("/") ? currentPath : (currentPath ? currentPath + "/" : "");
-      
-      if (normalizedCurrentPath && relativePath.startsWith(normalizedCurrentPath)) {
-        relativePath = relativePath.substring(normalizedCurrentPath.length);
-      } else if (!normalizedCurrentPath) {
-          // At root, relativePath is just filePath
-      } else {
-          // This file doesn't belong in the current path, skip it
-          return;
-      }
-
-      // If relativePath starts with /, remove it
-      if (relativePath.startsWith("/")) {
-        relativePath = relativePath.substring(1);
-      }
-
-      const parts = relativePath.split("/");
-
-      if (parts.length > 1) {
-        // It's in a subfolder
-        const folderName = parts[0];
-        if (!folders.has(folderName)) {
-          folders.set(folderName, {
-            id: `folder-${folderName}`,
-            fileName: folderName,
-            fileDescription: `Folder containing items in ${folderName}`,
-            fileType: "folder",
-            filePath: normalizedCurrentPath + folderName,
-            isFolder: true,
-            // Mocking other fields for FileRecord compatibility
-            createdAt: "",
-            updatedAt: "",
-            deletedAt: "",
-            storageReference: "",
-            previewUrl: "",
-            downloadUrl: ""
-          });
-        }
-      } else if (relativePath !== "") {
-        // It's a file in the current folder
+      // If it's directly in this folder
+      if (normalizedFilePath === normalizedCurrentPath) {
         displayedFiles.push(file);
+      } 
+      // If it's in a subfolder of this folder
+      else if (
+        (normalizedCurrentPath === "" && normalizedFilePath !== "") ||
+        (normalizedFilePath.startsWith(normalizedCurrentPath + "/"))
+      ) {
+        let remainingPath = normalizedFilePath;
+        if (normalizedCurrentPath !== "") {
+          remainingPath = normalizedFilePath.substring(normalizedCurrentPath.length + 1);
+        }
+        
+        const parts = remainingPath.split("/");
+        if (parts.length > 0) {
+          const folderName = parts[0];
+          if (!folders.has(folderName)) {
+            const folderPath = normalizedCurrentPath 
+                ? `${normalizedCurrentPath}/${folderName}` 
+                : folderName;
+                
+            folders.set(folderName, {
+              id: `folder-${folderPath}`,
+              fileName: folderName,
+              fileDescription: `Folder`,
+              fileType: "folder",
+              filePath: folderPath,
+              isFolder: true,
+              // Mocking other fields for FileRecord compatibility
+              createdAt: "",
+              updatedAt: "",
+              deletedAt: null,
+              storageReference: "",
+              previewUrl: "",
+              downloadUrl: ""
+            } as FileOrFolder);
+          }
+        }
       }
     });
 
-    let combinedItems = [...Array.from(folders.values()), ...displayedFiles];
+    let combinedItems: FileOrFolder[] = [...Array.from(folders.values()), ...displayedFiles.map(f => ({ ...f, isFolder: false }))];
     
     // Filter by search query if present
     if (searchQuery) {
@@ -98,7 +113,8 @@ export function FileList() {
 
   // Breadcrumbs logic
   const breadcrumbs = useMemo(() => {
-    const parts = currentPath ? currentPath.split("/").filter(Boolean) : [];
+    const normalizedCurrentPath = normalizePath(currentPath);
+    const parts = normalizedCurrentPath ? normalizedCurrentPath.split("/").filter(Boolean) : [];
     const crumbs = [{ name: "Root", path: "" }];
     
     let accPath = "";
@@ -132,16 +148,21 @@ export function FileList() {
   };
 
   const handleFolderClick = (folderPath: string) => {
-    setCurrentPath(folderPath);
+    const normalized = normalizePath(folderPath);
+    setCurrentPath(normalized);
     setPage(1);
   };
 
   const handleBack = () => {
-    const parts = currentPath.split("/").filter(Boolean);
+    const normalized = normalizePath(currentPath);
+    const parts = normalized.split("/").filter(Boolean);
     if (parts.length > 0) {
       const newPath = parts.slice(0, -1).join("/");
       setCurrentPath(newPath);
       setPage(1);
+    } else {
+        setCurrentPath("");
+        setPage(1);
     }
   };
 
@@ -150,11 +171,11 @@ export function FileList() {
         if (selectedFile) {
           await updateMutation.mutateAsync({ id: selectedFile.id, data: data as FileRecordUpdate });
         } else if (file) {
-          // If we are in a folder, prepend it to the file path if not already provided
           const formData = { ...data } as FileRecordInsert;
-          if (currentPath && !formData.filePath.startsWith(currentPath)) {
-              formData.filePath = `${currentPath}/${formData.filePath}`;
-          }
+          // Ensure filePath is correctly normalized and represents the intended location
+          const targetPath = normalizePath(formData.filePath || currentPath);
+          formData.filePath = targetPath;
+          
           await uploadMutation.mutateAsync({ data: formData, file });
         }
         setIsFormModalOpen(false);
@@ -257,10 +278,10 @@ export function FileList() {
       {/* Files & Folders Grid */}
       {items.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {items.map((item: any) => (
+          {items.map((item) => (
             <FileCard 
               key={item.id} 
-              file={item as FileRecord} 
+              file={item} 
               onEdit={item.isFolder ? () => {} : handleEdit}
               onDelete={item.isFolder ? () => {} : handleDeleteClick}
               onView={item.isFolder ? () => handleFolderClick(item.filePath) : handleView}
@@ -317,8 +338,15 @@ export function FileList() {
             fileName: "",
             fileDescription: "",
             filePath: currentPath ? `${currentPath}/` : "",
-            fileType: ""
-        } as any}
+            fileType: "",
+            createdAt: "",
+            updatedAt: "",
+            deletedAt: null,
+            storageReference: "",
+            previewUrl: "",
+            downloadUrl: "",
+            id: ""
+        } as FileRecord}
         isSubmitting={uploadMutation.isPending || updateMutation.isPending}
       />
 
