@@ -13,6 +13,7 @@ export class TeamResourceStorageAdapter implements ITeamResourceStorage {
       file.type,
       file.name,
       `Thumbnail for team resource: ${file.name}`,
+      null,
       "team-resources/thumbnails"
     );
 

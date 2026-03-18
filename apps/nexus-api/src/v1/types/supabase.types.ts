@@ -100,6 +100,36 @@ export type Database = {
           },
         ]
       }
+      dp_download_analytics: {
+        Row: {
+          created_at: string
+          downloaded_at: string
+          event_slug: string
+          frame_id: string
+          id: number
+          source_path: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          downloaded_at?: string
+          event_slug: string
+          frame_id: string
+          id?: never
+          source_path?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          downloaded_at?: string
+          event_slug?: string
+          frame_id?: string
+          id?: never
+          source_path?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       event: {
         Row: {
           attendance_points: number
@@ -245,30 +275,88 @@ export type Database = {
       }
       file_record: {
         Row: {
+          created_at: string
+          deleted_at: string | null
           file_description: string | null
           file_name: string | null
           file_path: string | null
+          file_type: string
+          folder_id: string | null
           id: string
           preview_url: string | null
           storage_ref: string | null
+          updated_at: string
         }
         Insert: {
+          created_at?: string
+          deleted_at?: string | null
           file_description?: string | null
           file_name?: string | null
           file_path?: string | null
+          file_type?: string
+          folder_id?: string | null
           id?: string
           preview_url?: string | null
           storage_ref?: string | null
+          updated_at?: string
         }
         Update: {
+          created_at?: string
+          deleted_at?: string | null
           file_description?: string | null
           file_name?: string | null
           file_path?: string | null
+          file_type?: string
+          folder_id?: string | null
           id?: string
           preview_url?: string | null
           storage_ref?: string | null
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "file_record_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "filesystem_folder"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      filesystem_folder: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filesystem_folder_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "filesystem_folder"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       gdg_members: {
         Row: {
@@ -727,6 +815,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      team_resource: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          resource_link: string
+          resource_type: string
+          team_name: string
+          thumbnail_public_url: string
+          thumbnail_storage_reference: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          resource_link: string
+          resource_type: string
+          team_name: string
+          thumbnail_public_url: string
+          thumbnail_storage_reference: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          resource_link?: string
+          resource_type?: string
+          team_name?: string
+          thumbnail_public_url?: string
+          thumbnail_storage_reference?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      test: {
+        Row: {
+          description: string | null
+          id: string
+          title: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          title: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          title?: string
+        }
+        Relationships: []
       }
       user: {
         Row: {

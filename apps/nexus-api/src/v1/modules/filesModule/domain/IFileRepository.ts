@@ -18,5 +18,14 @@ export abstract class IFileRepository {
     count: number;
   }>;
 
+  abstract listByFolderPaginated(
+    page: number,
+    pageSize: number,
+    folderId: string | null,
+  ): Promise<{
+    list: FileRecord[];
+    count: number;
+  }>;
+
   abstract deleteById(id: string): Promise<boolean>;
 }
