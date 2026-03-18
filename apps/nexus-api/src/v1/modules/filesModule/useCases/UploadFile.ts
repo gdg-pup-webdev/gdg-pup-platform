@@ -1,4 +1,4 @@
-import { crypto } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { FileBuffer } from "../domain/FileBuffer";
 import { IFileRepository } from "../domain/IFileRepository";
 import { IFileStorage } from "../domain/IFileStorage";
@@ -32,7 +32,7 @@ export class UploadFile {
         let folder = await this.folderRepository.findByNameAndParent(part, currentParentId);
         
         if (!folder) {
-          const id = (crypto as any).randomUUID();
+          const id = randomUUID();
           folder = Folder.create({ name: part, parentId: currentParentId }, id);
           folder = await this.folderRepository.save(folder);
         }

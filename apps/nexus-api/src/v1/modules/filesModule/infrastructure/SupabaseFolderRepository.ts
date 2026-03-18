@@ -3,7 +3,7 @@ import { Folder, FolderProps } from "../domain/Folder";
 import { IFolderRepository } from "../domain/IFolderRepository";
 
 export class SupabaseFolderRepository implements IFolderRepository {
-  private readonly TABLE_NAME = "filesystem_folders";
+  private readonly TABLE_NAME = "filesystem_folder";
 
   private toDb(folder: Folder) {
     return {
