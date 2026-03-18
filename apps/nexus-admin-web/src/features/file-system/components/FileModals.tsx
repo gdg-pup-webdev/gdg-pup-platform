@@ -14,7 +14,11 @@ import {
   Music,
   FileCode,
   FileJson,
-  Folder as FolderIcon
+  Folder as FolderIcon,
+  ExternalLink,
+  Download,
+  Edit2,
+  Trash2
 } from "lucide-react";
 import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
 
@@ -337,10 +341,23 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
 // ==========================================
 // File Details Modal
 // ==========================================
-export function FileDetailsModal({ isOpen, onClose, file }: { isOpen: boolean; onClose: () => void; file: FileRecord | null }) {
-  if (!file) return null;
+interface FileDetailsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  item: FileRecord | Folder | null;
+  onEdit: (item: any) => void;
+  onDelete: (item: any) => void;
+  onOpen?: (folder: Folder) => void;
+}
 
+export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOpen }: FileDetailsModalProps) {
+  if (!item) return null;
+
+  const isFolder = !("fileType" in item);
+  
   const getFileIcon = () => {
+    if (isFolder) return FolderIcon;
+    const file = item as FileRecord;
     const type = file.fileType?.toLowerCase() || "";
     if (type.startsWith("image/")) return ImageIcon;
     if (type.startsWith("video/")) return VideoIcon;
@@ -353,61 +370,104 @@ export function FileDetailsModal({ isOpen, onClose, file }: { isOpen: boolean; o
   };
 
   const IconComponent = getFileIcon();
+  const name = isFolder ? (item as Folder).name : (item as FileRecord).fileName;
+  const description = isFolder ? (item as Folder).description : (item as FileRecord).fileDescription;
+  const createdAt = isFolder ? (item as Folder).createdAt : (item as FileRecord).createdAt;
+  const updatedAt = isFolder ? (item as Folder).updatedAt : (item as FileRecord).updatedAt;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="File Details">
+    <Modal isOpen={isOpen} onClose={onClose} title={isFolder ? "Folder Details" : "File Details"}>
       <div className="space-y-6">
-        <div className="flex items-start gap-4 rounded-sm border border-teal-50 bg-teal-50/30 p-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-teal-100 text-teal-600">
-            <IconComponent size={24} />
+        <div className={`flex items-start gap-4 rounded-xl border p-5 ${isFolder ? "border-teal-100 bg-teal-50/30" : "border-gray-100 bg-gray-50/30"}`}>
+          <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl shadow-sm ${isFolder ? "bg-teal-100 text-teal-600" : "bg-white text-gray-400"}`}>
+            <IconComponent size={32} strokeWidth={1.5} />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-lg font-bold text-gray-900">{file.fileName}</h3>
-            <p className="mt-1 text-sm text-gray-500">ID: {file.id}</p>
+            <div className="mb-1 flex items-center gap-2">
+                <span className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${isFolder ? "bg-teal-200 text-teal-800" : "bg-gray-200 text-gray-600"}`}>
+                    {isFolder ? "Folder" : (item as FileRecord).fileType?.split("/")[1] || "File"}
+                </span>
+            </div>
+            <h3 className="truncate text-xl font-bold text-gray-900">{name}</h3>
+            <p className="mt-1 text-xs font-medium text-gray-400">ID: {item.id}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Folder ID</h4>
-            <p className="mt-1 text-sm font-medium text-gray-900 truncate">{file.folderId || "Root"}</p>
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Created</h4>
+            <p className="mt-1 text-sm font-bold text-gray-900">{new Date(createdAt).toLocaleString()}</p>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Type</h4>
-            <p className="mt-1 text-sm font-medium text-gray-900">{file.fileType || "Unknown"}</p>
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Last Modified</h4>
+            <p className="mt-1 text-sm font-bold text-gray-900">{new Date(updatedAt).toLocaleString()}</p>
           </div>
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Created At</h4>
-            <p className="mt-1 text-sm font-medium text-gray-900">{new Date(file.createdAt).toLocaleString()}</p>
-          </div>
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Updated At</h4>
-            <p className="mt-1 text-sm font-medium text-gray-900">{new Date(file.updatedAt).toLocaleString()}</p>
-          </div>
+          {isFolder && (item as Folder).parentId && (
+             <div>
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Parent Folder ID</h4>
+                <p className="mt-1 text-sm font-bold text-gray-900 truncate">{(item as Folder).parentId}</p>
+            </div>
+          )}
+          {!isFolder && (
+            <div>
+                <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Folder ID</h4>
+                <p className="mt-1 text-sm font-bold text-gray-900 truncate">{(item as FileRecord).folderId || "Root"}</p>
+            </div>
+          )}
         </div>
 
         <div>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Description</h4>
-          <p className="mt-1 text-sm leading-relaxed text-gray-600">{file.fileDescription || "No description provided."}</p>
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Description</h4>
+          <p className="mt-1 text-sm leading-relaxed text-gray-600">{description || "No description provided."}</p>
         </div>
 
-        <div className="space-y-3 pt-4 border-t border-gray-100">
-            {file.previewUrl && (
-                <a 
-                    href={file.previewUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex w-full items-center justify-center gap-2 rounded-sm border border-gray-200 py-2.5 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
+        <div className="flex flex-col gap-3 pt-6 border-t border-gray-100">
+            <div className="flex gap-3">
+                {isFolder ? (
+                    <button 
+                        onClick={() => { onOpen?.(item as Folder); onClose(); }}
+                        className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 shadow-md"
+                    >
+                        <FolderIcon size={18} />
+                        Open Folder
+                    </button>
+                ) : (
+                    <>
+                        <a 
+                            href={(item as FileRecord).previewUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-gray-200 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
+                        >
+                            <ExternalLink size={18} />
+                            Preview
+                        </a>
+                        <a 
+                            href={(item as FileRecord).downloadUrl} 
+                            className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 shadow-md"
+                        >
+                            <Download size={18} />
+                            Download
+                        </a>
+                    </>
+                )}
+            </div>
+            <div className="flex gap-3">
+                <button 
+                    onClick={() => { onEdit(item); onClose(); }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-gray-200 py-2.5 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-50"
                 >
-                    Preview File
-                </a>
-            )}
-            <a 
-                href={file.downloadUrl} 
-                className="flex w-full items-center justify-center gap-2 rounded-sm bg-teal-600 py-2.5 text-sm font-bold text-white transition-colors hover:bg-teal-700 shadow-sm"
-            >
-                Download File
-            </a>
+                    <Edit2 size={14} />
+                    Edit Details
+                </button>
+                <button 
+                    onClick={() => { onDelete(item); onClose(); }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-red-100 py-2.5 text-xs font-bold text-red-600 transition-colors hover:bg-red-50"
+                >
+                    <Trash2 size={14} />
+                    Delete {isFolder ? "Folder" : "File"}
+                </button>
+            </div>
         </div>
       </div>
     </Modal>

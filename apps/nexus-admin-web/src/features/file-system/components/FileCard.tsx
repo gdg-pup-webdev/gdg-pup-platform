@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { 
   File as FileIcon, 
   Edit2, 
@@ -14,7 +14,9 @@ import {
   Archive,
   Music,
   FileCode,
-  FileJson
+  FileJson,
+  MoreVertical,
+  Eye
 } from "lucide-react";
 import { FileRecord, Folder } from "../types";
 
@@ -23,15 +25,29 @@ interface FileCardProps {
   onEdit: (file: any) => void;
   onDelete: (file: any) => void;
   onView: (file: any) => void;
+  onOpen?: (file: any) => void;
   isFolder?: boolean;
 }
 
-export function FileCard({ file, onEdit, onDelete, onView, isFolder }: FileCardProps) {
+export function FileCard({ file, onEdit, onDelete, onView, onOpen, isFolder }: FileCardProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const renderThumbnail = () => {
     if (isFolder) {
       return (
-        <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-teal-50 text-teal-600 shadow-sm transition-transform duration-300 group-hover:scale-110">
-          <FolderIcon size={40} fill="currentColor" fillOpacity={0.2} />
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-teal-100 text-teal-600 shadow-inner transition-transform duration-300 group-hover:scale-110">
+          <FolderIcon size={48} fill="currentColor" fillOpacity={0.3} strokeWidth={1.5} />
         </div>
       );
     }
@@ -83,91 +99,103 @@ export function FileCard({ file, onEdit, onDelete, onView, isFolder }: FileCardP
     }
 
     return (
-      <div className={`flex h-16 w-16 items-center justify-center rounded-sm ${bgColor} ${iconColor} shadow-sm transition-transform duration-300 group-hover:scale-110`}>
-        <Icon size={32} />
+      <div className={`flex h-16 w-16 items-center justify-center rounded-xl ${bgColor} ${iconColor} shadow-sm transition-transform duration-300 group-hover:scale-110`}>
+        <Icon size={32} strokeWidth={1.5} />
       </div>
     );
   };
 
   const name = isFolder ? (file as Folder).name : (file as FileRecord).fileName;
-  const description = isFolder ? (file as Folder).description : (file as FileRecord).fileDescription;
+
+  const handleCardClick = () => {
+    if (isFolder && onOpen) {
+      onOpen(file);
+    } else {
+      onView(file);
+    }
+  };
+
+  const toggleMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <div 
-      className={`group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white transition-all hover:border-teal-100 hover:shadow-md ${isFolder ? "cursor-pointer" : ""}`}
-      onClick={isFolder ? () => onView(file) : undefined}
+      className={`group relative flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white transition-all hover:border-teal-200 hover:shadow-lg cursor-pointer ${isFolder ? "bg-gradient-to-br from-white to-teal-50/30" : ""}`}
+      onClick={handleCardClick}
     >
+      {/* 3-Dot Menu */}
+      <div className="absolute top-2 right-2 z-10" ref={menuRef}>
+        <button
+          onClick={toggleMenu}
+          className="rounded-full p-2 text-gray-400 opacity-0 transition-all hover:bg-white hover:text-teal-600 hover:shadow-sm group-hover:opacity-100"
+        >
+          <MoreVertical size={18} />
+        </button>
+        
+        {isMenuOpen && (
+          <div className="absolute top-full right-0 mt-1 w-40 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-xl">
+            <button
+              onClick={(e) => { e.stopPropagation(); onView(file); setIsMenuOpen(false); }}
+              className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <Eye size={14} className="text-teal-500" />
+              View Details
+            </button>
+            {!isFolder && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onEdit(file); setIsMenuOpen(false); }}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Edit2 size={14} className="text-teal-500" />
+                  Edit Info
+                </button>
+                <a
+                  href={(file as FileRecord).downloadUrl}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Download size={14} className="text-teal-500" />
+                  Download
+                </a>
+              </>
+            )}
+            <div className="h-px bg-gray-50" />
+            <button
+              onClick={(e) => { e.stopPropagation(); onDelete(file); setIsMenuOpen(false); }}
+              className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <Trash2 size={14} />
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Icon Area */}
-      <div className="flex h-32 items-center justify-center bg-gray-50 transition-colors group-hover:bg-teal-50/20">
+      <div className="flex h-36 items-center justify-center bg-gray-50/50 transition-colors group-hover:bg-teal-50/30">
         {renderThumbnail()}
       </div>
 
       {/* Content Area */}
       <div className="flex flex-1 flex-col p-4">
-        <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
-          <FolderIcon size={12} className="text-teal-500" />
-          <span className="truncate">{isFolder ? "Folder" : "File"}</span>
+        <div className="mb-2 flex items-center justify-between">
+            <div className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${isFolder ? "bg-teal-100 text-teal-700" : "bg-gray-100 text-gray-500"}`}>
+                {isFolder ? "Folder" : (file as FileRecord).fileType?.split("/")[1] || "File"}
+            </div>
         </div>
         
-        <h3 className="mb-2 line-clamp-1 text-sm font-bold text-gray-900 group-hover:text-teal-700">
+        <h3 className="line-clamp-1 text-sm font-bold text-gray-900 transition-colors group-hover:text-teal-700">
           {name}
         </h3>
         
-        <p className="mb-4 line-clamp-2 min-h-[32px] text-xs leading-relaxed text-gray-500">
-          {description || (isFolder ? "Click to open folder" : "No description provided.")}
-        </p>
-
-        {/* Action Buttons */}
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-gray-50 pt-3">
-          {!isFolder ? (
-            <>
-              <div className="flex gap-1">
-                <button
-                  onClick={(e) => { e.stopPropagation(); onEdit(file); }}
-                  className="rounded-sm p-2 text-gray-400 transition-colors hover:bg-teal-50 hover:text-teal-600"
-                  title="Edit details"
-                >
-                  <Edit2 size={16} />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onDelete(file); }}
-                  className="rounded-sm p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                  title="Delete file"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-              
-              <div className="flex gap-2">
-                <button
-                  onClick={(e) => { e.stopPropagation(); onView(file); }}
-                  className="flex items-center gap-1.5 rounded-sm bg-gray-50 px-3 py-1.5 text-[11px] font-bold text-gray-600 transition-colors hover:bg-gray-100"
-                >
-                  <ExternalLink size={12} />
-                  Details
-                </button>
-                <a
-                  href={(file as FileRecord).downloadUrl}
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1.5 rounded-sm bg-teal-600 px-3 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-teal-700"
-                >
-                  <Download size={12} />
-                  Get
-                </a>
-              </div>
-            </>
-          ) : (
-            <div className="flex w-full justify-center">
-               <button
-                  onClick={(e) => { e.stopPropagation(); onView(file); }}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-sm bg-teal-600 px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-teal-700"
-                >
-                  <FolderIcon size={12} />
-                  Open Folder
-                </button>
-            </div>
-          )}
-        </div>
+        {!isFolder && (
+             <p className="mt-1 text-[10px] font-medium text-gray-400">
+                Uploaded {new Date((file as FileRecord).createdAt).toLocaleDateString()}
+            </p>
+        )}
       </div>
     </div>
   );
