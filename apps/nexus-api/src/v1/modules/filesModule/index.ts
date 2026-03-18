@@ -5,6 +5,7 @@ import { DeleteFileById } from "./useCases/DeleteFileById";
 import { DeleteFileByPreviewUrl } from "./useCases/DeleteFileByPreviewUrl";
 import { GetOneFileById } from "./useCases/GetOneFileById";
 import { ListFIlesWithPagination } from "./useCases/ListFIlesWithPagination";
+import { ListFilesByPathWithPagination } from "./useCases/ListFilesByPathWithPagination";
 import { UpdateFileById } from "./useCases/UpdateFileById";
 import { UploadFile } from "./useCases/UploadFile";
 
@@ -26,6 +27,8 @@ const getOneFileByIdUseCase: GetOneFileById = new GetOneFileById(
 );
 const listFIlesWithPaginationUseCase: ListFIlesWithPagination =
   new ListFIlesWithPagination(fileRepository);
+const listFilesByPathWithPaginationUseCase: ListFilesByPathWithPagination =
+  new ListFilesByPathWithPagination(fileRepository);
 const updateFileByIdUseCase: UpdateFileById = new UpdateFileById(
   fileRepository,
 );
@@ -43,6 +46,7 @@ export const filesModuleController = new FilesModuleController(
   deleteFileByIdUseCase,
   getOneFileByIdUseCase,
   listFIlesWithPaginationUseCase,
+  listFilesByPathWithPaginationUseCase,
   updateFileByIdUseCase,
   uploadFileUseCase,
   deleteFileByPreviewUrlUseCase,

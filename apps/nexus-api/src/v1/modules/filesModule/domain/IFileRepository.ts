@@ -18,5 +18,14 @@ export abstract class IFileRepository {
     count: number;
   }>;
 
+  abstract listByPathPaginated(
+    page: number,
+    pageSize: number,
+    path: string,
+  ): Promise<{
+    list: FileRecord[];
+    count: number;
+  }>;
+
   abstract deleteById(id: string): Promise<boolean>;
 }

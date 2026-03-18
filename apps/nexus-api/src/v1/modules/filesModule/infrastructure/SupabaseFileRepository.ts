@@ -142,6 +142,31 @@ export class SupabaseFileRepository implements IFileRepository {
     };
   }
 
+  async listByPathPaginated(
+    page: number,
+    pageSize: number,
+    path: string,
+  ): Promise<{ list: FileRecord[]; count: number }> {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error, count } = await supabase
+      .from(this.TABLE_NAME)
+      .select("*", { count: "exact" })
+      .ilike("file_path", `${path}%`)
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) throw new Error(`Failed to list files by path: ${error.message}`);
+
+    return {
+      list: (data || []).map((row) =>
+        FileRecord.hydrate(this.toDomainRecord(row)),
+      ),
+      count: count || 0,
+    };
+  }
+
   async deleteById(id: string): Promise<boolean> {
     const { error } = await supabase
       .from(this.TABLE_NAME)

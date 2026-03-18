@@ -4,6 +4,7 @@ import { DeleteFileById } from "./useCases/DeleteFileById";
 import { DeleteFileByPreviewUrl } from "./useCases/DeleteFileByPreviewUrl";
 import { GetOneFileById } from "./useCases/GetOneFileById";
 import { ListFIlesWithPagination } from "./useCases/ListFIlesWithPagination";
+import { ListFilesByPathWithPagination } from "./useCases/ListFilesByPathWithPagination";
 import { UpdateFileById } from "./useCases/UpdateFileById";
 import { UploadFile } from "./useCases/UploadFile";
 
@@ -12,6 +13,7 @@ export class FilesModuleController {
     private deleteFileByIdUseCase: DeleteFileById,
     private getOneFileByIdUseCase: GetOneFileById,
     private listFIlesWithPaginationUseCase: ListFIlesWithPagination,
+    private listFilesByPathWithPaginationUseCase: ListFilesByPathWithPagination,
     private updateFileByIdUseCase: UpdateFileById,
     private uploadFileUseCase: UploadFile,
     private deleteFileByPreviewUrlUseCase: DeleteFileByPreviewUrl,
@@ -54,6 +56,32 @@ export class FilesModuleController {
     const result = await this.listFIlesWithPaginationUseCase.execute(
       page,
       pageSize,
+    );
+
+    const convertedResult = {
+      list: result.list.map((f) => ({
+        id: f.props.id,
+        name: f.props.fileName,
+        description: f.props.fileDescription,
+        path: f.props.filePath,
+        fileType: f.props.fileType,
+        createdAt: f.props.createdAt,
+        updatedAt: f.props.updatedAt,
+        previewUrl: f.props.previewUrl,
+        downloadUrl: f.props.previewUrl,
+        deletedAt: f.props.deletedAt,
+        storageReference: f.props.storageReference,
+      })),
+      count: result.count,
+    };
+    return convertedResult;
+  }
+
+  async listFilesByPathWithPagination(page: number, pageSize: number, path: string) {
+    const result = await this.listFilesByPathWithPaginationUseCase.execute(
+      page,
+      pageSize,
+      path,
     );
 
     const convertedResult = {

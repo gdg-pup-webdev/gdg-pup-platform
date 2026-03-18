@@ -11,12 +11,23 @@ export class FilesHttpController {
     async ({ input, output, ctx }) => {
       const pageNumber = input.query.pageNumber || 1;
       const pageSize = input.query.pageSize || 10;
+      const path = input.query.path;
 
-      const { list, count } =
-        await this.filesModuleController.listFIlesWithPagination(
+      let result;
+      if (path !== undefined) {
+        result = await this.filesModuleController.listFilesByPathWithPagination(
+          pageNumber,
+          pageSize,
+          path,
+        );
+      } else {
+        result = await this.filesModuleController.listFIlesWithPagination(
           pageNumber,
           pageSize,
         );
+      }
+
+      const { list, count } = result;
 
       return output(200, {
         status: "success",
