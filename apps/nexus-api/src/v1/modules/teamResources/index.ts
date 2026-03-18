@@ -1,5 +1,4 @@
 import { MockTeamResourceRepository } from "./infrastructure/MockTeamResourceRepository";
-import { mockFileStorage } from "../../utils/MockFileStorage";
 import { TeamResourceStorageAdapter } from "./infrastructure/TeamResourceStorageAdapter";
 import { TeamResourceTeamServiceAdapter } from "./infrastructure/TeamResourceTeamServiceAdapter";
 import { CreateTeamResource } from "./useCases/CreateTeamResource";
@@ -9,10 +8,11 @@ import { ListTeamResources } from "./useCases/ListTeamResources";
 import { UpdateTeamResource } from "./useCases/UpdateTeamResource";
 import { TeamResourceController } from "./TeamResourceController";
 import { teamModuleController } from "../teamsSystem";
+import { filesModuleController } from "../filesModule";
 
 // Infrastructure
 const repository = new MockTeamResourceRepository();
-const storageAdapter = new TeamResourceStorageAdapter();
+const storageAdapter = new TeamResourceStorageAdapter(filesModuleController);
 const teamServiceAdapter = new TeamResourceTeamServiceAdapter(teamModuleController);
 
 // Use Cases
@@ -34,4 +34,4 @@ export const teamResourceController = new TeamResourceController(
 // Exports
 export { CreateTeamResource, DeleteTeamResource, GetTeamResource, ListTeamResources, UpdateTeamResource };
 export { TeamResourceController };
-export { MockTeamResourceRepository, mockFileStorage, TeamResourceStorageAdapter };
+export { MockTeamResourceRepository, TeamResourceStorageAdapter };

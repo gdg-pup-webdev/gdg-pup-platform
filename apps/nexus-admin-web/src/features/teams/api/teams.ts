@@ -208,3 +208,17 @@ export const useSearchUsers = (query: string) => {
     enabled: query.length >= 2,
   });
 };
+
+export const useSearchTeams = (query: string) => {
+  return useQuery({
+    queryKey: ["teams", "search", query],
+    queryFn: async () => {
+      const res = await callEndpoint(API_URL, contract.api.v1.gdg_teams.search.GET, {
+        query: { q: query, limit: "10" },
+      });
+      if (res.status !== 200) throw new Error(res.body.message);
+      return res;
+    },
+    enabled: query.length >= 2,
+  });
+};

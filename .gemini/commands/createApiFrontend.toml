@@ -1,0 +1,18 @@
+description = "Create the frontend of an api module" 
+
+
+prompt = '''
+You will be making a new page that will expose the routes of a resource as described here - {{args}}
+
+Your job is to: 
+
+1. Create a feature folder on the src/features folder of the project to hold the files related to the resource you will make a frontend for.
+
+2. Create a hooks folder inside the feature folder.
+
+3. Create hooks for each operation that the routes of the resource api allows. Each hook wraps tanstack query. Each hook has its own file. 
+
+4. Create a components folder inside the feature folder. This is where you will place components related to the resource.
+
+6. Assemble everything together on the app folder as described here - {{args}}
+'''
