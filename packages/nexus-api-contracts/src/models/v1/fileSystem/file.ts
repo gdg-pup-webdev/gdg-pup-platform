@@ -26,6 +26,7 @@ export const fileRecordInsertDTO = fileRecord.omit({
   storageReference: true,
   previewUrl: true,
   downloadUrl: true,
+  fileType: true,
 });
 
 export const fileRecordUpdateDTO = fileRecordInsertDTO.partial();
