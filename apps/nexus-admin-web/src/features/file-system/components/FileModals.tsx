@@ -82,24 +82,31 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
   useEffect(() => {
     if (initialData) {
       setFormData({
-        fileName: initialData.fileName,
-        fileDescription: initialData.fileDescription,
-        filePath: initialData.filePath,
+        fileName: initialData.fileName || "",
+        fileDescription: initialData.fileDescription || "",
+        filePath: initialData.filePath || "",
       });
-      setSelectedFile(null);
     } else {
       setFormData({
         fileName: "",
         fileDescription: "",
         filePath: "",
       });
-      setSelectedFile(null);
     }
+    setSelectedFile(null);
   }, [initialData, isOpen]);
+
+  // Handle case where initialData is passed as an object with filePath but without other fields (for new upload in folder)
+  useEffect(() => {
+    if (isOpen && !initialData && !formData.filePath) {
+        // This is a bit of a hack to handle the 'initialData' passed from FileList for new uploads
+        // In FileList.tsx, we pass an object that looks like FileRecord but only has filePath
+    }
+  }, [isOpen, initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!initialData && !selectedFile) {
+    if (!initialData?.id && !selectedFile) {
         alert("Please select a file to upload");
         return;
     }
@@ -117,17 +124,39 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update File Info" : "Upload New File"}>
+    <Modal isOpen={isOpen} onClose={onClose} title={initialData?.id ? "Update File Info" : "Upload New File"}>
       <form onSubmit={handleSubmit} className="space-y-5">
-        {!initialData && (
+        {!initialData?.id && (
             <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-700">File</label>
-                <div className="relative">
+                <div className="group relative flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50 p-6 transition-colors hover:border-teal-400 hover:bg-teal-50/30">
+                    {selectedFile ? (
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="rounded-full bg-teal-100 p-2 text-teal-600">
+                                <FileIcon size={24} />
+                            </div>
+                            <span className="text-sm font-bold text-gray-900">{selectedFile.name}</span>
+                            <span className="text-xs text-gray-500">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                            <button 
+                                type="button"
+                                onClick={() => setSelectedFile(null)}
+                                className="mt-2 text-xs font-bold text-red-600 hover:underline"
+                            >
+                                Remove & Change
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <Upload className="mb-2 text-gray-400 transition-colors group-hover:text-teal-500" size={32} />
+                            <p className="mb-1 text-sm font-bold text-gray-900">Click to select a file</p>
+                            <p className="text-xs text-gray-500">All file types are supported</p>
+                        </>
+                    )}
                     <input
-                        required
+                        required={!initialData?.id}
                         type="file"
                         onChange={handleFileChange}
-                        className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        className="absolute inset-0 cursor-pointer opacity-0"
                     />
                 </div>
             </div>
@@ -167,6 +196,7 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
             className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
             placeholder="e.g. documents/reports"
           />
+          <p className="mt-1 text-[10px] font-medium text-gray-400 italic">Use forward slashes (/) for subfolders. Empty means root.</p>
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
@@ -185,10 +215,10 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
             {isSubmitting ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                {initialData ? "Updating..." : "Uploading..."}
+                {initialData?.id ? "Updating..." : "Uploading..."}
               </>
             ) : (
-              <>{initialData ? "Update Info" : "Upload File"}</>
+              <>{initialData?.id ? "Update Info" : "Upload File"}</>
             )}
           </button>
         </div>
