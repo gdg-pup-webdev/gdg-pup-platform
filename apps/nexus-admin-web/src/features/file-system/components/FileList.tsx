@@ -278,7 +278,7 @@ export function FileList() {
           className="flex w-full items-center justify-center gap-2 rounded-sm bg-teal-600 px-8 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-lg md:w-auto"
         >
           <Plus size={18} />
-          Upload to {currentPath ? "Folder" : "Root"}
+          Upload
         </button>
       </div>
 
