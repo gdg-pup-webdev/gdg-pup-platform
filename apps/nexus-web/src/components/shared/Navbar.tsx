@@ -27,7 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   transparent = false,
   hideAuth = false,
 }) => {
-  const { user, status } = useAuthContext();
+  const { user, status, gdgId } = useAuthContext();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -209,7 +209,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {/* Auth Section */}
                 {!hideAuth && (
                   <Inline gap="md" align="center">
-                    <Link href="/id">
+                    <Link href="/sparkmates">
                       <Button variant="default" size="md">
                         Get ID
                       </Button>
@@ -218,7 +218,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     {status === "checking" ? (
                       <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
                     ) : user ? (
-                      <Link href={`/id/${user.id}`} className="hover:opacity-80 hover:scale-105 transition-all duration-200">
+                      <Link href="/sparkmates" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
                         <Avatar
                           src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
                           alt={user.user_metadata?.full_name || user.email || "User"}
@@ -334,7 +334,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {!hideAuth && (
                         <Box className="px-4 py-3 mt-2 border-t border-slate-700">
                           <Stack gap="sm">
-                            <Link href="/id" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Link href="/sparkmates" onClick={() => setIsMobileMenuOpen(false)}>
                               <Button variant="default" size="md" >
                                 Get ID
                               </Button>
@@ -343,7 +343,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                               <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse"> </Box>
                             ) : user ? (
                               <Link
-                                href={`/id/${user.id}`}
+                                href="/sparkmates"
                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
