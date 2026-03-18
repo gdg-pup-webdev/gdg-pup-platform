@@ -30,4 +30,31 @@ export class GdgScrapedEventsHttpController {
       }); 
     },
   );
+
+  getOne: RequestHandler = createExpressController(
+    contract.api.v1.gdg_scraped_events.gdg_id.GET,
+    async ({ input, output }) => {
+      const gdgId = input.params.gdg_id;
+      const data = await this.bevyEventsModuleController.getById(gdgId);
+
+      if (!data) {
+        return output(404, {
+          status: "fail",
+          message: "Event not found",
+          errors: [
+            {
+              title: "Not Found",
+              detail: `Bevy Event with ID ${gdgId} not found`,
+            },
+          ],
+        });
+      }
+
+      return output(200, {
+        status: "success",
+        message: "Event fetched successfully",
+        data: data,
+      });
+    },
+  );
 }

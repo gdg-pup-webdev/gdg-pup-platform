@@ -24,7 +24,8 @@ export class BevyEventController {
     };
   }
 
-  async getById(id: string): Promise<BevyEvent | undefined> {
-    return this.getBevyEventUseCase.execute(id);
+  async getById(id: string): Promise<BevyEventDTO | undefined> {
+    const result = await this.getBevyEventUseCase.execute(id);
+    return result ? this.toDTO(result) : undefined;
   }
 }

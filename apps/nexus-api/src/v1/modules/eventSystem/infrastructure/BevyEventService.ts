@@ -11,17 +11,15 @@ export class BevyEventService implements IBevyEventService {
       return undefined;
     }
 
-    const props = bevyEvent.props;
-
     return {
-      id: props.id,
-      title: props.title,
-      description: props.description,
-      short_description: props.short_description,
-      event_type: props.event_type,
-      location: props.location,
-      start_date: props.start_date,
-      end_date: props.end_date,
+      id: bevyEvent.id,
+      title: bevyEvent.title,
+      description: bevyEvent.description,
+      short_description: bevyEvent.short_description,
+      event_type: bevyEvent.event_type,
+      location: bevyEvent.location,
+      start_date: bevyEvent.start_date,
+      end_date: bevyEvent.end_date,
     };
   }
 }
