@@ -50,6 +50,18 @@ export class SupabaseTeamRepository implements ITeamRepository {
     return { list: (data || []).map(this.mapToDomain), count: count || 0 };
   }
 
+  async search(query: string, limit: number): Promise<Team[]> {
+    const searchTerm = `%${query}%`;
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .or(`name.ilike.${searchTerm},description.ilike.${searchTerm}`)
+      .limit(limit);
+
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return (data || []).map(this.mapToDomain);
+  }
+
   async saveNew(team: Team): Promise<Team> {
     const props = team.props;
     const { data, error } = await supabase

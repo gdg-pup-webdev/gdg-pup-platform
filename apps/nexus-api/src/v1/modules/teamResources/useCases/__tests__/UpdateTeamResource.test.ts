@@ -2,8 +2,7 @@ import { describe, expect, it, beforeEach } from "vitest";
 import { UpdateTeamResource } from "../UpdateTeamResource";
 import { TeamResource } from "../../domain/TeamResource";
 import { MockTeamResourceRepository } from "../../infrastructure/MockTeamResourceRepository";
-import { mockFileStorage } from "../../../../utils/MockFileStorage";
-import { TeamResourceStorageAdapter } from "../../infrastructure/TeamResourceStorageAdapter";
+import { MockTeamResourceStorage } from "../../infrastructure/MockTeamResourceStorage";
 import { ITeamResourceTeamService } from "../../domain/ITeamResourceTeamService";
 
 class MockTeamResourceTeamService implements ITeamResourceTeamService {
@@ -16,19 +15,18 @@ class MockTeamResourceTeamService implements ITeamResourceTeamService {
 describe("UpdateTeamResource Use Case", () => {
   let repo: MockTeamResourceRepository;
   let teamService: MockTeamResourceTeamService;
-  let storageAdapter: TeamResourceStorageAdapter;
+  let storage: MockTeamResourceStorage;
   let useCase: UpdateTeamResource;
 
   beforeEach(() => {
-    mockFileStorage.reset();
     repo = new MockTeamResourceRepository();
     teamService = new MockTeamResourceTeamService();
-    storageAdapter = new TeamResourceStorageAdapter();
-    useCase = new UpdateTeamResource(repo, storageAdapter, teamService);
+    storage = new MockTeamResourceStorage();
+    useCase = new UpdateTeamResource(repo, storage, teamService);
   });
 
   const setupResource = async () => {
-    const uploaded = await storageAdapter.uploadFile({
+    const uploaded = await storage.uploadFile({
       buffer: new ArrayBuffer(8),
       name: "old.png",
       type: "image/png"
@@ -53,17 +51,17 @@ describe("UpdateTeamResource Use Case", () => {
 
   it("should update text properties and not affect image", async () => {
     const resource = await setupResource();
-    const oldRef = resource.props.thumbnailStorageReference;
+    const oldUrl = resource.props.thumbnailPublicUrl;
     const updated = await useCase.execute(resource.props.id, { title: "New Title" });
     
     expect(updated.props.title).toBe("New Title");
-    expect(updated.props.thumbnailStorageReference).toBe(oldRef);
-    expect(mockFileStorage.exists(oldRef)).toBe(true);
+    expect(updated.props.thumbnailPublicUrl).toBe(oldUrl);
+    expect(storage.exists(oldUrl)).toBe(true);
   });
 
   it("should replace image if new one provided", async () => {
     const resource = await setupResource();
-    const oldRef = resource.props.thumbnailStorageReference;
+    const oldUrl = resource.props.thumbnailPublicUrl;
     const newImage = {
       buffer: new ArrayBuffer(8),
       name: "new.png",
@@ -72,9 +70,9 @@ describe("UpdateTeamResource Use Case", () => {
 
     const updated = await useCase.execute(resource.props.id, { thumbnailImage: newImage });
     
-    expect(updated.props.thumbnailStorageReference).not.toBe(oldRef);
-    expect(mockFileStorage.exists(oldRef)).toBe(false);
-    expect(mockFileStorage.exists(updated.props.thumbnailStorageReference)).toBe(true);
+    expect(updated.props.thumbnailPublicUrl).not.toBe(oldUrl);
+    expect(storage.exists(oldUrl)).toBe(false);
+    expect(storage.exists(updated.props.thumbnailPublicUrl)).toBe(true);
   });
 
   it("should throw error if updated teamName does not exist", async () => {

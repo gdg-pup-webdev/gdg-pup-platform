@@ -1,6 +1,4 @@
 import { FilesModuleController } from "./FilesModuleController";
-import { MockFileRepository } from "./infrastructure/MockFileRepository";
-import { MockFileStorage } from "./infrastructure/MockFileStorage";
 import { SupabaseFileRepository } from "./infrastructure/SupabaseFileRepository";
 import { SupabaseFileStorage } from "./infrastructure/SupabaseFileStorage";
 import { DeleteFileById } from "./useCases/DeleteFileById";
@@ -13,8 +11,8 @@ import { UploadFile } from "./useCases/UploadFile";
 /**
  * infrastructure dependencies
  */
-const fileRepository = new MockFileRepository();
-const fileStorage = new MockFileStorage();
+const fileRepository = new SupabaseFileRepository();
+const fileStorage = new SupabaseFileStorage();
 
 /**
  * use cases

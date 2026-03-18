@@ -1,8 +1,7 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { CreateTeamResource } from "../CreateTeamResource";
 import { MockTeamResourceRepository } from "../../infrastructure/MockTeamResourceRepository";
-import { mockFileStorage } from "../../../../utils/MockFileStorage";
-import { TeamResourceStorageAdapter } from "../../infrastructure/TeamResourceStorageAdapter";
+import { MockTeamResourceStorage } from "../../infrastructure/MockTeamResourceStorage";
 import { ITeamResourceTeamService } from "../../domain/ITeamResourceTeamService";
 
 class MockTeamResourceTeamService implements ITeamResourceTeamService {
@@ -15,15 +14,14 @@ class MockTeamResourceTeamService implements ITeamResourceTeamService {
 describe("CreateTeamResource Use Case", () => {
   let repo: MockTeamResourceRepository;
   let teamService: MockTeamResourceTeamService;
-  let storageAdapter: TeamResourceStorageAdapter;
+  let storage: MockTeamResourceStorage;
   let useCase: CreateTeamResource;
 
   beforeEach(() => {
-    mockFileStorage.reset();
     repo = new MockTeamResourceRepository();
     teamService = new MockTeamResourceTeamService();
-    storageAdapter = new TeamResourceStorageAdapter();
-    useCase = new CreateTeamResource(repo, storageAdapter, teamService);
+    storage = new MockTeamResourceStorage();
+    useCase = new CreateTeamResource(repo, storage, teamService);
   });
 
   const validProps = {
@@ -48,7 +46,7 @@ describe("CreateTeamResource Use Case", () => {
     expect(resource.props.id).toBeDefined();
     expect(resource.props.teamName).toBe("Web Development");
     expect(repo.resources).toHaveLength(1);
-    expect(mockFileStorage.exists(resource.props.thumbnailStorageReference)).toBe(true);
+    expect(storage.exists(resource.props.thumbnailPublicUrl)).toBe(true);
   });
 
   it("should throw an error if team does not exist", async () => {

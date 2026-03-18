@@ -25,6 +25,11 @@ export class GdgTeamsRouter {
       this.controller.createTeam,
     );
     this.router.get(
+      "/search",
+      // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
+      this.controller.searchTeams,
+    );
+    this.router.get(
       "/:gdgTeamId",
       // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
       this.controller.getOneTeam,

@@ -10,6 +10,7 @@ import { GetOneTeamMember } from "./useCases/GetOneTeamMember";
 import { ListTeamMembers } from "./useCases/ListTeamMembers";
 import { ListTeams } from "./useCases/ListTeams";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
+import { SearchTeams } from "./useCases/SearchTeams";
 import { UpdateTeam } from "./useCases/UpdateTeam";
 import { UpdateTeamMember } from "./useCases/UpdateTeamMember";
 
@@ -39,6 +40,7 @@ export class TeamModuleController {
     private readonly updateTeamUC: UpdateTeam,
     private readonly deleteTeamUC: DeleteTeam,
     private readonly listTeamsUC: ListTeams,
+    private readonly searchTeamsUC: SearchTeams,
     private readonly checkTeamExistsByNameUC: CheckTeamExistsByName,
     // Team Member Use Cases
     private readonly addMemberUC: AddTeamMember,
@@ -120,6 +122,11 @@ export class TeamModuleController {
       pageSize,
     );
     return { list: list.map((t) => this.toTeamDTO(t)), count };
+  }
+
+  async searchTeams(query: string, limit: number) {
+    const list = await this.searchTeamsUC.execute(query, limit);
+    return list.map((t) => this.toTeamDTO(t));
   }
 
   async existsByName(name: string): Promise<boolean> {

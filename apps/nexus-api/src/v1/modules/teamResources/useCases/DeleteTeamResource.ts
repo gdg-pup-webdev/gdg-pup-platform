@@ -14,7 +14,7 @@ export class DeleteTeamResource {
     }
 
     // Delete associated file
-    await this.storage.deleteFile(resource.props.thumbnailStorageReference);
+    await this.storage.deleteFile(resource.props.thumbnailPublicUrl);
 
     await this.repo.delete(id);
   }

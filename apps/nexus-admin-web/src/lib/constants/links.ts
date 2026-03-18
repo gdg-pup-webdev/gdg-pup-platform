@@ -8,5 +8,6 @@ export const INTERNAL_LINKS = {
   DEBUG_PAGE: "/admin/debug",
   TEAMS: "/admin/teams",
   FILES: "/admin/files",
+  TEAM_RESOURCES: "/admin/team-resources",
   LOGIN: "/admin/login",
 } as const;

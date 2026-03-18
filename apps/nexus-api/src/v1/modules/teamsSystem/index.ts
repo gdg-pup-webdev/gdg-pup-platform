@@ -5,6 +5,7 @@ import { GetOneTeam } from "./useCases/GetOneTeam";
 import { UpdateTeam } from "./useCases/UpdateTeam";
 import { DeleteTeam } from "./useCases/DeleteTeam";
 import { ListTeams } from "./useCases/ListTeams";
+import { SearchTeams } from "./useCases/SearchTeams";
 import { CheckTeamExistsByName } from "./useCases/CheckTeamExistsByName";
 
 import { AddTeamMember } from "./useCases/AddTeamMember";
@@ -26,6 +27,7 @@ const getOneTeamUC = new GetOneTeam(teamRepo);
 const updateTeamUC = new UpdateTeam(teamRepo);
 const deleteTeamUC = new DeleteTeam(teamRepo);
 const listTeamsUC = new ListTeams(teamRepo);
+const searchTeamsUC = new SearchTeams(teamRepo);
 const checkTeamExistsByNameUC = new CheckTeamExistsByName(teamRepo);
 
 const addMemberUC = new AddTeamMember(memberRepo, teamRepo, userRepo);
@@ -41,6 +43,7 @@ export const teamModuleController = new TeamModuleController(
   updateTeamUC,
   deleteTeamUC,
   listTeamsUC,
+  searchTeamsUC,
   checkTeamExistsByNameUC,
   addMemberUC,
   removeMemberUC,

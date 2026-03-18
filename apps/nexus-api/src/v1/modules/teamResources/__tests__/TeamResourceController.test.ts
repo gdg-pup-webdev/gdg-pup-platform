@@ -6,8 +6,7 @@ import { ListTeamResources } from "../useCases/ListTeamResources";
 import { UpdateTeamResource } from "../useCases/UpdateTeamResource";
 import { DeleteTeamResource } from "../useCases/DeleteTeamResource";
 import { MockTeamResourceRepository } from "../infrastructure/MockTeamResourceRepository";
-import { mockFileStorage } from "../../../utils/MockFileStorage";
-import { TeamResourceStorageAdapter } from "../infrastructure/TeamResourceStorageAdapter";
+import { MockTeamResourceStorage } from "../infrastructure/MockTeamResourceStorage";
 import { ITeamResourceTeamService } from "../domain/ITeamResourceTeamService";
 
 class MockTeamResourceTeamService implements ITeamResourceTeamService {
@@ -21,19 +20,18 @@ describe("TeamResourceController", () => {
   let controller: TeamResourceController;
   let repo: MockTeamResourceRepository;
   let teamService: MockTeamResourceTeamService;
-  let storageAdapter: TeamResourceStorageAdapter;
+  let storage: MockTeamResourceStorage;
 
   beforeEach(() => {
-    mockFileStorage.reset();
     repo = new MockTeamResourceRepository();
     teamService = new MockTeamResourceTeamService();
-    storageAdapter = new TeamResourceStorageAdapter();
+    storage = new MockTeamResourceStorage();
     controller = new TeamResourceController(
-      new CreateTeamResource(repo, storageAdapter, teamService),
+      new CreateTeamResource(repo, storage, teamService),
       new GetTeamResource(repo),
       new ListTeamResources(repo),
-      new UpdateTeamResource(repo, storageAdapter, teamService),
-      new DeleteTeamResource(repo, storageAdapter)
+      new UpdateTeamResource(repo, storage, teamService),
+      new DeleteTeamResource(repo, storage)
     );
   });
 
@@ -56,7 +54,7 @@ describe("TeamResourceController", () => {
 
     const result = await controller.create(sampleData);
     expect(result.id).toBeDefined();
-    expect(result.thumbnailPublicUrl).toContain("https://mock-storage.com/");
+    expect(result.thumbnailPublicUrl).toContain("https://mock-url.com/");
   });
 
   it("should delete resource and its image", async () => {
@@ -65,10 +63,10 @@ describe("TeamResourceController", () => {
 
     const created = await controller.create(sampleData);
     const resource = await repo.findById(created.id);
-    const storageRef = resource!.props.thumbnailStorageReference;
+    const publicUrl = resource!.props.thumbnailPublicUrl;
     
     await controller.deleteResource(created.id);
     
-    expect(mockFileStorage.exists(storageRef)).toBe(false);
+    expect(storage.exists(publicUrl)).toBe(false);
   });
 });

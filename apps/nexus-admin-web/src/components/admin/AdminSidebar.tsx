@@ -11,6 +11,7 @@ import {
   Globe,
   ExternalLink,
   Files,
+  Link2,
 } from "lucide-react";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 
@@ -36,6 +37,11 @@ const NAV_ITEMS = [
     icon: Files,
   },
   {
+    label: "Team Resources",
+    href: INTERNAL_LINKS.TEAM_RESOURCES,
+    icon: Link2,
+  },
+  {
     label: "Debug page",
     href: INTERNAL_LINKS.DEBUG_PAGE,
     icon: Award, // Changed to Award or something else to avoid conflict with Users
@@ -46,7 +52,8 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    if (href === INTERNAL_LINKS.DASHBOARD) return pathname === INTERNAL_LINKS.DASHBOARD;
+    if (href === INTERNAL_LINKS.DASHBOARD)
+      return pathname === INTERNAL_LINKS.DASHBOARD;
     return pathname.startsWith(href);
   };
 
@@ -147,4 +154,3 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     </>
   );
 }
-

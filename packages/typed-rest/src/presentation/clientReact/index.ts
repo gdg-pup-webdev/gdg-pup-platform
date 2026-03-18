@@ -18,8 +18,7 @@ export const callEndpoint = async <T extends Contract>(
   endpoint: T,
   args: ClientArgs<T>,
 ): HandlerOutput<T> => {
-  const { token, headers, params, query, body, ...customConfig } = args as any;
-  const files = (args as any).files;
+  const { token, headers, params, query, body, files, ...customConfig } = args;
 
   let urlPath = endpoint.path;
 
@@ -90,13 +89,15 @@ export const callEndpoint = async <T extends Contract>(
     if (files) {
       Object.entries(files).forEach(([key, value]) => {
         if (Array.isArray(value)) {
-          value.forEach((v) => {
+          (value as any[]).forEach((v) => {
             if (v instanceof File || v instanceof Blob) {
               formData.append(key, v);
             }
           });
-        } else if (value instanceof File || value instanceof Blob) {
-          formData.append(key, value);
+        } else {
+          if (value instanceof File || value instanceof Blob) {
+            formData.append(key, value);
+          }
         }
       });
     }

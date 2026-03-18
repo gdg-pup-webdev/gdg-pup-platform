@@ -67,6 +67,31 @@ export class GdgTeamsHttpController {
     },
   );
 
+  searchTeams: RequestHandler = createExpressController(
+    contract.api.v1.gdg_teams.search.GET,
+    async ({ input, output }) => {
+      const query = input.query.q;
+      const limit = parseInt(input.query.limit || "10", 10);
+
+      const list = await teamModuleController.searchTeams(query, limit);
+
+      const data = await Promise.all(
+        list.map(async (team) => {
+          const members = await teamModuleController.listMembers(1, 100, {
+            teamId: team.id,
+          });
+          return toTeamRow(team, members.list);
+        }),
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Teams searched successfully",
+        data,
+      });
+    },
+  );
+
   createTeam: RequestHandler = createExpressController(
     contract.api.v1.gdg_teams.POST,
     async ({ input, output }) => {

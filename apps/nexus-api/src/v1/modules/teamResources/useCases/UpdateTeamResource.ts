@@ -31,7 +31,7 @@ export class UpdateTeamResource {
 
     if (input.thumbnailImage) {
       // Delete old file
-      await this.storage.deleteFile(resource.props.thumbnailStorageReference);
+      await this.storage.deleteFile(resource.props.thumbnailPublicUrl);
       
       // Upload new file
       const uploaded = await this.storage.uploadFile(input.thumbnailImage);
