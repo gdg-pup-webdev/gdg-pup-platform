@@ -1,43 +1,54 @@
 import { FileBuffer } from "./domain/FileBuffer";
 import { FileRecordUpdateProps } from "./domain/FileRecord";
+import { FolderInsertProps, FolderUpdateProps } from "./domain/Folder";
 import { DeleteFileById } from "./useCases/DeleteFileById";
 import { DeleteFileByPreviewUrl } from "./useCases/DeleteFileByPreviewUrl";
 import { GetOneFileById } from "./useCases/GetOneFileById";
 import { ListFIlesWithPagination } from "./useCases/ListFIlesWithPagination";
+import { ListFilesByFolderWithPagination } from "./useCases/ListFilesByFolderWithPagination";
+import { ListFilesByPathWithPagination } from "./useCases/ListFilesByPathWithPagination";
 import { UpdateFileById } from "./useCases/UpdateFileById";
 import { UploadFile } from "./useCases/UploadFile";
+import { CreateFolder } from "./useCases/CreateFolder";
+import { ListFoldersByParent } from "./useCases/ListFoldersByParent";
+import { GetOneFolderById } from "./useCases/GetOneFolderById";
+import { DeleteFolderById } from "./useCases/DeleteFolderById";
 
 export class FilesModuleController {
   constructor(
     private deleteFileByIdUseCase: DeleteFileById,
     private getOneFileByIdUseCase: GetOneFileById,
     private listFIlesWithPaginationUseCase: ListFIlesWithPagination,
+    private listFilesByFolderWithPaginationUseCase: ListFilesByFolderWithPagination,
+    private listFilesByPathWithPaginationUseCase: ListFilesByPathWithPagination,
     private updateFileByIdUseCase: UpdateFileById,
     private uploadFileUseCase: UploadFile,
     private deleteFileByPreviewUrlUseCase: DeleteFileByPreviewUrl,
+    private createFolderUseCase: CreateFolder,
+    private listFoldersByParentUseCase: ListFoldersByParent,
+    private getOneFolderByIdUseCase: GetOneFolderById,
+    private deleteFolderByIdUseCase: DeleteFolderById,
   ) {}
 
   async deleteFileByPreviewUrl(publicUrl: string) {
     const result = await this.deleteFileByPreviewUrlUseCase.execute(publicUrl);
-
     return result;
   }
 
-
   async deleteFileById(id: string) {
     const result = await this.deleteFileByIdUseCase.execute(id);
-
     return result;
   }
 
   async getOneFileById(id: string) {
     const result = await this.getOneFileByIdUseCase.execute(id);
 
-    const convertedResult = {
+    return {
       id: result.props.id,
-      name: result.props.fileName,
-      description: result.props.fileDescription,
-      path: result.props.filePath,
+      fileName: result.props.fileName,
+      fileDescription: result.props.fileDescription,
+      folderId: result.props.folderId,
+      fileType: result.props.fileType,
       createdAt: result.props.createdAt,
       updatedAt: result.props.updatedAt,
       previewUrl: result.props.previewUrl,
@@ -45,22 +56,21 @@ export class FilesModuleController {
       deletedAt: result.props.deletedAt,
       storageReference: result.props.storageReference,
     };
-
-    return convertedResult;
   }
 
-  async listFIlesWithPagination(page: number, pageSize: number) {
+  async listFilesWithPagination(page: number, pageSize: number) {
     const result = await this.listFIlesWithPaginationUseCase.execute(
       page,
       pageSize,
     );
 
-    const convertedResult = {
+    return {
       list: result.list.map((f) => ({
         id: f.props.id,
-        name: f.props.fileName,
-        description: f.props.fileDescription,
-        path: f.props.filePath,
+        fileName: f.props.fileName,
+        fileDescription: f.props.fileDescription,
+        folderId: f.props.folderId,
+        fileType: f.props.fileType,
         createdAt: f.props.createdAt,
         updatedAt: f.props.updatedAt,
         previewUrl: f.props.previewUrl,
@@ -70,17 +80,67 @@ export class FilesModuleController {
       })),
       count: result.count,
     };
-    return convertedResult;
+  }
+
+  async listFilesByFolderWithPagination(page: number, pageSize: number, folderId: string | null) {
+    const result = await this.listFilesByFolderWithPaginationUseCase.execute(
+      page,
+      pageSize,
+      folderId,
+    );
+
+    return {
+      list: result.list.map((f) => ({
+        id: f.props.id,
+        fileName: f.props.fileName,
+        fileDescription: f.props.fileDescription,
+        folderId: f.props.folderId,
+        fileType: f.props.fileType,
+        createdAt: f.props.createdAt,
+        updatedAt: f.props.updatedAt,
+        previewUrl: f.props.previewUrl,
+        downloadUrl: f.props.previewUrl,
+        deletedAt: f.props.deletedAt,
+        storageReference: f.props.storageReference,
+      })),
+      count: result.count,
+    };
+  }
+
+  async listFilesByPathWithPagination(page: number, pageSize: number, path: string) {
+    const result = await this.listFilesByPathWithPaginationUseCase.execute(
+      page,
+      pageSize,
+      path,
+    );
+
+    return {
+      list: result.list.map((f) => ({
+        id: f.props.id,
+        fileName: f.props.fileName,
+        fileDescription: f.props.fileDescription,
+        folderId: f.props.folderId,
+        fileType: f.props.fileType,
+        createdAt: f.props.createdAt,
+        updatedAt: f.props.updatedAt,
+        previewUrl: f.props.previewUrl,
+        downloadUrl: f.props.previewUrl,
+        deletedAt: f.props.deletedAt,
+        storageReference: f.props.storageReference,
+      })),
+      count: result.count,
+    };
   }
 
   async updateFileById(id: string, updateDTO: FileRecordUpdateProps) {
     const result = await this.updateFileByIdUseCase.execute(id, updateDTO);
 
-    const convertedResult = {
+    return {
       id: result.props.id,
-      name: result.props.fileName,
-      description: result.props.fileDescription,
-      path: result.props.filePath,
+      fileName: result.props.fileName,
+      fileDescription: result.props.fileDescription,
+      folderId: result.props.folderId,
+      fileType: result.props.fileType,
       createdAt: result.props.createdAt,
       updatedAt: result.props.updatedAt,
       previewUrl: result.props.previewUrl,
@@ -88,8 +148,6 @@ export class FilesModuleController {
       deletedAt: result.props.deletedAt,
       storageReference: result.props.storageReference,
     };
-
-    return convertedResult;
   }
 
   async uploadFile(
@@ -97,7 +155,8 @@ export class FilesModuleController {
     type: string,
     name: string,
     description: string,
-    path: string,
+    folderId: string | null,
+    path?: string,
   ) {
     const fileBufferObject = new FileBuffer(arrayBuffer, name, type);
 
@@ -105,14 +164,16 @@ export class FilesModuleController {
       fileBufferObject,
       name,
       description,
+      folderId,
       path,
     );
 
-    const convertedResult = {
+    return {
       id: result.props.id,
-      name: result.props.fileName,
-      description: result.props.fileDescription,
-      path: result.props.filePath,
+      fileName: result.props.fileName,
+      fileDescription: result.props.fileDescription,
+      folderId: result.props.folderId,
+      fileType: result.props.fileType,
       createdAt: result.props.createdAt,
       updatedAt: result.props.updatedAt,
       previewUrl: result.props.previewUrl,
@@ -120,7 +181,29 @@ export class FilesModuleController {
       deletedAt: result.props.deletedAt,
       storageReference: result.props.storageReference,
     };
+  }
 
-    return convertedResult;
+  // Folder methods
+  async createFolder(props: FolderInsertProps) {
+    const result = await this.createFolderUseCase.execute(props);
+    return result.props;
+  }
+
+  async listFoldersByParent(page: number, pageSize: number, parentId: string | null) {
+    const result = await this.listFoldersByParentUseCase.execute(page, pageSize, parentId);
+    return {
+      list: result.list.map(f => f.props),
+      count: result.count
+    };
+  }
+
+  async getOneFolderById(id: string) {
+    const result = await this.getOneFolderByIdUseCase.execute(id);
+    return result.props;
+  }
+
+  async deleteFolderById(id: string) {
+    const result = await this.deleteFolderByIdUseCase.execute(id);
+    return result;
   }
 }

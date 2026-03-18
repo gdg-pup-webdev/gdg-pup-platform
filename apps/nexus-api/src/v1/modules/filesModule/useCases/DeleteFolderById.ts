@@ -1,0 +1,56 @@
+import { IFileRepository } from "../domain/IFileRepository";
+import { IFileStorage } from "../domain/IFileStorage";
+import { IFolderRepository } from "../domain/IFolderRepository";
+
+export class DeleteFolderById {
+  constructor(
+    private folderRepository: IFolderRepository,
+    private fileRepository: IFileRepository,
+    private fileStorage: IFileStorage,
+  ) {}
+
+  async execute(folderId: string): Promise<boolean> {
+    const folder = await this.folderRepository.findById(folderId);
+    if (!folder) return true;
+
+    // 1. Delete all files in this folder
+    let hasMoreFiles = true;
+    while (hasMoreFiles) {
+      // Always get the first page since we are deleting items
+      const { list } = await this.fileRepository.listByFolderPaginated(1, 50, folderId);
+      if (list.length === 0) {
+        hasMoreFiles = false;
+        break;
+      }
+
+      for (const file of list) {
+        try {
+            await this.fileStorage.deleteFile(file.props.storageReference);
+        } catch (error) {
+            console.error(`Failed to delete file from storage: ${file.props.storageReference}`, error);
+        }
+        await this.fileRepository.deleteById(file.props.id);
+      }
+    }
+
+    // 2. Delete all subfolders recursively
+    let hasMoreFolders = true;
+    while (hasMoreFolders) {
+        // Always get the first page since we are deleting items
+        const { list } = await this.folderRepository.listByParentPaginated(1, 50, folderId);
+        if (list.length === 0) {
+            hasMoreFolders = false;
+            break;
+        }
+
+        for (const subfolder of list) {
+            await this.execute(subfolder.props.id);
+        }
+    }
+
+    // 3. Delete the folder itself
+    await this.folderRepository.deleteById(folderId);
+
+    return true;
+  }
+}

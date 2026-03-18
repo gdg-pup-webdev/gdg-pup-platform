@@ -8,6 +8,8 @@ import { AuthService } from "@/v1/modules/authSystem";
 import { filesModuleController } from "@/v1/modules/filesModule";
 import { FilesHttpController } from "../routes/files/files.controller";
 import { FilesRouter } from "../routes/files/files.router";
+import { FoldersHttpController } from "../routes/folders/folders.controller";
+import { FoldersRouter } from "../routes/folders/folders.router";
 import { GdgScrapedEventsHttpController } from "../routes/gdg-scraped-events/gdgScrapedEvents.controller";
 import { bevyEventController } from "../modules/bevyEvents";
 import { GdgScrapedEventsRouter } from "../routes/gdg-scraped-events/gdgScrapedEvents.router";
@@ -47,6 +49,9 @@ export const loadRoutes = (app: Express) => {
 
   const filesHttpController = new FilesHttpController(filesModuleController);
   const filesRouter = new FilesRouter(filesHttpController);
+
+  const foldersHttpController = new FoldersHttpController(filesModuleController);
+  const foldersRouter = new FoldersRouter(foldersHttpController);
 
   const authService = new AuthService(supabaseClient);
   const authHttpController = new AuthHttpController(authService);
@@ -95,6 +100,7 @@ export const loadRoutes = (app: Express) => {
 
 
   app.use("/files", filesRouter.router);
+  app.use("/folders", foldersRouter.router);
   app.use("/auth-system", authRouter.router);
   app.use("/health", healthRouter.router);
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);

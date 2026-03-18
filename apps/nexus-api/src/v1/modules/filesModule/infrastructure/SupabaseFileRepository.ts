@@ -21,9 +21,10 @@ export class SupabaseFileRepository implements IFileRepository {
     return {
       file_name: props.fileName,
       file_description: props.fileDescription,
-      file_path: props.filePath,
+      folder_id: props.folderId,
       preview_url: props.previewUrl,
       storage_ref: props.storageReference,
+      file_type: props.fileType,
     };
   }
 
@@ -35,11 +36,12 @@ export class SupabaseFileRepository implements IFileRepository {
       ...(props.fileDescription !== undefined && {
         file_description: props.fileDescription,
       }),
-      ...(props.filePath !== undefined && { file_path: props.filePath }),
+      ...(props.folderId !== undefined && { folder_id: props.folderId }),
       ...(props.previewUrl !== undefined && { preview_url: props.previewUrl }),
       ...(props.storageReference !== undefined && {
         storage_ref: props.storageReference,
       }),
+      ...(props.fileType !== undefined && { file_type: props.fileType }),
       ...(props.id !== undefined && { id: props.id }),
       ...(props.createdAt !== undefined && { created_at: props.createdAt }),
       ...(props.updatedAt !== undefined && { updated_at: props.updatedAt }),
@@ -53,9 +55,10 @@ export class SupabaseFileRepository implements IFileRepository {
       id: row.id,
       fileName: row.file_name,
       fileDescription: row.file_description,
-      filePath: row.file_path,
+      folderId: row.folder_id,
       previewUrl: row.preview_url,
       storageReference: row.storage_ref,
+      fileType: row.file_type || "",
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       deletedAt: row.deleted_at,
@@ -130,6 +133,38 @@ export class SupabaseFileRepository implements IFileRepository {
       .range(from, to);
 
     if (error) throw new Error(`Failed to list files: ${error.message}`);
+
+    return {
+      list: (data || []).map((row) =>
+        FileRecord.hydrate(this.toDomainRecord(row)),
+      ),
+      count: count || 0,
+    };
+  }
+
+  async listByFolderPaginated(
+    page: number,
+    pageSize: number,
+    folderId: string | null,
+  ): Promise<{ list: FileRecord[]; count: number }> {
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabase
+      .from(this.TABLE_NAME)
+      .select("*", { count: "exact" });
+
+    if (folderId === null) {
+        query = query.is("folder_id", null);
+    } else {
+        query = query.eq("folder_id", folderId);
+    }
+
+    const { data, error, count } = await query
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) throw new Error(`Failed to list files by folder: ${error.message}`);
 
     return {
       list: (data || []).map((row) =>
