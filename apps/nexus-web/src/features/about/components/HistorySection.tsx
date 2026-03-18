@@ -534,17 +534,18 @@ export function HistorySection() {
                 A Journey Through GDG PUP Milestones
               </Text>
 
-              <Text
-                variant="body"
-                align="center"
-                className="text-white max-w-3xl mx-auto"
-              >
+            <div className="w-full max-w-5xl mx-auto border border-white rounded-2xl px-8 py-6">                <Text
+                  variant="body"
+                  align="center"
+                  className="text-white text-lg"
+                >
                 Over two hundred students in PUP showed up to something that
                 didn&apos;t exist yet, drawn by Google&apos;s name alone. August
                 28, 2022. A Facebook page had just gone live. No track record,
                 no proven value, just a promise: we&apos;re building a space
                 where PUP students turn ideas into real projects.
               </Text>
+            </div>
             </Stack>
           </FadeInSection>
 
