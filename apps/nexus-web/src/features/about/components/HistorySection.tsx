@@ -284,45 +284,52 @@ const milestones = [
   {
     slug: "the-spark",
     title: "The Spark",
-    excerpt:
-      "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.", buttonColor: "green" as const, 
+    excerpt: "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.",
+    buttonColor: "green" as const,
+    image: "/about/history/the-spark.jpg",
   },
   {
     slug: "year-one",
     title: "Year One: Everything at Once",
-    excerpt:
-      "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.", buttonColor: "yellow" as const, 
+    excerpt: "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.",
+    buttonColor: "yellow" as const,
+    image: "/about/history/year-one-everything.png",
   },
   {
     slug: "year-two",
-    title: "Year Two: The Test", 
-    excerpt:
-      "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.", buttonColor: "red" as const, 
+    title: "Year Two: The Test",
+    excerpt: "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.",
+    buttonColor: "red" as const,
+    image: "/about/history/year-two-test.jpg",
   },
   {
     slug: "year-three",
     title: "Year Three: The Turnaround",
-    excerpt:
-      "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.", buttonColor: "blue" as const, 
+    excerpt: "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.",
+    buttonColor: "blue" as const,
+    image: "/about/history/year-three-turnaround.jpg",
   },
   {
     slug: "the-impact",
     title: "The Impact",
-    excerpt:
-      "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.", buttonColor: "green" as const, 
+    excerpt: "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.",
+    buttonColor: "green" as const,
+    image: "/about/history/the-impact.png",
   },
   {
     slug: "living-community",
     title: "The Living Community",
-    excerpt:
-      "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.", buttonColor: "yellow" as const,
+    excerpt: "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.",
+    buttonColor: "yellow" as const,
+    image: "/about/history/the-living-community.jpg",
   },
   {
-  slug: "your-chapter",
-  title: "Your Chapter Hasn't Been Written Yet",
-  excerpt: "Three years and counting proved something important: this community is built by the people who show up. That includes you.",
-  buttonColor: "red" as const,
-},
+    slug: "your-chapter",
+    title: "Your Chapter Hasn't Been Written Yet",
+    excerpt: "Three years and counting proved something important: this community is built by the people who show up. That includes you.",
+    buttonColor: "red" as const,
+    image: "/about/history/your-chapter.jpg",
+  },
 ];
 
 const buttonColorMap: Record<string, string> = {
@@ -356,17 +363,16 @@ const MilestoneCard = ({
       }}
     />
     <Card className="border-0">
-      <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
-        <Image
-          src={ASSETS.HOME.HERO.LAYER_BG}
-          alt={milestone.title}
-          fill
-          className="object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
-        />
-      </div>
+      {milestone.image && (
+  <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
+    <Image
+      src={milestone.image}
+      alt={milestone.title}
+      fill
+      className="object-cover"
+    />
+  </div>
+)}
       <CardHeader>
       <CardTitle className="text-3xl font-bold text-center">{milestone.title}</CardTitle>
     </CardHeader>
