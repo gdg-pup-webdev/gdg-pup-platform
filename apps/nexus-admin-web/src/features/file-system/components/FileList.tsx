@@ -172,9 +172,16 @@ export function FileList() {
           await updateMutation.mutateAsync({ id: selectedFile.id, data: data as FileRecordUpdate });
         } else if (file) {
           const formData = { ...data } as FileRecordInsert;
-          // Ensure filePath is correctly normalized and represents the intended location
-          const targetPath = normalizePath(formData.filePath || currentPath);
-          formData.filePath = targetPath;
+          
+          // Combine currentPath (base) and formData.filePath (relative subfolder)
+          const basePath = normalizePath(currentPath);
+          const relativePath = normalizePath(formData.filePath);
+          
+          const finalPath = basePath 
+            ? (relativePath ? `${basePath}/${relativePath}` : basePath) 
+            : relativePath;
+            
+          formData.filePath = finalPath;
           
           await uploadMutation.mutateAsync({ data: formData, file });
         }
@@ -331,13 +338,14 @@ export function FileList() {
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
         onSubmit={handleFormSubmit}
+        currentPath={currentPath}
         initialData={selectedFile ? {
             ...selectedFile,
             filePath: selectedFile.filePath
         } : {
             fileName: "",
             fileDescription: "",
-            filePath: currentPath ? `${currentPath}/` : "",
+            filePath: "", // Modal will treat this as relative to currentPath
             fileType: "",
             createdAt: "",
             updatedAt: "",

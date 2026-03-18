@@ -69,9 +69,10 @@ interface FileFormModalProps {
   onSubmit: (data: FileRecordInsert | FileRecordUpdate, file?: File) => void;
   initialData?: FileRecord;
   isSubmitting: boolean;
+  currentPath: string;
 }
 
-export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting }: FileFormModalProps) {
+export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting, currentPath }: FileFormModalProps) {
   const [formData, setFormData] = useState<FileRecordInsert>({
     fileName: "",
     fileDescription: "",
@@ -80,7 +81,7 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
-    if (initialData) {
+    if (initialData?.id) {
       setFormData({
         fileName: initialData.fileName || "",
         fileDescription: initialData.fileDescription || "",
@@ -90,19 +91,11 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
       setFormData({
         fileName: "",
         fileDescription: "",
-        filePath: "",
+        filePath: "", // Empty means current folder for new uploads
       });
     }
     setSelectedFile(null);
   }, [initialData, isOpen]);
-
-  // Handle case where initialData is passed as an object with filePath but without other fields (for new upload in folder)
-  useEffect(() => {
-    if (isOpen && !initialData && !formData.filePath) {
-        // This is a bit of a hack to handle the 'initialData' passed from FileList for new uploads
-        // In FileList.tsx, we pass an object that looks like FileRecord but only has filePath
-    }
-  }, [isOpen, initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,10 +116,12 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
     }
   };
 
+  const isEditing = !!initialData?.id;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData?.id ? "Update File Info" : "Upload New File"}>
+    <Modal isOpen={isOpen} onClose={onClose} title={isEditing ? "Update File Info" : "Upload New File"}>
       <form onSubmit={handleSubmit} className="space-y-5">
-        {!initialData?.id && (
+        {!isEditing && (
             <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-700">File</label>
                 <div className="group relative flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50 p-6 transition-colors hover:border-teal-400 hover:bg-teal-50/30">
@@ -153,7 +148,7 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
                         </>
                     )}
                     <input
-                        required={!initialData?.id}
+                        required={!isEditing}
                         type="file"
                         onChange={handleFileChange}
                         className="absolute inset-0 cursor-pointer opacity-0"
@@ -187,16 +182,28 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
         </div>
 
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">File Path (Folder)</label>
+          <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+            {isEditing ? "File Path (Folder)" : "Add to Subfolder (Optional)"}
+          </label>
+          {!isEditing && (
+            <div className="mb-2 flex items-center gap-2 rounded-sm bg-gray-50 p-2 text-xs text-gray-500 border border-gray-100">
+              <span className="font-bold">Base Folder:</span>
+              <span className="truncate">{currentPath || "Root"}</span>
+            </div>
+          )}
           <input
-            required
+            required={isEditing}
             type="text"
             value={formData.filePath}
             onChange={(e) => setFormData({ ...formData, filePath: e.target.value })}
             className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="e.g. documents/reports"
+            placeholder={isEditing ? "e.g. documents/reports" : "Enter subfolder path to create new folder..."}
           />
-          <p className="mt-1 text-[10px] font-medium text-gray-400 italic">Use forward slashes (/) for subfolders. Empty means root.</p>
+          <p className="mt-1 text-[10px] font-medium text-gray-400 italic">
+            {isEditing 
+              ? "Use forward slashes (/) for subfolders. Empty means root." 
+              : "Relative to the current base folder. Leave empty to upload directly to base folder."}
+          </p>
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
