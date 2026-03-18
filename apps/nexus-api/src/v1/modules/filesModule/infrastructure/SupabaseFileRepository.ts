@@ -21,7 +21,7 @@ export class SupabaseFileRepository implements IFileRepository {
     return {
       file_name: props.fileName,
       file_description: props.fileDescription,
-      file_path: props.filePath,
+      folder_id: props.folderId,
       preview_url: props.previewUrl,
       storage_ref: props.storageReference,
       file_type: props.fileType,
@@ -36,7 +36,7 @@ export class SupabaseFileRepository implements IFileRepository {
       ...(props.fileDescription !== undefined && {
         file_description: props.fileDescription,
       }),
-      ...(props.filePath !== undefined && { file_path: props.filePath }),
+      ...(props.folderId !== undefined && { folder_id: props.folderId }),
       ...(props.previewUrl !== undefined && { preview_url: props.previewUrl }),
       ...(props.storageReference !== undefined && {
         storage_ref: props.storageReference,
@@ -55,7 +55,7 @@ export class SupabaseFileRepository implements IFileRepository {
       id: row.id,
       fileName: row.file_name,
       fileDescription: row.file_description,
-      filePath: row.file_path,
+      folderId: row.folder_id,
       previewUrl: row.preview_url,
       storageReference: row.storage_ref,
       fileType: row.file_type || "",
@@ -142,22 +142,29 @@ export class SupabaseFileRepository implements IFileRepository {
     };
   }
 
-  async listByPathPaginated(
+  async listByFolderPaginated(
     page: number,
     pageSize: number,
-    path: string,
+    folderId: string | null,
   ): Promise<{ list: FileRecord[]; count: number }> {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    const { data, error, count } = await supabase
+    let query = supabase
       .from(this.TABLE_NAME)
-      .select("*", { count: "exact" })
-      .ilike("file_path", `${path}%`)
+      .select("*", { count: "exact" });
+
+    if (folderId === null) {
+        query = query.is("folder_id", null);
+    } else {
+        query = query.eq("folder_id", folderId);
+    }
+
+    const { data, error, count } = await query
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) throw new Error(`Failed to list files by path: ${error.message}`);
+    if (error) throw new Error(`Failed to list files by folder: ${error.message}`);
 
     return {
       list: (data || []).map((row) =>

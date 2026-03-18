@@ -7,7 +7,7 @@ import {
   Trash2, 
   ExternalLink, 
   Download, 
-  Folder,
+  Folder as FolderIcon,
   Image as ImageIcon,
   Video as VideoIcon,
   FileText,
@@ -16,13 +16,13 @@ import {
   FileCode,
   FileJson
 } from "lucide-react";
-import { FileRecord } from "../types";
+import { FileRecord, Folder } from "../types";
 
 interface FileCardProps {
-  file: FileRecord;
-  onEdit: (file: FileRecord) => void;
-  onDelete: (file: FileRecord) => void;
-  onView: (file: FileRecord) => void;
+  file: FileRecord | Folder;
+  onEdit: (file: any) => void;
+  onDelete: (file: any) => void;
+  onView: (file: any) => void;
   isFolder?: boolean;
 }
 
@@ -31,19 +31,20 @@ export function FileCard({ file, onEdit, onDelete, onView, isFolder }: FileCardP
     if (isFolder) {
       return (
         <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-teal-50 text-teal-600 shadow-sm transition-transform duration-300 group-hover:scale-110">
-          <Folder size={40} fill="currentColor" fillOpacity={0.2} />
+          <FolderIcon size={40} fill="currentColor" fillOpacity={0.2} />
         </div>
       );
     }
     
-    const type = file.fileType?.toLowerCase() || "";
+    const fileRecord = file as FileRecord;
+    const type = fileRecord.fileType?.toLowerCase() || "";
     
     if (type.startsWith("image/")) {
       return (
         <div className="relative h-full w-full overflow-hidden">
           <img 
-            src={file.previewUrl} 
-            alt={file.fileName}
+            src={fileRecord.previewUrl} 
+            alt={fileRecord.fileName}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
@@ -88,6 +89,9 @@ export function FileCard({ file, onEdit, onDelete, onView, isFolder }: FileCardP
     );
   };
 
+  const name = isFolder ? (file as Folder).name : (file as FileRecord).fileName;
+  const description = isFolder ? (file as Folder).description : (file as FileRecord).fileDescription;
+
   return (
     <div 
       className={`group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white transition-all hover:border-teal-100 hover:shadow-md ${isFolder ? "cursor-pointer" : ""}`}
@@ -101,16 +105,16 @@ export function FileCard({ file, onEdit, onDelete, onView, isFolder }: FileCardP
       {/* Content Area */}
       <div className="flex flex-1 flex-col p-4">
         <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
-          <Folder size={12} className="text-teal-500" />
-          <span className="truncate">{file.filePath}</span>
+          <FolderIcon size={12} className="text-teal-500" />
+          <span className="truncate">{isFolder ? "Folder" : "File"}</span>
         </div>
         
         <h3 className="mb-2 line-clamp-1 text-sm font-bold text-gray-900 group-hover:text-teal-700">
-          {file.fileName}
+          {name}
         </h3>
         
         <p className="mb-4 line-clamp-2 min-h-[32px] text-xs leading-relaxed text-gray-500">
-          {file.fileDescription || (isFolder ? "Click to open folder" : "No description provided.")}
+          {description || (isFolder ? "Click to open folder" : "No description provided.")}
         </p>
 
         {/* Action Buttons */}
@@ -143,7 +147,7 @@ export function FileCard({ file, onEdit, onDelete, onView, isFolder }: FileCardP
                   Details
                 </button>
                 <a
-                  href={file.downloadUrl}
+                  href={(file as FileRecord).downloadUrl}
                   onClick={(e) => e.stopPropagation()}
                   className="flex items-center gap-1.5 rounded-sm bg-teal-600 px-3 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-teal-700"
                 >
@@ -158,7 +162,7 @@ export function FileCard({ file, onEdit, onDelete, onView, isFolder }: FileCardP
                   onClick={(e) => { e.stopPropagation(); onView(file); }}
                   className="flex w-full items-center justify-center gap-1.5 rounded-sm bg-teal-600 px-3 py-2 text-[11px] font-bold text-white transition-colors hover:bg-teal-700"
                 >
-                  <Folder size={12} />
+                  <FolderIcon size={12} />
                   Open Folder
                 </button>
             </div>

@@ -18,10 +18,10 @@ export abstract class IFileRepository {
     count: number;
   }>;
 
-  abstract listByPathPaginated(
+  abstract listByFolderPaginated(
     page: number,
     pageSize: number,
-    path: string,
+    folderId: string | null,
   ): Promise<{
     list: FileRecord[];
     count: number;

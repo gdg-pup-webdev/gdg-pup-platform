@@ -13,7 +13,8 @@ import {
   Archive,
   Music,
   FileCode,
-  FileJson
+  FileJson,
+  Folder as FolderIcon
 } from "lucide-react";
 import { FileRecord, FileRecordInsert, FileRecordUpdate } from "../types";
 
@@ -73,10 +74,11 @@ interface FileFormModalProps {
 }
 
 export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting, currentPath }: FileFormModalProps) {
-  const [formData, setFormData] = useState<FileRecordInsert>({
+  const [formData, setFormData] = useState<any>({
     fileName: "",
     fileDescription: "",
-    filePath: "",
+    path: "",
+    folderId: null,
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -85,13 +87,15 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
       setFormData({
         fileName: initialData.fileName || "",
         fileDescription: initialData.fileDescription || "",
-        filePath: initialData.filePath || "",
+        folderId: initialData.folderId || null,
+        path: "",
       });
     } else {
       setFormData({
         fileName: "",
         fileDescription: "",
-        filePath: "", // Empty means current folder for new uploads
+        folderId: initialData?.folderId || null,
+        path: "",
       });
     }
     setSelectedFile(null);
@@ -111,7 +115,7 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
       const file = e.target.files[0];
       setSelectedFile(file);
       if (!formData.fileName) {
-          setFormData(prev => ({ ...prev, fileName: file.name }));
+          setFormData((prev: any) => ({ ...prev, fileName: file.name }));
       }
     }
   };
@@ -181,30 +185,25 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
           />
         </div>
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">
-            {isEditing ? "File Path (Folder)" : "Add to Subfolder (Optional)"}
-          </label>
-          {!isEditing && (
+        {!isEditing && (
+          <div>
+            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Add to Subfolder (Optional)</label>
             <div className="mb-2 flex items-center gap-2 rounded-sm bg-gray-50 p-2 text-xs text-gray-500 border border-gray-100">
               <span className="font-bold">Base Folder:</span>
               <span className="truncate">{currentPath || "Root"}</span>
             </div>
-          )}
-          <input
-            required={isEditing}
-            type="text"
-            value={formData.filePath}
-            onChange={(e) => setFormData({ ...formData, filePath: e.target.value })}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder={isEditing ? "e.g. documents/reports" : "Enter subfolder path to create new folder..."}
-          />
-          <p className="mt-1 text-[10px] font-medium text-gray-400 italic">
-            {isEditing 
-              ? "Use forward slashes (/) for subfolders. Empty means root." 
-              : "Relative to the current base folder. Leave empty to upload directly to base folder."}
-          </p>
-        </div>
+            <input
+              type="text"
+              value={formData.path}
+              onChange={(e) => setFormData({ ...formData, path: e.target.value })}
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+              placeholder="Enter subfolder path to create new folder..."
+            />
+            <p className="mt-1 text-[10px] font-medium text-gray-400 italic">
+              Relative to the current base folder. Leave empty to upload directly to base folder.
+            </p>
+          </div>
+        )}
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
           <button
@@ -222,10 +221,10 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
             {isSubmitting ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                {initialData?.id ? "Updating..." : "Uploading..."}
+                {isEditing ? "Updating..." : "Uploading..."}
               </>
             ) : (
-              <>{initialData?.id ? "Update Info" : "Upload File"}</>
+              <>{isEditing ? "Update Info" : "Upload File"}</>
             )}
           </button>
         </div>
@@ -269,8 +268,8 @@ export function FileDetailsModal({ isOpen, onClose, file }: { isOpen: boolean; o
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Path</h4>
-            <p className="mt-1 text-sm font-medium text-gray-900">{file.filePath}</p>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Folder ID</h4>
+            <p className="mt-1 text-sm font-medium text-gray-900 truncate">{file.folderId || "Root"}</p>
           </div>
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Type</h4>

@@ -1,7 +1,7 @@
 export type FileRecordPrototypeProps = {
   fileName: string;
   fileDescription: string;
-  filePath: string;
+  folderId: string | null;
   previewUrl: string;
   storageReference: string;
   fileType: string;
@@ -11,7 +11,7 @@ export type FileRecordMetadataProps = {
   id: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt: string;
+  deletedAt: string | null;
 };
 
 export type FileRecordUpdateProps = Partial<

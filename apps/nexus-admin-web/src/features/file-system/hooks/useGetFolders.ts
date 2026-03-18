@@ -4,12 +4,12 @@ import { contract } from "@packages/nexus-api-contracts";
 
 const API_URL = "http://localhost:8000";
 
-export const useGetFiles = (pageNumber = 1, pageSize = 10, folderId?: string | null) => {
+export const useGetFolders = (pageNumber = 1, pageSize = 100, parentId?: string | null) => {
   return useQuery({
-    queryKey: ["files", pageNumber, pageSize, folderId],
+    queryKey: ["folders", pageNumber, pageSize, parentId],
     queryFn: async () => {
-      const res = await callEndpoint(API_URL, contract.api.v1.files.GET, {
-        query: { pageNumber, pageSize, folderId },
+      const res = await callEndpoint(API_URL, contract.api.v1.folders.GET, {
+        query: { pageNumber, pageSize, parentId },
       });
 
       if (res.status === 200) return res;

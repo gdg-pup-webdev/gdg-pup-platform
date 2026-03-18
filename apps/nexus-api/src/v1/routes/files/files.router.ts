@@ -14,6 +14,7 @@ export class FilesRouter {
   ) {
     this.router = Router();
 
+    // Files routes
     this.router.get(
       "/",
       // this.authMiddleware.requirePermissions({ "files": ["read"] }),
@@ -21,7 +22,6 @@ export class FilesRouter {
     );
     this.router.post(
       "/",
-
       // this.authMiddleware.requirePermissions({ "files": ["create"] }),
       this.filesHttpController.uploadFile,
     );
@@ -39,6 +39,18 @@ export class FilesRouter {
       "/:fileId",
       // this.authMiddleware.requirePermissions({ "files": ["read"] }),
       this.filesHttpController.getOneFileById,
+    );
+
+    // Folder routes
+    this.router.get(
+      "/folders",
+      // this.authMiddleware.requirePermissions({ "folders": ["read"] }),
+      this.filesHttpController.listFolders,
+    );
+    this.router.post(
+      "/folders",
+      // this.authMiddleware.requirePermissions({ "folders": ["create"] }),
+      this.filesHttpController.createFolder,
     );
   }
 }
