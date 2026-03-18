@@ -394,6 +394,106 @@ const MilestoneCard = ({
   </div>
 );
 
+
+// ─── Stats section ────────────────────────────────────────────────────────────
+
+const stats = [
+  {
+   icon: (
+  <svg width="100" height="80" viewBox="0 0 120 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="blueGradReverse" x1="60" y1="0" x2="60" y2="110" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#162456" />
+        <stop offset="100%" stopColor="#2B7FFF" />
+      </linearGradient>
+      <mask id="gapMask">
+        <rect width="120" height="110" fill="white" />
+        {/* Enlarged mask shapes = bigger gap around center person */}
+        <circle cx="60" cy="30" r="22" fill="black" stroke="black" strokeWidth="10" />
+        <path d="M22 110 Q22 55 60 55 Q98 55 98 110Z" fill="black" stroke="black" strokeWidth="15" strokeLinejoin="round" />
+      </mask>
+    </defs>
+
+    {/* Side figures — paths clamped to x=0 and x=120 so no hard viewport cut */}
+    <g mask="url(#gapMask)">
+      <circle cx="20" cy="45" r="16" fill="url(#blueGradReverse)" />
+      <path d="M0 110 Q0 70 20 70 Q50 70 50 110Z" fill="url(#blueGradReverse)" />
+
+      <circle cx="100" cy="45" r="16" fill="url(#blueGradReverse)" />
+      <path d="M70 110 Q70 70 100 70 Q120 70 120 110Z" fill="url(#blueGradReverse)" />
+    </g>
+
+    {/* Center figure on top */}
+    <circle cx="60" cy="30" r="22" fill="url(#blueGradReverse)" />
+    <path d="M22 110 Q22 55 60 55 Q98 55 98 110Z" fill="url(#blueGradReverse)" />
+  </svg>
+),
+    value: "100+",
+    label: "Members Empowered",
+  },
+  {
+    icon: (
+      <svg width="100" height="80" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="redGrad" x1="60" y1="0" x2="60" y2="100" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#82181A" />
+            <stop offset="100%" stopColor="#EA4335" />
+          </linearGradient>
+        </defs>
+        <rect width="120" height="100" rx="16" fill="url(#redGrad)" />
+        <polyline points="32,35 14,50 32,65" stroke="#111" strokeWidth="11" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+        <polyline points="88,35 106,50 88,65" stroke="#111" strokeWidth="11" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+        <line x1="68" y1="28" x2="52" y2="72" stroke="#111" strokeWidth="11" strokeLinecap="square" />
+      </svg>
+    ),
+    value: "200+",
+    label: "Study Jam",
+  },
+  {
+    icon: (
+      <svg width="100" height="80" viewBox="0 0 110 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="greenGrad" x1="55" y1="0" x2="55" y2="120" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#00C950" />
+            <stop offset="100%" stopColor="#016630" />
+          </linearGradient>
+        </defs>
+        <circle cx="55" cy="48" r="40" fill="url(#greenGrad)" />
+        <circle cx="55" cy="48" r="26" fill="#111" />
+        <circle cx="55" cy="48" r="18" fill="url(#greenGrad)" />
+        <path d="M35 78 L35 115 L55 100 L75 115 L75 78Z" fill="url(#greenGrad)" />
+        <path d="M35 115 L55 100 L75 115" fill="#111" />
+      </svg>
+    ),
+    value: "4+",
+    label: "Years of Innovation",
+  },
+];
+
+const nexusStroke = "linear-gradient(to right, #EA4335, #F9AB00, #34A853, #4285F4)";
+
+const StatCard = ({
+  stat,
+}: {
+  stat: (typeof stats)[number];
+}) => (
+  <div
+    className="p-[1.5px] rounded-2xl"
+    style={{ background: nexusStroke }}
+  >
+    <div className="flex flex-col items-center gap-4 rounded-2xl p-8 h-full bg-[#0F0E0E]">
+      {stat.icon}
+      <Text variant="heading-1" weight="bold" align="center" className="text-white">
+        {stat.value}
+      </Text>
+      <Text variant="body" weight="bold" align="center" className="text-gray-300">
+        {stat.label}
+      </Text>
+    </div>
+  </div>
+);
+
+// ─── Main component ───────────────────────────────────────────────────────────
 export function HistorySection() {
   return (
     <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16 bg-[#0F0E0E]">
@@ -507,77 +607,23 @@ export function HistorySection() {
                 </Stack>
                 </FadeInSection>
 
-          {/* Section 3 — Statistics */}
-          <FadeInSection delay={0.2}>
-            <Stack gap="xl" align="center">
-              <Grid className="grid-cols-1 sm:grid-cols-3 gap-8 w-full">
-                <Stack align="center" gap="xs">
-                  <Text
-                    variant="heading-1"
-                    weight="bold"
-                    gradient="white-green"
-                    align="center"
-                  >
-                    100+
-                  </Text>
-                  <Text
-                    variant="body"
-                    weight="bold"
-                    align="center"
-                    className="text-white"
-                  >
-                    Members Empowered
-                  </Text>
-                </Stack>
-
-                <Stack align="center" gap="xs">
-                  <Text
-                    variant="heading-1"
-                    weight="bold"
-                    gradient="white-green"
-                    align="center"
-                  >
-                    200+
-                  </Text>
-                  <Text
-                    variant="body"
-                    weight="bold"
-                    align="center"
-                    className="text-white"
-                  >
-                    Study Jams
-                  </Text>
-                </Stack>
-
-                <Stack align="center" gap="xs">
-                  <Text
-                    variant="heading-1"
-                    weight="bold"
-                    gradient="white-green"
-                    align="center"
-                  >
-                    4+
-                  </Text>
-                  <Text
-                    variant="body"
-                    weight="bold"
-                    align="center"
-                    className="text-white"
-                  >
-                    Years of Innovation
-                  </Text>
-                </Stack>
-              </Grid>
-
-              <Box>
-                <Link href="/signup">
-                  <Button size="lg" variant="default">
-                    Join Our Journey
-                  </Button>
-                </Link>
-              </Box>
-            </Stack>
-          </FadeInSection>
+          {/* ── Section 3: Stats + CTA ───────────────────────────── */}
+<FadeInSection delay={0.2}>
+  <Stack gap="xl" align="center">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full">
+      {stats.map((stat) => (
+        <StatCard key={stat.label} stat={stat} />
+      ))}
+    </div>
+    <Box>
+      <Link href="/signup">
+        <Button size="lg" variant="default">
+          Join Our Journey
+        </Button>
+      </Link>
+    </Box>
+  </Stack>
+</FadeInSection>
         </Stack>
       </Container>
     </div>
