@@ -11,5 +11,5 @@ export interface UploadedTeamResourceFile {
 
 export abstract class ITeamResourceStorage {
   abstract uploadFile(file: TeamResourceFile): Promise<UploadedTeamResourceFile>;
-  abstract deleteFile(storageReference: string): Promise<boolean>;
+  abstract deleteFile(publicUrl: string): Promise<boolean>;
 }

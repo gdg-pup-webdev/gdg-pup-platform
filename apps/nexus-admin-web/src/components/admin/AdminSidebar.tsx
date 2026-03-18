@@ -10,6 +10,7 @@ import {
   X,
   Globe,
   ExternalLink,
+  Link2,
 } from "lucide-react";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 
@@ -28,6 +29,11 @@ const NAV_ITEMS = [
     label: "Teams",
     href: INTERNAL_LINKS.TEAMS,
     icon: Users,
+  },
+  {
+    label: "Team Resources",
+    href: INTERNAL_LINKS.TEAM_RESOURCES,
+    icon: Link2,
   },
   {
     label: "Debug page",

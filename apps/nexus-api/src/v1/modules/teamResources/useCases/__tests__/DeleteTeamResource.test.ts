@@ -2,23 +2,21 @@ import { describe, expect, it, beforeEach } from "vitest";
 import { DeleteTeamResource } from "../DeleteTeamResource";
 import { TeamResource } from "../../domain/TeamResource";
 import { MockTeamResourceRepository } from "../../infrastructure/MockTeamResourceRepository";
-import { mockFileStorage } from "../../../../utils/MockFileStorage";
-import { TeamResourceStorageAdapter } from "../../infrastructure/TeamResourceStorageAdapter";
+import { MockTeamResourceStorage } from "../../infrastructure/MockTeamResourceStorage";
 
 describe("DeleteTeamResource Use Case", () => {
   let repo: MockTeamResourceRepository;
-  let storageAdapter: TeamResourceStorageAdapter;
+  let storage: MockTeamResourceStorage;
   let useCase: DeleteTeamResource;
 
   beforeEach(() => {
-    mockFileStorage.reset();
     repo = new MockTeamResourceRepository();
-    storageAdapter = new TeamResourceStorageAdapter();
-    useCase = new DeleteTeamResource(repo, storageAdapter);
+    storage = new MockTeamResourceStorage();
+    useCase = new DeleteTeamResource(repo, storage);
   });
 
   it("should successfully delete an existing team resource and its image", async () => {
-    const uploaded = await storageAdapter.uploadFile({
+    const uploaded = await storage.uploadFile({
       buffer: new ArrayBuffer(8),
       name: "test.png",
       type: "image/png"
@@ -36,11 +34,11 @@ describe("DeleteTeamResource Use Case", () => {
     await repo.saveNew(resource);
     
     expect(repo.resources).toHaveLength(1);
-    expect(mockFileStorage.exists(uploaded.storageReference)).toBe(true);
+    expect(storage.exists(uploaded.publicUrl)).toBe(true);
 
     await useCase.execute(resource.props.id);
     
     expect(repo.resources).toHaveLength(0);
-    expect(mockFileStorage.exists(uploaded.storageReference)).toBe(false);
+    expect(storage.exists(uploaded.publicUrl)).toBe(false);
   });
 });
