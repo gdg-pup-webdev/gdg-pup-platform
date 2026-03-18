@@ -1,4 +1,4 @@
-import { MockTeamResourceRepository } from "./infrastructure/MockTeamResourceRepository";
+import { SupabaseTeamResourceRepository } from "./infrastructure/SupabaseTeamResourceRepository";
 import { TeamResourceStorageAdapter } from "./infrastructure/TeamResourceStorageAdapter";
 import { TeamResourceTeamServiceAdapter } from "./infrastructure/TeamResourceTeamServiceAdapter";
 import { CreateTeamResource } from "./useCases/CreateTeamResource";
@@ -11,7 +11,7 @@ import { teamModuleController } from "../teamsSystem";
 import { filesModuleController } from "../filesModule";
 
 // Infrastructure
-const repository = new MockTeamResourceRepository();
+const repository = new SupabaseTeamResourceRepository();
 const storageAdapter = new TeamResourceStorageAdapter(filesModuleController);
 const teamServiceAdapter = new TeamResourceTeamServiceAdapter(teamModuleController);
 
@@ -34,4 +34,4 @@ export const teamResourceController = new TeamResourceController(
 // Exports
 export { CreateTeamResource, DeleteTeamResource, GetTeamResource, ListTeamResources, UpdateTeamResource };
 export { TeamResourceController };
-export { MockTeamResourceRepository, TeamResourceStorageAdapter };
+export { SupabaseTeamResourceRepository, TeamResourceStorageAdapter };
