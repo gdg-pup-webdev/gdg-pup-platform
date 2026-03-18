@@ -1,34 +1,37 @@
 import { supabase } from "@/v1/lib/supabase";
 import { IBevyEventRepository } from "../domain/IBevyEventRepository";
 import { BevyEvent } from "../domain/BevyEvent";
+import { Tables } from "@/v1/types/supabase.types";
+
+type ScrapedGdgEventRow = Tables<"scraped_gdg_events">;
 
 export class SupabaseBevyEventRepository implements IBevyEventRepository {
   private readonly tableName = "scraped_gdg_events";
 
-  private mapToDomain(row: any): BevyEvent {
+  private mapToDomain(row: ScrapedGdgEventRow): BevyEvent {
     // We hydrate the domain entity, mapping database columns to the BevyEventProps.
     // Since your BevyEventProps already uses snake_case, the mapping is very straightforward.
     return BevyEvent.hydrate({
-      id: row.id,
+      id: row.gdg_id.toString(),
       title: row.title,
-      short_description: row.short_description,
-      bevy_url: row.bevy_url,
+      short_description: row.description_short ?? undefined,
+      bevy_url: row.url ?? undefined,
       start_date: row.start_date,
       end_date: row.end_date,
-      location: row.location,
-      cover_image_url: row.cover_image_url,
-      status: row.status,
-      event_type: row.event_type,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-      description: row.description,
-      tags: row.tags,
-      attendees: row.attendees,
-      total_capacity: row.total_capacity,
-      attendee_virtual_venue_url: row.attendee_virtual_venue_url,
-      event_type_slug: row.event_type_slug,
-      video_url: row.video_url,
-      is_virtual_event: row.is_virtual_event,
+      location: row.location ?? undefined,
+      cover_image_url: row.cover_image_url ?? undefined,
+      status: row.status ?? undefined,
+      event_type: row.event_type ?? undefined,
+      created_at: row.created_at ?? undefined,
+      updated_at: row.updated_at ?? undefined,
+      description: row.description ?? undefined,
+      tags: (row.tags as string[]) ?? undefined,
+      attendees: row.total_attendees ?? undefined,
+      total_capacity: row.total_capacity ?? undefined,
+      attendee_virtual_venue_url: row.attendee_virtual_venue_link ?? undefined,
+      event_type_slug: row.event_type_slug ?? undefined,
+      video_url: row.video_url ?? undefined,
+      is_virtual_event: row.is_virtual_event ?? undefined,
     });
   }
 
@@ -59,7 +62,7 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
-      .eq("id", id)
+      .eq("gdg_id", parseInt(id))
       .maybeSingle();
 
     if (error) {
