@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
+import { BADGE_GRADIENT_TOKENS } from "./Badge.tokens";
 
 /**
  * Badge - Small status and category indicators
@@ -10,9 +11,10 @@ export const badgeVariants = cva(
   [
     "inline-flex items-center justify-center",
     "rounded-full",
-    "text-xs font-medium",
+    "font-medium",
     "transition-colors",
     "whitespace-nowrap",
+    "border border-transparent",
   ],
   {
     variants: {
@@ -27,6 +29,10 @@ export const badgeVariants = cva(
         destructive: "bg-destructive text-destructive-foreground",
         outline: "border border-border text-foreground bg-background",
         muted: "bg-muted text-muted-foreground",
+        yellow: `${BADGE_GRADIENT_TOKENS.yellow} border border-transparent px-3 py-0.5 text-[14px] leading-normal font-normal text-white sm:text-[16px]`,
+        red: `${BADGE_GRADIENT_TOKENS.red} border border-transparent px-3 py-0.5 text-[14px] leading-normal font-normal text-white sm:text-[16px]`,
+        blue: `${BADGE_GRADIENT_TOKENS.blue} border border-transparent px-3 py-0.5 text-[14px] leading-normal font-normal text-white sm:text-[16px]`,
+        id: `${BADGE_GRADIENT_TOKENS.id} rounded-full border border-transparent px-3 py-0.5 text-[14px] leading-normal font-normal text-white sm:text-[16px]`,
       },
       /**
        * Size of the badge
