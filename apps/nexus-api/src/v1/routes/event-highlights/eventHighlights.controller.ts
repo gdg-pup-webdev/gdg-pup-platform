@@ -14,6 +14,8 @@ export class EventHighlightsHttpController {
   postCreate: RequestHandler = createExpressController(
     contract.api.v1.event_highlights.POST,
     async ({ input, output }) => {
+      const thumbnailImage = input.files.thumbnail_image;
+
       const result = await this.appController.createHighlight({
         title: input.body.data.title,
         description: input.body.data.description,
@@ -21,6 +23,11 @@ export class EventHighlightsHttpController {
         imageUrl: input.body.data.image_url ?? undefined,
         authorId: input.body.data.author_id,
         eventId: input.body.data.event_id,
+        thumbnailImage: thumbnailImage ? {
+          buffer: await thumbnailImage.arrayBuffer(),
+          name: thumbnailImage.name,
+          type: thumbnailImage.type,
+        } : undefined,
       });
 
       return output(201, {
@@ -95,6 +102,8 @@ export class EventHighlightsHttpController {
   patchUpdate: RequestHandler = createExpressController(
     contract.api.v1.event_highlights.id.PATCH,
     async ({ input, output }) => {
+      const thumbnailImage = input.files.thumbnail_image;
+
       const result = await this.appController.updateHighlight(input.params.id, {
         title: input.body.data.title,
         description: input.body.data.description,
@@ -102,6 +111,11 @@ export class EventHighlightsHttpController {
         imageUrl: input.body.data.image_url ?? undefined,
         authorId: input.body.data.author_id,
         eventId: input.body.data.event_id,
+        thumbnailImage: thumbnailImage ? {
+          buffer: await thumbnailImage.arrayBuffer(),
+          name: thumbnailImage.name,
+          type: thumbnailImage.type,
+        } : undefined,
       });
 
       return output(200, {

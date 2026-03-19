@@ -9,12 +9,15 @@ export const useCreateHighlight = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: EventHighlightInsert) => {
+    mutationFn: async ({ data, thumbnailImage }: { data: EventHighlightInsert; thumbnailImage?: File }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.event_highlights.POST,
         {
           body: { data },
+          files: {
+            thumbnail_image: thumbnailImage,
+          },
         }
       );
 

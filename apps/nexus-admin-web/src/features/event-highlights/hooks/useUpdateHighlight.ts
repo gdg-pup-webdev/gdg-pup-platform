@@ -9,13 +9,16 @@ export const useUpdateHighlight = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: EventHighlightUpdate }) => {
+    mutationFn: async ({ id, data, thumbnailImage }: { id: string; data: EventHighlightUpdate; thumbnailImage?: File }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.event_highlights.id.PATCH,
         {
           params: { id },
           body: { data },
+          files: {
+            thumbnail_image: thumbnailImage,
+          },
         }
       );
 

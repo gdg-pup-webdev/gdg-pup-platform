@@ -3,6 +3,10 @@ import { OpenApiSchemas } from "@packages/typed-rest/shared";
 
 export const body = OpenApiSchemas.Request.Body.withPayload(eventHighlightsRecordUpdateDTO);
 
+export const files = {
+  thumbnail_image: OpenApiSchemas.Models.file().optional(),
+};
+
 export const response = {
   200: OpenApiSchemas.Response.single(eventHighlightsRecord),
   ...OpenApiSchemas.Response.standardErrors(),

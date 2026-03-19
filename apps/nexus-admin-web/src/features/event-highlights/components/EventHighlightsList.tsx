@@ -56,13 +56,20 @@ export const EventHighlightsList: React.FC = () => {
     setIsDeleteModalOpen(true);
   };
 
-  const handleFormSubmit = async (data: EventHighlightInsert | EventHighlightUpdate) => {
+  const handleFormSubmit = async (data: EventHighlightInsert | EventHighlightUpdate, thumbnail?: File) => {
     try {
       if (selectedHighlight) {
-        await updateMutation.mutateAsync({ id: selectedHighlight.id, data: data as EventHighlightUpdate });
+        await updateMutation.mutateAsync({ 
+          id: selectedHighlight.id, 
+          data: data as EventHighlightUpdate,
+          thumbnailImage: thumbnail 
+        });
         toast.success("Highlight updated successfully");
       } else {
-        await createMutation.mutateAsync(data as EventHighlightInsert);
+        await createMutation.mutateAsync({ 
+          data: data as EventHighlightInsert,
+          thumbnailImage: thumbnail
+        });
         toast.success("Highlight created successfully");
       }
       setIsFormModalOpen(false);

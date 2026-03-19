@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Calendar, User, Info, Edit2, Trash2, Image as ImageIcon, Type, FileText, Search, MapPin } from "lucide-react";
+import { X, Loader2, AlertTriangle, Calendar, User, Info, Edit2, Trash2, Image as ImageIcon, Type, FileText, Search, MapPin, Upload } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { EventHighlight, EventHighlightInsert, EventHighlightUpdate } from "../types";
@@ -9,6 +9,7 @@ import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { useSearchUsers } from "@/features/users/hooks/useSearchUsers";
 import { Pagination } from "@/components/admin/Pagination";
 import { useUploadFile } from "@/features/file-system/hooks/useUploadFile";
+import Image from "next/image";
 
 // ==========================================
 // Modal Wrapper (Mirroring EventModals)
@@ -216,7 +217,7 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
 interface HighlightFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: any, thumbnail?: File) => void;
   initialData?: EventHighlight | null;
   isSubmitting: boolean;
 }
@@ -231,6 +232,9 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
     event_id: "",
   });
 
+  const [thumbnail, setThumbnail] = useState<File | undefined>(undefined);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const uploadFile = useUploadFile();
 
@@ -239,6 +243,18 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
 
   const [isEventSearchOpen, setIsEventSearchOpen] = useState(false);
   const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setThumbnail(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const items = e.clipboardData.items;
@@ -310,6 +326,7 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
         author_id: initialData.author_id,
         event_id: initialData.event_id,
       });
+      setPreviewUrl(initialData.image_url || null);
       setSelectedEventTitle("Currently selected event"); // We don't have the title in record, maybe just show the ID or fetch it
       setSelectedAuthorName("Currently selected author");
     } else {
@@ -321,9 +338,11 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
         author_id: "",
         event_id: "",
       });
+      setPreviewUrl(null);
       setSelectedEventTitle("");
       setSelectedAuthorName("");
     }
+    setThumbnail(undefined);
   }, [initialData, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -332,7 +351,7 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
       alert("Please select an event and an author.");
       return;
     }
-    onSubmit(formData);
+    onSubmit(formData, thumbnail);
   };
 
   return (
@@ -420,13 +439,31 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Image URL</label>
-              <input
-                type="text"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.image_url || ""}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value || null })}
-              />
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Thumbnail Image</label>
+              <div className="flex items-start gap-4">
+                <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-sm border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
+                  {previewUrl ? (
+                    <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                  ) : (
+                    <ImageIcon size={32} />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="mb-3 text-[10px] text-gray-500 leading-relaxed uppercase tracking-wider font-semibold">
+                    Upload a thumbnail image for this highlight. Recommended size: 800x450 (16:9).
+                  </p>
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+                    <Upload size={14} />
+                    Choose Image
+                    <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                  </label>
+                  {formData.image_url && !thumbnail && (
+                    <p className="mt-2 text-[10px] text-teal-600 font-bold uppercase tracking-widest">
+                      Current image will be kept unless you choose a new one.
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
           

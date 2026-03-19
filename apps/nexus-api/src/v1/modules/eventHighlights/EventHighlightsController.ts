@@ -2,8 +2,8 @@ import {
   EventHighlightInsertProps,
   EventHighlightUpdateProps,
 } from "./domain/EventHighlight";
-import { CreateHighlight } from "./useCases/CreateHighlight";
-import { UpdateHighlight } from "./useCases/UpdateHighlight";
+import { CreateHighlight, CreateHighlightInput } from "./useCases/CreateHighlight";
+import { UpdateHighlight, UpdateHighlightInputProps } from "./useCases/UpdateHighlight";
 import { DeleteHighlight } from "./useCases/DeleteHighlight";
 import { GetOneHighlight } from "./useCases/GetOneHighlight";
 import { ListHighlights } from "./useCases/ListHighlights";
@@ -17,8 +17,8 @@ export class EventHighlightsController {
     private readonly listHighlightsUseCase: ListHighlights,
   ) {}
 
-  async createHighlight(props: EventHighlightInsertProps) {
-    const result = await this.createHighlightUseCase.execute(props);
+  async createHighlight(input: CreateHighlightInput) {
+    const result = await this.createHighlightUseCase.execute(input);
     return {
       ...result.props,
       createdAt: result.props.createdAt.toISOString(),
@@ -26,8 +26,8 @@ export class EventHighlightsController {
     };
   }
 
-  async updateHighlight(id: string, props: EventHighlightUpdateProps) {
-    const result = await this.updateHighlightUseCase.execute(id, props);
+  async updateHighlight(id: string, input: UpdateHighlightInputProps) {
+    const result = await this.updateHighlightUseCase.execute(id, input);
     return {
       ...result.props,
       createdAt: result.props.createdAt.toISOString(),
