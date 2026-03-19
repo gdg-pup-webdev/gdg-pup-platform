@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X, Loader2, AlertTriangle, Calendar, User, Info, Edit2, Trash2, Image as ImageIcon, Type, FileText, Search, MapPin } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,6 +8,7 @@ import { EventHighlight, EventHighlightInsert, EventHighlightUpdate } from "../t
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { useSearchUsers } from "@/features/users/hooks/useSearchUsers";
 import { Pagination } from "@/components/admin/Pagination";
+import { useUploadFile } from "@/features/file-system/hooks/useUploadFile";
 
 // ==========================================
 // Modal Wrapper (Mirroring EventModals)
@@ -230,11 +231,74 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
     event_id: "",
   });
 
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const uploadFile = useUploadFile();
+
   const [selectedEventTitle, setSelectedEventTitle] = useState("");
   const [selectedAuthorName, setSelectedAuthorName] = useState("");
 
   const [isEventSearchOpen, setIsEventSearchOpen] = useState(false);
   const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
+
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = e.clipboardData.items;
+    
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const file = items[i].getAsFile();
+        if (!file) continue;
+
+        // Prevent default paste if it's an image
+        e.preventDefault();
+
+        const fileName = `pasted-image-${Date.now()}.png`;
+        
+        try {
+          const res = await uploadFile.mutateAsync({
+            file,
+            data: {
+              fileName,
+              fileDescription: `Pasted image for highlight: ${formData.title || "Untitled"}`,
+              folderId: null,
+              path: "event-highlights",
+            }
+          });
+
+          if (res.status === 200) {
+            const imageUrl = (res.body as any).data.previewUrl;
+            const markdownImage = `![${fileName}](${imageUrl})`;
+            
+            // Insert at cursor position
+            const textarea = contentRef.current;
+            if (textarea) {
+              const start = textarea.selectionStart;
+              const end = textarea.selectionEnd;
+              const text = formData.content;
+              const before = text.substring(0, start);
+              const after = text.substring(end);
+              
+              const newContent = `${before}${markdownImage}${after}`;
+              setFormData({ ...formData, content: newContent });
+              
+              // We need to set the cursor position after the state update
+              setTimeout(() => {
+                if (textarea) {
+                  textarea.focus();
+                  textarea.setSelectionRange(
+                    start + markdownImage.length,
+                    start + markdownImage.length
+                  );
+                }
+              }, 0);
+            }
+          }
+        } catch (error) {
+          console.error("Failed to upload pasted image:", error);
+          alert("Failed to upload image. Please try again.");
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -330,16 +394,29 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
               />
             </div>
 
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Content (Markdown)</label>
+            <div className="sm:col-span-2 relative">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
+                Content (Markdown)
+                {uploadFile.isPending && (
+                  <span className="ml-2 inline-flex items-center text-[10px] text-teal-600 normal-case font-medium">
+                    <Loader2 size={10} className="mr-1 animate-spin" />
+                    Uploading image...
+                  </span>
+                )}
+              </label>
               <textarea
+                ref={contentRef}
                 required
                 rows={8}
                 className="w-full font-mono rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
                 value={formData.content}
                 placeholder="# Use Markdown here..."
+                onPaste={handlePaste}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               />
+              <p className="mt-1 text-[10px] text-gray-400">
+                Tip: You can paste images directly into the editor to upload them.
+              </p>
             </div>
 
             <div className="sm:col-span-2">
@@ -363,10 +440,10 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || uploadFile.isPending}
               className="flex items-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 disabled:opacity-50"
             >
-              {isSubmitting && <Loader2 size={16} className="animate-spin" />}
+              {(isSubmitting || uploadFile.isPending) && <Loader2 size={16} className="animate-spin" />}
               {initialData ? "Save Changes" : "Create Highlight"}
             </button>
           </div>
