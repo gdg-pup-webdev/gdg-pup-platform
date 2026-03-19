@@ -7,7 +7,7 @@ export const useGetBevyEvent = (gdgId: string) => {
   return useQuery({
     queryKey: ["bevy-event", gdgId],
     queryFn: async () => {
-      const res = await callEndpoint(configs.nexusApiBaseUrl, contract.api.v1.gdg_scraped_events._gdg_id_.GET, {
+      const res = await callEndpoint(configs.nexusApiBaseUrl, contract.api.v1.gdg_scraped_events.gdg_id.GET, {
         params: { gdg_id: gdgId },
       });
 
