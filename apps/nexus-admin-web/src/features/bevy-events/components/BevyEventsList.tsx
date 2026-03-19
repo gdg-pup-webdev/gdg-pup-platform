@@ -1,15 +1,39 @@
 "use client";
 
 import React from "react";
+import { Loader2, AlertCircle, Zap } from "lucide-react";
 import { useGetBevyEvents } from "../hooks/useGetBevyEvents";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
 
 export const BevyEventsList: React.FC = () => {
-  const { data, isLoading, isError, error } = useGetBevyEvents();
+  const { data, isLoading, isError, error, refetch } = useGetBevyEvents();
   const createEventMutation = useCreateEventFromBevyEvent();
 
-  if (isLoading) return <div>Loading Bevy events...</div>;
-  if (isError) return <div>Error: {(error as Error).message}</div>;
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 size={40} className="animate-spin text-teal-600" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
+        <AlertCircle size={48} className="mb-4 text-red-500" />
+        <h3 className="text-lg font-bold text-red-900">Failed to load Bevy events</h3>
+        <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
+        <button 
+          onClick={() => refetch()}
+          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  const events = data?.data || [];
 
   const handleCreateEvent = async (bevyEventId: string) => {
     try {
@@ -21,26 +45,48 @@ export const BevyEventsList: React.FC = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Bevy Scraped Events</h2>
-      <div className="grid gap-4">
-        {data?.data.map((event: any) => (
-          <div key={event.id} className="border p-4 rounded shadow bg-white flex justify-between items-center">
-            <div>
-              <h3 className="text-lg font-semibold">{event.title}</h3>
-              <p className="text-sm text-gray-600">{event.location}</p>
-              <p className="text-xs text-gray-400">{new Date(event.start_date).toLocaleString()}</p>
-            </div>
-            <button
-              onClick={() => handleCreateEvent(event.id)}
-              disabled={createEventMutation.isPending}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
+    <div className="space-y-6">
+      {events.length > 0 ? (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {events.map((event: any) => (
+            <div 
+              key={event.id} 
+              className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
-              {createEventMutation.isPending ? "Creating..." : "Create Event"}
-            </button>
-          </div>
-        ))}
-      </div>
+              {/* Header with Icon */}
+              <div className="mb-4 flex items-start justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded bg-teal-50 text-teal-600">
+                  <Zap size={24} />
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                <p className="mt-2 text-sm text-gray-600">{event.location}</p>
+                <p className="mt-1 text-xs text-gray-500">
+                  {new Date(event.start_date).toLocaleString()}
+                </p>
+              </div>
+
+              {/* Button */}
+              <button
+                onClick={() => handleCreateEvent(event.id)}
+                disabled={createEventMutation.isPending}
+                className="mt-6 w-full rounded-sm bg-teal-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-teal-700 disabled:bg-teal-300"
+              >
+                {createEventMutation.isPending ? "Creating..." : "Create Event"}
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+          <Zap size={48} className="mb-4 text-gray-300" />
+          <h3 className="text-lg font-bold text-gray-900">No Bevy events found</h3>
+          <p className="mt-1 text-sm text-gray-500">Check again later for new events from Bevy.</p>
+        </div>
+      )}
     </div>
   );
 };
