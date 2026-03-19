@@ -358,35 +358,35 @@ const MilestoneCard = ({
         maskComposite: "exclude",
       }}
     />
-    <Card className="border-0">
-      {milestone.image && (
-  <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
-    <Image
-      src={milestone.image}
-      alt={milestone.title}
-      fill
-      className="object-cover"
-    />
-  </div>
-)}
-      <CardHeader>
-      <CardTitle className="text-3xl font-bold text-center">{milestone.title}</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <Text variant="body-sm" className="text-gray-300 line-clamp-3 text-center">
-        {milestone.excerpt}
-      </Text>
-    </CardContent>
-    <CardFooter className="justify-center">
-      <Link href="#">
-        <button
-          className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
-        >
-          Read More
-        </button>
-      </Link>
-    </CardFooter>
-    </Card>
+    <Card className="border-0 flex flex-col justify-between">
+  {milestone.image && (
+    <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
+      <Image
+        src={milestone.image}
+        alt={milestone.title}
+        fill
+        className="object-cover"
+      />
+    </div>
+  )}
+  <CardHeader>
+    <CardTitle className="text-4xl font-bold text-center">{milestone.title}</CardTitle>
+  </CardHeader>
+  <CardContent className="flex-1">
+    <Text variant="body" className="text-gray-300 line-clamp-3 text-center text-xl">
+      {milestone.excerpt}
+    </Text>
+  </CardContent>
+  <CardFooter className="justify-center">
+    <Link href="#">
+      <button
+        className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
+      >
+        Read More
+      </button>
+    </Link>
+  </CardFooter>
+</Card>
   </div>
 );
 
@@ -556,28 +556,21 @@ export function HistorySection() {
                   </AnimatedCard>
                 ))}
               </div>
-              {/* ── Desktop staircase ─────────────────────────────────── */}
+             {/* Desktop staircase layout */}
               <div className="hidden lg:grid lg:grid-cols-4 gap-6 w-full items-start">
-                {/* Col 1 — Year Three: deepest */}
-                <div className="lg:pt-[37rem]">
+                {/* Col 1 — The Spark → Your Chapter */}
+                <div className="flex flex-col">
                   <AnimatedCard>
-                    <MilestoneCard milestone={milestones[3]} />
+                    <MilestoneCard milestone={milestones[0]} />
                   </AnimatedCard>
-                </div>
-
-                {/* Col 2 — Year Two (row 1) → The Impact (row 2) */}
-                <div className="flex flex-col lg:pt-[20rem]">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[2]} />
-                  </AnimatedCard>
-                  <div className="lg:mt-[12rem]">
+                  <div className="lg:mt-[52rem]">
                     <AnimatedCard>
-                      <MilestoneCard milestone={milestones[4]} />
+                      <MilestoneCard milestone={milestones[6]} />
                     </AnimatedCard>
                   </div>
                 </div>
 
-                {/* Col 3 — Year One (row 1) → The Living Community (row 2) */}
+                {/* Col 2 — Year One → The Living Community */}
                 <div className="flex flex-col lg:pt-[10rem]">
                   <AnimatedCard>
                     <MilestoneCard milestone={milestones[1]} />
@@ -589,20 +582,27 @@ export function HistorySection() {
                   </div>
                 </div>
 
-                {/* Col 4 — The Spark (row 1) → Coming Soon (row 2) */}
-                <div className="flex flex-col">
+                {/* Col 3 — Year Two → The Impact */}
+                <div className="flex flex-col lg:pt-[20rem]">
                   <AnimatedCard>
-                    <MilestoneCard milestone={milestones[0]} />
+                    <MilestoneCard milestone={milestones[2]} />
                   </AnimatedCard>
-                  <div className="lg:mt-[52rem]">
+                  <div className="lg:mt-[12rem]">
                     <AnimatedCard>
-                      <MilestoneCard milestone={milestones[6]} />
+                      <MilestoneCard milestone={milestones[4]} />
                     </AnimatedCard>
                   </div>
                 </div>
-                </div>
-                </Stack>
-                </FadeInSection>
+
+                {/* Col 4 — Year Three: deepest */}
+              <div className="lg:pt-[37rem]">
+                <AnimatedCard>
+                  <MilestoneCard milestone={milestones[3]} />
+                </AnimatedCard>
+              </div>
+            </div>
+          </Stack>
+        </FadeInSection>
 
           {/* ── Section 3: Stats + CTA ───────────────────────────── */}
 <FadeInSection delay={0.2}>
