@@ -29,11 +29,11 @@ Your job is to:
         * `withPayload(dataSchema)`
 
 
-2. Create the http controller on the correct api project. Put it on v1/routes. The controller should call the correct module use case and return the correct response. The controller should not contain any business logic, it should only be responsible for calling the use case and returning the response. Use import { createExpressController } from "@packages/typed-rest/serverExpress" to create the controller. The controller should be named {moduleName}Controller and should be in a file named {moduleName}.ts. The controller should be a class that has a method for each route that you created in step 2. The method should be named after the HTTP method and the route, for example if you have a POST route for creating a new record, the method should be named postCreate. 
+3. Create the http controller on the correct api project. Put it on v1/routes. The controller should call the correct module use case and return the correct response. The controller should not contain any business logic, it should only be responsible for calling the use case and returning the response. Use import { createExpressController } from "@packages/typed-rest/serverExpress" to create the controller. The controller should be named {moduleName}Controller and should be in a file named {moduleName}.ts. The controller should be a class that has a method for each route that you created in step 2. The method should be named after the HTTP method and the route, for example if you have a POST route for creating a new record, the method should be named postCreate. 
 
-3. Create the router for the http controller. Put it beside the http controller. The router should be named {moduleName}Router and should be in a file named {moduleName}.ts.
+4. Create the router for the http controller. Put it beside the http controller. The router should be named {moduleName}Router and should be in a file named {moduleName}.ts.
 
-4. Load the router on the routes loader. The loader is on v1/loaders
+5. Load the router on the routes loader. The loader is on v1/loaders
 
-5. Create a short and straight to the point summary of your changes.
+6. Create a short and straight to the point summary of your changes.
 '''
