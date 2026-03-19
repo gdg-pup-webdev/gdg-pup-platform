@@ -1,13 +1,16 @@
 "use client";
 
-import React from "react";
-import { Loader2, AlertCircle, Zap } from "lucide-react";
+import React, { useState } from "react";
+import { Loader2, AlertCircle, Zap, ChevronRight } from "lucide-react";
 import { useGetBevyEvents } from "../hooks/useGetBevyEvents";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
+import { BevyEventDetails } from "./BevyEventDetails";
 
 export const BevyEventsList: React.FC = () => {
   const { data, isLoading, isError, error, refetch } = useGetBevyEvents();
   const createEventMutation = useCreateEventFromBevyEvent();
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -50,33 +53,64 @@ export const BevyEventsList: React.FC = () => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event: any) => (
             <div 
-              key={event.id} 
-              className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              key={event.id}
+              className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
+              onClick={() => {
+                setSelectedEventId(event.id);
+                setIsDetailsModalOpen(true);
+              }}
             >
-              {/* Header with Icon */}
-              <div className="mb-4 flex items-start justify-between">
-                <div className="flex h-12 w-12 items-center justify-center rounded bg-teal-50 text-teal-600">
-                  <Zap size={24} />
+              {/* Banner Image */}
+              {event.cover_image_url ? (
+                <div className="relative h-40 bg-gradient-to-b from-gray-200 to-gray-100 overflow-hidden">
+                  <img
+                    src={event.cover_image_url}
+                    alt={event.title}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
                 </div>
-              </div>
+              ) : (
+                <div className="flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100">
+                  <Zap size={40} className="text-teal-400" />
+                </div>
+              )}
 
               {/* Content */}
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                <p className="mt-2 text-sm text-gray-600">{event.location}</p>
-                <p className="mt-1 text-xs text-gray-500">
-                  {new Date(event.start_date).toLocaleString()}
-                </p>
-              </div>
+              <div className="flex flex-1 flex-col p-6">
+                {/* Header with Icon */}
+                <div className="mb-3 flex items-start justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-teal-50 text-teal-600">
+                    <Zap size={20} />
+                  </div>
+                  <ChevronRight size={20} className="text-gray-300 transition-transform group-hover:translate-x-1" />
+                </div>
 
-              {/* Button */}
-              <button
-                onClick={() => handleCreateEvent(event.id)}
-                disabled={createEventMutation.isPending}
-                className="mt-6 w-full rounded-sm bg-teal-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-teal-700 disabled:bg-teal-300"
-              >
-                {createEventMutation.isPending ? "Creating..." : "Create Event"}
-              </button>
+                {/* Title and Description */}
+                <h3 className="font-semibold text-gray-900 line-clamp-2">{event.title}</h3>
+                {event.location && (
+                  <p className="mt-2 text-sm text-gray-600 line-clamp-1">{event.location}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  {new Date(event.start_date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+
+                {/* Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCreateEvent(event.id);
+                  }}
+                  disabled={createEventMutation.isPending}
+                  className="mt-auto pt-4 w-full rounded-sm bg-teal-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-teal-700 disabled:bg-teal-300"
+                >
+                  {createEventMutation.isPending ? "Creating..." : "Create Event"}
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -87,6 +121,13 @@ export const BevyEventsList: React.FC = () => {
           <p className="mt-1 text-sm text-gray-500">Check again later for new events from Bevy.</p>
         </div>
       )}
+
+      {/* Modal */}
+      <BevyEventDetails
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        eventId={selectedEventId}
+      />
     </div>
   );
 };
