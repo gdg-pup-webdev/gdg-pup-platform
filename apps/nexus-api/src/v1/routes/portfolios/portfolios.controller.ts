@@ -28,6 +28,7 @@ function toRow(props: PortfolioProps) {
     learning_interests: props.learningInterests,
     tools_and_technologies: props.toolsAndTechnologies,
     is_public: props.isPublic,
+    profile_image: props.profileImage,
   };
 }
 
@@ -129,7 +130,16 @@ export class PortfoliosHttpController {
   updatePortfolioProperty: RequestHandler = createExpressController(
     contract.api.v1.portfolios.portfolioId.PATCH,
     async ({ input, output }) => {
+      const profileImageFile = input.files.profile_image;
       const camelUpdates = toCamelCase(input.body.data);
+
+      if (profileImageFile) {
+        (camelUpdates as any).profileImage = {
+          buffer: await profileImageFile.arrayBuffer(),
+          name: profileImageFile.name,
+          type: profileImageFile.type,
+        };
+      }
 
       const portfolio =
         await this.portfolioModuleController.updatePortfolioProperty(

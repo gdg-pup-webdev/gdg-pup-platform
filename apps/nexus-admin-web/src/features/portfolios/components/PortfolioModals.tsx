@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info, Code, BookOpen, Settings } from "lucide-react";
+import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info, Code, BookOpen, Settings, Camera, Upload } from "lucide-react";
 import { Portfolio, PortfolioUpdate } from "../types";
+import Image from "next/image";
 
 // ==========================================
 // Modal Wrapper
@@ -53,7 +54,7 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
 interface PortfolioFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: PortfolioUpdate) => void;
+  onSubmit: (data: PortfolioUpdate, profileImage?: File | null) => void;
   initialData: Portfolio | null;
   isSubmitting: boolean;
 }
@@ -79,6 +80,9 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
     learning_interests: [],
     tools_and_technologies: [],
   });
+
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Helper to manage tag inputs as comma-separated strings
   const [tagInputs, setTagInputs] = useState({
@@ -111,6 +115,8 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
         tools_and_technologies: initialData.tools_and_technologies || [],
       });
 
+      setPreviewUrl(initialData.profile_image || null);
+
       setTagInputs({
         other_links: (initialData.other_links || []).join(", "),
         technical_skills: (initialData.technical_skills || []).join(", "),
@@ -118,7 +124,20 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
         tools_and_technologies: (initialData.tools_and_technologies || []).join(", "),
       });
     }
+    setProfileImage(null);
   }, [initialData, isOpen]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleTagChange = (field: keyof typeof tagInputs, value: string) => {
     setTagInputs(prev => ({ ...prev, [field]: value }));
@@ -128,13 +147,37 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit(formData, profileImage);
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Update Portfolio">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* Profile Image Upload */}
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Profile Image</label>
+            <div className="flex items-center gap-6">
+              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
+                {previewUrl ? (
+                  <Image src={previewUrl} alt="Profile Preview" fill className="object-cover" />
+                ) : (
+                  <Camera size={32} />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="mb-3 text-xs text-gray-500 leading-relaxed">
+                  Upload a profile photo. Best as a square aspect ratio. Max size: 2MB.
+                </p>
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+                  <Upload size={16} />
+                  Choose Photo
+                  <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                </label>
+              </div>
+            </div>
+          </div>
+
           <div>
             <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">First Name</label>
             <input
@@ -365,8 +408,12 @@ export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: Po
         </div>
 
         <div className="flex flex-col sm:flex-row gap-6">
-          <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-sm bg-blue-50 border border-blue-100">
-             <User size={64} className="text-blue-300" />
+          <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center">
+            {portfolio.profile_image ? (
+              <Image src={portfolio.profile_image} alt={fullName} fill className="object-cover" />
+            ) : (
+              <User size={64} className="text-blue-300" />
+            )}
           </div>
           <div className="flex-1">
             <h3 className="text-2xl font-bold text-gray-900">{fullName}</h3>

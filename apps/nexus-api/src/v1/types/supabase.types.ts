@@ -1061,6 +1061,7 @@ export type Database = {
           nickname: string | null
           other_links: string[] | null
           portfolio_url: string | null
+          profile_image: string | null
           program: string | null
           skills_summary: string | null
           technical_skills: string[] | null
@@ -1085,6 +1086,7 @@ export type Database = {
           nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
+          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
           technical_skills?: string[] | null
@@ -1109,6 +1111,7 @@ export type Database = {
           nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
+          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
           technical_skills?: string[] | null

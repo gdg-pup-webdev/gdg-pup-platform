@@ -30,6 +30,7 @@ export type PortfolioProps = {
   toolsAndTechnologies: string[];
 
   isPublic: boolean;
+  profileImage: string | null;
 };
 
 export type PortfolioUpdateProps = Partial<

@@ -39,6 +39,7 @@ const PROFILE_COLUMN_MAPPING: Record<string, keyof UserProfileRow> = {
   learningInterests: "learning_interests",
   toolsAndTechnologies: "tools_and_technologies",
   isPublic: "is_public",
+  profileImage: "profile_image",
 };
 
 export class PortfolioRepository implements IPortfolioRepository {
@@ -92,6 +93,7 @@ export class PortfolioRepository implements IPortfolioRepository {
       toolsAndTechnologies: profile.tools_and_technologies ?? [],
 
       isPublic: profile.is_public ?? false,
+      profileImage: profile.profile_image ?? user?.avatar_url ?? null,
     });
   }
   

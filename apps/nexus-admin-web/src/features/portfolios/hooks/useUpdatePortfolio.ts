@@ -6,20 +6,22 @@ import { extractErrorMessage } from "@/lib/utils";
 
 type UpdatePortfolioInput = {
   portfolioId: string;
-  data: any; // I'll use any for now or I can try to find the DTO type
+  data: any;
+  profileImage?: File | null;
 };
 
 export const useUpdatePortfolio = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ portfolioId, data }: UpdatePortfolioInput) => {
+    mutationFn: async ({ portfolioId, data, profileImage }: UpdatePortfolioInput) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.portfolios.portfolioId.PATCH,
         {
           params: { portfolioId },
           body: { data },
+          files: profileImage ? { profile_image: profileImage } : undefined,
         }
       );
 

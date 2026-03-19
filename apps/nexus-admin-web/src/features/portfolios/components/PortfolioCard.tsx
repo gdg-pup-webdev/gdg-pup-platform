@@ -3,6 +3,7 @@
 import React from "react";
 import { User, Briefcase, GraduationCap, Globe, Mail } from "lucide-react";
 import { Portfolio } from "../types";
+import Image from "next/image";
 
 interface PortfolioCardProps {
   portfolio: Portfolio;
@@ -21,8 +22,12 @@ export function PortfolioCard({ portfolio, onClick }: PortfolioCardProps) {
     >
       {/* Profile Header */}
       <div className="flex h-32 items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100/50">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
-          <User size={32} className="text-blue-500" />
+        <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm border border-white">
+          {portfolio.profile_image ? (
+            <Image src={portfolio.profile_image} alt={fullName} fill className="object-cover" />
+          ) : (
+            <User size={32} className="text-blue-500" />
+          )}
         </div>
       </div>
 

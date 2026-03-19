@@ -6,6 +6,10 @@ import { OpenApiSchemas } from "@packages/typed-rest/shared";
 
 export const body = OpenApiSchemas.Request.Body.withPayload(portfolioUpdateDTO);
 
+export const files = {
+  profile_image: OpenApiSchemas.Models.file(),
+};
+
 export const response = {
   200: OpenApiSchemas.Response.single(portfolioRow),
   ...OpenApiSchemas.Response.standardErrors(),

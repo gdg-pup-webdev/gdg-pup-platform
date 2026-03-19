@@ -55,6 +55,7 @@ export const portfolioRow = cz.object({
   tools_and_technologies: cz.array(cz.string()),
 
   is_public: cz.boolean(),
+  profile_image: cz.string().nullable(),
 });
 
 /**

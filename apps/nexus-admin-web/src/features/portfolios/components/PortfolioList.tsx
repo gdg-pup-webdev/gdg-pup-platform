@@ -40,13 +40,14 @@ export const PortfolioList: React.FC = () => {
     setIsDetailsModalOpen(true);
   };
 
-  const handleFormSubmit = async (data: PortfolioUpdate) => {
+  const handleFormSubmit = async (data: PortfolioUpdate, profileImage?: File | null) => {
     if (!selectedPortfolio) return;
     
     try {
       await updateMutation.mutateAsync({ 
         portfolioId: selectedPortfolio.id, 
-        data 
+        data,
+        profileImage
       });
       toast.success("Portfolio updated successfully");
       setIsFormModalOpen(false);
