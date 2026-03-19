@@ -110,7 +110,7 @@ export class EventRepository implements IEventRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
-      .eq("bevy_event_id", bevyEventId)
+      .eq("gdg_event_id", parseInt(bevyEventId))
       .maybeSingle();
 
     if (error) handlePostgresError(error);

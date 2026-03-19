@@ -1,49 +1,35 @@
-/**
- * API function to create a new team resource
- */
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
-import { contract } from "@packages/nexus-api-contracts"; 
-import { CreateTeamResourceDTO, TeamResourcesException } from "../types";
-import { configs } from "@/lib/constants/configs";
+import { contract } from "@packages/nexus-api-contracts";
+import { CreateTeamResourceDTO } from "../types";
+import { extractErrorMessage } from "@/lib/utils";
 
-/**
- * Create a new team resource
- * 
- * @param data - The team resource data to create
- * @param thumbnail - Optional thumbnail image file
- * @returns Promise resolving to the created team resource response
- * @throws TeamResourcesException if the request fails
- */
-export async function createTeamResource(
-  data: CreateTeamResourceDTO,
-  thumbnail?: File
-) {
-  try {
-    const result = await callEndpoint(
-      configs.nexusApiBaseUrl,
-      contract.api.v1.team_resources.POST,
-      {
-        body: { data: data },
-        files: { thumbnail_image: thumbnail },
-      }
-    );
+const API_URL = "http://localhost:8000";
 
-    if (result.status == 201 && result.body) {
-      return result.body;
-    }
+export const useCreateTeamResource = () => {
+  const queryClient = useQueryClient();
 
-    throw new TeamResourcesException(
-      "Failed to create team resource",
-      "CREATE_ERROR",
-      `Received status ${result.status}`
-    );
-  } catch (error) {
-    if (error instanceof TeamResourcesException) throw error;
-    throw new TeamResourcesException(
-      "An unexpected error occurred while creating team resource",
-      "SERVER_ERROR",
-      error instanceof Error ? error.message : String(error)
-    );
-  }
-}
+  return useMutation({
+    mutationFn: async (data: CreateTeamResourceDTO & { thumbnail?: File }) => {
+      const res = await callEndpoint(API_URL, contract.api.v1.team_resources.POST, {
+        body: {
+          data: {
+            title: data.title,
+            description: data.description,
+            resource_link: data.resource_link,
+            resource_type: data.resource_type,
+            team_name: data.team_name,
+          },
+        },
+        files: data.thumbnail ? { thumbnail: data.thumbnail } : undefined,
+      });
+
+      if (res.status !== 201) throw new Error(extractErrorMessage(res.body));
+
+      return res.body;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-resources"] });
+    },
+  });
+};

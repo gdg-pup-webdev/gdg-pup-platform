@@ -1,44 +1,29 @@
-/**
- * API function to delete a team resource
- */
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
-import { contract } from "@packages/nexus-api-contracts"; 
-import { TeamResourcesException } from "../types";
-import { configs } from "@/lib/constants/configs";
+import { contract } from "@packages/nexus-api-contracts";
+import { extractErrorMessage } from "@/lib/utils";
 
-/**
- * Delete a team resource by its ID
- * 
- * @param id - The unique identifier of the team resource to delete
- * @returns Promise resolving to the deletion confirmation response
- * @throws TeamResourcesException if the request fails
- */
-export async function deleteTeamResource(id: string)  {
-  try {
-    const result = await callEndpoint(
-      configs.nexusApiBaseUrl,
-      contract.api.v1.team_resources.teamResourceId.DELETE,
-      {
-        params: { teamResourceId: id },
-      }
-    );
+const API_URL = "http://localhost:8000";
 
-    if (result.status == 200) {
-      return result.body;
-    }
+export const useDeleteTeamResource = () => {
+  const queryClient = useQueryClient();
 
-    throw new TeamResourcesException(
-      "Failed to delete team resource",
-      "DELETE_ERROR",
-      `Received status ${result.status}`
-    );
-  } catch (error) {
-    if (error instanceof TeamResourcesException) throw error;
-    throw new TeamResourcesException(
-      "An unexpected error occurred while deleting team resource",
-      "SERVER_ERROR",
-      error instanceof Error ? error.message : String(error)
-    );
-  }
-}
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const res = await callEndpoint(
+        API_URL,
+        contract.api.v1.team_resources.resourceId.DELETE,
+        {
+          params: { resourceId: id },
+        },
+      );
+
+      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+
+      return res.body;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-resources"] });
+    },
+  });
+};

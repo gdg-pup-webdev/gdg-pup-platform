@@ -372,7 +372,7 @@ export function EventDetailsModal({ isOpen, onClose, event, onEdit, onDelete }: 
             <div className="mt-3 space-y-1.5">
               <div className="flex items-center text-xs text-gray-600">
                 <Calendar size={14} className="mr-2 text-teal-600" />
-                {new Date(event.start_date).toLocaleString()}
+                {new Date(event.start_date || "").toLocaleString()}
               </div>
               <div className="flex items-center text-xs text-gray-600">
                 <MapPin size={14} className="mr-2 text-teal-600" />

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
+import { extractErrorMessage } from "@/lib/utils";
 
 type CreateEventInput = {
   title: string;
@@ -31,7 +32,7 @@ export const useCreateEvent = () => {
 
       if (res.status === 200) return res.body;
 
-      throw new Error(res.body.message);
+      throw new Error(extractErrorMessage(res.body));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });

@@ -6,7 +6,7 @@ import { IAttendanceRepository } from "./domain/IAttendanceRepository";
 import { IBevyEventService } from "./domain/IBevyEventService";
 import { IEventPointsService } from "./domain/IEventPointsService";
 
-export { Event, Attendance, IEventRepository, IAttendanceRepository, IBevyEventService, IEventPointsService };
+// export { Event, Attendance, IEventRepository, IAttendanceRepository, IBevyEventService, IEventPointsService };
 
 // Use Cases
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
