@@ -5,12 +5,19 @@ import { Loader2, AlertCircle, Zap, ChevronRight } from "lucide-react";
 import { useGetBevyEvents } from "../hooks/useGetBevyEvents";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
 import { BevyEventDetails } from "./BevyEventDetails";
+import { Pagination } from "@/components/admin/Pagination";
 
 export const BevyEventsList: React.FC = () => {
-  const { data, isLoading, isError, error, refetch } = useGetBevyEvents();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const { data: bevyResponse, isLoading, isError, error, refetch } = useGetBevyEvents(page, pageSize);
   const createEventMutation = useCreateEventFromBevyEvent();
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
+  const events = bevyResponse?.data || [];
+  const totalPages = bevyResponse?.meta?.totalPages || 1;
+  const totalRecords = bevyResponse?.meta?.totalRecords || 0;
 
   if (isLoading) {
     return (
@@ -35,8 +42,6 @@ export const BevyEventsList: React.FC = () => {
       </div>
     );
   }
-
-  const events = data?.data || [];
 
   const handleCreateEvent = async (bevyEventId: string) => {
     try {
@@ -120,6 +125,18 @@ export const BevyEventsList: React.FC = () => {
           <h3 className="text-lg font-bold text-gray-900">No Bevy events found</h3>
           <p className="mt-1 text-sm text-gray-500">Check again later for new events from Bevy.</p>
         </div>
+      )}
+
+      {/* Pagination */}
+      {events.length > 0 && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalRecords={totalRecords}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
       )}
 
       {/* Modal */}
