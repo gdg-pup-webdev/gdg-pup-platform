@@ -9,7 +9,7 @@ inputs:
     description: "Target environment (dev, staging, prod)"
     required: true
   gcp-sa-key:
-    description: "GCP service account JSON key (base64 or raw JSON)"
+    description: "GCP service account JSON key (raw JSON)"
     required: true
   gcp-project-id:
     description: "GCP project ID"
@@ -30,13 +30,14 @@ runs:
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v2
       with:
+        # Note: If your secret is base64 encoded, this action usually handles it,
+        # but ensure it is the raw JSON string for best compatibility.
         credentials_json: ${{ inputs.gcp-sa-key }}
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ inputs.gcp-project-id }}
-        region: ${{ inputs.region }}
 
     - name: Deploy to Cloud Run
       id: deploy
@@ -53,48 +54,51 @@ runs:
           --project="${{ inputs.gcp-project-id }}" \
           --quiet
 
-        echo "==> Deployment complete."
-
     - name: Health check
       id: healthcheck
       if: ${{ inputs.health-check-url != '' }}
       shell: bash
       run: |
-        echo "==> Waiting for service to be ready..."
-        sleep 10
-
-        STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 15 "${{ inputs.health-check-url }}")
-
-        if [[ "$STATUS" -ge 200 && "$STATUS" -lt 400 ]]; then
-          echo "==> Health check passed (HTTP $STATUS)"
-        else
-          echo "::error::Health check failed for ${{ inputs.health-check-url }} (HTTP $STATUS)"
-          exit 1
-        fi
+        echo "==> Waiting for service to stabilize..."
+        # Loop to give Cloud Run a few attempts to pass the health check
+        for i in {1..5}; do
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 10 "${{ inputs.health-check-url }}")
+          if [[ "$STATUS" -ge 200 && "$STATUS" -lt 400 ]]; then
+            echo "==> Health check passed (HTTP $STATUS)"
+            exit 0
+          fi
+          echo "==> Attempt $i: Health check returned $STATUS. Retrying in 5s..."
+          sleep 5
+        done
+        echo "::error::Health check failed after 5 attempts."
+        exit 1
 
     - name: Rollback on failure
-      if: ${{ failure() && steps.deploy.outcome == 'failure' || steps.healthcheck.outcome == 'failure' }}
+      # Only rollback if the health check failed after a "successful" deployment.
+      # If the 'deploy' step itself fails, Cloud Run keeps the previous revision active.
+      if: ${{ failure() && steps.healthcheck.outcome == 'failure' }}
       shell: bash
       run: |
         SERVICE_NAME="${{ inputs.service }}-${{ inputs.environment }}"
-        echo "==> Deployment or health check failed, rolling back to previous revision..."
+        echo "==> Health check failed, rolling back to the previous stable revision..."
 
-        # Get the previous revision
+        # Get the previous 'Ready' revision (the one before the broken LATEST)
         PREVIOUS_REVISION=$(gcloud run revisions list \
           --service="$SERVICE_NAME" \
           --region="${{ inputs.region }}" \
           --project="${{ inputs.gcp-project-id }}" \
-          --filter="status=Ready" \
+          --filter="status.conditions.type:Ready AND status.conditions.status:'True'" \
           --format="value(metadata.name)" \
-          | head -n 2 | tail -n 1)
+          --sort-by="~metadata.creationTimestamp" \
+          | sed -n '2p')
 
         if [[ -n "$PREVIOUS_REVISION" ]]; then
-          echo "==> Rolling back to $PREVIOUS_REVISION"
+          echo "==> Rolling back traffic to: $PREVIOUS_REVISION"
           gcloud run services update-traffic "$SERVICE_NAME" \
             --to-revisions="$PREVIOUS_REVISION=100" \
             --region="${{ inputs.region }}" \
             --project="${{ inputs.gcp-project-id }}"
-          echo "==> Rollback complete."
+          echo "==> Rollback to stable version complete."
         else
-          echo "::warning::No previous revision found for rollback"
+          echo "::warning::Could not identify a previous stable revision to roll back to."
         fi
