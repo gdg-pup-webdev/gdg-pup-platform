@@ -1,22 +1,7 @@
-export interface EventHighlight {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  title: string;
-  description: string;
-  content: string;
-  image_url?: string | null;
-  author_id: string;
-  event_id: string;
-}
+import { models } from "@packages/nexus-api-contracts";
 
-export interface EventHighlightInsert {
-  title: string;
-  description: string;
-  content: string;
-  image_url?: string | null;
-  author_id: string;
-  event_id: string;
-}
+export type EventHighlight = models.v1.eventHighlights.record.eventHighlightsRecord;
 
-export interface EventHighlightUpdate extends Partial<EventHighlightInsert> {}
+export type EventHighlightInsert = models.v1.eventHighlights.record.eventHighlightsRecordInsertDTO
+
+export type EventHighlightUpdate = models.v1.eventHighlights.record.eventHighlightsRecordUpdateDTO

@@ -47,7 +47,7 @@ export const EventHighlightCard: React.FC<EventHighlightCardProps> = ({
         <div className="mt-auto pt-4 flex flex-col gap-2 border-t border-gray-100">
           <div className="flex items-center gap-2 text-xs text-gray-400">
             <Calendar size={14} className="shrink-0" />
-            <span>{format(new Date(highlight.created_at), "MMM d, yyyy")}</span>
+            <span>{new Date(highlight.created_at).toDateString()}</span>
           </div>
           
           <div className="flex items-center gap-2 text-xs text-gray-400">
