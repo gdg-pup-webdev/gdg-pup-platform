@@ -58,17 +58,19 @@ jobs:
           fetch-depth: 0
       - name: Detect changes
         id: detect
-        uses: ./.github/workflows/ci.detect-changes
+        uses: ./.github/workflows/ci.detect-changes # Make sure this points to the .yml file if it's a reusable workflow
         with:
           head-sha: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
           head-branch: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'prod' && 'main' || github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'staging' && 'staging' || github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'dev' && 'deploy-develop' || github.event.workflow_run.head_branch }}
 
   deploy-nexus-web:
     name: nexus-web
-    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.nexus-web == 'true' }}
+    # CONSIDATED IF STATEMENT BELOW
+    if: |
+      ((github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch') &&
+      needs.detect-changes.outputs.nexus-web == 'true'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -83,10 +85,12 @@ jobs:
 
   deploy-nexus-api:
     name: nexus-api
-    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.nexus-api == 'true' }}
+    # CONSIDATED IF STATEMENT BELOW
+    if: |
+      ((github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch') &&
+      needs.detect-changes.outputs.nexus-api == 'true'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -101,10 +105,12 @@ jobs:
 
   deploy-identity-api:
     name: identity-api
-    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.identity-api == 'true' }}
+    # CONSIDATED IF STATEMENT BELOW
+    if: |
+      ((github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') || github.event_name == 'workflow_dispatch') &&
+      needs.detect-changes.outputs.identity-api == 'true'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
