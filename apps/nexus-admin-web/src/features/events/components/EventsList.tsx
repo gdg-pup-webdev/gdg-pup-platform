@@ -137,6 +137,16 @@ export const EventsList: React.FC = () => {
         </button>
       </div>
 
+      {/* Pagination */}
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        totalRecords={totalRecords}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
+
       {/* Grid of Cards */}
       {filteredEvents.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -167,16 +177,6 @@ export const EventsList: React.FC = () => {
           )}
         </div>
       )}
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
 
       {/* Modals */}
       <EventFormModal
