@@ -54,8 +54,20 @@ export const BevyEventsList: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Pagination at Top */}
+      {events.length > 0 && (
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalRecords={totalRecords}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
+      )}
+
       {events.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {events.map((event: any) => (
             <div 
               key={event.id}
@@ -67,7 +79,7 @@ export const BevyEventsList: React.FC = () => {
             >
               {/* Banner Image */}
               {event.cover_image_url ? (
-                <div className="relative h-40 bg-gradient-to-b from-gray-200 to-gray-100 overflow-hidden">
+                <div className="relative h-32 bg-gradient-to-b from-gray-200 to-gray-100 overflow-hidden">
                   <img
                     src={event.cover_image_url}
                     alt={event.title}
@@ -76,27 +88,27 @@ export const BevyEventsList: React.FC = () => {
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
                 </div>
               ) : (
-                <div className="flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100">
-                  <Zap size={40} className="text-teal-400" />
+                <div className="flex h-32 items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100">
+                  <Zap size={32} className="text-teal-400" />
                 </div>
               )}
 
               {/* Content */}
-              <div className="flex flex-1 flex-col p-6">
+              <div className="flex flex-1 flex-col p-4">
                 {/* Header with Icon */}
-                <div className="mb-3 flex items-start justify-between">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-teal-50 text-teal-600">
-                    <Zap size={20} />
+                <div className="mb-2 flex items-start justify-between">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-teal-50 text-teal-600">
+                    <Zap size={16} />
                   </div>
-                  <ChevronRight size={20} className="text-gray-300 transition-transform group-hover:translate-x-1" />
+                  <ChevronRight size={16} className="text-gray-300 transition-transform group-hover:translate-x-1" />
                 </div>
 
                 {/* Title and Description */}
-                <h3 className="font-semibold text-gray-900 line-clamp-2">{event.title}</h3>
+                <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm">{event.title}</h3>
                 {event.location && (
-                  <p className="mt-2 text-sm text-gray-600 line-clamp-1">{event.location}</p>
+                  <p className="mt-1 text-xs text-gray-600 line-clamp-1">{event.location}</p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-0.5 text-xs text-gray-500">
                   {new Date(event.start_date).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -111,9 +123,9 @@ export const BevyEventsList: React.FC = () => {
                     handleCreateEvent(event.id);
                   }}
                   disabled={createEventMutation.isPending}
-                  className="mt-auto pt-4 w-full rounded-sm bg-teal-600 px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-teal-700 disabled:bg-teal-300"
+                  className="mt-3 w-full rounded-sm bg-teal-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-teal-700 disabled:bg-teal-300"
                 >
-                  {createEventMutation.isPending ? "Creating..." : "Create Event"}
+                  {createEventMutation.isPending ? "Creating..." : "Create"}
                 </button>
               </div>
             </div>
@@ -125,18 +137,6 @@ export const BevyEventsList: React.FC = () => {
           <h3 className="text-lg font-bold text-gray-900">No Bevy events found</h3>
           <p className="mt-1 text-sm text-gray-500">Check again later for new events from Bevy.</p>
         </div>
-      )}
-
-      {/* Pagination */}
-      {events.length > 0 && (
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          pageSize={pageSize}
-          totalRecords={totalRecords}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-        />
       )}
 
       {/* Modal */}
