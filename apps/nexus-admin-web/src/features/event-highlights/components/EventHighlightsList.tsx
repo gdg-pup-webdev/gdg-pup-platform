@@ -3,9 +3,14 @@
 import React, { useState } from "react";
 import { Loader2, AlertCircle, Search, Plus, Info } from "lucide-react";
 import { useListHighlights } from "../hooks/useListHighlights";
-import { EventHighlight } from "../types";
+import { useCreateHighlight } from "../hooks/useCreateHighlight";
+import { useUpdateHighlight } from "../hooks/useUpdateHighlight";
+import { useDeleteHighlight } from "../hooks/useDeleteHighlight";
+import { EventHighlight, EventHighlightInsert, EventHighlightUpdate } from "../types";
 import { Pagination } from "@/components/admin/Pagination";
 import { EventHighlightCard } from "./EventHighlightCard";
+import { HighlightFormModal, HighlightDetailsModal, DeleteConfirmModal } from "./HighlightModals";
+import { toast } from "react-toastify";
 
 export const EventHighlightsList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -15,19 +20,67 @@ export const EventHighlightsList: React.FC = () => {
   
   // API Hooks
   const { data: highlightsResponse, isLoading, isError, error, refetch } = useListHighlights(page, pageSize, eventIdFilter);
+  const createMutation = useCreateHighlight();
+  const updateMutation = useUpdateHighlight();
+  const deleteMutation = useDeleteHighlight();
+
+  // State for modals
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedHighlight, setSelectedHighlight] = useState<EventHighlight | null>(null);
 
   const highlights = highlightsResponse?.data || [];
   const totalPages = highlightsResponse?.meta?.totalPages || 1;
   const totalRecords = highlightsResponse?.meta?.totalRecords || 0;
 
   const handleCreate = () => {
-    // Logic for create modal would go here
-    alert("Create functionality would open a modal here.");
+    setSelectedHighlight(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleEdit = (highlight: EventHighlight) => {
+    setSelectedHighlight(highlight);
+    setIsDetailsModalOpen(false);
+    setIsFormModalOpen(true);
   };
 
   const handleView = (highlight: EventHighlight) => {
-    // Logic for view/edit modal would go here
-    alert(`Viewing highlight: ${highlight.title}`);
+    setSelectedHighlight(highlight);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleDeleteClick = (highlight: EventHighlight) => {
+    setSelectedHighlight(highlight);
+    setIsDetailsModalOpen(false);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleFormSubmit = async (data: EventHighlightInsert | EventHighlightUpdate) => {
+    try {
+      if (selectedHighlight) {
+        await updateMutation.mutateAsync({ id: selectedHighlight.id, data: data as EventHighlightUpdate });
+        toast.success("Highlight updated successfully");
+      } else {
+        await createMutation.mutateAsync(data as EventHighlightInsert);
+        toast.success("Highlight created successfully");
+      }
+      setIsFormModalOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Operation failed");
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (selectedHighlight) {
+      try {
+        await deleteMutation.mutateAsync(selectedHighlight.id);
+        toast.success("Highlight deleted successfully");
+        setIsDeleteModalOpen(false);
+      } catch (err: any) {
+        toast.error(err.message || "Delete failed");
+      }
+    }
   };
 
   // Filter highlights client-side for search (simple implementation)
@@ -125,6 +178,31 @@ export const EventHighlightsList: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* Modals */}
+      <HighlightFormModal
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        onSubmit={handleFormSubmit}
+        initialData={selectedHighlight}
+        isSubmitting={createMutation.isPending || updateMutation.isPending}
+      />
+
+      <HighlightDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        highlight={selectedHighlight}
+        onEdit={handleEdit}
+        onDelete={handleDeleteClick}
+      />
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        itemName={selectedHighlight?.title || ""}
+        isDeleting={deleteMutation.isPending}
+      />
     </div>
   );
 };
