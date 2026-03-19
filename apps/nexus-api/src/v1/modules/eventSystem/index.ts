@@ -1,20 +1,33 @@
 // Domain & Interfaces
-export { Event } from "./domain/Event";
-export { Attendance } from "./domain/Attendance";
-export { IEventRepository } from "./domain/IEventRepository";
-export { IAttendanceRepository } from "./domain/IAttendanceRepository";
-export { IBevyEventService } from "./domain/IBevyEventService";
-export { IEventPointsService } from "./domain/IEventPointsService";
+import { Event } from "./domain/Event";
+import { Attendance } from "./domain/Attendance";
+import { IEventRepository } from "./domain/IEventRepository";
+import { IAttendanceRepository } from "./domain/IAttendanceRepository";
+import { IBevyEventService } from "./domain/IBevyEventService";
+import { IEventPointsService } from "./domain/IEventPointsService";
+
+export { Event, Attendance, IEventRepository, IAttendanceRepository, IBevyEventService, IEventPointsService };
 
 // Use Cases
-export { CheckinToEvent } from "./useCases/CheckinToEvent";
-export { CreateEvent } from "./useCases/CreateEvent";
-export { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
-export { DeleteEvent } from "./useCases/DeleteEvent";
-export { GetOneEvent } from "./useCases/GetOneEvent";
-export { ListEventAttendees } from "./useCases/ListEventAttendees";
-export { ListEvents } from "./useCases/ListEvents";
-export { UpdateEvent } from "./useCases/UpdateEvent";
+import { CheckinToEvent } from "./useCases/CheckinToEvent";
+import { CreateEvent } from "./useCases/CreateEvent";
+import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
+import { DeleteEvent } from "./useCases/DeleteEvent";
+import { GetOneEvent } from "./useCases/GetOneEvent";
+import { ListEventAttendees } from "./useCases/ListEventAttendees";
+import { ListEvents } from "./useCases/ListEvents";
+import { UpdateEvent } from "./useCases/UpdateEvent";
+
+export {
+  CheckinToEvent,
+  CreateEvent,
+  CreateEventFromBevyEventUseCase,
+  DeleteEvent,
+  GetOneEvent,
+  ListEventAttendees,
+  ListEvents,
+  UpdateEvent,
+};
 
 // Infrastructure (Real implementations)
 import { EventRepository } from "./infrastructure/EventRepository";

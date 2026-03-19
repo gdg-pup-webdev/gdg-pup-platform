@@ -1,6 +1,6 @@
 export * from "./components/EventsList";
-export * from "./components/CreateEventForm";
-export * from "./components/EventDetails";
+export * from "./components/EventModals";
+export * from "./components/EventCard";
 export * from "./hooks/useListEvents";
 export * from "./hooks/useGetOneEvent";
 export * from "./hooks/useCreateEvent";
@@ -9,3 +9,4 @@ export * from "./hooks/useDeleteEvent";
 export * from "./hooks/useListAttendees";
 export * from "./hooks/useCheckinToEvent";
 export * from "./hooks/useCreateEventFromBevyEvent";
+export * from "./types";

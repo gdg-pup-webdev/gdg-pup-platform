@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Users,
   Award,
+  Calendar,
   MessageSquareQuote,
   X,
   Globe,
@@ -70,7 +71,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-16 left-0 z-30 flex h-[calc(100vh-4rem)] w-64 flex-col
+          fixed top-16 left-0 z-30 flex h-[calc(100vh-4rem)] w-64 flex-col shrink-0
           border-r border-gray-200/80 bg-white shadow-xl
           transition-transform duration-300 ease-in-out
           md:static md:z-auto md:h-auto md:self-stretch md:translate-x-0 md:shadow-none
@@ -130,6 +131,11 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             Events
           </p>
           {[
+            {
+              label: "Nexus Events",
+              href: INTERNAL_LINKS.EVENTS,
+              icon: Calendar,
+            },
             {
               label: "Bevy Events",
               href: INTERNAL_LINKS.BEVY_EVENTS,

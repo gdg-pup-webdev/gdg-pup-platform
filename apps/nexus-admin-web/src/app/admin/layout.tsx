@@ -29,7 +29,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         />
 
         {/* Main content area — fills at least the remaining viewport height */}
-        <main className="min-h-[calc(100vh-4rem)] flex-1 p-6 md:p-8">
+        <main className="min-h-[calc(100vh-4rem)] min-w-0 flex-1 p-6 md:p-8">
           <div className="mx-auto max-w-screen-2xl">
             {children}
           </div>
