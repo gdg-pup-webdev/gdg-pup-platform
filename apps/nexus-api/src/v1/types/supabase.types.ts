@@ -1048,13 +1048,19 @@ export type Database = {
         Row: {
           bio: string | null
           created_at: string
+          department: string | null
           github_url: string | null
           id: string
           is_public: boolean
+          learning_interests: string[] | null
           linkedin_url: string | null
+          membership_type: string | null
+          other_links: string[] | null
           portfolio_url: string | null
           program: string | null
           skills_summary: string | null
+          technical_skills: string[] | null
+          tools_and_technologies: string[] | null
           updated_at: string
           user_id: string
           year_level: number | null
@@ -1062,13 +1068,19 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string
+          department?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
+          learning_interests?: string[] | null
           linkedin_url?: string | null
+          membership_type?: string | null
+          other_links?: string[] | null
           portfolio_url?: string | null
           program?: string | null
           skills_summary?: string | null
+          technical_skills?: string[] | null
+          tools_and_technologies?: string[] | null
           updated_at?: string
           user_id: string
           year_level?: number | null
@@ -1076,13 +1088,19 @@ export type Database = {
         Update: {
           bio?: string | null
           created_at?: string
+          department?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
+          learning_interests?: string[] | null
           linkedin_url?: string | null
+          membership_type?: string | null
+          other_links?: string[] | null
           portfolio_url?: string | null
           program?: string | null
           skills_summary?: string | null
+          technical_skills?: string[] | null
+          tools_and_technologies?: string[] | null
           updated_at?: string
           user_id?: string
           year_level?: number | null

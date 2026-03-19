@@ -11,7 +11,10 @@ export class UpdatePortfolioPropertyUseCase {
   ): Promise<Portfolio> {
     const portfolio = await this.portfolioRepository.findById(portfolioId);
 
+    console.log("Found portfolio:", portfolio);
     portfolio.update(updates);
+
+    console.log("Updated portfolio:", portfolio);
 
     return this.portfolioRepository.persistUpdates(portfolio);
   }

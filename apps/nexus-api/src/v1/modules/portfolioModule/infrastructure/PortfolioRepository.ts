@@ -31,9 +31,14 @@ export class PortfolioRepository implements IPortfolioRepository {
     linkedin_url,
     portfolio_url,
     program,
-    skills_summary,
     year_level,
     is_public,
+    membership_type,
+    department,
+    other_links,
+    technical_skills,
+    learning_interests,
+    tools_and_technologies,
     user:user_id (
       id,
       first_name,
@@ -42,14 +47,6 @@ export class PortfolioRepository implements IPortfolioRepository {
       gdg_id
     )
   `;
-
-  private toSkillsArray(value: string | null): string[] {
-    if (!value) return [];
-    return value
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
 
   private toYearAndProgram(
     program: string | null,
@@ -72,7 +69,6 @@ export class PortfolioRepository implements IPortfolioRepository {
 
   private rowToPortfolio(row: PortfolioSelectRow): Portfolio {
     const user = row.user;
-    const skills = this.toSkillsArray(row.skills_summary ?? null);
 
     return Portfolio.hydrate({
       id: row.id,
@@ -84,8 +80,8 @@ export class PortfolioRepository implements IPortfolioRepository {
         [user?.first_name, user?.last_name].filter(Boolean).join(" ") || null,
       nickname: user?.display_name ?? null,
       gdgId: user?.gdg_id ?? null,
-      membershipType: null,
-      department: null,
+      membershipType: row.membership_type ?? null,
+      department: row.department ?? null,
       yearAndProgram: this.toYearAndProgram(
         row.program ?? null,
         row.year_level ?? null,
@@ -96,11 +92,11 @@ export class PortfolioRepository implements IPortfolioRepository {
       githubUrl: row.github_url ?? null,
       linkedinUrl: row.linkedin_url ?? null,
       portfolioWebsiteUrl: row.portfolio_url ?? null,
-      otherLinks: [],
+      otherLinks: row.other_links ?? [],
 
-      technicalSkills: skills,
-      learningInterests: [],
-      toolsAndTechnologies: [],
+      technicalSkills: row.technical_skills ?? [],
+      learningInterests: row.learning_interests ?? [],
+      toolsAndTechnologies: row.tools_and_technologies ?? [],
 
       isPublic: row.is_public ?? false,
     });
@@ -205,17 +201,11 @@ export class PortfolioRepository implements IPortfolioRepository {
       toolsAndTechnologies,
       yearAndProgram,
       isPublic,
+      membershipType,
+      department,
+      otherLinks,
     } = portfolio.props;
 
-    const mergedSkills = Array.from(
-      new Set([
-        ...technicalSkills,
-        ...learningInterests,
-        ...toolsAndTechnologies,
-      ]),
-    );
-    const skillsSummary =
-      mergedSkills.length > 0 ? mergedSkills.join(", ") : null;
     const yearLevel = this.toYearLevel(yearAndProgram);
 
     const { error } = await supabase
@@ -226,9 +216,14 @@ export class PortfolioRepository implements IPortfolioRepository {
         linkedin_url: linkedinUrl,
         portfolio_url: portfolioWebsiteUrl,
         program: yearAndProgram,
-        skills_summary: skillsSummary,
         year_level: yearLevel,
         is_public: isPublic,
+        membership_type: membershipType,
+        department: department,
+        other_links: otherLinks,
+        technical_skills: technicalSkills,
+        learning_interests: learningInterests,
+        tools_and_technologies: toolsAndTechnologies,
       })
       .eq("id", id);
 

@@ -16,7 +16,7 @@ export const useUpdatePortfolio = () => {
     mutationFn: async ({ portfolioId, data }: UpdatePortfolioInput) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.portfolios._portfolioId_.PATCH,
+        contract.api.v1.portfolios.portfolioId.PATCH,
         {
           params: { portfolioId },
           body: { data },

@@ -10,7 +10,7 @@ export const useGetOnePortfolio = (portfolioId: string) => {
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.portfolios._portfolioId_.GET,
+        contract.api.v1.portfolios.portfolioId.GET,
         {
           params: { portfolioId },
         }

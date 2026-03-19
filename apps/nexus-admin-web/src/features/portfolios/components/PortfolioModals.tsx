@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info } from "lucide-react";
+import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info, Code, BookOpen, Settings } from "lucide-react";
 import { Portfolio, PortfolioUpdate } from "../types";
 
 // ==========================================
@@ -71,6 +71,18 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
     linkedin_url: "",
     portfolio_website_url: "",
     is_public: true,
+    other_links: [],
+    technical_skills: [],
+    learning_interests: [],
+    tools_and_technologies: [],
+  });
+
+  // Helper to manage tag inputs as comma-separated strings
+  const [tagInputs, setTagInputs] = useState({
+    other_links: "",
+    technical_skills: "",
+    learning_interests: "",
+    tools_and_technologies: "",
   });
 
   useEffect(() => {
@@ -87,9 +99,26 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
         linkedin_url: initialData.linkedin_url || "",
         portfolio_website_url: initialData.portfolio_website_url || "",
         is_public: initialData.is_public,
+        other_links: initialData.other_links || [],
+        technical_skills: initialData.technical_skills || [],
+        learning_interests: initialData.learning_interests || [],
+        tools_and_technologies: initialData.tools_and_technologies || [],
+      });
+
+      setTagInputs({
+        other_links: (initialData.other_links || []).join(", "),
+        technical_skills: (initialData.technical_skills || []).join(", "),
+        learning_interests: (initialData.learning_interests || []).join(", "),
+        tools_and_technologies: (initialData.tools_and_technologies || []).join(", "),
       });
     }
   }, [initialData, isOpen]);
+
+  const handleTagChange = (field: keyof typeof tagInputs, value: string) => {
+    setTagInputs(prev => ({ ...prev, [field]: value }));
+    const arrayValue = value.split(",").map(v => v.trim()).filter(Boolean);
+    setFormData(prev => ({ ...prev, [field]: arrayValue }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,6 +219,51 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
               onChange={(e) => setFormData({ ...formData, portfolio_website_url: e.target.value })}
             />
           </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Other Links (comma-separated)</label>
+            <input
+              type="text"
+              placeholder="e.g. https://link1.com, https://link2.com"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+              value={tagInputs.other_links}
+              onChange={(e) => handleTagChange("other_links", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Technical Skills (comma-separated)</label>
+            <input
+              type="text"
+              placeholder="e.g. React, Node.js, TypeScript"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+              value={tagInputs.technical_skills}
+              onChange={(e) => handleTagChange("technical_skills", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Learning Interests (comma-separated)</label>
+            <input
+              type="text"
+              placeholder="e.g. AI, Rust, Web3"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+              value={tagInputs.learning_interests}
+              onChange={(e) => handleTagChange("learning_interests", e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Tools & Technologies (comma-separated)</label>
+            <input
+              type="text"
+              placeholder="e.g. Docker, Git, VS Code"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+              value={tagInputs.tools_and_technologies}
+              onChange={(e) => handleTagChange("tools_and_technologies", e.target.value)}
+            />
+          </div>
+
           <div className="flex items-center gap-2 pt-6">
             <input
               type="checkbox"
@@ -325,7 +399,9 @@ export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: Po
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <h4 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Technical Skills</h4>
+                <h4 className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                    <Code size={12} /> Technical Skills
+                </h4>
                 <div className="flex flex-wrap gap-1.5">
                     {portfolio.technical_skills?.length > 0 ? (
                         portfolio.technical_skills.map((skill, i) => (
@@ -339,7 +415,9 @@ export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: Po
                 </div>
             </div>
             <div>
-                <h4 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Learning Interests</h4>
+                <h4 className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                    <BookOpen size={12} /> Learning Interests
+                </h4>
                 <div className="flex flex-wrap gap-1.5">
                     {portfolio.learning_interests?.length > 0 ? (
                         portfolio.learning_interests.map((interest, i) => (
@@ -351,6 +429,23 @@ export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: Po
                         <span className="text-[10px] text-gray-400 italic">None specified</span>
                     )}
                 </div>
+            </div>
+        </div>
+
+        <div className="rounded-sm border border-gray-100 bg-gray-50/50 p-4">
+            <h4 className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                <Settings size={12} /> Tools & Technologies
+            </h4>
+            <div className="flex flex-wrap gap-1.5">
+                {portfolio.tools_and_technologies?.length > 0 ? (
+                    portfolio.tools_and_technologies.map((tool, i) => (
+                        <span key={i} className="rounded-sm border border-gray-100 bg-gray-100 px-2 py-0.5 text-[10px] text-gray-700">
+                            {tool}
+                        </span>
+                    ))
+                ) : (
+                    <span className="text-[10px] text-gray-400 italic">None specified</span>
+                )}
             </div>
         </div>
 
