@@ -1,91 +1,56 @@
-import { Request, Response } from "express";
-import { EventHighlightsController } from "../../modules/eventHighlights/EventHighlightsController";
+import { RequestHandler } from "express";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
+import { contract } from "@packages/nexus-api-contracts";
+import { eventHighlightsController as appController } from "../../modules/eventHighlights";
 
+/**
+ * EventHighlightsHttpController
+ * Presentation layer controller for event highlights.
+ */
 export class EventHighlightsHttpController {
-  constructor(private readonly controller: EventHighlightsController) {}
+  postCreate: RequestHandler = createExpressController(
+    contract.api.v1.event_highlights.POST,
+    async ({ input, output }) => {
+      const result = await appController.createHighlight({
+        title: input.body.data.title,
+        description: input.body.data.description,
+        content: input.body.data.content,
+        imageUrl: input.body.data.image_url ?? undefined,
+        authorId: input.body.data.author_id,
+        eventId: input.body.data.event_id,
+      });
 
-  createHighlight = async (req: Request, res: Response) => {
-    try {
-      const data = await this.controller.createHighlight(req.body.data);
-      res.status(201).json({
+      return output(201, {
         status: "success",
         message: "Event highlight created successfully",
-        data,
+        data: {
+          ...result,
+          image_url: result.imageUrl ?? null,
+        },
       });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "fail",
-        message: error.message,
-      });
-    }
-  };
+    },
+  );
 
-  updateHighlight = async (req: Request, res: Response) => {
-    try {
-      const data = await this.controller.updateHighlight(
-        req.params.id,
-        req.body.data,
-      );
-      res.status(200).json({
-        status: "success",
-        message: "Event highlight updated successfully",
-        data,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "fail",
-        message: error.message,
-      });
-    }
-  };
+  getList: RequestHandler = createExpressController(
+    contract.api.v1.event_highlights.GET,
+    async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+      const eventId = input.query.eventId;
 
-  deleteHighlight = async (req: Request, res: Response) => {
-    try {
-      await this.controller.deleteHighlight(req.params.id);
-      res.status(200).json({
-        status: "success",
-        message: "Event highlight deleted successfully",
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "fail",
-        message: error.message,
-      });
-    }
-  };
-
-  getOneHighlight = async (req: Request, res: Response) => {
-    try {
-      const data = await this.controller.getOneHighlight(req.params.id);
-      res.status(200).json({
-        status: "success",
-        message: "Event highlight fetched successfully",
-        data,
-      });
-    } catch (error: any) {
-      res.status(404).json({
-        status: "fail",
-        message: error.message,
-      });
-    }
-  };
-
-  listHighlights = async (req: Request, res: Response) => {
-    try {
-      const pageNumber = parseInt(req.query.pageNumber as string) || 1;
-      const pageSize = parseInt(req.query.pageSize as string) || 10;
-      const eventId = req.query.eventId as string;
-
-      const { list, count } = await this.controller.listHighlights(
+      const { list, count } = await appController.listHighlights(
         pageNumber,
         pageSize,
         eventId,
       );
 
-      res.status(200).json({
+      return output(200, {
         status: "success",
         message: "Event highlights fetched successfully",
-        data: list,
+        data: list.map((item) => ({
+          ...item,
+          image_url: item.imageUrl ?? null,
+        })),
         meta: {
           totalRecords: count,
           pageSize,
@@ -93,11 +58,57 @@ export class EventHighlightsHttpController {
           totalPages: Math.ceil(count / pageSize),
         },
       });
-    } catch (error: any) {
-      res.status(400).json({
-        status: "fail",
-        message: error.message,
+    },
+  );
+
+  getOne: RequestHandler = createExpressController(
+    contract.api.v1.event_highlights.id.GET,
+    async ({ input, output }) => {
+      const result = await appController.getOneHighlight(input.params.id);
+
+      return output(200, {
+        status: "success",
+        message: "Event highlight fetched successfully",
+        data: {
+          ...result,
+          image_url: result.imageUrl ?? null,
+        },
       });
-    }
-  };
+    },
+  );
+
+  patchUpdate: RequestHandler = createExpressController(
+    contract.api.v1.event_highlights.id.PATCH,
+    async ({ input, output }) => {
+      const result = await appController.updateHighlight(input.params.id, {
+        title: input.body.data.title,
+        description: input.body.data.description,
+        content: input.body.data.content,
+        imageUrl: input.body.data.image_url ?? undefined,
+        authorId: input.body.data.author_id,
+        eventId: input.body.data.event_id,
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Event highlight updated successfully",
+        data: {
+          ...result,
+          image_url: result.imageUrl ?? null,
+        },
+      });
+    },
+  );
+
+  deleteItem: RequestHandler = createExpressController(
+    contract.api.v1.event_highlights.id.DELETE,
+    async ({ input, output }) => {
+      await appController.deleteHighlight(input.params.id);
+
+      return output(200, {
+        status: "success",
+        message: "Event highlight deleted successfully",
+      });
+    },
+  );
 }

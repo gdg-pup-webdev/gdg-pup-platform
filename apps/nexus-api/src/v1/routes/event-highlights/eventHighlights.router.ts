@@ -7,11 +7,11 @@ export class EventHighlightsRouter {
   constructor(private readonly controller: EventHighlightsHttpController) {
     this.router = Router();
 
-    this.router.get("/", this.controller.listHighlights);
-    this.router.post("/", this.controller.createHighlight);
+    this.router.get("/", this.controller.getList);
+    this.router.post("/", this.controller.postCreate);
 
-    this.router.get("/:id", this.controller.getOneHighlight);
-    this.router.patch("/:id", this.controller.updateHighlight);
-    this.router.delete("/:id", this.controller.deleteHighlight);
+    this.router.get("/:id", this.controller.getOne);
+    this.router.patch("/:id", this.controller.patchUpdate);
+    this.router.delete("/:id", this.controller.deleteItem);
   }
 }
