@@ -20,13 +20,15 @@ describe("ListEvents Use Case", () => {
   const seedEvent = async (title: string) => {
     const newEvent = Event.create({
       title: title,
-      description: "Standard description",
-      category: "WebDev",
-      venue: "Online",
-      start_date: new Date("2026-06-01T10:00:00Z"),
-      end_date: new Date("2026-06-01T12:00:00Z"),
-      attendance_points: 10,
+      description: "A test event for unit testing",
+      category: "Testing",
+      venue: "Test Venue",
+      start_date: new Date(),
+      end_date: new Date(),
+      attendance_points: 50,
+      image_url: null,
       bevy_event_id: null,
+      creatorId: "creator_123",
     });
     return await eventRepository.saveNew(newEvent);
   };

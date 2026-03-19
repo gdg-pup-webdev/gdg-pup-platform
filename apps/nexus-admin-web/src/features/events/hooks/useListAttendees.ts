@@ -4,15 +4,16 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
-export const useGetBevyEvent = (gdgId: string) => {
+export const useListAttendees = (eventId: string, pageNumber = 1, pageSize = 10) => {
   return useQuery({
-    queryKey: ["bevy-event", gdgId],
+    queryKey: ["events", "attendees", eventId, pageNumber, pageSize],
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.gdg_scraped_events.gdg_id.GET,
+        contract.api.v1.events.eventId.attendees.GET,
         {
-          params: { gdg_id: gdgId },
+          params: { eventId },
+          query: { pageNumber, pageSize },
         }
       );
 
@@ -20,6 +21,6 @@ export const useGetBevyEvent = (gdgId: string) => {
 
       throw new Error(extractErrorMessage(res.body));
     },
-    enabled: !!gdgId,
+    enabled: !!eventId,
   });
 };
