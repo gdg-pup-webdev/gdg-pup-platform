@@ -5,25 +5,6 @@ import { PortfolioModuleController } from "../../portfolioModule/PortfolioModule
 export class PortfolioServiceAdapter implements ISparkmatesPortfolioService {
   constructor(private readonly portfolioController: PortfolioModuleController) {}
 
-  private toYearAndProgram(
-    program: string | null,
-    yearLevel: number | null,
-  ): string | null {
-    if (!program && (yearLevel === null || yearLevel === undefined)) {
-      return null;
-    }
-
-    if (yearLevel === null || yearLevel === undefined) {
-      return program;
-    }
-
-    if (!program) {
-      return `${yearLevel}`;
-    }
-
-    return `${yearLevel} - ${program}`;
-  }
-
   async getPortfolioByGdgId(gdgId: string): Promise<SparkmatesPublicPortfolio> {
     const portfolio = await this.portfolioController.getPortfolioByGdgId(gdgId);
 
@@ -32,12 +13,15 @@ export class PortfolioServiceAdapter implements ISparkmatesPortfolioService {
       userId: portfolio.userId,
       createdAt: portfolio.createdAt,
       updatedAt: portfolio.updatedAt,
-      fullName: [portfolio.firstName, portfolio.lastName].filter(Boolean).join(" ") || null,
+      firstName: portfolio.firstName,
+      middleName: portfolio.middleName,
+      lastName: portfolio.lastName,
       nickname: portfolio.nickname,
       gdgId: portfolio.gdgId,
       membershipType: portfolio.membershipType,
       department: portfolio.department,
-      yearAndProgram: this.toYearAndProgram(portfolio.program, portfolio.yearLevel),
+      yearLevel: portfolio.yearLevel,
+      program: portfolio.program,
       bio: portfolio.bio,
       githubUrl: portfolio.githubUrl,
       linkedinUrl: portfolio.linkedinUrl,
