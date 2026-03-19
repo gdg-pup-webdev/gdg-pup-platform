@@ -261,6 +261,59 @@ export const publicEventAttendanceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicEventHighlightRowSchema = z.object({
+  author_id: z.string(),
+  content: z.string(),
+  created_at: z.string(),
+  description: z.string(),
+  event_id: z.string(),
+  id: z.string(),
+  image_url: z.string().nullable(),
+  title: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicEventHighlightInsertSchema = z.object({
+  author_id: z.string(),
+  content: z.string(),
+  created_at: z.string().optional(),
+  description: z.string(),
+  event_id: z.string(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  title: z.string(),
+  updated_at: z.string().optional(),
+});
+
+export const publicEventHighlightUpdateSchema = z.object({
+  author_id: z.string().optional(),
+  content: z.string().optional(),
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  event_id: z.string().optional(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  title: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
+export const publicEventHighlightRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("event_highlight_author_id_fkey"),
+    columns: z.tuple([z.literal("author_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("event_highlight_event_id_fkey"),
+    columns: z.tuple([z.literal("event_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("event"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicExternalResourceRowSchema = z.object({
   created_at: z.string(),
   description: z.string().nullable(),

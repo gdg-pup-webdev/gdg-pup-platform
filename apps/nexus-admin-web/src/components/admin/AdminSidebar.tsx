@@ -137,6 +137,11 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               icon: Calendar,
             },
             {
+              label: "Event Highlights",
+              href: INTERNAL_LINKS.EVENT_HIGHLIGHTS,
+              icon: MessageSquareQuote,
+            },
+            {
               label: "Bevy Events",
               href: INTERNAL_LINKS.BEVY_EVENTS,
               icon: MessageSquareQuote,

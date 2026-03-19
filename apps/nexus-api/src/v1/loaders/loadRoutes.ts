@@ -43,9 +43,15 @@ import { TeamResourcesRouter } from "../routes/teamResources/team-resources.rout
 import { eventSystemController } from "@/v1/modules/eventSystem";
 import { EventsHttpController } from "../routes/events/events.controller";
 import { EventsRouter } from "../routes/events/events.router";
+import { eventHighlightsController } from "../modules/eventHighlights";
+import { EventHighlightsHttpController } from "../routes/event-highlights/eventHighlights.controller";
+import { EventHighlightsRouter } from "../routes/event-highlights/eventHighlights.router";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
+
+  const eventHighlightsHttpController = new EventHighlightsHttpController(eventHighlightsController);
+  const eventHighlightsRouter = new EventHighlightsRouter(eventHighlightsHttpController);
 
   const pointsHttpController = new PointsHttpController(pointSystemController);
   const pointsRouter = new PointsRouter(pointsHttpController);
@@ -122,6 +128,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/team-resources", teamResourcesRouter.router);
   app.use("/events", eventsRouter.router);
   app.use("/event-system", eventsRouter.router);
+  app.use("/event-highlights", eventHighlightsRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });
