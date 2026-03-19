@@ -3,7 +3,7 @@ description: "Authenticate with GCP, deploy a new image to Cloud Run, and verify
 
 inputs:
   service:
-    description: "Service name (nexus-web, nexus-api, identity-api, storybook)"
+    description: "Service name (nexus-web, nexus-api, identity-api)"
     required: true
   environment:
     description: "Target environment (dev, staging, prod)"
@@ -38,6 +38,7 @@ runs:
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ inputs.gcp-project-id }}
+        region: ${{ inputs.region }}
 
     - name: Deploy to Cloud Run
       id: deploy

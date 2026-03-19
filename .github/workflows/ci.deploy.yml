@@ -68,6 +68,8 @@ jobs:
     needs: detect-changes
     if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && needs.detect-changes.outputs.nexus-web == 'true') || (github.event_name == 'workflow_dispatch' && needs.detect-changes.outputs.nexus-web == 'true') }}
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -85,6 +87,8 @@ jobs:
     needs: detect-changes
     if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && needs.detect-changes.outputs.nexus-api == 'true') || (github.event_name == 'workflow_dispatch' && needs.detect-changes.outputs.nexus-api == 'true') }}
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.nexus-api == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -102,6 +106,8 @@ jobs:
     needs: detect-changes
     if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && needs.detect-changes.outputs.identity-api == 'true') || (github.event_name == 'workflow_dispatch' && needs.detect-changes.outputs.identity-api == 'true') }}
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.identity-api == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
