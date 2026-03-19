@@ -3,18 +3,21 @@ import { CreateHighlight } from "../useCases/CreateHighlight";
 import { MockEventHighlightRepository } from "../infrastructure/MockEventHighlightRepository";
 import { MockUserService } from "../infrastructure/MockUserService";
 import { MockEventService } from "../infrastructure/MockEventService";
+import { MockEventHighlightStorage } from "../infrastructure/MockEventHighlightStorage";
 
 describe("CreateHighlight Use Case", () => {
   let repo: MockEventHighlightRepository;
   let userService: MockUserService;
   let eventService: MockEventService;
+  let storage: MockEventHighlightStorage;
   let useCase: CreateHighlight;
 
   beforeEach(() => {
     repo = new MockEventHighlightRepository();
     userService = new MockUserService();
     eventService = new MockEventService();
-    useCase = new CreateHighlight(repo, userService, eventService);
+    storage = new MockEventHighlightStorage();
+    useCase = new CreateHighlight(repo, userService, eventService, storage);
   });
 
   it("should create a highlight successfully", async () => {
