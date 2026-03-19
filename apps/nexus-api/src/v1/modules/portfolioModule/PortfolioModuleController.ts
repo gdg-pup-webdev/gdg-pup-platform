@@ -1,4 +1,5 @@
 import { PortfolioUpdateProps } from "./domain/Portfolio";
+import { PortfolioFile } from "./domain/IPortfolioStorage";
 import { GetPortfolioByGdgIdUseCase } from "./useCase/GetPortfolioByGdgIdUseCase";
 import { GetPortfolioByIdUseCase } from "./useCase/GetPortfolioByIdUseCase";
 import { GetPortfolioByNameUseCase } from "./useCase/GetPortfolioByNameUseCase";
@@ -44,7 +45,7 @@ export class PortfolioModuleController {
 
   async updatePortfolioProperty(
     portfolioId: string,
-    updates: PortfolioUpdateProps,
+    updates: Omit<PortfolioUpdateProps, "profileImage"> & { profileImage?: PortfolioFile | string | null },
   ) {
     const portfolio = await this.updatePortfolioPropertyUseCase.execute(
       portfolioId,

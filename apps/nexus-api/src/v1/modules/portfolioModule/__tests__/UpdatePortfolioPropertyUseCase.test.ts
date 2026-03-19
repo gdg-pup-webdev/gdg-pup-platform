@@ -39,7 +39,7 @@ describe("UpdatePortfolioPropertyUseCase", () => {
         buffer: new ArrayBuffer(8),
         name: "test.png",
         type: "image/png",
-      },
+      } as any,
     });
 
     expect(result.props.profileImage).toBe("https://mock-storage.com/test.png");

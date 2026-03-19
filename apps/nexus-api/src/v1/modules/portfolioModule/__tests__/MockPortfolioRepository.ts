@@ -95,6 +95,7 @@ export function buildPortfolioProps(overrides: Partial<PortfolioProps> = {}): Po
     learningInterests: ["AI", "Cloud"],
     toolsAndTechnologies: ["Figma", "GitHub"],
     isPublic: true,
+    profileImage: null,
     ...overrides,
   };
 }

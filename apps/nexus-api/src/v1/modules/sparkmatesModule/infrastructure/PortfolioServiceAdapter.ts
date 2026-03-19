@@ -47,6 +47,7 @@ export class PortfolioServiceAdapter implements ISparkmatesPortfolioService {
       learningInterests: portfolio.learningInterests,
       toolsAndTechnologies: portfolio.toolsAndTechnologies,
       isPublic: portfolio.isPublic,
+      profileImage: portfolio.profileImage,
     };
   }
 

@@ -49,6 +49,7 @@ export type SparkmatesPublicPortfolio = {
   learningInterests: string[];
   toolsAndTechnologies: string[];
   isPublic: boolean;
+  profileImage: string | null;
 };
 
 export type SparkmatesPublicRecord = {

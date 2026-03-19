@@ -13,7 +13,7 @@ type UserRow = Tables<"user">;
 type PortfolioSelectRow = UserProfileRow & {
   user: Pick<
     UserRow,
-    "id" | "first_name" | "last_name" | "display_name" | "gdg_id"
+    "id" | "first_name" | "last_name" | "display_name" | "gdg_id" | "avatar_url"
   > | null;
 };
 
@@ -53,7 +53,8 @@ export class PortfolioRepository implements IPortfolioRepository {
       first_name,
       last_name,
       display_name,
-      gdg_id
+      gdg_id,
+      avatar_url
     )
   `;
 

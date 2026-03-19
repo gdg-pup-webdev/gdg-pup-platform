@@ -11,8 +11,8 @@ export class UpdatePortfolioPropertyUseCase {
 
   async execute(
     portfolioId: string,
-    updates: PortfolioUpdateProps & {
-      profileImage?: PortfolioFile;
+    updates: Omit<PortfolioUpdateProps, "profileImage"> & {
+      profileImage?: PortfolioFile | string | null;
     },
   ): Promise<Portfolio> {
     const portfolio = await this.portfolioRepository.findById(portfolioId);
@@ -21,10 +21,10 @@ export class UpdatePortfolioPropertyUseCase {
       throw new NotFoundError("Portfolio not found.");
     }
 
-    if (updates.profileImage && updates.profileImage.buffer) {
+    if (updates.profileImage && typeof updates.profileImage !== "string" && (updates.profileImage as PortfolioFile).buffer) {
       // If there's an existing profile image, we should probably delete it
       // But for now, let's just upload the new one
-      const uploaded = await this.storage.uploadFile(updates.profileImage);
+      const uploaded = await this.storage.uploadFile(updates.profileImage as PortfolioFile);
       (updates as any).profileImage = uploaded.publicUrl;
     }
 

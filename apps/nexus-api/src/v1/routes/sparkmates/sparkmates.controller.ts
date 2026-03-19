@@ -10,12 +10,15 @@ function toRow(props: any) {
     user_id: props.userId,
     created_at: props.createdAt,
     updated_at: props.updatedAt,
-    full_name: props.fullName,
+    first_name: props.fullName?.split(" ")[0] || null, // Best effort since we only have fullName in SparkmatesPublicPortfolio
+    middle_name: null,
+    last_name: props.fullName?.split(" ").slice(1).join(" ") || null,
     nickname: props.nickname,
     gdg_id: props.gdgId,
     membership_type: props.membershipType,
     department: props.department,
-    year_and_program: props.yearAndProgram,
+    year_level: props.yearAndProgram ? parseInt(props.yearAndProgram.split(" ")[0]) : null,
+    program: props.yearAndProgram ? props.yearAndProgram.split("-").slice(1).join("-").trim() : null,
     bio: props.bio,
     github_url: props.githubUrl,
     linkedin_url: props.linkedinUrl,
@@ -25,6 +28,7 @@ function toRow(props: any) {
     learning_interests: props.learningInterests,
     tools_and_technologies: props.toolsAndTechnologies,
     is_public: props.isPublic,
+    profile_image: props.profileImage,
   };
 }
 
