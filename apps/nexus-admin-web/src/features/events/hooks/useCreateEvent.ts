@@ -25,7 +25,10 @@ export const useCreateEvent = () => {
         contract.api.v1.events.POST,
         {
           body: {
-            data: input,
+            data: {
+              ...input, 
+              bevy_event_id: null, // Ensure bevy_event_id is set to null for manual event creation
+            },
           },
         }
       );
