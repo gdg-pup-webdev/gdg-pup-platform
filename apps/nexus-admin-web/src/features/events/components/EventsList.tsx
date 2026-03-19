@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 
 export const EventsList: React.FC = () => {
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12); // Slightly more for grid
+  const [pageSize, setPageSize] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   
   // API Hooks
