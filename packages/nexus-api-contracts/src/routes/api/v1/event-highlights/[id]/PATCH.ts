@@ -4,7 +4,7 @@ import { OpenApiSchemas } from "@packages/typed-rest/shared";
 export const body = OpenApiSchemas.Request.Body.withPayload(eventHighlightsRecordUpdateDTO);
 
 export const files = {
-  thumbnail_image: OpenApiSchemas.Models.file().optional(),
+  thumbnail_image: OpenApiSchemas.Models.file(),
 };
 
 export const response = {
