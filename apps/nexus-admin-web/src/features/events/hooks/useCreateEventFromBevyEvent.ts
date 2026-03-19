@@ -9,16 +9,21 @@ export const useCreateEventFromBevyEvent = () => {
 
   return useMutation({
     mutationFn: async (bevy_event_id: string) => {
-      const res = await callEndpoint(configs.nexusApiBaseUrl, contract.api.v1.events.from_bevy_event.POST, {
-        body: { bevy_event_id },
-      });
+      const res = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.from_bevy_event.POST,
+        {
+          body: {
+            bevy_event_id,
+          },
+        }
+      );
 
       if (res.status === 201) return res.body;
 
       throw new Error(extractErrorMessage(res.body));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bevy-events"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
     },
   });

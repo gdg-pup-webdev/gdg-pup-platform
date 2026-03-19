@@ -1,60 +1,52 @@
-import { describe, expect, it, beforeEach, vi } from "vitest";
+import { describe, expect, it, beforeEach } from "vitest";
 import { MockEventRepository } from "../../infrastructure/MockEventRepository";
+import { MockBevyEventService } from "../../infrastructure/MockBevyEventService";
 import { CreateEventFromBevyEventUseCase } from "../CreateEventFromBevyEvent";
-import { IBevyEventService, BevyEventDTO } from "../../domain/IBevyEventService";
+
+let eventRepository: MockEventRepository;
+let bevyEventService: MockBevyEventService;
+let useCase: CreateEventFromBevyEventUseCase;
+
+const initializeInstances = () => {
+  eventRepository = new MockEventRepository();
+  bevyEventService = new MockBevyEventService();
+  useCase = new CreateEventFromBevyEventUseCase(eventRepository, bevyEventService);
+};
 
 describe("CreateEventFromBevyEvent Use Case", () => {
-  let eventRepository: MockEventRepository;
-  let bevyEventService: IBevyEventService;
-  let useCase: CreateEventFromBevyEventUseCase;
+  beforeEach(initializeInstances);
 
-  const mockBevyEvent: BevyEventDTO = {
-    id: "bevy-123",
-    title: "Bevy Event Title",
-    description: "Bevy Event Description",
-    event_type: "Workshop",
-    location: "Online",
-    start_date: "2026-03-01T10:00:00Z",
-    end_date: "2026-03-01T12:00:00Z",
-  };
+  it("should successfully create a new event from a bevy event", async () => {
+    bevyEventService.addBevyEvent({
+      id: "bevy-1",
+      title: "Bevy Event",
+      description: "Description",
+      start_date: "2026-03-01T10:00:00Z",
+      end_date: "2026-03-01T12:00:00Z",
+    });
 
-  beforeEach(() => {
-    eventRepository = new MockEventRepository();
-    bevyEventService = {
-      getById: vi.fn().mockResolvedValue(mockBevyEvent),
-    };
-    useCase = new CreateEventFromBevyEventUseCase(
-      eventRepository,
-      bevyEventService,
-    );
-  });
+    const result = await useCase.execute("bevy-1", "user-123");
 
-  it("should create an event from a bevy event", async () => {
-    const result = await useCase.execute("bevy-123");
-
-    expect(result).toBeDefined();
-    expect(result.props.title).toBe(mockBevyEvent.title);
-    expect(result.props.bevy_event_id).toBe("bevy-123");
+    expect(result.props.title).toBe("Bevy Event");
+    expect(result.props.bevy_event_id).toBe("bevy-1");
+    expect(result.props.creatorId).toBe("user-123");
     expect(eventRepository.events.length).toBe(1);
   });
 
-  it("should throw error if event already exists for bevy id", async () => {
-    // Arrange
-    await useCase.execute("bevy-123");
+  it("should throw an error if the bevy event already exists in the repository", async () => {
+    bevyEventService.addBevyEvent({
+      id: "bevy-1",
+      title: "Bevy Event",
+      start_date: "2026-03-01T10:00:00Z",
+      end_date: "2026-03-01T12:00:00Z",
+    });
 
-    // Act & Assert
-    await expect(useCase.execute("bevy-123")).rejects.toThrow(
-      "Event already exists for this bevy event id",
-    );
+    await useCase.execute("bevy-1", "user-123");
+
+    await expect(useCase.execute("bevy-1", "user-123")).rejects.toThrow("Event already exists");
   });
 
-  it("should throw error if bevy event not found", async () => {
-    // Arrange
-    (bevyEventService.getById as any).mockResolvedValue(undefined);
-
-    // Act & Assert
-    await expect(useCase.execute("non-existent")).rejects.toThrow(
-      "Bevy Event not found",
-    );
+  it("should throw an error if the bevy event is not found", async () => {
+    await expect(useCase.execute("non-existent", "user-123")).rejects.toThrow("Bevy Event not found");
   });
 });

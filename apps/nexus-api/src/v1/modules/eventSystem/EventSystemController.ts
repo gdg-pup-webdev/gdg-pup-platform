@@ -10,14 +10,14 @@ import { UpdateEvent } from "./useCases/UpdateEvent";
 
 export class EventSystemController {
   constructor(
-    private checkinToEventUseCase: CheckinToEvent,
-    private createEventUseCase: CreateEvent,
-    private createEventFromBevyEventUseCase: CreateEventFromBevyEventUseCase,
-    private DeleteEventUseCase: DeleteEvent,
-    private getOneEventUseCase: GetOneEvent,
-    private listEventAttendeesUseCase: ListEventAttendees,
-    private listEventsUseCase: ListEvents,
-    private updateEventUseCase: UpdateEvent,
+    private readonly checkinToEventUseCase: CheckinToEvent,
+    private readonly createEventUseCase: CreateEvent,
+    private readonly createEventFromBevyEventUseCase: CreateEventFromBevyEventUseCase,
+    private readonly deleteEventUseCase: DeleteEvent,
+    private readonly getOneEventUseCase: GetOneEvent,
+    private readonly listEventAttendeesUseCase: ListEventAttendees,
+    private readonly listEventsUseCase: ListEvents,
+    private readonly updateEventUseCase: UpdateEvent,
   ) {}
 
   async checkinToEvent(eventId: string, userId: string, checkInMethod: string) {
@@ -38,6 +38,7 @@ export class EventSystemController {
   }
 
   async createEvent(
+    creatorId: string,
     title: string,
     description: string,
     category: string,
@@ -45,8 +46,10 @@ export class EventSystemController {
     start_date: string,
     end_date: string,
     attendance_points: number,
+    image_url: string | null = null,
   ) {
     const result = await this.createEventUseCase.execute({
+      creatorId: creatorId,
       title: title,
       description: description,
       category: category,
@@ -55,12 +58,14 @@ export class EventSystemController {
       end_date: new Date(end_date),
       attendance_points: attendance_points,
       bevy_event_id: null,
+      image_url: image_url,
     });
 
     return {
       id: result.props.id,
       createdAt: result.props.createdAt.toISOString(),
       updatedAt: result.props.updatedAt.toISOString(),
+      creatorId: result.props.creatorId,
       title: result.props.title,
       description: result.props.description,
       category: result.props.category,
@@ -70,17 +75,21 @@ export class EventSystemController {
       attendance_points: result.props.attendance_points,
       attendees_count: result.props.attendees_count,
       bevy_event_id: result.props.bevy_event_id,
+      image_url: result.props.image_url,
     };
   }
 
-  async createEventFromBevyEvent(bevyEventId: string) {
-    const result =
-      await this.createEventFromBevyEventUseCase.execute(bevyEventId);
+  async createEventFromBevyEvent(bevyEventId: string, creatorId: string) {
+    const result = await this.createEventFromBevyEventUseCase.execute(
+      bevyEventId,
+      creatorId,
+    );
 
     return {
       id: result.props.id,
       createdAt: result.props.createdAt.toISOString(),
       updatedAt: result.props.updatedAt.toISOString(),
+      creatorId: result.props.creatorId,
       title: result.props.title,
       description: result.props.description,
       category: result.props.category,
@@ -90,11 +99,12 @@ export class EventSystemController {
       attendance_points: result.props.attendance_points,
       attendees_count: result.props.attendees_count,
       bevy_event_id: result.props.bevy_event_id,
+      image_url: result.props.image_url,
     };
   }
 
   async deleteEvent(eventId: string) {
-    const result = await this.DeleteEventUseCase.execute(eventId);
+    const result = await this.deleteEventUseCase.execute(eventId);
     return result;
   }
 
@@ -104,6 +114,7 @@ export class EventSystemController {
       id: result.props.id,
       createdAt: result.props.createdAt.toISOString(),
       updatedAt: result.props.updatedAt.toISOString(),
+      creatorId: result.props.creatorId,
       title: result.props.title,
       description: result.props.description,
       category: result.props.category,
@@ -113,6 +124,7 @@ export class EventSystemController {
       attendance_points: result.props.attendance_points,
       attendees_count: result.props.attendees_count,
       bevy_event_id: result.props.bevy_event_id,
+      image_url: result.props.image_url,
     };
   }
 
@@ -128,6 +140,7 @@ export class EventSystemController {
     );
     return {
       list: result.list.map((attendee) => ({
+        id: attendee.props.id,
         userId: attendee.props.userId,
         eventId: attendee.props.eventId,
         checkInMethod: attendee.props.checkInMethod,
@@ -144,6 +157,7 @@ export class EventSystemController {
         id: event.props.id,
         createdAt: event.props.createdAt.toISOString(),
         updatedAt: event.props.updatedAt.toISOString(),
+        creatorId: event.props.creatorId,
         title: event.props.title,
         description: event.props.description,
         category: event.props.category,
@@ -153,6 +167,7 @@ export class EventSystemController {
         attendance_points: event.props.attendance_points,
         attendees_count: event.props.attendees_count,
         bevy_event_id: event.props.bevy_event_id,
+        image_url: event.props.image_url,
       })),
       count: result.count,
     };
@@ -164,6 +179,7 @@ export class EventSystemController {
       id: result.props.id,
       createdAt: result.props.createdAt.toISOString(),
       updatedAt: result.props.updatedAt.toISOString(),
+      creatorId: result.props.creatorId,
       title: result.props.title,
       description: result.props.description,
       category: result.props.category,
@@ -173,6 +189,7 @@ export class EventSystemController {
       attendance_points: result.props.attendance_points,
       attendees_count: result.props.attendees_count,
       bevy_event_id: result.props.bevy_event_id,
+      image_url: result.props.image_url,
     };
   }
 }

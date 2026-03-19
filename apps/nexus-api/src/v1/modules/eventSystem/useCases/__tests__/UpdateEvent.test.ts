@@ -19,14 +19,16 @@ describe("UpdateEvent Use Case", () => {
   // Helper to seed an event so we can update it
   const seedEvent = async () => {
     const newEvent = Event.create({
-      title: "Initial Study Jam",
-      description: "Old description",
-      category: "WebDev",
-      venue: "TBA",
-      start_date: new Date("2026-05-01T10:00:00Z"),
-      end_date: new Date("2026-05-01T12:00:00Z"),
-      attendance_points: 20,
+      title: "Test Event",
+      description: "A test event for unit testing",
+      category: "Testing",
+      venue: "Test Venue",
+      start_date: new Date(),
+      end_date: new Date(),
+      attendance_points: 50,
+      image_url: null,
       bevy_event_id: null,
+      creatorId: "creator_123",
     });
     return await eventRepository.saveNew(newEvent);
   };

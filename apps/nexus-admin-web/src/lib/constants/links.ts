@@ -9,6 +9,7 @@ export const INTERNAL_LINKS = {
   TEAMS: "/admin/teams",
   FILES: "/admin/files",
   TEAM_RESOURCES: "/admin/team-resources",
+  EVENTS: "/admin/events",
   BEVY_EVENTS: "/admin/bevy-events",
   LOGIN: "/admin/login",
 } as const;
