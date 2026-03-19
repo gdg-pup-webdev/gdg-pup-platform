@@ -3,7 +3,7 @@ description: "Authenticate with GCP, deploy a new image to Cloud Run, and verify
 
 inputs:
   service:
-    description: "Service name (nexus-web, nexus-api, identity-api, storybook)"
+    description: "Service name (nexus-web, nexus-api, identity-api)"
     required: true
   environment:
     description: "Target environment (dev, staging, prod)"
@@ -13,7 +13,8 @@ inputs:
     required: true
   gcp-project-id:
     description: "GCP project ID"
-    required: true
+    required: false
+    default: "gdgpup-484914"
   region:
     description: "Cloud Run region"
     required: false
@@ -35,8 +36,10 @@ runs:
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ inputs.gcp-project-id }}
+        region: ${{ inputs.region }}
 
     - name: Deploy to Cloud Run
+      id: deploy
       shell: bash
       run: |
         SERVICE_NAME="${{ inputs.service }}-${{ inputs.environment }}"
@@ -53,6 +56,7 @@ runs:
         echo "==> Deployment complete."
 
     - name: Health check
+      id: healthcheck
       if: ${{ inputs.health-check-url != '' }}
       shell: bash
       run: |
@@ -66,4 +70,31 @@ runs:
         else
           echo "::error::Health check failed for ${{ inputs.health-check-url }} (HTTP $STATUS)"
           exit 1
+        fi
+
+    - name: Rollback on failure
+      if: ${{ failure() && steps.deploy.outcome == 'failure' || steps.healthcheck.outcome == 'failure' }}
+      shell: bash
+      run: |
+        SERVICE_NAME="${{ inputs.service }}-${{ inputs.environment }}"
+        echo "==> Deployment or health check failed, rolling back to previous revision..."
+
+        # Get the previous revision
+        PREVIOUS_REVISION=$(gcloud run revisions list \
+          --service="$SERVICE_NAME" \
+          --region="${{ inputs.region }}" \
+          --project="${{ inputs.gcp-project-id }}" \
+          --filter="status=Ready" \
+          --format="value(metadata.name)" \
+          | head -n 2 | tail -n 1)
+
+        if [[ -n "$PREVIOUS_REVISION" ]]; then
+          echo "==> Rolling back to $PREVIOUS_REVISION"
+          gcloud run services update-traffic "$SERVICE_NAME" \
+            --to-revisions="$PREVIOUS_REVISION=100" \
+            --region="${{ inputs.region }}" \
+            --project="${{ inputs.gcp-project-id }}"
+          echo "==> Rollback complete."
+        else
+          echo "::warning::No previous revision found for rollback"
         fi
