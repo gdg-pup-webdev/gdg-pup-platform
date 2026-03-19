@@ -1,0 +1,207 @@
+import { RequestHandler } from "express";
+import { createExpressController } from "@packages/typed-rest/serverExpress";
+import { contract } from "@packages/nexus-api-contracts";
+import { EventSystemController } from "@/v1/modules/eventSystem";
+
+export class EventsHttpController {
+  constructor(private readonly eventSystemController: EventSystemController) {}
+
+  listEvents: RequestHandler = createExpressController(
+    contract.api.v1.events.GET,
+    async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+
+      const { list, count } = await this.eventSystemController.listEvents(
+        pageNumber,
+        pageSize,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Events fetched successfully",
+        data: list.map((e) => ({
+          ...e,
+          creator_id: e.creatorId,
+        })),
+        meta: {
+          totalRecords: count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(count / pageSize),
+        },
+      });
+    },
+  );
+
+  createEvent: RequestHandler = createExpressController(
+    contract.api.v1.events.POST,
+    async ({ input, output, ctx }) => {
+      const { req } = ctx;
+      const creatorId = req.user?.id || "anonymous";
+
+      const result = await this.eventSystemController.createEvent(
+        creatorId,
+        input.body.data.title,
+        input.body.data.description || "",
+        input.body.data.category || "",
+        input.body.data.venue || "",
+        input.body.data.start_date || new Date().toISOString(),
+        input.body.data.end_date || new Date().toISOString(),
+        input.body.data.attendance_points,
+        input.body.data.image_url,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Event created successfully",
+        data: {
+          ...result,
+          creator_id: result.creatorId,
+        },
+      });
+    },
+  );
+
+  getOne: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.GET,
+    async ({ input, output }) => {
+      const result = await this.eventSystemController.getOneEvent(
+        input.params.eventId,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Event fetched successfully",
+        data: {
+          ...result,
+          creator_id: result.creatorId,
+        },
+      });
+    },
+  );
+
+  updateEvent: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.PATCH,
+    async ({ input, output }) => {
+      const result = await this.eventSystemController.updateEvent(
+        input.params.eventId,
+        {
+          title: input.body.data.title,
+          description: input.body.data.description ?? undefined,
+          category: input.body.data.category ?? undefined,
+          venue: input.body.data.venue ?? undefined,
+          start_date: input.body.data.start_date
+            ? new Date(input.body.data.start_date)
+            : undefined,
+          end_date: input.body.data.end_date
+            ? new Date(input.body.data.end_date)
+            : undefined,
+          attendance_points: input.body.data.attendance_points,
+          image_url: input.body.data.image_url,
+        },
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Event updated successfully",
+        data: {
+          ...result,
+          creator_id: result.creatorId,
+        },
+      });
+    },
+  );
+
+  deleteEvent: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.DELETE,
+    async ({ input, output }) => {
+      await this.eventSystemController.deleteEvent(input.params.eventId);
+
+      return output(200, {
+        status: "success",
+        message: "Event deleted successfully",
+        data: true,
+      });
+    },
+  );
+
+  checkin: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.attendees.POST,
+    async ({ input, output }) => {
+      const result = await this.eventSystemController.checkinToEvent(
+        input.params.eventId,
+        input.body.data.attendeeId,
+        input.body.data.checkinMethod,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Check-in successful",
+        data: {
+          id: result.eventId + "_" + result.userId, // Fake ID for row
+          event_id: result.eventId,
+          user_id: result.userId,
+          checkin_method: result.checkInMethod,
+          is_present: true,
+          created_at: result.checkedInAt,
+        },
+      });
+    },
+  );
+
+  listAttendees: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.attendees.GET,
+    async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+
+      const { list, count } = await this.eventSystemController.listEventAttendees(
+        pageNumber,
+        pageSize,
+        input.params.eventId,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Attendees fetched successfully",
+        data: list.map((a) => ({
+          id: a.id,
+          event_id: a.eventId,
+          user_id: a.userId,
+          checkin_method: a.checkInMethod,
+          is_present: true,
+          created_at: a.checkedInAt,
+        })),
+        meta: {
+          totalRecords: count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(count / pageSize),
+        },
+      });
+    },
+  );
+
+  createFromBevy: RequestHandler = createExpressController(
+    contract.api.v1.eventSystem.event.from_bevy_event.POST,
+    async ({ input, output, ctx }) => {
+      const { req } = ctx;
+      const creatorId = req.user?.id || "anonymous";
+
+      const result = await this.eventSystemController.createEventFromBevyEvent(
+        input.body.bevy_event_id,
+        creatorId,
+      );
+
+      return output(201, {
+        status: "success",
+        message: "Event created from Bevy successfully",
+        data: {
+          ...result,
+          creator_id: result.creatorId,
+        },
+      });
+    },
+  );
+}
