@@ -11,15 +11,15 @@ export class RolesRouter {
 
     this.router.get("/", this.rolesHttpController.listRoles);
     this.router.post("/", this.rolesHttpController.createRole);
-    this.router.delete("/:roleName", this.rolesHttpController.deleteRole);
-    this.router.get("/:roleName", this.rolesHttpController.getOne);
+    this.router.delete("/:roleId", this.rolesHttpController.deleteRole);
+    this.router.get("/:roleId", this.rolesHttpController.getOne);
 
     this.router.post(
-      "/:roleName/permissions",
+      "/:roleId/permissions",
       this.rolesHttpController.addPermission,
     );
     this.router.patch(
-      "/:roleName/permissions",
+      "/:roleId/permissions",
       this.rolesHttpController.deletePermission,
     );
   }
