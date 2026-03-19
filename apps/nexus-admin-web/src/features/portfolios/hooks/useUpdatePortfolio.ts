@@ -4,9 +4,11 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
+import { PortfolioUpdate } from "../types";
+
 type UpdatePortfolioInput = {
   portfolioId: string;
-  data: any;
+  data: PortfolioUpdate;
   profileImage?: File | null;
 };
 
@@ -21,7 +23,7 @@ export const useUpdatePortfolio = () => {
         {
           params: { portfolioId },
           body: { data },
-          files: profileImage ? { profile_image: profileImage } : undefined,
+          files: { profile_image: profileImage || undefined },
         }
       );
 

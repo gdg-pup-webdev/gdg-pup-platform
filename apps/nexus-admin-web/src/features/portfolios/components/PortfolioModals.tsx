@@ -140,9 +140,9 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
   };
 
   const handleTagChange = (field: keyof typeof tagInputs, value: string) => {
-    setTagInputs(prev => ({ ...prev, [field]: value }));
+    setTagInputs((prev: typeof tagInputs) => ({ ...prev, [field]: value }));
     const arrayValue = value.split(",").map(v => v.trim()).filter(Boolean);
-    setFormData(prev => ({ ...prev, [field]: arrayValue }));
+    setFormData((prev: PortfolioUpdate) => ({ ...prev, [field]: arrayValue }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
