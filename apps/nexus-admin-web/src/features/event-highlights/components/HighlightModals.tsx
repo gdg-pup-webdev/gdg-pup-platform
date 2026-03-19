@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Loader2, AlertTriangle, Calendar, User, Info, Edit2, Trash2, Image as ImageIcon, Type, FileText } from "lucide-react";
+import { X, Loader2, AlertTriangle, Calendar, User, Info, Edit2, Trash2, Image as ImageIcon, Type, FileText, Search, MapPin } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { EventHighlight, EventHighlightInsert, EventHighlightUpdate } from "../types";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
+import { useSearchUsers } from "@/features/users/hooks/useSearchUsers";
+import { Pagination } from "@/components/admin/Pagination";
 
 // ==========================================
 // Modal Wrapper (Mirroring EventModals)
@@ -51,6 +53,163 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
 }
 
 // ==========================================
+// Event Selection Modal
+// ==========================================
+interface EventSearchModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (event: any) => void;
+}
+
+export function EventSearchModal({ isOpen, onClose, onSelect }: EventSearchModalProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const { data: eventsResponse, isLoading } = useListEvents(page, pageSize);
+
+  const events = eventsResponse?.data || [];
+  const totalPages = eventsResponse?.meta?.totalPages || 1;
+  const totalRecords = eventsResponse?.meta?.totalRecords || 0;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Select Nexus Event">
+      <div className="space-y-4">
+        {isLoading ? (
+          <div className="flex h-40 items-center justify-center">
+            <Loader2 size={32} className="animate-spin text-teal-600" />
+          </div>
+        ) : events.length > 0 ? (
+          <div className="space-y-2">
+            <div className="divide-y divide-gray-100 rounded-sm border border-gray-100 bg-white shadow-sm">
+              {events.map((event: any) => (
+                <button
+                  key={event.id}
+                  onClick={() => {
+                    onSelect(event);
+                    onClose();
+                  }}
+                  className="flex w-full flex-col p-4 text-left hover:bg-teal-50 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-bold text-gray-900">{event.title}</span>
+                    <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-600 uppercase">
+                      {event.category}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={12} className="text-teal-600" />
+                      {new Date(event.start_date).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin size={12} className="text-teal-600" />
+                      <span className="truncate max-w-[150px]">{event.venue || "TBA"}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalRecords={totalRecords}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center p-12 text-center">
+            <Calendar size={32} className="mb-3 text-gray-300" />
+            <p className="text-sm text-gray-500">No events found.</p>
+          </div>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+// ==========================================
+// User Selection Modal
+// ==========================================
+interface UserSearchModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (user: any) => void;
+}
+
+export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalProps) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data: usersResponse, isLoading } = useSearchUsers(searchQuery);
+
+  const users = usersResponse?.data || [];
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Select Author">
+      <div className="space-y-4">
+        <div className="relative">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            autoFocus
+            type="text"
+            placeholder="Search by name or email..."
+            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none focus:border-teal-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {isLoading ? (
+          <div className="flex h-40 items-center justify-center">
+            <Loader2 size={32} className="animate-spin text-teal-600" />
+          </div>
+        ) : users.length > 0 ? (
+          <div className="divide-y divide-gray-100 rounded-sm border border-gray-100 bg-white shadow-sm max-h-[400px] overflow-y-auto">
+            {users.map((user: any) => (
+              <button
+                key={user.id}
+                onClick={() => {
+                  onSelect(user);
+                  onClose();
+                }}
+                className="flex w-full items-center gap-3 p-4 text-left hover:bg-teal-50 transition-colors"
+              >
+                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                  {user.avatar_url ? (
+                    <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-gray-400">
+                      <User size={20} />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-900 truncate">{user.display_name}</p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+                <span className="text-[10px] font-mono text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border">
+                  {user.id.slice(0, 8)}...
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : searchQuery.length >= 2 ? (
+          <div className="flex flex-col items-center justify-center p-12 text-center">
+            <User size={32} className="mb-3 text-gray-300" />
+            <p className="text-sm text-gray-500">No users found for "{searchQuery}".</p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center p-12 text-center text-gray-400">
+            <Search size={32} className="mb-3 opacity-20" />
+            <p className="text-sm">Type at least 2 characters to search.</p>
+          </div>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+// ==========================================
 // Highlight Form Modal (Create / Update)
 // ==========================================
 interface HighlightFormModalProps {
@@ -71,7 +230,11 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
     event_id: "",
   });
 
-  const { data: eventsResponse, isLoading: isEventsLoading } = useListEvents(1, 100);
+  const [selectedEventTitle, setSelectedEventTitle] = useState("");
+  const [selectedAuthorName, setSelectedAuthorName] = useState("");
+
+  const [isEventSearchOpen, setIsEventSearchOpen] = useState(false);
+  const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -83,6 +246,8 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
         author_id: initialData.author_id,
         event_id: initialData.event_id,
       });
+      setSelectedEventTitle("Currently selected event"); // We don't have the title in record, maybe just show the ID or fetch it
+      setSelectedAuthorName("Currently selected author");
     } else {
       setFormData({
         title: "",
@@ -92,109 +257,140 @@ export function HighlightFormModal({ isOpen, onClose, onSubmit, initialData, isS
         author_id: "",
         event_id: "",
       });
+      setSelectedEventTitle("");
+      setSelectedAuthorName("");
     }
   }, [initialData, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.event_id || !formData.author_id) {
+      alert("Please select an event and an author.");
+      return;
+    }
     onSubmit(formData);
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Highlight" : "Create Highlight"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Title</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            />
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Highlight" : "Create Highlight"}>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Title</label>
+              <input
+                required
+                type="text"
+                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              />
+            </div>
+            
+            <div className="sm:col-span-1">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event</label>
+              <div className="flex gap-2">
+                <div className="flex-1 rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600 truncate">
+                  {selectedEventTitle || (formData.event_id ? `ID: ${formData.event_id.slice(0,8)}...` : "None selected")}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEventSearchOpen(true)}
+                  className="flex items-center justify-center rounded-sm bg-[#0B1F3B] px-3 text-white hover:bg-[#0B1F3B]/90"
+                >
+                  <Search size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="sm:col-span-1">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Author</label>
+              <div className="flex gap-2">
+                <div className="flex-1 rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600 truncate">
+                  {selectedAuthorName || (formData.author_id ? `ID: ${formData.author_id.slice(0,8)}...` : "None selected")}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsUserSearchOpen(true)}
+                  className="flex items-center justify-center rounded-sm bg-[#0B1F3B] px-3 text-white hover:bg-[#0B1F3B]/90"
+                >
+                  <Search size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Description</label>
+              <textarea
+                required
+                rows={2}
+                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Content (Markdown)</label>
+              <textarea
+                required
+                rows={8}
+                className="w-full font-mono rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+                value={formData.content}
+                placeholder="# Use Markdown here..."
+                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Image URL</label>
+              <input
+                type="text"
+                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+                value={formData.image_url || ""}
+                onChange={(e) => setFormData({ ...formData, image_url: e.target.value || null })}
+              />
+            </div>
           </div>
           
-          <div className="sm:col-span-1">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event</label>
-            <select
-              required
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.event_id}
-              onChange={(e) => setFormData({ ...formData, event_id: e.target.value })}
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
             >
-              <option value="">Select an event</option>
-              {eventsResponse?.data.map((event: any) => (
-                <option key={event.id} value={event.id}>{event.title}</option>
-              ))}
-            </select>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex items-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 disabled:opacity-50"
+            >
+              {isSubmitting && <Loader2 size={16} className="animate-spin" />}
+              {initialData ? "Save Changes" : "Create Highlight"}
+            </button>
           </div>
+        </form>
+      </Modal>
 
-          <div className="sm:col-span-1">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Author ID</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              placeholder="UUID or ID"
-              value={formData.author_id}
-              onChange={(e) => setFormData({ ...formData, author_id: e.target.value })}
-            />
-          </div>
+      <EventSearchModal
+        isOpen={isEventSearchOpen}
+        onClose={() => setIsEventSearchOpen(false)}
+        onSelect={(event) => {
+          setFormData({ ...formData, event_id: event.id });
+          setSelectedEventTitle(event.title);
+        }}
+      />
 
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Description</label>
-            <textarea
-              required
-              rows={2}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Content (Markdown)</label>
-            <textarea
-              required
-              rows={8}
-              className="w-full font-mono rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.content}
-              placeholder="# Use Markdown here..."
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Image URL</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.image_url || ""}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value || null })}
-            />
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            {initialData ? "Save Changes" : "Create Highlight"}
-          </button>
-        </div>
-      </form>
-    </Modal>
+      <UserSearchModal
+        isOpen={isUserSearchOpen}
+        onClose={() => setIsUserSearchOpen(false)}
+        onSelect={(user) => {
+          setFormData({ ...formData, author_id: user.id });
+          setSelectedAuthorName(user.display_name);
+        }}
+      />
+    </>
   );
 }
 
