@@ -259,6 +259,31 @@ export const ASSETS = {
         SIGNIN_LOGO: "/auth/auth-signin-logo.webp",
         SIGNIN_HORIZON: "/auth/auth-signin-horizon.webp",
     },
+    MEMBER_SHOWCASE: {
+        ACHIEVEMENTS: {
+            CICADA: "/member-showcase/member-showcase-cicada.webp",
+            OMAGAD: "/member-showcase/member-showcase-omagad.webp",
+            SPARKPLUG: "/member-showcase/member-showcase-sparkplug.webp",
+        },
+        BACKGROUND: {
+            ORANGE_COLOR: "/member-showcase/member-showcase-orange-color.webp",
+            GREEN_COLOR: "/member-showcase/member-showcase-green-color.webp",
+            STARS_1: "/member-showcase/member-showcase-stars-1.webp",
+            STARS_2: "/member-showcase/member-showcase-stars-2.webp",
+            GDG_SHADOW: "/member-showcase/member-showcase-gdg.webp",
+            VECTOR_1296: "/member-showcase/member-showcase-vector-1296.webp",
+            VECTOR_1297: "/member-showcase/member-showcase-vector-1297.webp",
+            VECTOR_1298: "/member-showcase/member-showcase-vector-1298.webp",
+        },
+        SUBMIT_STORY: {
+            SPARKY_CIRBY: "/member-showcase/member-showcase-sparky-and-cirby-1-1.webp",
+        },
+        ICONS: {
+            LINK: "/member-showcase/member-showcase-link.svg",
+            SPOTLIGHT_PLACEHOLDER: "/member-showcase/member-showcase-spotlight-placeholder.svg",
+            SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.svg",
+        },
+    },
     PROFILE: {},
     SPARKY_POINTS: {
         SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
