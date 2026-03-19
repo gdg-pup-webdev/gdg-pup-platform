@@ -1,8 +1,4 @@
 /* For improvements:
- *
- * Revamp the whole page because this is just the initial design.
- * Add decorative elements based on figma
- * Proper image sizing and optimization
  * Add real links to the Read More buttons when article pages are built
  * Update "Join Our Journey" href when a dedicated join page is created
  */
@@ -503,19 +499,19 @@ export function HistorySection() {
 {/* Orbital rings */}
 <div className="absolute pointer-events-none"
   style={{ top: "12%", left: "50%", transform: "translateX(-50%)", width: "70%", opacity: 0.9 }}>
-  <Image src="/pages/about/history/orbital-rings.png" alt="" width={900} height={900} className="w-full h-auto" />
+  <Image src="/about/history/bg-orbital-rings.png" alt="" width={900} height={900} className="w-full h-auto" />
 </div>
 
 {/* Gear */}
 <div className="absolute pointer-events-none hidden lg:block"
   style={{ top: "45%", right: "-8%", width: "25%", opacity: 0.20 }}>
-  <Image src="/pages/about/history/gear.png" alt="" width={400} height={400} className="w-full h-auto" />
+  <Image src="/about/history/bg-gear.png" alt="" width={400} height={400} className="w-full h-auto" />
 </div>
 
 {/* Star */}
 <div className="absolute pointer-events-none hidden lg:block"
   style={{ top: "55%", left: "-15%", width: "50%", opacity: 0.20, transform: "rotate(20deg)" }}>
-  <Image src="/pages/about/history/star.png" alt="" width={300} height={300} className="w-full h-auto" />
+  <Image src="/about/history/bg-star.png" alt="" width={300} height={300} className="w-full h-auto" />
 </div>
 
       <Container maxWidth="7xl" padding="lg" className="relative z-10">
