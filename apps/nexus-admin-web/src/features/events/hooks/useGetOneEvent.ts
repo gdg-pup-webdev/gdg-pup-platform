@@ -1,0 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { contract } from "@packages/nexus-api-contracts";
+import { configs } from "@/lib/constants/configs";
+
+export const useGetOneEvent = (eventId: string) => {
+  return useQuery({
+    queryKey: ["events", "detail", eventId],
+    queryFn: async () => {
+      const res = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.eventId.GET,
+        {
+          params: { eventId },
+        }
+      );
+
+      if (res.status === 200) return res.body;
+
+      throw new Error(res.body.message);
+    },
+    enabled: !!eventId,
+  });
+};
