@@ -1,7 +1,7 @@
 import { IEventHighlightRepository } from "../domain/IEventHighlightRepository";
 import { EventHighlight } from "../domain/EventHighlight";
 import { supabase } from "@/v1/lib/supabase";
-import { handlePostgresError } from "@/v1/utils/handlePostgresError";
+import { handlePostgresError } from "@/v1/lib/supabase.utils";
 import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
 
 export class EventHighlightRepository implements IEventHighlightRepository {
@@ -41,6 +41,7 @@ export class EventHighlightRepository implements IEventHighlightRepository {
       .single();
 
     if (error) handlePostgresError(error);
+    if (!data) throw new Error("Failed to create event highlight");
     return this.mapToDomain(data);
   }
 
@@ -61,6 +62,7 @@ export class EventHighlightRepository implements IEventHighlightRepository {
       .single();
 
     if (error) handlePostgresError(error);
+    if (!data) throw new Error("Failed to update event highlight");
     return this.mapToDomain(data);
   }
 
