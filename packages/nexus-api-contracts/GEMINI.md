@@ -58,6 +58,39 @@ Endpoints use a file-based routing system mapping to the API path. Each file (e.
 Leverage pre-made schemas for standard responses:
 `import { OpenApiSchemas } from "@packages/typed-rest/shared";`
 
+#### OpenApiSchemas Summary
+
+* **Models**
+    * `file()`
+    * `files()`
+* **Response**
+    * `empty()`
+    * `boolean()`
+    * `single(dataSchema)`
+    * `list(dataSchema)`
+    * `paginated(dataSchema)`
+    * `error()`
+    * `standardErrors()`
+* **Request**
+    * **Query**
+        * `paginated()`
+    * **Body**
+        * `withPayload(dataSchema)`
+
+---
+
+#### OpenApiSchemas Object Shapes (Fields Only)
+
+| Category | Method | Fields |
+| :--- | :--- | :--- |
+| **Response** | `empty / boolean / single` | `status`, `message`, `data` |
+| **Response** | `list / paginated` | `status`, `message`, `data` (array) |
+| **Response** | `paginated (meta)` | `totalRecords`, `pageSize`, `currentPage`, `totalPages` |
+| **Response** | `error` | `status`, `message`, `errors` (`title`, `detail`, `moreDetails`, `source`) |
+| **Request** | `Query.paginated` | `pageNumber`, `pageSize` |
+| **Request** | `Body.withPayload` | `data` |
+
+
 ## 3. Auto-Generation
 
 A build step automatically compiles `models/` and `routes/` into `typedrest.contract.ts`. This file exports a single `contract` namespace containing the full API schema, inferred TypeScript types, and flat endpoint definitions used by the backend controllers and frontend API clients.

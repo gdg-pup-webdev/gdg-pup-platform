@@ -26,8 +26,9 @@ describe("GetOneEvent Use Case", () => {
       start_date: new Date("2026-02-01T13:00:00Z"),
       end_date: new Date("2026-02-01T16:00:00Z"),
       attendance_points: 50,
+      bevy_event_id: null,
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should successfully retrieve and return an existing event by its ID", async () => {
