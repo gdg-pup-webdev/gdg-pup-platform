@@ -1,0 +1,45 @@
+{
+  "name": "nexus-admin-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3100",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "g": "tsx scripts/generate-feature.ts"
+  },
+  "dependencies": {
+    "@configs/tailwind-config": "workspace:*",
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@packages/nexus-api-contracts": "workspace:*",
+    "@packages/typed-rest": "workspace:*",
+    "@supabase/supabase-js": "^2.90.1",
+    "@tanstack/react-query": "^5.90.20",
+    "cookies-next": "^6.1.1",
+    "lenis": "^1.3.17",
+    "lucide-react": "^0.577.0",
+    "motion": "^12.34.3",
+    "next": "16.1.1",
+    "ogl": "^1.0.11",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-toastify": "^11.0.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "postcss-import": "^16.1.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5",
+    "vitest": "^4.0.18"
+  }
+}

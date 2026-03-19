@@ -19,15 +19,18 @@ describe("DeleteEvent Use Case", () => {
   // Helper to seed an event so we have something to delete
   const seedEvent = async () => {
     const newEvent = Event.create({
-      title: "Tailwind CSS Workshop",
-      description: "Mastering utility classes",
-      category: "WebDev",
-      venue: "Discord",
+      title: "Test Event",
+      description: "A test event for unit testing",
+      category: "Testing",
+      venue: "Test Venue",
       start_date: new Date(),
-      end_date: new Date(Date.now() + 3600000),
-      attendance_points: 30,
+      end_date: new Date(),
+      attendance_points: 50,
+      image_url: null,
+      bevy_event_id: null,
+      creatorId: "creator_123",
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should successfully delete an existing event and return true", async () => {

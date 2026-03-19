@@ -7,7 +7,7 @@ export class CreateEvent {
   async execute(eventPrototype: EventPrototypeProps): Promise<Event> {
     const newEvent = Event.create(eventPrototype);
 
-    const createdEvent = await this.eventRepository.saveNewEvent(newEvent);
+    const createdEvent = await this.eventRepository.saveNew(newEvent);
 
     return createdEvent;
   }

@@ -9,7 +9,7 @@ export const loadCors = (app: Express) => {
   // CORS config
   app.use(
     cors({
-      origin: [configs.clientBaseUrl || "http://localhost:3000"],
+      origin: [configs.clientBaseUrl || "http://localhost:3000", "http://localhost:3100"],
       credentials: true,
     }),
   );

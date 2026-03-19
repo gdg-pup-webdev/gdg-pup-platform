@@ -5,7 +5,7 @@ export class MockEventRepository implements IEventRepository {
   // In-memory data store
   public events: Event[] = [];
 
-  async saveNewEvent(event: Event): Promise<Event> {
+  async saveNew(event: Event): Promise<Event> {
     this.events.push(event);
     return event;
   }
@@ -38,6 +38,10 @@ export class MockEventRepository implements IEventRepository {
     }
     
     return event;
+  }
+
+  async findByBevyId(bevyEventId: string): Promise<Event | undefined> {
+    return this.events.find(e => e.props.bevy_event_id === bevyEventId);
   }
 
   async listEvents(

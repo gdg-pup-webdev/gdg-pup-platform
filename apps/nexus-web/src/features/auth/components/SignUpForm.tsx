@@ -2,171 +2,109 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { GoogleSignInButton } from "./GoogleSignInButton";
-import { Stack, Text } from '@packages/spark-ui';
+import { Stack, Text, Input } from '@packages/spark-ui';
+
+const ICON_URL = "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
 
 export const SignUpForm = () => {
   const router = useRouter();
   const { signUpWithEmail } = useAuthContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setLoading(false);
-      return;
-    }
-
-    // Validate password strength
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
-      setLoading(false);
-      return;
-    }
-
     try {
       await signUpWithEmail(email, password);
-
-      // Show success message
-      setSuccess(true);
-      setLoading(false);
-
-      // Redirect to sign in after 3 seconds
       setTimeout(() => {
-        router.push("/signin");
-      }, 3000);
+         router.push("/update-profile");
+      }, 500);
     } catch (err: any) {
-      setError(err.message || "Failed to sign up. Please try again.");
+      setError(err.message || "Failed to create account.");
       setLoading(false);
     }
   };
 
-  if (success) {
-    return (
-      <Stack gap="md" className="text-center py-8">
-        <div className="text-green-500 text-6xl">✓</div>
-        <Text variant="heading-1" className="text-gray-800">
-          Account Created!
-        </Text>
-        <Text variant="body" className="text-gray-600">
-          Please check your email to verify your account.
-        </Text>
-        <Text variant="body-sm" className="text-gray-500">
-          Redirecting to sign in page...
-        </Text>
-      </Stack>
-    );
-  }
-
   return (
     <Stack gap="lg" className="w-full">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <Text variant="body-sm" className="text-red-700">{error}</Text>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-sm text-red-700">
+          {error}
         </div>
       )}
 
-      <form onSubmit={handleSignUp} className="space-y-6">
-        <div>
+      <form onSubmit={handleSignUp} className="flex flex-col gap-[24px]">
+
+        <div className="flex flex-col gap-[8px]">
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="text-[18px] font-bold text-white "
           >
-            Email Address
+            Email
           </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-            placeholder="you@example.com"
-          />
+          <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              containerClassName="!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]"
+              className="text-[18px] text-white placeholder:text-[#737373]"
+              leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
+              placeholder="e.g., mail@mail.com"
+            />
+          </div>
         </div>
 
-        <div>
+        <div className="flex flex-col gap-[8px]">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="flex justify-between items-center text-[18px] font-bold text-white "
           >
             Password
           </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-            placeholder="••••••••"
-          />
-          <Text variant="caption" className="text-gray-500">
-            Must be at least 8 characters
-          </Text>
-        </div>
-
-        <div>
-          <label
-            htmlFor="confirmPassword"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Confirm Password
-          </label>
-          <input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-            placeholder="••••••••"
-          />
+          <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              containerClassName="!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]"
+              className="text-[18px] text-white placeholder:text-[#737373]"
+              leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
+              placeholder="Enter Your Password"
+            />
+          </div>
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] gap-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-70 transition-all "
         >
-          {loading ? "Creating account..." : "Sign Up"}
+          {loading ? "Creating Account..." : "Create Account"}
         </button>
       </form>
 
-      <Stack gap="md">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <Text variant="body-sm" className="px-2 bg-white text-gray-500">
-              Or continue with
-            </Text>
-          </div>
-        </div>
+      <div className="flex items-center gap-[8px] w-full mt-4">
+        <div className="flex-1 h-[1px] bg-white/20"></div>
+        <p className="text-[#e5e5e5] text-[16px] font-regular  px-2">or continue with</p>
+        <div className="flex-1 h-[1px] bg-white/20"></div>
+      </div>
 
-        <GoogleSignInButton text="Sign up with Google" />
-      </Stack>
+      <GoogleSignInButton text="Sign up with Google" />
 
-      <Text variant="body-sm" className="text-center text-gray-600">
-        Already have an account?{" "}
-        <a
-          href="/signin"
-          className="text-purple-600 hover:text-purple-700 font-semibold"
-        >
-          Sign in
-        </a>
-      </Text>
+      <div className="flex justify-center mt-6 items-center gap-[8px]">
+        <span className="text-white/80 text-[16px] font-medium ">Already have an account?</span>
+        <a href="/signin" className="text-white font-bold hover:underline ">Sign In</a>
+      </div>
     </Stack>
   );
 };

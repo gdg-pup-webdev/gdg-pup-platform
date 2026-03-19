@@ -2,10 +2,11 @@ export type TeamProps = {
   id: string;
   name: string;
   description: string;
-  createdAt: Date;
+  responsibilities: string | null;
+  parentTeamId: string | null;
 };
 
-export type TeamInsertProps = Omit<TeamProps, "id" | "createdAt">;
+export type TeamInsertProps = Omit<TeamProps, "id">;
 export type TeamUpdateProps = Partial<TeamInsertProps>;
 
 export class Team {
@@ -19,7 +20,6 @@ export class Team {
     return new Team({
       ...props,
       id: crypto.randomUUID(),
-      createdAt: new Date(),
     });
   }
 

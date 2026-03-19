@@ -3,6 +3,7 @@
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User, Session } from "@supabase/supabase-js";
+import { getCurrentUserGdgId } from "@/features/sparkmates/api/getCurrentUserGdgId";
 
 const NEXUS_API_URL =
   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
@@ -28,6 +29,7 @@ type AuthState = {
   role: string | null;
   googleAccessToken: string | null;
   status: "checking" | "unauthenticated" | "authenticated";
+  gdgId: string | null;
   error: string | null;
 };
 
@@ -50,6 +52,7 @@ const initialState: AuthState = {
   role: null,
   googleAccessToken: null,
   status: "checking",
+  gdgId: null,
   error: null,
 };
 
@@ -98,6 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         role,
         googleAccessToken: providerToken || null,
         status: "authenticated",
+        gdgId: (user.user_metadata?.gdg_id as string) || authState.gdgId,
         error: null,
       });
     } else {
@@ -105,6 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       deleteCookie("supabaseAccessToken");
       setAuthState({
         ...initialState,
+        gdgId: null,
         status: "unauthenticated",
       });
     }
@@ -152,6 +157,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       deleteCookie("googleAccessToken");
       setAuthState({
         ...initialState,
+        gdgId: null,
         status: "unauthenticated",
       });
     }
@@ -170,6 +176,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isMounted = false;
     };
   }, []);
+  
+  // Fetch GDG ID whenever user is authenticated and gdgId is not set
+  useEffect(() => {
+    const fetchGdgId = async () => {
+      if (authState.status === "authenticated" && authState.user && !authState.gdgId) {
+        try {
+          const gdgId = await getCurrentUserGdgId(authState.user.id);
+          if (gdgId) {
+            setAuthState(prev => ({ ...prev, gdgId }));
+          }
+        } catch (err) {
+          console.error("Failed to fetch GDG ID:", err);
+        }
+      }
+    };
+    
+    fetchGdgId();
+  }, [authState.status, authState.user, authState.gdgId]);
 
   const signUpWithEmail = async (email: string, password: string) => {
     try {
@@ -297,6 +321,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setAuthState({
         ...initialState,
+        gdgId: null,
         status: "unauthenticated",
       });
 

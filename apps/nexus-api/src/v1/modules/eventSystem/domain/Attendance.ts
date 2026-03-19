@@ -5,25 +5,22 @@ export type AttendanceProps = {
   checkInMethod: string;
   checkedInAt: Date;
 };
+
 export type AttendancePrototypeProps = Omit<
   AttendanceProps,
   "id" | "checkedInAt"
 >;
 
 export class Attendance {
-  _props: AttendanceProps;
+  private constructor(private _props: AttendanceProps) {}
 
-  private constructor(props: AttendanceProps) {
-    this._props = props;
-  }
-
-  static create = (props: AttendancePrototypeProps) => {
+  static create(props: AttendancePrototypeProps) {
     return new Attendance({
       ...props,
       id: crypto.randomUUID(),
       checkedInAt: new Date(),
     });
-  };
+  }
 
   static hydrate(props: AttendanceProps) {
     return new Attendance(props);

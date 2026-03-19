@@ -1,7 +1,9 @@
- 
 import { HttpError } from "@/v1/errors/HttpError";
 import { ServerError } from "@/v1/errors/ServerError";
-import { ContractError } from "@packages/typed-rest/serverExpress";
+import {
+  ContractError,
+  TypedRestError,
+} from "@packages/typed-rest/serverExpress";
 import { Request, Response, NextFunction } from "express";
 import z, { ZodError } from "zod";
 
@@ -16,9 +18,46 @@ export const globalErrorHandler = (
   let message = err.message || "An unexpected error occurred.";
   let title = err.title || "Error";
 
-  console.log("///////////////////////////////////");
+  console.log("V1 ERROR HANDLER ///////////////////////////////////");
   console.error(err);
   console.log("///////////////////////////////////");
+
+  if (err instanceof TypedRestError) {
+    if (err.cause && err.cause instanceof ZodError) {
+      return res.status(400).json({
+        title: "Bad Request",
+        message: `Request validation failed. `,
+        errors: err.cause.issues.map((issue) => {
+          let detail = ``;
+          // if (issue.code === "invalid_type" && err.cause instanceof ZodError) {
+          //   detail += ` ${z.prettifyError(err.cause)}`;
+          // } else {
+          //   detail = issue.code;
+          // }
+            detail = issue.code;
+
+          return {
+            title: issue.message,
+            detail: detail,
+            // moreDetails: z.treeifyError(err.error),
+            path: `${issue.path.join(" -> ")}`,
+          };
+        }),
+      });
+    }
+
+    return res.status(400).json({
+      title: "Bad Request",
+      message: `Request validation failed. `,
+      errors: [
+        {
+          title: err.name,
+          message: err.message,
+          stack: err.stack,
+        },
+      ],
+    });
+  }
 
   if (err instanceof ContractError) {
     if (err.blame === "client") {
@@ -63,7 +102,6 @@ export const globalErrorHandler = (
       });
     }
   }
- 
 
   if (err instanceof HttpError) {
     return res.status(err.statusCode).json({
