@@ -38,7 +38,6 @@ runs:
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ inputs.gcp-project-id }}
-        region: ${{ inputs.region }}
 
     - name: Deploy to Cloud Run
       id: deploy
