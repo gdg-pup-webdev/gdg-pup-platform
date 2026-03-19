@@ -30,59 +30,39 @@ import { ASSETS } from "@/lib/constants/assets";
 /** Motion patterns available for each blob */
 type BlobMotion = "vertical" | "horizontal" | "diagonal" | "none";
 
-// ── Edit these values to tune the blobs ─────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 const BLOBS = {
   green: {
-    // Size & position
-    width: 420, height: 420,
-    top: 475, left: "calc(85% - 350px)" as const,
-    // Appearance
-    color: "#4DB368CC",   // last 2 hex = opacity  CC=80%  99=60%  66=40%
-    blur: 200,            // px — lower=more visible, higher=softer
-    // Movement
-    motion: "vertical" as BlobMotion,  // "vertical" | "horizontal" | "diagonal" | "none"
-    duration: 88,         // seconds for one full cycle
-    travel: 38,           // px — max drift distance
-    delay: "0s",
-    // Interactivity
-    interactive: true,   // true = blob subtly follows the mouse
-    interactiveStrength: 0.18, // 0–1, how strongly it follows (0.04 = very subtle)
+    width: 620, height: 600,
+    top: 550, left: "calc(15% - 60px)" as const,
+    color: "#4DB368CC", blur: 310,
+    motion: "diagonal" as BlobMotion,
+    duration: 80, travel: 38, delay: "-30s",
+    interactive: true, interactiveStrength: 0.18,
   },
   yellow: {
     width: 640, height: 640,
     top: 760, left: "calc(38% - 80px)" as const,
-    color: "#F9AB00B3",   // B3=70%
-    blur: 210,
+    color: "#F9AB00B3", blur: 210,
     motion: "horizontal" as BlobMotion,
-    duration: 58,
-    travel: 34,
-    delay: "-14s",
-    interactive: false,
-    interactiveStrength: 0.04,
+    duration: 58, travel: 34, delay: "-14s",
+    interactive: false, interactiveStrength: 0.04,
   },
   blue: {
-    width: 600, height: 600,
-    top: 1280, left: "calc(5% - 60px)" as const,
-    color: "#4285F4B3",   // B3=70%
-    blur: 310,
-    motion: "diagonal" as BlobMotion,
-    duration: 80,
-    travel: 28,
-    delay: "-30s",
-    interactive: true,
-    interactiveStrength: 0.35,
+    width: 620, height: 600,
+    top: 1200, left: "calc(85% - 350px)" as const,
+    color: "#4285F4B3", blur: 310,
+    motion: "vertical" as BlobMotion,
+    duration: 88, travel: 38, delay: "-20s",
+    interactive: true, interactiveStrength: 0.18,
   },
   red: {
     width: 500, height: 500,
-    top: 2020, right: "calc(5% - 80px)" as const,
-    color: "#EA4335BF",   // BF=75%
-    blur: 210,
+    top: 2000, left: "calc(5% - 60px)" as const,
+    color: "#EA4335BF", blur: 250,
     motion: "horizontal" as BlobMotion,
-    duration: 96,
-    travel: 38,
-    delay: "-48s",
-    interactive: false,
-    interactiveStrength: 0.04,
+    duration: 96, travel: 38, delay: "-30s",
+    interactive: false, interactiveStrength: 0.04,
   },
 } satisfies Record<string, {
   width: number; height: number;
@@ -204,7 +184,7 @@ function HistoryBlobBackground() {
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.35 }}
       />
 
-      {/* ── Blue — below yellow, further left ── */}
+      {/* ── Blue — below yellow, further right ── */}
       <motion.div
         ref={blueRef}
         style={blobStyle(BLOBS.blue, { top: BLOBS.blue.top, left: BLOBS.blue.left })}
@@ -213,10 +193,10 @@ function HistoryBlobBackground() {
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.7 }}
       />
 
-      {/* ── Red — below blue, right side ── */}
+      {/* ── Red — below blue, left side ── */}
       <motion.div
         ref={redRef}
-        style={blobStyle(BLOBS.red, { top: BLOBS.red.top, right: BLOBS.red.right })}
+        style={blobStyle(BLOBS.red, { top: BLOBS.red.top, left: BLOBS.red.left })}
         initial={{ opacity: 0, scale: 0.4 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 1.05 }}
