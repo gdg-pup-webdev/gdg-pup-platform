@@ -34,12 +34,15 @@ export type SparkmatesPublicPortfolio = {
   userId: string;
   createdAt: string;
   updatedAt: string;
-  fullName: string | null;
+  firstName: string | null;
+  middleName: string | null;
+  lastName: string | null;
   nickname: string | null;
   gdgId: string | null;
   membershipType: string | null;
   department: string | null;
-  yearAndProgram: string | null;
+  yearLevel: number | null;
+  program: string | null;
   bio: string | null;
   githubUrl: string | null;
   linkedinUrl: string | null;
@@ -49,6 +52,7 @@ export type SparkmatesPublicPortfolio = {
   learningInterests: string[];
   toolsAndTechnologies: string[];
   isPublic: boolean;
+  profileImage: string | null;
 };
 
 export type SparkmatesPublicRecord = {

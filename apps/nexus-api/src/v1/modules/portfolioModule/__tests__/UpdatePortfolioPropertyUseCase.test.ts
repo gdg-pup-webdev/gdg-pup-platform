@@ -4,16 +4,19 @@ import {
   MockPortfolioRepository,
   buildPortfolioProps,
 } from "./MockPortfolioRepository";
+import { MockPortfolioStorage } from "./MockPortfolioStorage";
 import { Portfolio } from "../domain/Portfolio";
 import { NotFoundError } from "@/v1/errors/HttpError";
 
 describe("UpdatePortfolioPropertyUseCase", () => {
   let repo: MockPortfolioRepository;
+  let storage: MockPortfolioStorage;
   let useCase: UpdatePortfolioPropertyUseCase;
 
   beforeEach(() => {
     repo = new MockPortfolioRepository();
-    useCase = new UpdatePortfolioPropertyUseCase(repo);
+    storage = new MockPortfolioStorage();
+    useCase = new UpdatePortfolioPropertyUseCase(repo, storage);
   });
 
   it("updates the bio of an existing portfolio", async () => {
@@ -24,6 +27,22 @@ describe("UpdatePortfolioPropertyUseCase", () => {
     const result = await useCase.execute("p-1", { bio: "New bio" });
 
     expect(result.props.bio).toBe("New bio");
+  });
+
+  it("updates the profile image if provided", async () => {
+    repo.portfolios = [
+      Portfolio.hydrate(buildPortfolioProps({ id: "p-1", profileImage: null })),
+    ];
+
+    const result = await useCase.execute("p-1", {
+      profileImage: {
+        buffer: new ArrayBuffer(8),
+        name: "test.png",
+        type: "image/png",
+      } as any,
+    });
+
+    expect(result.props.profileImage).toBe("https://mock-storage.com/test.png");
   });
 
   it("updates social links without affecting unrelated fields", async () => {

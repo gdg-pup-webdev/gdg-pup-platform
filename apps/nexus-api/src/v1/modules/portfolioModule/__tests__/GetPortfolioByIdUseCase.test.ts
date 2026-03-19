@@ -23,7 +23,6 @@ describe("GetPortfolioByIdUseCase", () => {
     const result = await useCase.execute("portfolio-abc");
 
     expect(result.props.id).toBe("portfolio-abc");
-    expect(result.props.fullName).toBe(props.fullName);
   });
 
   it("throws NotFoundError when no portfolio matches the given ID", async () => {
