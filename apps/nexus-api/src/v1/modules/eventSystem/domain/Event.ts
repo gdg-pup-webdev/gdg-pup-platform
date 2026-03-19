@@ -1,20 +1,23 @@
-import { Attendance } from "./Attendance"; 
+import { Attendance } from "./Attendance";
 
 export type EventProps = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
 
+  creatorId: string;
+
   title: string;
   description: string;
   category: string;
   venue: string;
-  end_date: Date;
   start_date: Date;
+  end_date: Date;
 
   attendance_points: number;
   attendees_count: number;
   bevy_event_id: string | null;
+  image_url: string | null;
 };
 
 export type EventPrototypeProps = Omit<
@@ -25,11 +28,7 @@ export type EventPrototypeProps = Omit<
 export type EventUpdateProps = Partial<EventPrototypeProps>;
 
 export class Event {
-  private _props: EventProps;
-
-  constructor(props: EventProps) {
-    this._props = props;
-  }
+  private constructor(private _props: EventProps) {}
 
   static hydrate(props: EventProps) {
     return new Event(props);
@@ -47,26 +46,27 @@ export class Event {
       updatedAt: new Date(),
       attendees_count: 0,
       bevy_event_id: props.bevy_event_id ?? null,
+      image_url: props.image_url ?? null,
     });
   }
 
-  update = (props: EventUpdateProps) => {
+  update(props: EventUpdateProps) {
     this._props = {
       ...this._props,
       ...props,
       updatedAt: new Date(),
     };
-  };
+  }
 
-  addAttendance = (userId: string, method: string) => {
-    const newAttendance =   Attendance.create({
+  addAttendance(userId: string, method: string) {
+    const newAttendance = Attendance.create({
       userId: userId,
       eventId: this._props.id,
-      checkInMethod: method, 
+      checkInMethod: method,
     });
 
     this._props.attendees_count += 1;
 
     return newAttendance;
-  };
+  }
 }

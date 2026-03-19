@@ -8,7 +8,7 @@ export class CreateEventFromBevyEventUseCase {
     private readonly bevyEventService: IBevyEventService
   ) {}
 
-  async execute(bevyEventId: string): Promise<Event> {
+  async execute(bevyEventId: string, creatorId: string): Promise<Event> {
     const existingEvent = await this.eventRepository.findByBevyId(bevyEventId);
 
     if (existingEvent) {
@@ -30,6 +30,8 @@ export class CreateEventFromBevyEventUseCase {
       end_date: new Date(bevyEvent.end_date),
       bevy_event_id: bevyEvent.id,
       attendance_points: 10, // Default points
+      creatorId: creatorId,
+      image_url: null,
     });
 
     await this.eventRepository.saveNew(newEvent);

@@ -1,24 +1,37 @@
-// Use Cases
-import { CheckinToEvent } from "./useCases/CheckinToEvent";
-import { CreateEvent } from "./useCases/CreateEvent";
-import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
-import { DeleteEvent } from "./useCases/DeleteEvent";
-import { GetOneEvent } from "./useCases/GetOneEvent";
-import { ListEventAttendees } from "./useCases/ListEventAttendees";
-import { ListEvents } from "./useCases/ListEvents";
-import { UpdateEvent } from "./useCases/UpdateEvent";
+// Domain & Interfaces
+export { Event } from "./domain/Event";
+export { Attendance } from "./domain/Attendance";
+export { IEventRepository } from "./domain/IEventRepository";
+export { IAttendanceRepository } from "./domain/IAttendanceRepository";
+export { IBevyEventService } from "./domain/IBevyEventService";
+export { IEventPointsService } from "./domain/IEventPointsService";
 
-// Controller
-import { EventSystemController } from "./EventSystemController";
-import { EventPointsService } from "./infrastructure/EventPointsService";
-import { AttendanceRepository } from "./infrastructure/AttendanceRepository";
+// Use Cases
+export { CheckinToEvent } from "./useCases/CheckinToEvent";
+export { CreateEvent } from "./useCases/CreateEvent";
+export { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
+export { DeleteEvent } from "./useCases/DeleteEvent";
+export { GetOneEvent } from "./useCases/GetOneEvent";
+export { ListEventAttendees } from "./useCases/ListEventAttendees";
+export { ListEvents } from "./useCases/ListEvents";
+export { UpdateEvent } from "./useCases/UpdateEvent";
+
+// Infrastructure (Real implementations)
 import { EventRepository } from "./infrastructure/EventRepository";
+import { AttendanceRepository } from "./infrastructure/AttendanceRepository";
 import { BevyEventService } from "./infrastructure/BevyEventService";
+import { EventPointsService } from "./infrastructure/EventPointsService";
+
+// Other Modules Controllers for Injection
 import { pointSystemController } from "../pointsSystem";
 import { bevyEventController } from "../bevyEvents";
 
+// Controller
+import { EventSystemController } from "./EventSystemController";
+export { EventSystemController };
+
 // ============================================================================
-// 2. DEPENDENCY INJECTION & INITIALIZATION
+// DEPENDENCY INJECTION & INITIALIZATION
 // ============================================================================
 
 const eventPointsServiceAdapter = new EventPointsService(pointSystemController);
@@ -26,8 +39,7 @@ const eventRepositoryAdapter = new EventRepository();
 const attendanceRepositoryAdapter = new AttendanceRepository();
 const bevyEventServiceAdapter = new BevyEventService(bevyEventController);
 
-// B. Initialize Use Cases (Application Layer)
-// We inject the adapters into the business logic
+// Initialize Use Cases
 const checkinToEventUseCase = new CheckinToEvent(
   eventRepositoryAdapter,
   attendanceRepositoryAdapter,
@@ -46,8 +58,7 @@ const listEventAttendeesUseCase = new ListEventAttendees(
 const listEventsUseCase = new ListEvents(eventRepositoryAdapter);
 const updateEventUseCase = new UpdateEvent(eventRepositoryAdapter);
 
-// C. Initialize Controller (Presentation/Interface Layer)
-// We inject all the use cases into the primary controller
+// Initialize Controller
 export const eventSystemController = new EventSystemController(
   checkinToEventUseCase,
   createEventUseCase,
