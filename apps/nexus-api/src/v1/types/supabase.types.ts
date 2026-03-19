@@ -193,6 +193,57 @@ export type Database = {
           },
         ]
       }
+      event_highlight: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          description: string
+          event_id: string
+          id: string
+          image_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          description: string
+          event_id: string
+          id?: string
+          image_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          description?: string
+          event_id?: string
+          id?: string
+          image_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_highlight_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_highlight_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_attendance: {
         Row: {
           checkin_method: string
