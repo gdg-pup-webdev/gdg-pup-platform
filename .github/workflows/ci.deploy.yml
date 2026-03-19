@@ -58,7 +58,7 @@ jobs:
           fetch-depth: 0
       - name: Detect changes
         id: detect
-        uses: ./.github/workflows/ci.detect-changes # Make sure this points to the .yml file if it's a reusable workflow
+        uses: ./.github/workflows/ci.detect-changes
         with:
           head-sha: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
           head-branch: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'prod' && 'main' || github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'staging' && 'staging' || github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'dev' && 'deploy-develop' || github.event.workflow_run.head_branch }}
