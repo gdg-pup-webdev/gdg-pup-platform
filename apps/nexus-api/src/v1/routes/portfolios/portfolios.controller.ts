@@ -100,7 +100,7 @@ export class PortfoliosHttpController {
       return output(200, {
         status: "success",
         message: "Portfolios fetched successfully",
-        data: list.map((p) => toRow(p.props)),
+        data: list.map((p) => toRow(p as any)),
         meta: {
           totalRecords: count,
           currentPage: pageNumber,
