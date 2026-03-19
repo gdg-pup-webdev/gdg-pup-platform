@@ -50,7 +50,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
         <div className="mt-auto space-y-2.5">
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <Calendar size={14} className="text-gray-400" />
-            <span>{new Date(event.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+            <span>{new Date(event.start_date || "").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
           </div>
           
           <div className="flex items-center gap-2 text-xs text-gray-500">

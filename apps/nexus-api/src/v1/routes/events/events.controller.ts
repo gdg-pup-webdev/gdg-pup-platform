@@ -23,6 +23,8 @@ export class EventsHttpController {
         data: list.map((e) => ({
           ...e,
           creator_id: e.creatorId,
+          created_at: e.createdAt,
+          updated_at: e.updatedAt,
         })),
         meta: {
           totalRecords: count,
@@ -58,6 +60,8 @@ export class EventsHttpController {
         data: {
           ...result,
           creator_id: result.creatorId,
+          created_at: result.createdAt,
+          updated_at: result.updatedAt,
         },
       });
     },
@@ -76,6 +80,8 @@ export class EventsHttpController {
         data: {
           ...result,
           creator_id: result.creatorId,
+          created_at: result.createdAt,
+          updated_at: result.updatedAt,
         },
       });
     },
@@ -108,6 +114,9 @@ export class EventsHttpController {
         data: {
           ...result,
           creator_id: result.creatorId,
+          created_at: result.createdAt,
+          updated_at: result.updatedAt,
+
         },
       });
     },
@@ -120,8 +129,7 @@ export class EventsHttpController {
 
       return output(200, {
         status: "success",
-        message: "Event deleted successfully",
-        data: true,
+        message: "Event deleted successfully", 
       });
     },
   );
@@ -200,6 +208,8 @@ export class EventsHttpController {
         data: {
           ...result,
           creator_id: result.creatorId,
+          created_at: result.createdAt,
+          updated_at: result.updatedAt,
         },
       });
     },

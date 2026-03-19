@@ -1,6 +1,5 @@
- 
 import { IEventRepository } from "../domain/IEventRepository";
-import { Event } from "../domain/Event";  
+import { Event } from "../domain/Event";
 import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
@@ -29,6 +28,9 @@ export class EventRepository implements IEventRepository {
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
       bevy_event_id: row.gdg_event_id?.toString() ?? null,
+
+      creatorId: row.creator_id || "",
+      image_url: null,
     });
   }
 
@@ -55,7 +57,7 @@ export class EventRepository implements IEventRepository {
 
   async saveNew(event: Event): Promise<Event> {
     const dto = this.mapToDTO(event);
-    
+
     const { data, error } = await supabase
       .from(this.tableName)
       .insert(dto)
@@ -69,7 +71,7 @@ export class EventRepository implements IEventRepository {
 
   async persistUpdates(event: Event): Promise<Event> {
     const dto = this.mapToDTO(event);
-    
+
     const { data, error } = await supabase
       .from(this.tableName)
       .update(dto)
