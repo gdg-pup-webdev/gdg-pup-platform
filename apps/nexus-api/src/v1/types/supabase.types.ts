@@ -1049,12 +1049,16 @@ export type Database = {
           bio: string | null
           created_at: string
           department: string | null
+          first_name: string | null
           github_url: string | null
           id: string
           is_public: boolean
+          last_name: string | null
           learning_interests: string[] | null
           linkedin_url: string | null
           membership_type: string | null
+          middle_name: string | null
+          nickname: string | null
           other_links: string[] | null
           portfolio_url: string | null
           program: string | null
@@ -1069,12 +1073,16 @@ export type Database = {
           bio?: string | null
           created_at?: string
           department?: string | null
+          first_name?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
+          last_name?: string | null
           learning_interests?: string[] | null
           linkedin_url?: string | null
           membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
           program?: string | null
@@ -1089,12 +1097,16 @@ export type Database = {
           bio?: string | null
           created_at?: string
           department?: string | null
+          first_name?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
+          last_name?: string | null
           learning_interests?: string[] | null
           linkedin_url?: string | null
           membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
           program?: string | null

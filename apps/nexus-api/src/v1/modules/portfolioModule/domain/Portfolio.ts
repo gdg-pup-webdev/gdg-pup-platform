@@ -5,12 +5,15 @@ export type PortfolioProps = {
   updatedAt: string;
 
   // Personal Information
-  fullName: string | null;
+  firstName: string | null;
+  middleName: string | null;
+  lastName: string | null;
   nickname: string | null;
   gdgId: string | null;
   membershipType: string | null;
   department: string | null;
-  yearAndProgram: string | null;
+  yearLevel: number | null;
+  program: string | null;
 
   // Bio
   bio: string | null;

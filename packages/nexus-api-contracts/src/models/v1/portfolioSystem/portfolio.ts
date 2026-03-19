@@ -30,12 +30,15 @@ export const portfolioRow = cz.object({
   updated_at: cz.string(),
 
   // Personal Information
-  full_name: cz.string().nullable(),
+  first_name: cz.string().nullable(),
+  middle_name: cz.string().nullable(),
+  last_name: cz.string().nullable(),
   nickname: cz.string().nullable(),
   gdg_id: cz.string().nullable(),
   membership_type: cz.string().nullable(),
   department: cz.string().nullable(),
-  year_and_program: cz.string().nullable(),
+  year_level: cz.number().nullable(),
+  program: cz.string().nullable(),
 
   // Bio
   bio: cz.string().nullable(),
