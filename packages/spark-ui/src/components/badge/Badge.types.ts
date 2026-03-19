@@ -14,6 +14,16 @@ export interface BadgeProps
    * @default "div"
    */
   as?: React.ElementType;
+
+  /**
+   * Optional icon rendered before the badge content.
+   */
+  leadingIcon?: React.ReactNode;
+
+  /**
+   * Optional icon rendered after the badge content.
+   */
+  trailingIcon?: React.ReactNode;
 }
 
 export type { BadgeVariants };
