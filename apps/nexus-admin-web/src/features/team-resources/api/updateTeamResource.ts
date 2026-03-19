@@ -1,41 +1,52 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+/**
+ * API function to update an existing team resource
+ */
+
 import { callEndpoint } from "@packages/typed-rest/clientReact";
-import { contract } from "@packages/nexus-api-contracts";
-import { UpdateTeamResourceDTO } from "../types";
-import { extractErrorMessage } from "@/lib/utils";
+import { contract } from "@packages/nexus-api-contracts"; 
+import { UpdateTeamResourceDTO, TeamResourcesException } from "../types";
+import { configs } from "@/lib/constants/configs";
 
-const API_URL = "http://localhost:8000";
+/**
+ * Update a team resource by ID
+ * 
+ * @param id - The ID of the team resource to update
+ * @param data - The update payload
+ * @param thumbnail - Optional new thumbnail image file
+ * @returns Promise resolving to the updated team resource response
+ * @throws TeamResourcesException if the request fails
+ */
+export async function updateTeamResource(
+  id: string,
+  data: UpdateTeamResourceDTO,
+  thumbnail?: File
+): Promise<any> {
+  try {
+    const result = await callEndpoint(
+      configs.nexusApiBaseUrl,
+      contract.api.v1.team_resources.teamResourceId.PATCH,
+      {
+        body: { data: data },
+        files: { thumbnail_image: thumbnail },
+        params: { teamResourceId: id },
+      }
+    );
 
-export const useUpdateTeamResource = () => {
-  const queryClient = useQueryClient();
+    if (result.status == 200 && result.body) {
+      return result.body;
+    }
 
-  return useMutation({
-    mutationFn: async ({ id, data, thumbnail }: { id: string; data: UpdateTeamResourceDTO; thumbnail?: File }) => {
-      const res = await callEndpoint(
-        API_URL,
-        contract.api.v1.team_resources.resourceId.PATCH,
-        {
-          params: { resourceId: id },
-          body: {
-            data: {
-              title: data.title,
-              description: data.description,
-              resource_link: data.resource_link,
-              resource_type: data.resource_type,
-              team_name: data.team_name,
-            },
-          },
-          files: thumbnail ? { thumbnail } : undefined,
-        },
-      );
-
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
-
-      return res.body;
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["team-resources"] });
-      queryClient.invalidateQueries({ queryKey: ["team-resources", variables.id] });
-    },
-  });
-};
+    throw new TeamResourcesException(
+      "Failed to update team resource",
+      "UPDATE_ERROR",
+      `Received status ${result.status}`
+    );
+  } catch (error) {
+    if (error instanceof TeamResourcesException) throw error;
+    throw new TeamResourcesException(
+      "An unexpected error occurred while updating team resource",
+      "SERVER_ERROR",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+}

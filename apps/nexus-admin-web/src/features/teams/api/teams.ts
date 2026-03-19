@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { Team, TeamInsert, TeamUpdate } from "../types";
-import { extractErrorMessage } from "@/lib/utils";
+import { getCookie } from "cookies-next";
 
 const API_URL = "http://localhost:8000";
 
@@ -16,7 +16,7 @@ export const useTeams = (pageNumber = 1, pageSize = 10) => {
 
       if (res.status==200) return res; 
 
-      throw new Error(extractErrorMessage(res.body));
+      throw new Error(res.body.message);
     },
   });
 };
@@ -36,7 +36,7 @@ export const useTeam = (id: string) => {
       
       if (res.status==200) return res; 
 
-      throw new Error(extractErrorMessage(res.body));
+      throw new Error(res.body.message);
     },
     enabled: !!id,
   });
@@ -46,13 +46,11 @@ export const useCreateTeam = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: TeamInsert) => {
-      const res = await callEndpoint(API_URL, contract.api.v1.gdg_teams.POST, {
+      return await callEndpoint(API_URL, contract.api.v1.gdg_teams.POST, {
         body: {
           data,
         },
       });
-      if (res.status !== 200 && res.status !== 201) throw new Error(extractErrorMessage(res.body));
-      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teams"] });
@@ -72,7 +70,7 @@ export const useUpdateTeam = () => {
           body: { data },
         },
       );
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
     onSuccess: (_, variables) => {
@@ -93,7 +91,7 @@ export const useDeleteTeam = () => {
           params: { gdgTeamId: id },
         },
       );
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
     onSuccess: () => {
@@ -111,7 +109,6 @@ export const useAddTeamMember = () => {
   return useMutation({
     mutationFn: async ({ teamId, userId, position }: { teamId: string; userId: string; position: string }) => {
       const res = await callEndpoint(
-        // @ts-ignore
         API_URL,
         contract.api.v1.gdg_teams.gdgTeamId.members.POST,
         {
@@ -124,7 +121,7 @@ export const useAddTeamMember = () => {
           },
         },
       );
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
     onSuccess: (_, variables) => {
@@ -150,7 +147,7 @@ export const useUpdateTeamMember = () => {
           },
         },
       );
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
     onSuccess: (_, variables) => {
@@ -171,7 +168,7 @@ export const useRemoveTeamMember = () => {
           params: { gdgTeamId: teamId, memberId },
         },
       );
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
     onSuccess: (_, variables) => {
@@ -192,7 +189,7 @@ export const useUsers = (pageNumber = 1, pageSize = 20) => {
       const res = await callEndpoint(API_URL, contract.api.v1.users.GET, {
         query: { pageNumber, pageSize, sortBy: "name", sortDirection: "asc" },
       });
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
   });
@@ -205,7 +202,7 @@ export const useSearchUsers = (query: string) => {
       const res = await callEndpoint(API_URL, contract.api.v1.users.search.GET, {
         query: { q: query, limit: "10" },
       });
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
     enabled: query.length >= 2,
@@ -219,7 +216,7 @@ export const useSearchTeams = (query: string) => {
       const res = await callEndpoint(API_URL, contract.api.v1.gdg_teams.search.GET, {
         query: { q: query, limit: "10" },
       });
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+      if (res.status !== 200) throw new Error(res.body.message);
       return res;
     },
     enabled: query.length >= 2,

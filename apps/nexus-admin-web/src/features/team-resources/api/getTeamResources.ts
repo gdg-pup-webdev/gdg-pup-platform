@@ -1,37 +1,82 @@
-import { useQuery } from "@tanstack/react-query";
+/**
+ * API function to fetch team resources from Nexus API
+ * 
+ * Retrieves a paginated list of team resources with optional filtering.
+ */
+
 import { callEndpoint } from "@packages/typed-rest/clientReact";
-import { contract } from "@packages/nexus-api-contracts";
-import { extractErrorMessage } from "@/lib/utils";
+import { contract } from "@packages/nexus-api-contracts"; 
+import { TeamResourcesException, TeamResourcesQueryParams, TeamResourcesResponse } from "../types";
+import { configs } from "@/lib/constants/configs";
 
-const API_URL = "http://localhost:8000";
+/**
+ * Fetch team resources from the Nexus API
+ * 
+ * @param params - Query parameters for filtering and pagination
+ * @returns Promise resolving to paginated team resources response
+ * @throws TeamResourcesException if the request fails
+ */
+export async function getTeamResources(
+  params: Partial<TeamResourcesQueryParams> = {}
+)  {
+  try {
+    // Set default pagination
+    const queryParams = {
+      pageNumber: 1,
+      pageSize: 10,
+      ...params,
+    };
 
-export const useGetTeamResources = (pageNumber = 1, pageSize = 10) => {
-  return useQuery({
-    queryKey: ["team-resources", pageNumber, pageSize],
-    queryFn: async () => {
-      const res = await callEndpoint(API_URL, contract.api.v1.team_resources.GET, {
-        query: { pageNumber, pageSize },
-      });
+    // Call the team resources endpoint
+    const result = await callEndpoint(
+      configs.nexusApiBaseUrl,
+      contract.api.v1.team_resources.GET,
+      {
+        query: queryParams,
+      }
+    );
 
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+    // Check for successful response
+    if (result.status == 200 && result.body) {
+      return result.body 
+    }
 
-      return res.body;
-    },
-  });
-};
+    // Handle error responses
+    throw new TeamResourcesException(
+      "Failed to fetch team resources",
+      "FETCH_ERROR",
+      `Received status ${result.status}`
+    );
 
-export const useSearchTeamResources = (query: string) => {
-  return useQuery({
-    queryKey: ["team-resources", "search", query],
-    queryFn: async () => {
-      const res = await callEndpoint(API_URL, contract.api.v1.team_resources.search.GET, {
-        query: { q: query },
-      });
+  } catch (error) {
+    // Network errors
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      throw new TeamResourcesException(
+        `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`,
+        "NETWORK_ERROR",
+        error.message
+      );
+    }
 
-      if (res.status !== 200) throw new Error(extractErrorMessage(res.body));
+    // Timeout errors
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new TeamResourcesException(
+        "Request timed out while fetching team resources",
+        "TIMEOUT_ERROR",
+        "The request took too long to complete"
+      );
+    }
 
-      return res.body;
-    },
-    enabled: !!query && query.length >= 2,
-  });
-};
+    // Re-throw TeamResourcesException
+    if (error instanceof TeamResourcesException) {
+      throw error;
+    }
+
+    // Unknown errors
+    throw new TeamResourcesException(
+      "An unexpected error occurred while fetching team resources",
+      "SERVER_ERROR",
+      error instanceof Error ? error.message : String(error)
+    );
+  }
+}
