@@ -17,6 +17,8 @@ export const eventRecord = cz.object({
   attendance_points: cz.number(),
 
   attendees_count: cz.number(),
+
+  bevy_event_id: cz.string().nullable(),
 });
 
 export const eventRecordInsertDTO = eventRecord.omit({

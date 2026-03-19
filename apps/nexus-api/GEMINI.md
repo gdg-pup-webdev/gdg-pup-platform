@@ -62,7 +62,7 @@ Implements the Application Interfaces (e.g., Database adapters, Third-party APIs
 
 - **NO BUSINESS LOGIC.**
 - Transforms DB schema data into valid Domain objects (and vice versa).
-
+- You may use the Tables, TablesInsert, and TablesUpdate from ./src/types/supabse.types.ts
 ---
 
 ## 3. Strict Implementation Rules

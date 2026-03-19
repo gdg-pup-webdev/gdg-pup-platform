@@ -10,5 +10,6 @@ export class GdgScrapedEventsRouter {
     this.router = Router();
 
     this.router.get("/", this.gdgScrapedEventsHttpController.list);
+    this.router.get("/:gdg_id", this.gdgScrapedEventsHttpController.getOne);
   }
 }

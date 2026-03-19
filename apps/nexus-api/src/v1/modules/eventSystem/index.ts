@@ -1,6 +1,7 @@
 // Use Cases
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
 import { CreateEvent } from "./useCases/CreateEvent";
+import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
 import { DeleteEvent } from "./useCases/DeleteEvent";
 import { GetOneEvent } from "./useCases/GetOneEvent";
 import { ListEventAttendees } from "./useCases/ListEventAttendees";
@@ -12,7 +13,9 @@ import { EventSystemController } from "./EventSystemController";
 import { EventPointsService } from "./infrastructure/EventPointsService";
 import { AttendanceRepository } from "./infrastructure/AttendanceRepository";
 import { EventRepository } from "./infrastructure/EventRepository";
+import { BevyEventService } from "./infrastructure/BevyEventService";
 import { pointSystemController } from "../pointsSystem";
+import { bevyEventController } from "../bevyEvents";
 
 // ============================================================================
 // 2. DEPENDENCY INJECTION & INITIALIZATION
@@ -21,6 +24,7 @@ import { pointSystemController } from "../pointsSystem";
 const eventPointsServiceAdapter = new EventPointsService(pointSystemController);
 const eventRepositoryAdapter = new EventRepository();
 const attendanceRepositoryAdapter = new AttendanceRepository();
+const bevyEventServiceAdapter = new BevyEventService(bevyEventController);
 
 // B. Initialize Use Cases (Application Layer)
 // We inject the adapters into the business logic
@@ -30,6 +34,10 @@ const checkinToEventUseCase = new CheckinToEvent(
   eventPointsServiceAdapter,
 );
 const createEventUseCase = new CreateEvent(eventRepositoryAdapter);
+const createEventFromBevyEventUseCase = new CreateEventFromBevyEventUseCase(
+  eventRepositoryAdapter,
+  bevyEventServiceAdapter,
+);
 const deleteEventUseCase = new DeleteEvent(eventRepositoryAdapter);
 const getOneEventUseCase = new GetOneEvent(eventRepositoryAdapter);
 const listEventAttendeesUseCase = new ListEventAttendees(
@@ -43,6 +51,7 @@ const updateEventUseCase = new UpdateEvent(eventRepositoryAdapter);
 export const eventSystemController = new EventSystemController(
   checkinToEventUseCase,
   createEventUseCase,
+  createEventFromBevyEventUseCase,
   deleteEventUseCase,
   getOneEventUseCase,
   listEventAttendeesUseCase,
