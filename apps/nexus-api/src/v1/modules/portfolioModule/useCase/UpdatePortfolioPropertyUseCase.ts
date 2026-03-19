@@ -1,30 +1,31 @@
 import { NotFoundError } from "@/v1/errors/HttpError";
 import { IPortfolioRepository } from "../domain/IPortfolioRepository";
 import { Portfolio, PortfolioUpdateProps } from "../domain/Portfolio";
-import { IFileRepository } from "../../filesModule/domain/IFileRepository";
+import { IPortfolioStorage, PortfolioFile } from "../domain/IPortfolioStorage";
 
 export class UpdatePortfolioPropertyUseCase {
   constructor(
     private readonly portfolioRepository: IPortfolioRepository,
-    private readonly fileRepository: IFileRepository,
+    private readonly storage: IPortfolioStorage,
   ) {}
 
   async execute(
     portfolioId: string,
     updates: PortfolioUpdateProps & {
-      profileImage?: { buffer: ArrayBuffer; name: string; type: string };
+      profileImage?: PortfolioFile;
     },
   ): Promise<Portfolio> {
     const portfolio = await this.portfolioRepository.findById(portfolioId);
 
+    if (!portfolio) {
+      throw new NotFoundError("Portfolio not found.");
+    }
+
     if (updates.profileImage && updates.profileImage.buffer) {
-      const fileRecord = await this.fileRepository.savePrototype({
-        fileName: updates.profileImage.name,
-        fileType: updates.profileImage.type,
-        buffer: updates.profileImage.buffer,
-        folderId: null, // Root or specific folder
-      });
-      (updates as any).profileImage = fileRecord.previewUrl;
+      // If there's an existing profile image, we should probably delete it
+      // But for now, let's just upload the new one
+      const uploaded = await this.storage.uploadFile(updates.profileImage);
+      (updates as any).profileImage = uploaded.publicUrl;
     }
 
     portfolio.update(updates as any);

@@ -5,11 +5,12 @@ import { GetPortfolioByIdUseCase } from "./useCase/GetPortfolioByIdUseCase";
 import { GetPortfolioByNameUseCase } from "./useCase/GetPortfolioByNameUseCase";
 import { ListPortfoliosUseCase } from "./useCase/ListPortfoliosUseCase";
 import { UpdatePortfolioPropertyUseCase } from "./useCase/UpdatePortfolioPropertyUseCase";
-import { SupabaseFileRepository } from "../filesModule/infrastructure/SupabaseFileRepository";
+import { PortfolioStorageAdapter } from "./infrastructure/PortfolioStorageAdapter";
+import { filesModuleController } from "../filesModule";
 
 // Infrastructure
 const portfolioRepository = new PortfolioRepository();
-const fileRepository = new SupabaseFileRepository();
+const portfolioStorage = new PortfolioStorageAdapter(filesModuleController);
 
 // Use Cases
 const listPortfoliosUseCase = new ListPortfoliosUseCase(portfolioRepository);
@@ -18,7 +19,7 @@ const getPortfolioByNameUseCase = new GetPortfolioByNameUseCase(portfolioReposit
 const getPortfolioByGdgIdUseCase = new GetPortfolioByGdgIdUseCase(portfolioRepository);
 const updatePortfolioPropertyUseCase = new UpdatePortfolioPropertyUseCase(
   portfolioRepository,
-  fileRepository,
+  portfolioStorage,
 );
 
 // Module Controller
