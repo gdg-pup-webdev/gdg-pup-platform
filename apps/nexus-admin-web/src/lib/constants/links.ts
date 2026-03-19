@@ -12,5 +12,6 @@ export const INTERNAL_LINKS = {
   EVENTS: "/admin/events",
   EVENT_HIGHLIGHTS: "/admin/event-highlights",
   BEVY_EVENTS: "/admin/bevy-events",
+  PORTFOLIOS: "/admin/portfolios",
   LOGIN: "/admin/login",
 } as const;

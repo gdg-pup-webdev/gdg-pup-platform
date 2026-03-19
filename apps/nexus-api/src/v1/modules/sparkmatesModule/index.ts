@@ -5,8 +5,11 @@ import { GetCardStatusByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCa
 import { GetSparkmateByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCase/GetSparkmateByGdgIdUseCase";
 import { RegisterCardByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCase/RegisterCardByGdgIdUseCase";
 import { RegisterCardsBulkUseCase } from "@/v1/modules/sparkmatesModule/useCase/RegisterCardsBulkUseCase";
+import { PortfolioServiceAdapter } from "@/v1/modules/sparkmatesModule/infrastructure/PortfolioServiceAdapter";
+import { portfolioModuleController } from "@/v1/modules/portfolioModule";
 
-const sparkmatesRepository = new SparkmatesRepository();
+const portfolioService = new PortfolioServiceAdapter(portfolioModuleController);
+const sparkmatesRepository = new SparkmatesRepository(portfolioService);
 
 const getCardStatusByGdgIdUseCase = new GetCardStatusByGdgIdUseCase(
   sparkmatesRepository,
