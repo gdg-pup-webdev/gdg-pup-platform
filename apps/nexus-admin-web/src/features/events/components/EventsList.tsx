@@ -8,8 +8,9 @@ import { useCreateEvent } from "../hooks/useCreateEvent";
 import { useUpdateEvent } from "../hooks/useUpdateEvent";
 import { Event, EventInsert, EventUpdate } from "../types";
 import { Pagination } from "@/components/admin/Pagination";
-import { EventFormModal, EventDetailsModal, DeleteConfirmModal } from "./EventModals";
+import { EventFormModal, EventDetailsModal, DeleteConfirmModal, BevyEventSearchModal } from "./EventModals";
 import { EventCard } from "./EventCard";
+import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
 import { toast } from "react-toastify";
 
 export const EventsList: React.FC = () => {
@@ -20,6 +21,7 @@ export const EventsList: React.FC = () => {
   // API Hooks
   const { data: eventsResponse, isLoading, isError, error, refetch } = useListEvents(page, pageSize);
   const createMutation = useCreateEvent();
+  const createFromBevyMutation = useCreateEventFromBevyEvent();
   const updateMutation = useUpdateEvent();
   const deleteMutation = useDeleteEvent();
 
@@ -27,6 +29,7 @@ export const EventsList: React.FC = () => {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isBevySearchModalOpen, setIsBevySearchModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const events = eventsResponse?.data || [];
@@ -37,6 +40,20 @@ export const EventsList: React.FC = () => {
   const handleCreate = () => {
     setSelectedEvent(null);
     setIsFormModalOpen(true);
+  };
+
+  const handleCreateFromBevy = () => {
+    setIsBevySearchModalOpen(true);
+  };
+
+  const handleSelectBevyEvent = async (bevyEventId: string) => {
+    try {
+      await createFromBevyMutation.mutateAsync(bevyEventId);
+      toast.success("Event imported from Bevy successfully");
+      setIsBevySearchModalOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Import failed");
+    }
   };
 
   const handleEdit = (event: Event) => {
@@ -128,13 +145,21 @@ export const EventsList: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <button
-          onClick={handleCreate}
-          className="flex w-full items-center justify-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 md:w-auto"
-        >
-          <Plus size={18} />
-          Create Event
-        </button>
+        <div className="flex w-full items-center gap-2 md:w-auto">
+          <button
+            onClick={handleCreateFromBevy}
+            className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-[#0B1F3B] transition-all hover:bg-gray-50 md:flex-none"
+          >
+            Import from Bevy
+          </button>
+          <button
+            onClick={handleCreate}
+            className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 md:flex-none"
+          >
+            <Plus size={18} />
+            Create Event
+          </button>
+        </div>
       </div>
 
       {/* Pagination */}
@@ -201,6 +226,13 @@ export const EventsList: React.FC = () => {
         onConfirm={handleDeleteConfirm}
         itemName={selectedEvent?.title || ""}
         isDeleting={deleteMutation.isPending}
+      />
+
+      <BevyEventSearchModal
+        isOpen={isBevySearchModalOpen}
+        onClose={() => setIsBevySearchModalOpen(false)}
+        onSelect={handleSelectBevyEvent}
+        isSubmitting={createFromBevyMutation.isPending}
       />
     </div>
   );

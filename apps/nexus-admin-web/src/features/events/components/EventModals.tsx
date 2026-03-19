@@ -5,7 +5,9 @@ import { X, Loader2, AlertTriangle, Calendar, MapPin, Users, CheckCircle, Plus, 
 import { Event, EventInsert, EventUpdate, EventAttendance } from "../types";
 import { useListAttendees } from "../hooks/useListAttendees";
 import { useCheckinToEvent } from "../hooks/useCheckinToEvent";
+import { useGetBevyEvents } from "@/features/bevy-events/hooks/useGetBevyEvents";
 import { toast } from "react-toastify";
+import { Pagination } from "@/components/admin/Pagination";
 
 // ==========================================
 // Modal Wrapper
@@ -47,6 +49,95 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+// ==========================================
+// Bevy Event Search Modal
+// ==========================================
+interface BevyEventSearchModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (bevyEventId: string) => void;
+  isSubmitting: boolean;
+}
+
+export function BevyEventSearchModal({ isOpen, onClose, onSelect, isSubmitting }: BevyEventSearchModalProps) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const { data: bevyEventsResponse, isLoading } = useGetBevyEvents(page, pageSize);
+
+  const bevyEvents = bevyEventsResponse?.data || [];
+  const totalPages = bevyEventsResponse?.meta?.totalPages || 1;
+  const totalRecords = bevyEventsResponse?.meta?.totalRecords || 0;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Select Bevy Event">
+      <div className="space-y-4">
+        <p className="text-sm text-gray-500">
+          Select a Bevy event to import its details into a new community event.
+        </p>
+
+        {isLoading ? (
+          <div className="flex h-40 items-center justify-center">
+            <Loader2 size={32} className="animate-spin text-teal-600" />
+          </div>
+        ) : bevyEvents.length > 0 ? (
+          <div className="space-y-2">
+            <div className="divide-y divide-gray-100 rounded-sm border border-gray-100 bg-white shadow-sm">
+              {bevyEvents.map((event: any) => (
+                <button
+                  key={event.id}
+                  disabled={isSubmitting}
+                  onClick={() => onSelect(event.id)}
+                  className="flex w-full flex-col p-4 text-left hover:bg-teal-50 transition-colors disabled:opacity-50"
+                >
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm font-bold text-gray-900">{event.title}</span>
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500 uppercase">
+                      {event.event_type}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={12} className="text-teal-600" />
+                      {new Date(event.start_date).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin size={12} className="text-teal-600" />
+                      <span className="truncate max-w-[150px]">{event.location || "TBA"}</span>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalRecords={totalRecords}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center p-12 text-center">
+            <Calendar size={32} className="mb-3 text-gray-300" />
+            <p className="text-sm text-gray-500">No Bevy events found.</p>
+          </div>
+        )}
+
+        <div className="flex justify-end pt-4 border-t border-gray-50">
+          <button
+            onClick={onClose}
+            className="rounded-sm bg-gray-100 px-8 py-2.5 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }
 

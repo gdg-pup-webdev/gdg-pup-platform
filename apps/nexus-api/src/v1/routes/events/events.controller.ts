@@ -184,7 +184,7 @@ export class EventsHttpController {
   );
 
   createFromBevy: RequestHandler = createExpressController(
-    contract.api.v1.eventSystem.event.from_bevy_event.POST,
+    contract.api.v1.events.from_bevy_event.POST,
     async ({ input, output, ctx }) => {
       const { req } = ctx;
       const creatorId = req.user?.id || "anonymous";
