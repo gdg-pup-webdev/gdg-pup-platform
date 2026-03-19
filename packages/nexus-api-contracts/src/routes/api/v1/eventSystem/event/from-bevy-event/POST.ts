@@ -1,5 +1,5 @@
-import { cz, OpenApiSchemas } from "@packages/typed-rest/shared";
-import { eventRecord } from "../../../../../models/v1/eventSystem/event";
+import { cz, OpenApiSchemas } from "@packages/typed-rest/shared"; 
+import { eventRecord } from "#models/v1/eventSystem/event.js"
 
 export const body = cz.object({
     bevy_event_id: cz.string(),

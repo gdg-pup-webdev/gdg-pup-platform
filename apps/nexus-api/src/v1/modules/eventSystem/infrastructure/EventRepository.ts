@@ -28,7 +28,7 @@ export class EventRepository implements IEventRepository {
       attendees_count: row.attendees_count,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
-      bevy_event_id: row.bevy_event_id ?? null,
+      bevy_event_id: row.gdg_event_id?.toString() ?? null,
     });
   }
 
@@ -49,7 +49,7 @@ export class EventRepository implements IEventRepository {
       attendees_count: props.attendees_count,
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString(),
-      bevy_event_id: props.bevy_event_id,
+      gdg_event_id: parseInt(props.bevy_event_id || "") || null,
     };
   }
 

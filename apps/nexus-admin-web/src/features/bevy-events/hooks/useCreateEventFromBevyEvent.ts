@@ -8,7 +8,7 @@ export const useCreateEventFromBevyEvent = () => {
 
   return useMutation({
     mutationFn: async (bevyEventId: string) => {
-      const res = await callEndpoint(configs.nexusApiBaseUrl, contract.v1.eventSystem.event.from_bevy_event.POST, {
+      const res = await callEndpoint(configs.nexusApiBaseUrl, contract.api.v1.eventSystem.event.from_bevy_event.POST, {
         body: { bevy_event_id: bevyEventId },
       });
 
