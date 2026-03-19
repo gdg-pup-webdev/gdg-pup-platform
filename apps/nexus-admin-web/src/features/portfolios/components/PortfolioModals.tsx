@@ -60,12 +60,15 @@ interface PortfolioFormModalProps {
 
 export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting }: PortfolioFormModalProps) {
   const [formData, setFormData] = useState<PortfolioUpdate>({
-    full_name: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
     nickname: "",
     gdg_id: "",
     membership_type: "",
     department: "",
-    year_and_program: "",
+    year_level: null,
+    program: "",
     bio: "",
     github_url: "",
     linkedin_url: "",
@@ -88,12 +91,15 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
   useEffect(() => {
     if (initialData) {
       setFormData({
-        full_name: initialData.full_name || "",
+        first_name: initialData.first_name || "",
+        middle_name: initialData.middle_name || "",
+        last_name: initialData.last_name || "",
         nickname: initialData.nickname || "",
         gdg_id: initialData.gdg_id || "",
         membership_type: initialData.membership_type || "",
         department: initialData.department || "",
-        year_and_program: initialData.year_and_program || "",
+        year_level: initialData.year_level,
+        program: initialData.program || "",
         bio: initialData.bio || "",
         github_url: initialData.github_url || "",
         linkedin_url: initialData.linkedin_url || "",
@@ -130,12 +136,30 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Full Name</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">First Name</label>
             <input
               type="text"
               className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.full_name || ""}
-              onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+              value={formData.first_name || ""}
+              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Middle Name</label>
+            <input
+              type="text"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+              value={formData.middle_name || ""}
+              onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Last Name</label>
+            <input
+              type="text"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+              value={formData.last_name || ""}
+              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
             />
           </div>
           <div>
@@ -174,14 +198,25 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
             />
           </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Year & Program</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.year_and_program || ""}
-              onChange={(e) => setFormData({ ...formData, year_and_program: e.target.value })}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Year Level</label>
+              <input
+                type="number"
+                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+                value={formData.year_level || ""}
+                onChange={(e) => setFormData({ ...formData, year_level: e.target.value ? parseInt(e.target.value) : null })}
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Program</label>
+              <input
+                type="text"
+                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
+                value={formData.program || ""}
+                onChange={(e) => setFormData({ ...formData, program: e.target.value })}
+              />
+            </div>
           </div>
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Bio</label>
@@ -311,6 +346,10 @@ interface PortfolioDetailsModalProps {
 export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: PortfolioDetailsModalProps) {
   if (!portfolio) return null;
 
+  const fullName = [portfolio.first_name, portfolio.middle_name, portfolio.last_name]
+    .filter(Boolean)
+    .join(" ") || "Anonymous";
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Portfolio Details">
       <div className="space-y-6">
@@ -330,7 +369,7 @@ export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: Po
              <User size={64} className="text-blue-300" />
           </div>
           <div className="flex-1">
-            <h3 className="text-2xl font-bold text-gray-900">{portfolio.full_name || "Anonymous"}</h3>
+            <h3 className="text-2xl font-bold text-gray-900">{fullName}</h3>
             <p className="text-sm text-gray-500 italic">"{portfolio.nickname || "No nickname"}"</p>
             <div className="mt-2 flex flex-wrap gap-2">
                <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold text-blue-600 uppercase tracking-widest">
@@ -359,7 +398,7 @@ export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: Po
             </h4>
             <div className="space-y-1 text-sm text-gray-700">
               <p><span className="font-semibold">Department:</span> {portfolio.department || "N/A"}</p>
-              <p><span className="font-semibold">Program:</span> {portfolio.year_and_program || "N/A"}</p>
+              <p><span className="font-semibold">Education:</span> {portfolio.year_level ? `${portfolio.year_level} Year` : ""} {portfolio.program || ""}</p>
             </div>
           </div>
 

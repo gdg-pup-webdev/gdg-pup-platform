@@ -57,7 +57,9 @@ export const PortfolioList: React.FC = () => {
 
   // Filter portfolios client-side for search
   const filteredPortfolios = portfolios.filter(p => 
-    p.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (p.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     p.middle_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     p.last_name?.toLowerCase().includes(searchQuery.toLowerCase())) ||
     p.nickname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.gdg_id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.department?.toLowerCase().includes(searchQuery.toLowerCase())

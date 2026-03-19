@@ -10,6 +10,10 @@ interface PortfolioCardProps {
 }
 
 export function PortfolioCard({ portfolio, onClick }: PortfolioCardProps) {
+  const fullName = [portfolio.first_name, portfolio.middle_name, portfolio.last_name]
+    .filter(Boolean)
+    .join(" ") || "Anonymous";
+
   return (
     <div 
       className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
@@ -34,7 +38,7 @@ export function PortfolioCard({ portfolio, onClick }: PortfolioCardProps) {
         </div>
 
         <h3 className="mb-1 line-clamp-1 text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-          {portfolio.full_name || "Anonymous User"}
+          {fullName}
         </h3>
         <p className="mb-4 text-xs font-medium text-gray-500 italic">
           "{portfolio.nickname || "No nickname"}"
@@ -48,7 +52,7 @@ export function PortfolioCard({ portfolio, onClick }: PortfolioCardProps) {
           
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <GraduationCap size={14} className="text-gray-400" />
-            <span className="line-clamp-1">{portfolio.year_and_program || "N/A"}</span>
+            <span className="line-clamp-1">{portfolio.year_level ? `${portfolio.year_level} Year` : ""} {portfolio.program || ""}</span>
           </div>
 
           <div className="flex items-center gap-3 border-t border-gray-50 pt-3">

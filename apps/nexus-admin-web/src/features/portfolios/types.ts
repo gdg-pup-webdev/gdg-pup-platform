@@ -5,12 +5,15 @@ import { z } from "zod";
 export type Portfolio = z.infer<typeof contract.api.v1.portfolios.GET.response[200]>["data"][number];
 
 export type PortfolioUpdate = {
-  full_name?: string | null;
+  first_name?: string | null;
+  middle_name?: string | null;
+  last_name?: string | null;
   nickname?: string | null;
   gdg_id?: string | null;
   membership_type?: string | null;
   department?: string | null;
-  year_and_program?: string | null;
+  year_level?: number | null;
+  program?: string | null;
   bio?: string | null;
   github_url?: string | null;
   linkedin_url?: string | null;

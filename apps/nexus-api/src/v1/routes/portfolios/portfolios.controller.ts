@@ -10,12 +10,15 @@ function toRow(props: PortfolioProps) {
     user_id: props.userId,
     created_at: props.createdAt,
     updated_at: props.updatedAt,
-    full_name: props.fullName,
+    first_name: props.firstName,
+    middle_name: props.middleName,
+    last_name: props.lastName,
     nickname: props.nickname,
     gdg_id: props.gdgId,
     membership_type: props.membershipType,
     department: props.department,
-    year_and_program: props.yearAndProgram,
+    year_level: props.yearLevel,
+    program: props.program,
     bio: props.bio,
     github_url: props.githubUrl,
     linkedin_url: props.linkedinUrl,
@@ -26,6 +29,20 @@ function toRow(props: PortfolioProps) {
     tools_and_technologies: props.toolsAndTechnologies,
     is_public: props.isPublic,
   };
+}
+
+/**
+ * Maps snake_case keys from the API contract to camelCase keys used in the Domain/Application layer.
+ */
+function toCamelCase(obj: Record<string, any>): Record<string, any> {
+  const result: Record<string, any> = {};
+  for (const key in obj) {
+    const camelKey = key.replace(/([-_][a-z])/g, (group) =>
+      group.toUpperCase().replace("-", "").replace("_", ""),
+    );
+    result[camelKey] = obj[key];
+  }
+  return result;
 }
 
 export class PortfoliosHttpController {
@@ -48,7 +65,7 @@ export class PortfoliosHttpController {
         return output(200, {
           status: "success",
           message: "Portfolio fetched by name successfully",
-          data: [toRow(portfolio)],
+          data: [toRow(portfolio as any)],
           meta: {
             totalRecords: 1,
             currentPage: 1,
@@ -64,7 +81,7 @@ export class PortfoliosHttpController {
         return output(200, {
           status: "success",
           message: "Portfolio fetched by GDG ID successfully",
-          data: [toRow(portfolio)],
+          data: [toRow(portfolio as any)],
           meta: {
             totalRecords: 1,
             currentPage: 1,
@@ -83,7 +100,7 @@ export class PortfoliosHttpController {
       return output(200, {
         status: "success",
         message: "Portfolios fetched successfully",
-        data: list.map(toRow),
+        data: list.map((p) => toRow(p.props)),
         meta: {
           totalRecords: count,
           currentPage: pageNumber,
@@ -104,7 +121,7 @@ export class PortfoliosHttpController {
       return output(200, {
         status: "success",
         message: "Portfolio fetched successfully",
-        data: toRow(portfolio),
+        data: toRow(portfolio as any),
       });
     },
   );
@@ -112,16 +129,18 @@ export class PortfoliosHttpController {
   updatePortfolioProperty: RequestHandler = createExpressController(
     contract.api.v1.portfolios.portfolioId.PATCH,
     async ({ input, output }) => {
+      const camelUpdates = toCamelCase(input.body.data);
+
       const portfolio =
         await this.portfolioModuleController.updatePortfolioProperty(
           input.params.portfolioId,
-          input.body.data,
+          camelUpdates as any,
         );
 
       return output(200, {
         status: "success",
         message: "Portfolio updated successfully",
-        data: toRow(portfolio),
+        data: toRow(portfolio as any),
       });
     },
   );
