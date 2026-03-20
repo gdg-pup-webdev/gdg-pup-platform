@@ -43,21 +43,21 @@ export function MobileShowcase() {
   return (
     <div className="md:hidden relative z-10">
       {/* ── Background decorations ── */}
-      <div className="w-[454px] h-[459px] right-0 top-0 absolute bg-pink-400/20 rounded-full blur-[150px] translate-x-1/2 -translate-y-1/2" />
-      <div className="w-[454px] h-[459px] left-0 top-0 absolute bg-sky-400/25 rounded-full blur-[150px] -translate-x-1/2 translate-y-1/2" />
-      <div className="w-[454px] h-[459px] left-0 bottom-0 absolute bg-sky-400/25 rounded-full blur-[150px] translate-y-4/5" />
+      <div className="pointer-events-none w-[454px] h-[459px] right-0 top-0 absolute bg-pink-400/20 rounded-full blur-[150px] translate-x-1/2 -translate-y-1/2" />
+      <div className="pointer-events-none w-[454px] h-[459px] left-0 top-0 absolute bg-sky-400/25 rounded-full blur-[150px] -translate-x-1/2 translate-y-1/2" />
+      <div className="pointer-events-none w-[454px] h-[459px] left-0 bottom-0 absolute bg-sky-400/25 rounded-full blur-[150px] translate-y-4/5" />
       <img
-        className="w-96 h-auto left-0 top-0 absolute opacity-75 rotate-10 -ml-60 -mt-6"
+        className="pointer-events-none w-96 h-auto left-0 top-0 absolute opacity-75 rotate-10 -ml-60 -mt-6"
         src="/community-showcase/community-showcase-space-dust-1.webp"
         alt=""
       />
       <img
-        className="w-[33vw] max-w-[493px] h-auto right-0 top-2 absolute -mr-[11vw] -z-10"
+        className="pointer-events-none w-[33vw] max-w-[493px] h-auto right-0 top-2 absolute -mr-[11vw] -z-10"
         src="/community-showcase/community-showcase-cirby.webp"
         alt=""
       />
       <img
-        className="w-[900px] max-w-none h-auto right-12 -bottom-20 absolute opacity-75 translate-x-1/2"
+        className="pointer-events-none w-[900px] max-w-none h-auto right-12 -bottom-20 absolute opacity-75 translate-x-1/2"
         src="/community-showcase/community-showcase-space-dust-2.webp"
         alt=""
       />

@@ -24,22 +24,22 @@ export function DesktopShowcase({ onOpenModal }: DesktopShowcaseProps) {
     <>
       {/* ── Background decorations (desktop only) ── */}
       <div className="hidden md:block">
-        <div className="w-[802px] h-[811px] right-0 top-0 absolute bg-pink-400/30 rounded-full blur-[400px] translate-x-1/2 -translate-y-1/2" />
-        <div className="w-[802px] h-[811px] left-0 top-0 absolute bg-blue-500/25 rounded-full blur-[400px] -translate-x-1/2 translate-y-1/2" />
-        <div className="w-[966px] h-[977px] left-0 top-0 absolute bg-sky-400/20 rounded-full blur-[400px] -translate-x-1/5 translate-y-3/4" />
-        <div className="w-[966px] h-[977px] left-0 bottom-0 absolute bg-pink-400/30 rounded-full blur-[400px] translate-x-1/2 translate-y-4/20" />
+        <div className="pointer-events-none w-[802px] h-[811px] right-0 top-0 absolute bg-pink-400/30 rounded-full blur-[400px] translate-x-1/2 -translate-y-1/2" />
+        <div className="pointer-events-none w-[802px] h-[811px] left-0 top-0 absolute bg-blue-500/25 rounded-full blur-[400px] -translate-x-1/2 translate-y-1/2" />
+        <div className="pointer-events-none w-[966px] h-[977px] left-0 top-0 absolute bg-sky-400/20 rounded-full blur-[400px] -translate-x-1/5 translate-y-3/4" />
+        <div className="pointer-events-none w-[966px] h-[977px] left-0 bottom-0 absolute bg-pink-400/30 rounded-full blur-[400px] translate-x-1/2 translate-y-4/20" />
         <img
-          className="w-[30vw] max-w-[493px] h-auto right-0 top-55 absolute -mr-[6vw]"
+          className="pointer-events-none w-[30vw] max-w-[493px] h-auto right-0 top-55 absolute -mr-[6vw]"
           src="/community-showcase/community-showcase-cirby.webp"
           alt=""
         />
         <img
-          className="w-[1354.15px] h-[1656.86px] left-0 top-0 absolute opacity-75 -ml-165 mt-40"
+          className="pointer-events-none w-[1354.15px] h-[1656.86px] left-0 top-0 absolute opacity-75 -ml-165 mt-40"
           src="/community-showcase/community-showcase-space-dust-1.webp"
           alt=""
         />
         <img
-          className="w-[1400px] h-auto right-20 bottom-235 absolute opacity-75 translate-x-1/3"
+          className="pointer-events-none w-[1400px] h-auto right-20 bottom-235 absolute opacity-75 translate-x-1/3"
           src="/community-showcase/community-showcase-space-dust-2.webp"
           alt=""
         />
