@@ -4,12 +4,11 @@ import {
   Container,
   Stack,
   Text,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
   Button,
 } from "@packages/spark-ui";
+import { AboutTheTeam } from "./AboutTheTeam";
+import { TeamDropdowns } from "./TeamDropdowns";
+import { StudyJamContainer } from "./StudyJamContainer";
 
 interface TeamSectionProps {
   teamName: string;
@@ -73,17 +72,45 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               />
             </div>
 
-            {/* Description card */}
-            <Card className="w-full max-w-3xl mx-auto mt-6">
-              <CardHeader>
-                <CardTitle>{teamName}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Text variant="body" color="secondary">
-                  This is the {teamName} team. Content coming soon.
-                </Text>
-              </CardContent>
-            </Card>
+            <div className="w-full max-w-5xl mx-auto mt-6">
+              <AboutTheTeam
+                description={
+                  <>
+                    The{" "}
+                    <span className="text-[#EA4335]">
+                      Internet of Things (IoT) Team
+                    </span>{" "}
+                    dedicates the design, development, and implementation of
+                    interconnected systems that bridge the digital and physical
+                    worlds. Members of this team will engage in every stage of
+                    IoT solution development, from conceptualizing device
+                    integrations and designing smart system architectures to
+                    coding, testing, and deploying functional prototypes. They
+                    will explore topics such as sensor technologies, data
+                    communication, automation, and real-time monitoring to
+                    create innovative and efficient IoT applications that enhance
+                    everyday experiences.
+                  </>
+                }
+                categories={
+                  <>
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
+                      Embedded Systems
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
+                      Sensor &amp; Device Integration
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
+                      Network Communication
+                    </span>
+                  </>
+                }
+              />
+            </div>
+
+            <div className="w-full max-w-5xl mx-auto mt-4">
+              <TeamDropdowns />
+            </div>
 
             <Link href={`/products/${teamSlug}/team-structure`}>
               <Button size="lg">See team leads and structure</Button>
@@ -101,18 +128,31 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               STUDY JAMS
             </Text>
 
-            <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex flex-col md:flex-row gap-6 items-center md:items-stretch justify-center">
               {[1, 2, 3].map((i) => (
-                <Card key={i} className="flex-1">
-                  <CardHeader>
-                    <CardTitle>Study Jam {i}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Text variant="body" color="secondary">
-                      Study jam content coming soon.
-                    </Text>
-                  </CardContent>
-                </Card>
+                <StudyJamContainer
+                  key={i}
+                  className="w-full"
+                  imageSrc="/products/iot_study_jam_image.jpg"
+                  imageAlt={`Study Jam ${i}`}
+                  title="Design Smarter, Prototype Faster"
+                  subtitle="Rosemarie Aspa"
+                  description="This hands-on session will teach you how to create parametric sketches, apply accurate dimensions and constraints, and seamlessly convert 2D drawings ..."
+                  category={
+                    <>
+                      <span className="inline-flex items-center rounded-full bg-[#8B2F00]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                        IOT
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-[#B67853]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                        Prototype
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-[#7E6A63]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                        3D Models
+                      </span>
+                    </>
+                  }
+                  date="02/27/26"
+                />
               ))}
             </div>
           </Stack>
