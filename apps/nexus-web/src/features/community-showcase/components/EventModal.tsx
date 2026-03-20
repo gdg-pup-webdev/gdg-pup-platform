@@ -16,13 +16,18 @@ interface EventModalProps {
 export function EventModal({ isVisible, onClose }: EventModalProps) {
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop with blur and darken, animated */}
       <div
-        className="fixed inset-0 z-100"
+        className="fixed inset-0 z-100 transition-all duration-800"
         onClick={onClose}
         style={{
-          backgroundColor: isVisible ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0)",
-          transition: "background-color 800ms cubic-bezier(0.22,1,0.36,1)",
+          background: isVisible
+            ? "rgba(0,0,0,0.6)"
+            : "rgba(0,0,0,0)",
+          backdropFilter: isVisible ? "blur(12px)" : "blur(0px)",
+          WebkitBackdropFilter: isVisible ? "blur(12px)" : "blur(0px)",
+          transition:
+            "background 800ms cubic-bezier(0.22,1,0.36,1), backdrop-filter 800ms cubic-bezier(0.22,1,0.36,1), -webkit-backdrop-filter 800ms cubic-bezier(0.22,1,0.36,1)",
         }}
       />
 
@@ -40,7 +45,7 @@ export function EventModal({ isVisible, onClose }: EventModalProps) {
         }}
       >
         <div
-          className="relative w-full max-w-[1100px] pointer-events-auto"
+          className="relative w-full max-w-275 pointer-events-auto"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Gradient border ring */}
