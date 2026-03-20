@@ -55,8 +55,8 @@ describe("UpdateEvent Use Case", () => {
     expect(result.props.attendance_points).toBe(updatePayload.attendance_points); // Updated field
     
     // Ensure non-updated fields remained intact
-    expect(result.props.description).toBe("Old description");
-    expect(result.props.category).toBe("WebDev");
+    expect(result.props.description).toBe("A test event for unit testing");
+    expect(result.props.category).toBe("Testing");
   });
 
   it("should persist the changes to the underlying repository", async () => {
