@@ -184,7 +184,7 @@ export function ProductsSection() {
                         <div
                           className="w-6 h-6 rounded-full shrink-0"
                           style={{
-                            padding: "1px",
+                            padding: "2px",
                             background:
                               "linear-gradient(135deg, #EA4335, #F9AB00, #34A853, #4285F4)",
                             WebkitMask:
