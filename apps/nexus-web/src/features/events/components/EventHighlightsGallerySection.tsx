@@ -13,11 +13,13 @@ type EventHighlightsGallerySectionProps = {
   title?: string;
 };
 
-const MOCK_TOTAL_PAGES = 68;
-const MOCK_TILES_PER_PAGE = 16;
-const MOCK_TILE_SRC = "/pages/events/gallery-preview-year.svg";
-const MOBILE_MOCK_TILE_COUNT = 20;
+const DESKTOP_TILES_PER_PAGE = 16;
 const MOBILE_SLIDE_WIDTH_PERCENT = 78;
+const PLACEHOLDER_TILE_URL = "/pages/events/event-cover.png";
+const PLACEHOLDER_IMAGES = Array.from(
+  { length: DESKTOP_TILES_PER_PAGE * 2 },
+  () => PLACEHOLDER_TILE_URL,
+);
 
 function formatDateLabel(startDate?: string, endDate?: string) {
   if (!startDate) return "Date TBA";
@@ -47,6 +49,29 @@ function formatDateLabel(startDate?: string, endDate?: string) {
   return `${dayLabel}${endTime ? ` ${startTime} - ${endTime}` : ` ${startTime}`}`;
 }
 
+function buildPagerTokens(currentPage: number, totalPages: number): Array<number | "..."> {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages = new Set<number>([1, totalPages, currentPage, currentPage - 1, currentPage + 1]);
+  const normalized = [...pages]
+    .filter((page) => page >= 1 && page <= totalPages)
+    .sort((a, b) => a - b);
+
+  const tokens: Array<number | "..."> = [];
+  for (let i = 0; i < normalized.length; i += 1) {
+    const page = normalized[i];
+    const prev = normalized[i - 1];
+    if (prev && page - prev > 1) {
+      tokens.push("...");
+    }
+    tokens.push(page);
+  }
+
+  return tokens;
+}
+
 export function EventHighlightsGallerySection({
   yearParam,
   eventId,
@@ -69,7 +94,10 @@ export function EventHighlightsGallerySection({
           routeId: eventId,
           title: title?.trim() || undefined,
         });
-        if (!cancelled) setEventDetail(found);
+
+        if (!cancelled) {
+          setEventDetail(found);
+        }
       } catch (error) {
         if (!cancelled) {
           setEventDetail(null);
@@ -99,30 +127,35 @@ export function EventHighlightsGallerySection({
     "General";
   const dateLabel = formatDateLabel(eventDetail?.start_date, eventDetail?.end_date);
   const venue = eventDetail?.venue?.trim() || "Location TBA";
-  const mockTiles = useMemo(
-    () =>
-      Array.from({ length: MOCK_TILES_PER_PAGE }, (_, index) => ({
-        id: `${currentPage}-${index}`,
-        src: MOCK_TILE_SRC,
-      })),
-    [currentPage],
+
+  const galleryImages = PLACEHOLDER_IMAGES;
+  const desktopTotalPages = Math.max(
+    1,
+    Math.ceil(galleryImages.length / DESKTOP_TILES_PER_PAGE),
   );
-  const mobileMockTiles = useMemo(
-    () =>
-      Array.from({ length: MOBILE_MOCK_TILE_COUNT }, (_, index) => ({
-        id: `mobile-${index + 1}`,
-        src: MOCK_TILE_SRC,
-      })),
-    [],
+
+  useEffect(() => {
+    setCurrentPage((prev) => Math.min(prev, desktopTotalPages));
+  }, [desktopTotalPages]);
+
+  useEffect(() => {
+    setMobileIndex((prev) => Math.min(prev, Math.max(galleryImages.length - 1, 0)));
+  }, [galleryImages.length]);
+
+  const desktopImages = useMemo(() => {
+    const from = (currentPage - 1) * DESKTOP_TILES_PER_PAGE;
+    return galleryImages.slice(from, from + DESKTOP_TILES_PER_PAGE);
+  }, [currentPage, galleryImages]);
+
+  const pagerTokens = useMemo(
+    () => buildPagerTokens(currentPage, desktopTotalPages),
+    [currentPage, desktopTotalPages],
   );
-  const pagerTokens = useMemo<(number | "...")[]>(
-    () => [1, 2, 3, "...", MOCK_TOTAL_PAGES - 1, MOCK_TOTAL_PAGES],
-    [],
-  );
+
   const canGoPrev = currentPage > 1;
-  const canGoNext = currentPage < MOCK_TOTAL_PAGES;
+  const canGoNext = currentPage < desktopTotalPages;
   const canGoMobilePrev = mobileIndex > 0;
-  const canGoMobileNext = mobileIndex < mobileMockTiles.length - 1;
+  const canGoMobileNext = mobileIndex < galleryImages.length - 1;
 
   return (
     <div
@@ -338,12 +371,11 @@ export function EventHighlightsGallerySection({
               <Text
                 variant="body"
                 align="center"
-                className="text-red-200/90 text-xs md:text-sm"
+                className="text-white/60 text-xs md:text-sm"
               >
-                {errorMessage}
+                Event details unavailable. Showing placeholder gallery.
               </Text>
             ) : null}
-
             <div className="md:hidden mt-2">
               <div className="overflow-hidden">
                 <div
@@ -352,33 +384,84 @@ export function EventHighlightsGallerySection({
                     transform: `translateX(calc((100% - ${MOBILE_SLIDE_WIDTH_PERCENT}%) / 2 - ${mobileIndex} * (${MOBILE_SLIDE_WIDTH_PERCENT}% + 0.75rem)))`,
                   }}
                 >
-                  {mobileMockTiles.map((tile, index) => (
+                  {galleryImages.map((src, index) => (
                     <div
-                      key={tile.id}
+                      key={`${src}-${index}`}
                       className="relative shrink-0 overflow-hidden rounded-[10px] border border-white/15 bg-black/30 aspect-[16/9]"
                       style={{ width: `${MOBILE_SLIDE_WIDTH_PERCENT}%` }}
                       aria-hidden={index !== mobileIndex}
                     >
                       <Image
-                        src={tile.src}
-                        alt={`Event highlight placeholder ${index + 1}`}
+                        src={src}
+                        alt={`${eventTitle} highlight ${index + 1}`}
                         fill
                         sizes="78vw"
                         className="object-cover"
-                        priority={false}
+                        priority={index === 0}
                       />
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center justify-center gap-6 text-white">
+              {galleryImages.length > 1 ? (
+                <div className="mt-5 flex items-center justify-center gap-6 text-white">
+                  <button
+                    type="button"
+                    aria-label="Previous slide"
+                    disabled={!canGoMobilePrev}
+                    onClick={() => setMobileIndex((index) => Math.max(0, index - 1))}
+                    className="h-9 w-9 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.3"
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                    >
+                      <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                  </button>
+                  <span className="text-base font-medium">
+                    {mobileIndex + 1} of {galleryImages.length}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Next slide"
+                    disabled={!canGoMobileNext}
+                    onClick={() =>
+                      setMobileIndex((index) =>
+                        Math.min(galleryImages.length - 1, index + 1),
+                      )
+                    }
+                    className="h-9 w-9 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.3"
+                      className="h-4 w-4"
+                      aria-hidden="true"
+                    >
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="relative px-10 md:px-16 hidden md:block">
                 <button
                   type="button"
-                  aria-label="Previous slide"
-                  disabled={!canGoMobilePrev}
-                  onClick={() => setMobileIndex((index) => Math.max(0, index - 1))}
-                  className="h-9 w-9 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
+                  aria-label="Previous page"
+                  disabled={!canGoPrev}
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -386,25 +469,19 @@ export function EventHighlightsGallerySection({
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2.3"
-                    className="h-4 w-4"
+                    className="h-4 w-4 md:h-5 md:w-5"
                     aria-hidden="true"
                   >
                     <path d="M15 18l-6-6 6-6" />
                   </svg>
                 </button>
-                <span className="text-base font-medium">
-                  {mobileIndex + 1} of {mobileMockTiles.length}
-                </span>
+
                 <button
                   type="button"
-                  aria-label="Next slide"
-                  disabled={!canGoMobileNext}
-                  onClick={() =>
-                    setMobileIndex((index) =>
-                      Math.min(mobileMockTiles.length - 1, index + 1),
-                    )
-                  }
-                  className="h-9 w-9 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
+                  aria-label="Next page"
+                  disabled={!canGoNext}
+                  onClick={() => setCurrentPage((page) => Math.min(desktopTotalPages, page + 1))}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -412,103 +489,60 @@ export function EventHighlightsGallerySection({
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2.3"
-                    className="h-4 w-4"
+                    className="h-4 w-4 md:h-5 md:w-5"
                     aria-hidden="true"
                   >
                     <path d="M9 6l6 6-6 6" />
                   </svg>
                 </button>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
+                  {desktopImages.map((src, index) => (
+                    <div
+                      key={`${src}-${index}`}
+                      className="relative overflow-hidden rounded-[6px] border border-white/10 bg-black/30 aspect-[16/9]"
+                    >
+                      <Image
+                        src={src}
+                        alt={`${eventTitle} highlight ${(currentPage - 1) * DESKTOP_TILES_PER_PAGE + index + 1}`}
+                        fill
+                        sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
+                        className="object-cover"
+                        priority={currentPage === 1 && index < 2}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="relative px-10 md:px-16 hidden md:block">
-              <button
-                type="button"
-                aria-label="Previous page"
-                disabled={!canGoPrev}
-                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.3"
-                  className="h-4 w-4 md:h-5 md:w-5"
-                  aria-hidden="true"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-              </button>
+            {desktopTotalPages > 1 ? (
+              <div className="hidden md:flex items-center justify-center gap-2 text-sm md:text-base text-white/80 select-none">
+                {pagerTokens.map((token, index) => {
+                  if (token === "...") {
+                    return (
+                      <span key={`ellipsis-${index}`} className="px-1.5 text-white/55">
+                        ...
+                      </span>
+                    );
+                  }
 
-              <button
-                type="button"
-                aria-label="Next page"
-                disabled={!canGoNext}
-                onClick={() =>
-                  setCurrentPage((page) => Math.min(MOCK_TOTAL_PAGES, page + 1))
-                }
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.3"
-                  className="h-4 w-4 md:h-5 md:w-5"
-                  aria-hidden="true"
-                >
-                  <path d="M9 6l6 6-6 6" />
-                </svg>
-              </button>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-                {mockTiles.map((tile) => (
-                  <div
-                    key={tile.id}
-                    className="relative overflow-hidden rounded-[6px] border border-white/10 bg-black/30 aspect-[16/9]"
-                  >
-                    <Image
-                      src={tile.src}
-                      alt="Event highlight placeholder"
-                      fill
-                      sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
-                      className="object-cover"
-                      priority={false}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="hidden md:flex items-center justify-center gap-2 text-sm md:text-base text-white/80 select-none">
-              {pagerTokens.map((token, index) => {
-                if (token === "...") {
                   return (
-                    <span key={`ellipsis-${index}`} className="px-1.5 text-white/55">
-                      ...
-                    </span>
+                    <button
+                      type="button"
+                      key={`page-${token}`}
+                      onClick={() => setCurrentPage(token)}
+                      className={`min-w-6 h-6 rounded-full text-xs md:text-sm transition-colors ${
+                        currentPage === token
+                          ? "bg-white/15 text-white"
+                          : "text-white/75 hover:text-white"
+                      }`}
+                    >
+                      {token}
+                    </button>
                   );
-                }
-
-                return (
-                  <button
-                    type="button"
-                    key={`page-${token}`}
-                    onClick={() => setCurrentPage(token)}
-                    className={`min-w-6 h-6 rounded-full text-xs md:text-sm transition-colors ${
-                      currentPage === token
-                        ? "bg-white/15 text-white"
-                        : "text-white/75 hover:text-white"
-                    }`}
-                  >
-                    {token}
-                  </button>
-                );
-              })}
-            </div>
+                })}
+              </div>
+            ) : null}
           </Stack>
         </Stack>
       </Container>

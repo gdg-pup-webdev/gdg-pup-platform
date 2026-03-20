@@ -41,6 +41,12 @@ export interface Event {
   
   /** Event banner/image URL */
   banner_url?: string;
+
+  /** Event cover/image URL from upstream source */
+  cover_image_url?: string | null;
+
+  /** Normalized gallery image URLs derived from upstream image fields */
+  gallery_images?: string[];
   
   /** Registration link  */
   registration_url?: string;

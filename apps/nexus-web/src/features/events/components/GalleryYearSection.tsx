@@ -333,7 +333,9 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                     : description;
 
                 return (
-                  <article key={`${event.id}-${event.start_date}-${event.title}`}>
+                  <article
+                    key={`${event.id}-${event.start_date}-${event.title}`}
+                  >
                     <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[220px] md:min-h-[560px]">
                       <img
                         src={event.banner_url || FALLBACK_COVER}
@@ -412,7 +414,9 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
                       {canOpen ? (
                         <Link
-                          href={`/events/gallery/${encodeURIComponent(yearTitle)}/${encodeURIComponent(routeId)}?title=${encodeURIComponent(event.title)}`}
+                          href={`/events/gallery/${encodeURIComponent(yearTitle)}/${encodeURIComponent(
+                            routeId,
+                          )}?title=${encodeURIComponent(event.title)}`}
                           className="mt-6 md:mt-7 h-10 md:h-11 w-full rounded-md border border-[#4285F4] bg-[linear-gradient(90deg,rgba(20,57,132,0.9)_0%,rgba(59,141,255,0.96)_50%,rgba(20,57,132,0.9)_100%)] hover:bg-[linear-gradient(90deg,rgba(11,34,90,0.98)_0%,rgba(72,153,255,0.96)_50%,rgba(11,34,90,0.98)_100%)] text-white text-sm md:text-base font-medium inline-flex items-center justify-center gap-1 transition-[background-image,border-color,box-shadow] duration-300 ease-out hover:border-[#5B95FF] hover:shadow-[0_0_18px_rgba(66,133,244,0.32)]"
                         >
                           View More Event Highlights

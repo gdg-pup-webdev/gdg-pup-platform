@@ -23,8 +23,12 @@ type RawEvent = {
   attendee_virtual_venue_link?: string | null;
   bevy_url?: string | null;
   is_virtual_event?: boolean;
-  banner_url?: string;
-  cover_image_url?: string;
+  banner_url?: string | null;
+  cover_image_url?: string | null;
+  gallery_images?: unknown;
+  image_urls?: unknown;
+  images?: unknown;
+  media?: unknown;
   short_description?: string | null;
   description_short?: string | null;
   tags?: string[] | null;
@@ -46,6 +50,88 @@ const firstNonEmptyString = (...values: Array<unknown>): string | null => {
   return null;
 };
 
+const isImageLikeUrl = (value: string): boolean => {
+  const normalized = value.trim();
+  if (!normalized) return false;
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    return true;
+  }
+  if (normalized.startsWith("/")) return true;
+  return false;
+};
+
+const extractImageUrls = (value: unknown): string[] => {
+  if (!value) return [];
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    if (
+      (trimmed.startsWith("[") && trimmed.endsWith("]")) ||
+      (trimmed.startsWith("{") && trimmed.endsWith("}"))
+    ) {
+      try {
+        return extractImageUrls(JSON.parse(trimmed));
+      } catch {
+        return isImageLikeUrl(trimmed) ? [trimmed] : [];
+      }
+    }
+
+    return isImageLikeUrl(trimmed) ? [trimmed] : [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(extractImageUrls);
+  }
+
+  if (typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    const commonKeys = [
+      "url",
+      "src",
+      "image_url",
+      "imageUrl",
+      "public_url",
+      "publicUrl",
+      "secure_url",
+      "secureUrl",
+      "link",
+      "href",
+    ];
+
+    for (const key of commonKeys) {
+      const urls = extractImageUrls(obj[key]);
+      if (urls.length > 0) return urls;
+    }
+  }
+
+  return [];
+};
+
+const dedupeUrls = (urls: string[]): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const url of urls) {
+    const normalized = url.trim();
+    if (!normalized) continue;
+    if (seen.has(normalized)) continue;
+    seen.add(normalized);
+    result.push(normalized);
+  }
+
+  return result;
+};
+
+const normalizeGalleryImages = (event: RawEvent): string[] =>
+  dedupeUrls([
+    ...extractImageUrls(event?.gallery_images),
+    ...extractImageUrls(event?.image_urls),
+    ...extractImageUrls(event?.images),
+    ...extractImageUrls(event?.media),
+  ]);
+
 const normalizeEvent = (event: RawEvent) => ({
   ...event,
   short_description: firstNonEmptyString(
@@ -58,7 +144,9 @@ const normalizeEvent = (event: RawEvent) => ({
     event?.attendee_virtual_venue_url,
     event?.attendee_virtual_venue_link,
   ) ?? (event?.is_virtual_event ? "Online" : null),
-  banner_url: event?.banner_url ?? event?.cover_image_url,
+  banner_url: firstNonEmptyString(event?.banner_url, event?.cover_image_url),
+  cover_image_url: firstNonEmptyString(event?.cover_image_url, event?.banner_url),
+  gallery_images: normalizeGalleryImages(event),
   category: event?.category ?? event?.event_type ?? null,
   tags: Array.isArray(event?.tags) ? event.tags : [],
   registration_url: firstNonEmptyString(
