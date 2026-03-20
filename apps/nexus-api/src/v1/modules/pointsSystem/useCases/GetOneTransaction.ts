@@ -1,13 +1,13 @@
-import { ITransactionRepository } from "../domain/ITransactionRepository";
-import { TransactionRecord } from "../domain/TransactionRecord";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
+import { TransactionRecord } from "../domain/TransactionRecord.js";
 
+/**
+ * GetOneTransaction Use Case
+ */
 export class GetOneTransaction {
   constructor(private readonly transactionRepository: ITransactionRepository) {}
 
   async execute(transactionId: string): Promise<TransactionRecord | null> {
-    const transactionRecord =
-      await this.transactionRepository.findById(transactionId);
-
-    return transactionRecord;
+    return this.transactionRepository.findById(transactionId);
   }
 }

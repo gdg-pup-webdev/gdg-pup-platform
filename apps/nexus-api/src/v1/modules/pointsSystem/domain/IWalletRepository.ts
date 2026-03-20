@@ -1,9 +1,11 @@
-import { Wallet } from "./Wallet";
+import { Wallet } from "./Wallet.js";
 
+/**
+ * IWalletRepository
+ *
+ * Contract for persisting and retrieving Wallet domain objects.
+ */
 export abstract class IWalletRepository {
-    constructor () {}
-
-    abstract findByUserId(userId: string) : Promise<Wallet | null>
-
-    abstract persistUpdates(wallet: Wallet) : Promise<Wallet>
+  abstract findByUserId(userId: string): Promise<Wallet | null>;
+  abstract persistUpdates(wallet: Wallet): Promise<Wallet>;
 }

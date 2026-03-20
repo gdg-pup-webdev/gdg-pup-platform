@@ -19,21 +19,25 @@ export function IdHowItWorks() {
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
     >
-      <div className="relative h-120 flex items-stretch">
-        {/* Cirby mascot — positioned behind the card */}
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[55%] z-10 pointer-events-none">
-          <Image
-            src={ASSETS.ID.CIRBY}
-            alt="Cirby mascot"
-            width={320}
-            height={320}
-            className="object-contain w-full h-auto drop-shadow-2xl"
-          />
+      <div className="relative h-auto md:h-120 flex flex-col md:flex-row items-stretch">
+        {/* Cirby mascot — positioned behind the card on desktop, above on mobile */}
+        <div className="static md:absolute left-0 top-1/2 md:-translate-y-1/2 w-full md:w-[55%] z-10 pointer-events-none flex justify-start md:justify-start -mt-80 md:mt-0 px-6 md:px-0">
+          <div className="w-[60%] md:w-full">
+            <Image
+              src={ASSETS.ID.CIRBY}
+              alt="Cirby mascot"
+              width={320}
+              height={320}
+              className="object-contain w-full h-auto drop-shadow-2xl"
+            />
+          </div>
         </div>
 
-        {/* Info card — overlaps Cirby, glassmorphism frosts the image beneath */}
-        <div className="absolute right-0 top-0 bottom-0 w-[57%] z-20">
-          <IdInfoCard />
+        {/* Info card — overlaps Cirby on desktop, stacks on mobile */}
+        <div className="static md:absolute right-0 top-0 bottom-0 w-full md:w-[57%] z-20 flex justify-center items-center -mt-16 md:mt-0">
+          <div className="w-full max-w-full md:max-w-none px-4 md:px-0">
+            <IdInfoCard />
+          </div>
         </div>
       </div>
     </motion.div>

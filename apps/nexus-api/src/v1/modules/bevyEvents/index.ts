@@ -1,5 +1,6 @@
 import { MockBevyEventRepository } from "./infrastructure/MockBevyEventRepository";
 import { ListBevyEvents } from "./useCases/ListBevyEvents";
+import { GetBevyEvent } from "./useCases/GetBevyEvent";
 import { BevyEventController } from "./BevyEventController";
 import { SupabaseBevyEventRepository } from "./infrastructure/SupabaseBevyEventRepository";
 
@@ -9,8 +10,10 @@ const repository = new SupabaseBevyEventRepository();
 
 // 2. Initialize Use Cases
 const listBevyEventsUseCase = new ListBevyEvents(repository);
+const getBevyEventUseCase = new GetBevyEvent(repository);
 
 // 3. Initialize Controller
 export const bevyEventController = new BevyEventController(
   listBevyEventsUseCase,
+  getBevyEventUseCase,
 );

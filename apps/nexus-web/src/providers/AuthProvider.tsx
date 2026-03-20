@@ -3,6 +3,7 @@
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User, Session } from "@supabase/supabase-js";
+import { getCurrentUserGdgId } from "@/features/sparkmates/api/getCurrentUserGdgId";
 
 const NEXUS_API_URL =
   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
@@ -28,6 +29,7 @@ type AuthState = {
   role: string | null;
   googleAccessToken: string | null;
   status: "checking" | "unauthenticated" | "authenticated";
+  gdgId: string | null;
   error: string | null;
 };
 
@@ -50,6 +52,7 @@ const initialState: AuthState = {
   role: null,
   googleAccessToken: null,
   status: "checking",
+  gdgId: null,
   error: null,
 };
 
@@ -98,6 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         role,
         googleAccessToken: providerToken || null,
         status: "authenticated",
+        gdgId: (user.user_metadata?.gdg_id as string) || authState.gdgId,
         error: null,
       });
     } else {
@@ -105,6 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       deleteCookie("supabaseAccessToken");
       setAuthState({
         ...initialState,
+        gdgId: null,
         status: "unauthenticated",
       });
     }
@@ -124,7 +129,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Fetch current user from backend
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/me`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -152,6 +157,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       deleteCookie("googleAccessToken");
       setAuthState({
         ...initialState,
+        gdgId: null,
         status: "unauthenticated",
       });
     }
@@ -170,12 +176,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isMounted = false;
     };
   }, []);
+  
+  // Fetch GDG ID whenever user is authenticated and gdgId is not set
+  useEffect(() => {
+    const fetchGdgId = async () => {
+      if (authState.status === "authenticated" && authState.user && !authState.gdgId) {
+        try {
+          const gdgId = await getCurrentUserGdgId(authState.user.id);
+          if (gdgId) {
+            setAuthState(prev => ({ ...prev, gdgId }));
+          }
+        } catch (err) {
+          console.error("Failed to fetch GDG ID:", err);
+        }
+      }
+    };
+    
+    fetchGdgId();
+  }, [authState.status, authState.user, authState.gdgId]);
 
   const signUpWithEmail = async (email: string, password: string) => {
     try {
       setAuthState((prev) => ({ ...prev, error: null }));
 
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/signup`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { email, password } }),
@@ -209,7 +233,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setAuthState((prev) => ({ ...prev, error: null }));
 
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/signin`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: { email, password } }),
@@ -242,7 +266,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setAuthState((prev) => ({ ...prev, error: null }));
 
       // Call backend to initiate OAuth
-      const response = await fetch(`${NEXUS_API_URL}api/auth-system/oauth`, {
+      const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/oauth`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -279,7 +303,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       // 1. Call backend to invalidate session (if we have a token)
       if (authState.token) {
-        await fetch(`${NEXUS_API_URL}api/auth-system/logout`, {
+        await fetch(`${NEXUS_API_URL}/api/v1/auth-system/logout`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -297,6 +321,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setAuthState({
         ...initialState,
+        gdgId: null,
         status: "unauthenticated",
       });
 

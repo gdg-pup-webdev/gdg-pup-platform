@@ -7,6 +7,19 @@
 import { z } from "zod";
 import { type Json } from "./supabase.types";
 
+export const publicNfcCardStatusSchema = z.enum([
+  "issued",
+  "activated",
+  "suspended",
+  "revoked",
+]);
+
+export const publicSparkmatesSourceSchema = z.enum([
+  "nfc_card",
+  "qr_code",
+  "direct_link",
+]);
+
 export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
   z
     .union([
@@ -108,6 +121,36 @@ export const publicArticleCommentRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
+
+export const publicDpDownloadAnalyticsRowSchema = z.object({
+  created_at: z.string(),
+  downloaded_at: z.string(),
+  event_slug: z.string(),
+  frame_id: z.string(),
+  id: z.number(),
+  source_path: z.string().nullable(),
+  user_agent: z.string().nullable(),
+});
+
+export const publicDpDownloadAnalyticsInsertSchema = z.object({
+  created_at: z.string().optional(),
+  downloaded_at: z.string().optional(),
+  event_slug: z.string(),
+  frame_id: z.string(),
+  id: z.never().optional(),
+  source_path: z.string().optional().nullable(),
+  user_agent: z.string().optional().nullable(),
+});
+
+export const publicDpDownloadAnalyticsUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  downloaded_at: z.string().optional(),
+  event_slug: z.string().optional(),
+  frame_id: z.string().optional(),
+  id: z.never().optional(),
+  source_path: z.string().optional().nullable(),
+  user_agent: z.string().optional().nullable(),
+});
 
 export const publicEventRowSchema = z.object({
   attendance_points: z.number(),
@@ -218,6 +261,59 @@ export const publicEventAttendanceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicEventHighlightRowSchema = z.object({
+  author_id: z.string(),
+  content: z.string(),
+  created_at: z.string(),
+  description: z.string(),
+  event_id: z.string(),
+  id: z.string(),
+  image_url: z.string().nullable(),
+  title: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicEventHighlightInsertSchema = z.object({
+  author_id: z.string(),
+  content: z.string(),
+  created_at: z.string().optional(),
+  description: z.string(),
+  event_id: z.string(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  title: z.string(),
+  updated_at: z.string().optional(),
+});
+
+export const publicEventHighlightUpdateSchema = z.object({
+  author_id: z.string().optional(),
+  content: z.string().optional(),
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  event_id: z.string().optional(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  title: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
+export const publicEventHighlightRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("event_highlight_author_id_fkey"),
+    columns: z.tuple([z.literal("author_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("event_highlight_event_id_fkey"),
+    columns: z.tuple([z.literal("event_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("event"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicExternalResourceRowSchema = z.object({
   created_at: z.string(),
   description: z.string().nullable(),
@@ -259,31 +355,93 @@ export const publicExternalResourceRelationshipsSchema = z.tuple([
 ]);
 
 export const publicFileRecordRowSchema = z.object({
+  created_at: z.string(),
+  deleted_at: z.string().nullable(),
   file_description: z.string().nullable(),
   file_name: z.string().nullable(),
   file_path: z.string().nullable(),
+  file_type: z.string(),
+  folder_id: z.string().nullable(),
   id: z.string(),
   preview_url: z.string().nullable(),
   storage_ref: z.string().nullable(),
+  updated_at: z.string(),
 });
 
 export const publicFileRecordInsertSchema = z.object({
+  created_at: z.string().optional(),
+  deleted_at: z.string().optional().nullable(),
   file_description: z.string().optional().nullable(),
   file_name: z.string().optional().nullable(),
   file_path: z.string().optional().nullable(),
+  file_type: z.string().optional(),
+  folder_id: z.string().optional().nullable(),
   id: z.string().optional(),
   preview_url: z.string().optional().nullable(),
   storage_ref: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
 
 export const publicFileRecordUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  deleted_at: z.string().optional().nullable(),
   file_description: z.string().optional().nullable(),
   file_name: z.string().optional().nullable(),
   file_path: z.string().optional().nullable(),
+  file_type: z.string().optional(),
+  folder_id: z.string().optional().nullable(),
   id: z.string().optional(),
   preview_url: z.string().optional().nullable(),
   storage_ref: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
+
+export const publicFileRecordRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("file_record_folder_id_fkey"),
+    columns: z.tuple([z.literal("folder_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("filesystem_folder"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicFilesystemFolderRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string().nullable(),
+  id: z.string(),
+  name: z.string(),
+  parent_id: z.string().nullable(),
+  updated_at: z.string(),
+});
+
+export const publicFilesystemFolderInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  name: z.string(),
+  parent_id: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
+});
+
+export const publicFilesystemFolderUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  parent_id: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
+});
+
+export const publicFilesystemFolderRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("filesystem_folder_parent_id_fkey"),
+    columns: z.tuple([z.literal("parent_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("filesystem_folder"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicGdgMembersRowSchema = z.object({
   created_at: z.string().nullable(),
@@ -327,78 +485,86 @@ export const publicGdgMembersUpdateSchema = z.object({
   updated_at: z.string().optional().nullable(),
 });
 
-export const publicNfcCardRowSchema = z.object({
+export const publicGdgMerchRowSchema = z.object({
+  created_at: z.string().nullable(),
+  id: z.string(),
+  image_url: z.string().nullable(),
+  name: z.string().nullable(),
+  points_cost: z.number().nullable(),
+  stock: z.string().nullable(),
+  updated_at: z.string().nullable(),
+});
+
+export const publicGdgMerchInsertSchema = z.object({
+  created_at: z.string().optional().nullable(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  name: z.string().optional().nullable(),
+  points_cost: z.number().optional().nullable(),
+  stock: z.string().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+});
+
+export const publicGdgMerchUpdateSchema = z.object({
+  created_at: z.string().optional().nullable(),
+  id: z.string().optional(),
+  image_url: z.string().optional().nullable(),
+  name: z.string().optional().nullable(),
+  points_cost: z.number().optional().nullable(),
+  stock: z.string().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+});
+
+export const publicNfcCardsRowSchema = z.object({
   activated_at: z.string().nullable(),
   created_at: z.string(),
+  gdg_id: z.string(),
   id: z.string(),
-  status: z.string(),
-  user_id: z.string().nullable(),
+  notes: z.string().nullable(),
+  owner_user_id: z.string().nullable(),
+  revoked_at: z.string().nullable(),
+  status: publicNfcCardStatusSchema,
+  suspended_at: z.string().nullable(),
+  updated_at: z.string(),
 });
 
-export const publicNfcCardInsertSchema = z.object({
+export const publicNfcCardsInsertSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
-  id: z.string(),
-  status: z.string().optional(),
-  user_id: z.string().optional().nullable(),
+  gdg_id: z.string(),
+  id: z.string().optional(),
+  notes: z.string().optional().nullable(),
+  owner_user_id: z.string().optional().nullable(),
+  revoked_at: z.string().optional().nullable(),
+  status: publicNfcCardStatusSchema.optional(),
+  suspended_at: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
 
-export const publicNfcCardUpdateSchema = z.object({
+export const publicNfcCardsUpdateSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  gdg_id: z.string().optional(),
   id: z.string().optional(),
-  status: z.string().optional(),
-  user_id: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  owner_user_id: z.string().optional().nullable(),
+  revoked_at: z.string().optional().nullable(),
+  status: publicNfcCardStatusSchema.optional(),
+  suspended_at: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
 
-export const publicNfcCardRelationshipsSchema = z.tuple([
+export const publicNfcCardsRelationshipsSchema = z.tuple([
   z.object({
-    foreignKeyName: z.literal("nfc_card_user_id_fkey"),
-    columns: z.tuple([z.literal("user_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-]);
-
-export const publicNfcCardTransactionRowSchema = z.object({
-  card_id: z.string(),
-  created_at: z.string(),
-  event_type: z.string(),
-  id: z.string(),
-  metadata: jsonSchema.nullable(),
-  scanner_id: z.string().nullable(),
-});
-
-export const publicNfcCardTransactionInsertSchema = z.object({
-  card_id: z.string(),
-  created_at: z.string().optional(),
-  event_type: z.string(),
-  id: z.string().optional(),
-  metadata: jsonSchema.optional().nullable(),
-  scanner_id: z.string().optional().nullable(),
-});
-
-export const publicNfcCardTransactionUpdateSchema = z.object({
-  card_id: z.string().optional(),
-  created_at: z.string().optional(),
-  event_type: z.string().optional(),
-  id: z.string().optional(),
-  metadata: jsonSchema.optional().nullable(),
-  scanner_id: z.string().optional().nullable(),
-});
-
-export const publicNfcCardTransactionRelationshipsSchema = z.tuple([
-  z.object({
-    foreignKeyName: z.literal("nfc_card_transaction_card_id_fkey"),
-    columns: z.tuple([z.literal("card_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("nfc_card"),
-    referencedColumns: z.tuple([z.literal("id")]),
+    foreignKeyName: z.literal("nfc_cards_gdg_id_fkey"),
+    columns: z.tuple([z.literal("gdg_id")]),
+    isOneToOne: z.literal(true),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
   }),
   z.object({
-    foreignKeyName: z.literal("nfc_card_transaction_scanner_id_fkey"),
-    columns: z.tuple([z.literal("scanner_id")]),
+    foreignKeyName: z.literal("nfc_cards_owner_user_id_fkey"),
+    columns: z.tuple([z.literal("owner_user_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("user"),
     referencedColumns: z.tuple([z.literal("id")]),
@@ -567,6 +733,40 @@ export const publicScrapedGdgEventsUpdateSchema = z.object({
   video_url: z.string().optional().nullable(),
 });
 
+export const publicSparkmatesMetricEventsRowSchema = z.object({
+  created_at: z.string(),
+  gdg_id: z.string(),
+  id: z.string(),
+  source: publicSparkmatesSourceSchema,
+  user_agent: z.string().nullable(),
+});
+
+export const publicSparkmatesMetricEventsInsertSchema = z.object({
+  created_at: z.string().optional(),
+  gdg_id: z.string(),
+  id: z.string().optional(),
+  source: publicSparkmatesSourceSchema.optional(),
+  user_agent: z.string().optional().nullable(),
+});
+
+export const publicSparkmatesMetricEventsUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  gdg_id: z.string().optional(),
+  id: z.string().optional(),
+  source: publicSparkmatesSourceSchema.optional(),
+  user_agent: z.string().optional().nullable(),
+});
+
+export const publicSparkmatesMetricEventsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("sparkmates_metric_events_gdg_id_fkey"),
+    columns: z.tuple([z.literal("gdg_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
+  }),
+]);
+
 export const publicStudyJamRowSchema = z.object({
   created_at: z.string(),
   creator_id: z.string().nullable(),
@@ -597,23 +797,85 @@ export const publicStudyJamUpdateSchema = z.object({
   title: z.string().optional(),
 });
 
+export const publicTaskRowSchema = z.object({
+  completed_at: z.string().nullable(),
+  created_at: z.string().nullable(),
+  description: z.string().nullable(),
+  id: z.string(),
+  is_completed: z.boolean().nullable(),
+  name: z.string().nullable(),
+  points_on_completion: z.number().nullable(),
+  updated_at: z.string().nullable(),
+  user_id: z.string(),
+});
+
+export const publicTaskInsertSchema = z.object({
+  completed_at: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  is_completed: z.boolean().optional().nullable(),
+  name: z.string().optional().nullable(),
+  points_on_completion: z.number().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+  user_id: z.string(),
+});
+
+export const publicTaskUpdateSchema = z.object({
+  completed_at: z.string().optional().nullable(),
+  created_at: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  is_completed: z.boolean().optional().nullable(),
+  name: z.string().optional().nullable(),
+  points_on_completion: z.number().optional().nullable(),
+  updated_at: z.string().optional().nullable(),
+  user_id: z.string().optional(),
+});
+
+export const publicTaskRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("task_user_id_fkey"),
+    columns: z.tuple([z.literal("user_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("user"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicTeamRowSchema = z.object({
   description: z.string(),
   id: z.string(),
   name: z.string(),
+  parent_team_id: z.string().nullable(),
+  responsibilities: z.string().nullable(),
 });
 
 export const publicTeamInsertSchema = z.object({
   description: z.string(),
   id: z.string().optional(),
   name: z.string(),
+  parent_team_id: z.string().optional().nullable(),
+  responsibilities: z.string().optional().nullable(),
 });
 
 export const publicTeamUpdateSchema = z.object({
   description: z.string().optional(),
   id: z.string().optional(),
   name: z.string().optional(),
+  parent_team_id: z.string().optional().nullable(),
+  responsibilities: z.string().optional().nullable(),
 });
+
+export const publicTeamRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("team_parent_team_id_fkey"),
+    columns: z.tuple([z.literal("parent_team_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("team"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicTeamMemberRowSchema = z.object({
   id: z.string(),
@@ -653,6 +915,63 @@ export const publicTeamMemberRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicTeamResourceRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string().nullable(),
+  id: z.string(),
+  resource_link: z.string(),
+  resource_type: z.string(),
+  team_name: z.string(),
+  thumbnail_public_url: z.string(),
+  thumbnail_storage_reference: z.string(),
+  title: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicTeamResourceInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  resource_link: z.string(),
+  resource_type: z.string(),
+  team_name: z.string(),
+  thumbnail_public_url: z.string(),
+  thumbnail_storage_reference: z.string(),
+  title: z.string(),
+  updated_at: z.string().optional(),
+});
+
+export const publicTeamResourceUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  resource_link: z.string().optional(),
+  resource_type: z.string().optional(),
+  team_name: z.string().optional(),
+  thumbnail_public_url: z.string().optional(),
+  thumbnail_storage_reference: z.string().optional(),
+  title: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
+export const publicTestRowSchema = z.object({
+  description: z.string().nullable(),
+  id: z.string(),
+  title: z.string(),
+});
+
+export const publicTestInsertSchema = z.object({
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  title: z.string(),
+});
+
+export const publicTestUpdateSchema = z.object({
+  description: z.string().optional().nullable(),
+  id: z.string().optional(),
+  title: z.string().optional(),
+});
+
 export const publicUserRowSchema = z.object({
   avatar_url: z.string().nullable(),
   created_at: z.string(),
@@ -691,6 +1010,16 @@ export const publicUserUpdateSchema = z.object({
   status: z.string().optional(),
   updated_at: z.string().optional(),
 });
+
+export const publicUserRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("user_gdg_id_fkey"),
+    columns: z.tuple([z.literal("gdg_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
+  }),
+]);
 
 export const publicUserAchievementRowSchema = z.object({
   achieved_at: z.string().nullable(),
@@ -772,13 +1101,24 @@ export const publicUserCertificateRelationshipsSchema = z.tuple([
 export const publicUserProfileRowSchema = z.object({
   bio: z.string().nullable(),
   created_at: z.string(),
+  department: z.string().nullable(),
+  first_name: z.string().nullable(),
   github_url: z.string().nullable(),
   id: z.string(),
   is_public: z.boolean(),
+  last_name: z.string().nullable(),
+  learning_interests: z.array(z.string()).nullable(),
   linkedin_url: z.string().nullable(),
+  membership_type: z.string().nullable(),
+  middle_name: z.string().nullable(),
+  nickname: z.string().nullable(),
+  other_links: z.array(z.string()).nullable(),
   portfolio_url: z.string().nullable(),
+  profile_image: z.string().nullable(),
   program: z.string().nullable(),
   skills_summary: z.string().nullable(),
+  technical_skills: z.array(z.string()).nullable(),
+  tools_and_technologies: z.array(z.string()).nullable(),
   updated_at: z.string(),
   user_id: z.string(),
   year_level: z.number().nullable(),
@@ -787,13 +1127,24 @@ export const publicUserProfileRowSchema = z.object({
 export const publicUserProfileInsertSchema = z.object({
   bio: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  department: z.string().optional().nullable(),
+  first_name: z.string().optional().nullable(),
   github_url: z.string().optional().nullable(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
+  last_name: z.string().optional().nullable(),
+  learning_interests: z.array(z.string()).optional().nullable(),
   linkedin_url: z.string().optional().nullable(),
+  membership_type: z.string().optional().nullable(),
+  middle_name: z.string().optional().nullable(),
+  nickname: z.string().optional().nullable(),
+  other_links: z.array(z.string()).optional().nullable(),
   portfolio_url: z.string().optional().nullable(),
+  profile_image: z.string().optional().nullable(),
   program: z.string().optional().nullable(),
   skills_summary: z.string().optional().nullable(),
+  technical_skills: z.array(z.string()).optional().nullable(),
+  tools_and_technologies: z.array(z.string()).optional().nullable(),
   updated_at: z.string().optional(),
   user_id: z.string(),
   year_level: z.number().optional().nullable(),
@@ -802,13 +1153,24 @@ export const publicUserProfileInsertSchema = z.object({
 export const publicUserProfileUpdateSchema = z.object({
   bio: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  department: z.string().optional().nullable(),
+  first_name: z.string().optional().nullable(),
   github_url: z.string().optional().nullable(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
+  last_name: z.string().optional().nullable(),
+  learning_interests: z.array(z.string()).optional().nullable(),
   linkedin_url: z.string().optional().nullable(),
+  membership_type: z.string().optional().nullable(),
+  middle_name: z.string().optional().nullable(),
+  nickname: z.string().optional().nullable(),
+  other_links: z.array(z.string()).optional().nullable(),
   portfolio_url: z.string().optional().nullable(),
+  profile_image: z.string().optional().nullable(),
   program: z.string().optional().nullable(),
   skills_summary: z.string().optional().nullable(),
+  technical_skills: z.array(z.string()).optional().nullable(),
+  tools_and_technologies: z.array(z.string()).optional().nullable(),
   updated_at: z.string().optional(),
   user_id: z.string().optional(),
   year_level: z.number().optional().nullable(),
@@ -1052,6 +1414,33 @@ export const publicWalletTransactionRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
+
+export const publicSparkmatesScanCountsRowSchema = z.object({
+  gdg_id: z.string().nullable(),
+  scan_count: z.number().nullable(),
+  source: publicSparkmatesSourceSchema.nullable(),
+});
+
+export const publicSparkmatesScanCountsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("sparkmates_metric_events_gdg_id_fkey"),
+    columns: z.tuple([z.literal("gdg_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
+  }),
+]);
+
+export const publicGetSparkmatesAnalyticsArgsSchema = z.object({
+  p_gdg_id: z.string(),
+});
+
+export const publicGetSparkmatesAnalyticsReturnsSchema = z.array(
+  z.object({
+    scan_count: z.number(),
+    source: publicSparkmatesSourceSchema,
+  }),
+);
 
 export const publicVerifyMemberArgsSchema = z.object({
   search_term: z.string(),

@@ -1,7 +1,7 @@
 import { Event } from "./Event";
 
 export abstract class IEventRepository {
-  abstract saveNewEvent(event: Event): Promise<Event>;
+  abstract saveNew(event: Event): Promise<Event>;
 
   abstract persistUpdates(event: Event): Promise<Event>;
 
@@ -9,9 +9,10 @@ export abstract class IEventRepository {
 
   abstract findById(eventId: string): Promise<Event>;
 
+  abstract findByBevyId(bevyEventId: string): Promise<Event | undefined>;
+
   abstract listEvents(
     pageNumber: number,
     pageSize: number,
   ): Promise<{ list: Event[]; count: number }>;
-
 }

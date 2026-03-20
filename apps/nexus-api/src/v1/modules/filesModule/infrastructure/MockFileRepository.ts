@@ -60,6 +60,24 @@ export class MockFileRepository implements IFileRepository {
     };
   }
 
+  async listByFolderPaginated(
+    page: number,
+    pageSize: number,
+    folderId: string | null,
+  ): Promise<{ list: FileRecord[]; count: number }> {
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+
+    const filteredList = this.list.filter((f) =>
+      f.props.folderId === folderId,
+    );
+
+    return {
+      list: filteredList.slice(start, end),
+      count: filteredList.length,
+    };
+  }
+
   async deleteById(id: string): Promise<boolean> {
     const initialLength = this.list.length;
     this.list = this.list.filter((f) => f.props.id !== id);

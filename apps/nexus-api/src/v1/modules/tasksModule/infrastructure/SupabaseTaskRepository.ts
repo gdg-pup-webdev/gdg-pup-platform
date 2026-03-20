@@ -1,19 +1,10 @@
+import { Tables } from "@/v1/types/supabase.types";
 import { ITaskRepository } from "../domain/ITaskRepository";
 import { Task, TaskProps } from "../domain/Task";
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 
-type TaskRow = {
-  id: string;
-  user_id: string;
-  name: string;
-  description: string;
-  points_on_completion: number;
-  is_completed: boolean;
-  completed_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
+type TaskRow = Tables<"task">;
 
 type TaskInsertDTO = Omit<TaskRow, never>;
 
@@ -24,13 +15,13 @@ export class SupabaseTaskRepository implements ITaskRepository {
     return Task.hydrate({
       id: row.id,
       userId: row.user_id,
-      name: row.name,
-      description: row.description,
-      pointsOnCompletion: row.points_on_completion,
-      isCompleted: row.is_completed,
+      name: row.name || "",
+      description: row.description || "",
+      pointsOnCompletion: row.points_on_completion || 0,
+      isCompleted: row.is_completed || false,
       completedAt: row.completed_at ? new Date(row.completed_at) : null,
-      createdAt: new Date(row.created_at),
-      updatedAt: new Date(row.updated_at),
+      createdAt: new Date(row.created_at || Date.now()),
+      updatedAt: new Date(row.updated_at || Date.now()),
     });
   }
 

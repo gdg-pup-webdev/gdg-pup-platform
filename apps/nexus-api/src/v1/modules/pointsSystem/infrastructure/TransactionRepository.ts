@@ -1,22 +1,19 @@
   
-import { supabase } from "@/v1/lib/supabase";
-import { ITransactionRepository } from "../domain/ITransactionRepository";
+import { supabase } from "@/v1/lib/supabase.js";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
 import {
   TransactionRecord,
   TransactionRecordPrototype,
   TransactionRecordProps,
-} from "../domain/TransactionRecord";
-import { handlePostgresError } from "@/v1/lib/supabase.utils";
-
-// Concrete implementation of the abstract TransactionRecord
-class PersistentTransactionRecord extends TransactionRecord {}
+} from "../domain/TransactionRecord.js";
+import { handlePostgresError } from "@/v1/lib/supabase.utils.js";
 
 export class TransactionRepository extends ITransactionRepository {
-  private readonly tableName = "wallet_transaction";
+  private readonly tableName = "wallet_transaction" as const;
 
   async findById(id: string): Promise<TransactionRecord | null> {
     const { data, error } = await supabase
-      .from(this.tableName)
+      .from("wallet_transaction")
       .select("*")
       .eq("id", id)
       .maybeSingle();
@@ -24,20 +21,20 @@ export class TransactionRepository extends ITransactionRepository {
     if (error) handlePostgresError(error);
     if (!data) return null;
 
-    return new PersistentTransactionRecord(this.mapToProps(data));
+    return TransactionRecord.hydrate(this.mapToProps(data));
   }
 
-  async listUserTransactions(
+  async listByUserId(
+    userId: string,
     pageNumber: number,
     pageSize: number,
-    userId: string,
   ): Promise<{ list: TransactionRecord[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
     // 1. Get Paginated Data
     const { data, error: listError } = await supabase
-      .from(this.tableName)
+      .from("wallet_transaction")
       .select("*")
       .eq("user_id", userId) // Filtering by userId directly
       .order("created_at", { ascending: false })
@@ -47,7 +44,7 @@ export class TransactionRepository extends ITransactionRepository {
 
     // 2. Get Total Count
     const { count, error: countError } = await supabase
-      .from(this.tableName)
+      .from("wallet_transaction")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
 
@@ -55,7 +52,7 @@ export class TransactionRepository extends ITransactionRepository {
 
     return {
       list: (data || []).map(
-        (row) => new PersistentTransactionRecord(this.mapToProps(row)),
+        (row) => TransactionRecord.hydrate(this.mapToProps(row)),
       ),
       count: count || 0,
     };
@@ -64,21 +61,31 @@ export class TransactionRepository extends ITransactionRepository {
   async savePrototype(
     prototype: TransactionRecordPrototype,
   ): Promise<TransactionRecord> {
-    const { data, error } = await supabase
-      .from(this.tableName)
-      .insert({
-        user_id: prototype.props.userId,
-        amount: prototype.props.pointsChange,
-        point_type: prototype.props.pointsType,
-        source_id: prototype.props.sourceReference,
-        source_type: prototype.props.sourceType,
-      })
-      .select("*")
-      .single();
+    const entries = prototype.props.entries;
+    let lastTransaction: TransactionRecord | null = null;
 
-    if (error) handlePostgresError(error);
+    for (const entry of entries) {
+      const { data, error } = await supabase
+        .from("wallet_transaction")
+        .insert({
+          user_id: prototype.props.userId,
+          amount: entry.amount,
+          point_type: entry.pointType,
+          source_id: prototype.props.sourceReference ?? "N/A",
+          source_type: prototype.props.sourceType ?? "system",
+        })
+        .select("*")
+        .single();
 
-    return new PersistentTransactionRecord(this.mapToProps(data));
+      if (error) handlePostgresError(error);
+      lastTransaction = TransactionRecord.hydrate(this.mapToProps(data));
+    }
+
+    if (!lastTransaction) {
+      throw new Error("No entries to save for transaction");
+    }
+
+    return lastTransaction;
   }
 
   /**
@@ -89,9 +96,13 @@ export class TransactionRepository extends ITransactionRepository {
       id: data.id,
       createdAt: data.created_at,
       userId: data.user_id,
-      pointsChange: data.points_change,
-      pointsType: data.points_type,
-      sourceReference: data.source_reference,
+      entries: [
+        {
+          pointType: data.point_type,
+          amount: data.amount,
+        },
+      ],
+      sourceReference: data.source_id,
       sourceType: data.source_type,
     };
   }

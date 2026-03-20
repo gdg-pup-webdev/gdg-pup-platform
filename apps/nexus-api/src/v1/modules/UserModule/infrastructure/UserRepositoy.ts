@@ -15,15 +15,17 @@ export class SupabaseUserRepository implements IUserRepository {
    * Handles snake_case (DB) to camelCase (Domain) conversions.
    */
   private mapToDomain(row: UserRow): User {
-    // Note: Assuming your DB columns are snake_case. 
-    // Type casting used here as a fallback in case your Tables<"user"> type 
-    // doesn't explicitly list username or role_id yet.
     const props: UserProps = {
       id: row.id,
       email: row.email,
-      username: (row as any).username || "",
+      username: (row as any).username || (row as any).display_name || "",
+      firstName: row.first_name || null,
+      lastName: row.last_name || null,
+      displayName: row.display_name || "",
+      avatarUrl: row.avatar_url || null,
+      gdgId: row.gdg_id || null,
       roleId: (row as any).role_id || (row as any).roleId || "",
-      createdAt: new Date((row as any).created_at || (row as any).createdAt),
+      createdAt: new Date(row.created_at),
     };
 
     return User.hydrate(props);
@@ -37,7 +39,7 @@ export class SupabaseUserRepository implements IUserRepository {
       .from(this.tableName)
       .select("*")
       .eq("id", id)
-      .maybeSingle(); // maybeSingle returns null instead of an error if no record is found
+      .maybeSingle();
 
     if (error) {
       handlePostgresError(error);
@@ -51,20 +53,17 @@ export class SupabaseUserRepository implements IUserRepository {
 
   /**
    * Retrieves a paginated list of users and the total count.
-   * Assumes pageNumber is 1-indexed (e.g., page 1, 2, 3...).
    */
   async paginatedList(
     pageNumber: number,
     pageSize: number
   ): Promise<{ list: User[]; count: number }> {
-    // Calculate the inclusive range for Supabase
-    // e.g., Page 1, Size 10 => from: 0, to: 9
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
     const { data, error, count } = await supabase
       .from(this.tableName)
-      .select("*", { count: "exact" }) // 'exact' tells Supabase to return the total row count
+      .select("*", { count: "exact" })
       .range(from, to);
 
     if (error) {
@@ -72,12 +71,31 @@ export class SupabaseUserRepository implements IUserRepository {
       throw new Error("Database error while fetching paginated users.");
     }
 
-    // Map the raw DB rows to our Domain Entities
     const userList = data ? data.map((row) => this.mapToDomain(row)) : [];
 
     return {
       list: userList,
       count: count || 0,
     };
+  }
+
+  /**
+   * Searches for users matching the query text in name, email, etc.
+   */
+  async search(query: string, limit: number): Promise<User[]> {
+    const searchTerm = `%${query}%`;
+    
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .or(`display_name.ilike.${searchTerm},email.ilike.${searchTerm},first_name.ilike.${searchTerm},last_name.ilike.${searchTerm}`)
+      .limit(limit);
+
+    if (error) {
+      handlePostgresError(error);
+      throw new Error("Database error while searching users.");
+    }
+
+    return data ? data.map((row) => this.mapToDomain(row)) : [];
   }
 }

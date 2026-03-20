@@ -1,43 +1,34 @@
-import { MockTransactionRepository } from "./infrastructure/MockTransactionRepository";
-import { MockWalletRepository } from "./infrastructure/MockWalletRepository";
-import { PointSystemController } from "./PointSystemController";
-import { GetOneTransaction } from "./useCases/GetOneTransaction";
-import { GetUserWallet } from "./useCases/GetUserWallet";
-import { GivePointsToUser } from "./useCases/GivePointsToUser";
-import { ListUserTransactions } from "./useCases/ListUserTransactions";
-import { TakePointsFromUser } from "./useCases/TakePointsFromUser";
+import { PointSystemController } from "./PointSystemController.js";
+import { SupabaseTransactionRepository } from "./infrastructure/SupabaseTransactionRepository.js";
+import { SupabaseWalletRepository } from "./infrastructure/SupabaseWalletRepository.js";
+import { ConsumePointsFromUser } from "./useCases/ConsumePointsFromUser.js";
+import { GetOneTransaction } from "./useCases/GetOneTransaction.js";
+import { GetUserWallet } from "./useCases/GetUserWallet.js";
+import { GivePointsToUser } from "./useCases/GivePointsToUser.js";
+import { ListUserTransactions } from "./useCases/ListUserTransactions.js";
+import { TakePointsFromUser } from "./useCases/TakePointsFromUser.js";
 
 /**
- * infrastructure dependencies
+ * Dependency Injection: wire Supabase infrastructure to use cases,
+ * then expose the singleton controller.
  */
-const transactionRepository = new MockTransactionRepository();
-const walletRepository = new MockWalletRepository();
+const walletRepository = new SupabaseWalletRepository();
+const transactionRepository = new SupabaseTransactionRepository();
 
-/**
- * use cases
- */
 const getOneTransactionUseCase = new GetOneTransaction(transactionRepository);
 const getUserWalletUseCase = new GetUserWallet(walletRepository);
-const givePointsToUserUseCase = new GivePointsToUser(
-  walletRepository,
-  transactionRepository,
-);
-const listUserTransactionsUseCase = new ListUserTransactions(
-  transactionRepository,
-);
-const takePointsFromUserUseCase = new TakePointsFromUser(
-  walletRepository,
-  transactionRepository,
-);
+const givePointsUseCase = new GivePointsToUser(walletRepository, transactionRepository);
+const listUserTransactionsUseCase = new ListUserTransactions(transactionRepository);
+const consumePointsUseCase = new ConsumePointsFromUser(walletRepository, transactionRepository);
+const takePointsFromUserUseCase = new TakePointsFromUser(walletRepository, transactionRepository);
 
-/**
- * exporting default controller
- */
 export const pointSystemController = new PointSystemController(
   getOneTransactionUseCase,
   getUserWalletUseCase,
-  givePointsToUserUseCase,
+  givePointsUseCase,
   listUserTransactionsUseCase,
+  consumePointsUseCase,
   takePointsFromUserUseCase,
 );
-export * from "./PointSystemController";
+
+export * from "./PointSystemController.js";

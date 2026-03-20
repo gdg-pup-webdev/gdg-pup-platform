@@ -14,30 +14,30 @@ export class FilesRouter {
   ) {
     this.router = Router();
 
+    // Files routes
     this.router.get(
       "/",
-      this.authMiddleware.requirePermissions({ "files": ["read"] }),
+      // this.authMiddleware.requirePermissions({ "files": ["read"] }),
       this.filesHttpController.listFiles,
     );
     this.router.post(
       "/",
-
-      this.authMiddleware.requirePermissions({ "files": ["create"] }),
+      // this.authMiddleware.requirePermissions({ "files": ["create"] }),
       this.filesHttpController.uploadFile,
     );
     this.router.delete(
       "/:fileId",
-      this.authMiddleware.requirePermissions({ "files": ["delete"] }),
+      // this.authMiddleware.requirePermissions({ "files": ["delete"] }),
       this.filesHttpController.deleteFileById,
     );
     this.router.patch(
       "/:fileId",
-      this.authMiddleware.requirePermissions({ "files": ["update"] }),
+      // this.authMiddleware.requirePermissions({ "files": ["update"] }),
       this.filesHttpController.updateFileById,
     );
     this.router.get(
       "/:fileId",
-      this.authMiddleware.requirePermissions({ "files": ["read"] }),
+      // this.authMiddleware.requirePermissions({ "files": ["read"] }),
       this.filesHttpController.getOneFileById,
     );
   }

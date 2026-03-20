@@ -312,74 +312,84 @@ export type Database = {
         }
         Relationships: []
       }
-      nfc_card: {
+      gdg_merch: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string | null
+          name: string | null
+          points_cost: number | null
+          stock: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string | null
+          points_cost?: number | null
+          stock?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string | null
+          points_cost?: number | null
+          stock?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      nfc_cards: {
         Row: {
           activated_at: string | null
           created_at: string
+          gdg_id: string
           id: string
-          status: string
-          user_id: string | null
+          notes: string | null
+          owner_user_id: string | null
+          revoked_at: string | null
+          status: Database["public"]["Enums"]["nfc_card_status"]
+          suspended_at: string | null
+          updated_at: string
         }
         Insert: {
           activated_at?: string | null
           created_at?: string
-          id: string
-          status?: string
-          user_id?: string | null
+          gdg_id: string
+          id?: string
+          notes?: string | null
+          owner_user_id?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["nfc_card_status"]
+          suspended_at?: string | null
+          updated_at?: string
         }
         Update: {
           activated_at?: string | null
           created_at?: string
+          gdg_id?: string
           id?: string
-          status?: string
-          user_id?: string | null
+          notes?: string | null
+          owner_user_id?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["nfc_card_status"]
+          suspended_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "nfc_card_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      nfc_card_transaction: {
-        Row: {
-          card_id: string
-          created_at: string
-          event_type: string
-          id: string
-          metadata: Json | null
-          scanner_id: string | null
-        }
-        Insert: {
-          card_id: string
-          created_at?: string
-          event_type: string
-          id?: string
-          metadata?: Json | null
-          scanner_id?: string | null
-        }
-        Update: {
-          card_id?: string
-          created_at?: string
-          event_type?: string
-          id?: string
-          metadata?: Json | null
-          scanner_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "nfc_card_transaction_card_id_fkey"
-            columns: ["card_id"]
-            isOneToOne: false
-            referencedRelation: "nfc_card"
-            referencedColumns: ["id"]
+            foreignKeyName: "nfc_cards_gdg_id_fkey"
+            columns: ["gdg_id"]
+            isOneToOne: true
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
           },
           {
-            foreignKeyName: "nfc_card_transaction_scanner_id_fkey"
-            columns: ["scanner_id"]
+            foreignKeyName: "nfc_cards_owner_user_id_fkey"
+            columns: ["owner_user_id"]
             isOneToOne: false
             referencedRelation: "user"
             referencedColumns: ["id"]
@@ -544,6 +554,38 @@ export type Database = {
         }
         Relationships: []
       }
+      sparkmates_metric_events: {
+        Row: {
+          created_at: string
+          gdg_id: string
+          id: string
+          source: Database["public"]["Enums"]["sparkmates_source"]
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          gdg_id: string
+          id?: string
+          source?: Database["public"]["Enums"]["sparkmates_source"]
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          gdg_id?: string
+          id?: string
+          source?: Database["public"]["Enums"]["sparkmates_source"]
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sparkmates_metric_events_gdg_id_fkey"
+            columns: ["gdg_id"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
+      }
       study_jam: {
         Row: {
           created_at: string
@@ -574,23 +616,81 @@ export type Database = {
         }
         Relationships: []
       }
+      task: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_completed: boolean | null
+          name: string | null
+          points_on_completion: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          name?: string | null
+          points_on_completion?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          name?: string | null
+          points_on_completion?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team: {
         Row: {
           description: string
           id: string
           name: string
+          parent_team_id: string | null
+          responsibilities: string | null
         }
         Insert: {
           description: string
           id?: string
           name: string
+          parent_team_id?: string | null
+          responsibilities?: string | null
         }
         Update: {
           description?: string
           id?: string
           name?: string
+          parent_team_id?: string | null
+          responsibilities?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "team_parent_team_id_fkey"
+            columns: ["parent_team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       team_member: {
         Row: {
@@ -665,7 +765,15 @@ export type Database = {
           status?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_gdg_id_fkey"
+            columns: ["gdg_id"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
       }
       user_achievement: {
         Row: {
@@ -1012,9 +1120,31 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      sparkmates_scan_counts: {
+        Row: {
+          gdg_id: string | null
+          scan_count: number | null
+          source: Database["public"]["Enums"]["sparkmates_source"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sparkmates_metric_events_gdg_id_fkey"
+            columns: ["gdg_id"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
+      }
     }
     Functions: {
+      get_sparkmates_analytics: {
+        Args: { p_gdg_id: string }
+        Returns: {
+          scan_count: number
+          source: Database["public"]["Enums"]["sparkmates_source"]
+        }[]
+      }
       verify_member: {
         Args: { search_term: string }
         Returns: {
@@ -1039,7 +1169,8 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      nfc_card_status: "issued" | "activated" | "suspended" | "revoked"
+      sparkmates_source: "nfc_card" | "qr_code" | "direct_link"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1166,6 +1297,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      nfc_card_status: ["issued", "activated", "suspended", "revoked"],
+      sparkmates_source: ["nfc_card", "qr_code", "direct_link"],
+    },
   },
 } as const

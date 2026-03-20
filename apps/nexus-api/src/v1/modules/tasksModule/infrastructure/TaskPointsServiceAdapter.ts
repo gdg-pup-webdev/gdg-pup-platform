@@ -17,6 +17,6 @@ export class TaskPointsServiceAdapter implements ITaskPointsService {
       "TASK_COMPLETION",
     );
 
-    return result?.totalPoints ?? 0;
+    return result?.wallet.totalPoints ?? 0;
   }
 }
