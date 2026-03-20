@@ -14,7 +14,7 @@ export function MemberShowcaseBackground({
   return (
     <CosmosParticles
       particleColors={["#ffffff", "#4285f4"]}
-      particleCount={350}
+      particleCount={500}
       particleSpread={15}
       speed={0.03}
       particleBaseSize={100}
