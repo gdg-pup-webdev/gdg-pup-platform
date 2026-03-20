@@ -112,7 +112,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
                   alt=""
                   width={1200}
                   height={600}
-                  className="w-full h-auto mix-blend-screen opacity-50 blur-[50px]"
+                  className="w-full h-auto mix-blend-screen opacity-67 blur-[50px]"
                 />
               </div>
               <div className="relative w-full max-w-3xl h-[140px] mt-[-10px] pointer-events-none">
