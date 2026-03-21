@@ -19,15 +19,18 @@ describe("GetOneEvent Use Case", () => {
   // Helper to seed a standard event into the mock repository
   const seedEvent = async () => {
     const newEvent = Event.create({
-      title: "Git & GitHub Study Jam",
-      description: "Version control basics for beginners",
-      category: "WebDev",
-      venue: "Discord / Google Meet",
-      start_date: new Date("2026-02-01T13:00:00Z"),
-      end_date: new Date("2026-02-01T16:00:00Z"),
+      title: "Test Event",
+      description: "A test event for unit testing",
+      category: "Testing",
+      venue: "Test Venue",
+      start_date: new Date(),
+      end_date: new Date(),
       attendance_points: 50,
+      image_url: null,
+      bevy_event_id: null,
+      creatorId: "creator_123",
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should successfully retrieve and return an existing event by its ID", async () => {

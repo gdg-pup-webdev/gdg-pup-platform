@@ -72,9 +72,9 @@ const PARTNERSHIP_MEMBERS = [
 
 export default function PartnershipPage() {
   return (
-    <Stack gap="xl">
+    <Stack gap="xl" className="w-full max-md:items-center">
       <Stack gap="xs">
-        <Text variant="heading-3" weight="bold" gradient="white-yellow">
+        <Text variant="heading-4" weight="bold" gradient="white-yellow" className="ml-3 max-md:w-full max-md:ml-0 max-md:text-center max-md:self-center max-md:text-[40px] max-md:leading-[1.1]">
           Partnership
         </Text>
       </Stack>
@@ -93,3 +93,7 @@ export default function PartnershipPage() {
     </Stack>
   );
 }
+
+
+
+

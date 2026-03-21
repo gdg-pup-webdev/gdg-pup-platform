@@ -1,6 +1,6 @@
 import { NotFoundError, InternalServerError } from "@/v1/errors/HttpError";
 import { supabase } from "@/v1/lib/supabase";
-import { Tables } from "@/v1/types/supabase.types";
+import { Tables, TablesUpdate } from "@/v1/types/supabase.types";
 import { IPortfolioRepository } from "@/v1/modules/portfolioModule/domain/IPortfolioRepository";
 import {
   Portfolio,
@@ -13,8 +13,33 @@ type UserRow = Tables<"user">;
 type PortfolioSelectRow = UserProfileRow & {
   user: Pick<
     UserRow,
-    "id" | "first_name" | "last_name" | "display_name" | "gdg_id"
+    "id" | "first_name" | "last_name" | "display_name" | "gdg_id" | "avatar_url"
   > | null;
+};
+
+/**
+ * Maps PortfolioProps (camelCase) to user_profile DB columns (snake_case).
+ * This configuration centralizes field mapping and reduces hardcoding in implementation.
+ */
+const PROFILE_COLUMN_MAPPING: Record<string, keyof UserProfileRow> = {
+  firstName: "first_name",
+  middleName: "middle_name",
+  lastName: "last_name",
+  nickname: "nickname",
+  membershipType: "membership_type",
+  department: "department",
+  yearLevel: "year_level",
+  program: "program",
+  bio: "bio",
+  githubUrl: "github_url",
+  linkedinUrl: "linkedin_url",
+  portfolioWebsiteUrl: "portfolio_url",
+  otherLinks: "other_links",
+  technicalSkills: "technical_skills",
+  learningInterests: "learning_interests",
+  toolsAndTechnologies: "tools_and_technologies",
+  isPublic: "is_public",
+  profileImage: "profile_image",
 };
 
 export class PortfolioRepository implements IPortfolioRepository {
@@ -22,88 +47,72 @@ export class PortfolioRepository implements IPortfolioRepository {
   private readonly userTable = "user";
 
   private readonly selectClause = `
-    id,
-    user_id,
-    created_at,
-    updated_at,
-    bio,
-    github_url,
-    linkedin_url,
-    portfolio_url,
-    program,
-    skills_summary,
-    year_level,
-    is_public,
+    *,
     user:user_id (
       id,
       first_name,
       last_name,
       display_name,
-      gdg_id
+      gdg_id,
+      avatar_url
     )
   `;
 
-  private toSkillsArray(value: string | null): string[] {
-    if (!value) return [];
-    return value
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  private toYearAndProgram(
-    program: string | null,
-    yearLevel: number | null,
-  ): string | null {
-    if (!program && (yearLevel === null || yearLevel === undefined))
-      return null;
-    if (yearLevel === null || yearLevel === undefined) return program;
-    if (!program) return `${yearLevel}`;
-    return `${yearLevel} - ${program}`;
-  }
-
-  private toYearLevel(yearAndProgram: string | null): number | null {
-    if (!yearAndProgram) return null;
-    const match = yearAndProgram.match(/\d+/);
-    if (!match) return null;
-    const parsed = Number(match[0]);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-
   private rowToPortfolio(row: PortfolioSelectRow): Portfolio {
-    const user = row.user;
-    const skills = this.toSkillsArray(row.skills_summary ?? null);
+    const { user, ...profile } = row;
 
     return Portfolio.hydrate({
-      id: row.id,
-      userId: row.user_id,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      id: profile.id,
+      userId: profile.user_id,
+      createdAt: profile.created_at,
+      updatedAt: profile.updated_at,
 
-      fullName:
-        [user?.first_name, user?.last_name].filter(Boolean).join(" ") || null,
-      nickname: user?.display_name ?? null,
+      // Personal Information - Fallback to User table if Profile table fields are null (legacy compatibility)
+      firstName: profile.first_name || user?.first_name || null,
+      middleName: profile.middle_name ?? null,
+      lastName: profile.last_name || user?.last_name || null,
+      nickname: profile.nickname || user?.display_name || null,
       gdgId: user?.gdg_id ?? null,
-      membershipType: null,
-      department: null,
-      yearAndProgram: this.toYearAndProgram(
-        row.program ?? null,
-        row.year_level ?? null,
-      ),
+      
+      membershipType: profile.membership_type ?? null,
+      department: profile.department ?? null,
+      yearLevel: profile.year_level ?? null,
+      program: profile.program ?? null,
 
-      bio: row.bio ?? null,
+      // Bio
+      bio: profile.bio ?? null,
 
-      githubUrl: row.github_url ?? null,
-      linkedinUrl: row.linkedin_url ?? null,
-      portfolioWebsiteUrl: row.portfolio_url ?? null,
-      otherLinks: [],
+      // Socials
+      githubUrl: profile.github_url ?? null,
+      linkedinUrl: profile.linkedin_url ?? null,
+      portfolioWebsiteUrl: profile.portfolio_url ?? null,
+      otherLinks: profile.other_links ?? [],
 
-      technicalSkills: skills,
-      learningInterests: [],
-      toolsAndTechnologies: [],
+      // Skills & Interests
+      technicalSkills: profile.technical_skills ?? [],
+      learningInterests: profile.learning_interests ?? [],
+      toolsAndTechnologies: profile.tools_and_technologies ?? [],
 
-      isPublic: row.is_public ?? false,
+      isPublic: profile.is_public ?? false,
+      profileImage: profile.profile_image ?? user?.avatar_url ?? null,
     });
+  }
+  
+  /**
+   * Helper to fetch portfolio by a user_id found via other criteria.
+   */
+  private async findByUserId(userId: string, errorLabel: string): Promise<Portfolio> {
+    const { data, error } = await supabase
+      .from(this.profileTable)
+      .select(this.selectClause)
+      .eq("user_id", userId)
+      .single();
+
+    if (error || !data) {
+      throw new NotFoundError(`Portfolio not found for ${errorLabel}`);
+    }
+
+    return this.rowToPortfolio(data as PortfolioSelectRow);
   }
 
   async findById(portfolioId: string): Promise<Portfolio> {
@@ -131,17 +140,7 @@ export class PortfolioRepository implements IPortfolioRepository {
       throw new NotFoundError(`Portfolio not found for name: ${displayName}`);
     }
 
-    const { data, error } = await supabase
-      .from(this.profileTable)
-      .select(this.selectClause)
-      .eq("user_id", userRow.id)
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundError(`Portfolio not found for name: ${displayName}`);
-    }
-
-    return this.rowToPortfolio(data as PortfolioSelectRow);
+    return this.findByUserId(userRow.id, `name: ${displayName}`);
   }
 
   async findByGdgId(gdgId: string): Promise<Portfolio> {
@@ -155,17 +154,7 @@ export class PortfolioRepository implements IPortfolioRepository {
       throw new NotFoundError(`Portfolio not found for GDG ID: ${gdgId}`);
     }
 
-    const { data, error } = await supabase
-      .from(this.profileTable)
-      .select(this.selectClause)
-      .eq("user_id", userRow.id)
-      .single();
-
-    if (error || !data) {
-      throw new NotFoundError(`Portfolio not found for GDG ID: ${gdgId}`);
-    }
-
-    return this.rowToPortfolio(data as PortfolioSelectRow);
+    return this.findByUserId(userRow.id, `GDG ID: ${gdgId}`);
   }
 
   async listPortfolios(
@@ -173,63 +162,37 @@ export class PortfolioRepository implements IPortfolioRepository {
     pageSize: number,
   ): Promise<{ list: Portfolio[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
-    const to = from + pageSize - 1;
-
     const { data, error, count } = await supabase
       .from(this.profileTable)
       .select(this.selectClause, { count: "exact" })
-      .range(from, to);
+      .range(from, from + pageSize - 1);
 
     if (error) {
       throw new InternalServerError("Failed to list portfolios.", error);
     }
 
     return {
-      list:
-        (data as PortfolioSelectRow[] | null)?.map((row) =>
-          this.rowToPortfolio(row),
-        ) ?? [],
+      list: (data as PortfolioSelectRow[] | null)?.map((row) => this.rowToPortfolio(row)) ?? [],
       count: count ?? 0,
     };
   }
 
   async persistUpdates(portfolio: Portfolio): Promise<Portfolio> {
-    const {
-      id,
-      bio,
-      githubUrl,
-      linkedinUrl,
-      portfolioWebsiteUrl,
-      technicalSkills,
-      learningInterests,
-      toolsAndTechnologies,
-      yearAndProgram,
-      isPublic,
-    } = portfolio.props;
+    const { id, ...props } = portfolio.props;
 
-    const mergedSkills = Array.from(
-      new Set([
-        ...technicalSkills,
-        ...learningInterests,
-        ...toolsAndTechnologies,
-      ]),
-    );
-    const skillsSummary =
-      mergedSkills.length > 0 ? mergedSkills.join(", ") : null;
-    const yearLevel = this.toYearLevel(yearAndProgram);
+    // Dynamically build the update object using the column mapping
+    const updatePayload: TablesUpdate<"user_profile"> = {};
+    
+    for (const [propKey, colName] of Object.entries(PROFILE_COLUMN_MAPPING)) {
+        const val = (props as any)[propKey];
+        if (val !== undefined) {
+            (updatePayload as any)[colName] = val;
+        }
+    }
 
     const { error } = await supabase
       .from(this.profileTable)
-      .update({
-        bio,
-        github_url: githubUrl,
-        linkedin_url: linkedinUrl,
-        portfolio_url: portfolioWebsiteUrl,
-        program: yearAndProgram,
-        skills_summary: skillsSummary,
-        year_level: yearLevel,
-        is_public: isPublic,
-      })
+      .update(updatePayload)
       .eq("id", id);
 
     if (error) {

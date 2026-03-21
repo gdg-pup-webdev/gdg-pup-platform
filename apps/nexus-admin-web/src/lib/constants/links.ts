@@ -9,5 +9,9 @@ export const INTERNAL_LINKS = {
   TEAMS: "/admin/teams",
   FILES: "/admin/files",
   TEAM_RESOURCES: "/admin/team-resources",
+  EVENTS: "/admin/events",
+  EVENT_HIGHLIGHTS: "/admin/event-highlights",
+  BEVY_EVENTS: "/admin/bevy-events",
+  PORTFOLIOS: "/admin/portfolios",
   LOGIN: "/admin/login",
 } as const;

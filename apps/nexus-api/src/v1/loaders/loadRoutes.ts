@@ -40,12 +40,24 @@ import { PointsRouter } from "../routes/points/points.router";
 import { teamResourceController } from "@/v1/modules/teamResources";
 import { TeamResourcesHttpController } from "../routes/teamResources/team-resources.controller";
 import { TeamResourcesRouter } from "../routes/teamResources/team-resources.router";
+import { eventSystemController } from "@/v1/modules/eventSystem";
+import { EventsHttpController } from "../routes/events/events.controller";
+import { EventsRouter } from "../routes/events/events.router";
+import { eventHighlightsController } from "../modules/eventHighlights";
+import { EventHighlightsHttpController } from "../routes/event-highlights/eventHighlights.controller";
+import { EventHighlightsRouter } from "../routes/event-highlights/eventHighlights.router";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
 
+  const eventHighlightsHttpController = new EventHighlightsHttpController(eventHighlightsController);
+  const eventHighlightsRouter = new EventHighlightsRouter(eventHighlightsHttpController);
+
   const pointsHttpController = new PointsHttpController(pointSystemController);
   const pointsRouter = new PointsRouter(pointsHttpController);
+
+  const eventsHttpController = new EventsHttpController(eventSystemController);
+  const eventsRouter = new EventsRouter(eventsHttpController);
 
   const filesHttpController = new FilesHttpController(filesModuleController);
   const filesRouter = new FilesRouter(filesHttpController);
@@ -114,6 +126,9 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdg-merch", gdgMerchRouter.router);
   app.use("/points", pointsRouter.router);
   app.use("/team-resources", teamResourcesRouter.router);
+  app.use("/events", eventsRouter.router);
+  app.use("/event-system", eventsRouter.router);
+  app.use("/event-highlights", eventHighlightsRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

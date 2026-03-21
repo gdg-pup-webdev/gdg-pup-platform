@@ -30,15 +30,18 @@ describe("CheckinToEvent Use Case", () => {
   // Helper function to quickly seed a valid event before tests
   const seedEvent = async (points: number = 50) => {
     const newEvent = Event.create({
-      title: "React Router Study Jam",
-      description: "Advanced Routing",
-      category: "WebDev",
-      venue: "Discord",
+      title: "Test Event",
+      description: "A test event for unit testing",
+      category: "Testing",
+      venue: "Test Venue",
       start_date: new Date(),
-      end_date: new Date(Date.now() + 3600000),
+      end_date: new Date(),
       attendance_points: points,
+      image_url: null,
+      bevy_event_id: null,
+      creatorId: "creator_123",
     });
-    return await eventRepository.saveNewEvent(newEvent);
+    return await eventRepository.saveNew(newEvent);
   };
 
   it("should successfully check in a user, persist records, and award points", async () => {

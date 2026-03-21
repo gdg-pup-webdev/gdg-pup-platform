@@ -263,7 +263,9 @@ export function CosmosParticles({
 }: CosmosParticlesProps) {
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      <ParticlesCanvas {...particleProps} />
+      <div className="pointer-events-none absolute inset-0 w-full h-full">
+        <ParticlesCanvas {...particleProps} />
+      </div>
       {children && <div className="relative z-10">{children}</div>}
     </div>
   );

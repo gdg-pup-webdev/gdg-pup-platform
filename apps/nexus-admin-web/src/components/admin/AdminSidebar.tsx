@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Users,
   Award,
+  Calendar,
   MessageSquareQuote,
   X,
   Globe,
@@ -42,9 +43,14 @@ const NAV_ITEMS = [
     icon: Link2,
   },
   {
+    label: "Portfolios",
+    href: INTERNAL_LINKS.PORTFOLIOS,
+    icon: Award,
+  },
+  {
     label: "Debug page",
     href: INTERNAL_LINKS.DEBUG_PAGE,
-    icon: Award, // Changed to Award or something else to avoid conflict with Users
+    icon: Award, 
   },
 ];
 
@@ -70,7 +76,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-16 left-0 z-30 flex h-[calc(100vh-4rem)] w-64 flex-col
+          fixed top-16 left-0 z-30 flex h-[calc(100vh-4rem)] w-64 flex-col shrink-0
           border-r border-gray-200/80 bg-white shadow-xl
           transition-transform duration-300 ease-in-out
           md:static md:z-auto md:h-auto md:self-stretch md:translate-x-0 md:shadow-none
@@ -125,6 +131,57 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               </Link>
             );
           })}
+
+          <p className="mb-3 mt-4 px-3 text-[11px] font-semibold text-gray-400 uppercase tracking-widest">
+            Events
+          </p>
+          {[
+            {
+              label: "Nexus Events",
+              href: INTERNAL_LINKS.EVENTS,
+              icon: Calendar,
+            },
+            {
+              label: "Event Highlights",
+              href: INTERNAL_LINKS.EVENT_HIGHLIGHTS,
+              icon: MessageSquareQuote,
+            },
+            {
+              label: "Bevy Events",
+              href: INTERNAL_LINKS.BEVY_EVENTS,
+              icon: MessageSquareQuote,
+            },
+          ].map((item) => {
+            const active = isActive(item.href);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={`
+                  group flex items-center gap-3 rounded px-3 py-2.5
+                  text-sm font-medium transition-all duration-200
+                  ${
+                    active
+                      ? "bg-[#0B1F3B] text-white shadow-md shadow-[#0B1F3B]/20"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  }
+                `}
+              >
+                <Icon
+                  size={20}
+                  className={`shrink-0 transition-colors ${
+                    active
+                      ? "text-[#2FB7A8]"
+                      : "text-gray-400 group-hover:text-gray-600"
+                  }`}
+                />
+                {item.label}
+              </Link>
+            );
+          })}
+
 
           {/* Divider */}
           <div className="my-4 border-t border-gray-200" />

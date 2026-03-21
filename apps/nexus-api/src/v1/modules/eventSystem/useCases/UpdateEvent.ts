@@ -5,15 +5,12 @@ export class UpdateEvent {
   constructor(private eventRepository: IEventRepository) {}
 
   async execute(eventId: string, updateProps: EventUpdateProps) {
-    /**
-     * STEPS:
-     * - load event
-     * - update event
-     * - persist updates
-     * - return updated event
-     */
-
     const currentEvent = await this.eventRepository.findById(eventId);
+
+    if (!currentEvent) {
+      throw new Error("Event not found");
+    }
+
     currentEvent.update(updateProps);
 
     const updatedEvent =
