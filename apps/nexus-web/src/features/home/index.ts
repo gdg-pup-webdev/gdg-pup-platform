@@ -9,4 +9,6 @@ export { WhoAreWeSection } from "./components/who-are-we-section";
 export { WhatWeDoSection } from "./components/what-we-do-section";
 export { WhatDrivesUsSection } from "./components/what-drives-us-section";
 export { ImpactSection } from "./components/impact-section";
+export { ImpactCard } from "./components/impact-card";
 export { SparkStartsHereSection } from "./components/spark-starts-here-section";
+export { HomeBackground } from "./components/home-background";

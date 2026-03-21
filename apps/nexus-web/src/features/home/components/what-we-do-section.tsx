@@ -1,86 +1,99 @@
 "use client";
 
 import { Container, Stack, Text } from "@packages/spark-ui";
+import { ASSETS } from "@/lib/constants/assets";
+import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { FrostedContentContainer } from "./frosted-content-container";
 
 export function WhatWeDoSection() {
-    const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const bulletItems = [
+    "Technical workshops powered by Google-backed tools and technologies",
+    "Study Jams and skill-shares focused on hands-on learning",
+    "Hackathons and real-world project collaborations",
+    "Industry partnerships and opportunities",
+    "Leadership and community-building events",
+  ];
 
-    return (
-        <section className="relative z-30" ref={ref}>
-            <Container className="py-24">
-                <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                    transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
-                >
-                    {/* Content on left*/}
-                    <Stack gap="xl" align="start" className="w-[60%]">
+  return (
+    <section className="relative hidden lg:block z-30" ref={ref}>
+      <Container className="py-24">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+          transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
+        >
+          {/* Content on left*/}
+          <Stack gap="2xl" align="start" className="w-[60%]">
+            <Text
+              as="h2"
+              align="left"
+              gradient="white-green"
+              variant="heading-2"
+              weight="bold"
+              className="mb-0.5"
+            >
+              What we do
+            </Text>
+            <div className="relative w-full">
+              <FrostedContentContainer>
+                <div className="flex flex-col gap-7.5">
+                  <div className="flex flex-col gap-2.5">
+                    <Text
+                      as="h3"
+                      align="left"
+                      gradient="white-yellow"
+                      weight="bold"
+                      color="on-primary"
+                      className="text-2xl"
+                    >
+                      We design experiences that turn <br />
+                      curiosity into capability:
+                    </Text>
+                  </div>
+                  <div className="flex flex-col gap-4">
+                    {bulletItems.map((item) => (
+                      <div key={item} className="flex items-start gap-3">
+                        <Image
+                          src={ASSETS.HOME.BULLET_DIAMOND}
+                          alt=""
+                          aria-hidden
+                          width={18}
+                          height={18}
+                          draggable={false}
+                          className="pointer-events-none select-none mt-1 shrink-0"
+                        />
                         <Text
-                            as="h2"
-                            align="left"
-                            gradient="white-green"
-                            variant="heading-2"
-                            weight="bold"
-                            className="mb-0.5"
+                          align="left"
+                          variant="body"
+                          weight="normal"
+                          color="on-primary"
+                          className="text-lg"
                         >
-                            What we do
+                          {item}
                         </Text>
-                        <Text
-                            as="h3"
-                            align="left"
-                            variant="body"
-                            weight="bold"
-                            color="on-primary"
-                            className="text-2xl whitespace-nowrap"
-                        >
-                            We design experiences that turn curiosity into capability:
-                        </Text>
-                        <Text
-                            align="left"
-                            variant="body"
-                            weight="normal"
-                            color="on-primary"
-                            className="text-xl"
-                        >
-                            At Google Developer Groups on Campus – Polytechnic University of the Philippines, GDG PUP is a student-driven tech community built to bridge the gap between theory and real-world practice.
-                        </Text>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </FrostedContentContainer>
 
-                        <Text
-                            align="left"
-                            variant="body"
-                            weight="normal"
-                            color="on-primary"
-                            className="text-xl"
-                        >
-                            We create spaces where students don't just study technology — they build with it.
-                        </Text>
-
-                        <Text
-                            align="left"
-                            variant="body"
-                            weight="normal"
-                            color="on-primary"
-                            className="text-xl"
-                        >
-                            From hands-on workshops and Study Jams to hackathons, industry collaborations, and real startup projects, GDG PUP empowers learners to transform classroom knowledge into practical skills that matter in today's tech industry.
-                        </Text>
-
-                        <Text
-                            align="left"
-                            variant="body"
-                            weight="normal"
-                            color="on-primary"
-                            className="text-xl"
-                        >
-                            hether you're exploring Web development, Artificial Intelligence and Machine Learning (AI/ML), Cybersecurity, Cloud Solutions, UI/UX Design, Internet of Things (IoT), Project Management,  or even as a core functional team member (Operations, Finance, Creatives, Marketing, Partnerships), our community provides opportunities to learn, collaborate, and grow alongside peers and mentors.
-                        </Text>
-
-                    </Stack>
-                </motion.div>
-            </Container>
-        </section>
-    );
+              <Image
+                src={ASSETS.HOME.CIRBY_STICKER21}
+                alt=""
+                aria-hidden
+                width={486}
+                height={536}
+                draggable={false}
+                className="pointer-events-none select-none absolute -right-100 top-1/2 -translate-y-1/2 z-20"
+              />
+            </div>
+          </Stack>
+        </motion.div>
+      </Container>
+    </section>
+  );
 }
