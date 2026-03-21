@@ -1,16 +1,13 @@
-/* For improvements:
- * Add real links to the CTA buttons
- * Add devcon.png to /public/pages/about/partnership/
- */
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import { Text } from "@packages/spark-ui";
+import { ASSETS } from "@/lib/constants/assets";
 
-
-// ─── Animation Wrapper ──────────────────────────────────────────────────────
+// ─── Animation Wrapper ───────────────────────────────────────────────────────
 const FadeIn = ({
   children,
   delay = 0,
@@ -25,9 +22,9 @@ const FadeIn = ({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 24 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.55, delay, ease: "easeOut" }}
       className={className}
     >
       {children}
@@ -35,200 +32,244 @@ const FadeIn = ({
   );
 };
 
-// ─── Partner Data ────────────────────────────────────────────────────────────
+// ─── Partner Data ─────────────────────────────────────────────────────────────
 const featuredPartners = [
-  { name: "Acadarena Education", slug: "acadarena", ext: "png" },
-  { name: "Globe", slug: "globe", ext: "png" },
-  { name: "DEVCON Manila Chapter", slug: "devcon", ext: "png" },
-  { name: "v0", slug: "v0", ext: "png" },
+  { name: "Acadarena Education", src: ASSETS.PARTNERS.ACADARENA },
+  { name: "Globe", src: ASSETS.PARTNERS.GLOBE },
+  { name: "DEVCON Manila Chapter", src: ASSETS.PARTNERS.DEVCON },
+  { name: "v0", src: ASSETS.PARTNERS.V0 },
 ];
 
 const regularPartners = [
-  { name: "Gen AI Philippines", slug: "gen-ai-philippines", ext: "jpg" },
-  { name: "DataCamp Donates", slug: "datacamp", ext: "png" },
-  { name: "PLDT", slug: "pldt", ext: "png" },
-  { name: "YSpaces", slug: "yspace", ext: "png" },
-  { name: "Whitecloak", slug: "whitecloak", ext: "png" },
-  { name: "Pocky", slug: "pocky", ext: "png" },
-  { name: "Hey Roomie", slug: "hey-roomie", ext: "png" },
-  { name: "Potico.ph", slug: "potico", ext: "png" },
-  { name: "FlowerStore.ph", slug: "flowerstore", ext: "png" },
-  { name: "Homeroom", slug: "homeroom", ext: "jpg" },
-  { name: "Mountain Dew", slug: "mountain-dew", ext: "png" },
+  { name: "Gen AI Philippines", src: ASSETS.PARTNERS.GEN_AI_PH },
+  { name: "DataCamp Donates", src: ASSETS.PARTNERS.DATACAMP },
+  { name: "PLDT", src: ASSETS.PARTNERS.PLDT },
+  { name: "YSpaces", src: ASSETS.PARTNERS.YSPACE },
+  { name: "Whitecloak", src: ASSETS.PARTNERS.WHITECLOAK },
+  { name: "Pocky", src: ASSETS.PARTNERS.POCKY },
+  { name: "Hey Roomie", src: ASSETS.PARTNERS.HEY_ROOMIE },
+  { name: "Potico.ph", src: ASSETS.PARTNERS.POTICO },
+  { name: "FlowerStore.ph", src: ASSETS.PARTNERS.FLOWERSTORE },
+  { name: "Homeroom", src: ASSETS.PARTNERS.HOMEROOM },
+  { name: "Mountain Dew", src: ASSETS.PARTNERS.MOUNTAIN_DEW },
 ];
 
-// ─── Logo image helper ───────────────────────────────────────────────────────
-function PartnerLogo({
-  slug,
-  name,
-  ext,
-}: {
-  slug: string;
-  name: string;
-  ext: string;
-}) {
+function PartnerLogo({ src, name }: { src: string; name: string }) {
   return (
     <div className="relative h-full w-full">
       <Image
-        src={`/pages/about/partnership/${slug}.${ext}`}
-        alt={name}
-        fill
-        className="object-contain"
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.opacity = "0";
-        }}
+        src={src} alt={name} fill className="object-contain"
+        onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0"; }}
       />
     </div>
   );
 }
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 export function PartnershipSection() {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black">
-      {/* ── 1. Starfield background ── */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            {/* Global Dark Glass Gradients for Floating 3D Objects */}
-            <linearGradient id="darkGlassFill" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.12)" />
-              <stop offset="100%" stopColor="rgba(10,10,10,0.6)" />
-            </linearGradient>
-            <linearGradient id="glassBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
-              <stop offset="100%" stopColor="rgba(255,255,255,0.02)" />
-            </linearGradient>
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-[#06080f]">
 
-            <pattern id="stars" width="200" height="200" patternUnits="userSpaceOnUse">
-              <circle cx="20" cy="50" r="1.5" fill="#FFF" opacity="0.8" />
-              <circle cx="80" cy="120" r="1" fill="#FFF" opacity="0.4" />
-              <circle cx="150" cy="30" r="2" fill="#FFF" opacity="0.9" filter="drop-shadow(0 0 2px #fff)" />
-              <circle cx="180" cy="150" r="1.5" fill="#FFF" opacity="0.6" />
-              <circle cx="40" cy="180" r="1" fill="#FFF" opacity="0.3" />
-              <circle cx="120" cy="90" r="1.5" fill="#FFF" opacity="0.7" />
-              <circle cx="10" cy="10" r="0.5" fill="#FFF" opacity="0.5" />
-              <circle cx="190" cy="10" r="1" fill="#FFF" opacity="0.6" />
-              <circle cx="100" cy="160" r="0.5" fill="#FFF" opacity="0.4" />
+      {/* ══════════════════════════════════════════════════════
+          BACKGROUND
+      ══════════════════════════════════════════════════════ */}
+      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+
+        {/* Base: very dark navy gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_110%_55%_at_50%_0%,#0b1525_0%,#06080f_60%,#020305_100%)]" />
+
+        {/* Stars */}
+        <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="sg" x="-300%" y="-300%" width="700%" height="700%">
+              <feGaussianBlur stdDeviation="1.1" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="sgl" x="-300%" y="-300%" width="700%" height="700%">
+              <feGaussianBlur stdDeviation="2.2" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            {/* tiny stars */}
+            <pattern id="sA" width="220" height="220" patternUnits="userSpaceOnUse">
+              <circle cx="18" cy="22" r="0.45" fill="#fff" opacity="0.16" />
+              <circle cx="95" cy="10" r="0.55" fill="#fff" opacity="0.13" />
+              <circle cx="150" cy="72" r="0.45" fill="#fff" opacity="0.14" />
+              <circle cx="55" cy="135" r="0.45" fill="#fff" opacity="0.11" />
+              <circle cx="195" cy="48" r="0.55" fill="#fff" opacity="0.14" />
+              <circle cx="115" cy="188" r="0.45" fill="#fff" opacity="0.12" />
+              <circle cx="32" cy="195" r="0.40" fill="#fff" opacity="0.10" />
+              <circle cx="175" cy="155" r="0.45" fill="#fff" opacity="0.13" />
+              <circle cx="78" cy="85" r="0.40" fill="#fff" opacity="0.09" />
+              <circle cx="140" cy="40" r="0.45" fill="#fff" opacity="0.12" />
             </pattern>
-            <pattern id="stars2" width="350" height="350" patternUnits="userSpaceOnUse">
-              <circle cx="50" cy="70" r="1" fill="#FFF" opacity="0.6" />
-              <circle cx="150" cy="220" r="1.5" fill="#FFF" opacity="0.8" />
-              <circle cx="250" cy="80" r="0.5" fill="#FFF" opacity="0.4" />
-              <circle cx="300" cy="300" r="2" fill="#FFF" opacity="0.9" filter="drop-shadow(0 0 3px #FFF)" />
-              <circle cx="50" cy="280" r="1" fill="#FFF" opacity="0.5" />
-              <circle cx="200" cy="150" r="1.2" fill="#FFF" opacity="0.7" />
+            {/* medium stars */}
+            <pattern id="sB" width="400" height="400" patternUnits="userSpaceOnUse">
+              <circle cx="62" cy="88" r="0.95" fill="#fff" opacity="0.48" filter="url(#sg)" />
+              <circle cx="238" cy="52" r="1.15" fill="#fff" opacity="0.52" filter="url(#sg)" />
+              <circle cx="355" cy="205" r="0.88" fill="#fff" opacity="0.40" />
+              <circle cx="108" cy="295" r="0.95" fill="#fff" opacity="0.46" filter="url(#sg)" />
+              <circle cx="295" cy="362" r="0.78" fill="#fff" opacity="0.36" />
+              <circle cx="385" cy="92" r="1.05" fill="#fff" opacity="0.48" filter="url(#sg)" />
+              <circle cx="175" cy="178" r="0.75" fill="#fff" opacity="0.33" />
+              <circle cx="320" cy="140" r="0.88" fill="#fff" opacity="0.40" />
+            </pattern>
+            {/* hero stars */}
+            <pattern id="sC" width="680" height="680" patternUnits="userSpaceOnUse">
+              <circle cx="125" cy="165" r="1.75" fill="#fff" opacity="0.68" filter="url(#sgl)" />
+              <circle cx="450" cy="108" r="1.95" fill="#fff" opacity="0.70" filter="url(#sgl)" />
+              <circle cx="580" cy="432" r="1.55" fill="#fff" opacity="0.60" filter="url(#sgl)" />
+              <circle cx="205" cy="545" r="1.45" fill="#fff" opacity="0.56" filter="url(#sgl)" />
+              <circle cx="340" cy="310" r="1.20" fill="#fff" opacity="0.45" filter="url(#sg)" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill="url(#stars)" />
-          <rect width="100%" height="100%" fill="url(#stars2)" />
+          <rect width="100%" height="100%" fill="url(#sA)" />
+          <rect width="100%" height="100%" fill="url(#sB)" />
+          <rect width="100%" height="100%" fill="url(#sC)" />
         </svg>
+
+        {/* Amber glow — top center */}
+        <div className="absolute -top-[6%] left-1/2 -translate-x-1/2 h-[42vw] w-[85vw] max-w-[960px]
+          bg-[radial-gradient(ellipse_at_50%_0%,rgba(188,128,10,0.40)_0%,rgba(130,82,4,0.12)_44%,transparent_66%)]
+          blur-[58px]"/>
+
+        {/* Blue right edge */}
+        <div className="absolute -right-[2%] top-[6%] h-[88vw] w-[22vw] max-w-[275px]
+          bg-[radial-gradient(ellipse_at_100%_32%,rgba(16,72,192,0.24)_0%,rgba(6,42,145,0.06)_54%,transparent_74%)]
+          blur-[46px]"/>
+
+        {/* Blue left edge */}
+        <div className="absolute -left-[2%] top-[10%] h-[78vw] w-[17vw] max-w-[210px]
+          bg-[radial-gradient(ellipse_at_0%_38%,rgba(10,52,168,0.17)_0%,rgba(4,28,115,0.04)_54%,transparent_74%)]
+          blur-[46px]"/>
+
+        {/* Bottom vignette */}
+        <div className="absolute bottom-0 left-0 right-0 h-[22vw]
+          bg-[linear-gradient(to_top,rgba(2,3,8,0.60)_0%,transparent_100%)]"/>
+
+        {/* Dot grid */}
+        <svg className="absolute inset-0 h-full w-full opacity-[0.038]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="dots" width="38" height="38" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="0.8" fill="white" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#dots)" />
+        </svg>
+
+        {/* ── GEAR — left, ~40% peeking in ── */}
+        <motion.div
+          className="absolute -left-[155px] top-[10%]
+                     h-[300px] w-[300px] opacity-50
+                     md:-left-[195px] md:h-[420px] md:w-[420px]"
+          animate={{ y: [0, -12, 0], rotate: [0, -2.5, 0] }}
+          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Image
+            src={ASSETS.ABOUT.PARTNERSHIP.GEAR}
+            alt="" fill className="object-contain"
+          />
+        </motion.div>
+
+        {/* ── CHEVRON > — right, ~40% peeking in, flipped ── */}
+        <motion.div
+          className="absolute -right-[105px] top-[28%]
+                     h-[320px] w-[320px] opacity-40
+                     md:-right-[165px] md:h-[480px] md:w-[480px]"
+          animate={{ y: [0, -18, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <div className="relative h-full w-full [transform:scaleX(-1)]">
+            <Image
+              src={ASSETS.ABOUT.PARTNERSHIP.CHEVRON}
+              alt="" fill className="object-contain"
+            />
+          </div>
+        </motion.div>
+
       </div>
-
-      {/* ── 2. Glow Blobs ── */}
-      <div className="pointer-events-none absolute z-0 -top-[20%] left-1/2 -translate-x-1/2 w-[100vw] h-[100vw] max-w-[1200px] max-h-[1200px] bg-[radial-gradient(circle_at_50%_30%,rgba(255,180,20,0.15)_0%,transparent_60%)] blur-[80px] mix-blend-screen" />
-      <div className="pointer-events-none absolute z-0 -left-[20%] top-[20%] w-[80vw] h-[80vw] bg-[radial-gradient(circle,rgba(255,50,50,0.12)_0%,transparent_60%)] blur-[80px] mix-blend-screen" />
-      <div className="pointer-events-none absolute z-0 -right-[20%] top-[30%] w-[80vw] h-[80vw] bg-[radial-gradient(circle,rgba(0,120,255,0.15)_0%,transparent_60%)] blur-[80px] mix-blend-screen" />
-
-      {/* ── 3. Dark 3D Glass Decorative Elements ── */}
-      {/* Heavy Gear Shape (Left Side) - Half Offscreen */}
-      <motion.div
-        className="pointer-events-none absolute -left-[140px] lg:-left-[180px] top-[25%] z-[1] w-[250px] h-[250px] md:w-[350px] md:h-[350px] opacity-100"
-        animate={{ y: [0, -15, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <svg viewBox="0 0 100 100" width="100%" height="100%" filter="drop-shadow(0 20px 30px rgba(0,0,0,0.8))">
-          <path fill="url(#darkGlassFill)" stroke="url(#glassBorder)" strokeWidth="0.8" fillRule="evenodd" d="M 98.78253626555092 45.3886926473928 A 49 49 0 0 1 98.78253626555092 54.6113073526072 L 85.13300342979491 57.85315669027553 A 36 36 0 0 1 80.39580531807255 69.28976461924388 L 87.75514889601368 81.2337754976858 L 87.75514889601368 81.2337754976858 A 49 49 0 0 1 81.2337754976858 87.75514889601368 L 69.28976461924387 80.39580531807255 A 36 36 0 0 1 57.85315669027554 85.13300342979491 L 54.61130735260721 98.78253626555092 L 54.61130735260721 98.78253626555092 A 49 49 0 0 1 45.388692647392794 98.78253626555092 L 42.14684330972447 85.13300342979491 A 36 36 0 0 1 30.710235380756128 80.39580531807255 L 18.766224502314202 87.75514889601368 L 18.766224502314202 87.75514889601368 A 49 49 0 0 1 12.244851103986335 81.2337754976858 L 19.604194681927456 69.28976461924388 A 36 36 0 0 1 14.866996570205096 57.85315669027554 L 1.2174637344490833 54.611307352607206 L 1.2174637344490833 54.611307352607206 A 49 49 0 0 1 1.2174637344490833 45.38869264739281 L 14.866996570205089 42.14684330972447 A 36 36 0 0 1 19.604194681927453 30.710235380756128 L 12.244851103986328 18.76622450231421 L 12.244851103986328 18.76622450231421 A 49 49 0 0 1 18.766224502314213 12.24485110398632 L 30.71023538075613 19.60419468192745 A 36 36 0 0 1 42.146843309724446 14.866996570205103 L 45.38869264739277 1.2174637344490833 L 45.38869264739277 1.2174637344490833 A 49 49 0 0 1 54.61130735260721 1.2174637344490833 L 57.85315669027555 14.866996570205096 A 36 36 0 0 1 69.28976461924385 19.604194681927442 L 81.23377549768577 12.244851103986313 L 81.23377549768577 12.244851103986313 A 49 49 0 0 1 87.75514889601368 18.76622450231421 L 80.39580531807255 30.71023538075613 A 36 36 0 0 1 85.1330034297949 42.14684330972444 L 98.78253626555092 45.38869264739277 Z M 50 26 A 24 24 0 1 0 50 74 A 24 24 0 1 0 50 26 Z" />
-        </svg>
-      </motion.div>
-
-      {/* Massive Glass Chevron > Shape (Right Side) */}
-      <motion.div
-        className="pointer-events-none absolute -right-[60px] lg:-right-[80px] top-[30%] lg:top-[35%] z-[1] w-[350px] h-[350px] md:w-[500px] md:h-[500px]"
-        animate={{ y: [0, -20, 0], rotate: [0, 2, 0] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <svg viewBox="0 0 100 100" width="100%" height="100%" filter="drop-shadow(0 25px 35px rgba(0,0,0,0.8))">
-          {/* Deeply rounded thick Chevron */}
-          <path fill="url(#darkGlassFill)" stroke="url(#glassBorder)" strokeWidth="0.8" strokeLinejoin="round"
-            d="M 25 22.5 L 67.5 50 L 25 77.5 A 12.5 12.5 0 0 0 37.5 95 L 87.5 58 A 12.5 12.5 0 0 0 87.5 42 L 37.5 5 A 12.5 12.5 0 0 0 25 22.5 Z" />
-        </svg>
-      </motion.div>
-
-      {/* Gemini / Sparkle Star */}
-      <motion.div
-        className="pointer-events-none absolute left-[5%] lg:left-[10%] top-[10%] lg:top-[12%] z-[1] w-[100px] h-[100px] lg:w-[140px] lg:h-[140px]"
-        animate={{ scale: [1, 1.05, 1], rotate: [0, 5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <svg viewBox="0 0 100 100" width="100%" height="100%" filter="drop-shadow(0 15px 25px rgba(0,0,0,0.6))">
-          <path fill="url(#darkGlassFill)" stroke="url(#glassBorder)" strokeWidth="0.6"
-            d="M50 10 C50 40 60 50 90 50 C60 50 50 60 50 90 C50 60 40 50 10 50 C40 50 50 40 50 10 Z" />
-        </svg>
-      </motion.div>
-
-      {/* Bottom Left Diamonds (Seamless SVGs) */}
-      <motion.div
-        className="pointer-events-none absolute left-[5%] lg:left-[15%] bottom-[20%] z-[1] w-[120px] h-[120px]"
-        animate={{ y: [0, -10, 0], rotate: [0, -5, 0] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <svg viewBox="0 0 100 100" width="100%" height="100%" filter="drop-shadow(0 15px 25px rgba(0,0,0,0.8))">
-          <rect x="15" y="15" width="55" height="55" rx="12" transform="rotate(-15 42 42)" fill="url(#darkGlassFill)" stroke="url(#glassBorder)" strokeWidth="1" />
-          <rect x="55" y="55" width="35" height="35" rx="8" transform="rotate(25 72 72)" fill="url(#darkGlassFill)" stroke="url(#glassBorder)" strokeWidth="1" />
-        </svg>
-      </motion.div>
+      {/* ══ END BACKGROUND ══ */}
 
 
-      {/* ─── Narrow center content column ─────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto flex max-w-[780px] flex-col items-center px-5 pb-40 pt-28 sm:px-8 md:pt-32">
-        {/* ══ SECTION 1: Hero ══════════════════════════════════════════════════ */}
-        <FadeIn className="mb-20 w-full text-center">
-          <h1 className="mb-8 text-[2.6rem] font-bold leading-[1.08] tracking-tight sm:text-[3.2rem] md:text-[3.6rem]">
-            <span className="text-white">Innovation Through </span>
+      {/* ══════════════════════════════════════════════════════
+          CONTENT
+      ══════════════════════════════════════════════════════ */}
+      <div className="relative z-10 mx-auto flex max-w-[720px] flex-col items-center
+                      px-5 pb-40 pt-44 sm:px-8 md:pt-52">
+
+        {/* ── SECTION 1: Hero ──────────────────────────────── */}
+        <FadeIn className="mb-14 w-full text-center">
+
+          {/* Heading */}
+          <h1 className="mb-5 text-[2.2rem] font-bold leading-[1.12] tracking-tight
+                         sm:text-[2.75rem] md:text-[3.1rem]">
+            <span className="text-white">Innovation Through</span>
             <br />
-            <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#F9A825] to-[#FFD54F]
+                             bg-clip-text text-transparent">
               Collaboration
             </span>
           </h1>
 
-          {/* Dark Obsidian Glass Description Card */}
-          <div className="w-full bg-[#0A0A0A]/60 border border-white/10 rounded-[2rem] p-6 md:p-8 backdrop-blur-md sm:px-10 sm:py-7 mx-auto shadow-2xl relative overflow-hidden">
-            {/* Subtle inner top highlight */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-            <p className="text-[14px] leading-[1.8] text-[#C8C8C8] md:text-base text-center relative z-10">
-              We collaborate with forward-thinking organizations to foster
-              innovation, deliver meaningful programs, and bridge the gap
-              between technology and community. Together, we build platforms
-              that inspire developers, nurture talent, and shape future-ready
-              leaders.
+          {/* Description card — wide flat glass rectangle */}
+          <div
+            className="relative mx-auto overflow-hidden rounded-[0.9rem]
+                       border border-white/[0.13] bg-white/[0.04]"
+            style={{
+              width: "min(800px, 95vw)",
+              marginLeft: "50%",
+              transform: "translateX(-50%)",
+              padding: "0.95rem 2.2rem 1.05rem",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.07)",
+            }}
+          >
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r
+                            from-transparent via-white/[0.13] to-transparent"/>
+            <p className="text-center text-[0.82rem] leading-[1.65] text-white/55
+                          sm:text-[0.88rem]">
+              We collaborate with forward-thinking organizations to foster innovation,
+              deliver meaningful programs, and bridge the gap between technology and
+              community. Together, we build platforms that inspire developers, nurture
+              talent, and shape future-ready leaders.
             </p>
           </div>
         </FadeIn>
 
-        {/* ══ SECTION 2: Why We Do This ════════════════════════════════════════ */}
-        <FadeIn delay={0.1} className="mb-20 w-full text-center">
-          <p className="mb-4 text-[10px] font-[900] tracking-[0.45em] sm:text-[12px] bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+        {/* ── SECTION 2: Why We Do This ────────────────────── */}
+        <FadeIn delay={0.08} className="mb-14 w-full text-center">
+
+          {/* Yellow label */}
+          <p className="mb-3 text-[0.78rem] font-black uppercase tracking-[0.38em]
+                        text-[#FFD700]">
             WHY WE DO THIS
           </p>
 
-          <h2 className="mb-8 text-xl font-bold text-white sm:text-2xl">
+          {/* Heading */}
+          <h2 className="mb-6 text-[1.28rem] font-bold leading-snug text-white
+                         sm:text-[1.42rem]">
             Creating value through trust and shared purpose
           </h2>
 
-          {/* Dark Obsidian Glass Why Card */}
-          <div className="w-full bg-[#0A0A0A]/60 border border-[rgba(87,202,255,0.15)] rounded-[2rem] px-7 py-6 sm:px-10 sm:py-7 backdrop-blur-md shadow-[0_0_30px_rgba(87,202,255,0.05)] relative overflow-hidden">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#57CAFF]/30 to-transparent" />
-            <p className="text-[14px] leading-[1.85] text-[#C8C8C8] md:text-base text-center relative z-10">
+          {/* Glass card with blue border */}
+          <div
+            className="relative overflow-hidden rounded-[0.9rem]
+                       border border-[rgba(87,202,255,0.22)]
+                       bg-[rgba(7,11,28,0.55)] backdrop-blur-sm"
+            style={{
+              padding: "0.95rem 1.5rem 1.1rem",
+              boxShadow: "inset 0 1px 0 rgba(87,202,255,0.11), 0 0 22px rgba(87,202,255,0.05)",
+            }}
+          >
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r
+                            from-transparent via-[rgba(87,202,255,0.32)] to-transparent"/>
+            <p className="relative z-10 text-center text-[0.80rem] leading-[1.70]
+                          text-white/55 sm:text-[0.86rem]">
               <span className="font-semibold text-[#57CAFF]">
                 Google Developer Group PUP Nexus
               </span>{" "}
-              exists to cultivate a collaborative tech community where students
-              and professionals grow together. Through partnerships built on{" "}
-              <span className="font-semibold text-[#FFD700]">
-                trust and shared goals
-              </span>
-              , we create meaningful opportunities for{" "}
+              exists to cultivate a collaborative tech community where students and
+              professionals grow together. Through partnerships built on{" "}
+              <span className="font-semibold text-[#FFD700]">trust and shared goals</span>,
+              we create meaningful opportunities for{" "}
               <span className="font-semibold text-[#5CDB6D]">
                 learning, innovation, and real-world impact.
               </span>
@@ -236,19 +277,22 @@ export function PartnershipSection() {
           </div>
         </FadeIn>
 
-        {/* ══ SECTION 3: Partners Grid ═════════════════════════════════════════ */}
-        <FadeIn delay={0.15} className="mb-20 w-full">
-          <p className="mb-8 text-center text-[10px] font-[900] tracking-[0.45em] sm:text-[12px] bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+        {/* ── SECTION 3: Partners ──────────────────────────── */}
+        <FadeIn delay={0.14} className="mb-14 w-full">
+
+          {/* Label */}
+          <p className="mb-8 text-center text-[0.72rem] font-bold uppercase
+                        tracking-[0.20em] text-white/75 sm:text-[0.80rem]">
             POWERED BY OUR PARTNERS
           </p>
 
-          {/* Row 1 — Featured (dark/transparent, no white box) */}
-          <div className="mb-4 grid grid-cols-4 gap-4">
+          {/* Featured row — 4 logos, transparent bg */}
+          <div className="mb-8 grid grid-cols-4 gap-6">
             {featuredPartners.map((p) => (
-              <div
-                key={p.slug}
-                className="flex h-16 sm:h-20 items-center justify-center p-3 transition-transform duration-200 hover:-translate-y-1 hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-              >
+              <div key={p.src}
+                className="flex h-16 items-center justify-center p-2 sm:h-20
+                           grayscale opacity-80 transition-all duration-300
+                           hover:grayscale-0 hover:opacity-100 hover:-translate-y-1">
                 <div className="relative h-full w-full">
                   <PartnerLogo {...p} />
                 </div>
@@ -256,17 +300,23 @@ export function PartnershipSection() {
             ))}
           </div>
 
-          {/* Rows 2+ — Regular (white rounded pill format) */}
+          {/* Regular rows — white rectangular cards, 4 cols */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {regularPartners.map((p) => {
-              const noBg = p.slug === "gen-ai-philippines";
+              const isTransparent = p.src === ASSETS.PARTNERS.GEN_AI_PH;
               return (
-                <div
-                  key={p.slug}
-                  className={`flex h-14 sm:h-16 items-center justify-center p-3 transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg ${noBg ? "drop-shadow-[0_0_5px_rgba(59,130,246,0.3)]" : "bg-white rounded-full shadow-md"
-                    }`}
+                <div key={p.src}
+                  className={[
+                    "flex h-20 sm:h-24 items-center justify-center rounded-xl",
+                    "border border-white/[0.08] p-4",
+                    "transition-all duration-300 hover:-translate-y-1",
+                    "hover:border-white/[0.18] hover:bg-white/[0.04]",
+                    isTransparent
+                      ? "bg-black/40 backdrop-blur-sm"
+                      : "bg-white shadow-md shadow-black/20",
+                  ].join(" ")}
                 >
-                  <div className="relative h-full w-[80%]">
+                  <div className="relative h-full w-full">
                     <PartnerLogo {...p} />
                   </div>
                 </div>
@@ -275,54 +325,56 @@ export function PartnershipSection() {
           </div>
         </FadeIn>
 
-        {/* ══ SECTION 4: CTA Card ═══════════════════════════════════════════ */}
-        <FadeIn delay={0.2} className="w-full">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] items-center gap-8">
-            {/* Left: Copy + CTA */}
-            <div className="flex flex-col gap-5 text-left">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
-                <span className="bg-gradient-to-r from-white via-white to-yellow-400 bg-clip-text text-transparent">
-                  Ready to Partner With Us?
-                </span>
+        {/* ── SECTION 4: CTA ───────────────────────────────── */}
+        <FadeIn delay={0.18} className="w-full">
+          <div className="grid grid-cols-1 items-center gap-6
+                          md:grid-cols-[1fr_auto]">
+
+            {/* Left */}
+            <div className="flex flex-col gap-3.5">
+              <h2 className="text-[1.42rem] font-bold leading-tight sm:text-[1.6rem]
+                             bg-gradient-to-r from-[#F9A825] to-[#FFD54F] bg-clip-text text-transparent">
+                Ready to Partner With Us?
               </h2>
-
-              <p className="text-[14px] leading-[1.85] text-[#C8C8C8] md:text-base">
-                Let&apos;s build something impactful together. By partnering
-                with GDG PUP, you gain access to a dynamic community of
-                aspiring developers, innovators, and changemakers eager to
-                learn, collaborate, and create solutions that matter.
+              <p className="text-[0.80rem] leading-relaxed text-white/52
+                            sm:text-[0.86rem]">
+                Let&apos;s build something impactful together. By partnering with
+                GDG PUP, you gain access to a dynamic community of aspiring
+                developers, innovators, and changemakers eager to learn,
+                collaborate, and create solutions that matter.
               </p>
-
               <div>
                 <Link
                   href="#"
-                  className="inline-block bg-black/80 hover:bg-black border border-white/20 rounded-lg px-8 py-3 text-white font-medium transition-colors hover:shadow-[0_0_15px_rgba(255,200,50,0.2)]"
+                  className="inline-block rounded-lg border border-white/22
+                             bg-black/85 px-6 py-2.5 text-[0.80rem] font-semibold
+                             text-white transition-colors
+                             hover:bg-black hover:shadow-[0_0_12px_rgba(255,200,50,0.16)]"
                 >
                   Join Now!
                 </Link>
               </div>
             </div>
 
-            {/* Right: Mascot */}
+            {/* Right: mascot */}
             <div className="flex justify-center md:justify-end">
               <motion.div
-                animate={{ y: [0, -15, 0], rotate: [0, 2, -2, 0] }}
+                animate={{ y: [0, -12, 0], rotate: [0, 1.5, -1.5, 0] }}
                 transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-                className="relative h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 drop-shadow-[0_0_25px_rgba(59,130,246,0.4)]"
+                className="relative h-44 w-44 sm:h-52 sm:w-52 md:h-56 md:w-56
+                           drop-shadow-[0_0_20px_rgba(59,130,246,0.35)]"
               >
                 <Image
-                  src="/pages/about/partnership/cirby-sticker.png"
-                  alt="GDG PUP Mascot"
-                  fill
-                  className="object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.opacity = "0";
-                  }}
+                  src={ASSETS.PARTNERS.CIRBY_STICKER}
+                  alt="GDG PUP Mascot" fill className="object-contain"
+                  onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0"; }}
                 />
               </motion.div>
             </div>
+
           </div>
         </FadeIn>
+
       </div>
     </div>
   );
