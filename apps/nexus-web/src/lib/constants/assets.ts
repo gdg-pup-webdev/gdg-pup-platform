@@ -234,12 +234,12 @@ export const ASSETS = {
 
     // ─── Partners ─────────────────────────────────────────────────────────────────
     PARTNERS: {
-        ACADARENA: "/partners/partner-acadarena.webp",
-        DATACAMP: "/partners/partner-datacamp.webp",
+        ACADARENA: "/partners/partner-acadarena-white.png",
+        DATACAMP: "/partners/partner-datacamp-new.png",
         YSPACE: "/partners/partner-yspace.webp",
         POCKY: "/partners/partner-pocky.webp",
         PLDT: "/partners/partner-pldt.webp",
-        GLOBE: "/partners/partner-globe.webp",
+        GLOBE: "/partners/partner-globe-white.png",
         MOUNTAIN_DEW: "/partners/partner-mountain-dew.webp",
         WHITECLOAK: "/partners/partner-whitecloak.webp",
         FLOWERSTORE: "/partners/partner-flowerstore.webp",
@@ -248,8 +248,16 @@ export const ASSETS = {
         HEY_ROOMIE: "/partners/partner-hey-roomie.webp",
         HOMEROOM: "/partners/partner-homeroom.webp",
         GEN_AI_PH: "/partners/partner-gen-ai-ph.webp",
+        DEVCON: "/partners/partner-devcon.png",
+        /** Aurora/glow SVG overlay matching Figma background */
+        BG_AURORA_OVERLAY: "/partners/bg-aurora-overlay.svg",
         /** Cirby sticker mascot shown in the CTA card */
         CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
+        /** Figma decorative floating assets */
+        DECOR_ASSET_1: "/partners/decor-asset-1.png",
+        DECOR_ASSET_2: "/partners/decor-asset-2.png",
+        DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
+        DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
     },
 
     // ─── Auth ─────────────────────────────────────────────────────────────────────
