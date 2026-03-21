@@ -127,7 +127,7 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
             <div className="w-full max-w-[1600px] mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
                 description={
-                  <div className="text-lg md:text-3xl leading-12 font-medium">
+                  <div className="text-lg md:text-3xl leading-snug md:leading-12 font-medium">
                     <>
                       The <span className="text-yellow-400">UI/UX Team</span>{" "}
                       focuses on creating intuitive and engaging user interfaces

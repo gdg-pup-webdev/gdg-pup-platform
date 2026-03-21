@@ -37,10 +37,10 @@ export function ResourceLibraryGrid() {
                   className="object-cover scale-125 opacity-40 bg-white/10 backdrop-blur-xl"
                 />
 
-                <CardHeader className="absolute top-6 left-4 z-10 p-0">
-                  <div className="flex items-center gap-3 px-3 md:px-5 h-[40px] md:h-[50px] rounded-full backdrop-blur-xl border border-white/20">
+                <CardHeader className="absolute top-3 md:top-6 left-2 md:left-4 z-10 p-0">
+                  <div className="flex items-center gap-1.5 md:gap-3 px-2 md:px-5 h-[28px] md:h-[50px] rounded-full backdrop-blur-xl border border-white/20">
                     <div
-                      className="w-5 h-5 md:w-6 md:h-6 rounded-full shrink-0"
+                      className="w-3 h-3 md:w-6 md:h-6 rounded-full shrink-0"
                       style={{
                         padding: "2px",
                         background:
@@ -51,7 +51,7 @@ export function ResourceLibraryGrid() {
                         maskComposite: "exclude",
                       }}
                     />
-                    <CardTitle className="text-sm md:text-lg font-medium tracking-wide">
+                    <CardTitle className="text-[10px] sm:text-xs md:text-lg font-medium tracking-wide">
                       <Text gradient="white-blue">
                         {item.header.toUpperCase()}
                       </Text>
@@ -59,11 +59,14 @@ export function ResourceLibraryGrid() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="absolute left-4 md:left-6 right-4 md:right-6 bottom-4 md:bottom-6 z-10 p-0">
+                <CardContent className="absolute left-3 md:left-6 right-3 md:right-6 bottom-3 md:bottom-6 z-10 p-0">
                   <Text
-                    variant={item.variant}
                     gradient={item.gradient}
-                    className="line-clamp-2 leading-tight"
+                    className={`font-bold line-clamp-2 leading-tight ${
+                      item.variant === "heading-1" ? "text-xl sm:text-2xl md:text-[3.5rem] lg:text-[4.5rem] tracking-tight" :
+                      item.variant === "heading-2" ? "text-lg sm:text-xl md:text-[3rem] lg:text-[3.75rem]" :
+                      "text-base sm:text-lg md:text-[2.5rem] lg:text-[3rem]"
+                    }`}
                   >
                     {item.body}
                   </Text>

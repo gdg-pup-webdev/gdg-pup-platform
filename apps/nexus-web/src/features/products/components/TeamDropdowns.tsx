@@ -60,7 +60,7 @@ function DropdownRow({
       />
 
       <div
-        className="relative rounded-xl px-7.5 py-5"
+        className="relative rounded-xl px-4 md:px-7.5 py-4 md:py-5"
         style={{
           backgroundColor: "rgba(255, 255, 255, 0.08)",
           backdropFilter: "blur(70px) saturate(180%)",

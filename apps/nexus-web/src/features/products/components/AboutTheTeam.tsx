@@ -21,7 +21,7 @@ export function AboutTheTeam({ description, categories }: AboutTheTeamProps) {
       />
 
       <div
-        className="relative rounded-2xl p-8 flex flex-col items-start gap-5"
+        className="relative rounded-2xl p-5 md:p-8 flex flex-col items-start gap-4 md:gap-5"
         style={{
           backgroundColor: "rgba(255, 255, 255, 0.08)",
           backdropFilter: "blur(70px) saturate(180%)",

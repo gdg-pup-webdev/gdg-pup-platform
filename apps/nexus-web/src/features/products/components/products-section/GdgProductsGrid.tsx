@@ -13,7 +13,7 @@ export function GdgProductsGrid() {
         GDG Products
       </Text>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-15 mt-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-15 mt-10">
         {GDG_PRODUCTS.map((name, i) => (
           <Card
             key={i}
