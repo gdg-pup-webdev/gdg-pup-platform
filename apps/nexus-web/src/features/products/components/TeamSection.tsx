@@ -1,10 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ASSETS } from "@/lib/constants/assets";
 import { Container, Stack, Text, Button } from "@packages/spark-ui";
 import { AboutTheTeam } from "./AboutTheTeam";
-import { TeamDropdowns } from "./TeamDropdowns";
-import { StudyJamContainer } from "./StudyJamContainer";
+import { TeamHero } from "./team-section/TeamHero";
+import { StudyJamsGrid } from "./team-section/StudyJamsGrid";
 
 interface TeamSectionProps {
   teamName: string;
@@ -13,31 +11,29 @@ interface TeamSectionProps {
 
 export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
   return (
-    <div className="relative overflow-x-hidden overflow-y-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
-      {/* Bottom layer */}
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
+      {/* Background layers */}
       <img
         src="/products/RL-SPACE_BG_3_3.png"
         alt=""
         className="absolute top-280 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
-      {/* Middle layer (partially under top) */}
       <img
         src="/products/RL-SPACE_BG_3_2.png"
         alt=""
         className="absolute top-165 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
-      {/* Top layer */}
       <img
         src="/products/RL-SPACE_BG_3_1.png"
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 70%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         }}
       />
-      {/* Decorative blob — top left */}
+
+      {/* Decorative blobs */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
@@ -50,7 +46,6 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
           zIndex: 0,
         }}
       />
-      {/* Decorative blob — right */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
@@ -68,12 +63,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         <Stack gap="2xl" className="relative z-10 mt-30">
           {/* ── About the Team ── */}
           <Stack gap="lg" className="items-center">
-            <Text
-              variant="heading-1"
-              gradient="white-blue"
-              align="center"
-              weight="bold"
-            >
+            <Text variant="heading-1" gradient="white-blue" align="center" weight="bold">
               ABOUT THE TEAM
             </Text>
             <Text
@@ -86,70 +76,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               {teamName}
             </Text>
 
-            {/* Team image + spirals */}
-            <div className="w-full mt-20 flex flex-col items-center">
-              {/* Main image */}
-              <div className="w-full flex justify-center">
-                <Image
-                  src="/products/ui-ux-logo.png"
-                  alt={`${teamName} team`}
-                  width={900}
-                  height={500}
-                  className="w-full max-w-[600px] rounded-2xl object-cover relative z-20"
-                />
-              </div>
-
-              {/* Spirals directly below image */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-10 w-[1900px] pointer-events-none z-10">
-                <Image
-                  src="/products/gold-4.png"
-                  alt=""
-                  width={1200}
-                  height={600}
-                  className="w-full h-auto mix-blend-screen opacity-67 blur-[50px]"
-                />
-              </div>
-              <div className="relative w-full max-w-3xl h-[140px] mt-[-10px] pointer-events-none">
-                {/* Spiral outer */}
-                <div className="absolute left-1/2 -translate-x-1/2 -top-25 w-570 aspect-[1204/188] opacity-70">
-                  <Image
-                    src={ASSETS.ID.SPIRAL_OUTER}
-                    alt=""
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                {/* Spiral outer */}
-                <div className="absolute left-1/2 -translate-x-1/2 -top-30 w-480 aspect-[1204/188] opacity-70">
-                  <Image
-                    src={ASSETS.ID.SPIRAL_OUTER}
-                    alt=""
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-
-                {/* Spiral center */}
-                <div className="absolute left-1/2 -translate-x-1/2 -top-24 w-410 aspect-[1018/125] opacity-80">
-                  <Image
-                    src={ASSETS.ID.SPIRAL_CENTER}
-                    alt=""
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-
-                {/* Spiral inner */}
-                <div className="absolute left-1/2 -translate-x-1/2 -top-25 w-450 aspect-[697/66] opacity-100">
-                  <Image
-                    src={ASSETS.ID.SPIRAL_INNER}
-                    alt=""
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              </div>
-            </div>
+            <TeamHero teamName={teamName} />
 
             <div className="w-full max-w-10xl mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
@@ -164,11 +91,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
                     worlds. Members of this team will engage in every stage of
                     IoT solution development, from conceptualizing device
                     integrations and designing smart system architectures to
-                    coding, testing, and deploying functional prototypes. They
-                    will explore topics such as sensor technologies, data
-                    communication, automation, and real-time monitoring to
-                    create innovative and efficient IoT applications that
-                    enhance everyday experiences.
+                    coding, testing, and deploying functional prototypes.
                   </>
                 }
                 categories={
@@ -187,55 +110,13 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               />
             </div>
 
-            {/* team dropdowns */}
-            {/* <div className="w-full max-w-5xl mx-auto mt-4">
-              <TeamDropdowns />
-            </div> */}
-
             <Link href={`/products/${teamSlug}/team-structure`}>
               <Button size="lg">See team leads and structure</Button>
             </Link>
           </Stack>
 
           {/* ── Study Jams ── */}
-          <Stack gap="xl" className="mt-16">
-            <Text
-              variant="heading-1"
-              gradient="white-blue"
-              align="center"
-              weight="bold"
-            >
-              STUDY JAMS
-            </Text>
-
-            <div className="w-full flex flex-col md:flex-row gap-6 items-center md:items-stretch justify-center">
-              {[1, 2, 3].map((i) => (
-                <StudyJamContainer
-                  key={i}
-                  className="w-full"
-                  imageSrc="/products/iot_study_jam_image.jpg"
-                  imageAlt={`Study Jam ${i}`}
-                  title="Design Smarter, Prototype Faster"
-                  subtitle="Rosemarie Aspa"
-                  description="This hands-on session will teach you how to create parametric sketches, apply accurate dimensions and constraints, and seamlessly convert 2D drawings ..."
-                  category={
-                    <>
-                      <span className="inline-flex items-center rounded-full bg-[#8B2F00]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
-                        IOT
-                      </span>
-                      <span className="inline-flex items-center rounded-full bg-[#B67853]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
-                        Prototype
-                      </span>
-                      <span className="inline-flex items-center rounded-full bg-[#7E6A63]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
-                        3D Models
-                      </span>
-                    </>
-                  }
-                  date="02/27/26"
-                />
-              ))}
-            </div>
-          </Stack>
+          <StudyJamsGrid />
         </Stack>
       </Container>
     </div>
