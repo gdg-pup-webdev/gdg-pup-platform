@@ -39,7 +39,7 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
         alt=""
       />
       <img
-        className="w-500 h-auto absolute bottom-0 right-150 translate-x-1/3"
+        className="w-auto h-auto absolute bottom-0 right-0"
         src="/products/RL-gold-2.png"
         alt=""
       />
