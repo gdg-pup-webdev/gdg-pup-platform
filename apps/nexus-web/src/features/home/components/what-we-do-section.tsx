@@ -50,7 +50,8 @@ export function WhatWeDoSection() {
                       color="on-primary"
                       className="text-2xl"
                     >
-                      We design experiences that turn <br/>curiosity into capability:
+                      We design experiences that turn <br />
+                      curiosity into capability:
                     </Text>
                   </div>
                   <div className="flex flex-col gap-4">
@@ -62,7 +63,8 @@ export function WhatWeDoSection() {
                           aria-hidden
                           width={18}
                           height={18}
-                          className="pointer-events-none mt-1 shrink-0"
+                          draggable={false}
+                          className="pointer-events-none select-none mt-1 shrink-0"
                         />
                         <Text
                           align="left"
@@ -85,7 +87,8 @@ export function WhatWeDoSection() {
                 aria-hidden
                 width={486}
                 height={536}
-                className="pointer-events-none absolute -right-100 top-1/2 -translate-y-1/2 z-20"
+                draggable={false}
+                className="pointer-events-none select-none absolute -right-100 top-1/2 -translate-y-1/2 z-20"
               />
             </div>
           </Stack>

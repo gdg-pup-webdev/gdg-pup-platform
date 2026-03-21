@@ -48,7 +48,8 @@ export function WhoAreWeSection() {
                   alt=""
                   fill
                   aria-hidden
-                  className="pointer-events-none object-contain"
+                  draggable={false}
+                  className="pointer-events-none select-none object-contain"
                 />
               </div>
               <Image
@@ -56,7 +57,8 @@ export function WhoAreWeSection() {
                 alt="Sparky and Cirby, the GDG PUP mascots"
                 width={612}
                 height={606}
-                className="pointer-events-none relative z-10"
+                draggable={false}
+                className="pointer-events-none select-none relative z-10"
               />
             </motion.div>
 
@@ -85,7 +87,6 @@ export function WhoAreWeSection() {
                     weight="normal"
                     color="on-primary"
                   >
-
                     A Launchpad for Builders at PUP.
                   </Text>
 
@@ -96,7 +97,10 @@ export function WhoAreWeSection() {
                     color="on-primary"
                     className="leading-8 text-base"
                   >
-                    At Google Developer Groups on Campus – Polytechnic University of the Philippines, GDG PUP is a student-driven tech community built to bridge the gap between theory and real-world practice.
+                    At Google Developer Groups on Campus – Polytechnic
+                    University of the Philippines, GDG PUP is a student-driven
+                    tech community built to bridge the gap between theory and
+                    real-world practice.
                   </Text>
 
                   <Text
@@ -105,7 +109,8 @@ export function WhoAreWeSection() {
                     weight="normal"
                     color="on-primary"
                   >
-                    We create spaces where students don’t just study technology — they build with it.
+                    We create spaces where students don’t just study technology
+                    — they build with it.
                   </Text>
                 </Stack>
               </FrostedContentContainer>
@@ -125,11 +130,26 @@ export function WhoAreWeSection() {
               contentBackgroundColor="transparent"
               contentBackdropFilter="none"
             >
-              <Text align="center" variant="body" weight="bold" color="on-primary" className="leading-8">
-                Whether you’re exploring Web development, Artificial Intelligence and Machine Learning (AI/ML), Cybersecurity, Cloud Solutions, UI/UX Design, Internet of Things (IoT), Project Management, or even as a core functional team member (Operations, Finance, Creatives, Marketing, Partnerships), our community provides opportunities to learn, collaborate, and grow alongside peers and mentors.
+              <Text
+                align="center"
+                variant="body"
+                weight="bold"
+                color="on-primary"
+                className="leading-8"
+              >
+                Whether you’re exploring Web development, Artificial
+                Intelligence and Machine Learning (AI/ML), Cybersecurity, Cloud
+                Solutions, UI/UX Design, Internet of Things (IoT), Project
+                Management, or even as a core functional team member
+                (Operations, Finance, Creatives, Marketing, Partnerships), our
+                community provides opportunities to learn, collaborate, and grow
+                alongside peers and mentors.
                 <br />
                 <br />
-                From hands-on workshops and Study Jams to hackathons, industry collaborations, and real startup projects, GDG PUP empowers learners to transform classroom knowledge into practical skills that matter in today’s tech industry.
+                From hands-on workshops and Study Jams to hackathons, industry
+                collaborations, and real startup projects, GDG PUP empowers
+                learners to transform classroom knowledge into practical skills
+                that matter in today’s tech industry.
               </Text>
             </FrostedContentContainer>
           </motion.div>

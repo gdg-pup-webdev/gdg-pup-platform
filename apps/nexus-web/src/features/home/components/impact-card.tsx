@@ -25,7 +25,7 @@ export function ImpactCard({
 }: ImpactCardProps) {
   return (
     <article
-      className={`hidden md:flex relative h-full w-full max-w-75 rounded-[28px] flex-col gap-6 border bg-[#1a2539] p-6 ${className}`}
+      className={`pointer-events-none relative h-full w-full max-w-75 rounded-[28px] flex flex-col gap-6 border bg-[#1a2539] p-6 ${className}`}
       style={{ borderColor: color }}
     >
       <div className="pointer-events-none absolute -inset-1 rounded-[30px]">
@@ -34,7 +34,8 @@ export function ImpactCard({
           alt=""
           aria-hidden
           fill
-          className="rounded-[30px] object-fill"
+          draggable={false}
+          className="pointer-events-none select-none rounded-[30px] object-fill"
         />
       </div>
 
@@ -46,7 +47,8 @@ export function ImpactCard({
             alt={logoAlt}
             width={48}
             height={48}
-            className="h-12 w-12 object-contain"
+            draggable={false}
+            className="h-12 w-12 object-contain pointer-events-none select-none"
           />
         </div>
 
@@ -56,7 +58,13 @@ export function ImpactCard({
       </div>
 
       <div className="relative h-47.5 overflow-hidden rounded-3xl">
-        <Image src={image} alt={imageAlt} fill className="object-cover" />
+        <Image
+          src={image}
+          alt={imageAlt}
+          fill
+          draggable={false}
+          className="object-cover pointer-events-none select-none"
+        />
       </div>
     </article>
   );
