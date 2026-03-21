@@ -4,11 +4,11 @@ import { WhoAreWeSection, HeroSection, WhatWeDoSection, WhatDrivesUsSection, Imp
 
 export default function HomePage() {
   return (
-    <>
+    <main className="overflow-x-hidden">
       <div className="relative z-20">
         <HeroSection />
       </div>
-      <div className="relative z-10">
+      <div className="relative z-10 bg-[#010B1D]">
         <HomeBackground />
         <div className="relative z-10">
           <WhoAreWeSection />
@@ -18,6 +18,6 @@ export default function HomePage() {
           <SparkStartsHereSection />
         </div>
       </div>
-    </>
+    </main>
   );
 }

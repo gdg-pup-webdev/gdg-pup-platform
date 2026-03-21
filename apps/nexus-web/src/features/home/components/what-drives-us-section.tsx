@@ -12,7 +12,7 @@ export function WhatDrivesUsSection() {
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     return (
-        <section className="relative z-30" ref={ref}>
+        <section className="relative hidden lg:block z-30" ref={ref}>
             <Container className="py-24">
                 <motion.div
                     className="relative"
@@ -21,7 +21,7 @@ export function WhatDrivesUsSection() {
                     transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
                 >
                     <Image
-                        src="/Sparky%20Thinking%201.png"
+                        src={ASSETS.HOME.SPARKY_THINKING1}
                         alt=""
                         aria-hidden
                         width={473}

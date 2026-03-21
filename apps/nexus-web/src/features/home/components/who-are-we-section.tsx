@@ -12,7 +12,7 @@ export function WhoAreWeSection() {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <section className="relative z-30 lg:py-34" ref={sectionRef}>
+    <section className="relative z-30 pb-20 lg:py-34" ref={sectionRef}>
       <Container className="">
         <Stack gap="2xl" align="center">
           {/* Section heading */}
@@ -27,13 +27,14 @@ export function WhoAreWeSection() {
               gradient="white-yellow"
               variant="heading-2"
               weight="bold"
+              className="mt-30 mb-10 lg:my-0"
             >
               Who are we
             </Text>
           </motion.div>
 
           {/* Two-column layout: Sparky image + text */}
-          <div className="flex items-center justify-center gap-8.5 w-full">
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-8.5 w-full">
             {/* Sparky mascot */}
             <motion.div
               className="relative shrink-0"
@@ -43,7 +44,7 @@ export function WhoAreWeSection() {
             >
               <div className="absolute inset-0 z-0">
                 <Image
-                  src="/Logos-Framev2-NEUTRAL%201.png"
+                  src={ASSETS.HOME.LOGOS_FRAMEV2_NEUTRAL1}
                   alt=""
                   fill
                   aria-hidden

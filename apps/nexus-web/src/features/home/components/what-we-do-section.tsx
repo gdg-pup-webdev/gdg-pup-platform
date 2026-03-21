@@ -1,6 +1,7 @@
 "use client";
 
 import { Container, Stack, Text } from "@packages/spark-ui";
+import { ASSETS } from "@/lib/constants/assets";
 import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
@@ -18,7 +19,7 @@ export function WhatWeDoSection() {
   ];
 
   return (
-    <section className="relative z-30" ref={ref}>
+    <section className="relative hidden lg:block z-30" ref={ref}>
       <Container className="py-24">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -56,7 +57,7 @@ export function WhatWeDoSection() {
                     {bulletItems.map((item) => (
                       <div key={item} className="flex items-start gap-3">
                         <Image
-                          src="/home/home-bullet-diamond.svg"
+                          src={ASSETS.HOME.BULLET_DIAMOND}
                           alt=""
                           aria-hidden
                           width={18}
@@ -79,7 +80,7 @@ export function WhatWeDoSection() {
               </FrostedContentContainer>
 
               <Image
-                src="/CIRBY%20STICKER%202%201.png"
+                src={ASSETS.HOME.CIRBY_STICKER21}
                 alt=""
                 aria-hidden
                 width={486}

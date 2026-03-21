@@ -25,7 +25,7 @@ export function ImpactCard({
 }: ImpactCardProps) {
   return (
     <article
-      className={`relative h-full w-full max-w-75 rounded-[28px] flex flex-col gap-6 border bg-[#1a2539] p-6 ${className}`}
+      className={`hidden md:flex relative h-full w-full max-w-75 rounded-[28px] flex-col gap-6 border bg-[#1a2539] p-6 ${className}`}
       style={{ borderColor: color }}
     >
       <div className="pointer-events-none absolute -inset-1 rounded-[30px]">

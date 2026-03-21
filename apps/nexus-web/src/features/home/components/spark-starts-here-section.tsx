@@ -12,7 +12,7 @@ export function SparkStartsHereSection() {
     const isInView = useInView(ref, { once: true, margin: "-100px" });
 
     return (
-        <section className="relative z-30 mt-26.25" ref={ref}>
+        <section className="relative hidden lg:block z-30 mt-26.25 pb-20.25" ref={ref}>
             <Container className="py-24">
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
@@ -21,7 +21,7 @@ export function SparkStartsHereSection() {
                 >
                     <div className="relative">
                         <Image
-                            src="/Sparky%20Leaderboard%201.png"
+                            src={ASSETS.HOME.SPARKY_LEADERBOARD1}
                             alt=""
                             aria-hidden
                             width={430}
@@ -42,7 +42,7 @@ export function SparkStartsHereSection() {
                                     >
                                         Your Spark Starts Here.
                                     </Text>
-                                    <Button variant="default" size="lg">
+                                    <Button variant="colored" subVariant="yellow" size="lg">
                                         Spark your Journey
                                     </Button>
                                 </Stack>

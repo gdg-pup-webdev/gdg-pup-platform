@@ -4,6 +4,7 @@ import { Container, Text } from "@packages/spark-ui";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
 import { ImpactCard } from "./impact-card";
+import { ASSETS } from "@/lib/constants/assets";
 
 export function ImpactSection() {
     const ref = useRef(null);
@@ -11,48 +12,48 @@ export function ImpactSection() {
     const impactCards = [
         {
             color: "#2E74FF",
-            corner: "/blue-corner.png",
+            corner: ASSETS.HOME.BLUE_CORNER,
             title: "2,000+ Members",
-            logo: "/team-icon.svg",
+            logo: ASSETS.HOME.TEAM_ICON,
             logoAlt: "team icon",
             description: "Fostered a vibrant and engaged ecosystem of tech enthusiasts and innovators.",
-            image: "/blue-img-placeholder.png",
+            image: ASSETS.HOME.BLUE_IMG_PLACEHOLDER,
             imageAlt: "GDG PUP community",
         },
         {
             color: "#34A853",
-            corner: "/green-corner.png",
+            corner: ASSETS.HOME.GREEN_CORNER,
             title: "Multiple Tech Teams",
-            logo: "/tech-icon.svg",
+            logo: ASSETS.HOME.TECH_ICON,
             logoAlt: "tech icon",
             description: "Launched specialized teams to drive technical excellence and project execution.",
-            image: "/green-img-placeholder.jpg",
+            image: ASSETS.HOME.GREEN_IMG_PLACEHOLDER,
             imageAlt: "Student project showcase",
         },
         {
             color: "#F9AB00",
-            corner: "/yellow-corner.png",
+            corner: ASSETS.HOME.YELLOW_CORNER,
             title: "Workshops & Hackathons",
-            logo: "/lightbulb-icon.svg",
+            logo: ASSETS.HOME.LIGHTBULB_ICON,
             logoAlt: "lightbulb icon",
             description: "Organized dozens of high-impact events focused on building and competing.",
-            image: "/yellow-img-placeholder.jpg",
+            image: ASSETS.HOME.YELLOW_IMG_PLACEHOLDER,
             imageAlt: "Community learning event",
         },
         {
             color: "#EA4335",
-            corner: "/red-corner.png",
+            corner: ASSETS.HOME.RED_CORNER,
             title: "Industry Collaborations",
-            logo: "/handshake-icon.svg",
+            logo: ASSETS.HOME.HANDSHAKE_ICON,
             logoAlt: "handshake icon",
             description: "Bridged the gap between our community and leading professional organizations.",
-            image: "/red-img-placeholder.jpg",
+            image: ASSETS.HOME.RED_IMG_PLACEHOLDER,
             imageAlt: "Industry partner collaboration",
         },
     ];
 
     return (
-        <section className="relative z-30 mt-40 lg:mt-100" ref={ref}>
+        <section className="relative hidden lg:block z-30 mt-40 lg:mt-100" ref={ref}>
             <Container className="pt-24">
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
