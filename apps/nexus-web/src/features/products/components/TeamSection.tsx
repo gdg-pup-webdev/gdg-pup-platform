@@ -1,12 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ASSETS } from "@/lib/constants/assets";
-import {
-  Container,
-  Stack,
-  Text,
-  Button,
-} from "@packages/spark-ui";
+import { Container, Stack, Text, Button } from "@packages/spark-ui";
 import { AboutTheTeam } from "./AboutTheTeam";
 import { TeamDropdowns } from "./TeamDropdowns";
 import { StudyJamContainer } from "./StudyJamContainer";
@@ -104,7 +99,6 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
                 />
               </div>
 
-
               {/* Spirals directly below image */}
               <div className="absolute left-1/2 -translate-x-1/2 top-10 w-[1900px] pointer-events-none z-10">
                 <Image
@@ -157,7 +151,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               </div>
             </div>
 
-            <div className="w-full max-w-5xl mx-auto my-6">
+            <div className="w-full max-w-10xl mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
                 description={
                   <>
@@ -173,8 +167,8 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
                     coding, testing, and deploying functional prototypes. They
                     will explore topics such as sensor technologies, data
                     communication, automation, and real-time monitoring to
-                    create innovative and efficient IoT applications that enhance
-                    everyday experiences.
+                    create innovative and efficient IoT applications that
+                    enhance everyday experiences.
                   </>
                 }
                 categories={
@@ -193,7 +187,6 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               />
             </div>
 
-            
             {/* team dropdowns */}
             {/* <div className="w-full max-w-5xl mx-auto mt-4">
               <TeamDropdowns />
@@ -215,7 +208,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               STUDY JAMS
             </Text>
 
-            <div className="flex flex-col md:flex-row gap-6 items-center md:items-stretch justify-center">
+            <div className="w-full flex flex-col md:flex-row gap-6 items-center md:items-stretch justify-center">
               {[1, 2, 3].map((i) => (
                 <StudyJamContainer
                   key={i}
