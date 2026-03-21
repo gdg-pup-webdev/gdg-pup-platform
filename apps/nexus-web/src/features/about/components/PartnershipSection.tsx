@@ -49,230 +49,242 @@ const FadeInSection = ({
     </motion.div>
   );
 };
-
-const partners: Array<{ name: string; src: string }> = [
-  { name: "Acadarena", src: ASSETS.PARTNERS.ACADARENA },
-  { name: "DataCamp", src: ASSETS.PARTNERS.DATACAMP },
-  { name: "YSpace", src: ASSETS.PARTNERS.YSPACE },
-  { name: "Pocky", src: ASSETS.PARTNERS.POCKY },
-  { name: "PLDT", src: ASSETS.PARTNERS.PLDT },
-  { name: "Globe", src: ASSETS.PARTNERS.GLOBE },
-  { name: "Mountain Dew", src: ASSETS.PARTNERS.MOUNTAIN_DEW },
-  { name: "Whitecloak", src: ASSETS.PARTNERS.WHITECLOAK },
-  { name: "FlowerStore.ph", src: ASSETS.PARTNERS.FLOWERSTORE },
-  { name: "Potico.ph", src: ASSETS.PARTNERS.POTICO },
-  { name: "v0", src: ASSETS.PARTNERS.V0 },
-  { name: "Hey Roomie", src: ASSETS.PARTNERS.HEY_ROOMIE },
-  { name: "Homeroom", src: ASSETS.PARTNERS.HOMEROOM },
-  { name: "Gen AI Philippines", src: ASSETS.PARTNERS.GEN_AI_PH },
-];
-
 export function PartnershipSection() {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
-      {/* Decorative Ellipse - Top Left */}
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: "min(1091px, 70vw)",
-          height: "min(950px, 80vh)",
-          top: "calc(8rem - 369px)",
-          left: "max(calc((100vw - 80rem) / 2 + 36px), 36px)",
-          background: "#4285F433",
-          opacity: 1,
-          filter: "blur(579.0999755859375px)",
-          WebkitFilter: "blur(579.0999755859375px)",
-          zIndex: 0,
-        }}
-      />
+    <div className="bg-[#010B1D] relative w-full overflow-hidden pt-60 pb-48 font-['Google_Sans',sans-serif]">
+      {/* Stars Background */}
+      <div className="absolute inset-x-0 bottom-0 pointer-events-none opacity-40 h-[100%] w-full z-0">
+         <div 
+           className="absolute inset-0 w-full h-full opacity-60"
+           style={{
+             backgroundImage: `url(${ASSETS.LEADERBOARD.STARS_BG})`,
+             backgroundRepeat: "repeat",
+             backgroundSize: "cover"
+           }}
+         />
+      </div>
 
-      {/* Decorative Ellipse - Right */}
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: "min(1003.654495437601px, 65vw)",
-          height: "min(1129.0127127002554px, 85vh)",
-          top: "calc(8rem + 137.79px)",
-          right: "max(calc((100vw - 80rem) / 2 - 400px), -200px)",
-          background: "#4285F433",
-          opacity: 1,
-          filter: "blur(579.0999755859375px)",
-          WebkitFilter: "blur(579.0999755859375px)",
-          transform: "rotate(-39.16deg)",
-          zIndex: 0,
-        }}
-      />
+      {/* Figma Perfect Background Elements Wrapper */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[1440px] h-full pointer-events-none z-0 overflow-visible">
+        {/* Figma Background Overlay — Aurora lines, ellipses, and blue/purple glows */}
+        {/* Using exact coordinates from Figma so it isn't distorted/stretched by viewport */}
+        <div className="absolute w-[2330px] h-[2174px] left-[-541px] top-[-508px]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={ASSETS.PARTNERS.BG_AURORA_OVERLAY}
+            alt=""
+            className="absolute max-w-none block"
+            style={{
+              top: "-23%",
+              left: "-21.46%",
+              width: "143%",
+              height: "146%"
+            }}
+          />
+        </div>
 
-      {/* Decorative Ellipse - Bottom Left */}
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: "min(792px, 50vw)",
-          height: "min(640px, 60vh)",
-          top: "calc(8rem + 694px)",
-          left: "max(calc((100vw - 80rem) / 2 - 234px), -200px)",
-          background: "#4285F433",
-          opacity: 1,
-          filter: "blur(579.0999755859375px)",
-          WebkitFilter: "blur(579.0999755859375px)",
-          zIndex: 0,
-        }}
-      />
+        {/* Floating 3D Elements from Figma — exact assets and positions */}
+        {/* Asset1.2 — right side, rotated -13.18deg, opacity 20% (node 81:2258) */}
+        <div className="absolute flex items-center justify-center" style={{ left: 1221, top: 399, width: 395, height: 395 }}>
+          <div className="flex-none" style={{ transform: "rotate(-13.18deg)" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ASSETS.PARTNERS.DECOR_ASSET_1} alt="" width={329} height={329} className="opacity-20 object-contain" />
+          </div>
+        </div>
+        
+        {/* Asset1.3 — far left, opacity 20% (node 81:2259) */}
+        <div className="absolute" style={{ left: -327, top: 160, width: 543, height: 543 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ASSETS.PARTNERS.DECOR_ASSET_2} alt="" className="w-full h-full opacity-20 object-contain" />
+        </div>
+        
+      </div>
 
-      <Container maxWidth="7xl" padding="lg" className="relative">
-        <Stack gap="2xl">
+      {/* Bottom-left decorative elements — positioned to peek from left edge */}
+      {/* Element SVG — flipped+rotated (node 81:2261) */}
+      <div className="absolute flex items-center justify-center pointer-events-none z-[1]" style={{ left: -80, bottom: 380, width: 250.4, height: 250.4 }}>
+        <div style={{ transform: "scaleY(-1) rotate(-168.31deg)" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ASSETS.PARTNERS.DECOR_ELEMENT_3} alt="" width={212} height={212} style={{ opacity: 0.3 }} />
+        </div>
+      </div>
+      
+      {/* Small Element SVG (node 81:2263) */}
+      <div className="absolute flex items-center justify-center pointer-events-none z-[1]" style={{ left: 0, bottom: 160, width: 95.4, height: 95.4 }}>
+        <div style={{ transform: "scaleY(-1) rotate(-168.31deg)" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ASSETS.PARTNERS.DECOR_ELEMENT_4} alt="" width={81} height={81} style={{ opacity: 0.3 }} />
+        </div>
+      </div>
+
+      <Container maxWidth="7xl" padding="lg" className="relative z-10">
+        <Stack gap="2xl" className="items-center">
           {/* Section 1 — Hero */}
-          <FadeInSection className="mb-32">
-            <Stack gap="lg" align="center">
-              <Text
-                as="h1"
-                variant="heading-1"
-                weight="bold"
-                align="center"
-                gradient="white-yellow"
-                className="w-full max-w-4xl"
-              >
-                Innovation Through Collaboration
-              </Text>
+          <FadeInSection className="mb-32 flex flex-col items-center w-full">
+            <Stack align="center" style={{ gap: "24px" }} className="w-full">
+              <h1 className="text-center font-bold text-[60px] leading-[1.2] w-full tracking-normal">
+                <span className="text-white">Innovation Through</span><br/>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A]">Collaboration</span>
+              </h1>
 
-              <Text
-                variant="body"
-                align="center"
-                className="text-white max-w-3xl mx-auto"
-              >
-                We collaborate with forward-thinking organizations to foster
-                innovation, deliver meaningful programs, and bridge the gap
-                between technology and community. Together, we build platforms
-                that inspire developers, nurture talent, and shape future-ready
-                leaders.
-              </Text>
+              <div className="bg-[rgba(255,255,255,0.05)] border border-solid border-white rounded-[28px] p-[20px] max-w-[1200px] w-full flex items-center justify-center">
+                <Text
+                  variant="body"
+                  align="center"
+                  className="text-white text-[24px] leading-[1.5]"
+                >
+                  We collaborate with forward-thinking organizations to foster
+                  innovation, deliver meaningful programs, and bridge the gap
+                  between technology and community. Together, we build platforms
+                  that inspire developers, nurture talent, and shape future-ready
+                  leaders.
+                </Text>
+              </div>
             </Stack>
           </FadeInSection>
 
           {/* Section 2 — Why We Do This */}
-          <FadeInSection delay={0.1} className="mb-32">
-            <Stack gap="lg" align="center">
-              <Text
-                variant="heading-2"
-                weight="bold"
-                align="center"
-                gradient="white-yellow"
-              >
-                WHY WE DO THIS
-              </Text>
+          <FadeInSection delay={0.1} className="mb-32 flex flex-col items-center w-full">
+            <Stack align="center" style={{ gap: "28px" }} className="w-full max-w-[1000px]">
+              <div className="flex flex-col items-center text-center w-full" style={{ gap: "18px" }}>
+                <h2 className="font-['Roboto',sans-serif] font-bold text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
+                  WHY WE DO THIS
+                </h2>
 
-              <Text
-                as="h3"
-                variant="heading-3"
-                weight="bold"
-                align="center"
-                className="text-white"
-              >
-                Creating value through trust and shared purpose
-              </Text>
+                <h3 className="font-bold text-[36px] text-white">
+                  Creating value through trust and shared purpose
+                </h3>
+              </div>
 
-              <Box className="w-full max-w-3xl mx-auto">
-                <Card>
-                  <Text variant="body" className="text-gray-300 text-center">
-                    <span className="bg-linear-[0deg,#57CAFF_0%,#347999_100%] bg-clip-text text-transparent font-semibold">
-                      Google Developer Group PUP Nexus
-                    </span>{" "}
-                    exists to cultivate a collaborative tech community where
-                    students and professionals grow together. Through
-                    partnerships built on{" "}
-                    <span className="bg-linear-[360deg,#FFD427_0%,#997F17_100%] bg-clip-text text-transparent font-semibold">
-                      trust and shared goals
-                    </span>
-                    , we create meaningful opportunities for{" "}
-                    <span className="bg-linear-[360deg,#5CDB6D_0%,#31753A_100%] bg-clip-text text-transparent font-semibold">
-                      learning, innovation, and real-world impact.
-                    </span>
-                  </Text>
-                </Card>
-              </Box>
+              <div className="border border-white border-solid p-[20px] rounded-[28px] w-full flex items-center justify-center">
+                <p className="text-center text-[20px] leading-[1.5] text-white">
+                  <span className="bg-clip-text bg-gradient-to-t from-[#51a2ff] text-transparent to-[#155dfc] font-semibold">
+                    Google Developer Group PUP Nexus
+                  </span>{" "}
+                  exists to cultivate a collaborative tech community where
+                  students and professionals grow together. Through
+                  partnerships built on{" "}
+                  <span className="bg-clip-text bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] text-transparent font-semibold">
+                    trust and shared goals
+                  </span>
+                  , we create meaningful opportunities for{" "}
+                  <span className="bg-clip-text bg-gradient-to-t from-[#5cdb6d] text-transparent to-[#31753a] font-semibold">
+                    learning, innovation, and real-world impact.
+                  </span>
+                </p>
+              </div>
             </Stack>
           </FadeInSection>
 
-          {/* Section 3 — Partners Grid */}
-          <FadeInSection delay={0.15} className="mb-32">
-            <Stack gap="xl" align="center">
-              <Text
-                variant="heading-4"
-                weight="bold"
-                align="center"
-                gradient="white-yellow"
-              >
+          {/* Section 3 — Partners Grid (Figma-exact CSS Grid with explicit col/row placement) */}
+          <FadeInSection delay={0.15} className="mb-32 flex flex-col items-center w-full relative">
+            <Stack align="center" style={{ gap: "64px" }} className="w-full">
+              <h2 className="font-['Roboto',sans-serif] font-bold text-[32px] leading-[1.3] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] text-center w-full tracking-normal">
                 POWERED BY OUR PARTNERS
-              </Text>
+              </h2>
 
-              <Grid className="grid-cols-2 sm:grid-cols-4 gap-4 w-full">
-                {partners.map((partner) => (
-                  <Box
-                    key={partner.name}
-                    className="flex items-center justify-center rounded-xl bg-white/10 p-4 aspect-[3/2]"
-                  >
-                    <div className="relative w-full h-12">
-                      <Image
-                        src={partner.src}
-                        alt={partner.name}
-                        fill
-                        className="object-contain"
-                        onError={(e) => {
-                          // Hide broken image — placeholder tile shows via bg-white/10
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                      />
-                    </div>
-                  </Box>
-                ))}
-              </Grid>
+              {/* eslint-disable @next/next/no-img-element */}
+              <div
+                className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4"
+              >
+                {/* ROW 1 — No white backgrounds */}
+                <div className="flex items-center justify-center relative h-[60px] sm:h-[80px]">
+                  <img src={ASSETS.PARTNERS.ACADARENA} alt="AcadArena" className="max-h-full max-w-full object-contain" />
+                </div>
+                <div className="flex items-center justify-center relative h-[60px] sm:h-[80px] overflow-hidden">
+                  <img src={ASSETS.PARTNERS.GLOBE} alt="Globe" className="max-h-[110%] object-contain" />
+                </div>
+                <div className="flex items-center justify-center relative h-[60px] sm:h-[80px] overflow-hidden">
+                  <img src={ASSETS.PARTNERS.DEVCON} alt="Devcon" className="max-h-[160%] object-contain" onError={(e) => { (e.target as HTMLImageElement).style.opacity = "0"; }} />
+                </div>
+                <div className="flex items-center justify-center relative h-[60px] sm:h-[100px]">
+                  <img src={ASSETS.PARTNERS.V0} alt="v0" className="max-h-full max-w-full object-contain" />
+                </div>
+
+                {/* ROW 2 */}
+                <div className="flex items-center justify-center relative h-[60px] sm:h-[80px] overflow-hidden">
+                  <img src={ASSETS.PARTNERS.GEN_AI_PH} alt="Gen AI PH" className="max-h-[160%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.DATACAMP} alt="DataCamp" className="max-h-full max-w-full object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2 overflow-hidden">
+                  <img src={ASSETS.PARTNERS.PLDT} alt="PLDT" className="max-h-[140%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-3">
+                  <img src={ASSETS.PARTNERS.YSPACE} alt="YSpace" className="max-h-full max-w-full object-contain" />
+                </div>
+
+                {/* ROW 3 — All white bg */}
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.WHITECLOAK} alt="Whitecloak" className="max-h-full max-w-[90%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.POCKY} alt="Pocky" className="max-h-full max-w-[70%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.HEY_ROOMIE} alt="Hey Roomie" className="max-h-full max-w-[80%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[50px] sm:h-[70px] p-2">
+                  <img src={ASSETS.PARTNERS.POTICO} alt="Potico" className="max-h-full max-w-[85%] object-contain" />
+                </div>
+
+                {/* ROW 4 — 3 items */}
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[50px] sm:h-[70px] p-2">
+                  <img src={ASSETS.PARTNERS.FLOWERSTORE} alt="FlowerStore.ph" className="max-h-full max-w-[85%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.HOMEROOM} alt="Homeroom" className="max-h-full max-w-[50%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.MOUNTAIN_DEW} alt="Mountain Dew" className="max-h-full max-w-[50%] object-contain" />
+                </div>
+              </div>
             </Stack>
           </FadeInSection>
 
           {/* Section 4 — CTA Card */}
-          <FadeInSection delay={0.2}>
-            <Card>
-              <Grid className="md:grid-cols-2 items-center gap-8">
-                {/* Left: Copy + CTA */}
-                <Stack gap="md">
-                  <Text
-                    as="h2"
-                    variant="heading-2"
-                    weight="bold"
-                    gradient="white-yellow"
-                  >
-                    Ready to Partner With Us?
-                  </Text>
+          <FadeInSection delay={0.2} className="w-full">
+            <div className="flex items-center justify-between p-[50px] relative w-full flex-wrap xl:flex-nowrap rounded-[28px]" style={{ gap: "20px" }}>
+              {/* Content */}
+              <div className="flex flex-col items-start shrink-0 z-10 w-full xl:w-auto" style={{ gap: "23px", maxWidth: "648px" }}>
+                <h2 className="font-['Roboto',sans-serif] font-bold text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
+                  Ready to Partner With Us?
+                </h2>
+                
+                <p className="text-[20px] leading-[1.5] text-white">
+                  Let&apos;s build something impactful together. By partnering
+                  with GDG PUP, you gain access to a dynamic community of
+                  aspiring developers, innovators, and changemakers eager to
+                  learn, collaborate, and create solutions that matter.
+                </p>
 
-                  <Text variant="body" className="text-gray-300">
-                    Let&apos;s build something impactful together. By partnering
-                    with GDG PUP, you gain access to a dynamic community of
-                    aspiring developers, innovators, and changemakers eager to
-                    learn, collaborate, and create solutions that matter.
-                  </Text>
+                <div className="pt-2">
+                  <Link href="#" className="inline-block hover:scale-105 transition-transform" style={{ textDecoration: "none" }}>
+                    {/* Gradient border wrapper */}
+                    <div className="p-[1px] rounded-[10px] bg-[linear-gradient(90deg,#EA4335_0%,#FBBC04_33%,#34A853_66%,#4285F4_100%)] cursor-pointer" style={{ boxShadow: "0px 4px 46.1px 0px rgba(0,0,0,0.25), 0px 4px 4px 0px rgba(0,0,0,0.25)" }}>
+                      {/* Inner background and shadows */}
+                      <div className="bg-gradient-to-b from-[#4A4A4A] to-[#2B2B2B] rounded-[9px] py-[12px] px-[36px] flex items-center justify-center relative overflow-hidden h-full w-full" style={{ boxShadow: "inset 0px 2px 0px 0px rgba(255,255,255,0.3)" }}>
+                        <span className="font-bold text-[24px] text-white leading-[1.5] tracking-wide text-center whitespace-nowrap" style={{ textShadow: "0px 2px 4px rgba(0,0,0,0.5)" }}>
+                          Join Now!
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
 
-                  <Box>
-                    <Link href="#">
-                      <Button size="lg" variant="default">
-                        Join Now
-                      </Button>
-                    </Link>
-                  </Box>
-                </Stack>
-
-                {/* Right: Mascot */}
-                <Box className="flex justify-center">
-                  <div className="relative w-72 h-72">
-                    <Image
-                      src={ASSETS.PARTNERS.CIRBY_STICKER}
-                      alt="GDG PUP Mascot"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                </Box>
-              </Grid>
-            </Card>
+              {/* Cirby Mascot */}
+              <div className="relative shrink-0 flex items-center justify-center w-full xl:w-[411px] h-[411px] z-10 mt-10 xl:mt-0">
+                <Image
+                  src={ASSETS.PARTNERS.CIRBY_STICKER}
+                  alt="Cirby Mascot"
+                  fill
+                  unoptimized
+                  className="object-contain"
+                />
+              </div>
+            </div>
           </FadeInSection>
         </Stack>
       </Container>
