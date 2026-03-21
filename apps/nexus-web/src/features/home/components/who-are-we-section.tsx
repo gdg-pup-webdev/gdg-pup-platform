@@ -37,12 +37,12 @@ export function WhoAreWeSection() {
           <div className="flex flex-col lg:flex-row items-center justify-center gap-8.5 w-full">
             {/* Sparky mascot */}
             <motion.div
-              className="relative shrink-0"
+              className="relative shrink-0 w-full max-w-153"
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
               transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
             >
-              <div className="absolute inset-0 z-0">
+              <div className="absolute inset-0 z-0 pointer-events-none">
                 <Image
                   src={ASSETS.HOME.LOGOS_FRAMEV2_NEUTRAL1}
                   alt=""
@@ -57,8 +57,9 @@ export function WhoAreWeSection() {
                 alt="Sparky and Cirby, the GDG PUP mascots"
                 width={612}
                 height={606}
+                priority
                 draggable={false}
-                className="pointer-events-none select-none relative z-10"
+                className="pointer-events-none select-none relative z-10 w-full h-auto object-contain"
               />
             </motion.div>
 
