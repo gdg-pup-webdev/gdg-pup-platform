@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 
 import { cn } from "../../utils/cn";
 import { buttonVariants } from "./Button.styles";
@@ -126,7 +126,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {renderLeftIcon()}
-        {children}
+        <Slottable>{children}</Slottable>
         {renderRightIcon()}
       </Comp>
     );

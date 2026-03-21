@@ -235,6 +235,57 @@ export type Database = {
           },
         ]
       }
+      event_highlight: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          description: string
+          event_id: string
+          id: string
+          image_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          description: string
+          event_id: string
+          id?: string
+          image_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          description?: string
+          event_id?: string
+          id?: string
+          image_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_highlight_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "user"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_highlight_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       external_resource: {
         Row: {
           created_at: string
@@ -997,13 +1048,24 @@ export type Database = {
         Row: {
           bio: string | null
           created_at: string
+          department: string | null
+          first_name: string | null
           github_url: string | null
           id: string
           is_public: boolean
+          last_name: string | null
+          learning_interests: string[] | null
           linkedin_url: string | null
+          membership_type: string | null
+          middle_name: string | null
+          nickname: string | null
+          other_links: string[] | null
           portfolio_url: string | null
+          profile_image: string | null
           program: string | null
           skills_summary: string | null
+          technical_skills: string[] | null
+          tools_and_technologies: string[] | null
           updated_at: string
           user_id: string
           year_level: number | null
@@ -1011,13 +1073,24 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string
+          department?: string | null
+          first_name?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
+          last_name?: string | null
+          learning_interests?: string[] | null
           linkedin_url?: string | null
+          membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
+          other_links?: string[] | null
           portfolio_url?: string | null
+          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
+          technical_skills?: string[] | null
+          tools_and_technologies?: string[] | null
           updated_at?: string
           user_id: string
           year_level?: number | null
@@ -1025,13 +1098,24 @@ export type Database = {
         Update: {
           bio?: string | null
           created_at?: string
+          department?: string | null
+          first_name?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
+          last_name?: string | null
+          learning_interests?: string[] | null
           linkedin_url?: string | null
+          membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
+          other_links?: string[] | null
           portfolio_url?: string | null
+          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
+          technical_skills?: string[] | null
+          tools_and_technologies?: string[] | null
           updated_at?: string
           user_id?: string
           year_level?: number | null

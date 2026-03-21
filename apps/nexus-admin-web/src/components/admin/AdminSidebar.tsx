@@ -43,9 +43,14 @@ const NAV_ITEMS = [
     icon: Link2,
   },
   {
+    label: "Portfolios",
+    href: INTERNAL_LINKS.PORTFOLIOS,
+    icon: Award,
+  },
+  {
     label: "Debug page",
     href: INTERNAL_LINKS.DEBUG_PAGE,
-    icon: Award, // Changed to Award or something else to avoid conflict with Users
+    icon: Award, 
   },
 ];
 
@@ -135,6 +140,11 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               label: "Nexus Events",
               href: INTERNAL_LINKS.EVENTS,
               icon: Calendar,
+            },
+            {
+              label: "Event Highlights",
+              href: INTERNAL_LINKS.EVENT_HIGHLIGHTS,
+              icon: MessageSquareQuote,
             },
             {
               label: "Bevy Events",
