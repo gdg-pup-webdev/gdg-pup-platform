@@ -1,4 +1,4 @@
-export type UserCredentialProps = {
+﻿export type UserCredentialProps = {
   id: string;
   emailAddress: string;
   username: string;
@@ -53,3 +53,4 @@ export class UserCredential {
     this._props.updatedAt = new Date();
   }
 }
+

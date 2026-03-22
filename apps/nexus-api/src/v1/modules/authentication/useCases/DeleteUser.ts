@@ -1,4 +1,4 @@
-import { IUserCredentialRepository } from "../domain/IAuthenticationInterfaces";
+﻿import { IUserCredentialRepository } from "../domain/IAuthenticationInterfaces.js";
 
 export class DeleteUser {
   constructor(private readonly credentialRepo: IUserCredentialRepository) {}
@@ -7,3 +7,4 @@ export class DeleteUser {
     return await this.credentialRepo.deleteByEmail(email);
   }
 }
+

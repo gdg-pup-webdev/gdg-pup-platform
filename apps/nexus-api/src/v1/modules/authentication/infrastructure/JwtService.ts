@@ -1,4 +1,4 @@
-import { IJWTService } from "../domain/IAuthenticationInterfaces";
+﻿import { IJWTService } from "../domain/IAuthenticationInterfaces.js";
 import * as jwt from "jsonwebtoken";
 
 export class JwtService implements IJWTService {
@@ -12,3 +12,4 @@ export class JwtService implements IJWTService {
     return jwt.verify(token, this.secret) as Record<string, any>;
   }
 }
+

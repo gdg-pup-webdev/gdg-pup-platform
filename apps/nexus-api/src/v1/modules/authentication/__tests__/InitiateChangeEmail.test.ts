@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { InitiateChangeEmail } from "../../useCases/InitiateChangeEmail";
-import { MockUserCredentialRepository } from "./__mocks__/MockUserCredentialRepository";
-import { MockUserCredentialReferenceRepository } from "./__mocks__/MockUserCredentialReferenceRepository";
-import { MockEncryptionService } from "./__mocks__/MockEncryptionService";
-import { MockOtpService } from "./__mocks__/MockOtpService";
-import { UserCredential } from "../../domain/UserCredential";
+﻿import { describe, it, expect, beforeEach } from "vitest"; 
+import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js";
+import { MockUserCredentialReferenceRepository } from "../infrastructure/MockUserCredentialReferenceRepository.js";
+import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
+import { MockOtpService } from "../infrastructure/MockOtpService.js"; 
+import { UserCredential } from "../domain/UserCredential.js";
+import { InitiateChangeEmail } from "../useCases/InitiateChangeEmail.js";
 
 describe("InitiateChangeEmail", () => {
   let credentialRepo: MockUserCredentialRepository;
@@ -40,3 +40,5 @@ describe("InitiateChangeEmail", () => {
     expect(reference?.props.payload.newEmail).toBe(newEmail);
   });
 });
+
+

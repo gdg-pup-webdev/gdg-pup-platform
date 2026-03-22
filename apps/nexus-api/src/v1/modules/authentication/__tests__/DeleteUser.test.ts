@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { DeleteUser } from "../../useCases/DeleteUser";
-import { MockUserCredentialRepository } from "./__mocks__/MockUserCredentialRepository";
-import { UserCredential } from "../../domain/UserCredential";
-import { MockEncryptionService } from "./__mocks__/MockEncryptionService";
+﻿import { describe, it, expect, beforeEach } from "vitest"; 
+import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js"; 
+import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
+import { UserCredential } from "../domain/UserCredential.js";
+import { DeleteUser } from "../useCases/DeleteUser.js";
 
 describe("DeleteUser", () => {
   let credentialRepo: MockUserCredentialRepository;
@@ -32,3 +32,5 @@ describe("DeleteUser", () => {
     expect(deletedCredential).toBeNull();
   });
 });
+
+

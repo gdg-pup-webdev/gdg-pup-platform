@@ -1,4 +1,4 @@
-export enum ReferenceCodeType {
+﻿export enum ReferenceCodeType {
   CREATE_USER = "CREATE_USER",
   CHANGE_PASSWORD = "CHANGE_PASSWORD",
   CHANGE_EMAIL = "CHANGE_EMAIL",
@@ -35,3 +35,4 @@ export class UserCredentialReferenceCode {
     return { ...this._props };
   }
 }
+

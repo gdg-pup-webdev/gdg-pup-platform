@@ -1,4 +1,4 @@
-import { IJWTService } from "../../domain/IAuthenticationInterfaces";
+﻿import { IJWTService } from "../domain/IAuthenticationInterfaces.js";
 
 export class MockJwtService implements IJWTService {
   async sign(payload: Record<string, any>): Promise<string> {
@@ -6,6 +6,11 @@ export class MockJwtService implements IJWTService {
   }
 
   async verify(token: string): Promise<Record<string, any>> {
-    return Promise.resolve(JSON.parse(token));
+    try {
+      return Promise.resolve(JSON.parse(token));
+    } catch (e) {
+      throw new Error("Invalid token");
+    }
   }
 }
+

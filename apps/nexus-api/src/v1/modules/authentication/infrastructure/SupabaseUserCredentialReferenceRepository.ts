@@ -1,6 +1,6 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { IUserCredentialReferenceRepository } from "../domain/IAuthenticationInterfaces";
-import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode";
+﻿import { SupabaseClient } from "@supabase/supabase-js";
+import { IUserCredentialReferenceRepository } from "../domain/IAuthenticationInterfaces.js";
+import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
 
 export class SupabaseUserCredentialReferenceRepository implements IUserCredentialReferenceRepository {
   constructor(private readonly supabase: SupabaseClient) {}
@@ -59,3 +59,4 @@ export class SupabaseUserCredentialReferenceRepository implements IUserCredentia
     return true;
   }
 }
+

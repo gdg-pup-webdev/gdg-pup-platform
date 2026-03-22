@@ -1,6 +1,6 @@
-import { IUserCredentialRepository, IUserCredentialReferenceRepository, IOTPService } from "../domain/IAuthenticationInterfaces";
-import { UserCredential } from "../domain/UserCredential";
-import { ReferenceCodeType } from "../domain/UserCredentialReferenceCode";
+﻿import { IUserCredentialRepository, IUserCredentialReferenceRepository, IOTPService } from "../domain/IAuthenticationInterfaces.js";
+import { UserCredential } from "../domain/UserCredential.js";
+import { ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
 
 export class FinalizeCreateNewUser {
   constructor(
@@ -35,3 +35,4 @@ export class FinalizeCreateNewUser {
     return true;
   }
 }
+

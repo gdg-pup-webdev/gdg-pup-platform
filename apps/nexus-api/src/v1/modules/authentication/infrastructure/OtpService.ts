@@ -1,4 +1,4 @@
-import { IOTPService } from "../domain/IAuthenticationInterfaces";
+﻿import { IOTPService } from "../domain/IAuthenticationInterfaces.js";
 
 // This is a mock implementation. A real implementation would use the oneTimePin module.
 export class OtpService implements IOTPService {
@@ -15,3 +15,4 @@ export class OtpService implements IOTPService {
     return Promise.resolve(otp === "123456"); // Mock verification
   }
 }
+

@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { Login } from "../../useCases/Login";
-import { MockUserCredentialRepository } from "./__mocks__/MockUserCredentialRepository";
-import { MockEncryptionService } from "./__mocks__/MockEncryptionService";
-import { MockJwtService } from "./__mocks__/MockJwtService";
-import { UserCredential } from "../../domain/UserCredential";
+﻿import { describe, it, expect, beforeEach } from "vitest";
+import { Login } from "@/v1/modules/authentication/useCases/Login";
+import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository";
+import { MockEncryptionService } from "../infrastructure/MockEncryptionService";
+import { MockJwtService } from "../infrastructure/MockJwtService";
+import { UserCredential } from "@/v1/modules/authentication/domain/UserCredential";
 
 describe("Login", () => {
   let credentialRepo: MockUserCredentialRepository;
@@ -36,3 +36,5 @@ describe("Login", () => {
     await expect(useCase.execute("test@example.com", "password")).rejects.toThrow("Invalid credentials.");
   });
 });
+
+

@@ -1,12 +1,12 @@
-import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser";
-import { FinalizeCreateNewUser } from "./useCases/FinalizeCreateNewUser";
-import { Login } from "./useCases/Login";
-import { VerifyToken } from "./useCases/VerifyToken";
-import { InitiateChangePassword } from "./useCases/InitiateChangePassword";
-import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword";
-import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail";
-import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail";
-import { DeleteUser } from "./useCases/DeleteUser";
+﻿import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser.js";
+import { FinalizeCreateNewUser } from "./useCases/FinalizeCreateNewUser.js";
+import { Login } from "./useCases/Login.js";
+import { VerifyToken } from "./useCases/VerifyToken.js";
+import { InitiateChangePassword } from "./useCases/InitiateChangePassword.js";
+import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword.js";
+import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail.js";
+import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail.js";
+import { DeleteUser } from "./useCases/DeleteUser.js";
 
 export class AuthenticationController {
   constructor(
@@ -65,3 +65,4 @@ export class AuthenticationController {
     return { success };
   }
 }
+

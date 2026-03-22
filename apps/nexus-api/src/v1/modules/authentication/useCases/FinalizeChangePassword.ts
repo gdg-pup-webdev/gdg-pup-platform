@@ -1,5 +1,5 @@
-import { IUserCredentialRepository, IUserCredentialReferenceRepository, IOTPService } from "../domain/IAuthenticationInterfaces";
-import { ReferenceCodeType } from "../domain/UserCredentialReferenceCode";
+﻿import { IUserCredentialRepository, IUserCredentialReferenceRepository, IOTPService } from "../domain/IAuthenticationInterfaces.js";
+import { ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
 
 export class FinalizeChangePassword {
   constructor(
@@ -31,3 +31,4 @@ export class FinalizeChangePassword {
     return true;
   }
 }
+

@@ -1,5 +1,5 @@
-import { UserCredential } from "./UserCredential";
-import { UserCredentialReferenceCode } from "./UserCredentialReferenceCode";
+﻿import { UserCredential } from "./UserCredential.js";
+import { UserCredentialReferenceCode } from "./UserCredentialReferenceCode.js";
 
 export abstract class IUserCredentialRepository {
   abstract saveNew(credential: UserCredential): Promise<UserCredential>;
@@ -28,3 +28,4 @@ export abstract class IOTPService {
   abstract createAndSendOtpToEmail(email: string): Promise<string>;
   abstract verifyOtp(reference: string, otp: string): Promise<boolean>;
 }
+

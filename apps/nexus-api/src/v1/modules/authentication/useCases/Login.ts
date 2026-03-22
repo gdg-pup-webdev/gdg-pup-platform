@@ -1,4 +1,4 @@
-import { IUserCredentialRepository, IEncryptionService, IJWTService } from "../domain/IAuthenticationInterfaces";
+﻿import { IUserCredentialRepository, IEncryptionService, IJWTService } from "../domain/IAuthenticationInterfaces.js";
 
 export class Login {
   constructor(
@@ -26,3 +26,4 @@ export class Login {
     return token;
   }
 }
+

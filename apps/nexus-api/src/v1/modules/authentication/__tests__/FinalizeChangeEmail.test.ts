@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { FinalizeChangeEmail } from "../../useCases/FinalizeChangeEmail";
-import { MockUserCredentialRepository } from "./__mocks__/MockUserCredentialRepository";
-import { MockUserCredentialReferenceRepository } from "./__mocks__/MockUserCredentialReferenceRepository";
-import { MockOtpService } from "./__mocks__/MockOtpService";
-import { UserCredential } from "../../domain/UserCredential";
-import { UserCredentialReferenceCode, ReferenceCodeType } from "../../domain/UserCredentialReferenceCode";
-import { MockEncryptionService } from "./__mocks__/MockEncryptionService";
+﻿import { describe, it, expect, beforeEach } from "vitest"; 
+import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js";
+import { MockUserCredentialReferenceRepository } from "../infrastructure/MockUserCredentialReferenceRepository.js";
+import { MockOtpService } from "../infrastructure/MockOtpService.js"; 
+import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
+import { UserCredential } from "../domain/UserCredential.js";
+import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
+import { FinalizeChangeEmail } from "../useCases/FinalizeChangeEmail.js";
 
 describe("FinalizeChangeEmail", () => {
   let credentialRepo: MockUserCredentialRepository;
@@ -48,3 +48,5 @@ describe("FinalizeChangeEmail", () => {
     expect(updatedCredential?.props.emailAddress).toBe(newEmail);
   });
 });
+
+

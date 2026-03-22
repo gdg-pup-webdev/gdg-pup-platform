@@ -1,4 +1,4 @@
-import { IEncryptionService } from "../domain/IAuthenticationInterfaces";
+﻿import { IEncryptionService } from "../domain/IAuthenticationInterfaces.js";
 import * as bcrypt from "bcrypt";
 
 export class BcryptEncryptionService implements IEncryptionService {
@@ -12,3 +12,4 @@ export class BcryptEncryptionService implements IEncryptionService {
     return bcrypt.compare(value, hash);
   }
 }
+

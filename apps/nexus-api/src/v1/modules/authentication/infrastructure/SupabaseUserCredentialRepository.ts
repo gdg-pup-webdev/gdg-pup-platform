@@ -1,6 +1,6 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { IUserCredentialRepository } from "../domain/IAuthenticationInterfaces";
-import { UserCredential } from "../domain/UserCredential";
+﻿import { SupabaseClient } from "@supabase/supabase-js";
+import { IUserCredentialRepository } from "../domain/IAuthenticationInterfaces.js";
+import { UserCredential } from "../domain/UserCredential.js";
 
 export class SupabaseUserCredentialRepository implements IUserCredentialRepository {
   constructor(private readonly supabase: SupabaseClient) {}
@@ -82,3 +82,4 @@ export class SupabaseUserCredentialRepository implements IUserCredentialReposito
     return true;
   }
 }
+

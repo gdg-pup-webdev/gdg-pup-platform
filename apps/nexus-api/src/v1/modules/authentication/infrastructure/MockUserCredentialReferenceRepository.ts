@@ -1,8 +1,12 @@
-import { IUserCredentialReferenceRepository } from "../../domain/IAuthenticationInterfaces";
-import { UserCredentialReferenceCode } from "../../domain/UserCredentialReferenceCode";
+﻿import { IUserCredentialReferenceRepository } from "../domain/IAuthenticationInterfaces.js";
+import { UserCredentialReferenceCode } from "../domain/UserCredentialReferenceCode.js";
 
 export class MockUserCredentialReferenceRepository implements IUserCredentialReferenceRepository {
   private references: UserCredentialReferenceCode[] = [];
+
+  constructor() {
+    this.references = [];
+  }
 
   async saveNew(reference: UserCredentialReferenceCode): Promise<UserCredentialReferenceCode> {
     this.references.push(reference);
@@ -15,11 +19,9 @@ export class MockUserCredentialReferenceRepository implements IUserCredentialRef
   }
 
   async deleteByReferenceCode(code: string): Promise<boolean> {
-    const index = this.references.findIndex((r) => r.props.referenceCode === code);
-    if (index > -1) {
-      this.references.splice(index, 1);
-      return true;
-    }
-    return false;
+    const initialLength = this.references.length;
+    this.references = this.references.filter((r) => r.props.referenceCode !== code);
+    return this.references.length < initialLength;
   }
 }
+

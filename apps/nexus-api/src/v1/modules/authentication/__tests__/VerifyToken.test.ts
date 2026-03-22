@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { VerifyToken } from "../../useCases/VerifyToken";
-import { MockJwtService } from "./__mocks__/MockJwtService";
+﻿import { describe, it, expect, beforeEach } from "vitest"; 
+import { MockJwtService } from "../infrastructure/MockJwtService.js";
+import { VerifyToken } from "../useCases/VerifyToken.js";
 
 describe("VerifyToken", () => {
   let jwtService: MockJwtService;
@@ -18,3 +18,5 @@ describe("VerifyToken", () => {
     expect(result).toEqual(payload);
   });
 });
+
+

@@ -1,4 +1,4 @@
-import { IJWTService } from "../domain/IAuthenticationInterfaces";
+﻿import { IJWTService } from "../domain/IAuthenticationInterfaces.js";
 
 export class VerifyToken {
   constructor(private readonly jwtService: IJWTService) {}
@@ -8,3 +8,4 @@ export class VerifyToken {
     return payload;
   }
 }
+

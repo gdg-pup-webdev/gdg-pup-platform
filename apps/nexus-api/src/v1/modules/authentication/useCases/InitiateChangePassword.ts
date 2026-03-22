@@ -1,5 +1,5 @@
-import { IUserCredentialRepository, IUserCredentialReferenceRepository, IEncryptionService, IOTPService } from "../domain/IAuthenticationInterfaces";
-import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode";
+﻿import { IUserCredentialRepository, IUserCredentialReferenceRepository, IEncryptionService, IOTPService } from "../domain/IAuthenticationInterfaces.js";
+import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
 
 export class InitiateChangePassword {
   constructor(
@@ -35,3 +35,4 @@ export class InitiateChangePassword {
     return reference.props.referenceCode;
   }
 }
+

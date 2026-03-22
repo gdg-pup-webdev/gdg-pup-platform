@@ -1,4 +1,4 @@
-import { IEncryptionService } from "../domain/IAuthenticationInterfaces";
+﻿import { IEncryptionService } from "../domain/IAuthenticationInterfaces.js";
 import { scrypt, randomBytes, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 
@@ -18,3 +18,4 @@ export class NodeEncryptionService implements IEncryptionService {
     return timingSafeEqual(keyBuffer, derivedKey);
   }
 }
+

@@ -1,19 +1,19 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { AuthenticationController } from "./AuthenticationController";
-import { BcryptEncryptionService } from "./infrastructure/BcryptEncryptionService";
-import { JwtService } from "./infrastructure/JwtService";
-import { OtpService } from "./infrastructure/OtpService";
-import { SupabaseUserCredentialRepository } from "./infrastructure/SupabaseUserCredentialRepository";
-import { SupabaseUserCredentialReferenceRepository } from "./infrastructure/SupabaseUserCredentialReferenceRepository";
-import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser";
-import { FinalizeCreateNewUser } from "./useCases/FinalizeCreateNewUser";
-import { Login } from "./useCases/Login";
-import { VerifyToken } from "./useCases/VerifyToken";
-import { InitiateChangePassword } from "./useCases/InitiateChangePassword";
-import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword";
-import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail";
-import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail";
-import { DeleteUser } from "./useCases/DeleteUser";
+﻿import { SupabaseClient } from "@supabase/supabase-js";
+import { AuthenticationController } from "./AuthenticationController.js";
+import { BcryptEncryptionService } from "./infrastructure/BcryptEncryptionService.js";
+import { JwtService } from "./infrastructure/JwtService.js";
+import { OtpService } from "./infrastructure/OtpService.js";
+import { SupabaseUserCredentialRepository } from "./infrastructure/SupabaseUserCredentialRepository.js";
+import { SupabaseUserCredentialReferenceRepository } from "./infrastructure/SupabaseUserCredentialReferenceRepository.js";
+import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser.js";
+import { FinalizeCreateNewUser } from "./useCases/FinalizeCreateNewUser.js";
+import { Login } from "./useCases/Login.js";
+import { VerifyToken } from "./useCases/VerifyToken.js";
+import { InitiateChangePassword } from "./useCases/InitiateChangePassword.js";
+import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword.js";
+import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail.js";
+import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail.js";
+import { DeleteUser } from "./useCases/DeleteUser.js";
 
 export function initializeAuthenticationModule(supabase: SupabaseClient, jwtSecret: string) {
   // Infrastructure
@@ -62,3 +62,4 @@ export {
     FinalizeChangeEmail,
     DeleteUser
 }
+

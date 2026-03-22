@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { FinalizeCreateNewUser } from "../../useCases/FinalizeCreateNewUser";
-import { MockUserCredentialRepository } from "./__mocks__/MockUserCredentialRepository";
-import { MockUserCredentialReferenceRepository } from "./__mocks__/MockUserCredentialReferenceRepository";
-import { MockOtpService } from "./__mocks__/MockOtpService";
-import { UserCredentialReferenceCode, ReferenceCodeType } from "../../domain/UserCredentialReferenceCode";
+﻿import { describe, it, expect, beforeEach } from "vitest"; 
+import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js";
+import { MockUserCredentialReferenceRepository } from "../infrastructure/MockUserCredentialReferenceRepository.js";
+import { MockOtpService } from "../infrastructure/MockOtpService.js"; 
+import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
+import { FinalizeCreateNewUser } from "../useCases/FinalizeCreateNewUser.js";
 
 describe("FinalizeCreateNewUser", () => {
   let credentialRepo: MockUserCredentialRepository;
@@ -49,3 +49,5 @@ describe("FinalizeCreateNewUser", () => {
     await expect(useCase.execute(reference.props.referenceCode, "wrong-otp")).rejects.toThrow("Invalid OTP.");
   });
 });
+
+

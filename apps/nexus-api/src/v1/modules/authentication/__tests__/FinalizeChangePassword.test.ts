@@ -1,11 +1,11 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { FinalizeChangePassword } from "../../useCases/FinalizeChangePassword";
-import { MockUserCredentialRepository } from "./__mocks__/MockUserCredentialRepository";
-import { MockUserCredentialReferenceRepository } from "./__mocks__/MockUserCredentialReferenceRepository";
-import { MockOtpService } from "./__mocks__/MockOtpService";
-import { UserCredential } from "../../domain/UserCredential";
-import { UserCredentialReferenceCode, ReferenceCodeType } from "../../domain/UserCredentialReferenceCode";
-import { MockEncryptionService } from "./__mocks__/MockEncryptionService";
+﻿import { describe, it, expect, beforeEach } from "vitest"; 
+import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js";
+import { MockUserCredentialReferenceRepository } from "../infrastructure/MockUserCredentialReferenceRepository.js";
+import { MockOtpService } from "../infrastructure/MockOtpService.js"; 
+import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
+import { UserCredential } from "../domain/UserCredential.js";
+import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
+import { FinalizeChangePassword } from "../useCases/FinalizeChangePassword.js";
 
 describe("FinalizeChangePassword", () => {
   let credentialRepo: MockUserCredentialRepository;
@@ -48,3 +48,5 @@ describe("FinalizeChangePassword", () => {
     expect(updatedCredential?.props.passwordHash).toBe(`hashed-${newPassword}`);
   });
 });
+
+
