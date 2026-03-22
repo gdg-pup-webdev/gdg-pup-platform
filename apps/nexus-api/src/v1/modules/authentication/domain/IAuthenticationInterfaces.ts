@@ -5,6 +5,8 @@ export abstract class ICustomAuthRepository {
   abstract persistUpdates(user: User): Promise<User>;
   abstract deleteByUsername(username: string): Promise<boolean>;
   abstract findByUsername(username: string): Promise<User | null>;
+  abstract findByEmail(email: string): Promise<User | null>;
+  abstract generateOtp(): string;
 }
 
 export abstract class IEncryptionService {

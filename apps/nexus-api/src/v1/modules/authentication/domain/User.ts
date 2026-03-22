@@ -1,13 +1,13 @@
-import { z } from "zod";
+import { randomUUID } from "node:crypto";
 
-const UserSchema = z.object({
-  id: z.string().uuid().optional(),
-  username: z.string().min(3),
-  password: z.string().min(6), // Hashed or raw (managed by infra/useCases)
-  createdAt: z.date().optional(),
-});
-
-export type UserProps = z.infer<typeof UserSchema>;
+export type UserProps = {
+  id: string;
+  username: string;
+  emailAddress: string;
+  passwordHash: string;
+  otpCode: string | null;
+  otpExpiresAt: Date | null;
+};
 
 export class User {
   private _props: UserProps;
@@ -16,31 +16,62 @@ export class User {
     this._props = props;
   }
 
-  get id() { return this._props.id; }
-  get username() { return this._props.username; }
-  get password() { return this._props.password; }
-  get createdAt() { return this._props.createdAt; }
-
-  static create(props: Omit<UserProps, "id" | "createdAt">): User {
-    const result = UserSchema.parse({
+  static create(props: Omit<UserProps, "id" | "otpCode" | "otpExpiresAt">): User {
+    if (!props.emailAddress.includes("@")) {
+      throw new Error("Invalid email address.");
+    }
+    if (!props.username.trim()) {
+      throw new Error("Username is required.");
+    }
+    return new User({
       ...props,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
+      id: randomUUID(),
+      otpCode: null,
+      otpExpiresAt: null,
     });
-    return new User(result);
   }
 
   static hydrate(props: UserProps): User {
-    const result = UserSchema.parse(props);
-    return new User(result);
+    return new User(props);
   }
 
-  update(props: Partial<Omit<UserProps, "id" | "createdAt">>) {
-    const updated = { ...this._props, ...props };
-    this._props = UserSchema.parse(updated);
+  get props(): UserProps {
+    return { ...this._props };
   }
 
-  get props() {
-    return Object.freeze({ ...this._props });
+  updatePassword(newHash: string): void {
+    this._props.passwordHash = newHash;
+    this.clearOtp();
+  }
+
+  updateEmail(newEmail: string): void {
+    if (!newEmail.includes("@")) {
+      throw new Error("Invalid email address.");
+    }
+    this._props.emailAddress = newEmail;
+    this.clearOtp();
+  }
+
+  updateUsername(newUsername: string): void {
+    if (!newUsername.trim()) {
+      throw new Error("Username cannot be empty.");
+    }
+    this._props.username = newUsername;
+  }
+
+  setOtp(code: string, expiresAt: Date): void {
+    this._props.otpCode = code;
+    this._props.otpExpiresAt = expiresAt;
+  }
+
+  clearOtp(): void {
+    this._props.otpCode = null;
+    this._props.otpExpiresAt = null;
+  }
+
+  isOtpValid(code: string): boolean {
+    if (!this._props.otpCode || !this._props.otpExpiresAt) return false;
+    if (this._props.otpCode !== code) return false;
+    return new Date() < this._props.otpExpiresAt;
   }
 }
