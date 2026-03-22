@@ -1,17 +1,16 @@
 # =============================================================================
 # Docker Build & Push
 # =============================================================================
-# Trigger: Successful completion of Test workflow
-# Mode:    Selective builds (only changed services)
+# Trigger: push to deploy branches (or manual dispatch).
+# Mode:    selective builds (only changed services)
 # =============================================================================
 
 name: Docker Build & Push
 
 on:
-  workflow_run:
-    workflows: ["Test"]
-    types:
-      - completed
+  push:
+    branches: [deploy-develop, staging, main]
+  workflow_dispatch:
 
 concurrency:
   group: docker-${{ github.ref }}
@@ -27,7 +26,6 @@ jobs:
     outputs:
       nexus-web: ${{ steps.detect.outputs.nexus-web }}
       nexus-api: ${{ steps.detect.outputs.nexus-api }}
-      identity-api: ${{ steps.detect.outputs.identity-api }}
       environment: ${{ steps.detect.outputs.environment }}
     steps:
       - uses: actions/checkout@v4
@@ -35,8 +33,8 @@ jobs:
         id: detect
         uses: ./.github/workflows/ci.detect-changes
         with:
-          head-sha: ${{ github.event.workflow_run.head_sha }}
-          head-branch: ${{ github.event.workflow_run.head_branch }}
+          head-sha: ${{ github.sha }}
+          head-branch: ${{ github.ref_name }}
 
   build-nexus-web:
     name: nexus-web
@@ -68,20 +66,5 @@ jobs:
           service: nexus-api
           environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-api/Dockerfile
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
-
-  build-identity-api:
-    name: identity-api
-    runs-on: ubuntu-latest
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.identity-api == 'true' }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/builds
-        with:
-          service: identity-api
-          environment: ${{ needs.detect-changes.outputs.environment }}
-          dockerfile: apps/identity-api/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
