@@ -4,7 +4,7 @@ import { AuthHttpController } from "../routes/auth-system/auth.controller";
 import { HealthRouter } from "../routes/health/healthCheck.route";
 import { HealthHttpController } from "../routes/health/healthCheck.controller";
 import { supabase } from "@/v1/lib/supabase";
-import { AuthService } from "@/v1/modules/authSystem";
+import { AuthService } from "@/v1/modules/authSystem_DEPRECATED";
 import { filesModuleController } from "@/v1/modules/filesModule";
 import { FilesHttpController } from "../routes/files/files.controller";
 import { FilesRouter } from "../routes/files/files.router";
