@@ -1,12 +1,17 @@
-import { User } from "./User";
+import { UserCredential } from "./UserCredential";
+import { UserCredentialReferenceCode } from "./UserCredentialReferenceCode";
 
-export abstract class ICustomAuthRepository {
-  abstract saveNew(user: User): Promise<User>;
-  abstract persistUpdates(user: User): Promise<User>;
-  abstract deleteByUsername(username: string): Promise<boolean>;
-  abstract findByUsername(username: string): Promise<User | null>;
-  abstract findByEmail(email: string): Promise<User | null>;
-  abstract generateOtp(): string;
+export abstract class IUserCredentialRepository {
+  abstract saveNew(credential: UserCredential): Promise<UserCredential>;
+  abstract persistUpdates(credential: UserCredential): Promise<UserCredential>;
+  abstract findByEmail(email: string): Promise<UserCredential | null>;
+  abstract deleteByEmail(email: string): Promise<boolean>;
+}
+
+export abstract class IUserCredentialReferenceRepository {
+  abstract saveNew(reference: UserCredentialReferenceCode): Promise<UserCredentialReferenceCode>;
+  abstract findByReferenceCode(code: string): Promise<UserCredentialReferenceCode | null>;
+  abstract deleteByReferenceCode(code: string): Promise<boolean>;
 }
 
 export abstract class IEncryptionService {
@@ -17,4 +22,9 @@ export abstract class IEncryptionService {
 export abstract class IJWTService {
   abstract sign(payload: Record<string, any>): Promise<string>;
   abstract verify(token: string): Promise<Record<string, any>>;
+}
+
+export abstract class IOTPService {
+  abstract createAndSendOtpToEmail(email: string): Promise<string>;
+  abstract verifyOtp(reference: string, otp: string): Promise<boolean>;
 }

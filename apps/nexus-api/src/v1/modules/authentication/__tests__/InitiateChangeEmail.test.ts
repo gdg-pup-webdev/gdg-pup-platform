@@ -1,0 +1,42 @@
+import { describe, it, expect, beforeEach } from "vitest";
+import { InitiateChangeEmail } from "../../useCases/InitiateChangeEmail";
+import { MockUserCredentialRepository } from "./__mocks__/MockUserCredentialRepository";
+import { MockUserCredentialReferenceRepository } from "./__mocks__/MockUserCredentialReferenceRepository";
+import { MockEncryptionService } from "./__mocks__/MockEncryptionService";
+import { MockOtpService } from "./__mocks__/MockOtpService";
+import { UserCredential } from "../../domain/UserCredential";
+
+describe("InitiateChangeEmail", () => {
+  let credentialRepo: MockUserCredentialRepository;
+  let referenceRepo: MockUserCredentialReferenceRepository;
+  let encryptionService: MockEncryptionService;
+  let otpService: MockOtpService;
+  let useCase: InitiateChangeEmail;
+
+  beforeEach(() => {
+    credentialRepo = new MockUserCredentialRepository();
+    referenceRepo = new MockUserCredentialReferenceRepository();
+    encryptionService = new MockEncryptionService();
+    otpService = new MockOtpService();
+    useCase = new InitiateChangeEmail(credentialRepo, referenceRepo, encryptionService, otpService);
+  });
+
+  it("should create a reference code for email change", async () => {
+    const email = "test@example.com";
+    const newEmail = "new@example.com";
+    const password = "password";
+    const credential = UserCredential.create({
+      emailAddress: email,
+      username: "test",
+      passwordHash: await encryptionService.hash(password),
+    });
+    await credentialRepo.saveNew(credential);
+
+    const referenceCode = await useCase.execute(email, password, newEmail);
+
+    expect(referenceCode).toBeDefined();
+    const reference = await referenceRepo.findByReferenceCode(referenceCode);
+    expect(reference).toBeDefined();
+    expect(reference?.props.payload.newEmail).toBe(newEmail);
+  });
+});

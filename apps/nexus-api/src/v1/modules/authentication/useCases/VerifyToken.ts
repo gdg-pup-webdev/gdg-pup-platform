@@ -1,12 +1,10 @@
 import { IJWTService } from "../domain/IAuthenticationInterfaces";
 
 export class VerifyToken {
-  constructor(private readonly jwt: IJWTService) {}
-  async execute(token: string): Promise<Record<string, any> | null> {
-    try {
-      return await this.jwt.verify(token);
-    } catch {
-      return null;
-    }
+  constructor(private readonly jwtService: IJWTService) {}
+
+  async execute(token: string): Promise<Record<string, any>> {
+    const payload = await this.jwtService.verify(token);
+    return payload;
   }
 }

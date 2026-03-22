@@ -1,48 +1,64 @@
+import { SupabaseClient } from "@supabase/supabase-js";
+import { AuthenticationController } from "./AuthenticationController";
+import { BcryptEncryptionService } from "./infrastructure/BcryptEncryptionService";
+import { JwtService } from "./infrastructure/JwtService";
+import { OtpService } from "./infrastructure/OtpService";
 import { SupabaseUserCredentialRepository } from "./infrastructure/SupabaseUserCredentialRepository";
-import { NodeEncryptionService } from "./infrastructure/NodeEncryptionService";
-import { NodeJWTService } from "./infrastructure/NodeJWTService";
-import { CreateUser } from "./useCases/CreateUser";
-import { DeleteUser } from "./useCases/DeleteUser";
+import { SupabaseUserCredentialReferenceRepository } from "./infrastructure/SupabaseUserCredentialReferenceRepository";
+import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser";
+import { FinalizeCreateNewUser } from "./useCases/FinalizeCreateNewUser";
 import { Login } from "./useCases/Login";
 import { VerifyToken } from "./useCases/VerifyToken";
-import { GetPasswordChangeOtp } from "./useCases/GetPasswordChangeOtp";
-import { GetChangeEmailOtp } from "./useCases/GetChangeEmailOtp";
-import { ChangePassword } from "./useCases/ChangePassword";
-import { ChangeEmail } from "./useCases/ChangeEmail";
-import { AuthenticationController } from "./AuthenticationController";
+import { InitiateChangePassword } from "./useCases/InitiateChangePassword";
+import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword";
+import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail";
+import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail";
+import { DeleteUser } from "./useCases/DeleteUser";
 
-const repo = new SupabaseUserCredentialRepository();
-const encryption = new NodeEncryptionService();
-const jwt = new NodeJWTService();
+export function initializeAuthenticationModule(supabase: SupabaseClient, jwtSecret: string) {
+  // Infrastructure
+  const credentialRepo = new SupabaseUserCredentialRepository(supabase);
+  const referenceRepo = new SupabaseUserCredentialReferenceRepository(supabase);
+  const encryptionService = new BcryptEncryptionService();
+  const jwtService = new JwtService(jwtSecret);
+  const otpService = new OtpService();
 
-const createUserUC = new CreateUser(repo, encryption);
-const deleteUserUC = new DeleteUser(repo);
-const loginUC = new Login(repo, encryption, jwt);
-const verifyTokenUC = new VerifyToken(jwt);
-const getPasswordOtpUC = new GetPasswordChangeOtp(repo);
-const getEmailOtpUC = new GetChangeEmailOtp(repo);
-const changePasswordUC = new ChangePassword(repo, encryption);
-const changeEmailUC = new ChangeEmail(repo);
+  // Use Cases
+  const initiateCreateNewUserUC = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService);
+  const finalizeCreateNewUserUC = new FinalizeCreateNewUser(credentialRepo, referenceRepo, otpService);
+  const loginUC = new Login(credentialRepo, encryptionService, jwtService);
+  const verifyTokenUC = new VerifyToken(jwtService);
+  const initiateChangePasswordUC = new InitiateChangePassword(credentialRepo, referenceRepo, encryptionService, otpService);
+  const finalizeChangePasswordUC = new FinalizeChangePassword(credentialRepo, referenceRepo, otpService);
+  const initiateChangeEmailUC = new InitiateChangeEmail(credentialRepo, referenceRepo, encryptionService, otpService);
+  const finalizeChangeEmailUC = new FinalizeChangeEmail(credentialRepo, referenceRepo, otpService);
+  const deleteUserUC = new DeleteUser(credentialRepo);
 
-export const authenticationController = new AuthenticationController(
-  createUserUC,
-  deleteUserUC,
-  loginUC,
-  verifyTokenUC,
-  getPasswordOtpUC,
-  getEmailOtpUC,
-  changePasswordUC,
-  changeEmailUC
-);
+  // Controller
+  const controller = new AuthenticationController(
+    initiateCreateNewUserUC,
+    finalizeCreateNewUserUC,
+    loginUC,
+    verifyTokenUC,
+    initiateChangePasswordUC,
+    finalizeChangePasswordUC,
+    initiateChangeEmailUC,
+    finalizeChangeEmailUC,
+    deleteUserUC
+  );
 
-export { AuthenticationController };
-export * from "./domain/User";
-export * from "./domain/IAuthenticationInterfaces";
-export * from "./useCases/CreateUser";
-export * from "./useCases/DeleteUser";
-export * from "./useCases/Login";
-export * from "./useCases/VerifyToken";
-export * from "./useCases/GetPasswordChangeOtp";
-export * from "./useCases/GetChangeEmailOtp";
-export * from "./useCases/ChangePassword";
-export * from "./useCases/ChangeEmail";
+  return controller;
+}
+
+export {
+    AuthenticationController,
+    InitiateCreateNewUser,
+    FinalizeCreateNewUser,
+    Login,
+    VerifyToken,
+    InitiateChangePassword,
+    FinalizeChangePassword,
+    InitiateChangeEmail,
+    FinalizeChangeEmail,
+    DeleteUser
+}

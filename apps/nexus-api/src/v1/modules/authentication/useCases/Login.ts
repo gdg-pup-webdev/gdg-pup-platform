@@ -1,22 +1,28 @@
-import { ICustomAuthRepository, IEncryptionService, IJWTService } from "../domain/IAuthenticationInterfaces";
+import { IUserCredentialRepository, IEncryptionService, IJWTService } from "../domain/IAuthenticationInterfaces";
 
 export class Login {
   constructor(
-    private readonly repo: ICustomAuthRepository,
-    private readonly encryption: IEncryptionService,
-    private readonly jwt: IJWTService
+    private readonly credentialRepo: IUserCredentialRepository,
+    private readonly encryptionService: IEncryptionService,
+    private readonly jwtService: IJWTService
   ) {}
 
   async execute(email: string, password: string): Promise<string> {
-    const user = await this.repo.findByEmail(email);
-    if (!user) throw new Error("Invalid credentials.");
+    const credential = await this.credentialRepo.findByEmail(email);
+    if (!credential) {
+      throw new Error("Invalid credentials.");
+    }
 
-    const isValid = await this.encryption.compare(password, user.props.passwordHash);
-    if (!isValid) throw new Error("Invalid credentials.");
+    const isPasswordValid = await this.encryptionService.compare(password, credential.props.passwordHash);
+    if (!isPasswordValid) {
+      throw new Error("Invalid credentials.");
+    }
 
-    return this.jwt.sign({ 
-      email: user.props.emailAddress, 
-      username: user.props.username 
+    const token = await this.jwtService.sign({
+      username: credential.props.username,
+      email: credential.props.emailAddress,
     });
+
+    return token;
   }
 }
