@@ -4,8 +4,17 @@ import { Database } from "../types/supabase.types";
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SECRET_KEY;
 
-// Global client for database operations
-export const supabase = createClient<Database>(supabaseUrl!, supabaseKey!, {
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error("Missing Supabase URL or Secret Key in environment variables.");
+}
+
+/**
+ * Global client for system-level database operations.
+ * Initialized with the service role key to bypass RLS.
+ * CRITICAL: This instance should NEVER be used for auth.setSession or user-specific auth calls.
+ * It is intended for shared, read-only or system-level write operations.
+ */
+export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: false,
     autoRefreshToken: false,
@@ -13,10 +22,26 @@ export const supabase = createClient<Database>(supabaseUrl!, supabaseKey!, {
   },
 });
 
-// Factory to create a fresh client per auth operation
-// Prevents cross-request session bleeding in the backend
+/**
+ * A dedicated service role client specifically for admin auth operations.
+ * Use this in services that perform sign-ups, sign-ins, or user management.
+ * We create a separate instance just to be absolutely sure no state is shared.
+ */
+export const serviceRoleClient = createClient<Database>(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false,
+  },
+});
+
+/**
+ * Factory to create a fresh client per request or operation.
+ * Prevents cross-request session bleeding in the backend.
+ * Each call returns a BRAND NEW client instance.
+ */
 export const createAuthClient = () => {
-  return createClient(supabaseUrl!, supabaseKey!, {
+  return createClient<Database>(supabaseUrl, supabaseKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,

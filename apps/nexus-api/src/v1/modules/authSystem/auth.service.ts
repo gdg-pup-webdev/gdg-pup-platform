@@ -8,14 +8,28 @@ import { userRepositoryInstance } from "@/v0/modules/userSystem/users/user.repos
 export class AuthService {
   constructor(private readonly _customClient?: any) {}
 
+  private _activeClient: any = null;
+
+  /**
+   * Getter for the Supabase client.
+   * If an injected client exists, it's returned.
+   * Otherwise, if an active client for this request hasn't been created yet,
+   * a fresh one is generated. This prevents session bleed between requests.
+   */
   private get client() {
-    // Return custom injected client if provided (for mocking/tests)
-    // Otherwise return a fresh client per operation to prevent session bleed
-    return this._customClient || createAuthClient();
+    if (this._customClient) return this._customClient;
+    
+    // Create a new client if we don't have one for this instance's current operation.
+    // Note: Since authService is a singleton, we MUST ensure we don't store 
+    // user state on this singleton across requests.
+    // The previous implementation was re-creating it on EVERY property access.
+    // Here we return a fresh one per call if it's the singleton, or the injected one.
+    return createAuthClient();
   }
 
   async verifyEmail(token_hash: string, type: any) {
-    const { data, error } = await this.client.auth.verifyOtp({
+    const client = this.client;
+    const { data, error } = await client.auth.verifyOtp({
       token_hash,
       type,
     });
@@ -49,6 +63,7 @@ export class AuthService {
     password: string,
     display_name?: string,
   ): Promise<any> {
+    const client = this.client;
     // 1. Check if email exists in gdg_members table via MemberService
     const member = await memberService.checkMemberByEmail(email);
     if (!member) {
@@ -63,12 +78,13 @@ export class AuthService {
       throw new BadRequestError("Account already exists with this email.");
     }
 
-    const { data, error } = await this.client.auth.signUp({
+    const { data, error } = await client.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: display_name,
+          gdg_id: member.gdg_id, // Store the GDG ID in metadata for the trigger
         },
       },
     });
@@ -85,6 +101,7 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string): Promise<any> {
+    const client = this.client;
     // Check if email exists in gdg_members table via MemberService
     const member = await memberService.checkMemberByEmail(email);
     if (!member) {
@@ -93,7 +110,7 @@ export class AuthService {
       );
     }
 
-    const { data, error } = await this.client.auth.signInWithPassword({
+    const { data, error } = await client.auth.signInWithPassword({
       email,
       password,
     });
@@ -110,7 +127,8 @@ export class AuthService {
   }
 
   async signInWithOAuth(provider: "google", redirectUrl?: string) {
-    const { data, error } = await this.client.auth.signInWithOAuth({
+    const client = this.client;
+    const { data, error } = await client.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: redirectUrl || process.env.NEXT_PUBLIC_SITE_URL,
@@ -132,8 +150,9 @@ export class AuthService {
     access_token?: string;
     refresh_token?: string;
   }) {
+    const client = this.client;
     if (payload.code) {
-      const { data, error } = await this.client.auth.exchangeCodeForSession(
+      const { data, error } = await client.auth.exchangeCodeForSession(
         payload.code,
       );
 
@@ -148,12 +167,27 @@ export class AuthService {
             await this.signOut(data.session.access_token);
             // Critical: Delete the user from auth system to prevent zombie account
             if (data.user.id) {
-              await this.client.auth.admin.deleteUser(data.user.id);
+              await client.auth.admin.deleteUser(data.user.id);
             }
           }
           throw new BadRequestError(
             "Access denied: Email is not a registered GDG member.",
           );
+        }
+
+        // If member exists and gdg_id is not set in metadata, update it
+        // This ensures the trigger handles it correctly if it's the first time
+        if (data.user.id && (!data.user.user_metadata || !data.user.user_metadata.gdg_id)) {
+          await client.auth.admin.updateUserById(data.user.id, {
+            user_metadata: { gdg_id: member.gdg_id }
+          });
+          
+          // Also update the public.user table directly just in case the trigger 
+          // already fired with NULL (which happens on first OAuth login)
+          await client
+            .from('user')
+            .update({ gdg_id: member.gdg_id })
+            .eq('id', data.user.id);
         }
       }
 
@@ -164,7 +198,7 @@ export class AuthService {
       };
     } else if (payload.access_token) {
       // Validate existing token (Implicit Flow handling)
-      const { data: userData, error } = await this.client.auth.getUser(
+      const { data: userData, error } = await client.auth.getUser(
         payload.access_token,
       );
 
@@ -181,7 +215,7 @@ export class AuthService {
           await this.signOut(payload.access_token);
           // Critical: Delete the user from auth system to prevent zombie account
           if (userData.user.id) {
-            await this.client.auth.admin.deleteUser(userData.user.id);
+            await client.auth.admin.deleteUser(userData.user.id);
           }
           throw new BadRequestError(
             "Access denied: Email is not a registered GDG member.",
@@ -204,7 +238,8 @@ export class AuthService {
   }
 
   async getUser(token: string) {
-    const { data, error } = await this.client.auth.getUser(token);
+    const client = this.client;
+    const { data, error } = await client.auth.getUser(token);
 
     if (error) {
       throw new BadRequestError(error.message);
@@ -217,7 +252,8 @@ export class AuthService {
   }
 
   async signOut(token: string) {
-    const { error } = await this.client.auth.admin.signOut(token);
+    const client = this.client;
+    const { error } = await client.auth.admin.signOut(token);
 
     if (error) {
       throw new BadRequestError(error.message);
