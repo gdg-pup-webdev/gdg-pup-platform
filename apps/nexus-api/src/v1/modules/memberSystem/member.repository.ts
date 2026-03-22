@@ -1,9 +1,7 @@
-import { supabase } from "@/v1/lib/supabase";
+import { serviceRoleClient } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 import { Tables } from "@/v1/types/supabase.types";
 import { RepositoryResult } from "@/v1/types/repository.types";
-
- 
 
 type memberRow = Tables<"gdg_members">;
 
@@ -13,15 +11,16 @@ export class MemberRepository {
   /**
    * getMemberByEmail
    * Fetches a single member record by their email.
+   * Uses serviceRoleClient to bypass RLS and avoid session bleeding.
    */
   getMemberByEmail = async (email: string): RepositoryResult<memberRow | null> => {
-    // Escape wildcards for ILIKE to prevent pattern injection
-    const escapedEmail = email.replace(/[%_]/g, "\\$&");
-
-    const { data, error } = await supabase
+    // We use .eq() for exact email match. Emails are unique and should be exact.
+    // If case-insensitivity is required, .ilike() is fine but usually emails 
+    // are stored in a standard way (lowercase).
+    const { data, error } = await serviceRoleClient
       .from(this.tableName)
       .select("*")
-      .ilike("email", escapedEmail)
+      .eq("email", email)
       .maybeSingle();
 
     if (error) {
