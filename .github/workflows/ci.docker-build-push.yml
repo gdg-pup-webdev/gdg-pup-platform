@@ -2,8 +2,7 @@
 # Docker Build & Push
 # =============================================================================
 # Trigger: push to deploy branches (or manual dispatch).
-# Mode:    non-selective (builds all services, including storybook).
-# CONFIGURE TO USE SELECTIVE BUILDINGS
+# Mode:    selective builds (only changed services)
 # =============================================================================
 
 name: Docker Build & Push
@@ -21,57 +20,51 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      nexus-web: ${{ steps.detect.outputs.nexus-web }}
+      nexus-api: ${{ steps.detect.outputs.nexus-api }}
+      environment: ${{ steps.detect.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect changes
+        id: detect
+        uses: ./.github/workflows/ci.detect-changes
+        with:
+          head-sha: ${{ github.sha }}
+          head-branch: ${{ github.ref_name }}
+
   build-nexus-web:
     name: nexus-web
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
         with:
           service: nexus-web
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-web/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
           build-args: |
-            NEXT_PUBLIC_NEXUS_API_URL=${{ github.ref_name == 'main' && 'https://api.gdgpup.org' || github.ref_name == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
-            NEXT_PUBLIC_IDENTITY_API_URL=${{ github.ref_name == 'main' && 'https://identity.gdgpup.org' || github.ref_name == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
+            NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
+            NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
 
   build-nexus-api:
     name: nexus-api
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.nexus-api == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
         with:
           service: nexus-api
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-api/Dockerfile
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
-
-  build-identity-api:
-    name: identity-api
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/builds
-        with:
-          service: identity-api
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
-          dockerfile: apps/identity-api/Dockerfile
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
-
-  build-storybook:
-    name: storybook
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/builds
-        with:
-          service: storybook
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
-          dockerfile: apps/storybook/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
