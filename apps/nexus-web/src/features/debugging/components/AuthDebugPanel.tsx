@@ -11,6 +11,7 @@ import React from "react";
 import { useDebugAuth } from "../hooks/useDebugAuth";
 import { toast } from "react-toastify";
 import { Button, Card, Badge, Avatar, Stack, Inline, Text } from '@packages/spark-ui';
+import { useAuthStore } from "@/features/authentication/store/useAuthStore";
 
 /**
  * Main authentication debugging panel
@@ -21,12 +22,17 @@ import { Button, Card, Badge, Avatar, Stack, Inline, Text } from '@packages/spar
 export function AuthDebugPanel() {
   const {
     authState,
-    loginWithGoogle,
-    logout,
+    loginWithGoogle, 
     copyToken,
     copyGoogleAccessToken,
     getFormattedAuthState,
   } = useDebugAuth();
+
+  const {token, clearToken} = useAuthStore();
+
+  const logout = () => {
+    clearToken();
+  }
 
   // Handle token copy with toast notification
   const handleCopyToken = async () => {

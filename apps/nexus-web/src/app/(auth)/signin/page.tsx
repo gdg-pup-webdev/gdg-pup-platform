@@ -1,6 +1,7 @@
 "use client";
 
 import { SignInForm } from "@/features/auth";
+import { LoginForm } from "@/features/authentication/components";
 import { ShineBorder } from "@packages/spark-ui";
 
 export default function SignInPage() {
@@ -16,7 +17,8 @@ export default function SignInPage() {
         </p>
       </div>
       <div className="w-full z-10 relative">
-        <SignInForm />
+        {/* <SignInForm /> */}
+        <LoginForm/>
       </div>
     </div>
   );
