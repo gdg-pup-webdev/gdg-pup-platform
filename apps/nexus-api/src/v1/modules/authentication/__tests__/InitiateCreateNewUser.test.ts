@@ -2,19 +2,22 @@
 import { MockUserCredentialReferenceRepository } from "../infrastructure/MockUserCredentialReferenceRepository.js";
 import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
 import { MockOtpService } from "../infrastructure/MockOtpService.js";
+import { MockMemberCheckService } from "../infrastructure/MockMemberCheckService.js";
 import { InitiateCreateNewUser } from "../useCases/InitiateCreateNewUser.js";
 
 describe("InitiateCreateNewUser", () => {
   let referenceRepo: MockUserCredentialReferenceRepository;
   let encryptionService: MockEncryptionService;
   let otpService: MockOtpService;
+  let memberCheckService: MockMemberCheckService;
   let useCase: InitiateCreateNewUser;
 
   beforeEach(() => {
     referenceRepo = new MockUserCredentialReferenceRepository();
     encryptionService = new MockEncryptionService();
     otpService = new MockOtpService();
-    useCase = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService);
+    memberCheckService = new MockMemberCheckService();
+    useCase = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService, memberCheckService);
   });
 
   it("should create a reference code for a new user", async () => {

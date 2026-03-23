@@ -12,6 +12,10 @@ export class MockGdgMemberRepository implements IGdgMemberRepository {
     return Array.from(this.members.values()).find(m => m.props.gdgId === gdgId) || null;
   }
 
+  async findByEmail(email: string): Promise<GdgMember | null> {
+    return Array.from(this.members.values()).find(m => m.props.email === email) || null;
+  }
+
   async findAll(pageNumber: number, pageSize: number, filters?: GdgMemberFilters): Promise<{ list: GdgMember[]; count: number }> {
     let list = Array.from(this.members.values());
 

@@ -9,6 +9,7 @@ import { ListGdgMembers } from "../useCases/ListGdgMembers";
 import { ImportGdgMembersFromCsv } from "../useCases/ImportGdgMembersFromCsv";
 import { ExportGdgMembersToCsv } from "../useCases/ExportGdgMembersToCsv";
 import { FindMemberByGdgId } from "../useCases/FindMemberByGdgId";
+import { FindMemberByEmail } from "../useCases/FindMemberByEmail";
 
 describe("GdgMembersController", () => {
   let controller: GdgMembersController;
@@ -24,7 +25,8 @@ describe("GdgMembersController", () => {
       new ListGdgMembers(repo),
       new ImportGdgMembersFromCsv(repo),
       new ExportGdgMembersToCsv(repo),
-      new FindMemberByGdgId(repo)
+      new FindMemberByGdgId(repo),
+      new FindMemberByEmail(repo)
     );
   });
 

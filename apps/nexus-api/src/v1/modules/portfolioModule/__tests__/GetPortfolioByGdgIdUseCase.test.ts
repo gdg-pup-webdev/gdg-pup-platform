@@ -43,9 +43,9 @@ describe("GetPortfolioByGdgIdUseCase", () => {
     expect(result.props.gdgId).toBe("GDG-002");
   });
 
-  it("throws NotFoundError when the portfolio has a null GDG ID", async () => {
+  it("throws NotFoundError when the portfolio has an empty GDG ID", async () => {
     repo.portfolios = [
-      Portfolio.hydrate(buildPortfolioProps({ id: "p-1", gdgId: null })),
+      Portfolio.hydrate(buildPortfolioProps({ id: "p-1", gdgId: "" })),
     ];
 
     await expect(useCase.execute("GDG-001")).rejects.toThrow(NotFoundError);

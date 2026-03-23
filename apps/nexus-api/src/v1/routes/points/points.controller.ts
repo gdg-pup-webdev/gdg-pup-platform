@@ -13,7 +13,7 @@ export class PointsHttpController {
         input.params.userId,
       );
       if (!wallet) throw new Error("Wallet not found");
-      return output(200, wallet as any);
+      return output(200, wallet);
     },
   );
 
@@ -28,15 +28,16 @@ export class PointsHttpController {
         pageSize,
       );
       return output(200, {
-        list: result.list,
-        count: result.count,
+        status: "success",
+        message: "History fetched successfully",  
+        data: result.list, 
         meta: {
           totalRecords: result.count,
           currentPage: pageNumber,
           pageSize,
           totalPages: Math.ceil(result.count / pageSize),
         },
-      } as any);
+      });
     },
   );
 
@@ -47,7 +48,7 @@ export class PointsHttpController {
         input.params.userId,
         input.body.entries,
       );
-      return output(200, result as any);
+      return output(200, result);
     },
   );
 
@@ -58,7 +59,7 @@ export class PointsHttpController {
         input.params.userId,
         input.body.entries,
       );
-      return output(200, result as any);
+      return output(200, result);
     },
   );
 
@@ -69,7 +70,7 @@ export class PointsHttpController {
         input.params.transactionId,
       );
       if (!transaction) throw new Error("Transaction not found");
-      return output(200, transaction as any);
+      return output(200, transaction);
     },
   );
 }
