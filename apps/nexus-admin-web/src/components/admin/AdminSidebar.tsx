@@ -34,6 +34,11 @@ const NAV_ITEMS = [
     icon: User,
   },
   {
+    label: "Members",
+    href: INTERNAL_LINKS.MEMBERS,
+    icon: User,
+  },
+  {
     label: "Teams",
     href: INTERNAL_LINKS.TEAMS,
     icon: Users,
@@ -48,11 +53,11 @@ const NAV_ITEMS = [
     href: INTERNAL_LINKS.TEAM_RESOURCES,
     icon: Link2,
   },
-  {
-    label: "Portfolios",
-    href: INTERNAL_LINKS.PORTFOLIOS,
-    icon: Award,
-  },
+  // {
+  //   label: "Portfolios",
+  //   href: INTERNAL_LINKS.PORTFOLIOS,
+  //   icon: Award,
+  // },
   {
     label: "Debug page",
     href: INTERNAL_LINKS.DEBUG_PAGE,

@@ -15,4 +15,5 @@ export const INTERNAL_LINKS = {
   PORTFOLIOS: "/admin/portfolios",
   PROFILE: "/admin/profile",
   LOGIN: "/authentication/login",
+  MEMBERS: "/admin/members",
 } as const;
