@@ -13,6 +13,7 @@ import {
   ExternalLink,
   Files,
   Link2,
+  User,
 } from "lucide-react";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 
@@ -26,6 +27,11 @@ const NAV_ITEMS = [
     label: "Dashboard",
     href: INTERNAL_LINKS.DASHBOARD,
     icon: LayoutDashboard,
+  },
+  {
+    label: "Profile",
+    href: INTERNAL_LINKS.PROFILE,
+    icon: User,
   },
   {
     label: "Teams",

@@ -14,8 +14,11 @@ export class AuthenticationRouter {
     this.router.post("/signup/finalize", this.controller.finalizeCreateNewUser);
     this.router.post("/login", this.controller.login);
     this.router.post("/verify", this.controller.verifyToken);
+    this.router.get("/me", this.controller.getMe);
+    this.router.post("/logout", this.controller.logout);
     
     this.router.post("/password/change/initiate", this.controller.initiateChangePassword);
+
     this.router.post("/password/change/finalize", this.controller.finalizeChangePassword);
     
     this.router.post("/email/change/initiate", this.controller.initiateChangeEmail);

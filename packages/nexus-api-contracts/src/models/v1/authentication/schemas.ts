@@ -79,3 +79,15 @@ export const deleteUserRequest = z.object({
 export const deleteUserResponse = z.object({
   success: z.boolean(),
 });
+
+export const meResponse = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  display_name: z.string(),
+  gdg_id: z.string().nullable(),
+});
+
+export const logoutResponse = z.object({
+  success: z.boolean(),
+});
+
