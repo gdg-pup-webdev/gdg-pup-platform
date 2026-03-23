@@ -9,7 +9,7 @@ export type PortfolioProps = {
   middleName: string | null;
   lastName: string | null;
   nickname: string | null;
-  gdgId: string | null;
+  gdgId: string;
   membershipType: string | null;
   department: string | null;
   yearLevel: number | null;

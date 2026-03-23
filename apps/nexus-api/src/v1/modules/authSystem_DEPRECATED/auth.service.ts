@@ -1,12 +1,12 @@
- 
+
 import { AuthError } from "@supabase/supabase-js";
-import { memberService } from "../memberSystem/member.service.js";  
 import { BadRequestError } from "@/v1/errors/HttpError.js";
 import { createAuthClient } from "@/v1/lib/supabase.js";
 import { userRepositoryInstance } from "@/v0/modules/userSystem/users/user.repository.js";
+import { memberService } from "../memberSystem_DEPRECATED";
 
 export class AuthService {
-  constructor(private readonly _customClient?: any) {}
+  constructor(private readonly _customClient?: any) { }
 
   private _activeClient: any = null;
 

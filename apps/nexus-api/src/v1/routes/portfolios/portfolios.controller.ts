@@ -66,7 +66,7 @@ export class PortfoliosHttpController {
         return output(200, {
           status: "success",
           message: "Portfolio fetched by name successfully",
-          data: [toRow(portfolio as any)],
+          data: [toRow(portfolio)],
           meta: {
             totalRecords: 1,
             currentPage: 1,
@@ -82,7 +82,7 @@ export class PortfoliosHttpController {
         return output(200, {
           status: "success",
           message: "Portfolio fetched by GDG ID successfully",
-          data: [toRow(portfolio as any)],
+          data: [toRow(portfolio)],
           meta: {
             totalRecords: 1,
             currentPage: 1,
@@ -101,7 +101,7 @@ export class PortfoliosHttpController {
       return output(200, {
         status: "success",
         message: "Portfolios fetched successfully",
-        data: list.map((p) => toRow(p as any)),
+        data: list.map((p) => toRow(p)),
         meta: {
           totalRecords: count,
           currentPage: pageNumber,
@@ -122,7 +122,7 @@ export class PortfoliosHttpController {
       return output(200, {
         status: "success",
         message: "Portfolio fetched successfully",
-        data: toRow(portfolio as any),
+        data: toRow(portfolio),
       });
     },
   );
@@ -150,7 +150,7 @@ export class PortfoliosHttpController {
       return output(200, {
         status: "success",
         message: "Portfolio updated successfully",
-        data: toRow(portfolio as any),
+        data: toRow(portfolio),
       });
     },
   );

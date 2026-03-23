@@ -13,15 +13,16 @@ export class GdgMerchHttpController {
       const pageSize = input.query.pageSize || 10;
       const data = await this.gdgMerchModuleController.list(pageNumber, pageSize);
       return output(200, {
-        list: data.list,
-        count: data.count,
+        status: "success",
+        message: "Merch list fetched successfully",
+        data: data.list,
         meta: {
           totalRecords: data.count,
           currentPage: pageNumber,
           pageSize: pageSize,
           totalPages: Math.ceil(data.count / pageSize)
         }
-      } as any);
+      });
     }
   );
 
