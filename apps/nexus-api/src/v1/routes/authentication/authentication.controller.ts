@@ -64,6 +64,36 @@ export class AuthenticationHttpController {
     }
   );
 
+  public getMe: RequestHandler = createExpressController(
+    contract.api.v1.authentication.me.GET,
+    async ({ output, ctx }) => {
+      const token = ctx.req.headers.authorization?.replace("Bearer ", "");
+      if (!token) throw new Error("No token provided");
+      
+      const result = await this.moduleController.getMe({ token });
+      
+      return output(200, {
+        status: "success",
+        message: "User retrieved",
+        data: result,
+      });
+    }
+  );
+
+  public logout: RequestHandler = createExpressController(
+    contract.api.v1.authentication.logout.POST,
+    async ({ output }) => {
+      const result = await this.moduleController.logout();
+      
+      return output(200, {
+        status: "success",
+        message: "Logged out successfully",
+        data: result,
+      });
+    }
+  );
+
+
   public initiateChangePassword: RequestHandler = createExpressController(
     contract.api.v1.authentication.password.change.initiate.POST,
     async ({ input, output }) => {

@@ -7,6 +7,8 @@ import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword.js";
 import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail.js";
 import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail.js";
 import { DeleteUser } from "./useCases/DeleteUser.js";
+import { GetMe } from "./useCases/GetMe.js";
+import { Logout } from "./useCases/Logout.js";
 
 export class AuthenticationController {
   constructor(
@@ -14,6 +16,8 @@ export class AuthenticationController {
     private readonly finalizeCreateNewUserUC: FinalizeCreateNewUser,
     private readonly loginUC: Login,
     private readonly verifyTokenUC: VerifyToken,
+    private readonly getMeUC: GetMe,
+    private readonly logoutUC: Logout,
     private readonly initiateChangePasswordUC: InitiateChangePassword,
     private readonly finalizeChangePasswordUC: FinalizeChangePassword,
     private readonly initiateChangeEmailUC: InitiateChangeEmail,
@@ -39,6 +43,15 @@ export class AuthenticationController {
   async verifyToken(body: { token: string }): Promise<Record<string, any>> {
     return this.verifyTokenUC.execute(body.token);
   }
+
+  async getMe(body: { token: string }): Promise<any> {
+    return this.getMeUC.execute(body.token);
+  }
+
+  async logout(): Promise<{ success: boolean }> {
+    return this.logoutUC.execute();
+  }
+
 
   async initiateChangePassword(body: { email: string; pass: string; newPass: string }): Promise<{ referenceCode: string }> {
     const referenceCode = await this.initiateChangePasswordUC.execute(body.email, body.pass, body.newPass);

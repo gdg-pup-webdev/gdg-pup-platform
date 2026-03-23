@@ -4,6 +4,7 @@ export abstract class IPortfolioRepository {
   abstract findById(portfolioId: string): Promise<Portfolio>;
   abstract findByName(displayName: string): Promise<Portfolio>;
   abstract findByGdgId(gdgId: string): Promise<Portfolio>;
+  abstract findByEmail(email: string): Promise<Portfolio>;
   abstract listPortfolios(
     pageNumber: number,
     pageSize: number,

@@ -13,15 +13,13 @@ import { RegisterCardByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCas
 import { RegisterCardsBulkUseCase } from "@/v1/modules/sparkmatesModule/useCase/RegisterCardsBulkUseCase";
 
 export type SparkmatesCardStateDTO = {
-  gdgId: string;
-  ownerUserId: string;
+  gdgId: string; 
   status: SparkmatesCardStatus;
   isPublic: boolean;
 };
 
 export type SparkmatesPublicRecordDTO = {
-  gdgId: string;
-  ownerUserId: string;
+  gdgId: string; 
   source: SparkmatesSource;
   status: SparkmatesCardStatus;
   portfolio: SparkmatesPublicPortfolio | null;
@@ -52,8 +50,7 @@ export class SparkmatesModuleController {
   }
 
   async registerCardByGdgId(input: {
-    gdgId: string;
-    ownerUserId?: string | null;
+    gdgId: string; 
     notes?: string | null;
   }): Promise<SparkmatesCardRegistrationDTO> {
     return this.registerCardByGdgIdUseCase.execute(input);
@@ -61,8 +58,7 @@ export class SparkmatesModuleController {
 
   async registerCardsBulk(input: {
     cards: Array<{
-      gdgId: string;
-      ownerUserId?: string | null;
+      gdgId: string; 
       notes?: string | null;
     }>;
   }): Promise<SparkmatesBulkRegistrationResultDTO> {

@@ -1,52 +1,32 @@
-import { AddGdgMember } from "./useCases/AddGdgMember";
-import { UpdateGdgMember } from "./useCases/UpdateGdgMember";
-import { DeleteGdgMember } from "./useCases/DeleteGdgMember";
-import { GetOneGdgMember } from "./useCases/GetOneGdgMember";
+import { AddGdgMember, AddGdgMemberInput } from "./useCases/AddGdgMember";
+import { UpdateMemberByGdgId } from "./useCases/UpdateMemberByGdgId";
 import { ListGdgMembers } from "./useCases/ListGdgMembers";
-import { ImportGdgMembersFromCsv } from "./useCases/ImportGdgMembersFromCsv";
-import { ExportGdgMembersToCsv } from "./useCases/ExportGdgMembersToCsv";
 import { FindMemberByGdgId } from "./useCases/FindMemberByGdgId";
 import { FindMemberByEmail } from "./useCases/FindMemberByEmail";
 import { GdgMemberFilters } from "./domain/IGdgMemberRepository";
+import { DeleteGdgMember } from "./useCases/DeleteGdgMember";
+import { GdgMember, GdgMemberUpdateProps } from "./domain/GdgMember";
+import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
+import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
 
 export class GdgMembersController {
   constructor(
     private readonly addUseCase: AddGdgMember,
-    private readonly updateUseCase: UpdateGdgMember,
     private readonly deleteUseCase: DeleteGdgMember,
-    private readonly getOneUseCase: GetOneGdgMember,
-    private readonly listUseCase: ListGdgMembers,
-    private readonly importUseCase: ImportGdgMembersFromCsv,
-    private readonly exportUseCase: ExportGdgMembersToCsv,
+    private readonly findByEmailUseCase: FindMemberByEmail,
     private readonly findByGdgIdUseCase: FindMemberByGdgId,
-    private readonly findByEmailUseCase: FindMemberByEmail
+    private readonly listUseCase: ListGdgMembers,
+    private readonly updateMemberByGdgIdUseCase: UpdateMemberByGdgId,
+    private readonly makeProfilePrivateUseCase: MakeProfilePrivate,
+    private readonly makeProfilePublicUseCase: MakeProfilePublic,
   ) {}
 
-  async addMember(data: {
-    gdgId: string;
-    email: string;
-    program: string;
-    department: string;
-    displayName: string;
-    firstName: string;
-    lastName: string;
-    suffix: string | null;
-  }) {
-    const result = await this.addUseCase.execute(data);
-    return result.props;
+  private flattenMemberData(data: GdgMember) {
+    return data.props;
   }
 
-  async update(id: string, data: {
-    gdgId?: string;
-    email?: string;
-    program?: string;
-    department?: string;
-    displayName?: string;
-    firstName?: string;
-    lastName?: string;
-    suffix?: string | null;
-  }) {
-    const result = await this.updateUseCase.execute(id, data);
+  async addMember(data: AddGdgMemberInput) {
+    const result = await this.addUseCase.execute(data);
     return result.props;
   }
 
@@ -55,8 +35,8 @@ export class GdgMembersController {
     return { success: true };
   }
 
-  async getOne(id: string) {
-    const result = await this.getOneUseCase.execute(id);
+  async findByEmail(email: string) {
+    const result = await this.findByEmailUseCase.execute(email);
     return result ? result.props : null;
   }
 
@@ -65,24 +45,30 @@ export class GdgMembersController {
     return result ? result.props : null;
   }
 
-  async findByEmail(email: string) {
-    const result = await this.findByEmailUseCase.execute(email);
-    return result ? result.props : null;
-  }
-
   async list(pageNumber: number, pageSize: number, filters?: GdgMemberFilters) {
-    const result = await this.listUseCase.execute(pageNumber, pageSize, filters);
+    const result = await this.listUseCase.execute(
+      pageNumber,
+      pageSize,
+      filters,
+    );
     return {
-      list: result.list.map(m => m.props),
-      count: result.count
+      list: result.list.map((m) => m.props),
+      count: result.count,
     };
   }
 
-  async importFromCsv(csvContent: string) {
-    return await this.importUseCase.execute(csvContent);
+  async update(gdgId: string, data: GdgMemberUpdateProps) {
+    const result = await this.updateMemberByGdgIdUseCase.execute(gdgId, data);
+    return result.props;
   }
 
-  async exportToCsv() {
-    return await this.exportUseCase.execute();
+  async makeProfilePrivate(gdgId: string) {
+    await this.makeProfilePrivateUseCase.execute(gdgId);
+    return { success: true };
+  }
+
+  async makeProfilePublic(gdgId: string) {
+    await this.makeProfilePublicUseCase.execute(gdgId);
+    return { success: true };
   }
 }

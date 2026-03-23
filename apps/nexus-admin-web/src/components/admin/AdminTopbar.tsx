@@ -89,6 +89,14 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 origin-top-right overflow-hidden rounded border border-gray-100 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-2">
               <Link
+                href={INTERNAL_LINKS.PROFILE}
+                onClick={() => setIsDropdownOpen(false)}
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <User size={16} className="text-gray-400" />
+                Profile
+              </Link>
+              <Link
                 href={EXTERNAL_LINKS.LIVE_WEBSITE}
                 onClick={() => setIsDropdownOpen(false)}
                 className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"

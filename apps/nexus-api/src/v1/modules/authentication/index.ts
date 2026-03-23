@@ -15,6 +15,8 @@ import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword.js";
 import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail.js";
 import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail.js";
 import { DeleteUser } from "./useCases/DeleteUser.js";
+import { GetMe } from "./useCases/GetMe.js";
+import { Logout } from "./useCases/Logout.js";
 import { OneTimePinController } from "../oneTimePin/OneTimePinController.js";
 import { GdgMembersController } from "../gdgMembers/GdgMembersController.js";
 
@@ -37,6 +39,8 @@ export function initializeAuthenticationModule(
   const finalizeCreateNewUserUC = new FinalizeCreateNewUser(credentialRepo, referenceRepo, otpService);
   const loginUC = new Login(credentialRepo, encryptionService, jwtService);
   const verifyTokenUC = new VerifyToken(jwtService);
+  const getMeUC = new GetMe(jwtService, credentialRepo);
+  const logoutUC = new Logout();
   const initiateChangePasswordUC = new InitiateChangePassword(credentialRepo, referenceRepo, encryptionService, otpService);
   const finalizeChangePasswordUC = new FinalizeChangePassword(credentialRepo, referenceRepo, otpService);
   const initiateChangeEmailUC = new InitiateChangeEmail(credentialRepo, referenceRepo, encryptionService, otpService);
@@ -49,6 +53,8 @@ export function initializeAuthenticationModule(
     finalizeCreateNewUserUC,
     loginUC,
     verifyTokenUC,
+    getMeUC,
+    logoutUC,
     initiateChangePasswordUC,
     finalizeChangePasswordUC,
     initiateChangeEmailUC,
@@ -65,10 +71,13 @@ export {
     FinalizeCreateNewUser,
     Login,
     VerifyToken,
+    GetMe,
+    Logout,
     InitiateChangePassword,
     FinalizeChangePassword,
     InitiateChangeEmail,
     FinalizeChangeEmail,
     DeleteUser
 }
+
 

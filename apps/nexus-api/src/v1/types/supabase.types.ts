@@ -411,43 +411,85 @@ export type Database = {
       }
       gdg_members: {
         Row: {
+          avatar_image_url: string | null
+          bio: string | null
           created_at: string | null
           department: string | null
           display_name: string | null
           email: string
           first_name: string | null
           gdg_id: string
-          id: string
+          github_url: string | null
+          is_public: boolean | null
           last_name: string | null
+          learning_interests: string | null
+          linkedin_url: string | null
+          membership_type: string | null
+          middle_name: string | null
+          nickname: string | null
+          other_links: string | null
+          portfolio_url: string | null
           program: string | null
+          skills_summary: string | null
           suffix: string | null
+          technical_skills: string | null
+          tools_and_technologies: string | null
           updated_at: string | null
+          year_level: number | null
         }
         Insert: {
+          avatar_image_url?: string | null
+          bio?: string | null
           created_at?: string | null
           department?: string | null
           display_name?: string | null
           email: string
           first_name?: string | null
           gdg_id: string
-          id?: string
+          github_url?: string | null
+          is_public?: boolean | null
           last_name?: string | null
+          learning_interests?: string | null
+          linkedin_url?: string | null
+          membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
+          other_links?: string | null
+          portfolio_url?: string | null
           program?: string | null
+          skills_summary?: string | null
           suffix?: string | null
+          technical_skills?: string | null
+          tools_and_technologies?: string | null
           updated_at?: string | null
+          year_level?: number | null
         }
         Update: {
+          avatar_image_url?: string | null
+          bio?: string | null
           created_at?: string | null
           department?: string | null
           display_name?: string | null
           email?: string
           first_name?: string | null
           gdg_id?: string
-          id?: string
+          github_url?: string | null
+          is_public?: boolean | null
           last_name?: string | null
+          learning_interests?: string | null
+          linkedin_url?: string | null
+          membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
+          other_links?: string | null
+          portfolio_url?: string | null
           program?: string | null
+          skills_summary?: string | null
           suffix?: string | null
+          technical_skills?: string | null
+          tools_and_technologies?: string | null
           updated_at?: string | null
+          year_level?: number | null
         }
         Relationships: []
       }
@@ -488,7 +530,6 @@ export type Database = {
           gdg_id: string
           id: string
           notes: string | null
-          owner_user_id: string | null
           revoked_at: string | null
           status: Database["public"]["Enums"]["nfc_card_status"]
           suspended_at: string | null
@@ -500,7 +541,6 @@ export type Database = {
           gdg_id: string
           id?: string
           notes?: string | null
-          owner_user_id?: string | null
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["nfc_card_status"]
           suspended_at?: string | null
@@ -512,7 +552,6 @@ export type Database = {
           gdg_id?: string
           id?: string
           notes?: string | null
-          owner_user_id?: string | null
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["nfc_card_status"]
           suspended_at?: string | null
@@ -525,13 +564,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "gdg_members"
             referencedColumns: ["gdg_id"]
-          },
-          {
-            foreignKeyName: "nfc_cards_owner_user_id_fkey"
-            columns: ["owner_user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -1230,12 +1262,14 @@ export type Database = {
         }
         Relationships: []
       }
-      user_profile: {
+      user_portfolio: {
         Row: {
+          avatar_image_url: string | null
           bio: string | null
           created_at: string
           department: string | null
           first_name: string | null
+          gdg_id: string | null
           github_url: string | null
           id: string
           is_public: boolean
@@ -1247,7 +1281,6 @@ export type Database = {
           nickname: string | null
           other_links: string[] | null
           portfolio_url: string | null
-          profile_image: string | null
           program: string | null
           skills_summary: string | null
           technical_skills: string[] | null
@@ -1257,10 +1290,12 @@ export type Database = {
           year_level: number | null
         }
         Insert: {
+          avatar_image_url?: string | null
           bio?: string | null
           created_at?: string
           department?: string | null
           first_name?: string | null
+          gdg_id?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
@@ -1272,7 +1307,6 @@ export type Database = {
           nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
-          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
           technical_skills?: string[] | null
@@ -1282,10 +1316,12 @@ export type Database = {
           year_level?: number | null
         }
         Update: {
+          avatar_image_url?: string | null
           bio?: string | null
           created_at?: string
           department?: string | null
           first_name?: string | null
+          gdg_id?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
@@ -1297,7 +1333,6 @@ export type Database = {
           nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
-          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
           technical_skills?: string[] | null
@@ -1306,15 +1341,7 @@ export type Database = {
           user_id?: string
           year_level?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_profile_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_project: {
         Row: {
@@ -1563,17 +1590,31 @@ export type Database = {
       verify_member: {
         Args: { search_term: string }
         Returns: {
+          avatar_image_url: string | null
+          bio: string | null
           created_at: string | null
           department: string | null
           display_name: string | null
           email: string
           first_name: string | null
           gdg_id: string
-          id: string
+          github_url: string | null
+          is_public: boolean | null
           last_name: string | null
+          learning_interests: string | null
+          linkedin_url: string | null
+          membership_type: string | null
+          middle_name: string | null
+          nickname: string | null
+          other_links: string | null
+          portfolio_url: string | null
           program: string | null
+          skills_summary: string | null
           suffix: string | null
+          technical_skills: string | null
+          tools_and_technologies: string | null
           updated_at: string | null
+          year_level: number | null
         }[]
         SetofOptions: {
           from: "*"

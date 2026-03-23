@@ -187,6 +187,12 @@ importers:
       '@packages/nexus-api-contracts':
         specifier: workspace:*
         version: link:../../packages/nexus-api-contracts
+      '@packages/spark-tools':
+        specifier: workspace:*
+        version: link:../../packages/spark-tools
+      '@packages/spark-ui':
+        specifier: workspace:*
+        version: link:../../packages/spark-ui
       '@packages/typed-rest':
         specifier: workspace:*
         version: link:../../packages/typed-rest

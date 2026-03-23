@@ -1,19 +1,5 @@
 export type PortfolioProps = {
-  id: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-
-  // Personal Information
-  firstName: string | null;
-  middleName: string | null;
-  lastName: string | null;
-  nickname: string | null;
   gdgId: string;
-  membershipType: string | null;
-  department: string | null;
-  yearLevel: number | null;
-  program: string | null;
 
   // Bio
   bio: string | null;
@@ -29,12 +15,13 @@ export type PortfolioProps = {
   learningInterests: string[];
   toolsAndTechnologies: string[];
 
-  isPublic: boolean;
   profileImage: string | null;
+
+  isPublic: boolean;
 };
 
 export type PortfolioUpdateProps = Partial<
-  Omit<PortfolioProps, "id" | "userId" | "createdAt" | "updatedAt">
+  Omit<PortfolioProps, "id" | "createdAt" | "updatedAt">
 >;
 
 export class Portfolio {
