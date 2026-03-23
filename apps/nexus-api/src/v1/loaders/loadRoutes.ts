@@ -48,6 +48,7 @@ import { EventHighlightsHttpController } from "../routes/event-highlights/eventH
 import { EventHighlightsRouter } from "../routes/event-highlights/eventHighlights.router";
 import { AuthenticationHttpController } from "../routes/authentication/authentication.controller";
 import { AuthenticationController, initializeAuthenticationModule } from "../modules/authentication";
+import { oneTimePinController } from "../modules/oneTimePin";
 import { configs } from "@/configs/configs";
 import { AuthenticationRouter } from "../routes/authentication/authentication.router";
 
@@ -114,7 +115,7 @@ export const loadRoutes = (app: Express) => {
   const teamResourcesHttpController = new TeamResourcesHttpController(teamResourceController);
   const teamResourcesRouter = new TeamResourcesRouter(teamResourcesHttpController);
 
-  const authenticationModule = initializeAuthenticationModule(supabaseClient, configs.jwt.secret)
+  const authenticationModule = initializeAuthenticationModule(supabaseClient, configs.jwt.secret, oneTimePinController)
   const authenticationHttpController = new AuthenticationHttpController(authenticationModule)
   const authenticationRouter = new AuthenticationRouter(authenticationHttpController)
 

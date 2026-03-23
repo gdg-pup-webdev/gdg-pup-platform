@@ -1,18 +1,17 @@
 ﻿import { IOTPService } from "../domain/IAuthenticationInterfaces.js";
+import { OneTimePinController } from "../../oneTimePin/OneTimePinController.js";
 
-// This is a mock implementation. A real implementation would use the oneTimePin module.
 export class OtpService implements IOTPService {
+  constructor(private readonly otpController: OneTimePinController) {}
+
   async createAndSendOtpToEmail(email: string): Promise<string> {
-    console.log(`Sending OTP to ${email}`);
-    // In a real implementation, this would call the oneTimePin module
-    // and return the reference from there.
-    return Promise.resolve("mock-otp-reference");
+    const { reference } = await this.otpController.createAndSendOtpToEmail(email);
+    return reference;
   }
 
   async verifyOtp(reference: string, otp: string): Promise<boolean> {
-    console.log(`Verifying OTP for reference ${reference}`);
-    // In a real implementation, this would call the oneTimePin module.
-    return Promise.resolve(otp === "123456"); // Mock verification
+    const { isValid } = await this.otpController.verifyOtp(reference, otp);
+    return isValid;
   }
 }
 

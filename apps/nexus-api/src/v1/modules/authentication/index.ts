@@ -14,14 +14,15 @@ import { FinalizeChangePassword } from "./useCases/FinalizeChangePassword.js";
 import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail.js";
 import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail.js";
 import { DeleteUser } from "./useCases/DeleteUser.js";
+import { OneTimePinController } from "../oneTimePin/OneTimePinController.js";
 
-export function initializeAuthenticationModule(supabase: SupabaseClient, jwtSecret: string) {
+export function initializeAuthenticationModule(supabase: SupabaseClient, jwtSecret: string, oneTimePinController: OneTimePinController) {
   // Infrastructure
   const credentialRepo = new SupabaseUserCredentialRepository(supabase);
   const referenceRepo = new SupabaseUserCredentialReferenceRepository(supabase);
   const encryptionService = new BcryptEncryptionService();
   const jwtService = new JwtService(jwtSecret);
-  const otpService = new OtpService();
+  const otpService = new OtpService(oneTimePinController);
 
   // Use Cases
   const initiateCreateNewUserUC = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService);
