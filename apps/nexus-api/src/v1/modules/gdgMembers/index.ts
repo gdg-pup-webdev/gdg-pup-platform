@@ -7,6 +7,7 @@ import { ListGdgMembers } from "./useCases/ListGdgMembers";
 import { ImportGdgMembersFromCsv } from "./useCases/ImportGdgMembersFromCsv";
 import { ExportGdgMembersToCsv } from "./useCases/ExportGdgMembersToCsv";
 import { FindMemberByGdgId } from "./useCases/FindMemberByGdgId";
+import { FindMemberByEmail } from "./useCases/FindMemberByEmail";
 import { GdgMembersController } from "./GdgMembersController";
 
 const repo = new SupabaseGdgMemberRepository();
@@ -19,6 +20,7 @@ const listUseCase = new ListGdgMembers(repo);
 const importUseCase = new ImportGdgMembersFromCsv(repo);
 const exportUseCase = new ExportGdgMembersToCsv(repo);
 const findByGdgIdUseCase = new FindMemberByGdgId(repo);
+const findByEmailUseCase = new FindMemberByEmail(repo);
 
 export const gdgMembersController = new GdgMembersController(
   addUseCase,
@@ -28,7 +30,8 @@ export const gdgMembersController = new GdgMembersController(
   listUseCase,
   importUseCase,
   exportUseCase,
-  findByGdgIdUseCase
+  findByGdgIdUseCase,
+  findByEmailUseCase
 );
 
 export { GdgMembersController };

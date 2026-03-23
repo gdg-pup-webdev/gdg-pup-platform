@@ -5,6 +5,7 @@ import { JwtService } from "./infrastructure/JwtService.js";
 import { OtpService } from "./infrastructure/OtpService.js";
 import { SupabaseUserCredentialRepository } from "./infrastructure/SupabaseUserCredentialRepository.js";
 import { SupabaseUserCredentialReferenceRepository } from "./infrastructure/SupabaseUserCredentialReferenceRepository.js";
+import { MemberCheckService } from "./infrastructure/MemberCheckService.js";
 import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser.js";
 import { FinalizeCreateNewUser } from "./useCases/FinalizeCreateNewUser.js";
 import { Login } from "./useCases/Login.js";
@@ -15,17 +16,24 @@ import { InitiateChangeEmail } from "./useCases/InitiateChangeEmail.js";
 import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail.js";
 import { DeleteUser } from "./useCases/DeleteUser.js";
 import { OneTimePinController } from "../oneTimePin/OneTimePinController.js";
+import { GdgMembersController } from "../gdgMembers/GdgMembersController.js";
 
-export function initializeAuthenticationModule(supabase: SupabaseClient, jwtSecret: string, oneTimePinController: OneTimePinController) {
+export function initializeAuthenticationModule(
+  supabase: SupabaseClient,
+  jwtSecret: string,
+  oneTimePinController: OneTimePinController,
+  gdgMembersController: GdgMembersController
+) {
   // Infrastructure
   const credentialRepo = new SupabaseUserCredentialRepository(supabase);
   const referenceRepo = new SupabaseUserCredentialReferenceRepository(supabase);
   const encryptionService = new BcryptEncryptionService();
   const jwtService = new JwtService(jwtSecret);
   const otpService = new OtpService(oneTimePinController);
+  const memberCheckService = new MemberCheckService(gdgMembersController);
 
   // Use Cases
-  const initiateCreateNewUserUC = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService);
+  const initiateCreateNewUserUC = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService, memberCheckService);
   const finalizeCreateNewUserUC = new FinalizeCreateNewUser(credentialRepo, referenceRepo, otpService);
   const loginUC = new Login(credentialRepo, encryptionService, jwtService);
   const verifyTokenUC = new VerifyToken(jwtService);

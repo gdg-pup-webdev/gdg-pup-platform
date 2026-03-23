@@ -32,6 +32,12 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     return data ? this.mapToDomain(data) : null;
   }
 
+  async findByEmail(email: string): Promise<GdgMember | null> {
+    const { data, error } = await supabase.from(this.tableName).select("*").eq("email", email).maybeSingle();
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return data ? this.mapToDomain(data) : null;
+  }
+
   async findAll(pageNumber: number, pageSize: number, filters: GdgMemberFilters = {}): Promise<{ list: GdgMember[]; count: number }> {
     let query = supabase.from(this.tableName).select("*", { count: "exact" });
 

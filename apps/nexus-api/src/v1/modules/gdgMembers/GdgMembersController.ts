@@ -6,6 +6,7 @@ import { ListGdgMembers } from "./useCases/ListGdgMembers";
 import { ImportGdgMembersFromCsv } from "./useCases/ImportGdgMembersFromCsv";
 import { ExportGdgMembersToCsv } from "./useCases/ExportGdgMembersToCsv";
 import { FindMemberByGdgId } from "./useCases/FindMemberByGdgId";
+import { FindMemberByEmail } from "./useCases/FindMemberByEmail";
 import { GdgMemberFilters } from "./domain/IGdgMemberRepository";
 
 export class GdgMembersController {
@@ -17,7 +18,8 @@ export class GdgMembersController {
     private readonly listUseCase: ListGdgMembers,
     private readonly importUseCase: ImportGdgMembersFromCsv,
     private readonly exportUseCase: ExportGdgMembersToCsv,
-    private readonly findByGdgIdUseCase: FindMemberByGdgId
+    private readonly findByGdgIdUseCase: FindMemberByGdgId,
+    private readonly findByEmailUseCase: FindMemberByEmail
   ) {}
 
   async addMember(data: {
@@ -60,6 +62,11 @@ export class GdgMembersController {
 
   async findByGdgId(gdgId: string) {
     const result = await this.findByGdgIdUseCase.execute(gdgId);
+    return result ? result.props : null;
+  }
+
+  async findByEmail(email: string) {
+    const result = await this.findByEmailUseCase.execute(email);
     return result ? result.props : null;
   }
 
