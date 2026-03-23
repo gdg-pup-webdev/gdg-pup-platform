@@ -6,13 +6,12 @@ export interface GdgMemberFilters {
   department?: string;
 }
 
-export interface IGdgMemberRepository {
-  findById(id: string): Promise<GdgMember | null>;
+export interface IGdgMemberRepository { 
   findByGdgId(gdgId: string): Promise<GdgMember | null>;
   findByEmail(email: string): Promise<GdgMember | null>;
   findAll(pageNumber: number, pageSize: number, filters?: GdgMemberFilters): Promise<{ list: GdgMember[]; count: number }>;
   saveNew(member: GdgMember): Promise<GdgMember>;
   persistUpdates(member: GdgMember): Promise<GdgMember>;
-  delete(id: string): Promise<void>;
+  deleteByGdgId(gdgId: string): Promise<void>;
   getHighestIdNumberForYear(yearPrefix: string): Promise<number>;
 }

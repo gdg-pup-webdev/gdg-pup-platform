@@ -43,31 +43,27 @@ export class SparkmatesRepository implements ISparkmatesRepository {
       .select("status")
       .eq("gdg_id", gdgId)
       .maybeSingle();
-
-    const userId = await this.portfolioService.getUserIdByGdgId(gdgId);
+ 
     const isPublic = await this.portfolioService.getPortfolioVisibilityByGdgId(gdgId);
 
     if (!nfcError && nfcData) {
       if (nfcData.status === "activated") {
         return {
-          gdgId,
-          ownerUserId: userId,
+          gdgId, 
           status: isPublic ? "activated" : "issued",
           isPublic: Boolean(isPublic),
         };
       }
 
       return {
-        gdgId,
-        ownerUserId: userId,
+        gdgId, 
         status: nfcData.status,
         isPublic: false,
       };
     }
 
     return {
-      gdgId,
-      ownerUserId: userId,
+      gdgId, 
       status: isPublic ? "activated" : "issued",
       isPublic,
     };
@@ -77,13 +73,13 @@ export class SparkmatesRepository implements ISparkmatesRepository {
     gdgId: string,
     actorUserId: string,
   ): Promise<SparkmatesCardState> {
-    const userId = await this.portfolioService.getUserIdByGdgId(gdgId);
+    // const userId = await this.portfolioService.getUserIdByGdgId(gdgId);
 
-    if (userId !== actorUserId) {
-      throw new ForbiddenError(
-        `User ${actorUserId} does not own Sparkmates card for GDG ID: ${gdgId}`,
-      );
-    }
+    // if (userId !== actorUserId) {
+    //   throw new ForbiddenError(
+    //     `User ${actorUserId} does not own Sparkmates card for GDG ID: ${gdgId}`,
+    //   );
+    // }
 
     await this.portfolioService.setPortfolioVisibilityByGdgId(gdgId, true);
 
@@ -98,8 +94,7 @@ export class SparkmatesRepository implements ISparkmatesRepository {
 
     const { error: nfcError } = await nfcClient.from(this.nfcTable).upsert(
       {
-        gdg_id: gdgId,
-        owner_user_id: userId,
+        gdg_id: gdgId, 
         status: "activated",
         activated_at: new Date().toISOString(),
       },
@@ -114,8 +109,7 @@ export class SparkmatesRepository implements ISparkmatesRepository {
     }
 
     return {
-      gdgId,
-      ownerUserId: userId,
+      gdgId, 
       status: "activated",
       isPublic: true,
     };
@@ -178,21 +172,20 @@ export class SparkmatesRepository implements ISparkmatesRepository {
     }
 
     // Use portfolio service to get or validate user ID
-    let ownerUserId = input.ownerUserId;
-    if (!ownerUserId) {
-        ownerUserId = await this.portfolioService.getUserIdByGdgId(input.gdgId);
-    } else {
-        // Just checking if portfolio exists for this user would be good
-        // But the original code was checking if user exists by ID.
-        // We'll stick to getUserIdByGdgId or similar if we wanted to be strict.
-        // For simplicity and to follow instructions, we rely on the portfolio service.
-    }
+    // let ownerUserId = input.ownerUserId;
+    // if (!ownerUserId) {
+    //     ownerUserId = await this.portfolioService.getUserIdByGdgId(input.gdgId);
+    // } else {
+    //     // Just checking if portfolio exists for this user would be good
+    //     // But the original code was checking if user exists by ID.
+    //     // We'll stick to getUserIdByGdgId or similar if we wanted to be strict.
+    //     // For simplicity and to follow instructions, we rely on the portfolio service.
+    // }
 
     const { data, error } = await nfcClient
       .from(this.nfcTable)
       .insert({
-        gdg_id: input.gdgId,
-        owner_user_id: ownerUserId,
+        gdg_id: input.gdgId, 
         status: "issued",
         notes: input.notes ?? null,
       })

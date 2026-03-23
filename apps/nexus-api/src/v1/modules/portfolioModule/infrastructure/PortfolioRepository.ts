@@ -7,21 +7,14 @@ import {
   PortfolioProps,
 } from "@/v1/modules/portfolioModule/domain/Portfolio";
 
-type GdgMemberRow = Tables<"gdg_members">;
-type UserRow = Tables<"user">;
-type UserProfileRow = Tables<"user_profile">;
+type UserPortfolioRow = Tables<"user_portfolio">;
 
-type PortfolioSelectRow = GdgMemberRow & {
-  user: (UserRow & {
-    profile: UserProfileRow[] | null;
-  })[] | null;
-};
 
 /**
  * Maps PortfolioProps (camelCase) to user_profile DB columns (snake_case).
  * This configuration centralizes field mapping and reduces hardcoding in implementation.
  */
-const PROFILE_COLUMN_MAPPING: Record<string, keyof UserProfileRow> = {
+const PROFILE_COLUMN_MAPPING: Record<string, keyof UserPortfolioRow> = {
   firstName: "first_name",
   middleName: "middle_name",
   lastName: "last_name",
@@ -42,65 +35,53 @@ const PROFILE_COLUMN_MAPPING: Record<string, keyof UserProfileRow> = {
   profileImage: "profile_image",
 };
 
-export class PortfolioRepository implements IPortfolioRepository {
-  private readonly memberTable = "gdg_members";
-  private readonly userTable = "user";
-  private readonly profileTable = "user_profile";
+export class PortfolioRepository implements IPortfolioRepository { 
+  private readonly profileTable = "user_portfolio";
 
-  private readonly selectClause = `
-    *,
-    user:user!user_gdg_id_fkey (
-      *,
-      profile:user_profile(*)
-    )
-  `;
 
-  private rowToPortfolio(row: PortfolioSelectRow): Portfolio {
-    const userRow = row.user?.[0] || null;
-    const profileRow = userRow?.profile?.[0] || null;
+  private rowToPortfolio(row: UserPortfolioRow): Portfolio {  
 
     return Portfolio.hydrate({
       // We use gdg_members.id as the primary identifier for the portfolio
-      id: row.id,
-      userId: userRow?.id || row.id, // Fallback to member ID if no user record
-      createdAt: profileRow?.created_at || row.created_at || new Date().toISOString(),
-      updatedAt: profileRow?.updated_at || row.updated_at || new Date().toISOString(),
+      id: row.id, 
+      createdAt: row?.created_at   || new Date().toISOString(),
+      updatedAt: row?.updated_at  || new Date().toISOString(),
 
       // Personal Information - Fallback hierarchy: Profile -> User -> Member (Source of Truth)
-      firstName: profileRow?.first_name || userRow?.first_name || row.first_name || null,
-      middleName: profileRow?.middle_name || null,
-      lastName: profileRow?.last_name || userRow?.last_name || row.last_name || null,
-      nickname: profileRow?.nickname || userRow?.display_name || row.display_name || null,
-      gdgId: row.gdg_id,
+      firstName: row?.first_name   || null,
+      middleName: row?.middle_name || null,
+      lastName: row?.last_name  || null,
+      nickname: row?.nickname || null,
+      gdgId: row.gdg_id || "NO GDG ID",
       
-      membershipType: profileRow?.membership_type ?? null,
-      department: profileRow?.department || row.department || null,
-      yearLevel: profileRow?.year_level ?? null,
-      program: profileRow?.program || row.program || null,
+      membershipType: row?.membership_type ?? null,
+      department: row?.department  || null,
+      yearLevel: row?.year_level ?? null,
+      program: row?.program || null,
 
       // Bio
-      bio: profileRow?.bio ?? null,
+      bio: row?.bio ?? null,
 
       // Socials
-      githubUrl: profileRow?.github_url ?? null,
-      linkedinUrl: profileRow?.linkedin_url ?? null,
-      portfolioWebsiteUrl: profileRow?.portfolio_url ?? null,
-      otherLinks: profileRow?.other_links ?? [],
+      githubUrl: row?.github_url ?? null,
+      linkedinUrl: row?.linkedin_url ?? null,
+      portfolioWebsiteUrl: row?.portfolio_url ?? null,
+      otherLinks: row?.other_links ?? [],
 
       // Skills & Interests
-      technicalSkills: profileRow?.technical_skills ?? [],
-      learningInterests: profileRow?.learning_interests ?? [],
-      toolsAndTechnologies: profileRow?.tools_and_technologies ?? [],
+      technicalSkills: row?.technical_skills ?? [],
+      learningInterests: row?.learning_interests ?? [],
+      toolsAndTechnologies: row?.tools_and_technologies ?? [],
 
-      isPublic: profileRow?.is_public ?? false,
-      profileImage: profileRow?.profile_image ?? userRow?.avatar_url ?? null,
+      isPublic: row?.is_public ?? false,
+      profileImage: row?.profile_image ?? null,
     });
   }
   
   async findById(portfolioId: string): Promise<Portfolio> {
     const { data, error } = await supabase
-      .from(this.memberTable)
-      .select(this.selectClause)
+      .from(this.profileTable)
+      .select("*")
       .eq("id", portfolioId)
       .single();
 
@@ -108,13 +89,13 @@ export class PortfolioRepository implements IPortfolioRepository {
       throw new NotFoundError(`Portfolio not found for ID: ${portfolioId}`);
     }
 
-    return this.rowToPortfolio(data as PortfolioSelectRow);
+    return this.rowToPortfolio(data  );
   }
 
   async findByName(displayName: string): Promise<Portfolio> {
     const { data, error } = await supabase
-      .from(this.memberTable)
-      .select(this.selectClause)
+      .from(this.profileTable)
+      .select("*")
       .eq("display_name", displayName)
       .single();
 
@@ -143,6 +124,27 @@ export class PortfolioRepository implements IPortfolioRepository {
     }
 
     console.log(`Found portfolio for GDG ID ${gdgId}:`, data);
+
+    return this.rowToPortfolio(data as PortfolioSelectRow);
+  }
+
+  async findByEmail(email: string): Promise<Portfolio> {
+    console.log(`Finding portfolio by email: ${email}`);
+    const { data, error } = await supabase
+      .from(this.memberTable)
+      .select(this.selectClause)
+      .eq("email", email)
+      .single();
+
+    if (error) {
+      console.error(`Error finding portfolio for email ${email}:`, error);
+    }
+
+    console.log(`Found portfolio for email ${email}:`, data);
+
+    if (error || !data) {
+      throw new NotFoundError(`Portfolio not found for email: ${email}`);
+    }
 
     return this.rowToPortfolio(data as PortfolioSelectRow);
   }

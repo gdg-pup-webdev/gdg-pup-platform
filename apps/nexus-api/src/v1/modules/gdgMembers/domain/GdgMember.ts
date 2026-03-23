@@ -1,17 +1,53 @@
 export type GdgMemberProps = {
-  id: string;
+  // Core Identifiers
   gdgId: string;
   email: string;
-  program: string;
-  department: string;
-  displayName: string;
+
+  /**
+   * membership
+   */
+
+  membershipType: string | null;
+
+  /**
+   * profile
+   */
+  avatarUrl: string | null;
+
+  // education
+  program: string | null;
+  yearLevel: number | null;
+  department: string | null;
+
+  // name
+  displayName: string | null;
   firstName: string;
+  middleName: string | null;
   lastName: string;
   suffix: string | null;
+
+  /**
+   * portfolio
+   */
+  // Bio
+  bio: string | null;
+
+  // Socials
+  githubUrl: string | null;
+  linkedinUrl: string | null;
+  portfolioWebsiteUrl: string | null;
+  otherLinks: string[];
+
+  // Skills & Interests
+  technicalSkills: string[];
+  learningInterests: string[];
+  toolsAndTechnologies: string[];
+
+  isPublic: boolean;
 };
 
-export type GdgMemberInsertProps = GdgMemberProps; // create requires id as per prompt
-export type GdgMemberUpdateProps = Partial<Omit<GdgMemberProps, "id">>;
+export type GdgMemberInsertProps = GdgMemberProps;
+export type GdgMemberUpdateProps = Partial<GdgMemberInsertProps>;
 
 export class GdgMember {
   private _props: GdgMemberProps;
@@ -21,7 +57,6 @@ export class GdgMember {
   }
 
   static create(props: GdgMemberInsertProps): GdgMember {
-    if (!props.id) throw new Error("ID is required for creation");
     return new GdgMember(props);
   }
 
@@ -33,7 +68,18 @@ export class GdgMember {
     return this._props;
   }
 
-  update(props: GdgMemberUpdateProps): void {
-    this._props = { ...this._props, ...props };
+  update(updates: GdgMemberUpdateProps): void {
+    this._props = {
+      ...this._props,
+      ...updates,
+    };
+  } 
+
+  makePortfolioPublic() : void {
+    this._props.isPublic = true
+  }
+
+  makePortfolioPrivate() : void {
+    this._props.isPublic = false
   }
 }

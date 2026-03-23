@@ -25,8 +25,7 @@ export class GetSparkmateByGdgIdUseCase {
 
     if (input.source === "nfc_card" && cardState.status !== "activated") {
       return {
-        gdgId: input.gdgId,
-        ownerUserId: cardState.ownerUserId,
+        gdgId: input.gdgId, 
         source: input.source,
         status: cardState.status,
         portfolio: null,
@@ -36,8 +35,7 @@ export class GetSparkmateByGdgIdUseCase {
     const portfolio = await this.repository.getPortfolioByGdgId(input.gdgId);
 
     return {
-      gdgId: input.gdgId,
-      ownerUserId: cardState.ownerUserId,
+      gdgId: input.gdgId, 
       source: input.source,
       status: cardState.status,
       portfolio,

@@ -20,8 +20,7 @@ export class NfcSystemHttpController {
         status: "success",
         message: "NFC status fetched successfully",
         data: {
-          gdg_id: card.gdgId,
-          owner_user_id: card.ownerUserId,
+          gdg_id: card.gdgId, 
           status: card.status,
           is_public: card.isPublic,
         },
@@ -49,7 +48,6 @@ export class NfcSystemHttpController {
         message: "NFC activated successfully",
         data: {
           gdg_id: card.gdgId,
-          owner_user_id: card.ownerUserId,
           status: "activated",
           is_public: true,
         },
@@ -62,7 +60,6 @@ export class NfcSystemHttpController {
     async ({ input, output }) => {
       const card = await this.sparkmatesModuleController.registerCardByGdgId({
         gdgId: input.body.data.gdg_id,
-        ownerUserId: input.body.data.owner_user_id,
         notes: input.body.data.notes,
       });
 
@@ -71,7 +68,6 @@ export class NfcSystemHttpController {
         message: "NFC registered successfully",
         data: {
           gdg_id: card.gdgId,
-          owner_user_id: card.ownerUserId,
           status: card.status,
         },
       });
@@ -84,7 +80,6 @@ export class NfcSystemHttpController {
       const result = await this.sparkmatesModuleController.registerCardsBulk({
         cards: input.body.data.cards.map((card) => ({
           gdgId: card.gdg_id,
-          ownerUserId: card.owner_user_id,
           notes: card.notes,
         })),
       });
@@ -98,7 +93,6 @@ export class NfcSystemHttpController {
         data: {
           registered: result.registered.map((card) => ({
             gdg_id: card.gdgId,
-            owner_user_id: card.ownerUserId,
             status: card.status,
           })),
           failed: result.failed.map((item) => ({

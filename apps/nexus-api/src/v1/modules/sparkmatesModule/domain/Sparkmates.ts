@@ -7,8 +7,7 @@ export type SparkmatesCardStatus =
   | "revoked";
 
 export type SparkmatesCardState = {
-  gdgId: string;
-  ownerUserId: string;
+  gdgId: string; 
   status: SparkmatesCardStatus;
   isPublic: boolean;
 };
@@ -30,34 +29,55 @@ export type SparkmatesBulkRegistrationResult = {
 };
 
 export type SparkmatesPublicPortfolio = {
-  id: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-  firstName: string | null;
-  middleName: string | null;
-  lastName: string | null;
-  nickname: string | null;
-  gdgId: string | null;
+  // Core Identifiers
+  gdgId: string;
+  email: string;
+
+  /**
+   * membership
+   */
+
   membershipType: string | null;
-  department: string | null;
-  yearLevel: number | null;
+
+  /**
+   * profile
+   */
+  avatarUrl: string | null;
+
+  // education
   program: string | null;
+  yearLevel: number | null;
+  department: string | null;
+
+  // name
+  displayName: string | null;
+  firstName: string;
+  middleName: string | null;
+  lastName: string;
+  suffix: string | null;
+
+  /**
+   * portfolio
+   */
+  // Bio
   bio: string | null;
+
+  // Socials
   githubUrl: string | null;
   linkedinUrl: string | null;
   portfolioWebsiteUrl: string | null;
   otherLinks: string[];
+
+  // Skills & Interests
   technicalSkills: string[];
   learningInterests: string[];
   toolsAndTechnologies: string[];
+
   isPublic: boolean;
-  profileImage: string | null;
 };
 
 export type SparkmatesPublicRecord = {
-  gdgId: string;
-  ownerUserId: string;
+  gdgId: string; 
   source: SparkmatesSource;
   status: SparkmatesCardStatus;
   portfolio: SparkmatesPublicPortfolio | null;

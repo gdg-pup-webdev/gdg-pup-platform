@@ -4,6 +4,6 @@ export class DeleteGdgMember {
   constructor(private readonly repo: IGdgMemberRepository) {}
 
   async execute(id: string): Promise<void> {
-    await this.repo.delete(id);
+    await this.repo.deleteByGdgId(id);
   }
 }

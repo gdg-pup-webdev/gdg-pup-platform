@@ -20,10 +20,7 @@ import { RolesRouter } from "../routes/roles/roles.router";
 import { RolesHttpController } from "../routes/roles/roles.controller";
 import { rbacController } from "../modules/rbacSystem";
 import { UsersRouter } from "../routes/users/users.router";
-import { UsersHttpController } from "../routes/users/users.controller";
-import { portfolioModuleController } from "../modules/portfolioModule";
-import { PortfoliosHttpController } from "../routes/portfolios/portfolios.controller";
-import { PortfoliosRouter } from "../routes/portfolios/portfolios.router";
+import { UsersHttpController } from "../routes/users/users.controller"; 
 import { GdgTeamsHttpController } from "../routes/gdg-teams/gdgTeams.controller";
 import { GdgTeamsRouter } from "../routes/gdg-teams/gdgTeams.router";
 import { sparkmatesModuleController } from "../modules/sparkmatesModule";
@@ -52,9 +49,14 @@ import { oneTimePinController } from "../modules/oneTimePin";
 import { gdgMembersController } from "../modules/gdgMembers";
 import { configs } from "@/configs/configs";
 import { AuthenticationRouter } from "../routes/authentication/authentication.router";
+import { GdgMembersHttpController } from "../routes/gdgmembers/gdgmembers.controller";
+import { GdgMembersRouter } from "../routes/gdgmembers/gdgmembers.router";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
+
+  const gdgMembersHttpController = new GdgMembersHttpController(gdgMembersController);
+  const gdgMembersRouter = new GdgMembersRouter(gdgMembersHttpController);
 
   const eventHighlightsHttpController = new EventHighlightsHttpController(eventHighlightsController);
   const eventHighlightsRouter = new EventHighlightsRouter(eventHighlightsHttpController);
@@ -92,11 +94,7 @@ export const loadRoutes = (app: Express) => {
 
   const usersHttpController = new UsersHttpController(rbacController);
   const usersRouter = new UsersRouter(usersHttpController);
-
-  const portfoliosHttpController = new PortfoliosHttpController(
-    portfolioModuleController,
-  );
-  const portfoliosRouter = new PortfoliosRouter(portfoliosHttpController);
+ 
 
   const gdgTeamsHttpController = new GdgTeamsHttpController();
   const gdgTeamsRouter = new GdgTeamsRouter(gdgTeamsHttpController);
@@ -127,8 +125,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);
   app.use("/tasks", tasksRouter.router);
   app.use("/roles", rolesRouter.router);
-  app.use("/users", usersRouter.router);
-  app.use("/portfolios", portfoliosRouter.router);
+  app.use("/users", usersRouter.router); 
   app.use("/gdg-teams", gdgTeamsRouter.router);
   app.use("/sparkmates", sparkmatesRouter.router);
   app.use("/nfc-system", nfcSystemRouter.router);
@@ -139,6 +136,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/event-system", eventsRouter.router);
   app.use("/event-highlights", eventHighlightsRouter.router);
   app.use("/authentication", authenticationRouter.router);
+  app.use("/gdgmembers", gdgMembersRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

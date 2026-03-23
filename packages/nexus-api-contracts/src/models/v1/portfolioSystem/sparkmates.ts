@@ -15,8 +15,7 @@ export const sparkmatesCardStatus = cz.union([
 ]);
 
 export const sparkmatesPublicResponse = cz.object({
-  gdg_id: cz.string(),
-  owner_user_id: cz.string().uuid(),
+  gdg_id: cz.string(), 
   source: sparkmatesSource,
   status: sparkmatesCardStatus,
   portfolio: portfolioRow.nullable(),
@@ -24,14 +23,12 @@ export const sparkmatesPublicResponse = cz.object({
 
 export const sparkmatesCardStatusResponse = cz.object({
   gdg_id: cz.string(),
-  owner_user_id: cz.string().uuid(),
   status: sparkmatesCardStatus,
   is_public: cz.boolean(),
 });
 
 export const sparkmatesCardActivateResponse = cz.object({
   gdg_id: cz.string(),
-  owner_user_id: cz.string().uuid(),
   status: cz.literal("activated"),
   is_public: cz.literal(true),
 });
@@ -48,7 +45,6 @@ export const nfcCardRegisterBulkPayload = cz.object({
 
 export const nfcCardRegisterResponse = cz.object({
   gdg_id: cz.string(),
-  owner_user_id: cz.string().uuid().nullable(),
   status: sparkmatesCardStatus,
 });
 

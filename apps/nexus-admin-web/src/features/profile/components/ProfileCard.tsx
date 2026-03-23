@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { ChangeEmailDialog } from "./ChangeEmailDialog";
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
+import { PortfolioSection } from "./PortfolioSection";
 import { useState } from "react";
 
 export const ProfileCard = () => {
@@ -15,7 +16,12 @@ export const ProfileCard = () => {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
 
   if (isLoading) {
-    return <Skeleton className="w-full h-[400px]" />;
+    return (
+      <div className="space-y-6">
+        <Skeleton className="w-full h-[300px]" />
+        <Skeleton className="w-full h-[400px]" />
+      </div>
+    );
   }
 
   if (error || !user) {
@@ -65,6 +71,8 @@ export const ProfileCard = () => {
           </div>
         </CardContent>
       </Card>
+
+      <PortfolioSection />
 
       <ChangeEmailDialog 
         open={isEmailDialogOpen} 

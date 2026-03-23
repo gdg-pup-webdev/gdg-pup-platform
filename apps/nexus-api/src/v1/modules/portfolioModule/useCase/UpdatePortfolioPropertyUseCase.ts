@@ -21,14 +21,29 @@ export class UpdatePortfolioPropertyUseCase {
       throw new NotFoundError("Portfolio not found.");
     }
 
-    if (updates.profileImage && typeof updates.profileImage !== "string" && (updates.profileImage as PortfolioFile).buffer) {
+    let profileImageUrl: string | null = null;
+
+    if (
+      updates.profileImage &&
+      typeof updates.profileImage !== "string" &&
+      (updates.profileImage as PortfolioFile).buffer
+    ) {
       // If there's an existing profile image, we should probably delete it
-      // But for now, let's just upload the new one
-      const uploaded = await this.storage.uploadFile(updates.profileImage as PortfolioFile);
-      (updates as any).profileImage = uploaded.publicUrl;
+      if (portfolio.props.profileImage) {
+        await this.storage.deleteFile(portfolio.props.profileImage);
+      }
+
+      // upload the new one
+      const uploaded = await this.storage.uploadFile(
+        updates.profileImage as PortfolioFile,
+      );
+      profileImageUrl = uploaded.publicUrl;
     }
 
-    portfolio.update(updates as any);
+    portfolio.update({
+      ...updates,
+      profileImage: profileImageUrl,
+    });
 
     return this.portfolioRepository.persistUpdates(portfolio);
   }

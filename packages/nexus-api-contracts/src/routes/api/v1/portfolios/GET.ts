@@ -4,6 +4,7 @@ import { cz, OpenApiSchemas } from "@packages/typed-rest/shared";
 export const query = OpenApiSchemas.Request.Query.paginated().extend({
   name: cz.string().optional(),
   gdg_id: cz.string().optional(),
+  email: cz.string().email().optional(),
 });
 
 export const response = {
