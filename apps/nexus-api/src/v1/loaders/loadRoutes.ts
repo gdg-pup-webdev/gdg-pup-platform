@@ -46,6 +46,10 @@ import { EventsRouter } from "../routes/events/events.router";
 import { eventHighlightsController } from "../modules/eventHighlights";
 import { EventHighlightsHttpController } from "../routes/event-highlights/eventHighlights.controller";
 import { EventHighlightsRouter } from "../routes/event-highlights/eventHighlights.router";
+import { AuthenticationHttpController } from "../routes/authentication/authentication.controller";
+import { AuthenticationController, initializeAuthenticationModule } from "../modules/authentication";
+import { configs } from "@/configs/configs";
+import { AuthenticationRouter } from "../routes/authentication/authentication.router";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
@@ -110,6 +114,9 @@ export const loadRoutes = (app: Express) => {
   const teamResourcesHttpController = new TeamResourcesHttpController(teamResourceController);
   const teamResourcesRouter = new TeamResourcesRouter(teamResourcesHttpController);
 
+  const authenticationModule = initializeAuthenticationModule(supabaseClient, configs.jwt.secret)
+  const authenticationHttpController = new AuthenticationHttpController(authenticationModule)
+  const authenticationRouter = new AuthenticationRouter(authenticationHttpController)
 
   app.use("/files", filesRouter.router);
   app.use("/folders", foldersRouter.router);
@@ -129,6 +136,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/events", eventsRouter.router);
   app.use("/event-system", eventsRouter.router);
   app.use("/event-highlights", eventHighlightsRouter.router);
+  app.use("/authentication", authenticationRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

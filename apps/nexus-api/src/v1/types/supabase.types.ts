@@ -535,6 +535,36 @@ export type Database = {
           },
         ]
       }
+      one_time_pins: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          is_used: boolean
+          otp_code: string
+          reference: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          is_used: boolean
+          otp_code: string
+          reference: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          otp_code?: string
+          reference?: string
+        }
+        Relationships: []
+      }
       resource_tag: {
         Row: {
           id: string
@@ -754,6 +784,105 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      survey: {
+        Row: {
+          attendance_code: string | null
+          close_time: string | null
+          created_at: string
+          event_id: string
+          id: string
+          is_active: boolean
+          questions_schema: Json | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          attendance_code?: string | null
+          close_time?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          is_active?: boolean
+          questions_schema?: Json | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          attendance_code?: string | null
+          close_time?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          is_active?: boolean
+          questions_schema?: Json | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_response: {
+        Row: {
+          certificate_url: string | null
+          created_at: string
+          email: string
+          event_id: string
+          gdg_id: string | null
+          id: string
+          survey_data: Json
+          survey_id: string
+        }
+        Insert: {
+          certificate_url?: string | null
+          created_at?: string
+          email: string
+          event_id: string
+          gdg_id?: string | null
+          id?: string
+          survey_data: Json
+          survey_id: string
+        }
+        Update: {
+          certificate_url?: string | null
+          created_at?: string
+          email?: string
+          event_id?: string
+          gdg_id?: string | null
+          id?: string
+          survey_data?: Json
+          survey_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_response_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survey_response_gdg_id_fkey"
+            columns: ["gdg_id"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+          {
+            foreignKeyName: "survey_response_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "survey"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       task: {
         Row: {
@@ -1043,6 +1172,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_credential: {
+        Row: {
+          created_at: string
+          email_address: string
+          id: string
+          password_hash: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          email_address: string
+          id?: string
+          password_hash: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          email_address?: string
+          id?: string
+          password_hash?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      user_credential_reference_code: {
+        Row: {
+          created_at: string | null
+          email_address: string | null
+          id: string
+          otp_reference: string | null
+          payload: Json | null
+          reference_code: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_address?: string | null
+          id?: string
+          otp_reference?: string | null
+          payload?: Json | null
+          reference_code: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email_address?: string | null
+          id?: string
+          otp_reference?: string | null
+          payload?: Json | null
+          reference_code?: string
+          type?: string | null
+        }
+        Relationships: []
       }
       user_profile: {
         Row: {

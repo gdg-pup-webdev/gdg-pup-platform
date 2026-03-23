@@ -1,9 +1,10 @@
 ﻿import { SupabaseClient } from "@supabase/supabase-js";
 import { IUserCredentialRepository } from "../domain/IAuthenticationInterfaces.js";
 import { UserCredential } from "../domain/UserCredential.js";
+import { Database } from "@/v1/types/supabase.types.js";
 
 export class SupabaseUserCredentialRepository implements IUserCredentialRepository {
-  constructor(private readonly supabase: SupabaseClient) {}
+  constructor(private readonly supabase: SupabaseClient<Database>) {}
 
   async saveNew(credential: UserCredential): Promise<UserCredential> {
     const { data, error } = await this.supabase

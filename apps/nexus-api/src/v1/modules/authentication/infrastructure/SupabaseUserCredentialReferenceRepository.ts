@@ -1,9 +1,10 @@
 ﻿import { SupabaseClient } from "@supabase/supabase-js";
 import { IUserCredentialReferenceRepository } from "../domain/IAuthenticationInterfaces.js";
 import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
+import { Database } from "@/v1/types/supabase.types.js";
 
 export class SupabaseUserCredentialReferenceRepository implements IUserCredentialReferenceRepository {
-  constructor(private readonly supabase: SupabaseClient) {}
+  constructor(private readonly supabase: SupabaseClient<Database>) { }
 
   async saveNew(reference: UserCredentialReferenceCode): Promise<UserCredentialReferenceCode> {
     const { data, error } = await this.supabase
@@ -21,11 +22,11 @@ export class SupabaseUserCredentialReferenceRepository implements IUserCredentia
     if (error) throw error;
     return UserCredentialReferenceCode.hydrate({
       referenceCode: data.reference_code,
-      emailAddress: data.email_address,
-      payload: data.payload,
+      emailAddress: data.email_address || "",
+      payload: (data.payload || {}) as Record<string, any>,
       type: data.type as ReferenceCodeType,
-      otpReference: data.otp_reference,
-      createdAt: new Date(data.created_at),
+      otpReference: data.otp_reference || "",
+      createdAt: new Date(data.created_at || ""),
     });
   }
 
@@ -41,11 +42,11 @@ export class SupabaseUserCredentialReferenceRepository implements IUserCredentia
 
     return UserCredentialReferenceCode.hydrate({
       referenceCode: data.reference_code,
-      emailAddress: data.email_address,
-      payload: data.payload,
+      emailAddress: data.email_address || "",
+      payload: (data.payload || {}) as Record<string, any>,
       type: data.type as ReferenceCodeType,
-      otpReference: data.otp_reference,
-      createdAt: new Date(data.created_at),
+      otpReference: data.otp_reference || "",
+      createdAt: new Date(data.created_at || ""),
     });
   }
 

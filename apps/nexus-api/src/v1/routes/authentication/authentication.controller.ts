@@ -59,7 +59,7 @@ export class AuthenticationHttpController {
       return output(200, {
         status: "success",
         message: "Token is valid",
-        data: result,
+        data: true,
       });
     }
   );
