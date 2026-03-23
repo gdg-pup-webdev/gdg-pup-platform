@@ -44,11 +44,11 @@ export const ProfileSection = () => {
         gdgId: member.gdgId,
         data: {
           bio,
-          github_url: githubUrl || null,
-          linkedin_url: linkedinUrl || null, 
-          technical_skills: technicalSkills.split(",").map(s => s.trim()).filter(Boolean),
-          learning_interests: learningInterests.split(",").map(s => s.trim()).filter(Boolean),
-          tools_and_technologies: tools.split(",").map(s => s.trim()).filter(Boolean),
+          githubUrl: githubUrl || null,
+          linkedinUrl: linkedinUrl || null, 
+          technicalSkills: technicalSkills.split(",").map(s => s.trim()).filter(Boolean),
+          learningInterests: learningInterests.split(",").map(s => s.trim()).filter(Boolean),
+          toolsAndTechnologies: tools.split(",").map(s => s.trim()).filter(Boolean),
         }
       });
       toast.success("Member updated successfully");

@@ -1,11 +1,6 @@
-import { contract } from "@packages/nexus-api-contracts";
-import { z } from "zod";
+import { contract } from "@packages/nexus-api-contracts"; 
 
 // types inferred from contract models
-export type GdgMember = z.infer<
-  (typeof contract.api.v1.gdgmembers.GET.response)[200]
->["data"][number];
+export type GdgMember = contract.api.v1.gdgmembers.GET.response[200]["data"][number];
 
-export type GdgMemberUpdate = z.infer<
-  typeof contract.api.v1.gdgmembers.gdgId.PATCH.request.body
->["data"];
+export type GdgMemberUpdate = contract.api.v1.gdgmembers.gdgId.PATCH.request.body["data"];
