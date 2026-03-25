@@ -15,11 +15,19 @@ export const RequireUnauthenticated = ({
 
   useEffect(() => {
     if (status === STATUS.AUTHENTICATED) {
-      console.log("User is authenticated, redirecting to landing page");
       router.push(LINKS.landing);
     }
-    console.log("Authentication status:", status);
   }, [status]);
+
+  if (status === STATUS.AUTHENTICATED) {
+    return (
+      <>
+        <div className="w-full h-full min-h-full flex justify-center items-center">
+          Redirecting to landing page...
+        </div>
+      </>
+    );
+  }
 
   if (status === STATUS.CHECKING) {
     return (

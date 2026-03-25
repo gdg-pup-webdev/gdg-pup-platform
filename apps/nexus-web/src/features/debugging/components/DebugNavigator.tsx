@@ -5,6 +5,7 @@ import Link from "next/link";
 import { IoIosNavigate } from "react-icons/io";
 import { IoNavigate } from "react-icons/io5";
 import { configs } from "@/lib/constants/configs";
+import { LINKS } from "@/lib/constants/links";
 
 export const DebugNavigator = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +54,7 @@ export const DebugNavigator = () => {
 
         {isOpen && (
           <div className="absolute right-0 bottom-[110%] flex w-50 flex-col rounded-2xl bg-white p-4 text-black shadow-md">
-            {Object.entries(LINKS).map(([key, value]) => (
+            {Object.entries(DEBUGGIN_LINKS).map(([key, value]) => (
               <Link
                 className="cursor-pointer hover:bg-gray-400"
                 key={key}
@@ -70,9 +71,4 @@ export const DebugNavigator = () => {
   );
 };
 
-export const LINKS = {
-  landing: "/",
-  "auth debug": "/debugging/authentication",
-  login: "/signin",
-  signup: "/signup",
-};
+export const DEBUGGIN_LINKS = LINKS.debugging;

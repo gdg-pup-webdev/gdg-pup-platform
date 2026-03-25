@@ -19,6 +19,16 @@ export const RequireAuthenticated = ({
     }
   }, [status]);
 
+  if (status === STATUS.UNAUTHENTICATED) {
+    return (
+      <>
+        <div className="w-full h-full min-h-full flex justify-center items-center">
+          Redirecting to login...
+        </div>
+      </>
+    );
+  }
+
   if (status === STATUS.CHECKING) {
     return (
       <>
