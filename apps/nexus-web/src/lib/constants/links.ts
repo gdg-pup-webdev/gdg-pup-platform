@@ -3,7 +3,7 @@ export const LINKS = {
   auth_signin: "/signin",
   auth_signup: "/signup",
 
-  profile_me: "/profile",
+  profile_me: "/me",
 
   debugging: {
     landing: "/",
@@ -11,6 +11,6 @@ export const LINKS = {
     login: "/signin",
     signup: "/signup",
     testSparkmateProfile: "/sparkmates/GDGPUP-26-000033",
-    testSelfProfile: "/profile",
+    testSelfProfile: "/me",
   },
 };

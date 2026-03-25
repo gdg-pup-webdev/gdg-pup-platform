@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react"; // Added useEffect and useRef
 import Link from "next/link";
-import { IoIosNavigate } from "react-icons/io";
 import { IoNavigate } from "react-icons/io5";
 import { configs } from "@/lib/constants/configs";
 import { LINKS } from "@/lib/constants/links";

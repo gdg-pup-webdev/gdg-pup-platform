@@ -1,6 +1,5 @@
 #!/usr/bin/env -S npx tsx
-import crypto from "crypto";
-import glob from "fast-glob";
+
 import { Command } from "commander";
 import path from "path";
 import chokidar from "chokidar";
@@ -23,39 +22,11 @@ const ROUTES_DIRECTORY_RELATIVE = "./routes";
 const OUTPUT_CONTRACT_DIR_ABSOLUTE = SRC_DIR_ABSOLUTE;
 const OUTPUT_CONTRACT_BASENAME = `./${configs.appName}.contract.ts`;
 
-const CACHE_FILE = path.resolve(ROOT_ABSOLUTE, ".build-cache");
-
 // 1. Track the current child process and build state
 let tscProcess: ChildProcess | null = null;
 let isBuilding = false;
 let buildQueued = false;
-function getSourceHash(): string {
-  const files = glob.sync("**/*", { cwd: SRC_DIR_ABSOLUTE, absolute: true, ignore: ["**/node_modules/**"] });
-  const hash = crypto.createHash("md5");
 
-  // Sort files to ensure consistent hashing
-  files.sort().forEach((file) => {
-    if (fs.lstatSync(file).isFile()) {
-      const content = fs.readFileSync(file);
-      hash.update(file); // Include filename
-      hash.update(content); // Include content
-    }
-  });
-
-  return hash.digest("hex");
-}
-
-function isCacheValid(): boolean {
-  if (!fs.existsSync(CACHE_FILE) || !fs.existsSync(DIST_DIR_ABSOLUTE)) return false;
-  const currentHash = getSourceHash();
-  const savedHash = fs.readFileSync(CACHE_FILE, "utf-8");
-  return currentHash === savedHash;
-}
-
-function updateCache() {
-  const currentHash = getSourceHash();
-  fs.writeFileSync(CACHE_FILE, currentHash);
-}
 // Promisified spawn to prevent blocking the event loop
 function runTypeScriptCompiler(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -104,9 +75,6 @@ async function syncAndGenerate(isWatchMode = false) {
 
     logger.log("Compiling...");
     await runTypeScriptCompiler();
-
-    updateCache();
-
     // Only log success if it wasn't interrupted by a new queued build
     if (!buildQueued) {
       logger.log("✅ Final build ready in dist/build");
@@ -146,12 +114,7 @@ program
   .command("dev")
   .description("Watch src, sync to dist, and compile")
   .action(async () => {
-    if (isCacheValid()) {
-      logger.log("🚀 No changes detected. Skipping initial build.");
-    } else {
-      logger.log("📦 Changes detected or no cache found. Building...");
-      await syncAndGenerate(true);
-    }
+    await syncAndGenerate();
 
     const debouncedSync = debounce(async () => {
       try {
