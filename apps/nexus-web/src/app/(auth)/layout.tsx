@@ -2,7 +2,7 @@ import Image from "next/image";
 import { CosmosParticles } from "@/components/shared";
 import { AuthParallaxBackground } from "@/features/auth/components/AuthParallaxBackground";
 import { AuthParallaxMascot } from "@/features/auth/components/AuthParallaxMascot";
-import { AuthGuard } from "@/features/authentication/components";
+import { RequireUnauthenticated } from "@/features/authentication/components/RequireUnauthenticated";
 
 export default function AuthLayout({
   children,
@@ -10,7 +10,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthGuard>
+    <RequireUnauthenticated>
       <CosmosParticles
         particleColors={["#ffffff", "#4285f4"]}
         particleCount={350}
@@ -62,6 +62,6 @@ export default function AuthLayout({
           </div>
         </div>
       </CosmosParticles>
-    </AuthGuard>
+    </RequireUnauthenticated>
   );
 }

@@ -19,7 +19,7 @@ export class Login {
   async execute(email: string, password: string): Promise<string> {
     const credential = await this.credentialRepo.findByEmail(email);
     if (!credential) {
-      throw new Error("Invalid credentials.");
+      throw new Error("No account found with the provided email address.");
     }
 
     const isPasswordValid = await this.encryptionService.compare(
@@ -27,7 +27,7 @@ export class Login {
       credential.props.passwordHash,
     );
     if (!isPasswordValid) {
-      throw new Error("Invalid credentials.");
+      throw new Error("The password that you entered is incorrect.");
     }
 
     const permissions = await this.rbacService.listPermissionsOfUser(email);

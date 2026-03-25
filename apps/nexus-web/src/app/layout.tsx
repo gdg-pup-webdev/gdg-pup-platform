@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared";
 import { ProviderCompose } from "@/providers/ProviderCompose";
+import { DebugNavigator } from "@/features/debugging/components/DebugNavigator";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
           <Navbar />
           <main className="min-h-screen">{children}</main>
           <Footer />
+          <DebugNavigator/>
         </ProviderCompose>
       </body>
     </html>

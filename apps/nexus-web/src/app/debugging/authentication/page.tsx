@@ -1,7 +1,8 @@
 "use client";
-
-import { LoginForm, SignupFlow } from "@/features/authentication/components";
-import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+ 
+import { LoginForm } from "@/features/authentication/components/LoginForm";
+import { SignupFlow } from "@/features/authentication/components/SignupFlow";
+import { STATUS, useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { Button } from "@packages/spark-ui";
 import React from "react";
 
@@ -14,17 +15,25 @@ const AuthenticationDebugPage = () => {
         <div>AuthenticationDebugPage</div>
         <div>Status: {status}</div>
         <div>Token: {token}</div>
-        <pre>{JSON.stringify(decodedToken, null, 2)}</pre>
+        <pre>Decoded token: {JSON.stringify(decodedToken, null, 2)}</pre>
         {/* <button onClick={login}>Login</button> */}
-        <Button onClick={logout}>Logout</Button>
-        <div className="border-2 text-white bg-black p-4">
-          <div className="text-3xl">LOGIN</div>
-          <LoginForm />
-        </div>
-        <div className="border-2 text-white bg-black p-4">
-          <div className="text-3xl">SIGNUP</div>
-          <SignupFlow />
-        </div>
+        {status === STATUS.AUTHENTICATED ? (
+          <>
+            <Button onClick={logout}>Logout</Button>
+          </>
+        ) : (
+          <>
+            {" "}
+            <div className="border-2 text-white bg-black p-4">
+              <div className="text-3xl">LOGIN</div>
+              <LoginForm />
+            </div>
+            <div className="border-2 text-white bg-black p-4">
+              <div className="text-3xl">SIGNUP</div>
+              <SignupFlow />
+            </div>
+          </>
+        )}
       </div>
     </>
   );

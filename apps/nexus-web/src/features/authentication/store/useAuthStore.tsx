@@ -5,17 +5,21 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useLogin } from "../hooks";
 import { jwtDecode } from "jwt-decode";
-import { TokenPayload } from "../types/tokenPayload";
+import { TokenPayload } from "../types/tokenPayload"; 
 
-type statusType =
-  | "checking"
-  | "loggedin"
-  | "loggedout"
-  | "loggingin"
-  | "loggingout";
+export const STATUS = {
+  CHECKING: "checking",
+  AUTHENTICATED: "authenticated",
+  UNAUTHENTICATED: "unauthenticated",
+  LOGGINGIN: "loggingin",
+  LOGGINGOUT: "loggingout",
+} as const;
+
+export type StatusType = (typeof STATUS)[keyof typeof STATUS];
+
 
 interface AuthState {
-  status: statusType;
+  status: StatusType; 
   token: string | null;
   decodedToken: TokenPayload | null;
   logout: () => Promise<void>;
@@ -40,34 +44,34 @@ export const AuthContextProvider = ({
 }) => {
   const loginMutation = useLogin();
   const [state, setState] = useState<{
-    status: statusType;
+    status: StatusType;
     error: Error | null;
   }>({
     status: "checking",
     error: null,
   });
-  const { token, setToken, clearToken , decodedToken } = useTokenStore();
+  const { token, setToken, clearToken, decodedToken } = useTokenStore();
 
   useEffect(() => {
     if (token) {
-      setState({ status: "loggedin", error: null });
+      setState({ status: STATUS.AUTHENTICATED, error: null });
     } else {
-      setState({ status: "loggedout", error: null });
+      setState({ status: STATUS.UNAUTHENTICATED, error: null });
     }
-  }, [])
+  }, [token]);
 
   const login = async (email: string, password: string) => {
-    setState({ status: "loggingin", error: null });
+    setState({ status: STATUS.LOGGINGIN, error: null });
     try {
       const res = await loginMutation.mutateAsync({
         email: email,
         pass: password,
       });
       setToken(res.data.token);
-      setState({ status: "loggedin", error: null });
+      setState({ status: STATUS.AUTHENTICATED, error: null });
     } catch (error) {
       setState({
-        status: "loggedout",
+        status: STATUS.UNAUTHENTICATED,
         error: error instanceof Error ? error : new Error("Unknown error"),
       });
       clearToken();
@@ -75,13 +79,13 @@ export const AuthContextProvider = ({
   };
 
   const logout = async () => {
-    setState({ status: "loggingout", error: null });
+    setState({ status: STATUS.LOGGINGOUT, error: null });
     try {
       clearToken();
-      setState({ status: "loggedout", error: null });
+      setState({ status: STATUS.UNAUTHENTICATED, error: null });
     } catch (error) {
       setState({
-        status: "loggedout",
+        status: STATUS.UNAUTHENTICATED,
         error: error instanceof Error ? error : new Error("Unknown error"),
       });
       clearToken();
@@ -118,7 +122,8 @@ const useTokenStore = create<TokenStore>()(
     (set) => ({
       token: null,
       decodedToken: null,
-      setToken: (token : string) => set({ token, decodedToken: jwtDecode(token) }),
+      setToken: (token: string) =>
+        set({ token, decodedToken: jwtDecode(token) }),
       clearToken: () => set({ token: null, decodedToken: null }),
     }),
     {

@@ -1,12 +1,11 @@
 "use client";
 
-import { AuthGuard } from "@/features/authentication/components";
-import { usePathname } from "next/navigation";
+import { RequireAuthenticated } from "@/features/authentication/components/RequireAuthenticated";
 
 export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AuthGuard>{children}</AuthGuard>;
+  return <RequireAuthenticated>{children}</RequireAuthenticated>;
 }

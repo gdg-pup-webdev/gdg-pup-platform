@@ -1,7 +1,6 @@
 "use client";
-
-import { SignUpForm } from "@/features/auth";
-import { SignupFlow } from "@/features/authentication/components";
+ 
+import { SignupFlow } from "@/features/authentication/components/SignupFlow";
 import { ShineBorder } from "@packages/spark-ui";
 
 export default function SignUpPage() {
