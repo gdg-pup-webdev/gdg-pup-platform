@@ -10,13 +10,13 @@
  */
 
 "use client";
-
-import { useAuthContext } from "@/providers/AuthProvider";
+ 
 import { configs } from "@/configs/servers.config";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { ASSETS } from "@/lib/constants/assets";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 export default function ActivateCardPage() {
   // Get the cardUid from the URL parameters
@@ -25,17 +25,16 @@ export default function ActivateCardPage() {
   const router = useRouter();
 
   const {
-    user,
+    decodedToken,
     token,
-    status: authStatus,
-    loginWithGoogle,
+    status: authStatus, 
   } = useAuthContext();
 
   const [isActivating, setIsActivating] = useState(false);
 
 
   const handleActivate = async () => {
-    if (!user) return;
+    if (!decodedToken) return;
 
     setIsActivating(true);
     try {
@@ -52,7 +51,7 @@ export default function ActivateCardPage() {
           },
           body: JSON.stringify({
             data: {
-              userId: user.id,
+              userId: decodedToken.memberInfo.gdgId,
             },
           }),
         },
@@ -65,7 +64,7 @@ export default function ActivateCardPage() {
       }
 
       toast.success("Card activated successfully!");
-      router.push(`/id/${user.id}`);
+      router.push(`/id/${decodedToken.memberInfo.gdgId}`);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || "Something went wrong");
@@ -110,39 +109,26 @@ export default function ActivateCardPage() {
             <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-white rounded-full mb-4"></div>
             <p className="text-zinc-400 text-sm">Checking authentication...</p>
           </div>
-        ) : !user ? (
+        ) : !decodedToken ? (
           <div className="space-y-6">
             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-center">
               <p className="text-yellow-200 text-sm">
                 You need to be logged in to link this card to your account.
               </p>
-            </div>
-            <button
-              onClick={loginWithGoogle}
-              className="w-full py-3.5 px-6 rounded-xl bg-white text-black font-bold hover:bg-zinc-200 transition-colors flex items-center justify-center gap-3"
-            >
-              <img
-                src="https://www.svgrepo.com/show/475656/google-color.svg"
-                alt="Google"
-                className="w-5 h-5"
-              />
-              <span>Continue with Google</span>
-            </button>
+            </div> 
           </div>
         ) : (
           <div className="space-y-6">
             <div className="bg-zinc-800/50 rounded-xl p-4 flex items-center gap-4">
               <img
-                src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
+                src={  ASSETS.AUTH.AVATAR_DEFAULT}
                 alt="User"
                 className="w-12 h-12 rounded-full bg-zinc-700"
               />
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-zinc-400">Activating as</p>
                 <p className="font-semibold truncate">
-                  {user.user_metadata?.full_name ||
-                    user.user_metadata?.name ||
-                    user.email}
+                  {decodedToken.memberInfo.firstName}
                 </p>
               </div>
             </div>

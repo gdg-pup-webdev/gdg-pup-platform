@@ -110,21 +110,19 @@ function OtherLinksCard({
 }
 
 export function SkillsAndLinksSection({
-  portfolio,
+  skills, interests, tools, otherLinks, 
   editIcon,
   addIcon,
   onOpenExternal,
 }: {
-  portfolio: SparkmatesProfile | null;
+  skills: string[];
+  interests: string[];
+  tools: string[];
+  otherLinks: string[];
   editIcon: ReactNode;
   addIcon: ReactNode;
   onOpenExternal: (url: string) => void;
-}) {
-  const skills = portfolio?.technical_skills ?? [];
-  const interests = portfolio?.learning_interests ?? [];
-  const tools = portfolio?.tools_and_technologies ?? [];
-  const otherLinks = portfolio?.other_links ?? [];
-
+}) { 
   return (
     <section className="space-y-4 pt-6">
       <div className="flex items-center justify-between gap-3">

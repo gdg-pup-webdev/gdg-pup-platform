@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
-import { extractErrorMessage } from "@/lib/utils";
-import { useAuthStore } from "@/features/authentication/store/useAuthStore";
+import { extractErrorMessage } from "@/lib/utils"; 
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 export const useMe = () => {
-  const token = useAuthStore((state) => state.token);
+  const {token} = useAuthContext();
 
   return useQuery({
     queryKey: ["auth-me", token],

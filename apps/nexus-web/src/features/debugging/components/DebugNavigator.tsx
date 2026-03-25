@@ -36,8 +36,7 @@ export const DebugNavigator = () => {
     console.log("DebugNavigator is only rendered in development mode");
     return null; // Don't render anything if not in development mode
   }
-
-  console.log("Rendering DebugNavigator");
+ 
   return (
     <>
       {/* Attached the ref to the wrapper div */}

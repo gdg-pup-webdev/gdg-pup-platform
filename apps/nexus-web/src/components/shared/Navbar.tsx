@@ -14,7 +14,7 @@ import {
   Avatar,
   Stack,
 } from "@packages/spark-ui";
-import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { STATUS, useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 interface NavbarProps {
   transparent?: boolean;
@@ -25,7 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   transparent = false,
   hideAuth = false,
 }) => {
-  const {  status  } = useAuthContext();
+  const {  status, decodedToken  } = useAuthContext();
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   
@@ -223,7 +223,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     {status === "checking" ? (
                       <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
-                    ) : status === "loggedin" ? (
+                    ) : status === STATUS.AUTHENTICATED ? (
                       <Link href="/sparkmates" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
                         <Avatar
                           src={
@@ -332,7 +332,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             </Link>
                             {status === "checking" ? (
                               <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse"> </Box>
-                            ) : user ? (
+                            ) : status === STATUS.AUTHENTICATED ? (
                               <Link
                                 href="/sparkmates"
                                 className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
@@ -348,7 +348,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 />
                                 <Stack gap="none">
                                   <Text variant="body-sm" weight="semibold" className="text-white">
-                                    {user.user_metadata?.full_name || "User"}
+                                    {decodedToken?.memberInfo.firstName|| "User"}
                                   </Text>
                                   <Text variant="body-sm" className="text-gray-400">
                                     View Profile

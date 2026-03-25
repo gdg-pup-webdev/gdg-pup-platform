@@ -12,7 +12,9 @@ import { ASSETS } from "@/lib/constants/assets";
 
 interface UserConfirmationProps {
   /** The authenticated user object from Supabase */
-  user: User;
+  username: string; 
+  useremail: string; 
+  useravatar: string;
   /** Whether the activation is currently in progress */
   isActivating: boolean;
   /** Function to call when user confirms activation */
@@ -26,20 +28,12 @@ interface UserConfirmationProps {
  * that they want to link this card to their account.
  */
 export const UserConfirmation: React.FC<UserConfirmationProps> = ({
-  user,
+  username,
+  useremail,
+  useravatar,
   isActivating,
   onConfirm,
-}) => {
-  // Get user's display name from metadata, fallback to email
-  const displayName =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.name ||
-    user.email;
-
-  // Get user's avatar URL or fall back to the default avatar asset
-  const avatarUrl =
-    user.user_metadata?.avatar_url ||
-    ASSETS.AUTH.AVATAR_DEFAULT;
+}) => { 
 
   return (
     <Stack gap="lg">
@@ -48,7 +42,7 @@ export const UserConfirmation: React.FC<UserConfirmationProps> = ({
         <Inline gap="md" align="center">
           {/* User avatar */}
           <img
-            src={avatarUrl}
+            src={useravatar || ASSETS.AUTH.AVATAR_DEFAULT}
             alt="User avatar"
             className="w-12 h-12 rounded-full bg-zinc-700"
           />
@@ -56,7 +50,7 @@ export const UserConfirmation: React.FC<UserConfirmationProps> = ({
           {/* User details */}
           <Stack gap="none" className="flex-1 min-w-0">
             <Text variant="body-sm" className="text-zinc-400">Activating as</Text>
-            <Text variant="body" className="font-semibold truncate">{displayName}</Text>
+            <Text variant="body" className="font-semibold truncate">{username}</Text>
           </Stack>
         </Inline>
       </div>

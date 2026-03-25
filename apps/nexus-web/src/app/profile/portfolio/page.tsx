@@ -1,7 +1,18 @@
+import React from 'react'
+
+const page = () => {
+  return (
+    <div>page</div>
+  )
+}
+
+export default page
+
+
 // import { PortfolioSection } from "@/features/profile";
 
-import { ProfileCard } from "@/features/profile/components/ProfileOwnerView";
+// import { ProfileCard } from "@/features/profile/components/ProfileOwnerView";
 
-export default function PortfolioPage() {
-  return <ProfileCard />;
-}
+// export default function PortfolioPage() {
+//   return <ProfileCard />;
+// }

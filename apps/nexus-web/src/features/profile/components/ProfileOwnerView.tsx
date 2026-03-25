@@ -341,8 +341,7 @@ export function ProfileOwnerView({
  
   const suggestedUsers = useSuggestedSparkmates({
     search,
-    viewerGdgId: profile?.gdg_id,
-    viewerPortfolio: profile?.portfolio ?? null,
+    viewerGdgId: profile?.gdg_id, 
   });
 
   // const isOwner = useMemo(() => {
@@ -419,7 +418,7 @@ export function ProfileOwnerView({
   }
 
   const displayName =
-    profile.portfolio?.full_name ||
+    profile.portfolio?.first_name ||
     profile.portfolio?.nickname ||
     // user?.user_metadata?.full_name ||
     profile.gdg_id;
@@ -516,7 +515,7 @@ export function ProfileOwnerView({
                       {displayName}
                     </Text>
                     <Text variant="body-sm" className="text-[#C1C7CD]">
-                      {profile.portfolio?.year_and_program ||
+                      {profile.portfolio?.program ||
                         "Program and Year not set"}
                     </Text>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -674,7 +673,10 @@ export function ProfileOwnerView({
               <Divider />
 
               <SkillsAndLinksSection
-                portfolio={profile.portfolio}
+                skills={profile.portfolio?.technical_skills ?? []}
+                interests={profile.portfolio?.learning_interests ?? []}
+                tools={profile.portfolio?.tools_and_technologies ?? []}
+                otherLinks={profile.portfolio?.other_links ?? []}
                 editIcon={editIcon}
                 addIcon={addIcon}
                 onOpenExternal={openExternal}

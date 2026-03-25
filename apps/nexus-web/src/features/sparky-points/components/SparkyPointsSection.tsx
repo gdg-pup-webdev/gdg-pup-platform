@@ -2,8 +2,7 @@
 "use client";
 
 import { ASSETS } from "@/lib/constants/assets";
-import { cn } from "@/lib/utils";
-import { useAuthContext } from "@/providers/AuthProvider";
+import { cn } from "@/lib/utils"; 
 import {  Button, Container, Dropdown, DropdownContent, DropdownItem, DropdownTrigger, Grid, Modal, Stack, Text } from "@packages/spark-ui";
 import { useEffect, useRef, useState } from "react";
 import { useSparkyPoints } from "../hooks/useSparkyPoints";
@@ -19,6 +18,8 @@ import { RewardItem } from "./RewardItem";
 import { GuideItem } from "./GuideItem";
 import { HistoryItem } from "./HistoryItem";
 import { RewardItemType } from "../types";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { useMe } from "@/features/profile/hooks";
 
 type mobileSections = "main" | "guide" | "redeem" | "history";
 
@@ -27,7 +28,8 @@ const RAINBOW_GRADIENT_COLOR = "before:bg-[linear-gradient(to_bottom_right,#FB2C
 export const RAINBOW_BORDER = cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR);
 
 export function SparkyPointsSection() {
-  const {user} = useAuthContext();
+  const {decodedToken } = useAuthContext();
+  const {data : user } = useMe();
   const { userPoints, userHistory, tasks, rewards } = useSparkyPoints();
   // TODO - pass user information
 
@@ -151,7 +153,7 @@ export function SparkyPointsSection() {
                 <Stack gap="xl">
                   <PointsDisplay points={userPoints}/>
                   <Stack>
-                    {userHistory.map(history => <HistoryItem key={`history-${history.data.id}`} avatar={user?.user_metadata.avatar_url} {...history}/>)}
+                    {userHistory.map(history => <HistoryItem key={`history-${history.data.id}`} avatar={ASSETS.AUTH.AVATAR_DEFAULT} {...history}/>)}
                   </Stack>
                 </Stack>
               </>
@@ -255,7 +257,7 @@ export function SparkyPointsSection() {
                     >
                       <Text gradient="white-blue" weight="bold" align="center" className="text-xl">Points History</Text>  
                       <Stack>
-                        {userHistory.map(history => <HistoryItem key={`historylg-${history.data.id}`} avatar={user?.user_metadata.avatar_url} {...history}/>)}
+                        {userHistory.map(history => <HistoryItem key={`historylg-${history.data.id}`} avatar={ASSETS.AUTH.AVATAR_DEFAULT} {...history}/>)}
                       </Stack>
                     </DropdownContent>
                   </Dropdown>
