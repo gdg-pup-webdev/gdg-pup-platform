@@ -5,6 +5,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useLogin } from "../hooks";
 import { jwtDecode } from "jwt-decode";
+import { TokenPayload } from "../types/tokenPayload";
 
 type statusType =
   | "checking"
@@ -16,6 +17,7 @@ type statusType =
 interface AuthState {
   status: statusType;
   token: string | null;
+  decodedToken: TokenPayload | null;
   logout: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   error: Error | null;
@@ -44,7 +46,7 @@ export const AuthContextProvider = ({
     status: "checking",
     error: null,
   });
-  const { token, setToken, clearToken } = useAuthStore();
+  const { token, setToken, clearToken , decodedToken } = useTokenStore();
 
   useEffect(() => {
     if (token) {
@@ -93,6 +95,7 @@ export const AuthContextProvider = ({
           status: state.status,
           error: state.error,
           token,
+          decodedToken,
           login,
           logout,
         }}
@@ -103,19 +106,19 @@ export const AuthContextProvider = ({
   );
 };
 
-type AuthStore = {
+type TokenStore = {
   token: string | null;
-  decodedToken: any;
+  decodedToken: TokenPayload | null;
   setToken: (token: string) => void;
   clearToken: () => void;
 };
 
-const useAuthStore = create<AuthStore>()(
+const useTokenStore = create<TokenStore>()(
   persist(
     (set) => ({
       token: null,
       decodedToken: null,
-      setToken: (token) => set({ token, decodedToken: jwtDecode(token) }),
+      setToken: (token : string) => set({ token, decodedToken: jwtDecode(token) }),
       clearToken: () => set({ token: null, decodedToken: null }),
     }),
     {

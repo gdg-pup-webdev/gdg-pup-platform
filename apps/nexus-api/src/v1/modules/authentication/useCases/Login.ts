@@ -5,7 +5,7 @@
   IRbacService,
   IGdgMemberService,
 } from "../domain/IAuthenticationInterfaces.js"; 
-import { TokenPayload } from "../domain/TokenPayload";
+import { TokenPayload } from "../domain/TokenPayload.js";
 
 export class Login {
   constructor(
@@ -35,7 +35,7 @@ export class Login {
 
     const tokenPayload = TokenPayload.create({
       email: credential.props.emailAddress,
-      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 2),
+      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(),
       memberInfo,
       permissions,
     });

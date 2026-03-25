@@ -14,7 +14,7 @@ export type MemberInfo = {
 
 export type TokenPayloadProps = {
   email: string;
-  validUntil: Date;
+  validUntil: string;
   memberInfo: MemberInfo;
   permissions: Permission[];
 };

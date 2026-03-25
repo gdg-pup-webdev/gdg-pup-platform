@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"; 
 import { Stack, Input } from "@packages/spark-ui";
-import { useAuthContext, useAuthStore } from "../store/useAuthStore"; 
+import { useAuthContext } from "../store/useAuthStore"; 
 
 
 export const LoginForm = () => { 

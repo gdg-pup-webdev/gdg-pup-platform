@@ -6,7 +6,7 @@ import { Button } from "@packages/spark-ui";
 import React from "react";
 
 const AuthenticationDebugPage = () => {
-  const { status, token, login, logout } = useAuthContext();
+  const { status, token, login, logout, decodedToken } = useAuthContext();
 
   return (
     <>
@@ -14,6 +14,7 @@ const AuthenticationDebugPage = () => {
         <div>AuthenticationDebugPage</div>
         <div>Status: {status}</div>
         <div>Token: {token}</div>
+        <pre>{JSON.stringify(decodedToken, null, 2)}</pre>
         {/* <button onClick={login}>Login</button> */}
         <Button onClick={logout}>Logout</Button>
         <div className="border-2 text-white bg-black p-4">
