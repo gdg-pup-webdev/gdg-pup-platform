@@ -35,7 +35,7 @@ export function initializeAuthenticationModule(
   const memberCheckService = new MemberCheckService(gdgMembersController);
 
   // Use Cases
-  const initiateCreateNewUserUC = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService, memberCheckService);
+  const initiateCreateNewUserUC = new InitiateCreateNewUser(referenceRepo, encryptionService, otpService, memberCheckService, credentialRepo);
   const finalizeCreateNewUserUC = new FinalizeCreateNewUser(credentialRepo, referenceRepo, otpService);
   const loginUC = new Login(credentialRepo, encryptionService, jwtService);
   const verifyTokenUC = new VerifyToken(jwtService);
