@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { useAuthContext } from "@/providers/AuthProvider";
+import Image from "next/image"; 
 import { usePathname } from "next/navigation";
 import { ASSETS } from "@/lib/constants/assets";
 import { cn } from "@/lib/utils";
@@ -15,6 +14,7 @@ import {
   Avatar,
   Stack,
 } from "@packages/spark-ui";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 interface NavbarProps {
   transparent?: boolean;
@@ -25,7 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   transparent = false,
   hideAuth = false,
 }) => {
-  const { user, status, gdgId } = useAuthContext();
+  const {  status  } = useAuthContext();
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   
@@ -223,13 +223,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     {status === "checking" ? (
                       <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
-                    ) : user ? (
+                    ) : status === "loggedin" ? (
                       <Link href="/sparkmates" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
                         <Avatar
-                          src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
-                          alt={user.user_metadata?.full_name || user.email || "User"}
-                          size="sm"
-                          fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+                          src={
+                            // user.user_metadata?.avatar_url || 
+                            ASSETS.AUTH.AVATAR_DEFAULT}
+                          // alt={user.user_metadata?.full_name || user.email || "User"}
+                          // size="sm"
+                          // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
                         />
                       </Link>
                     ) : (
@@ -337,10 +339,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 <Avatar
-                                  src={user.user_metadata?.avatar_url || ASSETS.AUTH.AVATAR_DEFAULT}
-                                  alt={user.user_metadata?.full_name || user.email || "User"}
-                                  size="sm"
-                                  fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+                                  src={
+                                    // user.user_metadata?.avatar_url || 
+                                    ASSETS.AUTH.AVATAR_DEFAULT}
+                                  // alt={user.user_metadata?.full_name || user.email || "User"}
+                                  // size="sm"
+                                  // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
                                 />
                                 <Stack gap="none">
                                   <Text variant="body-sm" weight="semibold" className="text-white">

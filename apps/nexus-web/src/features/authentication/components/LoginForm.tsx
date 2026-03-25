@@ -1,27 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useLogin } from "../hooks/useLogin";
-import { useAuthStore } from "../store/useAuthStore"; 
-import { LINKS } from "@/lib/constants/links";
-import { Stack, Input } from '@packages/spark-ui';
+import React, { useState } from "react"; 
+import { Stack, Input } from "@packages/spark-ui";
+import { useAuthContext, useAuthStore } from "../store/useAuthStore"; 
 
-const ICON_URL = "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
 
-// Moved outside to prevent re-renders and input defocusing
-const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
-    {children}
-  </div>
-);
-
-const inputBaseStyles = "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
-
-export const LoginForm = () => {
-  const router = useRouter();
-  const setToken = useAuthStore((state) => state.setToken);
-  const { mutateAsync: login, isPending, error } = useLogin();
+export const LoginForm = () => { 
+  const { status, login, error} = useAuthContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,15 +14,13 @@ export const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await login({ data: { email, pass: password } });
-      if (res?.data?.token) {
-        setToken(res.data.token);
-        router.push(LINKS.landing);
-      }
-    } catch (err) {
-      // Error is handled by react-query error state
+      await login(email, password); 
+    } catch (err) { 
     }
   };
+
+  // deriving states 
+  const isPending = status === "checking" || status === "loggingin";
 
   return (
     <Stack gap="lg" className="w-full">
@@ -62,7 +45,9 @@ export const LoginForm = () => {
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
+              leftIcon={
+                <img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />
+              }
               placeholder="e.g., sparkylorenzo@gmail.com"
             />
           </StyledInputContainer>
@@ -70,7 +55,10 @@ export const LoginForm = () => {
 
         {/* Password Field */}
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="password" className="text-[18px] font-bold text-white">
+          <label
+            htmlFor="password"
+            className="text-[18px] font-bold text-white"
+          >
             Password
           </label>
           <StyledInputContainer>
@@ -82,12 +70,18 @@ export const LoginForm = () => {
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
+              leftIcon={
+                <img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />
+              }
               placeholder="Enter Your Password"
             />
           </StyledInputContainer>
           <div className="flex justify-end">
-            <a href="/forgot-password" opacity-80 className="text-white text-[16px] font-medium hover:underline">
+            <a
+              href="/forgot-password"
+              opacity-80
+              className="text-white text-[16px] font-medium hover:underline"
+            >
               Forgot Password?
             </a>
           </div>
@@ -105,7 +99,9 @@ export const LoginForm = () => {
 
       {/* Footer / Redirect */}
       <div className="flex justify-center mt-6 items-center gap-[8px]">
-        <span className="text-white/80 text-[16px] font-medium">Don't have an account yet?</span>
+        <span className="text-white/80 text-[16px] font-medium">
+          Don't have an account yet?
+        </span>
         <a href="/signup" className="text-white font-bold hover:underline">
           Sign Up
         </a>
@@ -113,3 +109,17 @@ export const LoginForm = () => {
     </Stack>
   );
 };
+
+
+const ICON_URL =
+  "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
+
+// Moved outside to prevent re-renders and input defocusing
+const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
+  <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
+    {children}
+  </div>
+);
+
+const inputBaseStyles =
+  "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";

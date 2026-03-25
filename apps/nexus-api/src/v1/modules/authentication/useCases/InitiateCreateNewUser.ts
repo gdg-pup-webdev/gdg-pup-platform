@@ -18,7 +18,7 @@ export class InitiateCreateNewUser {
     }
 
     // check if user credential already exists 
-    const member = await this.credentialRepo.deleteByEmail(email);
+    const member = await this.credentialRepo.findByEmail(email);
     if(member) {
       throw new Error("An account with this email already exists. Please signin instead.");
     }

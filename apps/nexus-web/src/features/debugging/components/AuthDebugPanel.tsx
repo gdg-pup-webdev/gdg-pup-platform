@@ -28,10 +28,10 @@ export function AuthDebugPanel() {
     getFormattedAuthState,
   } = useDebugAuth();
 
-  const {token, clearToken} = useAuthStore();
+  const {token, logout} = useAuthStore();
 
   const logout = () => {
-    clearToken();
+    logout();
   }
 
   // Handle token copy with toast notification

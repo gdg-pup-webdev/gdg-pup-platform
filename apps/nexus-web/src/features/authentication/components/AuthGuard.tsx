@@ -1,40 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { useAuthStore } from "../store/useAuthStore"; 
+import { useRouter, usePathname } from "next/navigation"; 
 import { LINKS } from "@/lib/constants/links";
+import { useAuthContext } from "../store/useAuthStore";
 
 export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const token = useAuthStore((state) => state.token);
+  const {token } = useAuthContext();
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  // Ensure unauthenticated users are redirected from protected admin routes
   useEffect(() => {
-    if (!isHydrated) return;
-
-    // We don't want to redirect if they are already on the login or signup page
-    if (
-      !token &&
-      pathname !==  LINKS.auth_signin
-    ) {
-      router.replace( LINKS.auth_signin);
+    if (!token) {
+      router.push(LINKS.auth_signin);
     }
-  }, [isHydrated, token, pathname, router]);
+
+    if (token) {
+      if (pathname === LINKS.auth_signin || pathname === LINKS.auth_signup) {
+        router.push(LINKS.profile_me);
+      }
+    }
+  }, [isHydrated, token, pathname]);
 
   if (!isHydrated) {
-    return null; // Avoid hydration mismatch
-  }
-
-  // Prevent rendering protected content if unauthenticated
-  if (!token && pathname !==  LINKS.auth_signin && pathname !== "/authentication/signup") {
-    return null; 
+    return null;
   }
 
   return <>{children}</>;

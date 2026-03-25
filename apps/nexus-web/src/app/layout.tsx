@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@packages/spark-ui/styles.css";
 import "./globals.css";
-import { AuthProvider } from "@/providers/AuthProvider";
-import { LenisProvider } from "@/providers/LenisProvider";
 import { Navbar } from "@/components/shared/Navbar";
-import { QueryProvider } from "@packages/spark-tools/query";
 import { Footer } from "@/components/shared";
+import { ProviderCompose } from "@/providers/ProviderCompose";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,24 +27,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("Rendering RootLayout");
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <LenisProvider>
-            <AuthProvider>
-              <Navbar />
-              <main>
-                {children}
-              </main>
-              <Footer />
-            </AuthProvider>
-          </LenisProvider>
-        </QueryProvider>
+        <ProviderCompose>
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </ProviderCompose>
       </body>
     </html>
   );

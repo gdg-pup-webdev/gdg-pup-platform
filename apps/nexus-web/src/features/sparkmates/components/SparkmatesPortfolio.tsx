@@ -3,8 +3,7 @@
 import { type ReactNode, useMemo, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { Avatar, Badge, Button, Input, ShineBorder, Text } from "@packages/spark-ui";
-import { CosmosParticles } from "@/components/shared";
-import { useAuthContext } from "@/providers/AuthProvider";
+import { CosmosParticles } from "@/components/shared"; 
 import { SparkmatesRainbowStreak } from "./SparkmatesRainbowStreak";
 import { SkillsAndLinksSection } from "./portfolio/sections";
 import { useActivateSparkmatesCard } from "../hooks/useActivateSparkmatesCard";
