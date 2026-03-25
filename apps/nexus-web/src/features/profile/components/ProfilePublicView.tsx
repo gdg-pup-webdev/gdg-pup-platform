@@ -12,40 +12,11 @@ import {
   Text,
 } from "@packages/spark-ui";
 import { CosmosParticles } from "@/components/shared"; 
-import { SkillsAndLinksSection } from "./portfolio/sections"; 
+import { PublicSkillsAndLinksSection } from "./publicViewComponents/PublicSkillsAndLinksSection";
 import type { SparkmatesSource } from "../types"; 
 import { useSparkmateProfile } from "../hooks/useSparkmateProfile";
 import { useSuggestedSparkmates } from "../hooks/useSuggestedSparkmates";
 import { ASSETS } from "@/lib/constants/assets";
-
-const addIcon = (
-  <svg
-    viewBox="0 0 24 24"
-    className="h-4 w-4"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
-    <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-  </svg>
-);
-
-const editIcon = (
-  <svg
-    viewBox="0 0 24 24"
-    className="h-4 w-4"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
-    <path d="M12 20h9" strokeLinecap="round" />
-    <path
-      d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
 
 const viewIcon = (
   <svg
@@ -74,18 +45,6 @@ const searchIcon = (
   >
     <circle cx="11" cy="11" r="7" />
     <path d="m20 20-3.5-3.5" strokeLinecap="round" />
-  </svg>
-);
-
-const burgerIcon = (
-  <svg
-    viewBox="0 0 24 24"
-    className="h-4 w-4"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-  >
-    <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
   </svg>
 );
 
@@ -342,7 +301,7 @@ export function ProfilePublicView({
   const suggestedUsers = useSuggestedSparkmates({
     search,
     viewerGdgId: profile?.gdg_id,
-    viewerPortfolio: profile?.portfolio ?? null,
+    // viewerPortfolio: profile?.portfolio ?? null,
   });
 
   // const isOwner = useMemo(() => {
@@ -418,8 +377,10 @@ export function ProfilePublicView({
     );
   }
 
+
+
   const displayName =
-    profile.portfolio?.full_name ||
+    profile.portfolio?.first_name ||
     profile.portfolio?.nickname ||
     // user?.user_metadata?.full_name ||
     profile.gdg_id;
@@ -488,14 +449,6 @@ export function ProfilePublicView({
               <Text variant="heading-5" className="text-white">
                 My Portfolio
               </Text>
-              <Button
-                variant="default"
-                size="sm"
-                iconRight={viewIcon}
-                className="px-3 py-1 text-white"
-              >
-                Preview
-              </Button>
             </div>
 
             <div className="mt-6 p-0">
@@ -516,7 +469,7 @@ export function ProfilePublicView({
                       {displayName}
                     </Text>
                     <Text variant="body-sm" className="text-[#C1C7CD]">
-                      {profile.portfolio?.year_and_program ||
+                      {profile.portfolio?.program ||
                         "Program and Year not set"}
                     </Text>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -554,38 +507,8 @@ export function ProfilePublicView({
                           <SocialGlyph type={social.key} />
                         </Button>
                       ))}
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        title="Add Socials"
-                        className="h-8 w-8 rounded-full border border-white/25 bg-[#091734] p-0 text-white"
-                      >
-                        +
-                      </Button>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-white"
-                    title="Menu"
-                    aria-label="Menu"
-                  >
-                    {burgerIcon}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-white"
-                    title="Edit"
-                    aria-label="Edit"
-                  >
-                    {editIcon}
-                  </Button>
                 </div>
               </div>
             </div>
@@ -596,19 +519,7 @@ export function ProfilePublicView({
                   <Text variant="heading-6" gradient="white-blue" weight="bold">
                     Custom Button
                   </Text>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-white"
-                    title="Edit Custom Button"
-                    aria-label="Edit Custom Button"
-                  >
-                    {editIcon}
-                  </Button>
                 </div>
-                <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Add a custom button that appears on your profile.
-                </Text>
                 <div className="space-y-2.5">
                   {customLinks.map((item, index) => (
                     <div
@@ -643,14 +554,11 @@ export function ProfilePublicView({
                             {item.url}
                           </Text>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-white"
-                          onClick={() => toggleStar(index)}
-                        >
-                          {starredCustomButtons.has(index) ? "★" : "☆"}
-                        </Button>
+                        {starredCustomButtons.has(index) && (
+                          <div className="h-8 w-8 flex items-center justify-center text-white text-xl">
+                            ★
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -662,21 +570,12 @@ export function ProfilePublicView({
                     </div>
                   ) : null}
                 </div>
-                <Button
-                  variant="dashed-outline"
-                  className="w-full"
-                  iconLeft={addIcon}
-                >
-                  Add Custom Buttons
-                </Button>
               </section>
 
               <Divider />
 
-              <SkillsAndLinksSection
-                portfolio={profile.portfolio}
-                editIcon={editIcon}
-                addIcon={addIcon}
+              <PublicSkillsAndLinksSection
+                portfolio={profile}
                 onOpenExternal={openExternal}
               />
 
@@ -696,21 +595,11 @@ export function ProfilePublicView({
                     View All
                   </Button>
                 </div>
-                <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Feature your best works to highlight your skills.
-                </Text>
                 <div className="space-y-3.5">
                   {projectImages.map((image, index) => (
                     <ProjectCard key={`project-${index}`} image={image} />
                   ))}
                 </div>
-                <Button
-                  variant="dashed-outline"
-                  className="w-full"
-                  iconLeft={addIcon}
-                >
-                  Add New Projects
-                </Button>
               </section>
 
               <Divider />

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { SparkmatesPortfolio, SuggestedSparkmate } from "../types";
+import type { SparkmatesProfile, SuggestedSparkmate } from "../types";
 
 const DUMMY_SUGGESTED_SPARKMATES: SuggestedSparkmate[] = [
   {
@@ -99,16 +99,16 @@ function normalize(values: string[]) {
 }
 
 function getSimilarityScore(
-  viewerPortfolio: SparkmatesPortfolio | null,
+  viewerPortfolio: SparkmatesProfile | null,
   candidate: SuggestedSparkmate,
 ) {
   if (!viewerPortfolio) {
     return 0;
   }
 
-  const viewerSkills = normalize(viewerPortfolio.technical_skills);
-  const viewerInterests = normalize(viewerPortfolio.learning_interests);
-  const viewerTools = normalize(viewerPortfolio.tools_and_technologies);
+  const viewerSkills = normalize(viewerPortfolio.portfolio?.technical_skills ?? []);
+  const viewerInterests = normalize(viewerPortfolio.portfolio?.learning_interests ?? []);
+  const viewerTools = normalize(viewerPortfolio.portfolio?.tools_and_technologies ?? []);
 
   const candidateSkills = normalize(candidate.skills);
   const candidateInterests = normalize(candidate.interests);
@@ -127,23 +127,23 @@ function getSimilarityScore(
 export function useSuggestedSparkmates({
   search,
   viewerGdgId,
-  viewerPortfolio,
+  // viewerPortfolio,
 }: {
   search: string;
   viewerGdgId?: string;
-  viewerPortfolio: SparkmatesPortfolio | null;
+  // viewerPortfolio: SparkmatesPortfolio | null;
 }) {
   return useMemo(() => {
     const searchTerm = search.trim().toLowerCase();
 
     const sorted = [...DUMMY_SUGGESTED_SPARKMATES]
       .filter((candidate) => candidate.gdgId !== viewerGdgId)
-      .map((candidate) => ({
-        candidate,
-        score: getSimilarityScore(viewerPortfolio, candidate),
-      }))
-      .sort((left, right) => right.score - left.score)
-      .map((entry) => entry.candidate);
+      // .map((candidate) => ({
+      //   candidate,
+      //   score: getSimilarityScore(viewerPortfolio, candidate),
+      // }))
+      // .sort((left, right) => right.score - left.score)
+      // .map((entry) => entry.candidate);
 
     if (!searchTerm) {
       return sorted;
@@ -153,5 +153,5 @@ export function useSuggestedSparkmates({
       const haystack = `${candidate.name} ${candidate.bio} ${candidate.programYear}`.toLowerCase();
       return haystack.includes(searchTerm);
     });
-  }, [search, viewerGdgId, viewerPortfolio]);
+  }, [search, viewerGdgId ]);
 }

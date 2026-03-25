@@ -1,6 +1,5 @@
-import type { ReactNode } from "react";
 import { Badge, Button, Text } from "@packages/spark-ui";
-import type { SparkmatesProfile } from "../../../types";
+import { SparkmatesProfile } from "../../types";
 
 const SPARK_BADGE = {
   variantBlue: "blue",
@@ -109,21 +108,17 @@ function OtherLinksCard({
   );
 }
 
-export function SkillsAndLinksSection({
+export function PublicSkillsAndLinksSection({
   portfolio,
-  editIcon,
-  addIcon,
   onOpenExternal,
 }: {
   portfolio: SparkmatesProfile | null;
-  editIcon: ReactNode;
-  addIcon: ReactNode;
   onOpenExternal: (url: string) => void;
 }) {
-  const skills = portfolio?.technical_skills ?? [];
-  const interests = portfolio?.learning_interests ?? [];
-  const tools = portfolio?.tools_and_technologies ?? [];
-  const otherLinks = portfolio?.other_links ?? [];
+  const skills = portfolio?.portfolio?.technical_skills ?? [];
+  const interests = portfolio?.portfolio?.learning_interests ?? [];
+  const tools = portfolio?.portfolio?.tools_and_technologies ?? [];
+  const otherLinks = portfolio?.portfolio?.other_links ?? [];
 
   return (
     <section className="space-y-4 pt-6">
@@ -131,14 +126,7 @@ export function SkillsAndLinksSection({
         <Text variant="heading-6" gradient="white-blue" weight="bold">
           Skills and Interests
         </Text>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-white" title="Edit Skills and Interests" aria-label="Edit Skills and Interests">
-          {editIcon}
-        </Button>
       </div>
-
-      <Text variant="body-sm" className="text-[#C1C7CD]">
-        Add your skills or what you are currently learning.
-      </Text>
 
       <div className="space-y-3">
         <CategoryCard title="Technical Skills" chips={skills} iconType="technical" />
@@ -146,12 +134,6 @@ export function SkillsAndLinksSection({
         <CategoryCard title="Tools & Technologies" chips={tools} iconType="tools" />
         <OtherLinksCard links={otherLinks} onOpenExternal={onOpenExternal} />
       </div>
-
-      {skills.length === 0 && interests.length === 0 && tools.length === 0 && otherLinks.length === 0 ? (
-        <Button variant="outline" className="w-full border-white/25 bg-white/5 text-white" iconLeft={addIcon}>
-          Add Skills and Interests
-        </Button>
-      ) : null}
     </section>
   );
 }
