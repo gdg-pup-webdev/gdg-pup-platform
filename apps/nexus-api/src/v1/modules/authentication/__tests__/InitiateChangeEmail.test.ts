@@ -26,8 +26,7 @@ describe("InitiateChangeEmail", () => {
     const newEmail = "new@example.com";
     const password = "password";
     const credential = UserCredential.create({
-      emailAddress: email,
-      username: "test",
+      emailAddress: email, 
       passwordHash: await encryptionService.hash(password),
     });
     await credentialRepo.saveNew(credential);

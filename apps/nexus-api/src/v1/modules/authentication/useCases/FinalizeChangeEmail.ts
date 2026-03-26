@@ -26,8 +26,8 @@ export class FinalizeChangeEmail {
 
     credential.updateEmail(reference.props.payload.newEmail);
     // Optionally update username if it was based on email
-    const newUsername = reference.props.payload.newEmail.split("@")[0];
-    credential.updateUsername(newUsername);
+    // const newUsername = reference.props.payload.newEmail.split("@")[0];
+    // credential.updateUsername(newUsername);
 
     await this.credentialRepo.persistUpdates(credential);
     await this.referenceRepo.deleteByReferenceCode(referenceCode);

@@ -24,8 +24,7 @@ export class FinalizeCreateNewUser {
     const username = emailAddress.split("@")[0];
 
     const credential = UserCredential.create({
-      emailAddress,
-      username,
+      emailAddress, 
       passwordHash: payload.passwordHash,
     });
 
