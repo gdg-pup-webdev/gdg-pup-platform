@@ -3,6 +3,7 @@
 import React, { useState } from "react"; 
 import { Stack, Input } from "@packages/spark-ui";
 import { useAuthContext } from "../store/useAuthStore"; 
+import Link from "next/link";
 
 
 export const LoginForm = () => { 
@@ -102,9 +103,9 @@ export const LoginForm = () => {
         <span className="text-white/80 text-[16px] font-medium">
           Don't have an account yet?
         </span>
-        <a href="/signup" className="text-white font-bold hover:underline">
+        <Link href="/signup" className="text-white font-bold hover:underline">
           Sign Up
-        </a>
+        </Link>
       </div>
     </Stack>
   );

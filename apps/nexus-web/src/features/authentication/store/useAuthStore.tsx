@@ -51,7 +51,8 @@ export const AuthContextProvider = ({
     status: "checking",
     error: null,
   });
-  const { token, setToken, clearToken, decodedToken, _hasHydrated } = useTokenStore();
+  const { token, setToken, clearToken, decodedToken, _hasHydrated } =
+    useTokenStore();
 
   console.log("AuthContextProvider rendered with status:", state.status);
 
@@ -81,13 +82,14 @@ export const AuthContextProvider = ({
     return () => clearTimeout(timer);
   }, [token, decodedToken]);
 
-  useEffect(() => {if (!_hasHydrated) return;
+  useEffect(() => { 
+    if (!_hasHydrated) return;
     if (token) {
       setState({ status: STATUS.AUTHENTICATED, error: null });
     } else {
       setState({ status: STATUS.UNAUTHENTICATED, error: null });
     }
-  }, [token]);
+  }, [token, _hasHydrated]);
 
   const login = async (email: string, password: string) => {
     setState({ status: STATUS.LOGGINGIN, error: null });
@@ -153,14 +155,21 @@ const useTokenStore = create<TokenStore>()(
   persist(
     (set) => ({
       token: null,
-      decodedToken: null,_hasHydrated: false,
+      decodedToken: null,
+      _hasHydrated: false,
       setToken: (token: string) =>
         set({ token, decodedToken: jwtDecode(token) }),
-      clearToken: () => set({ token: null, decodedToken: null }),setHasHydrated: (state) => set({ _hasHydrated: state }),
+      clearToken: () => set({ token: null, decodedToken: null }),
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
-      name: "nexus-auth-storage",onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+      name: "nexus-auth-storage",
+      onRehydrateStorage: () => {
+        return (state, error) => {
+          if (!error && state) {
+            state.setHasHydrated(true);
+          }
+        };
       },
     },
   ),

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSignupInitiate, useSignupFinalize } from "../hooks"; 
 import { LINKS } from "@/lib/constants/links";
 import { Stack, Input } from '@packages/spark-ui';
+import Link from "next/link";
 
 const ICON_URL = "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
 
@@ -162,7 +163,7 @@ export const SignupFlow = () => {
 
       <div className="flex justify-center mt-6 items-center gap-[8px]">
         <span className="text-white/80 text-[16px] font-medium">Already have an account?</span>
-        <a href="/signin" className="text-white font-bold hover:underline">Sign In</a>
+        <Link href="/signin" className="text-white font-bold hover:underline">Sign In</Link>
       </div>
     </Stack>
   );
