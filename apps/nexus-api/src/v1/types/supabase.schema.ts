@@ -560,6 +560,7 @@ export const publicGdgMerchUpdateSchema = z.object({
 export const publicNfcCardsRowSchema = z.object({
   activated_at: z.string().nullable(),
   created_at: z.string(),
+  destination_url: z.string().nullable(),
   gdg_id: z.string(),
   id: z.string(),
   notes: z.string().nullable(),
@@ -572,6 +573,7 @@ export const publicNfcCardsRowSchema = z.object({
 export const publicNfcCardsInsertSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  destination_url: z.string().optional().nullable(),
   gdg_id: z.string(),
   id: z.string().optional(),
   notes: z.string().optional().nullable(),
@@ -584,6 +586,7 @@ export const publicNfcCardsInsertSchema = z.object({
 export const publicNfcCardsUpdateSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  destination_url: z.string().optional().nullable(),
   gdg_id: z.string().optional(),
   id: z.string().optional(),
   notes: z.string().optional().nullable(),
@@ -945,13 +948,6 @@ export const publicSurveyResponseRelationshipsSchema = z.tuple([
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("event"),
     referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("survey_response_gdg_id_fkey"),
-    columns: z.tuple([z.literal("gdg_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("gdg_members"),
-    referencedColumns: z.tuple([z.literal("gdg_id")]),
   }),
   z.object({
     foreignKeyName: z.literal("survey_response_survey_id_fkey"),

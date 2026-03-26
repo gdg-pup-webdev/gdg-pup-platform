@@ -20,7 +20,7 @@ import { RolesRouter } from "../routes/roles/roles.router";
 import { RolesHttpController } from "../routes/roles/roles.controller";
 import { rbacController } from "../modules/rbacSystem";
 import { UsersRouter } from "../routes/users/users.router";
-import { UsersHttpController } from "../routes/users/users.controller"; 
+import { UsersHttpController } from "../routes/users/users.controller";
 import { GdgTeamsHttpController } from "../routes/gdg-teams/gdgTeams.controller";
 import { GdgTeamsRouter } from "../routes/gdg-teams/gdgTeams.router";
 import { sparkmatesModuleController } from "../modules/sparkmatesModule";
@@ -44,22 +44,31 @@ import { eventHighlightsController } from "../modules/eventHighlights";
 import { EventHighlightsHttpController } from "../routes/event-highlights/eventHighlights.controller";
 import { EventHighlightsRouter } from "../routes/event-highlights/eventHighlights.router";
 import { AuthenticationHttpController } from "../routes/authentication/authentication.controller";
-import { AuthenticationController, initializeAuthenticationModule } from "../modules/authentication";
+import { authenticationController } from "../modules/authentication";
 import { oneTimePinController } from "../modules/oneTimePin";
 import { gdgMembersController } from "../modules/gdgMembers";
 import { configs } from "@/configs/configs";
 import { AuthenticationRouter } from "../routes/authentication/authentication.router";
 import { GdgMembersHttpController } from "../routes/gdgmembers/gdgmembers.controller";
 import { GdgMembersRouter } from "../routes/gdgmembers/gdgmembers.router";
+import { NfcCardsRouter } from "../routes/nfc-cards/nfcCards.router";
+import { NfcCardsHttpController } from "../routes/nfc-cards/nfcCards.controller";
+import { nfcCardsModuleController } from "../modules/nfcCards";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
 
-  const gdgMembersHttpController = new GdgMembersHttpController(gdgMembersController);
+  const gdgMembersHttpController = new GdgMembersHttpController(
+    gdgMembersController,
+  );
   const gdgMembersRouter = new GdgMembersRouter(gdgMembersHttpController);
 
-  const eventHighlightsHttpController = new EventHighlightsHttpController(eventHighlightsController);
-  const eventHighlightsRouter = new EventHighlightsRouter(eventHighlightsHttpController);
+  const eventHighlightsHttpController = new EventHighlightsHttpController(
+    eventHighlightsController,
+  );
+  const eventHighlightsRouter = new EventHighlightsRouter(
+    eventHighlightsHttpController,
+  );
 
   const pointsHttpController = new PointsHttpController(pointSystemController);
   const pointsRouter = new PointsRouter(pointsHttpController);
@@ -70,7 +79,9 @@ export const loadRoutes = (app: Express) => {
   const filesHttpController = new FilesHttpController(filesModuleController);
   const filesRouter = new FilesRouter(filesHttpController);
 
-  const foldersHttpController = new FoldersHttpController(filesModuleController);
+  const foldersHttpController = new FoldersHttpController(
+    filesModuleController,
+  );
   const foldersRouter = new FoldersRouter(foldersHttpController);
 
   const authService = new AuthService(supabaseClient);
@@ -94,7 +105,6 @@ export const loadRoutes = (app: Express) => {
 
   const usersHttpController = new UsersHttpController(rbacController);
   const usersRouter = new UsersRouter(usersHttpController);
- 
 
   const gdgTeamsHttpController = new GdgTeamsHttpController();
   const gdgTeamsRouter = new GdgTeamsRouter(gdgTeamsHttpController);
@@ -111,12 +121,24 @@ export const loadRoutes = (app: Express) => {
   const gdgMerchHttpController = new GdgMerchHttpController(gdgMerchController);
   const gdgMerchRouter = new GdgMerchRouter(gdgMerchHttpController);
 
-  const teamResourcesHttpController = new TeamResourcesHttpController(teamResourceController);
-  const teamResourcesRouter = new TeamResourcesRouter(teamResourcesHttpController);
+  const teamResourcesHttpController = new TeamResourcesHttpController(
+    teamResourceController,
+  );
+  const teamResourcesRouter = new TeamResourcesRouter(
+    teamResourcesHttpController,
+  );
 
-  const authenticationModule = initializeAuthenticationModule(supabaseClient, configs.jwt.secret, oneTimePinController, gdgMembersController)
-  const authenticationHttpController = new AuthenticationHttpController(authenticationModule)
-  const authenticationRouter = new AuthenticationRouter(authenticationHttpController)
+  const authenticationHttpController = new AuthenticationHttpController(
+    authenticationController,
+  );
+  const authenticationRouter = new AuthenticationRouter(
+    authenticationHttpController,
+  );
+
+  const nfcCardsHttpController = new NfcCardsHttpController(
+    nfcCardsModuleController,
+  );
+  const nfcCardsRouter = new NfcCardsRouter(nfcCardsHttpController);
 
   app.use("/files", filesRouter.router);
   app.use("/folders", foldersRouter.router);
@@ -125,7 +147,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);
   app.use("/tasks", tasksRouter.router);
   app.use("/roles", rolesRouter.router);
-  app.use("/users", usersRouter.router); 
+  app.use("/users", usersRouter.router);
   app.use("/gdg-teams", gdgTeamsRouter.router);
   app.use("/sparkmates", sparkmatesRouter.router);
   app.use("/nfc-system", nfcSystemRouter.router);
@@ -137,6 +159,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/event-highlights", eventHighlightsRouter.router);
   app.use("/authentication", authenticationRouter.router);
   app.use("/gdgmembers", gdgMembersRouter.router);
+  app.use("/nfc-cards", nfcCardsRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

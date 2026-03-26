@@ -1,7 +1,6 @@
 ﻿export type UserCredentialProps = {
   id: string;
   emailAddress: string;
-  username: string;
   passwordHash: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -44,13 +43,6 @@ export class UserCredential {
     this._props.emailAddress = newEmail;
     this._props.updatedAt = new Date();
   }
-
-  updateUsername(newUsername: string): void {
-    if (!newUsername.trim()) {
-      throw new Error("Username cannot be empty.");
-    }
-    this._props.username = newUsername;
-    this._props.updatedAt = new Date();
-  }
+ 
 }
 

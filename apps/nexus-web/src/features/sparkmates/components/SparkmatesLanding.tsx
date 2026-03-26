@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { CosmosParticles } from "@/components/shared";
-import { useAuthContext } from "@/providers/AuthProvider";
 import { SparkmatesMascot } from "./SparkmatesMascot";
 import { SparkmatesRainbowStreak } from "./SparkmatesRainbowStreak";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 export const SparkmatesLanding = () => {
-  const { user, status, gdgId } = useAuthContext();
+  const {  status  } = useAuthContext();
+  const gdgId = "testing";
 
   const portfolioHref = gdgId ? `/sparkmates/${gdgId}` : "/signin";
 

@@ -7,8 +7,7 @@
 
 "use client";
 
-import React from "react";
-import { DebugNavigation } from "@/features/debugging";
+import React from "react"; 
 import { Card, Container, Stack, Grid } from '@packages/spark-ui';
 import { HealthChecksGrid } from '@/features/health-checks';
 
@@ -18,7 +17,7 @@ export default function DebugPage() {
       <Stack gap="xl">
 
           {/* Navigation */}
-          <DebugNavigation activePage="index" />
+          {/* <DebugNavigation activePage="index" /> */}
 
           {/* Info Cards */}
           <Grid gap="lg" className="grid-cols-1 md:grid-cols-3">

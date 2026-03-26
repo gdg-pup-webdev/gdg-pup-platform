@@ -8,7 +8,7 @@ export class GetMe {
 
   async execute(token: string): Promise<any> {
     const payload = await this.jwtService.verify(token);
-    const email = payload.email || payload.email_address;
+    const email = payload.props.email  ;
     
     if (!email) {
       throw new Error("Invalid token: Email not found in payload");
@@ -24,7 +24,7 @@ export class GetMe {
     return {
       id: credential.props.id,
       email: credential.props.emailAddress,
-      display_name: credential.props.username, // Using username as display_name
+      display_name: credential.props.emailAddress, // Using username as display_name
       gdg_id: null, // gdg_id is usually in a separate profile table
     };
   }

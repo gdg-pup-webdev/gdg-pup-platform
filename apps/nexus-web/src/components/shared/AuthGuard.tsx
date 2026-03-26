@@ -1,9 +1,9 @@
 "use client";
-
-import { useAuthContext } from "@/providers/AuthProvider";
+ 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { LoadingScreen } from "./LoadingScreen";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -20,24 +20,24 @@ interface AuthGuardProps {
  * - Authenticated users see `children` normally.
  */
 export function AuthGuard({ children, redirectTo = "/signin" }: AuthGuardProps) {
-  const { user, status } = useAuthContext();
-  const router = useRouter();
+  // const { user, status } = useAuthContext();
+  // const router = useRouter();
 
-  useEffect(() => {
-    if (status === "checking") return;
-    if (!user) {
-      router.push(redirectTo);
-    }
-  }, [user, status, router, redirectTo]);
+  // useEffect(() => {
+  //   if (status === "checking") return;
+  //   if (!user) {
+  //     router.push(redirectTo);
+  //   }
+  // }, [user, status, router, redirectTo]);
 
-  if (status === "checking") {
-    return <LoadingScreen />;
-  }
+  // if (status === "checking") {
+  //   return <LoadingScreen />;
+  // }
 
-  if (!user) {
-    // Render nothing while the redirect is in flight
-    return null;
-  }
+  // if (!user) {
+  //   // Render nothing while the redirect is in flight
+  //   return null;
+  // }
 
   return <>{children}</>;
 }

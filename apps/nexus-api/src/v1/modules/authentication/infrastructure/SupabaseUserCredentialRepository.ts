@@ -12,7 +12,7 @@ export class SupabaseUserCredentialRepository implements IUserCredentialReposito
       .insert({
         id: credential.props.id,
         email_address: credential.props.emailAddress,
-        username: credential.props.username,
+        username: "username",
         password_hash: credential.props.passwordHash,
       })
       .select()
@@ -21,8 +21,7 @@ export class SupabaseUserCredentialRepository implements IUserCredentialReposito
     if (error) throw error;
     return UserCredential.hydrate({
       id: data.id,
-      emailAddress: data.email_address,
-      username: data.username,
+      emailAddress: data.email_address, 
       passwordHash: data.password_hash,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
@@ -34,7 +33,7 @@ export class SupabaseUserCredentialRepository implements IUserCredentialReposito
       .from("user_credential")
       .update({
         email_address: credential.props.emailAddress,
-        username: credential.props.username,
+        username: "username",
         password_hash: credential.props.passwordHash,
         updated_at: new Date().toISOString(),
       })
@@ -45,8 +44,7 @@ export class SupabaseUserCredentialRepository implements IUserCredentialReposito
     if (error) throw error;
     return UserCredential.hydrate({
       id: data.id,
-      emailAddress: data.email_address,
-      username: data.username,
+      emailAddress: data.email_address, 
       passwordHash: data.password_hash,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
@@ -65,8 +63,7 @@ export class SupabaseUserCredentialRepository implements IUserCredentialReposito
 
     return UserCredential.hydrate({
       id: data.id,
-      emailAddress: data.email_address,
-      username: data.username,
+      emailAddress: data.email_address, 
       passwordHash: data.password_hash,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
