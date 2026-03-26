@@ -17,6 +17,7 @@ export type TokenPayloadProps = {
   validUntil: string;
   memberInfo: MemberInfo;
   permissions: Permission[];
+  roles: string[];
 };
 
 export class TokenPayload {

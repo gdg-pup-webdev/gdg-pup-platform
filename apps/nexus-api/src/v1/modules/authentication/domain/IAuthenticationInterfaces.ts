@@ -36,6 +36,7 @@ export abstract class IOTPService {
 
 export abstract class IRbacService {
   abstract listPermissionsOfUser(email: string): Promise<Permission[]>;
+  abstract listRolesOfUser(email: string): Promise<string[]>;
 }
 
 export abstract class IGdgMemberService {

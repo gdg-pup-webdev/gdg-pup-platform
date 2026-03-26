@@ -63,6 +63,11 @@ const NAV_ITEMS = [
     href: INTERNAL_LINKS.DEBUG_PAGE,
     icon: Award, 
   },
+  {
+    label: "Roles",
+    href: INTERNAL_LINKS.RBAC,
+    icon: Award, 
+  },
 ];
 
 export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {

@@ -43,7 +43,7 @@ export class RbacModuleController {
     const result = await this.assignRoleToUserUseCase.execute(userId, roleName);
 
     return {
-      id: result.props.id,
+      id: result.props.gdgId,
       roles: [...result.props.roles], // Spreading the string array to ensure a flat, safe copy
     };
   }
@@ -134,7 +134,7 @@ export class RbacModuleController {
     );
 
     return {
-      id: result.props.id,
+      id: result.props.gdgId,
       roles: [...result.props.roles], // Spreading the string array to ensure a flat, safe copy
     };
   }
