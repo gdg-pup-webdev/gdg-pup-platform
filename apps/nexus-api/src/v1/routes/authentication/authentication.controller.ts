@@ -6,6 +6,20 @@ import { createExpressController } from "@packages/typed-rest/serverExpress";
 export class AuthenticationHttpController {
   constructor(private readonly moduleController: AuthModuleController) {}
 
+  public refreshToken: RequestHandler = createExpressController(
+    contract.api.v1.authentication.refresh.POST,
+    async ({ input, output }) => {
+      const { token } = input.body.data;
+      const newToken = await this.moduleController.refreshToken(token);
+      
+      return output(200, {
+        status: "success",
+        message: "Token refreshed successfully",
+        data: newToken,
+      });
+    }
+  );
+
   public initiateCreateNewUser: RequestHandler = createExpressController(
     contract.api.v1.authentication.signup.initiate.POST,
     async ({ input, output }) => {

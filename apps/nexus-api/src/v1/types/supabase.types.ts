@@ -527,6 +527,7 @@ export type Database = {
         Row: {
           activated_at: string | null
           created_at: string
+          destination_url: string | null
           gdg_id: string
           id: string
           notes: string | null
@@ -538,6 +539,7 @@ export type Database = {
         Insert: {
           activated_at?: string | null
           created_at?: string
+          destination_url?: string | null
           gdg_id: string
           id?: string
           notes?: string | null
@@ -549,6 +551,7 @@ export type Database = {
         Update: {
           activated_at?: string | null
           created_at?: string
+          destination_url?: string | null
           gdg_id?: string
           id?: string
           notes?: string | null
@@ -899,13 +902,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "event"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "survey_response_gdg_id_fkey"
-            columns: ["gdg_id"]
-            isOneToOne: false
-            referencedRelation: "gdg_members"
-            referencedColumns: ["gdg_id"]
           },
           {
             foreignKeyName: "survey_response_survey_id_fkey"

@@ -23,6 +23,8 @@ import { configs } from "@/configs/configs.js";
 import { oneTimePinController } from "../oneTimePin/index.js";
 import { gdgMembersController } from "../gdgMembers/index.js";
 import { rbacController } from "../rbacSystem/index.js";
+import { TokenPayloadProps } from "./domain/TokenPayload";
+import { RefreshToken } from "./useCases/RefreshToken.js";
 
 // Infrastructure
 const credentialRepo = new SupabaseUserCredentialRepository(supabase);
@@ -80,6 +82,7 @@ const finalizeChangeEmailUC = new FinalizeChangeEmail(
   otpService,
 );
 const deleteUserUC = new DeleteUser(credentialRepo);
+const refreshTokenUC = new RefreshToken(jwtService);
 
 // Controller
 export const authenticationController = new AuthenticationController(
@@ -94,4 +97,7 @@ export const authenticationController = new AuthenticationController(
   initiateChangeEmailUC,
   finalizeChangeEmailUC,
   deleteUserUC,
+  refreshTokenUC,
 );
+
+export { AuthenticationController, type TokenPayloadProps };

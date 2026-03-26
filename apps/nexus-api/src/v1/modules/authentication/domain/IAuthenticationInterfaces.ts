@@ -26,7 +26,7 @@ export abstract class IEncryptionService {
 
 export abstract class IJWTService {
   abstract sign(payload: TokenPayload): Promise<string>;
-  abstract verify(token: string): Promise<Record<string, any>>;
+  abstract verify(token: string): Promise<TokenPayload>;
 }
 
 export abstract class IOTPService {

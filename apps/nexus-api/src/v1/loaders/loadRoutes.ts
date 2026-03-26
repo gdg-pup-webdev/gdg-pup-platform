@@ -51,6 +51,9 @@ import { configs } from "@/configs/configs";
 import { AuthenticationRouter } from "../routes/authentication/authentication.router";
 import { GdgMembersHttpController } from "../routes/gdgmembers/gdgmembers.controller";
 import { GdgMembersRouter } from "../routes/gdgmembers/gdgmembers.router";
+import { NfcCardsRouter } from "../routes/nfc-cards/nfcCards.router";
+import { NfcCardsHttpController } from "../routes/nfc-cards/nfcCards.controller";
+import { nfcCardsModuleController } from "../modules/nfcCards";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
@@ -132,6 +135,11 @@ export const loadRoutes = (app: Express) => {
     authenticationHttpController,
   );
 
+  const nfcCardsHttpController = new NfcCardsHttpController(
+    nfcCardsModuleController,
+  );
+  const nfcCardsRouter = new NfcCardsRouter(nfcCardsHttpController);
+
   app.use("/files", filesRouter.router);
   app.use("/folders", foldersRouter.router);
   app.use("/auth-system", authRouter.router);
@@ -151,6 +159,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/event-highlights", eventHighlightsRouter.router);
   app.use("/authentication", authenticationRouter.router);
   app.use("/gdgmembers", gdgMembersRouter.router);
+  app.use("/nfc-cards", nfcCardsRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

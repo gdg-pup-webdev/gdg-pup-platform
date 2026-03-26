@@ -9,6 +9,7 @@ import { FinalizeChangeEmail } from "./useCases/FinalizeChangeEmail.js";
 import { DeleteUser } from "./useCases/DeleteUser.js";
 import { GetMe } from "./useCases/GetMe.js";
 import { Logout } from "./useCases/Logout.js";
+import { RefreshToken } from "./useCases/RefreshToken.js";
 
 export class AuthenticationController {
   constructor(
@@ -22,8 +23,14 @@ export class AuthenticationController {
     private readonly finalizeChangePasswordUC: FinalizeChangePassword,
     private readonly initiateChangeEmailUC: InitiateChangeEmail,
     private readonly finalizeChangeEmailUC: FinalizeChangeEmail,
-    private readonly deleteUserUC: DeleteUser
+    private readonly deleteUserUC: DeleteUser, 
+    private readonly refreshTokenUC: RefreshToken
   ) {}
+
+  async refreshToken (token:string) : Promise<string> {
+    const newToken = await this.refreshTokenUC.execute(token);
+    return newToken;
+  }
 
   async initiateCreateNewUser(body: { email: string; pass: string }): Promise<{ referenceCode: string }> {
     const referenceCode = await this.initiateCreateNewUserUC.execute(body.email, body.pass);
@@ -40,16 +47,16 @@ export class AuthenticationController {
     return { token };
   }
 
-  async verifyToken(body: { token: string }): Promise<Record<string, any>> {
-    return this.verifyTokenUC.execute(body.token);
+  async verifyToken(body: { token: string })  {
+    return (await this.verifyTokenUC.execute(body.token)).props;
   }
 
   async getMe(body: { token: string }): Promise<any> {
-    return this.getMeUC.execute(body.token);
+    return await this.getMeUC.execute(body.token);
   }
 
   async logout(): Promise<{ success: boolean }> {
-    return this.logoutUC.execute();
+    return await this.logoutUC.execute();
   }
 
 

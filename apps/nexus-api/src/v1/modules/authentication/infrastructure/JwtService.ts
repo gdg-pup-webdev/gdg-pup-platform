@@ -1,6 +1,6 @@
 import { IJWTService } from "../domain/IAuthenticationInterfaces.js";
 import * as jwt from "jsonwebtoken";
-import { TokenPayload } from "../domain/TokenPayload.js";
+import { TokenPayload, TokenPayloadProps } from "../domain/TokenPayload.js";
 
 export class JwtService implements IJWTService {
   constructor(
@@ -15,7 +15,8 @@ export class JwtService implements IJWTService {
     });
   }
 
-  async verify(token: string): Promise<Record<string, any>> {
-    return jwt.verify(token, this.secret) as Record<string, any>;
+  async verify(token: string): Promise<TokenPayload> {
+    const data = jwt.verify(token, this.secret) as TokenPayloadProps;
+    return TokenPayload.create(data);
   }
 }

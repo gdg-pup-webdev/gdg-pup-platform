@@ -15,6 +15,7 @@ export const RequireAuthenticated = ({
 
   useEffect(() => {
     if (status === STATUS.UNAUTHENTICATED) {
+      console.log("Redirecting to login... unauthenticated");
       router.push(LINKS.auth_signin);
     }
   }, [status]);

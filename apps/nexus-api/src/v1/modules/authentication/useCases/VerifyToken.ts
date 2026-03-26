@@ -3,7 +3,7 @@
 export class VerifyToken {
   constructor(private readonly jwtService: IJWTService) {}
 
-  async execute(token: string): Promise<Record<string, any>> {
+  async execute(token: string)  {
     const payload = await this.jwtService.verify(token);
     return payload;
   }

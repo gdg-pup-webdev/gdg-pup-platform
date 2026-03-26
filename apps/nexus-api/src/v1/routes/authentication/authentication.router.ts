@@ -25,5 +25,7 @@ export class AuthenticationRouter {
     this.router.post("/email/change/finalize", this.controller.finalizeChangeEmail);
     
     this.router.delete("/user", this.controller.deleteUser);
+
+    this.router.post("/refresh", this.controller.refreshToken);
   }
 }

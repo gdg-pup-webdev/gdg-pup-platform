@@ -12,5 +12,7 @@ export const LINKS = {
     signup: "/signup",
     testSparkmateProfile: "/sparkmates/GDGPUP-26-000033",
     testSelfProfile: "/me",
+    testNfcCards: "/me/nfc-cards",
+    testNfcCard: "/nfc-cards/c2476a15-14bd-4574-8aba-d1b5845872cf",
   },
 };

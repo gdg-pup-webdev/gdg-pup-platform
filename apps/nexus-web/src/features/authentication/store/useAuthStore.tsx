@@ -5,7 +5,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useLogin } from "../hooks";
 import { jwtDecode } from "jwt-decode";
-import { TokenPayload } from "../types/tokenPayload"; 
+import { TokenPayload } from "../types/tokenPayload";
+import { useRefreshToken } from "../hooks/useRefreshToken";
 
 export const STATUS = {
   CHECKING: "checking",
@@ -17,14 +18,14 @@ export const STATUS = {
 
 export type StatusType = (typeof STATUS)[keyof typeof STATUS];
 
-
 interface AuthState {
-  status: StatusType; 
+  status: StatusType;
   token: string | null;
   decodedToken: TokenPayload | null;
   logout: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   error: Error | null;
+  refreshToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -50,9 +51,37 @@ export const AuthContextProvider = ({
     status: "checking",
     error: null,
   });
-  const { token, setToken, clearToken, decodedToken } = useTokenStore();
+  const { token, setToken, clearToken, decodedToken, _hasHydrated } = useTokenStore();
+
+  console.log("AuthContextProvider rendered with status:", state.status);
+
+  const refreshTokenMutation = useRefreshToken();
+
+  const refreshToken = async () => {
+    try {
+      const res = await refreshTokenMutation.mutateAsync({ token: token! });
+      setToken(res.data);
+    } catch (error) {
+      console.error("error while refreshing token", error);
+      clearToken();
+      setState({
+        status: STATUS.UNAUTHENTICATED,
+        error: error instanceof Error ? error : new Error("Unknown error"),
+      });
+    }
+  };
 
   useEffect(() => {
+    if (!token || !decodedToken) return;
+    const REFRESH_INTERVAL = 40 * 60 * 1000;
+    const timer = setTimeout(() => {
+      refreshToken();
+    }, REFRESH_INTERVAL);
+
+    return () => clearTimeout(timer);
+  }, [token, decodedToken]);
+
+  useEffect(() => {if (!_hasHydrated) return;
     if (token) {
       setState({ status: STATUS.AUTHENTICATED, error: null });
     } else {
@@ -102,6 +131,7 @@ export const AuthContextProvider = ({
           decodedToken,
           login,
           logout,
+          refreshToken,
         }}
       >
         {children}
@@ -115,19 +145,23 @@ type TokenStore = {
   decodedToken: TokenPayload | null;
   setToken: (token: string) => void;
   clearToken: () => void;
+  _hasHydrated: boolean; // Add this
+  setHasHydrated: (state: boolean) => void; // Add this
 };
 
 const useTokenStore = create<TokenStore>()(
   persist(
     (set) => ({
       token: null,
-      decodedToken: null,
+      decodedToken: null,_hasHydrated: false,
       setToken: (token: string) =>
         set({ token, decodedToken: jwtDecode(token) }),
-      clearToken: () => set({ token: null, decodedToken: null }),
+      clearToken: () => set({ token: null, decodedToken: null }),setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
-      name: "nexus-auth-storage",
+      name: "nexus-auth-storage",onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     },
   ),
 );
