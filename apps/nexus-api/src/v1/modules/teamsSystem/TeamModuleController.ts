@@ -68,10 +68,10 @@ export class TeamModuleController {
     return {
       id: p.id,
       teamId: p.teamId,
-      userId: p.userId,
-      name: p.name,
+      userId: p.gdgId,
+      name: p.teamName,
       position: p.role,
-      image: p.image,
+      image: p.thumbnailImageUrl,
       joinedAt: p.joinedAt.toISOString(),
     };
   }

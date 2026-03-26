@@ -1,5 +1,5 @@
-﻿import { IUserCredentialRepository } from "../domain/IAuthenticationInterfaces.js";
-import { UserCredential } from "../domain/UserCredential.js";
+﻿import { IUserCredentialRepository } from "../../domain/IAuthenticationInterfaces.js";
+import { UserCredential } from "../../domain/UserCredential.js";
 
 export class MockUserCredentialRepository implements IUserCredentialRepository {
   private credentials: UserCredential[] = [];

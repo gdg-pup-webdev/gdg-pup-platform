@@ -1,5 +1,5 @@
-﻿import { IUserCredentialReferenceRepository } from "../domain/IAuthenticationInterfaces.js";
-import { UserCredentialReferenceCode } from "../domain/UserCredentialReferenceCode.js";
+﻿import { IUserCredentialReferenceRepository } from "../../domain/IAuthenticationInterfaces.js";
+import { UserCredentialReferenceCode } from "../../domain/UserCredentialReferenceCode.js";
 
 export class MockUserCredentialReferenceRepository implements IUserCredentialReferenceRepository {
   private references: UserCredentialReferenceCode[] = [];

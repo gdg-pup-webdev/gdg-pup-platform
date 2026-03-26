@@ -13,7 +13,7 @@ import { FoldersRouter } from "../routes/folders/folders.router";
 import { GdgScrapedEventsHttpController } from "../routes/gdg-scraped-events/gdgScrapedEvents.controller";
 import { bevyEventController } from "../modules/bevyEvents";
 import { GdgScrapedEventsRouter } from "../routes/gdg-scraped-events/gdgScrapedEvents.router";
-import { taskModuleController } from "../modules/tasksModule";
+import { taskModuleController } from "../modules/memberTasks";
 import { TasksHttpController } from "../routes/tasks/tasks.controller";
 import { TasksRouter } from "../routes/tasks/tasks.router";
 import { RolesRouter } from "../routes/roles/roles.router";
@@ -46,7 +46,7 @@ import { EventHighlightsRouter } from "../routes/event-highlights/eventHighlight
 import { AuthenticationHttpController } from "../routes/authentication/authentication.controller";
 import { authenticationController } from "../modules/authentication";
 import { oneTimePinController } from "../modules/oneTimePin";
-import { gdgMembersController } from "../modules/gdgMembers";
+import { gdgMembersController } from "../modules/members";
 import { configs } from "@/configs/configs";
 import { AuthenticationRouter } from "../routes/authentication/authentication.router";
 import { GdgMembersHttpController } from "../routes/gdgmembers/gdgmembers.controller";

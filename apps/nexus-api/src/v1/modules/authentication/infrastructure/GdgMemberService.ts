@@ -1,4 +1,4 @@
-import { GdgMembersController } from "../../gdgMembers/GdgMembersController.js";
+import { GdgMembersController } from "../../members/GdgMembersController.js";
 import { IGdgMemberService } from "../domain/IAuthenticationInterfaces.js";
 import { MemberInfo } from "../domain/TokenPayload.js";
 

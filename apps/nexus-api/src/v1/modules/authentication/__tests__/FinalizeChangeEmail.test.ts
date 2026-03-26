@@ -1,8 +1,8 @@
 ﻿import { describe, it, expect, beforeEach } from "vitest"; 
-import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js";
-import { MockUserCredentialReferenceRepository } from "../infrastructure/MockUserCredentialReferenceRepository.js";
-import { MockOtpService } from "../infrastructure/MockOtpService.js"; 
-import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
+import { MockUserCredentialRepository } from "../infrastructure/mocks/MockUserCredentialRepository.js";
+import { MockUserCredentialReferenceRepository } from "../infrastructure/mocks/MockUserCredentialReferenceRepository.js";
+import { MockOtpService } from "../infrastructure/mocks/MockOtpService.js"; 
+import { MockEncryptionService } from "../infrastructure/mocks/MockEncryptionService.js";
 import { UserCredential } from "../domain/UserCredential.js";
 import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
 import { FinalizeChangeEmail } from "../useCases/FinalizeChangeEmail.js";

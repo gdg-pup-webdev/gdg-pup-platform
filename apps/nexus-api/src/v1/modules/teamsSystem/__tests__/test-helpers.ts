@@ -17,11 +17,11 @@ export const buildTeamMemberProps = (
 ): TeamMemberProps => ({
   id: overrides.id ?? "member-1",
   teamId: overrides.teamId ?? "team-1",
-  userId: overrides.userId ?? "user-1",
+  gdgId: overrides.gdgId ?? "user-1",
   role: overrides.role ?? "Lead",
   joinedAt: overrides.joinedAt ?? new Date("2026-03-16T00:00:00.000Z"),
-  name: overrides.name ?? "Alex Doe",
-  image: overrides.image ?? "https://example.com/avatar.png",
+  teamName: overrides.teamName ?? "Alex Doe",
+  thumbnailImageUrl: overrides.thumbnailImageUrl ?? "https://example.com/avatar.png",
 });
 
 export const buildTeam = (overrides: Partial<TeamProps> = {}): Team =>

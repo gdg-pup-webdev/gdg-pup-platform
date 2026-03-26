@@ -1,4 +1,4 @@
-import { gdgMembersController } from "../../gdgMembers";
+import { gdgMembersController } from "../../members";
 import { ISparkmatesPortfolioService } from "../domain/ISparkmatesPortfolioService";
 import { SparkmatesPublicPortfolio } from "../domain/Sparkmates"; 
 

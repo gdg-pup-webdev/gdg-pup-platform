@@ -21,7 +21,7 @@ import { Logout } from "./useCases/Logout.js";
 import { supabase } from "@/v1/lib/supabase.js";
 import { configs } from "@/configs/configs.js";
 import { oneTimePinController } from "../oneTimePin/index.js";
-import { gdgMembersController } from "../gdgMembers/index.js";
+import { gdgMembersController } from "../members/index.js";
 import { rbacController } from "../rbacSystem/index.js";
 import { TokenPayloadProps } from "./domain/TokenPayload";
 import { RefreshToken } from "./useCases/RefreshToken.js";

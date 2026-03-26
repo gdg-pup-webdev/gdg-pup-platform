@@ -1,5 +1,5 @@
-﻿import { IJWTService } from "../domain/IAuthenticationInterfaces.js";
-import { TokenPayload } from "../domain/TokenPayload.js";
+﻿import { IJWTService } from "../../domain/IAuthenticationInterfaces.js";
+import { TokenPayload } from "../../domain/TokenPayload.js";
 
 export class MockJwtService implements IJWTService {
   async sign(payload: TokenPayload): Promise<string> {

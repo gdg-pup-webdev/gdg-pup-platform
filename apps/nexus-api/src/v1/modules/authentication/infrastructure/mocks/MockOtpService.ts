@@ -1,4 +1,4 @@
-﻿import { IOTPService } from "../domain/IAuthenticationInterfaces.js";
+﻿import { IOTPService } from "../../domain/IAuthenticationInterfaces.js";
 
 export class MockOtpService implements IOTPService {
   async createAndSendOtpToEmail(email: string): Promise<string> {

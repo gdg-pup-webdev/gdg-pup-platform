@@ -1,4 +1,4 @@
-﻿import { IEncryptionService } from "../domain/IAuthenticationInterfaces.js";
+﻿import { IEncryptionService } from "../../domain/IAuthenticationInterfaces.js";
 
 export class MockEncryptionService implements IEncryptionService {
   async hash(value: string): Promise<string> {

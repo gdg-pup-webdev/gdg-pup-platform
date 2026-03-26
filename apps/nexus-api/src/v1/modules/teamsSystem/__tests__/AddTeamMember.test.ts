@@ -26,13 +26,13 @@ describe("AddTeamMember", () => {
 
     const result = await useCase.execute({
       teamId: "team-1",
-      userId: "user-1",
+      gdgId: "user-1",
       role: "Lead",
     });
 
     expect(result.props.id).toBeTruthy();
     expect(result.props.teamId).toBe("team-1");
-    expect(result.props.userId).toBe("user-1");
+    expect(result.props.gdgId).toBe("user-1");
     expect(memberRepo.members).toHaveLength(1);
   });
 
@@ -42,7 +42,7 @@ describe("AddTeamMember", () => {
     await expect(
       useCase.execute({
         teamId: "missing-team",
-        userId: "user-1",
+        gdgId: "user-1",
         role: "Lead",
       }),
     ).rejects.toThrow(

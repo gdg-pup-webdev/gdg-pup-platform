@@ -12,8 +12,8 @@ export class AddTeamMember {
 
   async execute(props: TeamMemberInsertProps): Promise<TeamMember> {
     // 1. Verify User Exists
-    const user = await this.userRepo.findById(props.userId);
-    if (!user) throw new Error(`Cannot add member: User with ID ${props.userId} not found.`);
+    const user = await this.userRepo.findById(props.gdgId);
+    if (!user) throw new Error(`Cannot add member: User with ID ${props.gdgId} not found.`);
 
     // 2. Verify Team Exists
     const team = await this.teamRepo.findById(props.teamId);
