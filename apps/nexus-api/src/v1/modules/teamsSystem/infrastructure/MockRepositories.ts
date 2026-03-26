@@ -3,6 +3,7 @@ import { ITeamMemberRepository, TeamMemberFilters } from "../domain/ITeamMemberR
 import { IUserRepository } from "../domain/IUserRepository";
 import { Team } from "../domain/Team";
 import { TeamMember } from "../domain/TeamMember";
+import { User } from "../domain/User";
 
 export class MockTeamRepository implements ITeamRepository {
   public teams: Team[] = [];
@@ -37,6 +38,6 @@ export class MockTeamMemberRepository implements ITeamMemberRepository {
 
 // Minimal mock to simulate the external user module
 export class MockUserRepository implements IUserRepository {
-  public users: { id: string }[] = [];
-  async findById(id: string) { return this.users.find(u => u.id === id) || null; }
+  public users: User[] = [];
+  async findById(id: string) { return this.users.find(u => u.props.gdgId === id) || null; }
 }

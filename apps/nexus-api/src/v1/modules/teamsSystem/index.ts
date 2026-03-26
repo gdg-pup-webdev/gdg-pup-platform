@@ -12,14 +12,14 @@ import { AddTeamMember } from "./useCases/AddTeamMember";
 import { GetOneTeamMember } from "./useCases/GetOneTeamMember";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
 import { ListTeamMembers } from "./useCases/ListTeamMembers";
-import { UpdateTeamMember } from "./useCases/UpdateTeamMember";
-import { SupabaseUserRepository } from "../UserModule_deprecated/infrastructure/UserRepositoy";
+import { UpdateTeamMember } from "./useCases/UpdateTeamMember"; 
 import { TeamModuleController } from "./TeamModuleController";
+import { UserRepository } from "./infrastructure/UserRepository";
  
 // 1. Repositories (Infrastructure)
 const teamRepo = new SupabaseTeamRepository();
 const memberRepo = new SupabaseTeamMemberRepository();
-const userRepo = new SupabaseUserRepository(); // Injected for cross-validation
+const userRepo = new UserRepository(); // Injected for cross-validation
 
 // 2. Use Cases (Application)
 const createTeamUC = new CreateTeam(teamRepo);

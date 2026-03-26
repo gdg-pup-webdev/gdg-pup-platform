@@ -1,6 +1,5 @@
 export type UserProps = { 
-  gdgId: string;
-  role: string; 
+  gdgId: string; 
   memberName: string | null; 
     thumbnailImageUrl: string | null;
 };

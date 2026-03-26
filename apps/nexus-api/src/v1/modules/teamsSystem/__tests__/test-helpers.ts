@@ -20,7 +20,7 @@ export const buildTeamMemberProps = (
   gdgId: overrides.gdgId ?? "user-1",
   role: overrides.role ?? "Lead",
   joinedAt: overrides.joinedAt ?? new Date("2026-03-16T00:00:00.000Z"),
-  teamName: overrides.teamName ?? "Alex Doe",
+  memberName: overrides.memberName ?? "Alex Doe",
   thumbnailImageUrl: overrides.thumbnailImageUrl ?? "https://example.com/avatar.png",
 });
 
