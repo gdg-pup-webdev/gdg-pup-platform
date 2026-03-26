@@ -1459,33 +1459,33 @@ export const publicUserRoleUpdateSchema = z.object({
 });
 
 export const publicUserRoleJunctionRowSchema = z.object({
+  gdg_id: z.string(),
   role_id: z.string(),
-  user_id: z.string(),
 });
 
 export const publicUserRoleJunctionInsertSchema = z.object({
+  gdg_id: z.string(),
   role_id: z.string(),
-  user_id: z.string(),
 });
 
 export const publicUserRoleJunctionUpdateSchema = z.object({
+  gdg_id: z.string().optional(),
   role_id: z.string().optional(),
-  user_id: z.string().optional(),
 });
 
 export const publicUserRoleJunctionRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("user_role_junction_gdg_id_fkey"),
+    columns: z.tuple([z.literal("gdg_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
+  }),
   z.object({
     foreignKeyName: z.literal("user_role_junction_role_id_fkey"),
     columns: z.tuple([z.literal("role_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("user_role"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("user_role_junction_user_id_fkey"),
-    columns: z.tuple([z.literal("user_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);

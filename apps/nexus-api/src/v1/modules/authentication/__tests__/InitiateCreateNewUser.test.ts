@@ -1,10 +1,10 @@
 ﻿import { describe, it, expect, beforeEach } from "vitest"; 
-import { MockUserCredentialReferenceRepository } from "../infrastructure/MockUserCredentialReferenceRepository.js";
-import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
-import { MockOtpService } from "../infrastructure/MockOtpService.js";
-import { MockMemberCheckService } from "../infrastructure/MockMemberCheckService.js";
+import { MockUserCredentialReferenceRepository } from "../infrastructure/mocks/MockUserCredentialReferenceRepository.js";
+import { MockEncryptionService } from "../infrastructure/mocks/MockEncryptionService.js";
+import { MockOtpService } from "../infrastructure/mocks/MockOtpService.js";
+import { MockMemberCheckService } from "../infrastructure/mocks/MockMemberCheckService.js";
 import { InitiateCreateNewUser } from "../useCases/InitiateCreateNewUser.js";
-import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js";
+import { MockUserCredentialRepository } from "../infrastructure/mocks/MockUserCredentialRepository.js";
 
 describe("InitiateCreateNewUser", () => {
   let referenceRepo: MockUserCredentialReferenceRepository;

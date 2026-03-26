@@ -5,20 +5,7 @@ import { Permission } from "../domain/TokenPayload.js";
 export class RbacService implements IRbacService {
   constructor(private readonly rbacController: RbacModuleController) {}
 
-  async listPermissionsOfUser(email: string): Promise<Permission[]> {
-    // const roles = await this.rbacController.getRolesAndPermissionsOfUser(email);
-    // const permissions: Permission[] = [];
-
-    // roles.forEach((role) => {
-    //   role.permissions.forEach((permission) => {
-    //     permissions.push({
-    //       resource: permission.resource,
-    //       action: permission.action,
-    //       from_role: role.name,
-    //     });
-    //   });
-    // });
-
+  async listPermissionsOfUser(email: string): Promise<Permission[]> { 
     const permissions = [
       {
         resource: "event",
@@ -33,5 +20,11 @@ export class RbacService implements IRbacService {
     ];
 
     return permissions;
+  }
+
+  async listRolesOfUser(email: string): Promise<string[]> {
+    // const roles = await this.rbacController.getRolesAndPermissionsOfUser(email);
+    // return roles.map((role) => role.name);
+    return ["admin"];
   }
 }

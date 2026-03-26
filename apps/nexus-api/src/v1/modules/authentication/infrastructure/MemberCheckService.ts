@@ -1,5 +1,5 @@
 import { IMemberCheckService } from "../domain/IMemberCheckService.js";
-import { GdgMembersController } from "../../gdgMembers/GdgMembersController.js";
+import { GdgMembersController } from "../../members/GdgMembersController.js";
 
 export class MemberCheckService implements IMemberCheckService {
   constructor(private readonly gdgMembersController: GdgMembersController) {}

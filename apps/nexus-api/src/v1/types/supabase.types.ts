@@ -1400,30 +1400,30 @@ export type Database = {
       }
       user_role_junction: {
         Row: {
+          gdg_id: string
           role_id: string
-          user_id: string
         }
         Insert: {
+          gdg_id: string
           role_id: string
-          user_id: string
         }
         Update: {
+          gdg_id?: string
           role_id?: string
-          user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_role_junction_gdg_id_fkey"
+            columns: ["gdg_id"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
           {
             foreignKeyName: "user_role_junction_role_id_fkey"
             columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "user_role"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_role_junction_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]

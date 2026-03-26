@@ -31,6 +31,7 @@ export class Login {
     }
 
     const permissions = await this.rbacService.listPermissionsOfUser(email);
+    const roles = await this.rbacService.listRolesOfUser(email);
     const memberInfo = await this.gdgMemberService.getMemberInfoByEmail(email);
 
     const tokenPayload = TokenPayload.create({
@@ -38,6 +39,7 @@ export class Login {
       validUntil: new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(),
       memberInfo,
       permissions,
+      roles,
     });
 
     const token = await this.jwtService.sign(tokenPayload);

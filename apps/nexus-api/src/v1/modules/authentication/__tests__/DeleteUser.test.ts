@@ -1,6 +1,6 @@
 ﻿import { describe, it, expect, beforeEach } from "vitest"; 
-import { MockUserCredentialRepository } from "../infrastructure/MockUserCredentialRepository.js"; 
-import { MockEncryptionService } from "../infrastructure/MockEncryptionService.js";
+import { MockUserCredentialRepository } from "../infrastructure/mocks/MockUserCredentialRepository.js"; 
+import { MockEncryptionService } from "../infrastructure/mocks/MockEncryptionService.js";
 import { UserCredential } from "../domain/UserCredential.js";
 import { DeleteUser } from "../useCases/DeleteUser.js";
 

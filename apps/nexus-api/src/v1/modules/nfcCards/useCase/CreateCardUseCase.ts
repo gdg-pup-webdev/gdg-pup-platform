@@ -1,4 +1,4 @@
-import { ISparkmatesRepository } from "@/v1/modules/sparkmatesModule/domain/ISparkmatesRepository";
+import { ISparkmatesRepository } from "@/v1/modules/sparkmatesModule_deprecated/domain/ISparkmatesRepository";
 import { INfcRepository } from "../domain/INfcRepository";
 import { NfcCard } from "../domain/NfcCard";
 
