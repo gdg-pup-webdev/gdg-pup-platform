@@ -5,3 +5,6 @@ export * from "./useUpdateRole";
 export * from "./useDeleteRole";
 export * from "./useAddRolePermission";
 export * from "./useRemoveRolePermission";
+export * from "./useAssignRoleToUser";
+export * from "./useRemoveRoleFromUser";
+export * from "./useGetMemberRoles";

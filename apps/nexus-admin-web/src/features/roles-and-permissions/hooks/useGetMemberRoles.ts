@@ -4,15 +4,15 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
-export const useListMembers = (pageNumber = 1, pageSize = 10, search?: string) => {
+export const useGetMemberRoles = (userId: string) => {
   return useQuery({
-    queryKey: ["members", "list", pageNumber, pageSize, search],
+    queryKey: ["members", "roles", userId],
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.gdgmembers.GET,
+        contract.api.v1.users._userId_.roles.GET,
         {
-          query: { pageNumber, pageSize, search },
+          params: { userId },
         }
       );
 
@@ -20,5 +20,6 @@ export const useListMembers = (pageNumber = 1, pageSize = 10, search?: string) =
 
       throw new Error(extractErrorMessage(res.body));
     },
+    enabled: !!userId,
   });
 };
