@@ -6,23 +6,32 @@ import { useListMembers } from "@/features/members/hooks/useListMembers";
 import { useGetMemberRoles, useAssignRoleToUser, useRemoveRoleFromUser, useListRoles } from "../hooks";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { Pagination } from "@/components/admin/Pagination";
 import { toast } from "react-toastify";
 
 export const MemberRoleAssignment: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [searchValue, setSearchValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMember, setSelectedMember] = useState<any | null>(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
-  const { data: membersResponse, isLoading, isError, error, refetch } = useListMembers(page, pageSize, searchQuery);
+  const { data: membersResponse, isLoading } = useListMembers(page, pageSize, searchQuery);
   const { data: rolesResponse } = useListRoles({ pageSize: 100 });
-  const { data: memberRoles, isLoading: isLoadingRoles } = useGetMemberRoles(selectedMember?.gdgId || "");
+  const { data: memberRoles } = useGetMemberRoles(selectedMember?.gdgId || "");
   const assignRole = useAssignRoleToUser();
   const removeRole = useRemoveRoleFromUser();
 
   const members = membersResponse?.data || [];
+  const totalPages = membersResponse?.meta?.totalPages || 1;
+  const totalRecords = membersResponse?.meta?.totalRecords || 0;
   const roles = rolesResponse?.data || [];
+
+  const handleSearch = () => {
+    setSearchQuery(searchValue);
+    setPage(1);
+  };
 
   const handleOpenRoleModal = (member: any) => {
     setSelectedMember(member);
@@ -51,15 +60,18 @@ export const MemberRoleAssignment: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="relative w-full max-w-sm">
-        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search members..."
-          className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      <div className="flex gap-2 w-full max-w-sm">
+        <div className="relative flex-1">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search members..."
+            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
+        </div>
+        <Button variant="outline" onClick={handleSearch}>Search</Button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -75,6 +87,15 @@ export const MemberRoleAssignment: React.FC = () => {
           </div>
         ))}
       </div>
+
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        totalRecords={totalRecords}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
 
       <Modal open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen} className="max-w-lg rounded-lg">
         <div className="flex items-center justify-between border-b p-4">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, AlertCircle, Search, Shield, Plus, MoreVertical, Edit2, Eye, Trash2 } from "lucide-react";
+import { Loader2, AlertCircle, Search, Shield, Plus, Edit2, Eye, Trash2 } from "lucide-react";
 import { useListRoles, useCreateRole, useUpdateRole, useDeleteRole } from "../hooks";
 import { Pagination } from "@/components/admin/Pagination";
 import { RoleFormModal, RoleDetailsModal } from "./RoleModals";
@@ -16,10 +16,11 @@ type RoleItem = Role["data"][number];
 export const RoleList: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [searchValue, setSearchValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   
   // API Hooks
-  const { data: rolesResponse, isLoading, isError, error, refetch } = useListRoles({ pageNumber: page, pageSize });
+  const { data: rolesResponse, isLoading, isError, error, refetch } = useListRoles({ pageNumber: page, pageSize, resourceName: searchQuery });
   const createMutation = useCreateRole();
   const deleteMutation = useDeleteRole();
   const updateMutation = useUpdateRole();
@@ -34,6 +35,11 @@ export const RoleList: React.FC = () => {
   const totalRecords = rolesResponse?.meta?.totalRecords || 0;
 
   // Handlers
+  const handleSearch = () => {
+    setSearchQuery(searchValue);
+    setPage(1);
+  };
+
   const handleCreate = () => {
     setSelectedRole(null);
     setIsFormModalOpen(true);
@@ -105,15 +111,18 @@ export const RoleList: React.FC = () => {
     <div className="space-y-6">
       {/* Action Bar */}
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search roles..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div className="flex gap-2 w-full max-w-sm">
+          <div className="relative flex-1">
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search roles..."
+              className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+          </div>
+          <Button variant="outline" onClick={handleSearch}>Search</Button>
         </div>
         <Button onClick={handleCreate} className="flex items-center gap-2">
           <Plus size={18} />
