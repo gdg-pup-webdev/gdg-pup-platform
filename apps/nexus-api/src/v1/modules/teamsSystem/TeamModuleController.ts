@@ -69,7 +69,7 @@ export class TeamModuleController {
       id: p.id,
       teamId: p.teamId,
       userId: p.gdgId,
-      name: p.teamName,
+      name: p.memberName,
       position: p.role,
       image: p.thumbnailImageUrl,
       joinedAt: p.joinedAt.toISOString(),
@@ -136,7 +136,7 @@ export class TeamModuleController {
   /**
    * Team Member Endpoints
    */
-  async addMember(data: { teamId: string; userId: string; role: string }) {
+  async addMember(data: { teamId: string; gdgId: string; role: string }) {
     const member = await this.addMemberUC.execute(data);
     return this.toMemberDTO(member);
   }
