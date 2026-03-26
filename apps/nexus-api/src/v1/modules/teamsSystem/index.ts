@@ -13,7 +13,7 @@ import { GetOneTeamMember } from "./useCases/GetOneTeamMember";
 import { RemoveTeamMember } from "./useCases/RemoveTeamMember";
 import { ListTeamMembers } from "./useCases/ListTeamMembers";
 import { UpdateTeamMember } from "./useCases/UpdateTeamMember";
-import { SupabaseUserRepository } from "../UserModule/infrastructure/UserRepositoy";
+import { SupabaseUserRepository } from "../UserModule_deprecated/infrastructure/UserRepositoy";
 import { TeamModuleController } from "./TeamModuleController";
  
 // 1. Repositories (Infrastructure)

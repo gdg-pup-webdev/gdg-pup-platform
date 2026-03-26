@@ -40,7 +40,7 @@ export const MemberRoleAssignment: React.FC = () => {
 
   const handleAssignRole = async (roleName: string) => {
     try {
-      await assignRole.mutateAsync({ userId: selectedMember.gdgId, roleName });
+      await assignRole.mutateAsync({ gdgId: selectedMember.gdgId, roleName });
       toast.success("Role assigned successfully");
     } catch (err: any) {
       toast.error(err.message || "Failed to assign role");
@@ -49,7 +49,7 @@ export const MemberRoleAssignment: React.FC = () => {
 
   const handleRemoveRole = async (roleName: string) => {
     try {
-      await removeRole.mutateAsync({ userId: selectedMember.gdgId, roleName });
+      await removeRole.mutateAsync({ gdgId: selectedMember.gdgId, roleName });
       toast.success("Role removed successfully");
     } catch (err: any) {
       toast.error(err.message || "Failed to remove role");

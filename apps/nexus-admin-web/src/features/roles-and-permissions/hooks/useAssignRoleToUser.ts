@@ -7,12 +7,12 @@ import { extractErrorMessage } from "@/lib/utils";
 export const useAssignRoleToUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ userId, roleName }: { userId: string; roleName: string }) => {
+    mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.users._userId_.roles.POST,
         {
-          params: { userId },
+          params: { userId: gdgId },
           body: { payload: { roleName } },
         }
       );
@@ -22,7 +22,7 @@ export const useAssignRoleToUser = () => {
       throw new Error(extractErrorMessage(res.body));
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["members", "roles", variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ["members", "roles", variables.gdgId] });
     },
   });
 };

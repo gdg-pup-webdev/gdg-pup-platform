@@ -10,7 +10,7 @@ import { EventHighlightStorageAdapter } from "./infrastructure/EventHighlightSto
 import { EventHighlightsController } from "./EventHighlightsController";
 
 // External dependencies (Will be injected or used from other modules)
-import { userModuleController } from "../UserModule";
+import { userModuleController } from "../UserModule_deprecated";
 import { eventSystemController } from "../eventSystem";
 import { filesModuleController } from "../filesModule";
 

@@ -7,12 +7,12 @@ import { extractErrorMessage } from "@/lib/utils";
 export const useRemoveRoleFromUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ userId, roleName }: { userId: string; roleName: string }) => {
+    mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.users._userId_.roles._roleName_.DELETE,
         {
-          params: { userId, roleName },
+          params: { userId: gdgId, roleName },
         }
       );
 
@@ -21,7 +21,7 @@ export const useRemoveRoleFromUser = () => {
       throw new Error(extractErrorMessage(res.body));
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["members", "roles", variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ["members", "roles", variables.gdgId] });
     },
   });
 };
