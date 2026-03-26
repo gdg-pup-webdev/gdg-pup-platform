@@ -7,10 +7,10 @@ import { z } from "zod";
 
 type RoleUpdateDTO = z.infer<typeof contract.api.v1.roles._roleName_.PATCH.body.payload>;
 
-export const useUpdateRole = (roleName: string) => {
+export const useUpdateRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (payload: RoleUpdateDTO) => {
+    mutationFn: async ({ roleName, payload }: { roleName: string; payload: RoleUpdateDTO }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.roles._roleName_.PATCH,
@@ -24,9 +24,9 @@ export const useUpdateRole = (roleName: string) => {
 
       throw new Error(extractErrorMessage(res.body));
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["roles", "list"] });
-      queryClient.invalidateQueries({ queryKey: ["roles", "detail", roleName] });
+      queryClient.invalidateQueries({ queryKey: ["roles", "detail", variables.roleName] });
     },
   });
 };

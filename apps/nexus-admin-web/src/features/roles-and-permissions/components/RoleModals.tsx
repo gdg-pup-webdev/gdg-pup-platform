@@ -45,8 +45,16 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Edit Role" : "Create New Role"}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal open={isOpen} onOpenChange={onClose} className="max-w-lg rounded-lg">
+      <div className="flex items-center justify-between border-b p-4">
+        <h2 className="text-xl font-bold text-gray-900">
+          {initialData ? "Edit Role" : "Create New Role"}
+        </h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <X size={20} />
+        </button>
+      </div>
+      <form onSubmit={handleSubmit} className="space-y-4 p-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Role Name</label>
           <Input
@@ -101,8 +109,14 @@ export const RoleDetailsModal: React.FC<RoleDetailsModalProps> = ({
   if (!role) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Role Details">
-      <div className="space-y-6">
+    <Modal open={isOpen} onOpenChange={onClose} className="max-w-2xl rounded-lg">
+      <div className="flex items-center justify-between border-b p-4">
+        <h2 className="text-xl font-bold text-gray-900">Role Details</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <X size={20} />
+        </button>
+      </div>
+      <div className="space-y-6 p-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-blue-100 p-3 text-blue-600">

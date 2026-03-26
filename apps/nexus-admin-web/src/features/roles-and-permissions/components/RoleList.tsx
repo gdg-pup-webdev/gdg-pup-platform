@@ -22,6 +22,7 @@ export const RoleList: React.FC = () => {
   const { data: rolesResponse, isLoading, isError, error, refetch } = useListRoles({ pageNumber: page, pageSize });
   const createMutation = useCreateRole();
   const deleteMutation = useDeleteRole();
+  const updateMutation = useUpdateRole();
 
   // State for modals
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -58,12 +59,13 @@ export const RoleList: React.FC = () => {
     }
   };
 
-  const updateRoleHook = useUpdateRole(selectedRole?.name || "");
-
   const handleFormSubmit = async (data: any) => {
     try {
       if (selectedRole) {
-        await updateRoleHook.mutateAsync(data);
+        await updateMutation.mutateAsync({ 
+          roleName: selectedRole.name, 
+          payload: data 
+        });
         toast.success("Role updated successfully");
       } else {
         await createMutation.mutateAsync(data);
@@ -199,7 +201,7 @@ export const RoleList: React.FC = () => {
         onClose={() => setIsFormModalOpen(false)}
         onSubmit={handleFormSubmit}
         initialData={selectedRole}
-        isSubmitting={selectedRole ? updateRoleHook.isPending : createMutation.isPending}
+        isSubmitting={selectedRole ? updateMutation.isPending : createMutation.isPending}
       />
 
       <RoleDetailsModal
