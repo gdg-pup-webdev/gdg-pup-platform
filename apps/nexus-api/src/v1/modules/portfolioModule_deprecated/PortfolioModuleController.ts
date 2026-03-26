@@ -6,6 +6,9 @@ import { GetPortfolioByEmailUseCase } from "./useCase/GetPortfolioByEmailUseCase
 import { ListPortfoliosUseCase } from "./useCase/ListPortfoliosUseCase";
 import { UpdatePortfolioPropertyUseCase } from "./useCase/UpdatePortfolioPropertyUseCase";
 
+/**
+ * @deprecated
+ */
 export class PortfolioModuleController {
   constructor(
     private readonly listPortfoliosUseCase: ListPortfoliosUseCase,

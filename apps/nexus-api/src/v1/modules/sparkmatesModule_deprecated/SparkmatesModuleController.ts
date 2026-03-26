@@ -5,12 +5,12 @@ import {
   SparkmatesPublicPortfolio,
   SparkmatesPublicRecord,
   SparkmatesSource,
-} from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
-import { ActivateCardByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCase/ActivateCardByGdgIdUseCase";
-import { GetCardStatusByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCase/GetCardStatusByGdgIdUseCase";
-import { GetSparkmateByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCase/GetSparkmateByGdgIdUseCase";
-import { RegisterCardByGdgIdUseCase } from "@/v1/modules/sparkmatesModule/useCase/RegisterCardByGdgIdUseCase";
-import { RegisterCardsBulkUseCase } from "@/v1/modules/sparkmatesModule/useCase/RegisterCardsBulkUseCase";
+} from "@/v1/modules/sparkmatesModule_deprecated/domain/Sparkmates";
+import { ActivateCardByGdgIdUseCase } from "@/v1/modules/sparkmatesModule_deprecated/useCase/ActivateCardByGdgIdUseCase";
+import { GetCardStatusByGdgIdUseCase } from "@/v1/modules/sparkmatesModule_deprecated/useCase/GetCardStatusByGdgIdUseCase";
+import { GetSparkmateByGdgIdUseCase } from "@/v1/modules/sparkmatesModule_deprecated/useCase/GetSparkmateByGdgIdUseCase";
+import { RegisterCardByGdgIdUseCase } from "@/v1/modules/sparkmatesModule_deprecated/useCase/RegisterCardByGdgIdUseCase";
+import { RegisterCardsBulkUseCase } from "@/v1/modules/sparkmatesModule_deprecated/useCase/RegisterCardsBulkUseCase";
 
 export type SparkmatesCardStateDTO = {
   gdgId: string; 
@@ -29,6 +29,10 @@ export type SparkmatesCardRegistrationDTO = SparkmatesCardRegistration;
 export type SparkmatesBulkRegistrationResultDTO =
   SparkmatesBulkRegistrationResult;
 
+  
+/**
+ * @deprecated
+ */
 export class SparkmatesModuleController {
   constructor(
     private readonly getCardStatusByGdgIdUseCase: GetCardStatusByGdgIdUseCase,

@@ -4,7 +4,7 @@ import {
   SparkmatesCardState,
   SparkmatesPublicPortfolio,
   SparkmatesSource,
-} from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
+} from "@/v1/modules/sparkmatesModule_deprecated/domain/Sparkmates";
 
 export abstract class ISparkmatesRepository {
   abstract getCardStateByGdgId(gdgId: string): Promise<SparkmatesCardState>;

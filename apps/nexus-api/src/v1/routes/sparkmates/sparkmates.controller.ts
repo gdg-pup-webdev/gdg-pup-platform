@@ -1,5 +1,5 @@
-import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule";
-import { SparkmatesSource } from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
+import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule_deprecated";
+import { SparkmatesSource } from "@/v1/modules/sparkmatesModule_deprecated/domain/Sparkmates";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";

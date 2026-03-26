@@ -1,5 +1,5 @@
 import { UnauthorizedError } from "@/v1/errors/HttpError";
-import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule";
+import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule_deprecated";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";

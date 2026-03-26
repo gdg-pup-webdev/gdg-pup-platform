@@ -16,6 +16,9 @@ export interface UserResponseDTO {
   createdAt: string;
 }
 
+/**
+ * @deprecated
+ */
 export class UserModuleController {
   constructor(
     private readonly getUserUseCase: GetUserUseCase,

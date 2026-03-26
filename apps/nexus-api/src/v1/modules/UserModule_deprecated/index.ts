@@ -13,9 +13,15 @@ const listUsersUseCase = new ListUsersUseCase(userRepository);
 const searchUsersUseCase = new SearchUsersUseCase(userRepository);
 
 // 4. Instantiate the Presentation Layer (Controller), injecting the use cases
+/**
+ * @deprecated
+ */
 export const userModuleController = new UserModuleController(
   getUserUseCase,
   listUsersUseCase,
   searchUsersUseCase,
 );
+/**
+ * @deprecated
+ */
 export * from "./UserModuleController";

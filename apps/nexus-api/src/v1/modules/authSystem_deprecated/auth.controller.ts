@@ -1,10 +1,13 @@
-import { AuthService } from "@/v1/modules/authSystem_deprecated";
+import { authService } from "./auth.service.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
 
-export class AuthHttpController {
-  constructor(private readonly service: AuthService) {}
+/**
+ * @deprecated
+ */
+export class AuthController {
+  constructor(private readonly service: typeof authService = authService) {}
 
   verifyEmail: RequestHandler = createExpressController(
     contract.api.auth_system.verify.POST,
@@ -149,3 +152,5 @@ export class AuthHttpController {
     },
   );
 }
+
+export const authController = new AuthController();

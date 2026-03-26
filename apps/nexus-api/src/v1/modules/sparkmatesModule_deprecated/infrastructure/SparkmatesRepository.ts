@@ -6,14 +6,14 @@ import {
 } from "@/v1/errors/HttpError";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 import { supabase } from "@/v1/lib/supabase";
-import { ISparkmatesRepository } from "@/v1/modules/sparkmatesModule/domain/ISparkmatesRepository";
+import { ISparkmatesRepository } from "@/v1/modules/sparkmatesModule_deprecated/domain/ISparkmatesRepository";
 import {
   SparkmatesBulkRegistrationResult,
   SparkmatesCardRegistration,
   SparkmatesCardState,
   SparkmatesPublicPortfolio,
   SparkmatesSource,
-} from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
+} from "@/v1/modules/sparkmatesModule_deprecated/domain/Sparkmates";
 import { ISparkmatesPortfolioService } from "../domain/ISparkmatesPortfolioService";
 
 export class SparkmatesRepository implements ISparkmatesRepository {

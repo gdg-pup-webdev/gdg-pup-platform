@@ -1,8 +1,8 @@
-import { ISparkmatesRepository } from "@/v1/modules/sparkmatesModule/domain/ISparkmatesRepository";
+import { ISparkmatesRepository } from "@/v1/modules/sparkmatesModule_deprecated/domain/ISparkmatesRepository";
 import {
   SparkmatesPublicRecord,
   SparkmatesSource,
-} from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
+} from "@/v1/modules/sparkmatesModule_deprecated/domain/Sparkmates";
 
 export class GetSparkmateByGdgIdUseCase {
   constructor(private readonly repository: ISparkmatesRepository) {}
