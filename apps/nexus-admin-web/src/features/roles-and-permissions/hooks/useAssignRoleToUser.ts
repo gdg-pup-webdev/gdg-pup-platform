@@ -10,10 +10,10 @@ export const useAssignRoleToUser = () => {
     mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.users._userId_.roles.POST,
+        contract.api.v1.users.userId.roles.POST,
         {
           params: { userId: gdgId },
-          body: { payload: { roleName } },
+          body: { data: { roleName } },
         }
       );
 

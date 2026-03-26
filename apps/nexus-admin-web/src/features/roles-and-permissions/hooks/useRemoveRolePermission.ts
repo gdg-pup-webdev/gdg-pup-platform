@@ -5,7 +5,7 @@ import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
-type RolePermissionRemoveDTO = z.infer<typeof contract.api.v1.roles._roleName_.permissions.PATCH.body.payload>;
+type RolePermissionRemoveDTO = z.infer<typeof contract.api.v1.roles.roleName.permissions.PATCH.request.body>;
 
 export const useRemoveRolePermission = (roleName: string) => {
   const queryClient = useQueryClient();
@@ -13,10 +13,10 @@ export const useRemoveRolePermission = (roleName: string) => {
     mutationFn: async (payload: RolePermissionRemoveDTO) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles._roleName_.permissions.PATCH,
+        contract.api.v1.roles.roleName.permissions.PATCH,
         {
           params: { roleName },
-          body: { payload },
+          body: payload,
         }
       );
 

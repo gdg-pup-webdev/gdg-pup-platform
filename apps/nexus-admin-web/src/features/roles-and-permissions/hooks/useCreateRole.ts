@@ -5,7 +5,7 @@ import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
-type RoleInsertDTO = z.infer<typeof contract.api.v1.roles.POST.body.payload>;
+type RoleInsertDTO = z.infer<typeof contract.api.v1.roles.POST.request.body>;
 
 export const useCreateRole = () => {
   const queryClient = useQueryClient();
@@ -15,7 +15,7 @@ export const useCreateRole = () => {
         configs.nexusApiBaseUrl,
         contract.api.v1.roles.POST,
         {
-          body: { payload },
+          body: payload,
         }
       );
 

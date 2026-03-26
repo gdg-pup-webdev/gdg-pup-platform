@@ -10,7 +10,7 @@ export const useGetMemberRoles = (gdgId: string) => {
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.users._userId_.roles.GET,
+        contract.api.v1.users.userId.roles.GET,
         {
           params: { userId: gdgId },
         }

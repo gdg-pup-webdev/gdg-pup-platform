@@ -106,7 +106,7 @@ export const MemberRoleAssignment: React.FC = () => {
           <div className="space-y-2">
             <h3 className="font-semibold text-sm text-gray-500 uppercase">Assigned Roles</h3>
             <div className="flex flex-wrap gap-2">
-              {memberRoles?.map((role: any) => (
+              {memberRoles?.data?.map((role: any) => (
                 <span key={role.name} className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
                   {role.name}
                   <button onClick={() => handleRemoveRole(role.name)}><X size={14} /></button>

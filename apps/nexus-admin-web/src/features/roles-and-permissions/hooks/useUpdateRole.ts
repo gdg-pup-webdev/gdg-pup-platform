@@ -5,7 +5,7 @@ import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
-type RoleUpdateDTO = z.infer<typeof contract.api.v1.roles._roleName_.PATCH.body.payload>;
+type RoleUpdateDTO = z.infer<typeof contract.api.v1.roles.roleName.PATCH.request.body>;
 
 export const useUpdateRole = () => {
   const queryClient = useQueryClient();
@@ -13,10 +13,10 @@ export const useUpdateRole = () => {
     mutationFn: async ({ roleName, payload }: { roleName: string; payload: RoleUpdateDTO }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles._roleName_.PATCH,
+        contract.api.v1.roles.roleName.PATCH,
         {
           params: { roleName },
-          body: { payload },
+          body: payload,
         }
       );
 

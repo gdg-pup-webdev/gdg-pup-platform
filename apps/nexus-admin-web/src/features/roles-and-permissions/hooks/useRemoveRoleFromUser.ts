@@ -10,7 +10,7 @@ export const useRemoveRoleFromUser = () => {
     mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.users._userId_.roles._roleName_.DELETE,
+        contract.api.v1.users.userId.roles.roleName.DELETE,
         {
           params: { userId: gdgId, roleName },
         }

@@ -10,7 +10,7 @@ export const useGetRole = (roleName: string) => {
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles._roleName_.GET,
+        contract.api.v1.roles.roleName.GET,
         {
           params: { roleName },
         }

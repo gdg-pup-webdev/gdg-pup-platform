@@ -5,7 +5,7 @@ import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
-type RolePermissionInsertDTO = z.infer<typeof contract.api.v1.roles._roleName_.permissions.POST.body.payload>;
+type RolePermissionInsertDTO = z.infer<typeof contract.api.v1.roles.roleName.permissions.POST.request.body>;
 
 export const useAddRolePermission = (roleName: string) => {
   const queryClient = useQueryClient();
@@ -13,10 +13,10 @@ export const useAddRolePermission = (roleName: string) => {
     mutationFn: async (payload: RolePermissionInsertDTO) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles._roleName_.permissions.POST,
+        contract.api.v1.roles.roleName.permissions.POST,
         {
           params: { roleName },
-          body: { payload },
+          body: payload,
         }
       );
 

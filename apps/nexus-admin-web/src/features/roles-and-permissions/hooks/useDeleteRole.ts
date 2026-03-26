@@ -10,7 +10,7 @@ export const useDeleteRole = () => {
     mutationFn: async (roleName: string) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles._roleName_.DELETE,
+        contract.api.v1.roles.roleName.DELETE,
         {
           params: { roleName },
         }

@@ -15,18 +15,20 @@ interface RolePermissionsProps {
 export const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
   const [resourceName, setResourceName] = useState("");
   const [action, setAction] = useState("");
-  
+
   const addPermissionMutation = useAddRolePermission(role.name);
   const removePermissionMutation = useRemoveRolePermission(role.name);
 
   const handleAddPermission = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!resourceName || !action) return;
-    
+
     try {
-      await addPermissionMutation.mutateAsync({ 
-        resource_name: resourceName, 
-        action 
+      await addPermissionMutation.mutateAsync({
+        data: {
+          resource_name: resourceName,
+          action,
+        },
       });
       toast.success("Permission added successfully");
       setResourceName("");
@@ -36,11 +38,16 @@ export const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
     }
   };
 
-  const handleRemovePermission = async (permResource: string, permAction: string) => {
+  const handleRemovePermission = async (
+    permResource: string,
+    permAction: string,
+  ) => {
     try {
-      await removePermissionMutation.mutateAsync({ 
-        resource: permResource, 
-        action: permAction 
+      await removePermissionMutation.mutateAsync({
+        data: {
+          resource: permResource,
+          action: permAction,
+        },
       });
       toast.success("Permission removed successfully");
     } catch (err: any) {
@@ -52,22 +59,29 @@ export const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
         <div className="flex-1 space-y-2">
-          <label className="text-xs font-semibold uppercase text-gray-400">Resource</label>
-          <Input 
-            placeholder="e.g. users" 
-            value={resourceName} 
+          <label className="text-xs font-semibold uppercase text-gray-400">
+            Resource
+          </label>
+          <Input
+            placeholder="e.g. users"
+            value={resourceName}
             onChange={(e) => setResourceName(e.target.value)}
           />
         </div>
         <div className="flex-1 space-y-2">
-          <label className="text-xs font-semibold uppercase text-gray-400">Action</label>
-          <Input 
-            placeholder="e.g. read" 
-            value={action} 
+          <label className="text-xs font-semibold uppercase text-gray-400">
+            Action
+          </label>
+          <Input
+            placeholder="e.g. read"
+            value={action}
             onChange={(e) => setAction(e.target.value)}
           />
         </div>
-        <Button onClick={handleAddPermission} disabled={addPermissionMutation.isPending}>
+        <Button
+          onClick={handleAddPermission}
+          disabled={addPermissionMutation.isPending}
+        >
           <Plus size={18} className="mr-2" />
           Add
         </Button>
@@ -85,16 +99,23 @@ export const RolePermissions: React.FC<RolePermissionsProps> = ({ role }) => {
           <tbody className="divide-y divide-gray-100">
             {role.permissions && role.permissions.length > 0 ? (
               role.permissions.map((perm, idx) => (
-                <tr key={`${perm.resource}-${perm.action}-${idx}`} className="text-sm">
-                  <td className="px-4 py-2 font-medium text-gray-700">{perm.resource}</td>
+                <tr
+                  key={`${perm.resource}-${perm.action}-${idx}`}
+                  className="text-sm"
+                >
+                  <td className="px-4 py-2 font-medium text-gray-700">
+                    {perm.resource}
+                  </td>
                   <td className="px-4 py-2">
                     <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
                       {perm.action}
                     </span>
                   </td>
                   <td className="px-4 py-2 text-right">
-                    <button 
-                      onClick={() => handleRemovePermission(perm.resource, perm.action)}
+                    <button
+                      onClick={() =>
+                        handleRemovePermission(perm.resource, perm.action)
+                      }
                       className="text-gray-400 hover:text-red-600"
                       disabled={removePermissionMutation.isPending}
                     >
