@@ -12,5 +12,4 @@ export interface IMemberShowcaseRepository {
   saveNew(memberShowcase: MemberShowcase): Promise<MemberShowcase>;
   persistUpdates(memberShowcase: MemberShowcase): Promise<MemberShowcase>;
   delete(id: string): Promise<void>;
-  getSpotlightOfTheDay(): Promise<MemberShowcase | null>;
 }

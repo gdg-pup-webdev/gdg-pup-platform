@@ -39,9 +39,4 @@ export class MockMemberShowcaseRepository implements IMemberShowcaseRepository {
   async delete(id: string): Promise<void> {
     this.showcases.delete(id);
   }
-
-  async getSpotlightOfTheDay(): Promise<MemberShowcase | null> {
-    if (this.showcases.size === 0) return null;
-    return Array.from(this.showcases.values())[0];
-  }
 }

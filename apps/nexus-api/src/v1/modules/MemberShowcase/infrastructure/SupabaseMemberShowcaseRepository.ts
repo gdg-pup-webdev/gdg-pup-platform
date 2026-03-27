@@ -79,12 +79,4 @@ export class SupabaseMemberShowcaseRepository implements IMemberShowcaseReposito
     const { error } = await supabase.from(this.tableName).delete().eq("id", id);
     if (error) throw new Error(`Failed to delete Member Showcase: ${error.message}`);
   }
-
-  async getSpotlightOfTheDay(): Promise<MemberShowcase | null> {
-    // Basic logic: get the most recent one.
-    // In a real app, this could be a specific flag or rotating selection.
-    const { data, error } = await supabase.from(this.tableName).select("*").order("date", { ascending: false }).limit(1).maybeSingle();
-    if (error) throw new Error(`Database error: ${error.message}`);
-    return data ? this.mapToDomain(data) : null;
-  }
 }
