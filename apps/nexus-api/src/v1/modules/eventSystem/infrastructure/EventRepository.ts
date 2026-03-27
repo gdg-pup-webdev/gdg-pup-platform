@@ -30,8 +30,11 @@ export class EventRepository implements IEventRepository {
       bevy_event_id: row.gdg_event_id?.toString() ?? null,
 
       creatorId: row.creator_id || "",
-      image_url:  row.thumbnail_url || null,
+      image_url: row.thumbnail_url || null,
       bevyPreviewUrl: row.bevy_preview_url || null,
+      tags: row.tags ? row.tags.split(",") : [],
+      max_capacity: row.max_capacity ? parseInt(row.max_capacity) : 999999,
+      short_description: row.short_description || null,
     });
   }
 
@@ -55,6 +58,37 @@ export class EventRepository implements IEventRepository {
       gdg_event_id: parseInt(props.bevy_event_id || "") || null,
       thumbnail_url: props.image_url || null,
       bevy_preview_url: props.bevyPreviewUrl || null,
+    };
+  }
+
+  async listEventsByYear(
+    year: number,
+    pageNumber: number = 1,
+    pageSize: number = 10,
+  ): Promise<{ list: Event[]; count: number }> { 
+
+
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // const startDate = new Date('2026-01-01').toISOString(); // More readable & 1-indexed string
+
+    const { data, count, error } = await supabase
+      .from(this.tableName)
+      .select("*", { count: "exact" })
+      .gte("start_date", new Date(year, 0, 1).toISOString())
+      .lte("start_date", new Date(year, 11, 31).toISOString())
+      .order("start_date", { ascending: true })
+      .range(from, to);
+
+    if (error) {
+      console.error("Error fetching events by year:", error);
+      handlePostgresError(error);
+    }
+
+    return {
+      list: (data || []).map((row) => this.mapToDomain(row)),
+      count: count ?? 0,
     };
   }
 

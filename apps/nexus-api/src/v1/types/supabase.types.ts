@@ -142,7 +142,10 @@ export type Database = {
           end_date: string | null
           gdg_event_id: number | null
           id: string
+          max_capacity: string | null
+          short_description: string | null
           start_date: string | null
+          tags: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string
@@ -159,7 +162,10 @@ export type Database = {
           end_date?: string | null
           gdg_event_id?: number | null
           id?: string
+          max_capacity?: string | null
+          short_description?: string | null
           start_date?: string | null
+          tags?: string | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string
@@ -176,7 +182,10 @@ export type Database = {
           end_date?: string | null
           gdg_event_id?: number | null
           id?: string
+          max_capacity?: string | null
+          short_description?: string | null
           start_date?: string | null
+          tags?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string

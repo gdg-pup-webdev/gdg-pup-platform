@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nexus Web
 
-## Getting Started
+## Local Run
 
-First, run the development server:
+From workspace root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm --filter nexus-web dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Always use the URL printed by Next.js (`Local: http://localhost:xxxx`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Route Diagnostics (`/events/gallery/[year]/[id]`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If the gallery detail route appears as 404, verify runtime first:
 
-## Learn More
+1. Confirm only one `next dev` instance is running for `nexus-web`.
+2. Confirm the active port from terminal output. Do not assume `3000`.
+3. If you see `.next/dev/lock` warnings, stop all `next dev` processes and restart.
+4. Re-test using the active local URL.
 
-To learn more about Next.js, take a look at the following resources:
+## Event Gallery Data Behavior
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Gallery detail page (`/events/gallery/[year]/[id]`) is the active route for
+`View More Event Highlights` and renders a placeholder gallery grid/carousel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Event metadata fetch (title/date/tag/location) is optional:
 
-## Deploy on Vercel
+1. If event detail is found, header metadata is shown.
+2. If event detail fails/missing, fallback title from query param is used.
+3. Placeholder gallery tiles still render in both cases (no redirect back to year page).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Supabase Verification (Safe Path)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use Supabase SQL Editor or another protected server-side environment (not browser-exposed secret keys).
+
+Check specific event:
+
+```sql
+select gdg_id, title, cover_image_url, url, start_date
+from scraped_gdg_events
+where gdg_id = 87073;
+```
+
+Check available image-related columns:
+
+```sql
+select column_name
+from information_schema.columns
+where table_schema = 'public'
+  and table_name = 'scraped_gdg_events'
+order by ordinal_position;
+```

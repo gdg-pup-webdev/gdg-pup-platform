@@ -21,6 +21,8 @@ export class BevyEventService implements IBevyEventService {
       start_date: bevyEvent.start_date,
       end_date: bevyEvent.end_date,
       url: bevyEvent.bevy_url || "",
+      tags: bevyEvent.tags || [],
+      max_capacity: bevyEvent.total_capacity || 999999,
     });
   }
 }

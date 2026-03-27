@@ -12,9 +12,7 @@ export * from "./components";
 
 // Hooks
 export { useEvents, useEventFilters } from "./hooks/useEvents";
-
-// API
-export { getEvents } from "./api/getEvents";
+ 
 
 // Types
 export type {

@@ -2,9 +2,11 @@ import { RequestHandler } from "express";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 import { EventSystemController } from "@/v1/modules/eventSystem";
+import { Event } from "@/v1/modules/eventSystem/domain/Event";
 
 export class EventsHttpController {
-  constructor(private readonly eventSystemController: EventSystemController) {}
+  constructor(private readonly eventSystemController: EventSystemController) {} 
+
 
   listEvents: RequestHandler = createExpressController(
     contract.api.v1.events.GET,
@@ -12,10 +14,25 @@ export class EventsHttpController {
       const pageNumber = input.query.pageNumber || 1;
       const pageSize = input.query.pageSize || 10;
 
-      const { list, count } = await this.eventSystemController.listEvents(
-        pageNumber,
-        pageSize,
-      );
+      const year = input.query.year || null;
+
+      let list, count;
+      if (year) { 
+        const res = await this.eventSystemController.listEventsByYear(
+          pageNumber,
+          pageSize,
+          year,
+        );
+        list = res.list;
+        count = res.count;
+      } else {
+        const res = await this.eventSystemController.listEvents(
+          pageNumber,
+          pageSize,
+        );
+        list = res.list;
+        count = res.count;
+      }
 
       return output(200, {
         status: "success",
@@ -25,7 +42,8 @@ export class EventsHttpController {
           creator_id: e.creatorId,
           created_at: e.createdAt,
           updated_at: e.updatedAt,
-          bevy_event_url: e.bevyPreviewUrl || undefined,
+          bevy_event_url: e.bevyPreviewUrl,
+
         })),
         meta: {
           totalRecords: count,
@@ -57,7 +75,6 @@ export class EventsHttpController {
         end_date: input.body.data.end_date || new Date().toISOString(),
         attendance_points: input.body.data.attendance_points,
         image: image,
-
       });
 
       return output(200, {
@@ -68,7 +85,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
-          bevy_event_url: result.bevyPreviewUrl || undefined,
+          bevy_event_url: result.bevyPreviewUrl  ,
         },
       });
     },
@@ -89,7 +106,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
-          bevy_event_url: result.bevyPreviewUrl || undefined,
+          bevy_event_url: result.bevyPreviewUrl ,
         },
       });
     },
@@ -123,7 +140,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
-          bevy_event_url: result.bevyPreviewUrl || undefined,
+          bevy_event_url: result.bevyPreviewUrl  ,
         },
       });
     },
@@ -218,7 +235,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
-          bevy_event_url: result.bevyPreviewUrl || undefined,
+          bevy_event_url: result.bevyPreviewUrl ,
         },
       });
     },

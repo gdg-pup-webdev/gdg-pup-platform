@@ -4,6 +4,7 @@ import { OpenApiSchemas } from "@packages/typed-rest/shared";
 import { cz as z } from "@packages/typed-rest/shared";
 
 export const query = OpenApiSchemas.Request.Query.paginated().extend({
+  year: z.coerce.number().optional(),
   creator_id: z.string().optional(),
   category: z.string().optional(),
   venue: z.string().optional(),

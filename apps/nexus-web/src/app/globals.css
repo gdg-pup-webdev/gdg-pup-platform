@@ -263,3 +263,17 @@ body {
   pointer-events: none;
   z-index: -1;
 }
+
+/* Lenis base styles to prevent duplicate/native scrollbars */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
