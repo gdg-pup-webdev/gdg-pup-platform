@@ -1,6 +1,6 @@
 import { IMemberShowcaseRepository } from "../domain/IMemberShowcaseRepository";
 import { MemberShowcase } from "../domain/MemberShowcase";
-import { IMembersService } from "../domain/IMembersService";
+import { IMembersService, ShowcasedMember } from "../domain/IMembersService";
 
 export class GetSpotlightOfTheDay {
   constructor(
@@ -8,7 +8,7 @@ export class GetSpotlightOfTheDay {
     private readonly membersService: IMembersService
   ) {}
 
-  async execute(): Promise<{ showcase: MemberShowcase | null; members: any[] }> {
+  async execute(): Promise<{ showcase: MemberShowcase | null; members: ShowcasedMember[] }> {
     const showcase = await this.repo.getSpotlightOfTheDay();
     if (!showcase) return { showcase: null, members: [] };
 

@@ -8,7 +8,7 @@ import { UpdateMemberShowcase } from "../useCases/UpdateMemberShowcase";
 import { DeleteMemberShowcase } from "../useCases/DeleteMemberShowcase";
 import { GetSpotlightOfTheDay } from "../useCases/GetSpotlightOfTheDay";
 import { MemberShowcaseController } from "../MemberShowcaseController";
-import { IMembersService } from "../domain/IMembersService";
+import { IMembersService, ShowcasedMember } from "../domain/IMembersService";
 import { IFileStorageService, FileToUpload, UploadedFile } from "../domain/IFileStorageService";
 
 describe("MemberShowcase Module", () => {
@@ -26,8 +26,19 @@ describe("MemberShowcase Module", () => {
 
   beforeEach(() => {
     repo = new MockMemberShowcaseRepository();
+    
+    const mockShowcasedMember: ShowcasedMember = {
+      gdgId: "member-1",
+      displayName: "John Doe",
+      firstName: "John",
+      lastName: "Doe",
+      avatarUrl: "http://avatar.com",
+      program: "BSCS",
+      yearLevel: 4
+    };
+
     membersService = {
-      findByIds: vi.fn().mockResolvedValue([{ id: "member-1", name: "John Doe" }]),
+      findByIds: vi.fn().mockResolvedValue([mockShowcasedMember]),
       exists: vi.fn().mockResolvedValue(true)
     };
 
@@ -154,6 +165,22 @@ describe("MemberShowcase Module", () => {
       const result = await controller.create(input);
       expect(result.title).toBe(input.title);
       expect(result.thumbnailUrl).toBe("http://example.com/uploaded.png");
+    });
+
+    it("should return enriched data on getOne", async () => {
+      const showcase = await repo.saveNew(MemberShowcase.create({
+        title: "Showcase 1",
+        description: "Desc 1",
+        thumbnailUrl: "thumb1",
+        date: new Date(),
+        articleUrl: "art1",
+        showcasedMembers: ["m1"]
+      }));
+
+      const result = await controller.getOne(showcase.props.id);
+      expect(result.title).toBe("Showcase 1");
+      expect(result.showcasedMembers).toHaveLength(1);
+      expect(result.showcasedMembers[0].displayName).toBe("John Doe");
     });
   });
 });

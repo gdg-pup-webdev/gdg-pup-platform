@@ -1,11 +1,12 @@
 import { MemberShowcase, MemberShowcaseInsertProps, MemberShowcaseUpdateProps } from "./domain/MemberShowcase";
-import { CreateMemberShowcase } from "./useCases/CreateMemberShowcase";
+import { CreateMemberShowcase, CreateMemberShowcaseInput } from "./useCases/CreateMemberShowcase";
 import { ListMemberShowcases } from "./useCases/ListMemberShowcases";
 import { GetMemberShowcase } from "./useCases/GetMemberShowcase";
-import { UpdateMemberShowcase } from "./useCases/UpdateMemberShowcase";
+import { UpdateMemberShowcase, UpdateMemberShowcaseInput } from "./useCases/UpdateMemberShowcase";
 import { DeleteMemberShowcase } from "./useCases/DeleteMemberShowcase";
 import { GetSpotlightOfTheDay } from "./useCases/GetSpotlightOfTheDay";
 import { MemberShowcaseFilters } from "./domain/IMemberShowcaseRepository";
+import { ShowcasedMember } from "./domain/IMembersService";
 
 export interface MemberShowcaseDTO {
   id: string;
@@ -14,7 +15,7 @@ export interface MemberShowcaseDTO {
   date: string;
   description: string;
   articleUrl: string;
-  showcasedMembers: any[];
+  showcasedMembers: ShowcasedMember[];
   createdAt: string;
 }
 
@@ -28,7 +29,7 @@ export class MemberShowcaseController {
     private readonly getSpotlightUseCase: GetSpotlightOfTheDay
   ) {}
 
-  private toDTO(memberShowcase: MemberShowcase, enrichedMembers: any[] = []): MemberShowcaseDTO {
+  private toDTO(memberShowcase: MemberShowcase, enrichedMembers: ShowcasedMember[] = []): MemberShowcaseDTO {
     const p = memberShowcase.props;
     return {
       id: p.id,
@@ -42,7 +43,7 @@ export class MemberShowcaseController {
     };
   }
 
-  async create(data: MemberShowcaseInsertProps) {
+  async create(data: CreateMemberShowcaseInput) {
     const result = await this.createUseCase.execute(data);
     return this.toDTO(result);
   }
@@ -60,7 +61,7 @@ export class MemberShowcaseController {
     return this.toDTO(showcase, members);
   }
 
-  async update(id: string, updates: MemberShowcaseUpdateProps) {
+  async update(id: string, updates: UpdateMemberShowcaseInput) {
     const result = await this.updateUseCase.execute(id, updates);
     return this.toDTO(result);
   }

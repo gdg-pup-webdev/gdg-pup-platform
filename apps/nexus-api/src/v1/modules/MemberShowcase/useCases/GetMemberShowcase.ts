@@ -1,6 +1,6 @@
 import { IMemberShowcaseRepository } from "../domain/IMemberShowcaseRepository";
 import { MemberShowcase } from "../domain/MemberShowcase";
-import { IMembersService } from "../domain/IMembersService";
+import { IMembersService, ShowcasedMember } from "../domain/IMembersService";
 
 export class GetMemberShowcase {
   constructor(
@@ -8,7 +8,7 @@ export class GetMemberShowcase {
     private readonly membersService: IMembersService
   ) {}
 
-  async execute(id: string): Promise<{ showcase: MemberShowcase; members: any[] }> {
+  async execute(id: string): Promise<{ showcase: MemberShowcase; members: ShowcasedMember[] }> {
     const showcase = await this.repo.findById(id);
     if (!showcase) throw new Error("Member Showcase not found.");
     
