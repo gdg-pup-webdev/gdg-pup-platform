@@ -14,6 +14,7 @@ import {
   Files,
   Link2,
   User,
+  Sparkles,
 } from "lucide-react";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 
@@ -52,6 +53,11 @@ const NAV_ITEMS = [
     label: "Team Resources",
     href: INTERNAL_LINKS.TEAM_RESOURCES,
     icon: Link2,
+  },
+  {
+    label: "Member Showcase",
+    href: INTERNAL_LINKS.MEMBER_SHOWCASE,
+    icon: Sparkles,
   },
   // {
   //   label: "Portfolios",
