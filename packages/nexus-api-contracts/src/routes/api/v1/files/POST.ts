@@ -6,11 +6,12 @@ export const body =
  
 export const files = {
   file: OpenApiSchemas.Models.file(),
-};
+}; 
 
 export const response = {
   200: OpenApiSchemas.Response.single(fileRecord),
   ...OpenApiSchemas.Response.standardErrors(),
-};
+};  
 
 export const docs_summary = "Upload a single file to the server";
+ 
