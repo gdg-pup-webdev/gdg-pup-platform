@@ -1,4 +1,4 @@
-import { IEventPointsService } from "../domain/IEventPointsService";
+import { IEventPointsService } from "../../domain/IEventPointsService";
 
 export class MockEventPointsService implements IEventPointsService {
   // Store user points in memory

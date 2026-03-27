@@ -4,6 +4,8 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     // "incremental": true,
+    "tsBuildInfoFile": "./.tsconfig.tsbuildinfo",
+    // "incremental": true,
     "outDir": "dist",
     "rootDir": "src"
   }

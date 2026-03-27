@@ -719,6 +719,9 @@ importers:
       '@packages/typed-rest':
         specifier: workspace:*
         version: link:../typed-rest
+      bcrypt:
+        specifier: ^6.0.0
+        version: 6.0.0
       concurrently:
         specifier: 9.2.1
         version: 9.2.1
@@ -845,6 +848,9 @@ importers:
       '@configs/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript-config
+      bcrypt:
+        specifier: ^6.0.0
+        version: 6.0.0
       chokidar:
         specifier: ^5.0.0
         version: 5.0.0

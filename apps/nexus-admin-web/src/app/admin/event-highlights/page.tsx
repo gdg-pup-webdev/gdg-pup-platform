@@ -1,5 +1,5 @@
 import { EventHighlightsList } from "@/features/event-highlights";
-
+ 
 export default function EventHighlightsPage() {
   return (
     <div className="mx-auto w-full max-w-7xl">

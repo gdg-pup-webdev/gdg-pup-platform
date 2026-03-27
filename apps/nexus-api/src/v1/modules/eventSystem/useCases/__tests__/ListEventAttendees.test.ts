@@ -1,7 +1,7 @@
  // src/modules/eventSystem/useCases/__tests__/ListEventAttendees.test.ts
 
 import { describe, expect, it, beforeEach } from "vitest";
-import { MockAttendanceRepository } from "../../infrastructure/MockAttendanceRepository";
+import { MockAttendanceRepository } from "../../infrastructure/mocks/MockAttendanceRepository";
 import { ListEventAttendees } from "../ListEventAttendees";
 import { Attendance } from "../../domain/Attendance";
 

@@ -25,6 +25,7 @@ export class EventsHttpController {
           creator_id: e.creatorId,
           created_at: e.createdAt,
           updated_at: e.updatedAt,
+          bevy_event_url: e.bevyPreviewUrl || undefined,
         })),
         meta: {
           totalRecords: count,
@@ -42,17 +43,22 @@ export class EventsHttpController {
       const { req } = ctx;
       const creatorId = req.user?.id || "anonymous";
 
-      const result = await this.eventSystemController.createEvent(
+      const image = input.files.thumbnail || null;
+
+      console.log("Received image file:", image);
+
+      const result = await this.eventSystemController.createEvent({
         creatorId,
-        input.body.data.title,
-        input.body.data.description || "",
-        input.body.data.category || "",
-        input.body.data.venue || "",
-        input.body.data.start_date || new Date().toISOString(),
-        input.body.data.end_date || new Date().toISOString(),
-        input.body.data.attendance_points,
-        input.body.data.image_url,
-      );
+        title: input.body.data.title,
+        description: input.body.data.description || "",
+        category: input.body.data.category || "",
+        venue: input.body.data.venue || "",
+        start_date: input.body.data.start_date || new Date().toISOString(),
+        end_date: input.body.data.end_date || new Date().toISOString(),
+        attendance_points: input.body.data.attendance_points,
+        image: image,
+
+      });
 
       return output(200, {
         status: "success",
@@ -62,6 +68,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
+          bevy_event_url: result.bevyPreviewUrl || undefined,
         },
       });
     },
@@ -82,6 +89,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
+          bevy_event_url: result.bevyPreviewUrl || undefined,
         },
       });
     },
@@ -104,7 +112,6 @@ export class EventsHttpController {
             ? new Date(input.body.data.end_date)
             : undefined,
           attendance_points: input.body.data.attendance_points,
-          image_url: input.body.data.image_url,
         },
       );
 
@@ -116,7 +123,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
-
+          bevy_event_url: result.bevyPreviewUrl || undefined,
         },
       });
     },
@@ -129,7 +136,7 @@ export class EventsHttpController {
 
       return output(200, {
         status: "success",
-        message: "Event deleted successfully", 
+        message: "Event deleted successfully",
       });
     },
   );
@@ -164,11 +171,12 @@ export class EventsHttpController {
       const pageNumber = input.query.pageNumber || 1;
       const pageSize = input.query.pageSize || 10;
 
-      const { list, count } = await this.eventSystemController.listEventAttendees(
-        pageNumber,
-        pageSize,
-        input.params.eventId,
-      );
+      const { list, count } =
+        await this.eventSystemController.listEventAttendees(
+          pageNumber,
+          pageSize,
+          input.params.eventId,
+        );
 
       return output(200, {
         status: "success",
@@ -210,6 +218,7 @@ export class EventsHttpController {
           creator_id: result.creatorId,
           created_at: result.createdAt,
           updated_at: result.updatedAt,
+          bevy_event_url: result.bevyPreviewUrl || undefined,
         },
       });
     },

@@ -1,14 +1,17 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { MockEventRepository } from "../../infrastructure/MockEventRepository";
+import { MockEventRepository } from "../../infrastructure/mocks/MockEventRepository";
 import { EventPrototypeProps } from "../../domain/Event";
 import { CreateEvent } from "../CreateEvent";
+import { MockFileStorageAdapter } from "../../infrastructure/mocks/MocFileStorageAdapter";
 
 let eventRepository: MockEventRepository;
 let createEventUseCase: CreateEvent;
+let mockfilestorage: MockFileStorageAdapter;
 
 const initializeInstances = () => {
   eventRepository = new MockEventRepository();
-  createEventUseCase = new CreateEvent(eventRepository);
+  mockfilestorage = new MockFileStorageAdapter();
+  createEventUseCase = new CreateEvent(eventRepository, mockfilestorage);
 };
 
 describe("CreateEvent Use Case", () => {
@@ -25,10 +28,11 @@ describe("CreateEvent Use Case", () => {
     bevy_event_id: null,
     creatorId: "user-123",
     image_url: "https://example.com/image.png",
+    bevyPreviewUrl : null
   };
 
   it("should successfully create and return a new event", async () => {
-    const result = await createEventUseCase.execute(validEventInput);
+    const result = await createEventUseCase.execute(validEventInput, null);
 
     expect(result).toBeDefined();
     expect(result.props.title).toBe(validEventInput.title);
@@ -38,7 +42,7 @@ describe("CreateEvent Use Case", () => {
   });
 
   it("should correctly initialize domain-generated fields (id, timestamps, attendees_count)", async () => {
-    const result = await createEventUseCase.execute(validEventInput);
+    const result = await createEventUseCase.execute(validEventInput, null);
 
     expect(result.props.id).toBeDefined();
     expect(result.props.createdAt).toBeInstanceOf(Date);
@@ -46,7 +50,7 @@ describe("CreateEvent Use Case", () => {
   });
 
   it("should successfully persist the created event in the repository", async () => {
-    const result = await createEventUseCase.execute(validEventInput);
+    const result = await createEventUseCase.execute(validEventInput, null);
     expect(eventRepository.events.length).toBe(1);
     expect(eventRepository.events[0].props.id).toBe(result.props.id);
   });

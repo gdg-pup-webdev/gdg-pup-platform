@@ -1,5 +1,5 @@
-import { IEventRepository } from "../domain/IEventRepository";
-import { Event } from "../domain/Event";
+import { IEventRepository } from "../../domain/IEventRepository";
+import { Event } from "../../domain/Event";
 
 export class MockEventRepository implements IEventRepository {
   // In-memory data store

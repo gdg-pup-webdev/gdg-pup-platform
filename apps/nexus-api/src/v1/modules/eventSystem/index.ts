@@ -41,6 +41,8 @@ import { bevyEventController } from "../bevyEvents";
 
 // Controller
 import { EventSystemController } from "./EventSystemController";
+import { FileStorageAdapter } from "./infrastructure/FileStorageAdapter";
+import { filesModuleController } from "../filesModule";
 export { EventSystemController };
 
 // ============================================================================
@@ -51,6 +53,7 @@ const eventPointsServiceAdapter = new EventPointsService(pointSystemController);
 const eventRepositoryAdapter = new EventRepository();
 const attendanceRepositoryAdapter = new AttendanceRepository();
 const bevyEventServiceAdapter = new BevyEventService(bevyEventController);
+const filestorageAdapter = new FileStorageAdapter(filesModuleController);
 
 // Initialize Use Cases
 const checkinToEventUseCase = new CheckinToEvent(
@@ -58,7 +61,10 @@ const checkinToEventUseCase = new CheckinToEvent(
   attendanceRepositoryAdapter,
   eventPointsServiceAdapter,
 );
-const createEventUseCase = new CreateEvent(eventRepositoryAdapter);
+const createEventUseCase = new CreateEvent(
+  eventRepositoryAdapter,
+  filestorageAdapter,
+);
 const createEventFromBevyEventUseCase = new CreateEventFromBevyEventUseCase(
   eventRepositoryAdapter,
   bevyEventServiceAdapter,
