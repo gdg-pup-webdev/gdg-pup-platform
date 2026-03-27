@@ -1,15 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
-import {
-  Container,
-  Stack,
-  Text,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Button,
-} from "@packages/spark-ui";
+import { Container, Stack, Text, Button } from "@packages/spark-ui";
+import { AboutTheTeam } from "./AboutTheTeam";
+import { TeamHero } from "./team-section/TeamHero";
+import { StudyJamsGrid } from "./team-section/StudyJamsGrid";
 
 interface TeamSectionProps {
   teamName: string;
@@ -18,8 +11,29 @@ interface TeamSectionProps {
 
 export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
-      {/* Decorative blob — top left */}
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
+      {/* Background layers */}
+      <img
+        src="/products/RL-SPACE_BG_3_3.png"
+        alt=""
+        className="absolute top-280 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
+      />
+      <img
+        src="/products/RL-SPACE_BG_3_2.png"
+        alt=""
+        className="absolute top-165 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
+      />
+      <img
+        src="/products/RL-SPACE_BG_3_1.png"
+        alt=""
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
+        style={{
+          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+          maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+        }}
+      />
+
+      {/* Decorative blobs */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
@@ -32,7 +46,6 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
           zIndex: 0,
         }}
       />
-      {/* Decorative blob — right */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
@@ -47,43 +60,55 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
       />
 
       <Container>
-        <Stack gap="2xl" className="relative z-10">
+        <Stack gap="2xl" className="relative z-10 mt-30">
           {/* ── About the Team ── */}
           <Stack gap="lg" className="items-center">
+            <Text variant="heading-1" gradient="white-blue" align="center" weight="bold">
+              ABOUT THE TEAM
+            </Text>
             <Text
               variant="heading-1"
-              gradient="white-blue"
+              gradient="white-yellow"
               align="center"
               weight="bold"
+              className="mt-10"
             >
-              About the team
-            </Text>
-            <Text variant="heading-3" align="center" color="secondary">
               {teamName}
             </Text>
 
-            {/* Team image placeholder */}
-            <div className="w-full max-w-3xl mx-auto mt-6">
-              <Image
-                src="/placeholder.svg"
-                alt={`${teamName} team`}
-                width={900}
-                height={500}
-                className="w-full rounded-2xl object-cover"
+            <TeamHero teamName={teamName} />
+
+            <div className="w-full max-w-10xl mx-auto my-6 z-10 mt-30">
+              <AboutTheTeam
+                description={
+                  <>
+                    The{" "}
+                    <span className="text-[#EA4335]">
+                      Internet of Things (IoT) Team
+                    </span>{" "}
+                    dedicates the design, development, and implementation of
+                    interconnected systems that bridge the digital and physical
+                    worlds. Members of this team will engage in every stage of
+                    IoT solution development, from conceptualizing device
+                    integrations and designing smart system architectures to
+                    coding, testing, and deploying functional prototypes.
+                  </>
+                }
+                categories={
+                  <>
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
+                      Embedded Systems
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
+                      Sensor &amp; Device Integration
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
+                      Network Communication
+                    </span>
+                  </>
+                }
               />
             </div>
-
-            {/* Description card */}
-            <Card className="w-full max-w-3xl mx-auto mt-6">
-              <CardHeader>
-                <CardTitle>{teamName}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Text variant="body" color="secondary">
-                  This is the {teamName} team. Content coming soon.
-                </Text>
-              </CardContent>
-            </Card>
 
             <Link href={`/products/${teamSlug}/team-structure`}>
               <Button size="lg">See team leads and structure</Button>
@@ -91,31 +116,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
           </Stack>
 
           {/* ── Study Jams ── */}
-          <Stack gap="xl" className="mt-16">
-            <Text
-              variant="heading-1"
-              gradient="white-blue"
-              align="center"
-              weight="bold"
-            >
-              STUDY JAMS
-            </Text>
-
-            <div className="flex flex-col md:flex-row gap-6">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="flex-1">
-                  <CardHeader>
-                    <CardTitle>Study Jam {i}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Text variant="body" color="secondary">
-                      Study jam content coming soon.
-                    </Text>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </Stack>
+          <StudyJamsGrid />
         </Stack>
       </Container>
     </div>

@@ -13,6 +13,7 @@ import {
   ExternalLink,
   Files,
   Link2,
+  User,
 } from "lucide-react";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 
@@ -26,6 +27,16 @@ const NAV_ITEMS = [
     label: "Dashboard",
     href: INTERNAL_LINKS.DASHBOARD,
     icon: LayoutDashboard,
+  },
+  {
+    label: "Profile",
+    href: INTERNAL_LINKS.PROFILE,
+    icon: User,
+  },
+  {
+    label: "Members",
+    href: INTERNAL_LINKS.MEMBERS,
+    icon: User,
   },
   {
     label: "Teams",
@@ -42,14 +53,19 @@ const NAV_ITEMS = [
     href: INTERNAL_LINKS.TEAM_RESOURCES,
     icon: Link2,
   },
-  {
-    label: "Portfolios",
-    href: INTERNAL_LINKS.PORTFOLIOS,
-    icon: Award,
-  },
+  // {
+  //   label: "Portfolios",
+  //   href: INTERNAL_LINKS.PORTFOLIOS,
+  //   icon: Award,
+  // },
   {
     label: "Debug page",
     href: INTERNAL_LINKS.DEBUG_PAGE,
+    icon: Award, 
+  },
+  {
+    label: "Roles",
+    href: INTERNAL_LINKS.RBAC,
     icon: Award, 
   },
 ];

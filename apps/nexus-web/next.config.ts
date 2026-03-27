@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   /* config options here */
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -18,6 +19,13 @@ const nextConfig: NextConfig = {
         hostname: "*.googleusercontent.com",
       },
     ],
+  },
+  
+  experimental: {
+    // Enable filesystem caching for `next dev`
+    turbopackFileSystemCacheForDev: true,
+    // Enable filesystem caching for `next build`
+    turbopackFileSystemCacheForBuild: true,
   },
 };
 

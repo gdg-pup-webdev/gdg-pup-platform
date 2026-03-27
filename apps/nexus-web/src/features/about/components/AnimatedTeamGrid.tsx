@@ -27,7 +27,7 @@ const cardVariants = {
   hidden: {
     opacity: 0,
     y: 72,
-    scale: 0.80,
+    scale: 0.8,
   },
   visible: {
     opacity: 1,
@@ -76,7 +76,9 @@ export function AnimatedTeamGrid({ children }: AnimatedTeamGridProps) {
       {React.Children.map(children, (child) => {
         if (child == null) return null;
 
-        const childProps: Record<string, unknown> | null = React.isValidElement(child)
+        const childProps: Record<string, unknown> | null = React.isValidElement(
+          child,
+        )
           ? (child.props as Record<string, unknown>)
           : null;
 
@@ -98,4 +100,3 @@ export function AnimatedTeamGrid({ children }: AnimatedTeamGridProps) {
     </motion.div>
   );
 }
-

@@ -13,5 +13,8 @@ export const INTERNAL_LINKS = {
   EVENT_HIGHLIGHTS: "/admin/event-highlights",
   BEVY_EVENTS: "/admin/bevy-events",
   PORTFOLIOS: "/admin/portfolios",
-  LOGIN: "/admin/login",
+  PROFILE: "/admin/profile",
+  LOGIN: "/authentication/login",
+  MEMBERS: "/admin/members",
+  RBAC: "/admin/roles-and-permissions",
 } as const;

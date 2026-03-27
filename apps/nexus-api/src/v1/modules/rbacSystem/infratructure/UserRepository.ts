@@ -5,26 +5,26 @@ import { User } from "../domain/User";
 import { Role } from "../domain/Role";
 
 export class UserRepository implements IUserRepository {
-  private readonly userTable = "user";
+  private readonly userTable = "gdg_members";
   private readonly junctionTable = "user_role_junction";
 
-  async findById(userId: string): Promise<User> {
+  async findById(gdgId: string): Promise<User> {
     // Step 1: Ensure the user exists in the app user table.
     const { data: userRow, error: userError } = await supabase
       .from(this.userTable)
-      .select("id")
-      .eq("id", userId)
+      .select("*")
+      .eq("gdg_id", gdgId)
       .single();
 
     if (userError) {
       throw new InternalServerError(
-        `Failed to query user '${userId}' from table '${this.userTable}'.`,
+        `Failed to query user '${gdgId}' from table '${this.userTable}'.`,
         userError,
       );
     }
 
     if (!userRow) {
-      throw new NotFoundError(`User not found: ${userId}`);
+      throw new NotFoundError(`User not found: ${gdgId}`);
     }
 
     // Step 2: Load assigned roles and permissions from the junction table.
@@ -43,11 +43,11 @@ export class UserRepository implements IUserRepository {
         )
       `,
       )
-      .eq("user_id", userId);
+      .eq("user_id", gdgId);
 
     if (junctionError) {
       throw new InternalServerError(
-        `Failed to load roles and permissions for user: ${userId}`,
+        `Failed to load roles and permissions for user: ${gdgId}`,
         junctionError,
       );
     }
@@ -59,7 +59,7 @@ export class UserRepository implements IUserRepository {
     const junctions = junctionRows || [];
 
     for (const junction of junctions) {
-      const roleData = junction.user_role as any;
+      const roleData = junction.user_role;
 
       if (roleData) {
         roleNames.push(roleData.name);
@@ -77,20 +77,20 @@ export class UserRepository implements IUserRepository {
 
     // Reconstruct the User domain entity with all required props
     return User.hydrate({
-      id: userRow.id,
+      gdgId: userRow.gdg_id,
       roles: roleNames,
       rolesWithPermissions,
     });
   }
 
   async persistUpdates(user: User): Promise<boolean> {
-    const { id: userId, roles: roleNames } = user.props;
+    const { gdgId, roles: roleNames } = user.props;
 
     // 1. Wipe existing relations
     const { error: deleteError } = await supabase
       .from(this.junctionTable)
       .delete()
-      .eq("user_id", userId);
+      .eq("gdg_id", gdgId);
 
     if (deleteError)
       throw new Error(`Failed to clear old user roles: ${deleteError.message}`);
@@ -111,7 +111,7 @@ export class UserRepository implements IUserRepository {
 
       // Construct rows according to your schema: user_role_junction uses role_id and user_id
       const junctionRows = (roleRecords || []).map((role) => ({
-        user_id: userId,
+        gdg_id: gdgId,
         role_id: role.id,
       }));
 

@@ -1,0 +1,31 @@
+import { IUserCredentialRepository, IJWTService } from "../domain/IAuthenticationInterfaces.js";
+
+export class GetMe {
+  constructor(
+    private readonly jwtService: IJWTService,
+    private readonly credentialRepo: IUserCredentialRepository
+  ) {}
+
+  async execute(token: string): Promise<any> {
+    const payload = await this.jwtService.verify(token);
+    const email = payload.props.email  ;
+    
+    if (!email) {
+      throw new Error("Invalid token: Email not found in payload");
+    }
+
+    const credential = await this.credentialRepo.findByEmail(email);
+    if (!credential) {
+      throw new Error("User not found");
+    }
+
+    // In a real system, you'd fetch more from a public.user table
+    // But for now we return what we have in credentials as per the schema
+    return {
+      id: credential.props.id,
+      email: credential.props.emailAddress,
+      display_name: credential.props.emailAddress, // Using username as display_name
+      gdg_id: null, // gdg_id is usually in a separate profile table
+    };
+  }
+}

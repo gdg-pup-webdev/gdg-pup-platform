@@ -6,6 +6,7 @@ import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminFooter } from "@/components/admin/AdminFooter";
 import { INTERNAL_LINKS } from "@/lib/constants/links";
+import { AuthGuard } from "@/features/authentication/components/AuthGuard";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,11 +14,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // Login page gets its own full-screen layout — no topbar/sidebar
   if (pathname === INTERNAL_LINKS.LOGIN) {
-    return <>{children}</>;
+    return <AuthGuard>{children}</AuthGuard>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <AuthGuard>
+      <div className="min-h-screen bg-gray-50">
       {/* Topbar — sticky at top */}
       <AdminTopbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
@@ -39,6 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Footer — full-width bg, visible on scroll */}
       <AdminFooter />
     </div>
+    </AuthGuard>
   );
 }
 

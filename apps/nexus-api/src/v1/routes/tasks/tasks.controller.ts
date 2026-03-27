@@ -1,4 +1,4 @@
-import { TaskModuleController } from "@/v1/modules/tasksModule";
+import { TaskModuleController } from "@/v1/modules/memberTasks";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";

@@ -1,6 +1,6 @@
 "use client";
-
-import { SignInForm } from "@/features/auth";
+ 
+import { LoginForm } from "@/features/authentication/components/LoginForm";
 import { ShineBorder } from "@packages/spark-ui";
 
 export default function SignInPage() {
@@ -15,8 +15,8 @@ export default function SignInPage() {
           Sign in using your GDG ID to access your profile, XPark Points, and account settings.
         </p>
       </div>
-      <div className="w-full z-10 relative">
-        <SignInForm />
+      <div className="w-full z-10 relative"> 
+        <LoginForm/>
       </div>
     </div>
   );

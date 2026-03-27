@@ -1,11 +1,11 @@
 export type TeamMemberProps = {
   id: string;
   teamId: string;
-  userId: string;
+  gdgId: string;
   role: string;
   joinedAt: Date;
-  name: string | null;
-  image: string | null;
+  memberName: string | null;
+  thumbnailImageUrl: string | null;
 };
 
 export type TeamMemberInsertProps = Omit<
@@ -27,8 +27,8 @@ export class TeamMember {
       ...props,
       id: crypto.randomUUID(),
       joinedAt: new Date(),
-      name: null,
-      image: null,
+      memberName: null,
+      thumbnailImageUrl: null,
     });
   }
 
