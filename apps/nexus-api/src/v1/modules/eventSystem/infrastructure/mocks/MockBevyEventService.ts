@@ -1,4 +1,4 @@
-import { IBevyEventService, BevyEventDTO } from "../domain/IBevyEventService";
+import { IBevyEventService, BevyEventDTO } from "../../domain/IBevyEventService";
 
 export class MockBevyEventService implements IBevyEventService {
   public bevyEvents: BevyEventDTO[] = [];

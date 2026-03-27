@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { MockEventRepository } from "../../infrastructure/MockEventRepository";
+import { MockEventRepository } from "../../infrastructure/mocks/MockEventRepository";
 import { EventPrototypeProps } from "../../domain/Event";
 import { CreateEvent } from "../CreateEvent";
 

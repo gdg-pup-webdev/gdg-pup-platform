@@ -40,7 +40,7 @@ export async function getEvents(
     // Call the events endpoint
     const result = await callEndpoint(
       configs.nexusApiBaseUrl,
-      contract.api.event_system.events.GET,
+      contract.api.v1.events.GET,
       {
         query: queryParams,
       }

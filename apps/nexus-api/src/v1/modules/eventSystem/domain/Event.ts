@@ -18,11 +18,12 @@ export type EventProps = {
   attendees_count: number;
   bevy_event_id: string | null;
   image_url: string | null;
+  bevyPreviewUrl : string | null;
 };
 
 export type EventPrototypeProps = Omit<
   EventProps,
-  "id" | "createdAt" | "updatedAt" | "attendees_count"
+  "id" | "createdAt" | "updatedAt" | "attendees_count"  
 >;
 
 export type EventUpdateProps = Partial<EventPrototypeProps>;

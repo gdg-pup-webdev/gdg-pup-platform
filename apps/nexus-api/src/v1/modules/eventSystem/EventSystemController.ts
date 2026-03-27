@@ -1,4 +1,5 @@
-import { EventUpdateProps } from "./domain/Event";
+import { Event, EventUpdateProps } from "./domain/Event";
+import { FileToUpload } from "./domain/IFileStorage";
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
 import { CreateEvent } from "./useCases/CreateEvent";
 import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
@@ -20,6 +21,28 @@ export class EventSystemController {
     private readonly updateEventUseCase: UpdateEvent,
   ) {}
 
+
+
+  private flattenEvent(event: Event) {
+    return {
+      id: event.props.id,
+      createdAt: event.props.createdAt.toISOString(),
+      updatedAt: event.props.updatedAt.toISOString(),
+      creatorId: event.props.creatorId,
+      title: event.props.title,
+      description: event.props.description,
+      category: event.props.category,
+      venue: event.props.venue,
+      start_date: event.props.start_date.toISOString(),
+      end_date: event.props.end_date.toISOString(),
+      attendance_points: event.props.attendance_points,
+      attendees_count: event.props.attendees_count,
+      bevy_event_id: event.props.bevy_event_id,
+      bevyPreviewUrl: event.props.bevyPreviewUrl,
+      image_url: event.props.image_url,
+    }
+  }
+
   async checkinToEvent(eventId: string, userId: string, checkInMethod: string) {
     const result = await this.checkinToEventUseCase.execute(
       eventId,
@@ -37,46 +60,46 @@ export class EventSystemController {
     };
   }
 
-  async createEvent(
-    creatorId: string,
-    title: string,
-    description: string,
-    category: string,
-    venue: string,
-    start_date: string,
-    end_date: string,
-    attendance_points: number,
-    image_url: string | null = null,
-  ) {
-    const result = await this.createEventUseCase.execute({
-      creatorId: creatorId,
-      title: title,
-      description: description,
-      category: category,
-      venue: venue,
-      start_date: new Date(start_date),
-      end_date: new Date(end_date),
-      attendance_points: attendance_points,
-      bevy_event_id: null,
-      image_url: image_url,
-    });
+  async createEvent({
+    creatorId,
+    title,
+    description,
+    category,
+    venue,
+    start_date,
+    end_date,
+    attendance_points,
+    beviPreviewUrl,
+    image,
+  }: {
+    creatorId: string;
+    title: string;
+    description: string;
+    category: string;
+    venue: string;
+    start_date: string;
+    end_date: string;
+    attendance_points: number;
+    beviPreviewUrl?: string;
+    image?: FileToUpload;
+  }) {
+    const result = await this.createEventUseCase.execute(
+      {
+        creatorId: creatorId,
+        title: title,
+        description: description,
+        category: category,
+        venue: venue,
+        start_date: new Date(start_date),
+        end_date: new Date(end_date),
+        attendance_points: attendance_points,
+        bevy_event_id: null,
+        bevyPreviewUrl: beviPreviewUrl || null,
+      },
+      image,
+    );
 
-    return {
-      id: result.props.id,
-      createdAt: result.props.createdAt.toISOString(),
-      updatedAt: result.props.updatedAt.toISOString(),
-      creatorId: result.props.creatorId,
-      title: result.props.title,
-      description: result.props.description,
-      category: result.props.category,
-      venue: result.props.venue,
-      start_date: result.props.start_date.toISOString(),
-      end_date: result.props.end_date.toISOString(),
-      attendance_points: result.props.attendance_points,
-      attendees_count: result.props.attendees_count,
-      bevy_event_id: result.props.bevy_event_id,
-      image_url: result.props.image_url,
-    };
+    return this.flattenEvent(result);
   }
 
   async createEventFromBevyEvent(bevyEventId: string, creatorId: string) {
@@ -85,22 +108,7 @@ export class EventSystemController {
       creatorId,
     );
 
-    return {
-      id: result.props.id,
-      createdAt: result.props.createdAt.toISOString(),
-      updatedAt: result.props.updatedAt.toISOString(),
-      creatorId: result.props.creatorId,
-      title: result.props.title,
-      description: result.props.description,
-      category: result.props.category,
-      venue: result.props.venue,
-      start_date: result.props.start_date.toISOString(),
-      end_date: result.props.end_date.toISOString(),
-      attendance_points: result.props.attendance_points,
-      attendees_count: result.props.attendees_count,
-      bevy_event_id: result.props.bevy_event_id,
-      image_url: result.props.image_url,
-    };
+    return this.flattenEvent(result);
   }
 
   async deleteEvent(eventId: string) {
@@ -110,22 +118,7 @@ export class EventSystemController {
 
   async getOneEvent(eventId: string) {
     const result = await this.getOneEventUseCase.execute(eventId);
-    return {
-      id: result.props.id,
-      createdAt: result.props.createdAt.toISOString(),
-      updatedAt: result.props.updatedAt.toISOString(),
-      creatorId: result.props.creatorId,
-      title: result.props.title,
-      description: result.props.description,
-      category: result.props.category,
-      venue: result.props.venue,
-      start_date: result.props.start_date.toISOString(),
-      end_date: result.props.end_date.toISOString(),
-      attendance_points: result.props.attendance_points,
-      attendees_count: result.props.attendees_count,
-      bevy_event_id: result.props.bevy_event_id,
-      image_url: result.props.image_url,
-    };
+    return this.flattenEvent(result);
   }
 
   async listEventAttendees(
@@ -153,43 +146,13 @@ export class EventSystemController {
   async listEvents(pageNumber: number, pageSize: number) {
     const result = await this.listEventsUseCase.execute(pageNumber, pageSize);
     return {
-      list: result.list.map((event) => ({
-        id: event.props.id,
-        createdAt: event.props.createdAt.toISOString(),
-        updatedAt: event.props.updatedAt.toISOString(),
-        creatorId: event.props.creatorId,
-        title: event.props.title,
-        description: event.props.description,
-        category: event.props.category,
-        venue: event.props.venue,
-        start_date: event.props.start_date.toISOString(),
-        end_date: event.props.end_date.toISOString(),
-        attendance_points: event.props.attendance_points,
-        attendees_count: event.props.attendees_count,
-        bevy_event_id: event.props.bevy_event_id,
-        image_url: event.props.image_url,
-      })),
+      list: result.list.map((event) =>  this.flattenEvent(event)),
       count: result.count,
     };
   }
 
   async updateEvent(eventId: string, dto: EventUpdateProps) {
     const result = await this.updateEventUseCase.execute(eventId, dto);
-    return {
-      id: result.props.id,
-      createdAt: result.props.createdAt.toISOString(),
-      updatedAt: result.props.updatedAt.toISOString(),
-      creatorId: result.props.creatorId,
-      title: result.props.title,
-      description: result.props.description,
-      category: result.props.category,
-      venue: result.props.venue,
-      start_date: result.props.start_date.toISOString(),
-      end_date: result.props.end_date.toISOString(),
-      attendance_points: result.props.attendance_points,
-      attendees_count: result.props.attendees_count,
-      bevy_event_id: result.props.bevy_event_id,
-      image_url: result.props.image_url,
-    };
+    return this.flattenEvent(result);
   }
 }

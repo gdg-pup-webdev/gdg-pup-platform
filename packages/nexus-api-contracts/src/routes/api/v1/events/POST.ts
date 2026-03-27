@@ -1,11 +1,15 @@
 import { eventRecord, eventRecordInsertDTO, eventRecordUpdateDTO } from "#models/v1/eventSystem/event.js";
-import { OpenApiSchemas } from "@packages/typed-rest/shared";
-
+import { OpenApiSchemas } from "@packages/typed-rest/shared"; 
+   
+export const files = {
+  thumnail: OpenApiSchemas.Models.file(),  
+}  
+   
  export const body = OpenApiSchemas.Request.Body.withPayload(eventRecordInsertDTO);
-
+ 
 export const response = {
   200: OpenApiSchemas.Response.single(eventRecord),
-  ...OpenApiSchemas.Response.standardErrors(),
+  ...OpenApiSchemas.Response.standardErrors(), 
 };
 
 export const docs_summary = "Create events";

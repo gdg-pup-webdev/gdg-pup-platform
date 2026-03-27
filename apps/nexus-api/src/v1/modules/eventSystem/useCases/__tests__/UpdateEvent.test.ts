@@ -1,7 +1,7 @@
  // src/modules/eventSystem/useCases/__tests__/UpdateEvent.test.ts
 
 import { describe, expect, it, beforeEach } from "vitest";
-import { MockEventRepository } from "../../infrastructure/MockEventRepository";
+import { MockEventRepository } from "../../infrastructure/mocks/MockEventRepository";
 import { UpdateEvent } from "../UpdateEvent";
 import { Event, EventUpdateProps } from "../../domain/Event";
 

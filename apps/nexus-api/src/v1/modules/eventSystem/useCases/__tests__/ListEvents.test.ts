@@ -1,7 +1,7 @@
 // src/modules/eventSystem/useCases/__tests__/ListEvents.test.ts
 
 import { describe, expect, it, beforeEach } from "vitest";
-import { MockEventRepository } from "../../infrastructure/MockEventRepository";
+import { MockEventRepository } from "../../infrastructure/mocks/MockEventRepository";
 import { ListEvents } from "../ListEvents";
 import { Event } from "../../domain/Event";
 

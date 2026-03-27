@@ -30,7 +30,8 @@ export class EventRepository implements IEventRepository {
       bevy_event_id: row.gdg_event_id?.toString() ?? null,
 
       creatorId: row.creator_id || "",
-      image_url: null,
+      image_url:  row.thumbnail_url || null,
+      bevyPreviewUrl: row.bevy_preview_url || null,
     });
   }
 
@@ -52,6 +53,8 @@ export class EventRepository implements IEventRepository {
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString(),
       gdg_event_id: parseInt(props.bevy_event_id || "") || null,
+      thumbnail_url: props.image_url || null,
+      bevy_preview_url: props.bevyPreviewUrl || null,
     };
   }
 

@@ -1,9 +1,9 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { EventSystemController } from "../EventSystemController";
-import { MockEventRepository } from "../infrastructure/MockEventRepository";
-import { MockAttendanceRepository } from "../infrastructure/MockAttendanceRepository";
-import { MockEventPointsService } from "../infrastructure/MockEventPointsService";
-import { MockBevyEventService } from "../infrastructure/MockBevyEventService";
+import { MockEventRepository } from "../infrastructure/mocks/MockEventRepository";
+import { MockAttendanceRepository } from "../infrastructure/mocks/MockAttendanceRepository";
+import { MockEventPointsService } from "../infrastructure/mocks/MockEventPointsService";
+import { MockBevyEventService } from "../infrastructure/mocks/MockBevyEventService";
 import { CheckinToEvent } from "../useCases/CheckinToEvent";
 import { CreateEvent } from "../useCases/CreateEvent";
 import { CreateEventFromBevyEventUseCase } from "../useCases/CreateEventFromBevyEvent";

@@ -14,6 +14,7 @@ export type EventInsert = {
   end_date: string;
   attendance_points: number;
   image_url: string | null;
+  image?: File ;
 };
 
 export type EventUpdate = Partial<EventInsert>;

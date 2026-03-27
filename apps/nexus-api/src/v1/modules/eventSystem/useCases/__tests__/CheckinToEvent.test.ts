@@ -1,9 +1,9 @@
 // src/modules/eventSystem/useCases/__tests__/CheckinToEvent.test.ts
 
 import { describe, expect, it, beforeEach } from "vitest";
-import { MockAttendanceRepository } from "../../infrastructure/MockAttendanceRepository";
-import { MockEventPointsService } from "../../infrastructure/MockEventPointsService";
-import { MockEventRepository } from "../../infrastructure/MockEventRepository";
+import { MockAttendanceRepository } from "../../infrastructure/mocks/MockAttendanceRepository";
+import { MockEventPointsService } from "../../infrastructure/mocks/MockEventPointsService";
+import { MockEventRepository } from "../../infrastructure/mocks/MockEventRepository";
 import { CheckinToEvent } from "../CheckinToEvent";
 import { Event } from "../../domain/Event";
 

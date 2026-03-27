@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { MockEventRepository } from "../../infrastructure/MockEventRepository";
-import { MockBevyEventService } from "../../infrastructure/MockBevyEventService";
+import { MockEventRepository } from "../../infrastructure/mocks/MockEventRepository";
+import { MockBevyEventService } from "../../infrastructure/mocks/MockBevyEventService";
 import { CreateEventFromBevyEventUseCase } from "../CreateEventFromBevyEvent";
 
 let eventRepository: MockEventRepository;

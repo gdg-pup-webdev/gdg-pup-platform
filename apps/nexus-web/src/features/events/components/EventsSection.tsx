@@ -1,4 +1,5 @@
 import { Container, Stack, Text, Card, CardHeader, CardTitle, CardContent } from "@packages/spark-ui";
+import { MockEventGallery } from "./MockEventGallery";
 
 export function EventsSection() {
   return (
@@ -77,9 +78,10 @@ export function EventsSection() {
             {/* Gallery placeholder */}
             <Card className="w-full mt-8 min-h-100 flex items-center justify-center">
               <CardContent>
-                <Text variant="body" color="secondary" align="center">
+                {/* <Text variant="body" color="secondary" align="center">
                   Gallery — coming soon
-                </Text>
+                </Text> */}
+                <MockEventGallery/>
               </CardContent>
             </Card>
           </Stack>
