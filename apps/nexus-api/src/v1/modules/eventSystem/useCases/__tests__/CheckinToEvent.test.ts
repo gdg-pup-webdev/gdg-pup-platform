@@ -40,6 +40,7 @@ describe("CheckinToEvent Use Case", () => {
       image_url: null,
       bevy_event_id: null,
       creatorId: "creator_123",
+      bevyPreviewUrl : null
     });
     return await eventRepository.saveNew(newEvent);
   };
