@@ -15,6 +15,7 @@ export class MembersServiceAdapter implements IMembersService {
             displayName: member.displayName,
             firstName: member.firstName,
             lastName: member.lastName,
+            fullName: `${member.firstName} ${member.lastName}`,
             avatarUrl: member.avatarUrl,
             program: member.program,
             yearLevel: member.yearLevel

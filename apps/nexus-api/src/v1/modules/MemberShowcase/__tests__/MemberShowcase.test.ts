@@ -32,6 +32,7 @@ describe("MemberShowcase Module", () => {
       displayName: "John Doe",
       firstName: "John",
       lastName: "Doe",
+      fullName: "John Doe",
       avatarUrl: "http://avatar.com",
       program: "BSCS",
       yearLevel: 4
@@ -63,7 +64,8 @@ describe("MemberShowcase Module", () => {
       getOneUseCase,
       updateUseCase,
       deleteUseCase,
-      getSpotlightUseCase
+      getSpotlightUseCase,
+      membersService
     );
   });
 

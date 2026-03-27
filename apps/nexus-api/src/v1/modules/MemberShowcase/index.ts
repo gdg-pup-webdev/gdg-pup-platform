@@ -31,7 +31,8 @@ export const memberShowcaseController = new MemberShowcaseController(
   getOneUseCase,
   updateUseCase,
   deleteUseCase,
-  getSpotlightUseCase
+  getSpotlightUseCase,
+  membersService
 );
 
 export { MemberShowcaseController };

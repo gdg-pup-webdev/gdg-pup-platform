@@ -5,7 +5,7 @@ import {
 import { OpenApiSchemas } from "@packages/typed-rest/shared";
 
 export const files = {
-  thumbnailFile: OpenApiSchemas.Models.file().optional(),
+  thumbnailFile: OpenApiSchemas.Models.file() ,
 };
 
 export const body = OpenApiSchemas.Request.Body.withPayload(memberShowcaseRecordUpdateDTO);

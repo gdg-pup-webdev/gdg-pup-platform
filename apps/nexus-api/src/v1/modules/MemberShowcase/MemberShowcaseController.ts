@@ -6,7 +6,7 @@ import { UpdateMemberShowcase, UpdateMemberShowcaseInput } from "./useCases/Upda
 import { DeleteMemberShowcase } from "./useCases/DeleteMemberShowcase";
 import { GetSpotlightOfTheDay } from "./useCases/GetSpotlightOfTheDay";
 import { MemberShowcaseFilters } from "./domain/IMemberShowcaseRepository";
-import { ShowcasedMember } from "./domain/IMembersService";
+import { ShowcasedMember, IMembersService } from "./domain/IMembersService";
 
 export interface MemberShowcaseDTO {
   id: string;
@@ -26,7 +26,8 @@ export class MemberShowcaseController {
     private readonly getOneUseCase: GetMemberShowcase,
     private readonly updateUseCase: UpdateMemberShowcase,
     private readonly deleteUseCase: DeleteMemberShowcase,
-    private readonly getSpotlightUseCase: GetSpotlightOfTheDay
+    private readonly getSpotlightUseCase: GetSpotlightOfTheDay,
+    private readonly membersService: IMembersService
   ) {}
 
   private toDTO(memberShowcase: MemberShowcase, enrichedMembers: ShowcasedMember[] = []): MemberShowcaseDTO {
@@ -45,13 +46,23 @@ export class MemberShowcaseController {
 
   async create(data: CreateMemberShowcaseInput) {
     const result = await this.createUseCase.execute(data);
-    return this.toDTO(result);
+    const enriched = await this.membersService.findByIds(result.props.showcasedMembers);
+    return this.toDTO(result, enriched);
   }
 
   async list(pageNumber: number, pageSize: number, filters?: MemberShowcaseFilters) {
     const { list, count } = await this.listUseCase.execute(pageNumber, pageSize, filters);
+    
+    // Enrich all in the list
+    const enrichedList = await Promise.all(
+      list.map(async item => {
+        const enriched = await this.membersService.findByIds(item.props.showcasedMembers);
+        return this.toDTO(item, enriched);
+      })
+    );
+
     return {
-      list: list.map(item => this.toDTO(item)),
+      list: enrichedList,
       count,
     };
   }
@@ -63,7 +74,8 @@ export class MemberShowcaseController {
 
   async update(id: string, updates: UpdateMemberShowcaseInput) {
     const result = await this.updateUseCase.execute(id, updates);
-    return this.toDTO(result);
+    const enriched = await this.membersService.findByIds(result.props.showcasedMembers);
+    return this.toDTO(result, enriched);
   }
 
   async delete(id: string) {

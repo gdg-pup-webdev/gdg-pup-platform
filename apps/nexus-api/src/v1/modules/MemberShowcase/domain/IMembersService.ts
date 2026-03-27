@@ -3,6 +3,7 @@ export interface ShowcasedMember {
   displayName: string | null;
   firstName: string;
   lastName: string;
+  fullName: string;
   avatarUrl: string | null;
   program: string | null;
   yearLevel: number | null;

@@ -82,7 +82,7 @@ export class MemberShowcaseHttpController {
         articleUrl: input.body.data.articleUrl,
         showcasedMembers: input.body.data.showcasedMembers,
         thumbnailFile: thumbnailFile ? {
-          buffer: thumbnailFile.buffer,
+          buffer: await thumbnailFile.arrayBuffer(),
           name: thumbnailFile.name,
           type: thumbnailFile.type,
         } : undefined,
