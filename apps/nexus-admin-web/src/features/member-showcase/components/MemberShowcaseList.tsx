@@ -22,8 +22,8 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
   const { data: listResponse, isLoading, isError } = useMemberShowcases(page, pageSize);
   const { data: spotlight, isLoading: isLoadingSpotlight } = useSpotlight();
 
-  const showcases = listResponse?.body?.data || [];
-  const totalRecords = listResponse?.body?.meta?.totalRecords || 0;
+  const showcases = listResponse?.data || [];
+  const totalRecords = listResponse?.meta?.totalRecords || 0;
   const totalPages = Math.ceil(totalRecords / pageSize);
 
   if (isLoading) {
@@ -50,7 +50,7 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
   return (
     <div className="space-y-10 pb-20">
       {/* Spotlight Section */}
-      {spotlight?.body?.data && (
+      {spotlight?.data && (
         <section className="relative overflow-hidden rounded-sm border border-teal-100 bg-gradient-to-br from-teal-50/50 to-white p-6 shadow-sm">
           <div className="absolute -top-6 -right-6 text-teal-100/20">
             <Sparkles size={120} />
@@ -58,8 +58,8 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
           
           <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center">
             <div className="relative h-48 w-full md:w-80 shrink-0 overflow-hidden rounded-sm border border-white shadow-xl">
-              {spotlight.body.data.thumbnailUrl ? (
-                <Image src={spotlight.body.data.thumbnailUrl} alt={spotlight.body.data.title} fill className="object-cover" />
+              {spotlight.data.thumbnailUrl ? (
+                <Image src={spotlight.data.thumbnailUrl} alt={spotlight.data.title} fill className="object-cover" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-300">
                   <Users size={48} />
@@ -72,20 +72,20 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
             </div>
 
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-2xl font-black text-gray-900 mb-2 leading-tight">{spotlight.body.data.title}</h2>
+              <h2 className="text-2xl font-black text-gray-900 mb-2 leading-tight">{spotlight.data.title}</h2>
               <p className="text-sm text-gray-600 line-clamp-3 mb-6 leading-relaxed max-w-2xl">
-                {spotlight.body.data.description}
+                {spotlight.data.description}
               </p>
               
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <button
-                  onClick={() => onView(spotlight.body.data)}
+                  onClick={() => onView(spotlight.data)}
                   className="rounded-sm bg-gray-900 px-8 py-2.5 text-xs font-bold text-white transition-all hover:bg-gray-800 hover:shadow-lg active:scale-95"
                 >
                   View Full Spotlight
                 </button>
                 <div className="flex items-center -space-x-2">
-                  {spotlight.body.data.showcasedMembers.map(m => (
+                  {spotlight.data.showcasedMembers.map(m => (
                     <div key={m.gdgId} className="h-8 w-8 rounded-full border-2 border-white overflow-hidden bg-gray-100 shadow-sm" title={m.fullName}>
                       {m.avatarUrl ? <img src={m.avatarUrl} alt={m.fullName} className="h-full w-full object-cover" /> : <div className="h-full w-full flex items-center justify-center text-[10px] font-bold text-gray-400">{m.firstName[0]}</div>}
                     </div>
