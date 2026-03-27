@@ -22,14 +22,14 @@ const MODELS_DIRECTORY_RELATIVE = "./models";
 const ROUTES_DIRECTORY_RELATIVE = "./routes";
 const OUTPUT_CONTRACT_DIR_ABSOLUTE = SRC_DIR_ABSOLUTE;
 const OUTPUT_CONTRACT_BASENAME = `./${configs.appName}.contract.ts`;
- 
 
-// 1. Track the current child process and build state
-let tscProcess: ChildProcess | null = null;
-let isBuilding = false;
-let buildQueued = false;
+const CACHE_FILE = path.resolve(ROOT_ABSOLUTE, ".build-cache");
 function getSourceHash(): string {
-  const files = glob.sync("**/*", { cwd: SRC_DIR_ABSOLUTE, absolute: true, ignore: ["**/node_modules/**"] });
+  const files = glob.sync("**/*", {
+    cwd: SRC_DIR_ABSOLUTE,
+    absolute: true,
+    ignore: ["**/node_modules/**"],
+  });
   const hash = crypto.createHash("md5");
 
   // Sort files to ensure consistent hashing
@@ -43,14 +43,32 @@ function getSourceHash(): string {
 
   return hash.digest("hex");
 }
-  
+
+function isCacheValid(): boolean {
+  if (!fs.existsSync(CACHE_FILE) || !fs.existsSync(DIST_DIR_ABSOLUTE))
+    return false;
+  const currentHash = getSourceHash();
+  const savedHash = fs.readFileSync(CACHE_FILE, "utf-8");
+  return currentHash === savedHash;
+}
+
+function updateCache() {
+  const currentHash = getSourceHash();
+  fs.writeFileSync(CACHE_FILE, currentHash);
+}
+
+// 1. Track the current child process and build state
+let tscProcess: ChildProcess | null = null;
+let isBuilding = false;
+let buildQueued = false;
+
 // Promisified spawn to prevent blocking the event loop
 function runTypeScriptCompiler(): Promise<void> {
   return new Promise((resolve, reject) => {
     // Added --incremental flag
-    const child = spawn("npx", ["tsc", "-p", ROOT_ABSOLUTE ], {
+    const child = spawn("npx", ["tsc", "-p", ROOT_ABSOLUTE], {
       stdio: "inherit",
-      shell: true, 
+      shell: true,
     });
 
     child.on("close", (code, signal) => {
@@ -90,7 +108,6 @@ async function syncAndGenerate(isWatchMode = false) {
 
     logger.log("Compiling...");
     await runTypeScriptCompiler();
- 
 
     // Only log success if it wasn't interrupted by a new queued build
     if (!buildQueued) {
@@ -121,6 +138,7 @@ program.command("build").action(async () => {
     fs.mkdirSync(DIST_DIR_ABSOLUTE, { recursive: true });
 
     await syncAndGenerate();
+    updateCache();
   } catch (err) {
     logger.error("❌ Build failed:", err);
     process.exit(1);
@@ -134,19 +152,36 @@ program
     logger.log("🚀 Starting dev environment...");
 
     // 1. Run an initial contract generation
-    await generateContract(
-      SRC_DIR_ABSOLUTE,
-      MODELS_DIRECTORY_RELATIVE,
-      ROUTES_DIRECTORY_RELATIVE,
-      OUTPUT_CONTRACT_DIR_ABSOLUTE,
-      OUTPUT_CONTRACT_BASENAME,
-    );
+    if (isCacheValid()) {
+      logger.log("🚀 Cache hit. Skipping initial build.");
+    } else {
+      logger.log("📦 Cache miss. Building...");
+      await generateContract(
+        SRC_DIR_ABSOLUTE,
+        MODELS_DIRECTORY_RELATIVE,
+        ROUTES_DIRECTORY_RELATIVE,
+        OUTPUT_CONTRACT_DIR_ABSOLUTE,
+        OUTPUT_CONTRACT_BASENAME,
+      );
+      updateCache();
+    }
 
     // 2. Start tsc in native watch mode (keeps AST in memory)
-    const tscWatchProcess = spawn("npx", ["tsc", "-p", ROOT_ABSOLUTE, "--watch", "--preserveWatchOutput", "--incremental"], {
-      stdio: "inherit",
-      shell: true,
-    });
+    const tscWatchProcess = spawn(
+      "npx",
+      [
+        "tsc",
+        "-p",
+        ROOT_ABSOLUTE,
+        "--watch",
+        "--preserveWatchOutput",
+        "--incremental",
+      ],
+      {
+        stdio: "inherit",
+        shell: true,
+      },
+    );
 
     // 3. Only watch for files that should trigger a CONTRACT rebuild
     const debouncedContractGen = debounce(async () => {
@@ -159,7 +194,8 @@ program
           OUTPUT_CONTRACT_DIR_ABSOLUTE,
           OUTPUT_CONTRACT_BASENAME,
         );
-        // We DO NOT kill tsc here. tsc --watch will automatically detect 
+        updateCache();
+        // We DO NOT kill tsc here. tsc --watch will automatically detect
         // the newly generated contract file and recompile it instantly.
       } catch (err) {
         logger.error("❌ Contract generation failed:", err);
@@ -175,7 +211,7 @@ program
       .watch(SRC_DIR_ABSOLUTE, {
         ignoreInitial: true,
         // Ignore the contract file itself so generating it doesn't trigger an infinite loop
-        ignored: [contractFilepath, "**/node_modules/**", "**/.git/**"], 
+        ignored: [contractFilepath, "**/node_modules/**", "**/.git/**"],
       })
       .on("all", (event, filepath) => {
         // You might want to filter here so it ONLY triggers on route/model changes
