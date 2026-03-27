@@ -7,6 +7,7 @@ import { DeleteEvent } from "./useCases/DeleteEvent";
 import { GetOneEvent } from "./useCases/GetOneEvent";
 import { ListEventAttendees } from "./useCases/ListEventAttendees";
 import { ListEvents } from "./useCases/ListEvents";
+import { ListEventsByYear } from "./useCases/listEventsByYear";
 import { UpdateEvent } from "./useCases/UpdateEvent";
 
 export class EventSystemController {
@@ -19,6 +20,7 @@ export class EventSystemController {
     private readonly listEventAttendeesUseCase: ListEventAttendees,
     private readonly listEventsUseCase: ListEvents,
     private readonly updateEventUseCase: UpdateEvent,
+    private readonly listEventsByYearUseCase: ListEventsByYear,
   ) {}
 
 
@@ -40,7 +42,18 @@ export class EventSystemController {
       bevy_event_id: event.props.bevy_event_id,
       bevyPreviewUrl: event.props.bevyPreviewUrl,
       image_url: event.props.image_url,
+      tags: event.props.tags,
+      max_capacity: event.props.max_capacity,
+      short_description: event.props.short_description,
     }
+  }
+
+  async listEventsByYear(pageNumber: number, pageSize: number, year: number) { 
+    const result = await this.listEventsByYearUseCase.execute(pageNumber, pageSize, year);
+    return {
+      list: result.list.map(this.flattenEvent),
+      count: result.count,
+    };
   }
 
   async checkinToEvent(eventId: string, userId: string, checkInMethod: string) {
@@ -71,6 +84,9 @@ export class EventSystemController {
     attendance_points,
     beviPreviewUrl,
     image,
+    tags, 
+    max_capacity,
+    short_description,
   }: {
     creatorId: string;
     title: string;
@@ -82,6 +98,10 @@ export class EventSystemController {
     attendance_points: number;
     beviPreviewUrl?: string;
     image : File | null;
+    tags?: string[];
+    max_capacity?: number;
+    short_description?: string;
+
   }) {
     const result = await this.createEventUseCase.execute(
       {
@@ -95,6 +115,9 @@ export class EventSystemController {
         attendance_points: attendance_points,
         bevy_event_id: null,
         bevyPreviewUrl: beviPreviewUrl || null,
+        tags: tags || [],
+        max_capacity: max_capacity || 99999999,
+        short_description: short_description || null,
       },
       image? new FileToUpload({
         buffer: await image.arrayBuffer()  ,

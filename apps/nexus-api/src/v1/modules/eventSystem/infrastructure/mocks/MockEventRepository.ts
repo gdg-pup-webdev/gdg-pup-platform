@@ -5,6 +5,33 @@ export class MockEventRepository implements IEventRepository {
   // In-memory data store
   public events: Event[] = [];
 
+  async listEventsByYear(
+    year: number,
+    pageNumber: number = 1,
+    pageSize: number = 10
+  ): Promise<{ list: Event[]; count: number }> {
+    // 1. Filter the in-memory array by the year
+    const filteredEvents = this.events.filter((event) => {
+      const eventYear = event.props.start_date.getFullYear();
+      return eventYear === year;
+    });
+
+    // 2. Sort them to match the production behavior (ascending)
+    filteredEvents.sort((a, b) => 
+      a.props.start_date.getTime() - b.props.start_date.getTime()
+    );
+
+    // 3. Handle pagination
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize;
+    const paginatedList = filteredEvents.slice(from, to);
+
+    return {
+      list: paginatedList,
+      count: filteredEvents.length,
+    };
+  }
+
   async saveNew(event: Event): Promise<Event> {
     this.events.push(event);
     return event;

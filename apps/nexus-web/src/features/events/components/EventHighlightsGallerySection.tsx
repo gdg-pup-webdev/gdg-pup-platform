@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Text } from "@packages/spark-ui";
-import { getEventDetail } from "../api/getEventDetail";
+import { Container, Stack, Text } from "@packages/spark-ui"; 
 import type { Event } from "../types";
+import { useEvent } from "../hooks/useEvents";
 
 type EventHighlightsGallerySectionProps = {
   yearParam: string;
@@ -76,48 +76,13 @@ export function EventHighlightsGallerySection({
   yearParam,
   eventId,
   title,
-}: EventHighlightsGallerySectionProps) {
-  const [eventDetail, setEventDetail] = useState<Event | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+}: EventHighlightsGallerySectionProps) { 
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileIndex, setMobileIndex] = useState(0);
 
-  useEffect(() => {
-    let cancelled = false;
 
-    async function loadEvent() {
-      setIsLoading(true);
-      setErrorMessage(null);
-      try {
-        const found = await getEventDetail({
-          routeId: eventId,
-          title: title?.trim() || undefined,
-        });
-
-        if (!cancelled) {
-          setEventDetail(found);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setEventDetail(null);
-          setErrorMessage(
-            error instanceof Error
-              ? error.message
-              : "Failed to load event details.",
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    loadEvent();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [eventId, title]);
+  const {data : eventDetail, error : errorMessage, isLoading} = useEvent(eventId);
+ 
 
   const eventTitle = eventDetail?.title?.trim() || title?.trim() || "Event";
   const pageTitle = `${eventTitle} Gallery`;
@@ -125,7 +90,7 @@ export function EventHighlightsGallerySection({
     eventDetail?.tags?.find((theme) => Boolean(theme?.trim())) ||
     eventDetail?.category ||
     "General";
-  const dateLabel = formatDateLabel(eventDetail?.start_date, eventDetail?.end_date);
+  const dateLabel = formatDateLabel(eventDetail?.start_date || "", eventDetail?.end_date || "");
   const venue = eventDetail?.venue?.trim() || "Location TBA";
 
   const galleryImages = PLACEHOLDER_IMAGES;

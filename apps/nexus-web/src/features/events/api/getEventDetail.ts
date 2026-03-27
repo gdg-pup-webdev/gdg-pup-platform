@@ -1,5 +1,5 @@
 import { Event } from "../types";
-import { getEvents } from "./getEvents";
+import { getEvents_deprecated } from "./getEvents";
 
 const MAX_PAGES = 8;
 const PAGE_SIZE = 50;
@@ -11,19 +11,19 @@ type ResolveInput = {
 
 function matchEvent(event: Event, routeId: string, decodedRouteId: string, title?: string) {
   if (event.id === routeId || event.id === decodedRouteId) return true;
-  if (event.bevy_url && (event.bevy_url === routeId || event.bevy_url === decodedRouteId)) return true;
+  if (event.bevy_event_url && (event.bevy_event_url === routeId || event.bevy_event_url === decodedRouteId)) return true;
   if (title && event.title === title) return true;
   return false;
 }
 
-export async function getEventDetail({
+export async function getEventDetail_deprecated({
   routeId,
   title,
 }: ResolveInput): Promise<Event | null> {
   const decodedRouteId = decodeURIComponent(routeId);
 
   for (let pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber += 1) {
-    const response = await getEvents({
+    const response = await getEvents_deprecated({
       pageNumber,
       pageSize: PAGE_SIZE,
     });

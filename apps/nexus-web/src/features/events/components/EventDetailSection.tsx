@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Text } from "@packages/spark-ui";
-import { getEventDetail } from "../api/getEventDetail";
+import { Container, Stack, Text } from "@packages/spark-ui"; 
 import type { Event } from "../types";
 import { normalizeEventDescription, splitBoldSegments } from "../utils/description";
+import { useEvent } from "../hooks/useEvents";
 
 type EventDetailSectionProps = {
   eventId: string;
@@ -30,31 +30,11 @@ function renderDescriptionWithBold(text: string) {
 export function EventDetailSection({
   eventId,
   title,
-}: EventDetailSectionProps) {
-  const [eventDetail, setEventDetail] = useState<Event | null>(null);
+}: EventDetailSectionProps) { 
   const [expanded, setExpanded] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function resolveDetail() {
-      try {
-        const found = await getEventDetail({
-          routeId: eventId,
-          title: title?.trim() || undefined,
-        });
-        if (!cancelled) setEventDetail(found);
-      } catch {
-        if (!cancelled) setEventDetail(null);
-      }
-    }
-
-    resolveDetail();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [eventId, title]);
+  const { data : eventDetail, isLoading, error} = useEvent(eventId)
+ 
 
   const eventTitle = eventDetail?.title?.trim() || title?.trim() || "Event Details";
 
@@ -72,7 +52,7 @@ export function EventDetailSection({
   const secondaryTitleDisplay = secondaryTitle.replace(/\s([A-Za-z])$/, "\u00A0$1");
   const aboutText = normalizeEventDescription(
     eventDetail?.description?.trim() ||
-      eventDetail?.short_description?.trim() ||
+      eventDetail?.description?.trim() ||
       "Description will be available soon.",
   );
   const isLongAbout = aboutText.length > 360;
@@ -80,12 +60,12 @@ export function EventDetailSection({
     isLongAbout && !expanded ? `${aboutText.slice(0, 360).trimEnd()}...` : aboutText;
   const fullAboutParagraphs = aboutText.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
   const aboutParagraphs = aboutPreview.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
-  const keyThemes =
-    eventDetail?.tags?.filter((tag) => Boolean(tag?.trim())) ||
-    (eventDetail?.category ? [eventDetail.category] : []);
+  const keyThemes : string[] = ["test"]
+    // eventDetail?.tags?.filter((tag) => Boolean(tag?.trim())) ||
+    // (eventDetail?.category ? [eventDetail.category] : []);
 
   const registerHref =
-    eventDetail?.registration_url?.trim() || eventDetail?.bevy_url?.trim() || "";
+    eventDetail?.bevy_event_url?.trim() || eventDetail?.bevy_event_url?.trim() || "";
 
   const dateBarLabel = useMemo(() => {
     if (!eventDetail?.start_date) return "Date to be announced";
@@ -269,7 +249,7 @@ export function EventDetailSection({
 
           <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[260px] md:min-h-[520px]">
             <img
-              src="/pages/events/event-cover.png"
+              src={eventDetail?.image_url || "/pages/events/event-cover.png"}
               alt={eventTitle}
               className="absolute inset-0 h-full w-full object-cover object-center"
               draggable={false}

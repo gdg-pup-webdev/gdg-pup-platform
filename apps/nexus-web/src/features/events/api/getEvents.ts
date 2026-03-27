@@ -175,7 +175,7 @@ const normalizeEvent = (event: RawEvent) => ({
  * });
  * ```
  */
-export async function getEvents(
+export async function getEvents_deprecated(
   params: EventsQueryParams = {}
 ): Promise<EventsResponse> {
   try {

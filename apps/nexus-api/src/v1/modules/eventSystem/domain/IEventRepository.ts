@@ -15,4 +15,10 @@ export abstract class IEventRepository {
     pageNumber: number,
     pageSize: number,
   ): Promise<{ list: Event[]; count: number }>;
+
+  abstract listEventsByYear(
+    pageNumber: number,
+    pageSize: number,
+    year: number,
+  ): Promise<{ list: Event[]; count: number }>;
 }

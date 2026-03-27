@@ -1,5 +1,5 @@
 import type { Event } from "../types";
-import { getEvents } from "./getEvents";
+import { getEvents_deprecated } from "./getEvents";
 
 const PAGE_SIZE = 50;
 const MAX_PAGES = 8;
@@ -12,11 +12,11 @@ function getEventYear(event: Event): number | null {
   return date.getFullYear();
 }
 
-export async function getEventsByYear(year: number): Promise<Event[]> {
+export async function getEventsByYear_deprecated(year: number): Promise<Event[]> {
   const matches: Event[] = [];
 
   for (let pageNumber = 1; pageNumber <= MAX_PAGES; pageNumber += 1) {
-    const response = await getEvents({
+    const response = await getEvents_deprecated({
       pageNumber,
       pageSize: PAGE_SIZE,
     });
@@ -29,7 +29,7 @@ export async function getEventsByYear(year: number): Promise<Event[]> {
 
   return matches.sort(
     (a, b) =>
-      new Date(a.start_date).getTime() - new Date(b.start_date).getTime(),
+      new Date(a.start_date || "").getTime() - new Date(b.start_date || "").getTime(),
   );
 }
 

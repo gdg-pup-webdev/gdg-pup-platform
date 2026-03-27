@@ -42,7 +42,8 @@ import { bevyEventController } from "../bevyEvents";
 // Controller
 import { EventSystemController } from "./EventSystemController";
 import { FileStorageAdapter } from "./infrastructure/FileStorageAdapter";
-import { filesModuleController } from "../filesModule";
+import { filesModuleController } from "../filesModule"; 
+import { ListEventsByYear } from "./useCases/listEventsByYear";
 export { EventSystemController };
 
 // ============================================================================
@@ -77,6 +78,8 @@ const listEventAttendeesUseCase = new ListEventAttendees(
 const listEventsUseCase = new ListEvents(eventRepositoryAdapter);
 const updateEventUseCase = new UpdateEvent(eventRepositoryAdapter);
 
+const listEventsByYearUseCase = new ListEventsByYear(eventRepositoryAdapter);
+
 // Initialize Controller
 export const eventSystemController = new EventSystemController(
   checkinToEventUseCase,
@@ -86,5 +89,5 @@ export const eventSystemController = new EventSystemController(
   getOneEventUseCase,
   listEventAttendeesUseCase,
   listEventsUseCase,
-  updateEventUseCase,
+  updateEventUseCase,listEventsByYearUseCase
 );

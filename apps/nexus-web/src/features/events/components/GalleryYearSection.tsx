@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Text } from "@packages/spark-ui";
-import { getEventsByYear } from "../api/getEventsByYear";
+import { Container, Stack, Text } from "@packages/spark-ui"; 
 import type { Event } from "../types";
 import { normalizeEventDescription, splitBoldSegments } from "../utils/description";
+import { useEvents } from "../hooks/useEvents";
 
 type GalleryYearSectionProps = {
   yearParam: string;
@@ -16,7 +16,7 @@ const FALLBACK_COVER = "/pages/events/event-cover.png";
 function getHighlightsRouteId(event: Event): string {
   const candidate =
     event.id ||
-    event.bevy_url ||
+    event.bevy_event_url ||
     `${event.start_date || "event"}-${event.title || "details"}`;
   return String(candidate).trim();
 }
@@ -67,48 +67,15 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
     Number.isInteger(parsedYear) && parsedYear >= 2022 && parsedYear <= 2100;
   const yearTitle = isYearValid ? String(parsedYear) : "YEAR";
 
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<
     Record<string, boolean>
   >({});
 
-  useEffect(() => {
-    if (!isYearValid) return;
-
-    let cancelled = false;
-
-    async function loadEvents() {
-      setIsLoading(true);
-      setErrorMessage(null);
-      try {
-        const yearEvents = await getEventsByYear(parsedYear);
-        if (!cancelled) setEvents(yearEvents);
-      } catch (error) {
-        if (!cancelled) {
-          setEvents([]);
-          setErrorMessage(
-            error instanceof Error
-              ? error.message
-              : "Failed to load events for this year.",
-          );
-        }
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    loadEvents();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isYearValid, parsedYear]);
+  const {data : events, error : errorMessage, isLoading} = useEvents({ year: parsedYear  });
 
   const visibleItems = useMemo(() => {
     if (!isYearValid) return [];
-    return events;
+    return events?.data || [];
   }, [events, isYearValid]);
 
   return (
@@ -295,7 +262,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
           ) : errorMessage ? (
             <div className="rounded-2xl border border-red-500/40 bg-black/30 p-6 md:p-8">
               <Text variant="body" className="text-red-200">
-                {errorMessage}
+                {errorMessage.message}
               </Text>
             </div>
           ) : visibleItems.length === 0 ? (
@@ -338,7 +305,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                   >
                     <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[220px] md:min-h-[560px]">
                       <img
-                        src={event.banner_url || FALLBACK_COVER}
+                        src={event.image_url || FALLBACK_COVER}
                         alt={event.title}
                         className="absolute inset-0 h-full w-full object-cover object-center"
                         draggable={false}
@@ -370,7 +337,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                           >
                             <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm12 8H5v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8Z" />
                           </svg>
-                          <span>{formatDateLabel(event.start_date, event.end_date)}</span>
+                          <span>{formatDateLabel(event.start_date || "", event.end_date || "")}</span>
                         </span>
 
                         <span className="inline-flex items-center gap-1 text-[9px] md:text-sm whitespace-nowrap shrink-0 max-w-[120px] md:max-w-none">

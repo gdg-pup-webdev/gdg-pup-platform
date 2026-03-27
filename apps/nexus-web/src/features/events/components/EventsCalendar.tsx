@@ -26,7 +26,7 @@ function toLocalDateKey(date: Date): string {
 function getEventRouteId(event: Event): string {
   const rawId =
     event.id ||
-    event.bevy_url ||
+    event.bevy_event_url ||
     `${event.start_date}-${event.title}`;
 
   return String(rawId).trim();
@@ -379,7 +379,7 @@ export function EventsCalendar() {
                   (selectedMobileEvent.category ? [selectedMobileEvent.category] : []);
                 const about =
                   normalizeEventDescription(
-                    selectedMobileEvent.description?.trim() ||
+                    selectedMobileEvent.short_description?.trim() ||
                       selectedMobileEvent.short_description?.trim() ||
                       "Description will be available soon.",
                   );
@@ -438,7 +438,7 @@ export function EventsCalendar() {
                         <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm12 8H5v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8Z" />
                       </svg>
                       <span className="text-white/85 text-[11px] leading-none">
-                        {formatDateBar(selectedMobileEvent.start_date, selectedMobileEvent.end_date)}
+                        {formatDateBar(selectedMobileEvent.start_date || "", selectedMobileEvent.end_date || "")}
                       </span>
                     </div>
 
