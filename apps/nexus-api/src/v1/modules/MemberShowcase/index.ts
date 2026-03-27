@@ -17,11 +17,11 @@ const membersService = new MembersServiceAdapter(gdgMembersController);
 const fileStorageService = new FileStorageServiceAdapter(filesModuleController);
 
 // Use Cases
-const createUseCase = new CreateMemberShowcase(repo);
+const createUseCase = new CreateMemberShowcase(repo, fileStorageService);
 const listUseCase = new ListMemberShowcases(repo);
 const getOneUseCase = new GetMemberShowcase(repo, membersService);
-const updateUseCase = new UpdateMemberShowcase(repo);
-const deleteUseCase = new DeleteMemberShowcase(repo);
+const updateUseCase = new UpdateMemberShowcase(repo, fileStorageService);
+const deleteUseCase = new DeleteMemberShowcase(repo, fileStorageService);
 const getSpotlightUseCase = new GetSpotlightOfTheDay(repo, membersService);
 
 // Controller
@@ -37,3 +37,4 @@ export const memberShowcaseController = new MemberShowcaseController(
 export { MemberShowcaseController };
 export * from "./domain/MemberShowcase";
 export * from "./domain/IMemberShowcaseRepository";
+export * from "./domain/IFileStorageService";
