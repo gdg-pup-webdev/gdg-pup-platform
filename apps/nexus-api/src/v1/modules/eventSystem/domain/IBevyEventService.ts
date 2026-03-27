@@ -10,6 +10,8 @@ export class BevyEventDTO {
       start_date: string;
       end_date: string;
       url: string;
+      tags: string[]; 
+      max_capacity: number;
     },
   ) {}
 }

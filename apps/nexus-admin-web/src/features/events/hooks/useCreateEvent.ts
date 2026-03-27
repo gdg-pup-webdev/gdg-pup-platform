@@ -27,14 +27,18 @@ export const useCreateEvent = () => {
         {
           body: {
             data: {
-              ...input, 
+              ...input,
               bevy_event_id: null, // Ensure bevy_event_id is set to null for manual event creation
+              tags: [],
+              short_description: null,
+              bevy_event_url: null,
+              max_capacity: null,
             },
-           
-          }, files: {
-              thumbnail: input.image
-            }
-        }
+          },
+          files: {
+            thumbnail: input.image,
+          },
+        },
       );
 
       if (res.status === 200) return res.body;

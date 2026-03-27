@@ -33,6 +33,9 @@ export class CreateEventFromBevyEventUseCase {
       creatorId: creatorId,
       image_url: null,
       bevyPreviewUrl: bevyEvent.props.url,
+      short_description: bevyEvent.props.short_description || bevyEvent.props.description || "",
+      tags: bevyEvent.props.tags || [],
+      max_capacity: bevyEvent.props.max_capacity || 999999,
     });
 
     await this.eventRepository.saveNew(newEvent);
