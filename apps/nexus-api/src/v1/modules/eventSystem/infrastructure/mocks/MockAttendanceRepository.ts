@@ -1,5 +1,5 @@
-import { IAttendanceRepository } from "../domain/IAttendanceRepository";
-import { Attendance } from "../domain/Attendance";
+import { IAttendanceRepository } from "../../domain/IAttendanceRepository";
+import { Attendance } from "../../domain/Attendance";
 
 export class MockAttendanceRepository implements IAttendanceRepository {
   // In-memory data store

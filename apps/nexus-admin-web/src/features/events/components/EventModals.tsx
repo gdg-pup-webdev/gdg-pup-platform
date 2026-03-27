@@ -8,6 +8,7 @@ import { useCheckinToEvent } from "../hooks/useCheckinToEvent";
 import { useGetBevyEvents } from "@/features/bevy-events/hooks/useGetBevyEvents";
 import { toast } from "react-toastify";
 import { Pagination } from "@/components/admin/Pagination";
+import { WireframeUploadImage } from "@/components/wireframeUi/WireframeUploadImage";
 
 // ==========================================
 // Modal Wrapper
@@ -161,8 +162,14 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
     start_date: "",
     end_date: "",
     attendance_points: 10,
-    image_url: null,
+    image_url: null,  
   });
+
+  const setThumbnail = (image: File | undefined) => {
+    setFormData({ ...formData,image: image });
+  };
+
+
 
   useEffect(() => {
     if (initialData) {
@@ -174,7 +181,7 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
         start_date: initialData.start_date ? new Date(initialData.start_date).toISOString().slice(0, 16) : "",
         end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().slice(0, 16) : "",
         attendance_points: initialData.attendance_points,
-        image_url: initialData.image_url,
+        image_url: initialData.image_url, 
       });
     } else {
       setFormData({
@@ -199,6 +206,7 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
     <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Event" : "Create New Event"}>
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <WireframeUploadImage image={formData.image} setImage={setThumbnail} />
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Title</label>
             <input

@@ -21,6 +21,7 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@configs/typescript-config": "workspace:*",
+    "bcrypt": "^6.0.0",
     "chokidar": "^5.0.0",
     "commander": "11.0.0",
     "express": "5.2.1",

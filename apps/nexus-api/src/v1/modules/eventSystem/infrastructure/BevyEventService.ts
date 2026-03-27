@@ -11,7 +11,7 @@ export class BevyEventService implements IBevyEventService {
       return undefined;
     }
 
-    return {
+    return new BevyEventDTO({
       id: bevyEvent.id,
       title: bevyEvent.title,
       description: bevyEvent.description,
@@ -20,6 +20,7 @@ export class BevyEventService implements IBevyEventService {
       location: bevyEvent.location,
       start_date: bevyEvent.start_date,
       end_date: bevyEvent.end_date,
-    };
+      url: bevyEvent.bevy_url || "",
+    });
   }
 }

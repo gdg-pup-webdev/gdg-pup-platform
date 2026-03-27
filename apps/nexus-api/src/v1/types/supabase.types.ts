@@ -134,6 +134,7 @@ export type Database = {
         Row: {
           attendance_points: number
           attendees_count: number
+          bevy_preview_url: string | null
           category: string | null
           created_at: string
           creator_id: string | null
@@ -142,6 +143,7 @@ export type Database = {
           gdg_event_id: number | null
           id: string
           start_date: string | null
+          thumbnail_url: string | null
           title: string
           updated_at: string
           venue: string | null
@@ -149,6 +151,7 @@ export type Database = {
         Insert: {
           attendance_points?: number
           attendees_count?: number
+          bevy_preview_url?: string | null
           category?: string | null
           created_at?: string
           creator_id?: string | null
@@ -157,6 +160,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           start_date?: string | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
           venue?: string | null
@@ -164,6 +168,7 @@ export type Database = {
         Update: {
           attendance_points?: number
           attendees_count?: number
+          bevy_preview_url?: string | null
           category?: string | null
           created_at?: string
           creator_id?: string | null
@@ -172,6 +177,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           start_date?: string | null
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
           venue?: string | null
@@ -1558,6 +1564,72 @@ export type Database = {
       }
     }
     Views: {
+      flat_survey_data: {
+        Row: {
+          college: string | null
+          comments_for_speakers: string | null
+          created_at: string | null
+          id: string | null
+          is_pupian: boolean | null
+          missing_content: string | null
+          name: string | null
+          organization: string | null
+          overall_satisfaction: number | null
+          program: string | null
+          questions_for_speakers: string | null
+          rating_duration: number | null
+          rating_program_flow: number | null
+          rating_schedule: number | null
+          rating_speakers: number | null
+          rating_subject: number | null
+          suggestions: string | null
+          valuable_aspects: string | null
+          year_level: string | null
+        }
+        Insert: {
+          college?: never
+          comments_for_speakers?: never
+          created_at?: string | null
+          id?: string | null
+          is_pupian?: never
+          missing_content?: never
+          name?: never
+          organization?: never
+          overall_satisfaction?: never
+          program?: never
+          questions_for_speakers?: never
+          rating_duration?: never
+          rating_program_flow?: never
+          rating_schedule?: never
+          rating_speakers?: never
+          rating_subject?: never
+          suggestions?: never
+          valuable_aspects?: never
+          year_level?: never
+        }
+        Update: {
+          college?: never
+          comments_for_speakers?: never
+          created_at?: string | null
+          id?: string | null
+          is_pupian?: never
+          missing_content?: never
+          name?: never
+          organization?: never
+          overall_satisfaction?: never
+          program?: never
+          questions_for_speakers?: never
+          rating_duration?: never
+          rating_program_flow?: never
+          rating_schedule?: never
+          rating_speakers?: never
+          rating_subject?: never
+          suggestions?: never
+          valuable_aspects?: never
+          year_level?: never
+        }
+        Relationships: []
+      }
       sparkmates_scan_counts: {
         Row: {
           gdg_id: string | null
