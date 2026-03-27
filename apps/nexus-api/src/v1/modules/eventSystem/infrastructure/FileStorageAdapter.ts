@@ -15,7 +15,7 @@ export class FileStorageAdapter implements IFileStorage {
       file.name,
       `Thumbnail for team resource: ${file.name}`,
       null,
-      "team-resources/thumbnails"
+      "events/thumbnails"
     );
 
     return {

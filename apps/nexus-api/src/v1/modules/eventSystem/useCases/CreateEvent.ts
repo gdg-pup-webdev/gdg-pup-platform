@@ -10,7 +10,7 @@ export class CreateEvent {
 
   async execute(
     eventPrototype: Omit<EventPrototypeProps, "image_url">,
-    image?: FileToUpload,
+    image : FileToUpload | null,
   ): Promise<Event> {
     // uploading image
     let imageUrl: string | null = null;

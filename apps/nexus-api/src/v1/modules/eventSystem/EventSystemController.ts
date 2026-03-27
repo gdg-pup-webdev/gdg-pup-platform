@@ -1,5 +1,5 @@
 import { Event, EventUpdateProps } from "./domain/Event";
-import { FileToUpload } from "./domain/IFileStorage";
+import { FileToUpload } from './domain/IFileStorage';
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
 import { CreateEvent } from "./useCases/CreateEvent";
 import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
@@ -81,7 +81,7 @@ export class EventSystemController {
     end_date: string;
     attendance_points: number;
     beviPreviewUrl?: string;
-    image?: FileToUpload;
+    image : File | null;
   }) {
     const result = await this.createEventUseCase.execute(
       {
@@ -96,7 +96,11 @@ export class EventSystemController {
         bevy_event_id: null,
         bevyPreviewUrl: beviPreviewUrl || null,
       },
-      image,
+      image? new FileToUpload({
+        buffer: await image.arrayBuffer()  ,
+        name: image.name  ,
+        type: image.type  ,
+      }) : null,  
     );
 
     return this.flattenEvent(result);

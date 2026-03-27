@@ -2,7 +2,7 @@ import { eventRecord, eventRecordInsertDTO, eventRecordUpdateDTO } from "#models
 import { OpenApiSchemas } from "@packages/typed-rest/shared"; 
    
 export const files = {
-  thumnail: OpenApiSchemas.Models.file(),  
+  thumbnail: OpenApiSchemas.Models.file(),  
 }  
    
  export const body = OpenApiSchemas.Request.Body.withPayload(eventRecordInsertDTO);

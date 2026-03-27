@@ -22,16 +22,17 @@ export class CreateEventFromBevyEventUseCase {
     }
 
     const newEvent = Event.create({
-      title: bevyEvent.title,
-      description: bevyEvent.description || bevyEvent.short_description || "",
-      category: bevyEvent.event_type || "No Category",
-      venue: bevyEvent.location || "Online",
-      start_date: new Date(bevyEvent.start_date),
-      end_date: new Date(bevyEvent.end_date),
-      bevy_event_id: bevyEvent.id,
+      title: bevyEvent.props.title,
+      description: bevyEvent.props.description || bevyEvent.props.short_description || "",
+      category: bevyEvent.props.event_type || "No Category",
+      venue: bevyEvent.props.location || "Online",
+      start_date: new Date(bevyEvent.props.start_date),
+      end_date: new Date(bevyEvent.props.end_date),
+      bevy_event_id: bevyEvent.props.id,
       attendance_points: 10, // Default points
       creatorId: creatorId,
       image_url: null,
+      bevyPreviewUrl: bevyEvent.props.url,
     });
 
     await this.eventRepository.saveNew(newEvent);
