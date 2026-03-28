@@ -1,20 +1,20 @@
-import { ITeamResourceStorage, TeamResourceFile, UploadedTeamResourceFile } from "../domain/ITeamResourceStorage";
+import { ILearningResourceStorage, FileToUpload, UploadedFile } from "../domain/ILearningResourceStorage";
 import { FilesModuleController } from "../../filesModule/FilesModuleController";
 
 /**
- * Adapter that implements the ITeamResourceStorage port using the FilesModuleController.
+ * Adapter that implements the ILearningResourceStorage port using the FilesModuleController.
  */
-export class TeamResourceStorageAdapter implements ITeamResourceStorage {
+export class LearningResourceStorageAdapter implements ILearningResourceStorage {
   constructor(private readonly filesController: FilesModuleController) {}
 
-  async uploadFile(file: TeamResourceFile): Promise<UploadedTeamResourceFile> {
+  async uploadFile(file: FileToUpload): Promise<UploadedFile> {
     const result = await this.filesController.uploadFile(
       file.buffer,
       file.type,
       file.name,
-      `Thumbnail for team resource: ${file.name}`,
+      `Thumbnail for learning resource: ${file.name}`,
       null,
-      "team-resources/thumbnails"
+      "learning-resources/thumbnails"
     );
 
     return {

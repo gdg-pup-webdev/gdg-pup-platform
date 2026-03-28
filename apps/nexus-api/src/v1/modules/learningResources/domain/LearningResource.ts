@@ -1,29 +1,36 @@
+export type LearningResourceType = "studyJam" | "external" | "blog";
+
 export type LearningResourceProps = {
   id: string;
-  uploaderId: string;
   title: string;
   description: string;
   url: string;
-  tagIds: string[];
+  type: LearningResourceType;
+  tags: string[];
+  teamId: string | null;
+  eventId: string | null;
+  thumbnailUrl: string | null;
   createdAt: Date;
+  updatedAt: Date;
 };
 
-export type LearningResourceInsertProps = Omit<LearningResourceProps, "id" | "createdAt" | "tagIds"> & { tagIds?: string[] };
-export type LearningResourceUpdateProps = Partial<Omit<LearningResourceProps, "id" | "uploaderId" | "createdAt">>;
+export type LearningResourceInsertProps = Omit<LearningResourceProps, "id" | "createdAt" | "updatedAt">;
+export type LearningResourceUpdateProps = Partial<LearningResourceInsertProps>;
 
 export class LearningResource {
   private _props: LearningResourceProps;
 
-  constructor(props: LearningResourceProps) {
+  private constructor(props: LearningResourceProps) {
     this._props = props;
   }
 
   static create(props: LearningResourceInsertProps): LearningResource {
+    const now = new Date();
     return new LearningResource({
       ...props,
       id: crypto.randomUUID(),
-      tagIds: props.tagIds || [],
-      createdAt: new Date(),
+      createdAt: now,
+      updatedAt: now,
     });
   }
 
@@ -36,6 +43,10 @@ export class LearningResource {
   }
 
   update(props: LearningResourceUpdateProps): void {
-    this._props = { ...this._props, ...props };
+    this._props = {
+      ...this._props,
+      ...props,
+      updatedAt: new Date(),
+    };
   }
 }
