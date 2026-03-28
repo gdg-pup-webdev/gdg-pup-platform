@@ -10,7 +10,6 @@ export const useCreateEvent = () => {
 
   return useMutation({
     mutationFn: async (input: EventInsert) => {
-      // Create a temporary object for the data to ensure we match the contract
       const { image, ...eventData } = input;
       
       const res = await callEndpoint(
@@ -20,12 +19,7 @@ export const useCreateEvent = () => {
           body: {
             data: {
               ...eventData,
-              bevy_event_id: null,
-              tags: [],
-              short_description: null,
-              bevyPreviewUrl: null,
-              max_capacity: 999999,
-              creatorId: "00000000-0000-0000-0000-000000000000", // This will be overridden by the backend controller from auth
+              creatorId: "00000000-0000-0000-0000-000000000000", // Placeholder, server-side will handle
             },
           },
           files: {

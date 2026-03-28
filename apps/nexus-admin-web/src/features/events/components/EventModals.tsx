@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Calendar, MapPin, Users, CheckCircle, Plus, Trash2, Edit2, Type, FileText, Star, Image as ImageIcon, Tags, Info } from "lucide-react";
+import { X, Loader2, AlertTriangle, Calendar, MapPin, Users, CheckCircle, Plus, Trash2, Edit2, Type, FileText, Star, Image as ImageIcon, Tags, Info, Link2, Hash } from "lucide-react";
 import { Event, EventInsert, EventUpdate, EventAttendance } from "../types";
 import { useListAttendees } from "../hooks/useListAttendees";
 import { useCheckinToEvent } from "../hooks/useCheckinToEvent";
@@ -158,18 +158,24 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
   const [formData, setFormData] = useState<EventInsert>({
     title: "",
     description: "",
+    short_description: null,
     category: "",
+    type: null,
     venue: "",
     start_date: "",
     end_date: "",
     attendance_points: 10,
+    max_capacity: 999999,
     image_url: null,
     speakers: [],
-    type: null,
+    tags: [],
     teamId: null,
+    bevy_event_id: null,
+    bevyPreviewUrl: null,
   });
 
   const [speakerInput, setSpeakerInput] = useState("");
+  const [tagInput, setTagInput] = useState("");
   
   // Team search state
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
@@ -204,30 +210,40 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
       setFormData({
         title: initialData.title,
         description: initialData.description || "",
+        short_description: initialData.short_description || null,
         category: initialData.category || "",
+        type: initialData.type || null,
         venue: initialData.venue || "",
         start_date: initialData.start_date ? new Date(initialData.start_date).toISOString().slice(0, 16) : "",
         end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().slice(0, 16) : "",
         attendance_points: initialData.attendance_points,
+        max_capacity: initialData.max_capacity,
         image_url: initialData.image_url,
         speakers: initialData.speakers || [],
-        type: initialData.type || null,
+        tags: initialData.tags || [],
         teamId: initialData.teamId || null,
+        bevy_event_id: initialData.bevy_event_id || null,
+        bevyPreviewUrl: initialData.bevyPreviewUrl || null,
       });
-      setSelectedTeamName(initialData.teamId ? `Selected Team (${initialData.teamId.substring(0,8)}...)` : "");
+      setSelectedTeamName(initialData.teamId ? `Team (${initialData.teamId.substring(0,8)}...)` : "");
     } else {
       setFormData({
         title: "",
         description: "",
+        short_description: null,
         category: "",
+        type: null,
         venue: "",
         start_date: "",
         end_date: "",
         attendance_points: 10,
+        max_capacity: 999999,
         image_url: null,
         speakers: [],
-        type: null,
+        tags: [],
         teamId: null,
+        bevy_event_id: null,
+        bevyPreviewUrl: null,
       });
       setSelectedTeamName("");
     }
@@ -245,6 +261,20 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
 
   const removeSpeaker = (speakerToRemove: string) => {
     setFormData(prev => ({ ...prev, speakers: prev.speakers.filter(s => s !== speakerToRemove) }));
+  };
+
+  const handleAddTag = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && tagInput.trim()) {
+      e.preventDefault();
+      if (!formData.tags.includes(tagInput.trim())) {
+        setFormData(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
+      }
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setFormData(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tagToRemove) }));
   };
 
   const handleSelectTeam = (team: any) => {
@@ -265,6 +295,7 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <WireframeUploadImage image={formData.image} setImage={setThumbnail} />
+          
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Title</label>
             <input
@@ -275,46 +306,105 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
           </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Category</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Venue</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.venue}
-              onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-            />
-          </div>
+
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Description</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Short Description</label>
+            <input
+              type="text"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              placeholder="A brief summary of the event..."
+              value={formData.short_description || ""}
+              onChange={(e) => setFormData({ ...formData, short_description: e.target.value || null })}
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Full Description</label>
             <textarea
               required
-              rows={3}
+              rows={4}
               className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
 
-          {/* New Fields: Type and Team */}
           <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Type</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Category</label>
+            <input
+              required
+              type="text"
+              placeholder="e.g. Workshop, Talk"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Type (Internal)</label>
             <input
               type="text"
-              placeholder="e.g. Workshop, Seminar"
+              placeholder="e.g. Study Jam, Special Event"
               className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
               value={formData.type || ""}
               onChange={(e) => setFormData({ ...formData, type: e.target.value || null })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Venue</label>
+            <input
+              required
+              type="text"
+              placeholder="Online or Physical Location"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.venue}
+              onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Max Capacity</label>
+            <input
+              required
+              type="number"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.max_capacity}
+              onChange={(e) => setFormData({ ...formData, max_capacity: parseInt(e.target.value) || 0 })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Start Date</label>
+            <input
+              required
+              type="datetime-local"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.start_date}
+              onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">End Date</label>
+            <input
+              required
+              type="datetime-local"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.end_date}
+              onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Attendance Points</label>
+            <input
+              required
+              type="number"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.attendance_points}
+              onChange={(e) => setFormData({ ...formData, attendance_points: parseInt(e.target.value) || 0 })}
             />
           </div>
 
@@ -336,7 +426,7 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
                 onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
                 readOnly={!!formData.teamId}
               />
-              {formData.teamId ? (
+              {formData.teamId && (
                 <button 
                   type="button"
                   onClick={() => { setFormData({...formData, teamId: null}); setSelectedTeamName(""); }}
@@ -344,11 +434,7 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
                 >
                   <X size={16} />
                 </button>
-              ) : isSearchingTeams ? (
-                <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                  <Loader2 size={16} className="animate-spin text-gray-400" />
-                </div>
-              ) : null}
+              )}
             </div>
             
             {showTeamDropdown && teamSearchQuery.length >= 2 && (
@@ -371,7 +457,6 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
             )}
           </div>
 
-          {/* New Field: Speakers */}
           <div className="sm:col-span-2">
             <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Speakers</label>
             <div className="flex flex-wrap gap-2 mb-2">
@@ -385,9 +470,10 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
               ))}
             </div>
             <div className="relative">
+              <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                className="w-full rounded-sm border border-gray-200 py-2.5 px-4 text-sm outline-none focus:border-teal-500"
+                className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
                 placeholder="Type speaker name and press Enter..."
                 value={speakerInput}
                 onChange={(e) => setSpeakerInput(e.target.value)}
@@ -396,43 +482,50 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
             </div>
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Start Date</label>
-            <input
-              required
-              type="datetime-local"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.start_date}
-              onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-            />
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Tags</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {formData.tags.map(tag => (
+                <span key={tag} className="flex items-center gap-1 rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-600">
+                  #{tag}
+                  <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="relative">
+              <Hash className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
+                placeholder="Type tag and press Enter..."
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleAddTag}
+              />
+            </div>
           </div>
+
           <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">End Date</label>
-            <input
-              required
-              type="datetime-local"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.end_date}
-              onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Points</label>
-            <input
-              required
-              type="number"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.attendance_points}
-              onChange={(e) => setFormData({ ...formData, attendance_points: parseInt(e.target.value) })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Image URL</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Bevy Event ID (Manual Link)</label>
             <input
               type="text"
+              placeholder="Numeric ID from Bevy"
               className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.image_url || ""}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value || null })}
+              value={formData.bevy_event_id || ""}
+              onChange={(e) => setFormData({ ...formData, bevy_event_id: e.target.value || null })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Bevy Event URL</label>
+            <input
+              type="url"
+              placeholder="https://gdg.community.dev/..."
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.bevyPreviewUrl || ""}
+              onChange={(e) => setFormData({ ...formData, bevyPreviewUrl: e.target.value || null })}
             />
           </div>
         </div>
@@ -542,15 +635,30 @@ export function EventDetailsModal({ isOpen, onClose, event, onEdit, onDelete }: 
                 <MapPin size={14} className="mr-2 text-teal-600" />
                 {event.venue || "No venue specified"}
               </div>
-              {event.teamId && (
-                <div className="flex items-center text-xs text-gray-600">
-                  <Users size={14} className="mr-2 text-teal-600" />
-                  Team ID: {event.teamId}
-                </div>
+              {event.bevyPreviewUrl && (
+                <a 
+                  href={event.bevyPreviewUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center text-xs text-blue-600 hover:underline"
+                >
+                  <Link2 size={14} className="mr-2" />
+                  View on Bevy
+                </a>
               )}
             </div>
           </div>
         </div>
+
+        {event.tags && event.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {event.tags.map(tag => (
+              <span key={tag} className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {event.speakers && event.speakers.length > 0 && (
           <div className="rounded-sm border border-gray-100 bg-white p-4">
@@ -573,7 +681,7 @@ export function EventDetailsModal({ isOpen, onClose, event, onEdit, onDelete }: 
             <Info size={12} />
             Description
           </h4>
-          <p className="text-sm leading-relaxed text-gray-700">{event.description}</p>
+          <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">{event.description}</p>
         </div>
 
         <div className="border-t border-gray-100 pt-4">
@@ -638,10 +746,10 @@ export function EventDetailsModal({ isOpen, onClose, event, onEdit, onDelete }: 
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t border-gray-50">
+        <div className="flex justify-end pt-4 border-t border-gray-100">
           <button
             onClick={onClose}
-            className="rounded-sm bg-gray-100 px-8 py-2.5 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-200"
+            className="rounded-sm bg-gray-900 px-8 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-800"
           >
             Close
           </button>
