@@ -9,6 +9,17 @@ interface TeamSectionProps {
   teamSlug: string;
 }
 
+const TEAM_SLUG_TO_TEAM_NAME_MAP = {
+  "cloud-solutions": "Cloud Solutions",
+  "cybersecurity": "Cybersecurity",
+  "data-ml": "Data & ML",
+  "executives": "Executives",
+  iot: "Internet of Things (IoT)",
+  "project-management": "Project Management",
+  "ui-ux": "UI/UX Design",
+  "web-development": "Web Development",
+};
+
 export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
   return (
     <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
@@ -28,7 +39,8 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
-          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 70%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         }}
       />
@@ -63,7 +75,12 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         <Stack gap="2xl" className="relative z-10 mt-30">
           {/* ── About the Team ── */}
           <Stack gap="lg" className="items-center">
-            <Text variant="heading-1" gradient="white-blue" align="center" weight="bold">
+            <Text
+              variant="heading-1"
+              gradient="white-blue"
+              align="center"
+              weight="bold"
+            >
               ABOUT THE TEAM
             </Text>
             <Text

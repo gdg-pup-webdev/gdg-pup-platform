@@ -14,6 +14,7 @@ export class EventsHttpController {
       const filters = {
         type: input.query.type,
         teamId: input.query.teamId,
+        teamName: input.query.teamName,
         category: input.query.category,
       };
 
@@ -26,13 +27,7 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: "Events fetched successfully",
-        data: list.map((e) => ({
-          ...e,
-          createdAt: new Date(e.createdAt),
-          updatedAt: new Date(e.updatedAt),
-          start_date: new Date(e.start_date),
-          end_date: new Date(e.end_date),
-        })),
+        data: list as any,
         meta: {
           totalRecords: count,
           currentPage: pageNumber,
@@ -58,13 +53,7 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: `Events with type ${input.params.type} fetched successfully`,
-        data: list.map((e) => ({
-          ...e,
-          createdAt: new Date(e.createdAt),
-          updatedAt: new Date(e.updatedAt),
-          start_date: new Date(e.start_date),
-          end_date: new Date(e.end_date),
-        })),
+        data: list as any,
         meta: {
           totalRecords: count,
           currentPage: pageNumber,
@@ -90,13 +79,7 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: `Events for team ${input.params.teamId} fetched successfully`,
-        data: list.map((e) => ({
-          ...e,
-          createdAt: new Date(e.createdAt),
-          updatedAt: new Date(e.updatedAt),
-          start_date: new Date(e.start_date),
-          end_date: new Date(e.end_date),
-        })),
+        data: list as any,
         meta: {
           totalRecords: count,
           currentPage: pageNumber,
@@ -113,24 +96,11 @@ export class EventsHttpController {
       const imageFile = input.files?.thumbnail;
 
       const result = await this.eventController.createEvent({
-        creatorId: input.body.data.creatorId,
-        title: input.body.data.title,
-        description: input.body.data.description,
-        category: input.body.data.category,
-        venue: input.body.data.venue,
-        start_date: input.body.data.start_date.toISOString(),
-        end_date: input.body.data.end_date.toISOString(),
-        attendance_points: input.body.data.attendance_points,
+        ...input.body.data,
         beviPreviewUrl: input.body.data.bevyPreviewUrl || undefined,
-        image: imageFile ? {
-          arrayBuffer: () => imageFile.arrayBuffer(),
-          name: imageFile.name,
-          type: imageFile.type,
-        } as any : null,
-        tags: input.body.data.tags,
-        max_capacity: input.body.data.max_capacity,
+        image: imageFile || null,
+        image_url: input.body.data.image_url || undefined,
         short_description: input.body.data.short_description || undefined,
-        speakers: input.body.data.speakers,
         type: input.body.data.type || undefined,
         teamId: input.body.data.teamId || undefined,
       });
@@ -138,13 +108,7 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: "Event created successfully",
-        data: {
-          ...result,
-          createdAt: new Date(result.createdAt),
-          updatedAt: new Date(result.updatedAt),
-          start_date: new Date(result.start_date),
-          end_date: new Date(result.end_date),
-        },
+        data: result as any,
       });
     }
   );
@@ -157,13 +121,7 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: "Event fetched successfully",
-        data: {
-          ...result,
-          createdAt: new Date(result.createdAt),
-          updatedAt: new Date(result.updatedAt),
-          start_date: new Date(result.start_date),
-          end_date: new Date(result.end_date),
-        },
+        data: result as any,
       });
     }
   );
@@ -171,22 +129,17 @@ export class EventsHttpController {
   updateEvent: RequestHandler = createExpressController(
     contract.api.v1.events.eventId.PATCH,
     async ({ input, output }) => {
+      const imageFile = input.files?.thumbnail;
+
       const result = await this.eventController.updateEvent(input.params.eventId, {
         ...input.body.data,
-        start_date: input.body.data.start_date,
-        end_date: input.body.data.end_date,
+        image: imageFile || null,
       });
 
       return output(200, {
         status: "success",
         message: "Event updated successfully",
-        data: {
-          ...result,
-          createdAt: new Date(result.createdAt),
-          updatedAt: new Date(result.updatedAt),
-          start_date: new Date(result.start_date),
-          end_date: new Date(result.end_date),
-        },
+        data: result as any,
       });
     }
   );

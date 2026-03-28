@@ -28,7 +28,8 @@ export class EventRepository implements IEventRepository {
       creatorId: row.creator_id || "",
       image_url: row.thumbnail_url || null,
       bevyPreviewUrl: row.bevy_preview_url || null,
-      tags: row.tags ? row.tags.split(",") : [],
+      // Handle tags as array (Postgres _text)
+      tags: Array.isArray(row.tags) ? row.tags : (row.tags ? row.tags.split(",") : []),
       max_capacity: row.max_capacity ? parseInt(row.max_capacity) : 999999,
       short_description: row.short_description || null,
       // New props
@@ -40,6 +41,15 @@ export class EventRepository implements IEventRepository {
 
   private mapToDTO(event: Event): any {
     const props = event.props;
+    
+    let gdg_event_id: number | null = null;
+    if (props.bevy_event_id) {
+      const parsed = parseInt(props.bevy_event_id);
+      if (!isNaN(parsed)) {
+        gdg_event_id = parsed;
+      }
+    }
+
     return {
       id: props.id,
       title: props.title,
@@ -52,12 +62,12 @@ export class EventRepository implements IEventRepository {
       attendees_count: props.attendees_count,
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString(),
-      gdg_event_id: props.bevy_event_id ? parseInt(props.bevy_event_id) : null,
+      gdg_event_id,
       thumbnail_url: props.image_url || null,
       bevy_preview_url: props.bevyPreviewUrl || null,
       max_capacity: props.max_capacity.toString(),
       short_description: props.short_description,
-      tags: props.tags.join(","),
+      tags: props.tags, // Should be array for Postgres
       creator_id: props.creatorId || null,
       // New props
       speakers: props.speakers,
@@ -74,14 +84,28 @@ export class EventRepository implements IEventRepository {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
+    // Use !inner join when teamName is present to filter parent rows
+    const selectStr = filters?.teamName 
+      ? "*, team!inner(name)" 
+      : "*, team(name)";
+
     let query = supabase
       .from(this.tableName)
-      .select("*", { count: "exact" });
+      .select(selectStr, { count: "exact" });
 
     if (filters) {
-      if (filters.type) query = query.eq("type", filters.type);
-      if (filters.teamId) query = query.eq("team_id", filters.teamId);
-      if (filters.category) query = query.eq("category", filters.category);
+      if (filters.type) {
+        query = query.ilike("type", `%${filters.type}%`);
+      }
+      if (filters.teamId) {
+        query = query.eq("team_id", filters.teamId);
+      }
+      if (filters.teamName) {
+        query = query.ilike("team.name", `%${filters.teamName}%`);
+      }
+      if (filters.category) {
+        query = query.ilike("category", `%${filters.category}%`);
+      }
     }
 
     const { data, count, error } = await query

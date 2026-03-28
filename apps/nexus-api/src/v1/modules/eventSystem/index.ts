@@ -77,7 +77,10 @@ const listEventAttendeesUseCase = new ListEventAttendees(
   attendanceRepositoryAdapter,
 );
 const listEventsUseCase = new ListEvents(eventRepositoryAdapter);
-const updateEventUseCase = new UpdateEvent(eventRepositoryAdapter);
+const updateEventUseCase = new UpdateEvent(
+  eventRepositoryAdapter,
+  filestorageAdapter,
+);
 const listEventsByYearUseCase = new ListEventsByYear(eventRepositoryAdapter);
 const getEventsByTypeUseCase = new GetEventsByType(eventRepositoryAdapter);
 const getEventsByTeamUseCase = new GetEventsByTeam(eventRepositoryAdapter);

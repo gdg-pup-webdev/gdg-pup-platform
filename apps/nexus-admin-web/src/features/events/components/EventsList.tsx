@@ -19,11 +19,16 @@ export const EventsList: React.FC = () => {
   const [pageSize, setPageSize] = useState(12);
   const [searchQuery, setSearchQuery] = useState("");
   
-  // Filter state
+  // Filter state (actual filters applied to the query)
   const [filters, setFilters] = useState({
     type: undefined as string | undefined,
     teamId: undefined as string | undefined,
+    teamName: undefined as string | undefined,
   });
+
+  // Local input state (values in the text fields before clicking Search)
+  const [localType, setLocalType] = useState("");
+  const [localTeamName, setLocalTeamName] = useState("");
 
   // Team search state for filter
   const [teamSearch, setTeamSearch] = useState("");
@@ -48,7 +53,7 @@ export const EventsList: React.FC = () => {
   }, []);
 
   // API Hooks
-  const { data: eventsResponse, isLoading, isError, error, refetch } = useListEvents(page, pageSize, filters);
+  const { data: eventsResponse, isLoading, isFetching, isError, error, refetch } = useListEvents(page, pageSize, filters);
   const createMutation = useCreateEvent();
   const createFromBevyMutation = useCreateEventFromBevyEvent();
   const updateMutation = useUpdateEvent();
@@ -75,9 +80,9 @@ export const EventsList: React.FC = () => {
     setIsBevySearchModalOpen(true);
   };
 
-  const handleSelectBevyEvent = async (bevyEvent: any) => {
+  const handleSelectBevyEvent = async (bevyEventId: string) => {
     try {
-      await createFromBevyMutation.mutateAsync(bevyEvent.id);
+      await createFromBevyMutation.mutateAsync(bevyEventId);
       toast.success("Event imported from Bevy successfully");
       setIsBevySearchModalOpen(false);
     } catch (err: any) {
@@ -137,8 +142,21 @@ export const EventsList: React.FC = () => {
   };
 
   const clearTypeFilter = () => {
+    setLocalType("");
     setFilters(prev => ({ ...prev, type: undefined }));
     setPage(1);
+  };
+
+  const handleApplyFilters = () => {
+    setFilters(prev => ({
+      ...prev,
+      type: localType.trim() || undefined,
+      teamName: localTeamName.trim() || undefined
+    }));
+    setPage(1);
+    // Explicitly refetch to handle cases where the filter value might be the same
+    // but the user wants to refresh the list manually
+    refetch();
   };
 
   // Filter events client-side for search (simple implementation for title/venue)
@@ -148,7 +166,7 @@ export const EventsList: React.FC = () => {
     e.venue?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (isLoading && !searchQuery && !filters.teamId && !filters.type) {
+  if (isLoading && !searchQuery && !filters.teamId && !filters.type && !filters.teamName) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 size={40} className="animate-spin text-teal-600" />
@@ -266,24 +284,67 @@ export const EventsList: React.FC = () => {
           </div>
 
           {/* Type Filter */}
-          <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600">
+          <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 focus-within:border-teal-500 transition-all">
             <input
               type="text"
               placeholder="Filter by type..."
               className="w-24 outline-none bg-transparent"
-              value={filters.type || ""}
-              onChange={(e) => {
-                setFilters(prev => ({ ...prev, type: e.target.value || undefined }));
-                setPage(1);
+              value={localType}
+              onChange={(e) => setLocalType(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleApplyFilters();
               }}
             />
-            {filters.type && <X size={14} className="cursor-pointer hover:text-red-500" onClick={clearTypeFilter} />}
+            {localType && (
+              <X 
+                size={14} 
+                className="cursor-pointer hover:text-red-500" 
+                onClick={clearTypeFilter} 
+              />
+            )}
           </div>
 
-          {(filters.teamId || filters.type || searchQuery) && (
+          {/* Team Name Filter */}
+          <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 focus-within:border-teal-500 transition-all">
+            <Users size={14} className="text-gray-400" />
+            <input
+              type="text"
+              placeholder="Filter by team name..."
+              className="w-32 outline-none bg-transparent"
+              value={localTeamName}
+              onChange={(e) => setLocalTeamName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleApplyFilters();
+              }}
+            />
+            {localTeamName && (
+              <X 
+                size={14} 
+                className="cursor-pointer hover:text-red-500" 
+                onClick={() => {
+                  setLocalTeamName("");
+                  setFilters(prev => ({ ...prev, teamName: undefined }));
+                  setPage(1);
+                }} 
+              />
+            )}
+          </div>
+
+          <button
+            onClick={handleApplyFilters}
+            disabled={isFetching}
+            className="flex items-center gap-1.5 rounded-sm bg-teal-600 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white transition-all hover:bg-teal-700 shadow-sm disabled:opacity-50"
+          >
+            {isFetching ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
+            {isFetching ? "Searching..." : "Search"}
+          </button>
+
+          {(filters.teamId || filters.type || filters.teamName || searchQuery || localType || localTeamName) && (
             <button
               onClick={() => {
-                setFilters({ type: undefined, teamId: undefined });
+                setFilters({ type: undefined, teamId: undefined, teamName: undefined });
+                setLocalType("");
+                setLocalTeamName("");
                 setSelectedTeamName("");
                 setTeamSearch("");
                 setSearchQuery("");
@@ -309,7 +370,7 @@ export const EventsList: React.FC = () => {
 
       {/* Grid of Cards */}
       {filteredEvents.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-200 ${isFetching ? "opacity-50" : "opacity-100"}`}>
           {filteredEvents.map((event: Event) => (
             <EventCard
               key={event.id}
@@ -322,15 +383,17 @@ export const EventsList: React.FC = () => {
         <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
           <Calendar size={48} className="mb-4 text-gray-300" />
           <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery || filters.teamId || filters.type ? "No matching events found" : "No events found"}
+            {searchQuery || filters.teamId || filters.type || filters.teamName ? "No matching events found" : "No events found"}
           </h3>
           <p className="mt-1 text-sm text-gray-500">
-            {searchQuery || filters.teamId || filters.type ? "Try adjusting your filters." : "Get started by creating your first community event."}
+            {searchQuery || filters.teamId || filters.type || filters.teamName ? "Try adjusting your filters." : "Get started by creating your first community event."}
           </p>
-          {(searchQuery || filters.teamId || filters.type) ? (
+          {(searchQuery || filters.teamId || filters.type || filters.teamName) ? (
             <button 
               onClick={() => {
-                setFilters({ type: undefined, teamId: undefined });
+                setFilters({ type: undefined, teamId: undefined, teamName: undefined });
+                setLocalType("");
+                setLocalTeamName("");
                 setSelectedTeamName("");
                 setSearchQuery("");
               }}

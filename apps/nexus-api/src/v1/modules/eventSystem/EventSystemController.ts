@@ -90,13 +90,14 @@ export class EventSystemController {
     attendance_points,
     beviPreviewUrl,
     image,
+    image_url,
     tags, 
     max_capacity,
     short_description,
-    // New props
     speakers,
     type,
     teamId,
+    bevy_event_id,
   }: {
     creatorId: string;
     title: string;
@@ -107,15 +108,25 @@ export class EventSystemController {
     end_date: string;
     attendance_points: number;
     beviPreviewUrl?: string;
-    image : File | null;
+    image: any | null; // This is the file object from TypedRest
+    image_url?: string | null;
     tags?: string[];
     max_capacity?: number;
     short_description?: string;
-    // New props
     speakers?: string[];
     type?: string;
     teamId?: string;
+    bevy_event_id?: string | null;
   }) {
+    let fileToUpload: FileToUpload | null = null;
+    if (image && typeof image.arrayBuffer === "function") {
+      fileToUpload = new FileToUpload({
+        buffer: await image.arrayBuffer(),
+        name: image.name,
+        type: image.type,
+      });
+    }
+
     const result = await this.createEventUseCase.execute(
       {
         creatorId: creatorId,
@@ -126,21 +137,17 @@ export class EventSystemController {
         start_date: new Date(start_date),
         end_date: new Date(end_date),
         attendance_points: attendance_points,
-        bevy_event_id: null,
+        bevy_event_id: bevy_event_id || null,
         bevyPreviewUrl: beviPreviewUrl || null,
+        image_url: image_url || null,
         tags: tags || [],
         max_capacity: max_capacity || 99999999,
         short_description: short_description || null,
-        // New props
         speakers: speakers || [],
         type: type || null,
         teamId: teamId || null,
       },
-      image? new FileToUpload({
-        buffer: await image.arrayBuffer()  ,
-        name: image.name  ,
-        type: image.type  ,
-      }) : null,  
+      fileToUpload,
     );
 
     return this.flattenEvent(result);
@@ -203,7 +210,7 @@ export class EventSystemController {
     };
   }
 
-  async listEvents(pageNumber: number, pageSize: number, filters?: { type?: string; teamId?: string }) {
+  async listEvents(pageNumber: number, pageSize: number, filters?: { type?: string; teamId?: string; teamName?: string }) {
     const result = await this.listEventsUseCase.execute(pageNumber, pageSize, filters);
     return {
       list: result.list.map((event) =>  this.flattenEvent(event)),
@@ -211,8 +218,26 @@ export class EventSystemController {
     };
   }
 
-  async updateEvent(eventId: string, dto: EventUpdateProps) {
-    const result = await this.updateEventUseCase.execute(eventId, dto);
+  async updateEvent(eventId: string, dto: any) {
+    const updateProps: any = { ...dto };
+    
+    if (dto.start_date) updateProps.start_date = new Date(dto.start_date);
+    if (dto.end_date) updateProps.end_date = new Date(dto.end_date);
+    if (dto.bevyPreviewUrl) updateProps.bevyPreviewUrl = dto.bevyPreviewUrl;
+
+    let fileToUpload: FileToUpload | null = null;
+    if (dto.image && typeof dto.image.arrayBuffer === "function") {
+      fileToUpload = new FileToUpload({
+        buffer: await dto.image.arrayBuffer(),
+        name: dto.image.name,
+        type: dto.image.type,
+      });
+    }
+
+    const result = await this.updateEventUseCase.execute(eventId, {
+      ...updateProps,
+      image: fileToUpload,
+    });
     return this.flattenEvent(result);
   }
 }

@@ -15,9 +15,6 @@ export const useUpdateEvent = () => {
 
   return useMutation({
     mutationFn: async ({ eventId, data }: UpdateEventInput) => {
-      // Remove image from data as it's handled separately if needed
-      // Note: The current contract/controller for PATCH /v1/events/:id doesn't seem to support file upload yet
-      // If it did, it would be in the 'files' property of callEndpoint
       const { image, ...updateData } = data;
 
       const res = await callEndpoint(
@@ -26,6 +23,9 @@ export const useUpdateEvent = () => {
         {
           params: { eventId },
           body: { data: updateData as any },
+          files: {
+            thumbnail: image,
+          }
         }
       );
 

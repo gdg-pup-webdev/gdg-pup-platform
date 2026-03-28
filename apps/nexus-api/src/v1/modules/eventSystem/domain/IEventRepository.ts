@@ -3,6 +3,7 @@ import { Event } from "./Event";
 export interface EventFilters {
   type?: string;
   teamId?: string;
+  teamName?: string;
   category?: string;
 }
 

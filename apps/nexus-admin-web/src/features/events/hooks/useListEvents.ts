@@ -4,7 +4,7 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
-export const useListEvents = (pageNumber = 1, pageSize = 10, filters?: { type?: string; teamId?: string; category?: string }) => {
+export const useListEvents = (pageNumber = 1, pageSize = 10, filters?: { type?: string; teamId?: string; teamName?: string; category?: string }) => {
   return useQuery({
     queryKey: ["events", "list", pageNumber, pageSize, filters],
     queryFn: async () => {
@@ -17,6 +17,7 @@ export const useListEvents = (pageNumber = 1, pageSize = 10, filters?: { type?: 
             pageSize,
             type: filters?.type,
             teamId: filters?.teamId,
+            teamName: filters?.teamName,
             category: filters?.category
           },
         }

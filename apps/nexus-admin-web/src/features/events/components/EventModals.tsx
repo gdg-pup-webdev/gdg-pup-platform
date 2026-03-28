@@ -293,6 +293,13 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
       const bevyEvent = await bevyImportMutation.mutateAsync(bevyEventId);
       const data = bevyEvent.data;
       
+      // Check if this Bevy event is already linked to a Nexus event
+      // We can use the events list or a specific check if needed, 
+      // but for now let's just populate and let the unique constraint handle the error gracefully on the backend
+      // if it's already there. 
+      // Actually, we should ensure the ID is a string.
+      const stringId = data.id.toString();
+
       setFormData(prev => ({
         ...prev,
         title: data.title,
@@ -303,7 +310,7 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
         start_date: data.start_date ? new Date(data.start_date).toISOString().slice(0, 16) : prev.start_date,
         end_date: data.end_date ? new Date(data.end_date).toISOString().slice(0, 16) : prev.end_date,
         image_url: data.thumbnail_image_url || prev.image_url,
-        bevy_event_id: data.id,
+        bevy_event_id: stringId,
         bevyPreviewUrl: data.direct_url,
         tags: [...new Set([...prev.tags, ...(data.tags || [])])],
       }));
@@ -317,7 +324,15 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Ensure dates are in full ISO format for the API
+    const submissionData = {
+      ...formData,
+      start_date: formData.start_date ? new Date(formData.start_date).toISOString() : "",
+      end_date: formData.end_date ? new Date(formData.end_date).toISOString() : "",
+    };
+    
+    onSubmit(submissionData);
   };
 
   const teamResults = teamsResponse?.body?.data || [];
