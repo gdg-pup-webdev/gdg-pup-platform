@@ -1,0 +1,26 @@
+import { useQuery } from "@tanstack/react-query";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { contract } from "@packages/nexus-api-contracts";
+import { configs } from "@/lib/constants/configs";
+import { extractErrorMessage } from "@/lib/utils";
+
+export const useListAttendees = (eventId: string, pageNumber = 1, pageSize = 10) => {
+  return useQuery({
+    queryKey: ["events", "attendees", eventId, pageNumber, pageSize],
+    queryFn: async () => {
+      const res = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.eventId.attendees.GET,
+        {
+          params: { eventId },
+          query: { pageNumber, pageSize },
+        }
+      );
+
+      if (res.status === 200) return res.body;
+
+      throw new Error(extractErrorMessage(res.body));
+    },
+    enabled: !!eventId,
+  });
+};

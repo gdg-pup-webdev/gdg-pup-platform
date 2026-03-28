@@ -6,6 +6,7 @@ export const query = OpenApiSchemas.Request.Query.paginated().extend({
   teamId: cz.string().uuid().optional(),
   teamName: cz.string().optional(),
   category: cz.string().optional(),
+  year: cz.coerce.number().optional(),
 });
 
 export const response = {
