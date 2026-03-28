@@ -15,6 +15,7 @@ export async function getLearningResources(params: Partial<LearningResourcesQuer
           search: params.search,
           type: params.type,
           teamId: params.teamId,
+          teamName: params.teamName,
           eventId: params.eventId,
         },
       }

@@ -3,6 +3,7 @@ import { LearningResource } from "./LearningResource";
 export interface LearningResourceFilters {
   search?: string;
   teamId?: string;
+  teamName?: string;
   eventId?: string;
 }
 

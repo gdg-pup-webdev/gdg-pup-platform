@@ -53,9 +53,15 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
     filters?: LearningResourceFilters
   ): Promise<{ list: LearningResource[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
+    
+    // Determine the select string. If teamName filter is used, we must use !inner join to filter the main table rows.
+    const selectQuery = filters?.teamName 
+      ? "*, team!inner(id, name, description), event(id, title, description, start_date, end_date, venue, thumbnail_url)"
+      : this.selectQuery;
+
     let query = supabase
       .from(this.tableName)
-      .select(this.selectQuery, { count: "exact" });
+      .select(selectQuery, { count: "exact" });
 
     if (filters) {
       if (filters.search) {
@@ -64,6 +70,9 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
       }
       if (filters.teamId) {
         query = query.eq("team_id", filters.teamId);
+      }
+      if (filters.teamName) {
+        query = query.ilike("team.name", `%${filters.teamName}%`);
       }
       if (filters.eventId) {
         query = query.eq("event_id", filters.eventId);

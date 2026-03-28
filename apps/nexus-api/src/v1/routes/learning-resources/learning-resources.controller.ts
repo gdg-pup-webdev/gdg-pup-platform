@@ -13,6 +13,7 @@ export class LearningResourcesHttpController {
       const pageSize = input.query.pageSize || 10;
       const filters = {
         teamId: input.query.teamId as string | undefined,
+        teamName: input.query.teamName as string | undefined,
         eventId: input.query.eventId as string | undefined,
         search: input.query.search,
       };

@@ -16,11 +16,16 @@ export function LearningResourceList() {
     pageSize: 12, 
     search: "",
     teamId: undefined as string | undefined,
+    teamName: undefined as string | undefined,
     eventId: undefined as string | undefined
   });
+
+  // Local input states for the filter fields (to avoid fetching on every keystroke)
+  const [localSearch, setLocalSearch] = useState("");
+  const [localTeamName, setLocalTeamName] = useState("");
   
   // API Hooks
-  const { data: response, isLoading, isError, error, refetch } = useGetLearningResources(params);
+  const { data: response, isLoading, isFetching, isError, error, refetch } = useGetLearningResources(params);
   const createMutation = useCreateLearningResource();
   const updateMutation = useUpdateLearningResource();
   const deleteMutation = useDeleteLearningResource();
@@ -45,10 +50,25 @@ export function LearningResourceList() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<LearningResource | null>(null);
 
+  // Debouncing for search fields (optional but added per requirement)
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedTeamSearch(teamSearch), 300);
+    const timer = setTimeout(() => {
+      // We don't automatically trigger fetch here if we want manual button trigger,
+      // but the user asked for debouncing too. Let's use it for the dropdown search.
+      setDebouncedTeamSearch(teamSearch);
+    }, 300);
     return () => clearTimeout(timer);
   }, [teamSearch]);
+
+  // Handler for manual search button
+  const handleSearchTrigger = () => {
+    setParams(prev => ({
+      ...prev,
+      search: localSearch.trim() || undefined,
+      teamName: localTeamName.trim() || undefined,
+      pageNumber: 1
+    }));
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -118,7 +138,8 @@ export function LearningResourceList() {
   };
 
   const clearTeamFilter = () => {
-    setParams(prev => ({ ...prev, teamId: undefined }));
+    setParams(prev => ({ ...prev, teamId: undefined, teamName: undefined }));
+    setLocalTeamName("");
     setSelectedTeamName("");
     setTeamSearch("");
   };
@@ -128,7 +149,7 @@ export function LearningResourceList() {
     setSelectedEventTitle("");
   };
 
-  if (isLoading && !params.search && !params.teamId && !params.eventId) {
+  if (isLoading && !params.search && !params.teamId && !params.eventId && !params.teamName) {
     return (
       <div className="flex h-64 items-center justify-center">
         <Loader2 size={40} className="animate-spin text-teal-600" />
@@ -141,16 +162,41 @@ export function LearningResourceList() {
       {/* Action Bar */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search resources..."
-              className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-              value={params.search}
-              onChange={(e) => setParams(prev => ({ ...prev, search: e.target.value, pageNumber: 1 }))}
-            />
+          <div className="flex w-full max-w-2xl items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search resources..."
+                className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearchTrigger()}
+              />
+            </div>
+            
+            <div className="relative flex-1">
+              <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Team Name..."
+                className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                value={localTeamName}
+                onChange={(e) => setLocalTeamName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearchTrigger()}
+              />
+            </div>
+
+            <button
+              onClick={handleSearchTrigger}
+              disabled={isFetching}
+              className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
+            >
+              {isFetching ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
+              Search
+            </button>
           </div>
+          
           <button
             onClick={handleAdd}
             className="flex w-full items-center justify-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 md:w-auto"
@@ -163,10 +209,10 @@ export function LearningResourceList() {
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 mr-2">
-            Filter by:
+            Quick Filter:
           </div>
           
-          {/* Team Filter */}
+          {/* Team Dropdown Filter */}
           <div className="relative" ref={teamRef}>
             <button
               onClick={() => setShowTeamDropdown(!showTeamDropdown)}
@@ -175,7 +221,7 @@ export function LearningResourceList() {
               }`}
             >
               <Users size={14} />
-              {selectedTeamName || "All Teams"}
+              {selectedTeamName || "Select Team"}
               {params.teamId && (
                 <X size={14} className="ml-1 hover:text-teal-900" onClick={(e) => { e.stopPropagation(); clearTeamFilter(); }} />
               )}
@@ -202,7 +248,8 @@ export function LearningResourceList() {
                       <button
                         key={team.id}
                         onClick={() => {
-                          setParams(prev => ({ ...prev, teamId: team.id, pageNumber: 1 }));
+                          setParams(prev => ({ ...prev, teamId: team.id, teamName: undefined, pageNumber: 1 }));
+                          setLocalTeamName(""); // Clear text filter if selecting from dropdown
                           setSelectedTeamName(team.name);
                           setShowTeamDropdown(false);
                         }}
@@ -259,10 +306,12 @@ export function LearningResourceList() {
             )}
           </div>
 
-          {(params.teamId || params.eventId || params.search) && (
+          {(params.teamId || params.eventId || params.search || params.teamName) && (
             <button
               onClick={() => {
-                setParams({ pageNumber: 1, pageSize: 12, search: "", teamId: undefined, eventId: undefined });
+                setParams({ pageNumber: 1, pageSize: 12, search: "", teamId: undefined, teamName: undefined, eventId: undefined });
+                setLocalSearch("");
+                setLocalTeamName("");
                 setSelectedTeamName("");
                 setSelectedEventTitle("");
                 setTeamSearch("");

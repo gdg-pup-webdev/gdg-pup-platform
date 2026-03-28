@@ -4,6 +4,7 @@ import { OpenApiSchemas, cz } from "@packages/typed-rest/shared";
 export const query = OpenApiSchemas.Request.Query.paginated().extend({
   search: cz.string().optional(),
   teamId: cz.string().uuid().optional(),
+  teamName: cz.string().optional(),
   eventId: cz.string().uuid().optional(),
 });
 
@@ -15,6 +16,6 @@ export const response = {
 export const docs_summary = "List learning resources";
 export const docs_description = [
   "Purpose: List learning resources with pagination and filters.",
-  "Inputs: Query: search, teamId, eventId, pageNumber, pageSize.",
+  "Inputs: Query: search, teamId, teamName, eventId, pageNumber, pageSize.",
   "Outputs: Paginated list of learning resources.",
 ].join("\n\n");
