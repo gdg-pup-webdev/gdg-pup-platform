@@ -75,9 +75,9 @@ export const EventsList: React.FC = () => {
     setIsBevySearchModalOpen(true);
   };
 
-  const handleSelectBevyEvent = async (bevyEventId: string) => {
+  const handleSelectBevyEvent = async (bevyEvent: any) => {
     try {
-      await createFromBevyMutation.mutateAsync(bevyEventId);
+      await createFromBevyMutation.mutateAsync(bevyEvent.id);
       toast.success("Event imported from Bevy successfully");
       setIsBevySearchModalOpen(false);
     } catch (err: any) {
