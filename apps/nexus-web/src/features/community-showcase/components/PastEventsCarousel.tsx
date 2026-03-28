@@ -3,9 +3,11 @@
 
 import { Button, Stack, Text } from "@packages/spark-ui";
 import { useCarousel } from "../hooks/useCarousel";
-import { PAST_EVENTS_CAROUSEL } from "../data/past-events";
+// import { PAST_EVENTS_CAROUSEL } from "../data/past-events";
 import { CarouselArrowIcon } from "./CarouselArrowIcon";
 import { PlanetCard } from "./PlanetCard";
+import { useListEvents } from "@/features/events/hooks/useListEvents";
+import { ASSETS } from "@/lib/constants/assets";
 
 /**
  * PastEventsCarousel
@@ -24,6 +26,12 @@ export function PastEventsCarousel() {
     handlePointerMove,
     handlePointerUp,
   } = useCarousel();
+
+  const { data, error, isLoading } = useListEvents(1, 20, {});
+
+  const PAST_EVENTS_CAROUSEL = data
+    ? [...data.data ]
+    : [];
 
   return (
     <Stack gap="xs" className="mt-22">
@@ -68,7 +76,9 @@ export function PastEventsCarousel() {
               {/* Draggable track */}
               <div
                 className={`flex gap-8 md:gap-12 lg:gap-28 xl:gap-40 2xl:gap-35 pb-6 pt-4 w-max ${
-                  isPastEventsDragging ? "cursor-grabbing select-none" : "cursor-grab"
+                  isPastEventsDragging
+                    ? "cursor-grabbing select-none"
+                    : "cursor-grab"
                 }`}
                 ref={trackRef}
                 onPointerDown={handlePointerDown}
@@ -86,7 +96,7 @@ export function PastEventsCarousel() {
                   >
                     <div className="flex w-full flex-col items-center">
                       <PlanetCard
-                        image={event.image}
+                        image={event.image_url || ASSETS.PLACEHOLDERS.DEFAULT}
                         alt={event.title}
                         style={{
                           width: "clamp(140px,14vw,260px)",
@@ -100,7 +110,14 @@ export function PastEventsCarousel() {
                         color="muted"
                         className="mt-5 xl:mt-7"
                       >
-                        {event.date}
+                        {new Date(event.end_date).toLocaleDateString(
+                          undefined,
+                          {
+                            month: "short",
+                            year: "numeric",
+                            day: "numeric",
+                          },
+                        )}
                       </Text>
                       <Text
                         variant="body"

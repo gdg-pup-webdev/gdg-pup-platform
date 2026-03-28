@@ -4,6 +4,7 @@ import { useEventModal } from "../hooks/useEventModal";
 import { MobileShowcase } from "./MobileShowcase";
 import { DesktopShowcase } from "./DesktopShowcase";
 import { EventModal } from "./EventModal";
+import { useListEvents } from "@/features/events/hooks/useListEvents";
 
 /**
  * CommunityShowcaseSection
@@ -22,12 +23,17 @@ import { EventModal } from "./EventModal";
 export function CommunityShowcaseSection() {
   const modal = useEventModal();
 
+  
+    const { data , error, isLoading } = useListEvents(1, 20, {});
+   
+    const EVENTS = data ? [...data.data] : [];
+
   return (
     <div className="relative overflow-hidden pt-32 pb-32 md:pt-60 md:pb-48 px-4 md:px-8 lg:px-16">
-      <MobileShowcase />
-      <DesktopShowcase onOpenModal={modal.openModal} />
-      {modal.shouldRender && (
-        <EventModal isVisible={modal.isVisible} onClose={modal.closeModal} />
+      <MobileShowcase events={EVENTS} />
+      <DesktopShowcase onOpenModal={modal.openModal} events={EVENTS} />
+      {modal.shouldRender && EVENTS.length > 0 && (
+        <EventModal event={EVENTS[0]} isVisible={modal.isVisible} onClose={modal.closeModal} />
       )}
     </div>
   );
