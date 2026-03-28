@@ -65,7 +65,7 @@ export function EventDetailSection({
     // (eventDetail?.category ? [eventDetail.category] : []);
 
   const registerHref =
-    eventDetail?.bevy_event_url?.trim() || eventDetail?.bevy_event_url?.trim() || "";
+    eventDetail?.bevyPreviewUrl?.trim() || eventDetail?.bevyPreviewUrl?.trim() || "";
 
   const dateBarLabel = useMemo(() => {
     if (!eventDetail?.start_date) return "Date to be announced";

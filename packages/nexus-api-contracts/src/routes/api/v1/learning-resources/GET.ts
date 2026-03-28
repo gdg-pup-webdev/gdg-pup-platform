@@ -1,100 +1,21 @@
- import { learningResource } from "#models/v1/learningResourceSystem/externalResource.js";
-import { OpenApiSchemas } from "@packages/typed-rest/shared";
+import { LearningResourceModel } from "#models/v1/learningResourceSystem/learningResource.js";
+import { OpenApiSchemas, cz } from "@packages/typed-rest/shared";
 
-export const query = OpenApiSchemas.Request.Query.paginated();
+export const query = OpenApiSchemas.Request.Query.paginated().extend({
+  search: cz.string().optional(),
+  teamId: cz.string().uuid().optional(),
+  teamName: cz.string().optional(),
+  eventId: cz.string().uuid().optional(),
+});
 
 export const response = {
-  200: OpenApiSchemas.Response.paginated(learningResource),
+  200: OpenApiSchemas.Response.paginated(LearningResourceModel),
   ...OpenApiSchemas.Response.standardErrors(),
 };
 
-export const docs_summary = "List external resources";
+export const docs_summary = "List learning resources";
 export const docs_description = [
-  "Purpose: Retrieve external learning resources with optional filters.",
-  "Inputs: Query params pageNumber, pageSize, search, createdFrom, createdTo, uploaderId, tagIds.",
-  "Outputs: Paginated list of external resources with meta.",
-  "Errors: 400, 403, 404, 500.",
-  "Auth: Public.",
+  "Purpose: List learning resources with pagination and filters.",
+  "Inputs: Query: search, teamId, teamName, eventId, pageNumber, pageSize.",
+  "Outputs: Paginated list of learning resources.",
 ].join("\n\n");
-export const docs_query = {
-  pageNumber: "Page number (default: 1).",
-  pageSize: "Page size (default: 10, max: 50).",
-  search: "Optional. Search by title or description.",
-  createdFrom: "Optional. Filter by created_at on/after this date-time.",
-  createdTo: "Optional. Filter by created_at on/before this date-time.",
-  uploaderId: "Optional. Filter by uploader ID.",
-  tagIds: "Optional. CSV tag IDs filter (match-any), e.g. tag-1,tag-2.",
-};
-export const docs_response_200 = "Paginated list of external resources.";
-export const docs_example_response = {
-  status: "success",
-  message: "Resources fetched successfully",
-  data: [
-    {
-      id: "external-1",
-      title: "Intro to Web Performance",
-      description: "Performance fundamentals",
-      resource_url: "https://example.com/perf",
-      uploader_id: "user-1",
-      created_at: "2026-01-01T00:00:00.000Z",
-      updated_at: "2026-01-01T00:00:00.000Z",
-    },
-  ],
-  meta: {
-    totalRecords: 1,
-    pageSize: 10,
-    currentPage: 1,
-    totalPages: 1,
-  },
-};
-
-export const docs_example_response_400 = {
-  status: "error",
-  message: "Invalid request.",
-  errors: [
-    {
-      title: "Bad Request",
-      detail: "One or more request fields are invalid.",
-    },
-  ],
-};
-export const docs_example_response_401 = {
-  status: "error",
-  message: "Unauthorized.",
-  errors: [
-    {
-      title: "Unauthorized",
-      detail: "Missing or invalid authentication token.",
-    },
-  ],
-};
-export const docs_example_response_403 = {
-  status: "error",
-  message: "Forbidden.",
-  errors: [
-    {
-      title: "Forbidden",
-      detail: "You do not have permission to access this resource.",
-    },
-  ],
-};
-export const docs_example_response_404 = {
-  status: "error",
-  message: "External resource not found.",
-  errors: [
-    {
-      title: "Not Found",
-      detail: "No external resource found for the provided identifier.",
-    },
-  ],
-};
-export const docs_example_response_500 = {
-  status: "error",
-  message: "Internal server error.",
-  errors: [
-    {
-      title: "Internal Server Error",
-      detail: "An unexpected error occurred.",
-    },
-  ],
-};

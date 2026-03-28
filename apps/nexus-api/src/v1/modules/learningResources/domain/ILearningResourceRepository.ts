@@ -2,16 +2,17 @@ import { LearningResource } from "./LearningResource";
 
 export interface LearningResourceFilters {
   search?: string;
-  createdFrom?: string | Date;
-  createdTo?: string | Date;
-  uploaderId?: string;
-  tagIds?: string[];
+  teamId?: string;
+  teamName?: string;
+  eventId?: string;
 }
 
 export interface ILearningResourceRepository {
   findById(id: string): Promise<LearningResource | null>;
   findAll(pageNumber: number, pageSize: number, filters?: LearningResourceFilters): Promise<{ list: LearningResource[]; count: number }>;
-  saveNew(resource: LearningResource): Promise<LearningResource>;
-  persistUpdates(resource: LearningResource): Promise<LearningResource>;
+  findByTag(tag: string, pageNumber: number, pageSize: number): Promise<{ list: LearningResource[]; count: number }>;
+  search(query: string, limit: number): Promise<LearningResource[]>;
+  saveNew(learningResource: LearningResource): Promise<LearningResource>;
+  persistUpdates(learningResource: LearningResource): Promise<LearningResource>;
   delete(id: string): Promise<void>;
 }

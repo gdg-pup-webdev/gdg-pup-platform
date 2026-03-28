@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Calendar, MapPin, Users, Star } from "lucide-react";
+import { Calendar, MapPin, Users, Star, Tag } from "lucide-react";
 import { Event } from "../types";
 
 interface EventCardProps {
@@ -24,10 +24,20 @@ export function EventCard({ event, onClick }: EventCardProps) {
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          {event.type && (
+            <div className="absolute top-3 left-3 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-teal-700 shadow-sm backdrop-blur-sm">
+              {event.type}
+            </div>
+          )}
         </div>
       ) : (
-        <div className="flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100/50">
+        <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100/50">
           <Calendar size={48} className="text-teal-200" />
+          {event.type && (
+            <div className="absolute top-3 left-3 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-teal-700 shadow-sm backdrop-blur-sm">
+              {event.type}
+            </div>
+          )}
         </div>
       )}
 
@@ -58,9 +68,17 @@ export function EventCard({ event, onClick }: EventCardProps) {
             <span className="line-clamp-1">{event.venue || "TBA"}</span>
           </div>
 
-          <div className="flex items-center gap-2 border-t border-gray-50 pt-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-            <Users size={14} />
-            <span>{event.attendees_count} Attendees</span>
+          <div className="flex items-center justify-between border-t border-gray-50 pt-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              <Users size={14} />
+              <span>{event.attendees_count} Attendees</span>
+            </div>
+            {event.speakers && event.speakers.length > 0 && (
+              <div className="flex items-center gap-1 text-[10px] font-bold text-teal-500 uppercase">
+                <Users size={12} />
+                <span>{event.speakers.length} Speakers</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

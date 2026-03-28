@@ -9,6 +9,8 @@ import { ListEventAttendees } from "./useCases/ListEventAttendees";
 import { ListEvents } from "./useCases/ListEvents";
 import { ListEventsByYear } from "./useCases/listEventsByYear";
 import { UpdateEvent } from "./useCases/UpdateEvent";
+import { GetEventsByType } from "./useCases/GetEventsByType";
+import { GetEventsByTeam } from "./useCases/GetEventsByTeam";
 
 export class EventSystemController {
   constructor(
@@ -17,13 +19,13 @@ export class EventSystemController {
     private readonly createEventFromBevyEventUseCase: CreateEventFromBevyEventUseCase,
     private readonly deleteEventUseCase: DeleteEvent,
     private readonly getOneEventUseCase: GetOneEvent,
-    private readonly listEventAttendeesUseCase: ListEventAttendees,
+    private readonly listEventAttendeesUseCase: any,
     private readonly listEventsUseCase: ListEvents,
     private readonly updateEventUseCase: UpdateEvent,
     private readonly listEventsByYearUseCase: ListEventsByYear,
+    private readonly getEventsByTypeUseCase: GetEventsByType,
+    private readonly getEventsByTeamUseCase: GetEventsByTeam,
   ) {}
-
-
 
   private flattenEvent(event: Event) {
     return {
@@ -45,13 +47,36 @@ export class EventSystemController {
       tags: event.props.tags,
       max_capacity: event.props.max_capacity,
       short_description: event.props.short_description,
+      // New props
+      speakers: event.props.speakers,
+      type: event.props.type,
+      teamId: event.props.teamId,
     }
+  }
+
+  /**
+   * Helper to ensure array fields are actual arrays.
+   * This handles cases where multipart/form-data might have stringified the array.
+   */
+  private ensureArray(val: any): string[] {
+    if (!val) return [];
+    if (Array.isArray(val)) return val.filter(item => typeof item === 'string');
+    if (typeof val === 'string') {
+      try {
+        const parsed = JSON.parse(val);
+        if (Array.isArray(parsed)) return parsed.filter(item => typeof item === 'string');
+      } catch (e) {
+        // Not JSON, maybe comma separated
+        return val.split(',').map(s => s.trim()).filter(Boolean);
+      }
+    }
+    return [];
   }
 
   async listEventsByYear(pageNumber: number, pageSize: number, year: number) { 
     const result = await this.listEventsByYearUseCase.execute(pageNumber, pageSize, year);
     return {
-      list: result.list.map(this.flattenEvent),
+      list: result.list.map(this.flattenEvent.bind(this)),
       count: result.count,
     };
   }
@@ -84,9 +109,14 @@ export class EventSystemController {
     attendance_points,
     beviPreviewUrl,
     image,
+    image_url,
     tags, 
     max_capacity,
     short_description,
+    speakers,
+    type,
+    teamId,
+    bevy_event_id,
   }: {
     creatorId: string;
     title: string;
@@ -97,12 +127,25 @@ export class EventSystemController {
     end_date: string;
     attendance_points: number;
     beviPreviewUrl?: string;
-    image : File | null;
-    tags?: string[];
+    image: any | null; // This is the file object from TypedRest
+    image_url?: string | null;
+    tags?: any;
     max_capacity?: number;
     short_description?: string;
-
+    speakers?: any;
+    type?: string;
+    teamId?: string;
+    bevy_event_id?: string | null;
   }) {
+    let fileToUpload: FileToUpload | null = null;
+    if (image && typeof image.arrayBuffer === "function") {
+      fileToUpload = new FileToUpload({
+        buffer: await image.arrayBuffer(),
+        name: image.name,
+        type: image.type,
+      });
+    }
+
     const result = await this.createEventUseCase.execute(
       {
         creatorId: creatorId,
@@ -113,17 +156,17 @@ export class EventSystemController {
         start_date: new Date(start_date),
         end_date: new Date(end_date),
         attendance_points: attendance_points,
-        bevy_event_id: null,
+        bevy_event_id: bevy_event_id || null,
         bevyPreviewUrl: beviPreviewUrl || null,
-        tags: tags || [],
+        image_url: image_url || null,
+        tags: this.ensureArray(tags),
         max_capacity: max_capacity || 99999999,
         short_description: short_description || null,
+        speakers: this.ensureArray(speakers),
+        type: type || null,
+        teamId: teamId || null,
       },
-      image? new FileToUpload({
-        buffer: await image.arrayBuffer()  ,
-        name: image.name  ,
-        type: image.type  ,
-      }) : null,  
+      fileToUpload,
     );
 
     return this.flattenEvent(result);
@@ -148,6 +191,22 @@ export class EventSystemController {
     return this.flattenEvent(result);
   }
 
+  async getEventsByType(type: string, pageNumber: number, pageSize: number) {
+    const result = await this.getEventsByTypeUseCase.execute(type, pageNumber, pageSize);
+    return {
+      list: result.list.map((event) => this.flattenEvent(event)),
+      count: result.count,
+    };
+  }
+
+  async getEventsByTeam(teamId: string, pageNumber: number, pageSize: number) {
+    const result = await this.getEventsByTeamUseCase.execute(teamId, pageNumber, pageSize);
+    return {
+      list: result.list.map((event) => this.flattenEvent(event)),
+      count: result.count,
+    };
+  }
+
   async listEventAttendees(
     pageNumber: number,
     pageSize: number,
@@ -159,7 +218,7 @@ export class EventSystemController {
       eventId,
     );
     return {
-      list: result.list.map((attendee) => ({
+      list: result.list.map((attendee: any) => ({
         id: attendee.props.id,
         userId: attendee.props.userId,
         eventId: attendee.props.eventId,
@@ -170,16 +229,38 @@ export class EventSystemController {
     };
   }
 
-  async listEvents(pageNumber: number, pageSize: number) {
-    const result = await this.listEventsUseCase.execute(pageNumber, pageSize);
+  async listEvents(pageNumber: number, pageSize: number, filters?: { type?: string; teamId?: string; teamName?: string; year?: number }) {
+    const result = await this.listEventsUseCase.execute(pageNumber, pageSize, filters);
     return {
       list: result.list.map((event) =>  this.flattenEvent(event)),
       count: result.count,
     };
   }
 
-  async updateEvent(eventId: string, dto: EventUpdateProps) {
-    const result = await this.updateEventUseCase.execute(eventId, dto);
+  async updateEvent(eventId: string, dto: any) {
+    const updateProps: any = { ...dto };
+    
+    if (dto.start_date) updateProps.start_date = new Date(dto.start_date);
+    if (dto.end_date) updateProps.end_date = new Date(dto.end_date);
+    if (dto.bevyPreviewUrl) updateProps.bevyPreviewUrl = dto.bevyPreviewUrl;
+    
+    // Explicitly handle array fields that might be stringified in multipart
+    if (dto.tags) updateProps.tags = this.ensureArray(dto.tags);
+    if (dto.speakers) updateProps.speakers = this.ensureArray(dto.speakers);
+
+    let fileToUpload: FileToUpload | null = null;
+    if (dto.image && typeof dto.image.arrayBuffer === "function") {
+      fileToUpload = new FileToUpload({
+        buffer: await dto.image.arrayBuffer(),
+        name: dto.image.name,
+        type: dto.image.type,
+      });
+    }
+
+    const result = await this.updateEventUseCase.execute(eventId, {
+      ...updateProps,
+      image: fileToUpload,
+    });
     return this.flattenEvent(result);
   }
 }

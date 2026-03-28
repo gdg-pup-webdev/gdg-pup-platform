@@ -23,6 +23,11 @@ export type EventProps = {
   short_description: string | null;
   max_capacity: number;
   tags: string[];
+  
+  // New props
+  speakers: string[];
+  type: string | null;
+  teamId: string | null;
 };
 
 export type EventPrototypeProps = Omit<
@@ -52,6 +57,9 @@ export class Event {
       attendees_count: 0,
       bevy_event_id: props.bevy_event_id ?? null,
       image_url: props.image_url ?? null,
+      type: props.type ?? null,
+      teamId: props.teamId ?? null,
+      speakers: props.speakers ?? [],
     });
   }
 

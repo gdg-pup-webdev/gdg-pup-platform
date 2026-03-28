@@ -9,11 +9,12 @@ export class CreateEvent {
   ) {}
 
   async execute(
-    eventPrototype: Omit<EventPrototypeProps, "image_url">,
+    eventPrototype: EventPrototypeProps,
     image : FileToUpload | null,
   ): Promise<Event> {
-    // uploading image
-    let imageUrl: string | null = null;
+    // uploading image if provided
+    let imageUrl: string | null = eventPrototype.image_url;
+    
     if (image) {
       const res = await this.filestorage.uploadFile(image);
       imageUrl = res.publicUrl;

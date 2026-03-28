@@ -1,111 +1,171 @@
- 
 import { supabase } from "@/v1/lib/supabase";
 import { ILearningResourceRepository, LearningResourceFilters } from "../domain/ILearningResourceRepository";
 import { LearningResource } from "../domain/LearningResource";
-import { Tables } from "@/v0/types/supabase.types";
 
 export class SupabaseLearningResourceRepository implements ILearningResourceRepository {
-  // Assuming the table is renamed to match the domain, adjust if it remains "external_resource"
-  private readonly tableName = "external_resource"; 
+  private readonly tableName = "learning_resource";
+  private readonly selectQuery = "*, team(id, name, description), event(id, title, description, start_date, end_date, venue, thumbnail_url)";
 
-  private mapToDomain(row: Tables<"external_resource">, tagIds: string[] = []): LearningResource {
+  private mapToDomain(row: any): LearningResource {
     return LearningResource.hydrate({
       id: row.id,
-      uploaderId: row.uploader_id,
-      title: row.title || "",
+      title: row.title,
       description: row.description || "",
-      url: row.resource_url || "",
-      tagIds: tagIds,
-      createdAt: new Date(row.created_at || Date.now()),
+      url: row.url,
+      tags: row.tags || [],
+      teamId: row.team_id,
+      eventId: row.event_id,
+      thumbnailUrl: row.thumbnail_url,
+      createdAt: new Date(row.created_at),
+      updatedAt: new Date(row.updated_at),
+      team: row.team ? { 
+        id: row.team.id, 
+        name: row.team.name,
+        description: row.team.description
+      } : null,
+      event: row.event ? { 
+        id: row.event.id, 
+        title: row.event.title,
+        description: row.event.description,
+        imageUrl: row.event.thumbnail_url,
+        startDate: row.event.start_date ? new Date(row.event.start_date) : null,
+        endDate: row.event.end_date ? new Date(row.event.end_date) : null,
+        venue: row.event.venue
+      } : null,
     });
   }
 
+
   async findById(id: string): Promise<LearningResource | null> {
-    const { data, error } = await supabase.from("external_resource").select("*").eq("id", id).maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!data) return null;
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select(this.selectQuery)
+      .eq("id", id)
+      .maybeSingle();
 
-    const { data: tags } = await supabase.from("resource_tag_junction").select("resource_tag_id").eq("resource_id", id);
-    const tagIds = (tags || []).map(t => t.resource_tag_id);
-
-    return this.mapToDomain(data, tagIds);
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return data ? this.mapToDomain(data) : null;
   }
 
-  async findAll(pageNumber: number, pageSize: number, filters: LearningResourceFilters = {}): Promise<{ list: LearningResource[]; count: number }> {
-    let query = supabase.from("external_resource").select("*", { count: "exact" });
-
-    if (filters.search) {
-      const term = filters.search.trim();
-      query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%`);
-    }
-    if (filters.createdFrom) query = query.gte("created_at", filters.createdFrom);
-    if (filters.createdTo) query = query.lte("created_at", filters.createdTo);
-    if (filters.uploaderId) query = query.eq("uploader_id", filters.uploaderId);
-
-    if (filters.tagIds && filters.tagIds.length > 0) {
-      const { data: tagged } = await supabase.from("resource_tag_junction").select("resource_id").in("resource_tag_id", filters.tagIds);
-      const resourceIds = Array.from(new Set((tagged || []).map(t => t.resource_id)));
-      if (resourceIds.length === 0) return { list: [], count: 0 };
-      query = query.in("id", resourceIds);
-    }
-
+  async findAll(
+    pageNumber: number,
+    pageSize: number,
+    filters?: LearningResourceFilters
+  ): Promise<{ list: LearningResource[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
-    const { data, count, error } = await query.order("created_at", { ascending: false }).range(from, from + pageSize - 1);
     
-    if (error) throw new Error(error.message);
+    // Determine the select string. If teamName filter is used, we must use !inner join to filter the main table rows.
+    const selectQuery = filters?.teamName 
+      ? "*, team!inner(id, name, description), event(id, title, description, start_date, end_date, venue, thumbnail_url)"
+      : this.selectQuery;
 
-    // Note: For a fully optimized query, you would join tags here rather than making N+1 queries. 
-    // This maps the raw data for now.
+    let query = supabase
+      .from(this.tableName)
+      .select(selectQuery, { count: "exact" });
+
+    if (filters) {
+      if (filters.search) {
+        const searchTerm = `%${filters.search}%`;
+        query = query.or(`title.ilike.${searchTerm},description.ilike.${searchTerm}`);
+      }
+      if (filters.teamId) {
+        query = query.eq("team_id", filters.teamId);
+      }
+      if (filters.teamName) {
+        query = query.ilike("team.name", `%${filters.teamName}%`);
+      }
+      if (filters.eventId) {
+        query = query.eq("event_id", filters.eventId);
+      }
+    }
+
+    const { data, count, error } = await query
+      .order("updated_at", { ascending: false })
+      .range(from, from + pageSize - 1);
+
+    if (error) throw new Error(`Database error: ${error.message}`);
     return {
-      list: (data || []).map(row => this.mapToDomain(row, [])), 
+      list: (data || []).map(this.mapToDomain),
       count: count || 0,
     };
   }
 
-  async saveNew(resource: LearningResource): Promise<LearningResource> {
-    const props = resource.props;
-    const { data, error } = await supabase.from("external_resource").insert({
-      id: props.id,
-      uploader_id: props.uploaderId,
-      title: props.title,
-      description: props.description,
-      resource_url: props.url,
-      created_at: props.createdAt.toISOString(),
-    }).select().single();
+  async findByTag(tag: string, pageNumber: number, pageSize: number): Promise<{ list: LearningResource[]; count: number }> {
+    const from = (pageNumber - 1) * pageSize;
+    const { data, count, error } = await supabase
+      .from(this.tableName)
+      .select(this.selectQuery, { count: "exact" })
+      .contains("tags", [tag])
+      .order("updated_at", { ascending: false })
+      .range(from, from + pageSize - 1);
 
-    if (error) throw new Error(error.message);
-
-    // Handle tag insertion
-    if (props.tagIds.length > 0) {
-      const junctions = props.tagIds.map(tagId => ({ resource_id: props.id, resource_tag_id: tagId }));
-      await supabase.from("resource_tag_junction").insert(junctions);
-    }
-
-    return this.mapToDomain(data, props.tagIds);
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return {
+      list: (data || []).map(this.mapToDomain),
+      count: count || 0,
+    };
   }
 
-  async persistUpdates(resource: LearningResource): Promise<LearningResource> {
-    const props = resource.props;
-    const { data, error } = await supabase.from("external_resource").update({
-      title: props.title,
-      description: props.description,
-      url: props.url,
-    }).eq("id", props.id).select().single();
+  async search(query: string, limit: number): Promise<LearningResource[]> {
+    const searchTerm = `%${query}%`;
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select(this.selectQuery)
+      .or(`title.ilike.${searchTerm},description.ilike.${searchTerm}`)
+      .order("updated_at", { ascending: false })
+      .limit(limit);
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return (data || []).map(this.mapToDomain);
+  }
 
-    // Sync tags: Wipe and replace
-    await supabase.from("resource_tag_junction").delete().eq("resource_id", props.id);
-    if (props.tagIds.length > 0) {
-      const junctions = props.tagIds.map(tagId => ({ resource_id: props.id, resource_tag_id: tagId }));
-      await supabase.from("resource_tag_junction").insert(junctions);
-    }
+  async saveNew(learningResource: LearningResource): Promise<LearningResource> {
+    const p = learningResource.props;
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .insert({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        url: p.url,
+        tags: p.tags,
+        team_id: p.teamId,
+        event_id: p.eventId,
+        thumbnail_url: p.thumbnailUrl,
+        created_at: p.createdAt.toISOString(),
+        updated_at: p.updatedAt.toISOString(),
+      })
+      .select(this.selectQuery)
+      .single();
 
-    return this.mapToDomain(data, props.tagIds);
+    if (error) throw new Error(`Failed to create learning resource: ${error.message}`);
+    return this.mapToDomain(data);
+  }
+
+  async persistUpdates(learningResource: LearningResource): Promise<LearningResource> {
+    const p = learningResource.props;
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .update({
+        title: p.title,
+        description: p.description,
+        url: p.url,
+        tags: p.tags,
+        team_id: p.teamId,
+        event_id: p.eventId,
+        thumbnail_url: p.thumbnailUrl || undefined, 
+        updated_at: p.updatedAt.toISOString(),
+      })
+      .eq("id", p.id)
+      .select(this.selectQuery)
+      .single();
+
+    if (error) throw new Error(`Failed to update learning resource: ${error.message}`);
+    return this.mapToDomain(data);
   }
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase.from("external_resource").delete().eq("id", id);
-    if (error) throw new Error(error.message);
+    const { error } = await supabase.from(this.tableName).delete().eq("id", id);
+    if (error) throw new Error(`Failed to delete learning resource: ${error.message}`);
   }
 }

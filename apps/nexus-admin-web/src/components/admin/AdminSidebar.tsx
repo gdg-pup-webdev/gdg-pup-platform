@@ -48,10 +48,10 @@ const NAV_ITEMS = [
     label: "Files",
     href: INTERNAL_LINKS.FILES,
     icon: Files,
-  },
+  }, 
   {
-    label: "Team Resources",
-    href: INTERNAL_LINKS.TEAM_RESOURCES,
+    label: "Learning Resources",
+    href: INTERNAL_LINKS.LEARNING_RESOURCES,
     icon: Link2,
   },
   {

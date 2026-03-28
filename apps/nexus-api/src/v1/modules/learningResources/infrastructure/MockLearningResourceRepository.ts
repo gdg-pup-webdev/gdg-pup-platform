@@ -13,53 +13,58 @@ export class MockLearningResourceRepository implements ILearningResourceReposito
 
     if (filters) {
       if (filters.search) {
-        const s = filters.search.toLowerCase();
+        const term = filters.search.toLowerCase();
         filtered = filtered.filter(r => 
-          r.props.title.toLowerCase().includes(s) || 
-          r.props.description.toLowerCase().includes(s)
+          r.props.title.toLowerCase().includes(term) || 
+          r.props.description.toLowerCase().includes(term)
         );
       }
-      if (filters.uploaderId) {
-        filtered = filtered.filter(r => r.props.uploaderId === filters.uploaderId);
+      if (filters.teamId) {
+        filtered = filtered.filter(r => r.props.teamId === filters.teamId);
       }
-      if (filters.createdFrom) {
-        const fromDate = new Date(filters.createdFrom);
-        filtered = filtered.filter(r => r.props.createdAt >= fromDate);
+      if (filters.teamName) {
+        // In mock, we can just check team object if it exists or teamId
+        filtered = filtered.filter(r => r.props.team?.name === filters.teamName);
       }
-      if (filters.createdTo) {
-        const toDate = new Date(filters.createdTo);
-        filtered = filtered.filter(r => r.props.createdAt <= toDate);
-      }
-      if (filters.tagIds && filters.tagIds.length > 0) {
-        filtered = filtered.filter(r => 
-          r.props.tagIds.some(tag => filters.tagIds!.includes(tag))
-        );
+      if (filters.eventId) {
+        filtered = filtered.filter(r => r.props.eventId === filters.eventId);
       }
     }
 
-    // Sort by latest created
-    filtered.sort((a, b) => b.props.createdAt.getTime() - a.props.createdAt.getTime());
+    filtered.sort((a, b) => b.props.updatedAt.getTime() - a.props.updatedAt.getTime());
 
     const from = (pageNumber - 1) * pageSize;
     const paginated = filtered.slice(from, from + pageSize);
 
-    return {
-      list: paginated,
-      count: filtered.length
-    };
+    return { list: paginated, count: filtered.length };
   }
 
-  async saveNew(resource: LearningResource): Promise<LearningResource> {
-    this.resources.push(resource);
-    return resource;
+  async findByTag(tag: string, pageNumber: number, pageSize: number): Promise<{ list: LearningResource[]; count: number }> {
+    const filtered = this.resources.filter(r => r.props.tags.includes(tag));
+    const from = (pageNumber - 1) * pageSize;
+    const paginated = filtered.slice(from, from + pageSize);
+    return { list: paginated, count: filtered.length };
   }
 
-  async persistUpdates(resource: LearningResource): Promise<LearningResource> {
-    const idx = this.resources.findIndex(r => r.props.id === resource.props.id);
+  async search(query: string, limit: number): Promise<LearningResource[]> {
+    const term = query.toLowerCase();
+    return this.resources.filter(r => 
+      r.props.title.toLowerCase().includes(term) || 
+      r.props.description.toLowerCase().includes(term)
+    ).slice(0, limit);
+  }
+
+  async saveNew(learningResource: LearningResource): Promise<LearningResource> {
+    this.resources.push(learningResource);
+    return learningResource;
+  }
+
+  async persistUpdates(learningResource: LearningResource): Promise<LearningResource> {
+    const idx = this.resources.findIndex(r => r.props.id === learningResource.props.id);
     if (idx !== -1) {
-      this.resources[idx] = resource;
+      this.resources[idx] = learningResource;
     }
-    return resource;
+    return learningResource;
   }
 
   async delete(id: string): Promise<void> {

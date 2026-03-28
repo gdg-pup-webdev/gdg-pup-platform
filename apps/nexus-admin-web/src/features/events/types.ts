@@ -8,13 +8,21 @@ export type EventAttendance = z.infer<typeof contract.api.v1.events.eventId.atte
 export type EventInsert = {
   title: string;
   description: string;
+  short_description: string | null;
   category: string;
+  type: string | null;
   venue: string;
   start_date: string;
   end_date: string;
   attendance_points: number;
+  max_capacity: number;
   image_url: string | null;
-  image?: File ;
+  image?: File;
+  speakers: string[];
+  tags: string[];
+  teamId: string | null;
+  bevy_event_id: string | null;
+  bevyPreviewUrl: string | null;
 };
 
 export type EventUpdate = Partial<EventInsert>;

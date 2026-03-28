@@ -144,10 +144,13 @@ export type Database = {
           id: string
           max_capacity: string | null
           short_description: string | null
+          speakers: string[] | null
           start_date: string | null
           tags: string | null
+          team_id: string | null
           thumbnail_url: string | null
           title: string
+          type: string | null
           updated_at: string
           venue: string | null
         }
@@ -164,10 +167,13 @@ export type Database = {
           id?: string
           max_capacity?: string | null
           short_description?: string | null
+          speakers?: string[] | null
           start_date?: string | null
           tags?: string | null
+          team_id?: string | null
           thumbnail_url?: string | null
           title: string
+          type?: string | null
           updated_at?: string
           venue?: string | null
         }
@@ -184,10 +190,13 @@ export type Database = {
           id?: string
           max_capacity?: string | null
           short_description?: string | null
+          speakers?: string[] | null
           start_date?: string | null
           tags?: string | null
+          team_id?: string | null
           thumbnail_url?: string | null
           title?: string
+          type?: string | null
           updated_at?: string
           venue?: string | null
         }
@@ -198,6 +207,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "scraped_gdg_events"
             referencedColumns: ["gdg_id"]
+          },
+          {
+            foreignKeyName: "event_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "events_creator_id_fkey"
@@ -538,6 +554,60 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_resource: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_id: string | null
+          id: string
+          tags: Json | null
+          team_id: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          tags?: Json | null
+          team_id?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          tags?: Json | null
+          team_id?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_resource_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_resource_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_showcase: {
         Row: {
           article_url: string
@@ -838,36 +908,6 @@ export type Database = {
           },
         ]
       }
-      study_jam: {
-        Row: {
-          created_at: string
-          creator_id: string | null
-          description: string
-          id: string
-          recording_url: string | null
-          summary: string
-          title: string
-        }
-        Insert: {
-          created_at?: string
-          creator_id?: string | null
-          description: string
-          id?: string
-          recording_url?: string | null
-          summary: string
-          title: string
-        }
-        Update: {
-          created_at?: string
-          creator_id?: string | null
-          description?: string
-          id?: string
-          recording_url?: string | null
-          summary?: string
-          title?: string
-        }
-        Relationships: []
-      }
       survey: {
         Row: {
           attendance_code: string | null
@@ -1071,45 +1111,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      team_resource: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          resource_link: string
-          resource_type: string
-          team_name: string
-          thumbnail_public_url: string
-          thumbnail_storage_reference: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_link: string
-          resource_type: string
-          team_name: string
-          thumbnail_public_url: string
-          thumbnail_storage_reference: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_link?: string
-          resource_type?: string
-          team_name?: string
-          thumbnail_public_url?: string
-          thumbnail_storage_reference?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
       test: {
         Row: {

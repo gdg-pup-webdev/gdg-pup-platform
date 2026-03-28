@@ -34,9 +34,9 @@ import { GdgMerchRouter } from "../routes/gdg-merch/gdgMerch.router";
 import { pointSystemController } from "@/v1/modules/pointsSystem";
 import { PointsHttpController } from "../routes/points/points.controller";
 import { PointsRouter } from "../routes/points/points.router";
-import { teamResourceController } from "@/v1/modules/teamResources";
-import { TeamResourcesHttpController } from "../routes/teamResources/team-resources.controller";
-import { TeamResourcesRouter } from "../routes/teamResources/team-resources.router";
+import { learningResourceController } from "@/v1/modules/learningResources";
+import { LearningResourcesHttpController } from "../routes/learning-resources/learning-resources.controller";
+import { LearningResourcesRouter } from "../routes/learning-resources/learning-resources.router";
 import { eventSystemController } from "@/v1/modules/eventSystem";
 import { EventsHttpController } from "../routes/events/events.controller";
 import { EventsRouter } from "../routes/events/events.router";
@@ -123,11 +123,11 @@ export const loadRoutes = (app: Express) => {
   const gdgMerchHttpController = new GdgMerchHttpController(gdgMerchController);
   const gdgMerchRouter = new GdgMerchRouter(gdgMerchHttpController);
 
-  const teamResourcesHttpController = new TeamResourcesHttpController(
-    teamResourceController,
+  const learningResourcesHttpController = new LearningResourcesHttpController(
+    learningResourceController,
   );
-  const teamResourcesRouter = new TeamResourcesRouter(
-    teamResourcesHttpController,
+  const learningResourcesRouter = new LearningResourcesRouter(
+    learningResourcesHttpController,
   );
 
   const authenticationHttpController = new AuthenticationHttpController(
@@ -162,7 +162,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/nfc-system", nfcSystemRouter.router);
   app.use("/gdg-merch", gdgMerchRouter.router);
   app.use("/points", pointsRouter.router);
-  app.use("/team-resources", teamResourcesRouter.router);
+  app.use("/learning-resources", learningResourcesRouter.router);
   app.use("/events", eventsRouter.router);
   app.use("/event-system", eventsRouter.router);
   app.use("/event-highlights", eventHighlightsRouter.router);

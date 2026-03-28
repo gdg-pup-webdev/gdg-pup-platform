@@ -11,7 +11,7 @@ type ResolveInput = {
 
 function matchEvent(event: Event, routeId: string, decodedRouteId: string, title?: string) {
   if (event.id === routeId || event.id === decodedRouteId) return true;
-  if (event.bevy_event_url && (event.bevy_event_url === routeId || event.bevy_event_url === decodedRouteId)) return true;
+  if (event.bevyPreviewUrl && (event.bevyPreviewUrl === routeId || event.bevyPreviewUrl === decodedRouteId)) return true;
   if (title && event.title === title) return true;
   return false;
 }

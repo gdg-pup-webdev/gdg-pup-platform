@@ -1,4 +1,4 @@
-import { IEventRepository } from "../../domain/IEventRepository";
+import { IEventRepository, EventFilters } from "../../domain/IEventRepository";
 import { Event } from "../../domain/Event";
 
 export class MockEventRepository implements IEventRepository {
@@ -74,15 +74,41 @@ export class MockEventRepository implements IEventRepository {
   async listEvents(
     pageNumber: number,
     pageSize: number,
+    filters?: EventFilters
   ): Promise<{ list: Event[]; count: number }> {
+    let filteredEvents = [...this.events];
+
+    if (filters) {
+      if (filters.type) {
+        filteredEvents = filteredEvents.filter(e => e.props.type === filters.type);
+      }
+      if (filters.teamId) {
+        filteredEvents = filteredEvents.filter(e => e.props.teamId === filters.teamId);
+      }
+      if (filters.category) {
+        filteredEvents = filteredEvents.filter(e => e.props.category === filters.category);
+      }
+      if (filters.year) {
+        filteredEvents = filteredEvents.filter(e => e.props.start_date.getFullYear() === filters.year);
+      }
+    }
+
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize;
     
-    const paginatedList = this.events.slice(from, to);
+    const paginatedList = filteredEvents.slice(from, to);
 
     return {
       list: paginatedList,
-      count: this.events.length,
+      count: filteredEvents.length,
     };
+  }
+
+  async findByType(type: string, pageNumber: number, pageSize: number): Promise<{ list: Event[]; count: number }> {
+    return this.listEvents(pageNumber, pageSize, { type });
+  }
+
+  async findByTeamId(teamId: string, pageNumber: number, pageSize: number): Promise<{ list: Event[]; count: number }> {
+    return this.listEvents(pageNumber, pageSize, { teamId });
   }
 }

@@ -1,15 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import { Container, Stack, Text, Button } from "@packages/spark-ui";
 import { AboutTheTeam } from "./AboutTheTeam";
 import { TeamHero } from "./team-section/TeamHero";
-import { StudyJamsGrid } from "./team-section/StudyJamsGrid";
-
+import { StudyJamsGrid } from "./team-section/StudyJamsGrid"; 
+import { LearningResourcesGrid } from "./team-section/LearningResourcesGrid";
 interface TeamSectionProps {
   teamName: string;
   teamSlug: string;
 }
+ 
 
 export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
+ 
+
   return (
     <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
@@ -28,7 +33,8 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
-          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 70%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         }}
       />
@@ -63,7 +69,12 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         <Stack gap="2xl" className="relative z-10 mt-30">
           {/* ── About the Team ── */}
           <Stack gap="lg" className="items-center">
-            <Text variant="heading-1" gradient="white-blue" align="center" weight="bold">
+            <Text
+              variant="heading-1"
+              gradient="white-blue"
+              align="center"
+              weight="bold"
+            >
               ABOUT THE TEAM
             </Text>
             <Text
@@ -116,7 +127,10 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
           </Stack>
 
           {/* ── Study Jams ── */}
-          <StudyJamsGrid />
+          <StudyJamsGrid teamSlug={teamSlug} />
+
+          {/* ── Learning Resources ── */}
+          <LearningResourcesGrid teamSlug={teamSlug} />
         </Stack>
       </Container>
     </div>
