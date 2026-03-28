@@ -16,6 +16,7 @@ export class EventsHttpController {
         teamId: input.query.teamId,
         teamName: input.query.teamName,
         category: input.query.category,
+        year: input.query.year,
       };
 
       const { list, count } = await this.eventController.listEvents(

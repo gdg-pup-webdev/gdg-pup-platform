@@ -210,7 +210,7 @@ export class EventSystemController {
     };
   }
 
-  async listEvents(pageNumber: number, pageSize: number, filters?: { type?: string; teamId?: string; teamName?: string }) {
+  async listEvents(pageNumber: number, pageSize: number, filters?: { type?: string; teamId?: string; teamName?: string; year?: number }) {
     const result = await this.listEventsUseCase.execute(pageNumber, pageSize, filters);
     return {
       list: result.list.map((event) =>  this.flattenEvent(event)),

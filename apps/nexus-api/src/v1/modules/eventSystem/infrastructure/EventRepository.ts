@@ -106,6 +106,11 @@ export class EventRepository implements IEventRepository {
       if (filters.category) {
         query = query.ilike("category", `%${filters.category}%`);
       }
+      if (filters.year) {
+        query = query
+          .gte("start_date", new Date(filters.year, 0, 1).toISOString())
+          .lte("start_date", new Date(filters.year, 11, 31, 23, 59, 59).toISOString());
+      }
     }
 
     const { data, count, error } = await query

@@ -5,6 +5,7 @@ export interface EventFilters {
   teamId?: string;
   teamName?: string;
   category?: string;
+  year?: number;
 }
 
 export abstract class IEventRepository {

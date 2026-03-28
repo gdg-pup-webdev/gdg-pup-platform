@@ -24,11 +24,13 @@ export const EventsList: React.FC = () => {
     type: undefined as string | undefined,
     teamId: undefined as string | undefined,
     teamName: undefined as string | undefined,
+    year: undefined as number | undefined,
   });
 
   // Local input state (values in the text fields before clicking Search)
   const [localType, setLocalType] = useState("");
   const [localTeamName, setLocalTeamName] = useState("");
+  const [localYear, setLocalYear] = useState("");
 
   // Team search state for filter
   const [teamSearch, setTeamSearch] = useState("");
@@ -151,7 +153,8 @@ export const EventsList: React.FC = () => {
     setFilters(prev => ({
       ...prev,
       type: localType.trim() || undefined,
-      teamName: localTeamName.trim() || undefined
+      teamName: localTeamName.trim() || undefined,
+      year: localYear.trim() ? parseInt(localYear) : undefined
     }));
     setPage(1);
     // Explicitly refetch to handle cases where the filter value might be the same
@@ -330,6 +333,32 @@ export const EventsList: React.FC = () => {
             )}
           </div>
 
+          {/* Year Filter */}
+          <div className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600 focus-within:border-teal-500 transition-all">
+            <Calendar size={14} className="text-gray-400" />
+            <input
+              type="number"
+              placeholder="Year (e.g. 2025)"
+              className="w-24 outline-none bg-transparent"
+              value={localYear}
+              onChange={(e) => setLocalYear(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleApplyFilters();
+              }}
+            />
+            {localYear && (
+              <X 
+                size={14} 
+                className="cursor-pointer hover:text-red-500" 
+                onClick={() => {
+                  setLocalYear("");
+                  setFilters(prev => ({ ...prev, year: undefined }));
+                  setPage(1);
+                }} 
+              />
+            )}
+          </div>
+
           <button
             onClick={handleApplyFilters}
             disabled={isFetching}
@@ -339,12 +368,13 @@ export const EventsList: React.FC = () => {
             {isFetching ? "Searching..." : "Search"}
           </button>
 
-          {(filters.teamId || filters.type || filters.teamName || searchQuery || localType || localTeamName) && (
+          {(filters.teamId || filters.type || filters.teamName || filters.year || searchQuery || localType || localTeamName || localYear) && (
             <button
               onClick={() => {
-                setFilters({ type: undefined, teamId: undefined, teamName: undefined });
+                setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
                 setLocalType("");
                 setLocalTeamName("");
+                setLocalYear("");
                 setSelectedTeamName("");
                 setTeamSearch("");
                 setSearchQuery("");
@@ -388,12 +418,13 @@ export const EventsList: React.FC = () => {
           <p className="mt-1 text-sm text-gray-500">
             {searchQuery || filters.teamId || filters.type || filters.teamName ? "Try adjusting your filters." : "Get started by creating your first community event."}
           </p>
-          {(searchQuery || filters.teamId || filters.type || filters.teamName) ? (
+          {(searchQuery || filters.teamId || filters.type || filters.teamName || filters.year) ? (
             <button 
               onClick={() => {
-                setFilters({ type: undefined, teamId: undefined, teamName: undefined });
+                setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
                 setLocalType("");
                 setLocalTeamName("");
+                setLocalYear("");
                 setSelectedTeamName("");
                 setSearchQuery("");
               }}
