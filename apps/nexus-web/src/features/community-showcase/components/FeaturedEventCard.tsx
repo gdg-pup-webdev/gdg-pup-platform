@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import { Card, Stack, Text } from "@packages/spark-ui";
+import { Event } from "@/features/events";
+import { ASSETS } from "@/lib/constants/assets";
 
 /**
  * FeaturedEventCard
@@ -16,28 +18,22 @@ import { Card, Stack, Text } from "@packages/spark-ui";
  * `onOpenModal` is called when the user clicks the "ABOUT THIS EVENT" text.
  */
 
-const ABOUT_TEXT =
-  `Join us for an empowering session on February 27, 2026, from 8:00 PM to 9:30 PM, ` +
-  `as we delve into the world of intermediate UI/UX design! In the "Interactive UI/UX Design ` +
-  `Bootcamp," we'll transform your ideas into reality by guiding you through the creation of ` +
-  `both low- and high-fidelity wireframes. Learn how to turn these wireframes into interactive ` +
-  `prototypes to showcase real user flows. We'll introduce key Figma features like Auto Layout ` +
-  `and Components that boost design efficiency and maintain consistency. To top it all off, engage ` +
-  `in our "Hero Maker: Proto-Design Challenge," a mini design task where you can apply what ` +
-  `you've learned. Become part of the design revolution and elevate your skills with GDG PUP! ` +
-  `Don't miss this opportunity to enhance your design capabilities. Book your seat today and ` +
-  `bring your vision to life!`;
-
-const TRUNCATED_ABOUT =
-  ABOUT_TEXT.length > 493 ? ABOUT_TEXT.slice(0, 493) + "..." : ABOUT_TEXT;
 
 interface FeaturedEventCardProps {
   onOpenModal: () => void;
+  event: Event
 }
 
-export function FeaturedEventCard({ onOpenModal }: FeaturedEventCardProps) {
+export function FeaturedEventCard({ onOpenModal, event }: FeaturedEventCardProps) {
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [is39Hovered, setIs39Hovered] = useState(false);
+
+
+
+const ABOUT_TEXT = event.description || "No description available for this event.";
+
+const TRUNCATED_ABOUT =
+  ABOUT_TEXT.length > 493 ? ABOUT_TEXT.slice(0, 493) + "..." : ABOUT_TEXT;
 
   return (
     <Stack gap="xs" className="mt-12">
@@ -55,7 +51,7 @@ export function FeaturedEventCard({ onOpenModal }: FeaturedEventCardProps) {
           weight="bold"
           className="z-10"
         >
-          Love at First Prototype: UI/UX in Motion
+          {event.title}
         </Text>
         <Text
           variant="body-lg"
@@ -63,7 +59,14 @@ export function FeaturedEventCard({ onOpenModal }: FeaturedEventCardProps) {
           color="on-secondary"
           className="z-10"
         >
-          MS Teams &nbsp; • &nbsp; Feb 27, 2026, 8:00 PM - 9:30 PM
+          {new Date(event.end_date).toLocaleString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })}
         </Text>
         <Text
           variant="body"
@@ -84,7 +87,7 @@ export function FeaturedEventCard({ onOpenModal }: FeaturedEventCardProps) {
           onMouseLeave={() => setIsCardHovered(false)}
         >
           <img
-            src="/community-showcase/community-showcase-event.webp"
+            src={event.image_url || ASSETS.PLACEHOLDERS.DEFAULT}
             alt=""
             className="w-full h-full object-cover rounded-[30px]"
           />
@@ -168,7 +171,7 @@ export function FeaturedEventCard({ onOpenModal }: FeaturedEventCardProps) {
               className="h-9 max-w-72 px-3 py-1 rounded-2xl outline-[1.50px] outline-offset-[-1.50px] outline-white inline-flex flex-col justify-center items-center gap-2"
             >
               <Text variant="body" color="on-secondary">
-                UI / UX Designs
+                TODO: Team Here
               </Text>
             </div>
           </Stack>

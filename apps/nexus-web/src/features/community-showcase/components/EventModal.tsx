@@ -1,5 +1,7 @@
 "use client";
 
+import { Event } from "@/features/events";
+
 /**
  * EventModal
  *
@@ -11,9 +13,10 @@
 interface EventModalProps {
   isVisible: boolean;
   onClose: () => void;
+  event: Event;
 }
 
-export function EventModal({ isVisible, onClose }: EventModalProps) {
+export function EventModal({ isVisible, onClose, event }: EventModalProps) {
   return (
     <>
       {/* Backdrop with blur and darken, animated */}
@@ -91,7 +94,10 @@ export function EventModal({ isVisible, onClose }: EventModalProps) {
                   "opacity 700ms ease 80ms, transform 800ms cubic-bezier(0.22,1,0.36,1)",
               }}
             >
-              Join us for an empowering session on February 27, 2026, from 8:00
+              {
+                event.description
+              }
+              {/* Join us for an empowering session on February 27, 2026, from 8:00
               PM to 9:30 PM, as we delve into the world of intermediate UI/UX
               design! In the &quot;Interactive UI/UX Design Bootcamp,&quot;
               we&apos;ll transform your ideas into reality by guiding you through
@@ -104,7 +110,7 @@ export function EventModal({ isVisible, onClose }: EventModalProps) {
               apply what you&apos;ve learned. Become part of the design
               revolution and elevate your skills with GDG PUP! Don&apos;t miss
               this opportunity to enhance your design capabilities. Book your
-              seat today and bring your vision to life!
+              seat today and bring your vision to life! */}
             </div>
           </div>
         </div>

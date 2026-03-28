@@ -3,6 +3,7 @@
 import { Container, Stack, Text } from "@packages/spark-ui";
 import { FeaturedEventCard } from "./FeaturedEventCard";
 import { PastEventsCarousel } from "./PastEventsCarousel";
+import { Event } from "@/features/events";
 
 /**
  * DesktopShowcase
@@ -17,9 +18,10 @@ import { PastEventsCarousel } from "./PastEventsCarousel";
 
 interface DesktopShowcaseProps {
   onOpenModal: () => void;
+  events: Event[]
 }
 
-export function DesktopShowcase({ onOpenModal }: DesktopShowcaseProps) {
+export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
   return (
     <>
       {/* ── Background decorations (desktop only) ── */}
@@ -78,10 +80,18 @@ export function DesktopShowcase({ onOpenModal }: DesktopShowcaseProps) {
           />
 
           {/* Featured event card — 1st instance */}
-          <FeaturedEventCard onOpenModal={onOpenModal} />
+          {
+            events.length > 0 && (
+              <FeaturedEventCard onOpenModal={onOpenModal} event={events[0]} />
+            )
+          }
 
           {/* Featured event card — 2nd instance (intentional duplicate) */}
-          <FeaturedEventCard onOpenModal={onOpenModal} />
+          {
+            events.length > 1 && (
+              <FeaturedEventCard onOpenModal={onOpenModal} event={events[1]} />
+            )
+          }
 
           {/* Past events carousel */}
           <PastEventsCarousel />
