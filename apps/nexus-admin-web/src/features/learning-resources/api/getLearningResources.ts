@@ -13,7 +13,6 @@ export async function getLearningResources(params: Partial<LearningResourcesQuer
           pageNumber: params.pageNumber || 1,
           pageSize: params.pageSize || 10,
           search: params.search,
-          type: params.type,
           teamId: params.teamId,
           teamName: params.teamName,
           eventId: params.eventId,

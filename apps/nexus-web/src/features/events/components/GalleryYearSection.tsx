@@ -16,7 +16,7 @@ const FALLBACK_COVER = "/pages/events/event-cover.png";
 function getHighlightsRouteId(event: Event): string {
   const candidate =
     event.id ||
-    event.bevy_event_url ||
+    event.bevyPreviewUrl ||
     `${event.start_date || "event"}-${event.title || "details"}`;
   return String(candidate).trim();
 }

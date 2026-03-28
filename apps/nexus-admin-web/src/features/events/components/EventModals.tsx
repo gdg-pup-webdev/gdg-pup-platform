@@ -223,7 +223,7 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
         end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().slice(0, 16) : "",
         attendance_points: initialData.attendance_points,
         max_capacity: initialData.max_capacity,
-        image_url: initialData.image_url,
+        image_url: initialData.image_url || null,
         speakers: initialData.speakers || [],
         tags: initialData.tags || [],
         teamId: initialData.teamId || null,
@@ -309,9 +309,9 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
         venue: data.location || prev.venue,
         start_date: data.start_date ? new Date(data.start_date).toISOString().slice(0, 16) : prev.start_date,
         end_date: data.end_date ? new Date(data.end_date).toISOString().slice(0, 16) : prev.end_date,
-        image_url: data.thumbnail_image_url || prev.image_url,
+        image_url: data.cover_image_url || prev.image_url,
         bevy_event_id: stringId,
-        bevyPreviewUrl: data.direct_url,
+        bevyPreviewUrl: data.bevy_url || null,
         tags: [...new Set([...prev.tags, ...(data.tags || [])])],
       }));
 

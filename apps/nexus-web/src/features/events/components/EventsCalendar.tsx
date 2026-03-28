@@ -26,7 +26,7 @@ function toLocalDateKey(date: Date): string {
 function getEventRouteId(event: Event): string {
   const rawId =
     event.id ||
-    event.bevy_event_url ||
+    event.bevyPreviewUrl ||
     `${event.start_date}-${event.title}`;
 
   return String(rawId).trim();

@@ -36,6 +36,10 @@ export class CreateEventFromBevyEventUseCase {
       short_description: bevyEvent.props.short_description || bevyEvent.props.description || "",
       tags: bevyEvent.props.tags || [],
       max_capacity: bevyEvent.props.max_capacity || 999999,
+      // New props
+      type: null,
+      teamId: null,
+      speakers: [],
     });
 
     await this.eventRepository.saveNew(newEvent);

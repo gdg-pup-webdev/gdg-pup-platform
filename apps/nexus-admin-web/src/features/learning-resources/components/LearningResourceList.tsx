@@ -14,7 +14,7 @@ export function LearningResourceList() {
   const [params, setParams] = useState({ 
     pageNumber: 1, 
     pageSize: 12, 
-    search: "",
+    search: undefined as string | undefined,
     teamId: undefined as string | undefined,
     teamName: undefined as string | undefined,
     eventId: undefined as string | undefined
@@ -366,9 +366,9 @@ export function LearningResourceList() {
                       ? "No resources match your active filters." 
                       : "Get started by adding your first learning resource."}
                   </p>
-                  {(params.teamId || params.eventId || params.search) ? (
+                  {(params.teamId || params.eventId || params.search || params.teamName) ? (
                     <button 
-                      onClick={() => setParams({ pageNumber: 1, pageSize: 12, search: "", teamId: undefined, eventId: undefined })}
+                      onClick={() => setParams({ pageNumber: 1, pageSize: 12, search: undefined, teamId: undefined, teamName: undefined, eventId: undefined })}
                       className="mt-6 rounded-sm bg-gray-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-gray-800"
                     >
                       Clear Filters

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { EventsHttpController } from "./events.controller";
 import { eventSystemController } from "@/v1/modules/eventSystem";
 
-const router = Router();
+const router: Router = Router();
 const controller = new EventsHttpController(eventSystemController);
 
 router.get("/", controller.listEvents);

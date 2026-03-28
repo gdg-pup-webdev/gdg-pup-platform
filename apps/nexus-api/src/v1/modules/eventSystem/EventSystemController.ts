@@ -5,7 +5,7 @@ import { CreateEvent } from "./useCases/CreateEvent";
 import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
 import { DeleteEvent } from "./useCases/DeleteEvent";
 import { GetOneEvent } from "./useCases/GetOneEvent";
-import { listEventAttendees } from "./useCases/ListEventAttendees";
+import { ListEventAttendees } from "./useCases/ListEventAttendees";
 import { ListEvents } from "./useCases/ListEvents";
 import { ListEventsByYear } from "./useCases/listEventsByYear";
 import { UpdateEvent } from "./useCases/UpdateEvent";
