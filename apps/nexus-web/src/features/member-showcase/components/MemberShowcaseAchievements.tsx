@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import { Button, Card, CardFooter, CardHeader, Stack, Text } from "@packages/spark-ui";
+import {
+  Button,
+  Card,
+  CardFooter,
+  CardHeader,
+  Stack,
+  Text,
+} from "@packages/spark-ui";
 import { ASSETS } from "@/lib/constants/assets";
 import {
   createContainerVariants,
@@ -11,18 +18,48 @@ import {
   SECTION_DELAYS,
   SECTION_VIEWPORT,
 } from "./memberShowcaseMotion";
+import { useMemberShowcases } from "../hooks/useMemberShowcases";
+import { useState } from "react";
+import Link from "next/link";
 
-const MEMBER_ACHIEVEMENT_CARDS = [
-  { src: ASSETS.MEMBER_SHOWCASE.ACHIEVEMENTS.CICADA, alt: "Cicada", title: "Lorem Ipsum" },
-  { src: ASSETS.MEMBER_SHOWCASE.ACHIEVEMENTS.OMAGAD, alt: "Omagad", title: "Lorem Ipsum" },
-  { src: ASSETS.MEMBER_SHOWCASE.ACHIEVEMENTS.SPARKPLUG, alt: "Sparkplug", title: "Lorem Ipsum" },
-];
+// const MEMBER_ACHIEVEMENT_CARDS = [
+//   { src: ASSETS.MEMBER_SHOWCASE.ACHIEVEMENTS.CICADA, alt: "Cicada", title: "Lorem Ipsum" },
+//   { src: ASSETS.MEMBER_SHOWCASE.ACHIEVEMENTS.OMAGAD, alt: "Omagad", title: "Lorem Ipsum" },
+//   { src: ASSETS.MEMBER_SHOWCASE.ACHIEVEMENTS.SPARKPLUG, alt: "Sparkplug", title: "Lorem Ipsum" },
+// ];
 
-const achievementsSectionVariants = createSectionVariants(SECTION_DELAYS.achievements);
+const achievementsSectionVariants = createSectionVariants(
+  SECTION_DELAYS.achievements,
+);
 const achievementsListVariants = createContainerVariants(0.18, 0.14);
 
 export function MemberShowcaseAchievements() {
   const prefersReduced = useReducedMotion();
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(3);
+  const { data, error, isLoading } = useMemberShowcases(page, pageSize);
+
+  const MEMBER_ACHIEVEMENT_CARDS = data
+    ? data.data.map((showcase) => ({
+        ...showcase,
+        src: showcase.thumbnailUrl,
+        alt: showcase.title,
+        title: showcase.title,
+      }))
+    : [];
+
+  console.log("Member Showcases Data:", MEMBER_ACHIEVEMENT_CARDS);
+
+  const handleOnNextPage = async () => {
+    setPage((prev) =>
+      Math.min(prev + 1, data ? data.meta.totalPages : prev + 1),
+    );
+  };
+
+  const handleOnPreviousPage = async () => {
+    setPage((prev) => Math.max(prev - 1, 1));
+  };
 
   return (
     <motion.div
@@ -33,7 +70,12 @@ export function MemberShowcaseAchievements() {
     >
       <Stack gap="xl" className="mt-16">
         <Stack className="gap-1">
-          <Text variant="heading-4" gradient="white-blue" align="center" weight="bold">
+          <Text
+            variant="heading-4"
+            gradient="white-blue"
+            align="center"
+            weight="bold"
+          >
             Member Achievements
           </Text>
           <Text variant="heading-6" color="on-primary" align="center">
@@ -51,6 +93,8 @@ export function MemberShowcaseAchievements() {
               size="lg"
               subVariant="blue"
               variant="colored"
+              onClick={handleOnPreviousPage}
+              disabled={page === 1}
             >
               ←
             </Button>
@@ -64,7 +108,7 @@ export function MemberShowcaseAchievements() {
               <motion.div
                 key={`${card.alt}-${index}`}
                 className={index > 0 ? "hidden md:block" : "block"}
-                variants={prefersReduced ? undefined : ITEM_VARIANTS}
+                // variants={prefersReduced ? undefined : ITEM_VARIANTS}
               >
                 <Card className="relative w-full overflow-hidden bg-[#1d2231]/85 shadow-[0_7px_18px_rgba(0,0,0,0.25)] backdrop-blur-md">
                   <div className="pointer-events-none absolute inset-0 z-0">
@@ -87,9 +131,21 @@ export function MemberShowcaseAchievements() {
                       {card.title}
                     </CardHeader>
                     <CardFooter className="mt-4 flex justify-end md:mt-5">
-                      <Button className="w-fit" size="lg" subVariant="blue" variant="colored">
-                        <Image src={ASSETS.MEMBER_SHOWCASE.ICONS.LINK} alt="Link" width={27} height={27} />
-                      </Button>
+                      <Link href={card.articleUrl || "#"}>
+                        <Button
+                          className="w-fit"
+                          size="lg"
+                          subVariant="blue"
+                          variant="colored"
+                        >
+                          <Image
+                            src={ASSETS.MEMBER_SHOWCASE.ICONS.LINK}
+                            alt="Link"
+                            width={27}
+                            height={27}
+                          />
+                        </Button>
+                      </Link>
                     </CardFooter>
                   </div>
                 </Card>
@@ -103,6 +159,8 @@ export function MemberShowcaseAchievements() {
               size="lg"
               subVariant="blue"
               variant="colored"
+              onClick={handleOnNextPage}
+              disabled={page === (data ? data.meta.totalPages : 1)}
             >
               →
             </Button>

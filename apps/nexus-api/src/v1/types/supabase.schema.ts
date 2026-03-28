@@ -572,6 +572,39 @@ export const publicGdgMerchUpdateSchema = z.object({
   updated_at: z.string().optional().nullable(),
 });
 
+export const publicMemberShowcaseRowSchema = z.object({
+  article_url: z.string(),
+  created_at: z.string(),
+  date: z.string(),
+  description: z.string(),
+  id: z.string(),
+  showcased_members: z.array(z.string()),
+  thumbnail_url: z.string(),
+  title: z.string(),
+});
+
+export const publicMemberShowcaseInsertSchema = z.object({
+  article_url: z.string(),
+  created_at: z.string().optional(),
+  date: z.string(),
+  description: z.string(),
+  id: z.string(),
+  showcased_members: z.array(z.string()).optional(),
+  thumbnail_url: z.string(),
+  title: z.string(),
+});
+
+export const publicMemberShowcaseUpdateSchema = z.object({
+  article_url: z.string().optional(),
+  created_at: z.string().optional(),
+  date: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  showcased_members: z.array(z.string()).optional(),
+  thumbnail_url: z.string().optional(),
+  title: z.string().optional(),
+});
+
 export const publicNfcCardsRowSchema = z.object({
   activated_at: z.string().nullable(),
   created_at: z.string(),

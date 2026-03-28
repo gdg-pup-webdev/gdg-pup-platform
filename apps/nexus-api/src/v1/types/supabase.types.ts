@@ -538,6 +538,39 @@ export type Database = {
         }
         Relationships: []
       }
+      member_showcase: {
+        Row: {
+          article_url: string
+          created_at: string
+          date: string
+          description: string
+          id: string
+          showcased_members: string[]
+          thumbnail_url: string
+          title: string
+        }
+        Insert: {
+          article_url: string
+          created_at?: string
+          date: string
+          description: string
+          id: string
+          showcased_members?: string[]
+          thumbnail_url: string
+          title: string
+        }
+        Update: {
+          article_url?: string
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          showcased_members?: string[]
+          thumbnail_url?: string
+          title?: string
+        }
+        Relationships: []
+      }
       nfc_cards: {
         Row: {
           activated_at: string | null

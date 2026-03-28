@@ -361,6 +361,13 @@ export const ASSETS = {
         ELEMENT_BOTTOMLEFT: "/leaderboard/leaderboard-element-bottomleft.svg",
         DIAL_GROUP_248: "/leaderboard/leaderboard-dial-group-248.svg",
     },
+
+
+    
+    // ─── PLACEHOLDERS ──────────────────────────────────────────────────────────────
+    PLACEHOLDERS: {
+        DEFAULT : "/placeholders/default.webp",
+    }
 } as const;
 
 /** Convenience type for any value in the ASSETS tree */
