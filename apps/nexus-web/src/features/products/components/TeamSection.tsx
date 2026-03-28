@@ -5,6 +5,7 @@ import { Container, Stack, Text, Button } from "@packages/spark-ui";
 import { AboutTheTeam } from "./AboutTheTeam";
 import { TeamHero } from "./team-section/TeamHero";
 import { StudyJamsGrid } from "./team-section/StudyJamsGrid"; 
+import { LearningResourcesGrid } from "./team-section/LearningResourcesGrid";
 interface TeamSectionProps {
   teamName: string;
   teamSlug: string;
@@ -127,6 +128,9 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
 
           {/* ── Study Jams ── */}
           <StudyJamsGrid teamSlug={teamSlug} />
+
+          {/* ── Learning Resources ── */}
+          <LearningResourcesGrid teamSlug={teamSlug} />
         </Stack>
       </Container>
     </div>
