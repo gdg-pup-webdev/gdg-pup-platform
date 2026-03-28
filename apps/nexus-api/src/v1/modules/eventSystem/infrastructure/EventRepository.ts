@@ -12,6 +12,53 @@ export class EventRepository implements IEventRepository {
   private readonly tableName = "event";
 
   private mapToDomain(row: any): Event {
+    /**
+     * Helper to clean array fields from corrupted data.
+     * Handles: 
+     * 1. Actual arrays returned by Supabase
+     * 2. Corrupted nested string arrays like ["[\"a\"]"]
+     * 3. Legacy comma-separated strings
+     * 4. Artifact strings like "[]" or ""
+     */
+    const cleanArray = (val: any): string[] => {
+      if (!val) return [];
+      
+      let workingArray: any[] = [];
+      
+      if (Array.isArray(val)) {
+        workingArray = val;
+      } else if (typeof val === 'string') {
+        if (val === "[]" || val === "") return [];
+        // Try parsing as JSON first (handles '["a", "b"]')
+        try {
+          const parsed = JSON.parse(val);
+          if (Array.isArray(parsed)) workingArray = parsed;
+          else workingArray = [val];
+        } catch (e) {
+          // Fallback to comma separated
+          workingArray = val.split(",");
+        }
+      }
+
+      // Final pass: filter out empty/nulls and RECURSIVELY check for stringified arrays 
+      // which is what caused the ["[\"a\"]"] issue
+      return workingArray
+        .map(item => {
+          if (typeof item !== 'string') return String(item);
+          const trimmed = item.trim();
+          // If the string itself looks like an array, try to parse it (handles the corruption case)
+          if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+            try {
+              const nested = JSON.parse(trimmed);
+              if (Array.isArray(nested)) return nested;
+            } catch (e) {}
+          }
+          return trimmed;
+        })
+        .flat() // Un-nest if any strings were parsed into arrays
+        .filter(item => item && item !== "[]" && item !== "");
+    };
+
     return Event.hydrate({
       id: row.id,
       title: row.title,
@@ -28,12 +75,10 @@ export class EventRepository implements IEventRepository {
       creatorId: row.creator_id || "",
       image_url: row.thumbnail_url || null,
       bevyPreviewUrl: row.bevy_preview_url || null,
-      // Handle tags as array (Postgres _text)
-      tags: Array.isArray(row.tags) ? row.tags : (row.tags ? row.tags.split(",") : []),
+      tags: cleanArray(row.tags),
       max_capacity: row.max_capacity ? parseInt(row.max_capacity) : 999999,
       short_description: row.short_description || null,
-      // New props
-      speakers: row.speakers || [],
+      speakers: cleanArray(row.speakers),
       type: row.type || null,
       teamId: row.team_id || null,
     });
@@ -49,6 +94,11 @@ export class EventRepository implements IEventRepository {
         gdg_event_id = parsed;
       }
     }
+
+    // Pass arrays directly to Supabase client, don't stringify
+    // Multer/API layer should have already ensured these are clean arrays
+    const cleanTags = Array.isArray(props.tags) ? props.tags.filter(t => t && t !== "[]") : [];
+    const cleanSpeakers = Array.isArray(props.speakers) ? props.speakers.filter(s => s && s !== "[]") : [];
 
     return {
       id: props.id,
@@ -67,10 +117,9 @@ export class EventRepository implements IEventRepository {
       bevy_preview_url: props.bevyPreviewUrl || null,
       max_capacity: props.max_capacity.toString(),
       short_description: props.short_description,
-      tags: props.tags, // Should be array for Postgres
+      tags: cleanTags, 
       creator_id: props.creatorId || null,
-      // New props
-      speakers: props.speakers,
+      speakers: cleanSpeakers,
       type: props.type,
       team_id: props.teamId,
     };
@@ -84,7 +133,6 @@ export class EventRepository implements IEventRepository {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    // Use !inner join when teamName is present to filter parent rows
     const selectStr = filters?.teamName 
       ? "*, team!inner(name)" 
       : "*, team(name)";

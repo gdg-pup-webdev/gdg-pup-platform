@@ -6,7 +6,7 @@ const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
   cybersecurity: "Cybersecurity",
   "data-ml": "Data & ML",
-  executives: "Executives",
+  executives: "Executive team",
   iot: "Internet of Things (IoT)",
   "project-management": "Project Management",
   "ui-ux": "UI/UX Design",
@@ -52,7 +52,8 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
                   : "Study Jam"
               }
               description={
-                studyjam.description ||
+                studyjam.description.slice(0, 200) +
+                (studyjam.description.length > 200 ? "..." : "")||
                 "Join us for an engaging Study Jam where we dive deep into the latest trends and technologies in the industry. Whether you're a beginner or an expert, there's something for everyone to learn and explore."
               }
               category={
@@ -71,7 +72,11 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
                 </span> */}
                 </>
               }
-              date="02/27/26"
+              date={new Date(studyjam.start_date).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             />
           ))}
       </div>

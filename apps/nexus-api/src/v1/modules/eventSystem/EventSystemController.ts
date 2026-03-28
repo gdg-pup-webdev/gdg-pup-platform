@@ -5,7 +5,7 @@ import { CreateEvent } from "./useCases/CreateEvent";
 import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
 import { DeleteEvent } from "./useCases/DeleteEvent";
 import { GetOneEvent } from "./useCases/GetOneEvent";
-import { ListEventAttendees } from "./useCases/ListEventAttendees";
+import { listEventAttendees } from "./useCases/ListEventAttendees";
 import { ListEvents } from "./useCases/ListEvents";
 import { ListEventsByYear } from "./useCases/listEventsByYear";
 import { UpdateEvent } from "./useCases/UpdateEvent";
@@ -19,7 +19,7 @@ export class EventSystemController {
     private readonly createEventFromBevyEventUseCase: CreateEventFromBevyEventUseCase,
     private readonly deleteEventUseCase: DeleteEvent,
     private readonly getOneEventUseCase: GetOneEvent,
-    private readonly listEventAttendeesUseCase: ListEventAttendees,
+    private readonly listEventAttendeesUseCase: any,
     private readonly listEventsUseCase: ListEvents,
     private readonly updateEventUseCase: UpdateEvent,
     private readonly listEventsByYearUseCase: ListEventsByYear,
@@ -54,10 +54,29 @@ export class EventSystemController {
     }
   }
 
+  /**
+   * Helper to ensure array fields are actual arrays.
+   * This handles cases where multipart/form-data might have stringified the array.
+   */
+  private ensureArray(val: any): string[] {
+    if (!val) return [];
+    if (Array.isArray(val)) return val.filter(item => typeof item === 'string');
+    if (typeof val === 'string') {
+      try {
+        const parsed = JSON.parse(val);
+        if (Array.isArray(parsed)) return parsed.filter(item => typeof item === 'string');
+      } catch (e) {
+        // Not JSON, maybe comma separated
+        return val.split(',').map(s => s.trim()).filter(Boolean);
+      }
+    }
+    return [];
+  }
+
   async listEventsByYear(pageNumber: number, pageSize: number, year: number) { 
     const result = await this.listEventsByYearUseCase.execute(pageNumber, pageSize, year);
     return {
-      list: result.list.map(this.flattenEvent),
+      list: result.list.map(this.flattenEvent.bind(this)),
       count: result.count,
     };
   }
@@ -110,10 +129,10 @@ export class EventSystemController {
     beviPreviewUrl?: string;
     image: any | null; // This is the file object from TypedRest
     image_url?: string | null;
-    tags?: string[];
+    tags?: any;
     max_capacity?: number;
     short_description?: string;
-    speakers?: string[];
+    speakers?: any;
     type?: string;
     teamId?: string;
     bevy_event_id?: string | null;
@@ -140,10 +159,10 @@ export class EventSystemController {
         bevy_event_id: bevy_event_id || null,
         bevyPreviewUrl: beviPreviewUrl || null,
         image_url: image_url || null,
-        tags: tags || [],
+        tags: this.ensureArray(tags),
         max_capacity: max_capacity || 99999999,
         short_description: short_description || null,
-        speakers: speakers || [],
+        speakers: this.ensureArray(speakers),
         type: type || null,
         teamId: teamId || null,
       },
@@ -199,7 +218,7 @@ export class EventSystemController {
       eventId,
     );
     return {
-      list: result.list.map((attendee) => ({
+      list: result.list.map((attendee: any) => ({
         id: attendee.props.id,
         userId: attendee.props.userId,
         eventId: attendee.props.eventId,
@@ -224,6 +243,10 @@ export class EventSystemController {
     if (dto.start_date) updateProps.start_date = new Date(dto.start_date);
     if (dto.end_date) updateProps.end_date = new Date(dto.end_date);
     if (dto.bevyPreviewUrl) updateProps.bevyPreviewUrl = dto.bevyPreviewUrl;
+    
+    // Explicitly handle array fields that might be stringified in multipart
+    if (dto.tags) updateProps.tags = this.ensureArray(dto.tags);
+    if (dto.speakers) updateProps.speakers = this.ensureArray(dto.speakers);
 
     let fileToUpload: FileToUpload | null = null;
     if (dto.image && typeof dto.image.arrayBuffer === "function") {
