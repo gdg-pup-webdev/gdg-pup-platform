@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { X, Loader2, AlertTriangle, Calendar, MapPin, Users, CheckCircle, Plus, Trash2, Edit2, Type, FileText, Star, Image as ImageIcon } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { X, Loader2, AlertTriangle, Calendar, MapPin, Users, CheckCircle, Plus, Trash2, Edit2, Type, FileText, Star, Image as ImageIcon, Tags, Info } from "lucide-react";
 import { Event, EventInsert, EventUpdate, EventAttendance } from "../types";
 import { useListAttendees } from "../hooks/useListAttendees";
 import { useCheckinToEvent } from "../hooks/useCheckinToEvent";
 import { useGetBevyEvents } from "@/features/bevy-events/hooks/useGetBevyEvents";
+import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
 import { Pagination } from "@/components/admin/Pagination";
 import { WireframeUploadImage } from "@/components/wireframeUi/WireframeUploadImage";
@@ -162,14 +163,41 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
     start_date: "",
     end_date: "",
     attendance_points: 10,
-    image_url: null,  
+    image_url: null,
+    speakers: [],
+    type: null,
+    teamId: null,
   });
 
+  const [speakerInput, setSpeakerInput] = useState("");
+  
+  // Team search state
+  const [teamSearchQuery, setTeamSearchQuery] = useState("");
+  const [debouncedTeamSearch, setDebouncedTeamSearch] = useState("");
+  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+  const [selectedTeamName, setSelectedTeamName] = useState("");
+  const teamDropdownRef = useRef<HTMLDivElement>(null);
+
+  const { data: teamsResponse, isLoading: isSearchingTeams } = useSearchTeams(debouncedTeamSearch);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedTeamSearch(teamSearchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [teamSearchQuery]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (teamDropdownRef.current && !teamDropdownRef.current.contains(event.target as Node)) {
+        setShowTeamDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const setThumbnail = (image: File | undefined) => {
-    setFormData({ ...formData,image: image });
+    setFormData({ ...formData, image: image });
   };
-
-
 
   useEffect(() => {
     if (initialData) {
@@ -181,8 +209,12 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
         start_date: initialData.start_date ? new Date(initialData.start_date).toISOString().slice(0, 16) : "",
         end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().slice(0, 16) : "",
         attendance_points: initialData.attendance_points,
-        image_url: initialData.image_url, 
+        image_url: initialData.image_url,
+        speakers: initialData.speakers || [],
+        type: initialData.type || null,
+        teamId: initialData.teamId || null,
       });
+      setSelectedTeamName(initialData.teamId ? `Selected Team (${initialData.teamId.substring(0,8)}...)` : "");
     } else {
       setFormData({
         title: "",
@@ -193,14 +225,40 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
         end_date: "",
         attendance_points: 10,
         image_url: null,
+        speakers: [],
+        type: null,
+        teamId: null,
       });
+      setSelectedTeamName("");
     }
   }, [initialData, isOpen]);
+
+  const handleAddSpeaker = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && speakerInput.trim()) {
+      e.preventDefault();
+      if (!formData.speakers.includes(speakerInput.trim())) {
+        setFormData(prev => ({ ...prev, speakers: [...prev.speakers, speakerInput.trim()] }));
+      }
+      setSpeakerInput("");
+    }
+  };
+
+  const removeSpeaker = (speakerToRemove: string) => {
+    setFormData(prev => ({ ...prev, speakers: prev.speakers.filter(s => s !== speakerToRemove) }));
+  };
+
+  const handleSelectTeam = (team: any) => {
+    setFormData(prev => ({ ...prev, teamId: team.id }));
+    setSelectedTeamName(team.name);
+    setShowTeamDropdown(false);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
   };
+
+  const teamResults = teamsResponse?.body?.data || [];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Event" : "Create New Event"}>
@@ -247,6 +305,97 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
+
+          {/* New Fields: Type and Team */}
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Type</label>
+            <input
+              type="text"
+              placeholder="e.g. Workshop, Seminar"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.type || ""}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value || null })}
+            />
+          </div>
+
+          <div className="relative" ref={teamDropdownRef}>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Related Team</label>
+            <div className="relative">
+              <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search team..."
+                className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
+                  formData.teamId ? "border-teal-500 bg-teal-50/30" : "border-gray-200 bg-white"
+                }`}
+                value={formData.teamId ? selectedTeamName : teamSearchQuery}
+                onChange={(e) => {
+                  setTeamSearchQuery(e.target.value);
+                  if (!formData.teamId) setShowTeamDropdown(true);
+                }}
+                onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
+                readOnly={!!formData.teamId}
+              />
+              {formData.teamId ? (
+                <button 
+                  type="button"
+                  onClick={() => { setFormData({...formData, teamId: null}); setSelectedTeamName(""); }}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
+                >
+                  <X size={16} />
+                </button>
+              ) : isSearchingTeams ? (
+                <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                  <Loader2 size={16} className="animate-spin text-gray-400" />
+                </div>
+              ) : null}
+            </div>
+            
+            {showTeamDropdown && teamSearchQuery.length >= 2 && (
+              <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
+                {teamResults.length > 0 ? (
+                  teamResults.map((team: any) => (
+                    <button
+                      key={team.id}
+                      type="button"
+                      onClick={() => handleSelectTeam(team)}
+                      className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
+                    >
+                      <span className="text-sm font-bold text-gray-900">{team.name}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm text-gray-500 italic">No teams found.</div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* New Field: Speakers */}
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Speakers</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {formData.speakers.map(speaker => (
+                <span key={speaker} className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                  {speaker}
+                  <button type="button" onClick={() => removeSpeaker(speaker)} className="hover:text-red-500">
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                className="w-full rounded-sm border border-gray-200 py-2.5 px-4 text-sm outline-none focus:border-teal-500"
+                placeholder="Type speaker name and press Enter..."
+                value={speakerInput}
+                onChange={(e) => setSpeakerInput(e.target.value)}
+                onKeyDown={handleAddSpeaker}
+              />
+            </div>
+          </div>
+
           <div>
             <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Start Date</label>
             <input
@@ -374,9 +523,16 @@ export function EventDetailsModal({ isOpen, onClose, event, onEdit, onDelete }: 
           )}
           <div className="flex-1">
             <h3 className="text-xl font-bold text-gray-900">{event.title}</h3>
-            <span className="mt-1 inline-block rounded-full bg-teal-50 px-3 py-1 text-[10px] font-bold text-teal-600 uppercase tracking-widest">
-              {event.category}
-            </span>
+            <div className="mt-1 flex flex-wrap gap-2">
+              <span className="inline-block rounded-full bg-teal-50 px-3 py-1 text-[10px] font-bold text-teal-600 uppercase tracking-widest">
+                {event.category}
+              </span>
+              {event.type && (
+                <span className="inline-block rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold text-blue-600 uppercase tracking-widest">
+                  {event.type}
+                </span>
+              )}
+            </div>
             <div className="mt-3 space-y-1.5">
               <div className="flex items-center text-xs text-gray-600">
                 <Calendar size={14} className="mr-2 text-teal-600" />
@@ -386,12 +542,37 @@ export function EventDetailsModal({ isOpen, onClose, event, onEdit, onDelete }: 
                 <MapPin size={14} className="mr-2 text-teal-600" />
                 {event.venue || "No venue specified"}
               </div>
+              {event.teamId && (
+                <div className="flex items-center text-xs text-gray-600">
+                  <Users size={14} className="mr-2 text-teal-600" />
+                  Team ID: {event.teamId}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
+        {event.speakers && event.speakers.length > 0 && (
+          <div className="rounded-sm border border-gray-100 bg-white p-4">
+            <h4 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+              <Users size={12} />
+              Speakers
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {event.speakers.map(speaker => (
+                <span key={speaker} className="rounded-sm bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700 border border-gray-100">
+                  {speaker}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="rounded-sm border border-gray-100 bg-gray-50/50 p-4">
-          <h4 className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Description</h4>
+          <h4 className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+            <Info size={12} />
+            Description
+          </h4>
           <p className="text-sm leading-relaxed text-gray-700">{event.description}</p>
         </div>
 

@@ -3,19 +3,11 @@ import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+import { EventUpdate } from "../types";
 
 type UpdateEventInput = {
   eventId: string;
-  data: {
-    title?: string;
-    description?: string;
-    category?: string;
-    venue?: string;
-    start_date?: string;
-    end_date?: string;
-    attendance_points?: number;
-    image_url?: string | null;
-  };
+  data: EventUpdate;
 };
 
 export const useUpdateEvent = () => {
@@ -23,12 +15,17 @@ export const useUpdateEvent = () => {
 
   return useMutation({
     mutationFn: async ({ eventId, data }: UpdateEventInput) => {
+      // Remove image from data as it's handled separately if needed
+      // Note: The current contract/controller for PATCH /v1/events/:id doesn't seem to support file upload yet
+      // If it did, it would be in the 'files' property of callEndpoint
+      const { image, ...updateData } = data;
+
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.events.eventId.PATCH,
         {
           params: { eventId },
-          body: { data },
+          body: { data: updateData as any },
         }
       );
 

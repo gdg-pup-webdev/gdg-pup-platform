@@ -14,7 +14,11 @@ export type EventInsert = {
   end_date: string;
   attendance_points: number;
   image_url: string | null;
-  image?: File ;
+  image?: File;
+  // New fields
+  speakers: string[];
+  type: string | null;
+  teamId: string | null;
 };
 
 export type EventUpdate = Partial<EventInsert>;

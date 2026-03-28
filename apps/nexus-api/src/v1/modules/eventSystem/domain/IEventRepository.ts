@@ -1,5 +1,11 @@
 import { Event } from "./Event";
 
+export interface EventFilters {
+  type?: string;
+  teamId?: string;
+  category?: string;
+}
+
 export abstract class IEventRepository {
   abstract saveNew(event: Event): Promise<Event>;
 
@@ -14,6 +20,7 @@ export abstract class IEventRepository {
   abstract listEvents(
     pageNumber: number,
     pageSize: number,
+    filters?: EventFilters
   ): Promise<{ list: Event[]; count: number }>;
 
   abstract listEventsByYear(
@@ -21,4 +28,8 @@ export abstract class IEventRepository {
     pageSize: number,
     year: number,
   ): Promise<{ list: Event[]; count: number }>;
+
+  abstract findByType(type: string, pageNumber: number, pageSize: number): Promise<{ list: Event[]; count: number }>;
+  
+  abstract findByTeamId(teamId: string, pageNumber: number, pageSize: number): Promise<{ list: Event[]; count: number }>;
 }

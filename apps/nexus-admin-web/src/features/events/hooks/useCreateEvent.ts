@@ -5,38 +5,31 @@ import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { EventInsert } from "../types";
 
-type CreateEventInput = {
-  title: string;
-  description: string;
-  category: string;
-  venue: string;
-  start_date: string;
-  end_date: string;
-  attendance_points: number;
-  image_url: string | null;
-};
-
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (input: EventInsert) => {
+      // Create a temporary object for the data to ensure we match the contract
+      const { image, ...eventData } = input;
+      
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.events.POST,
         {
           body: {
             data: {
-              ...input,
-              bevy_event_id: null, // Ensure bevy_event_id is set to null for manual event creation
+              ...eventData,
+              bevy_event_id: null,
               tags: [],
               short_description: null,
-              bevy_event_url: null,
-              max_capacity: null,
+              bevyPreviewUrl: null,
+              max_capacity: 999999,
+              creatorId: "00000000-0000-0000-0000-000000000000", // This will be overridden by the backend controller from auth
             },
           },
           files: {
-            thumbnail: input.image,
+            thumbnail: image,
           },
         },
       );

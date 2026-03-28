@@ -6,8 +6,6 @@ import { IAttendanceRepository } from "./domain/IAttendanceRepository";
 import { IBevyEventService } from "./domain/IBevyEventService";
 import { IEventPointsService } from "./domain/IEventPointsService";
 
-// export { Event, Attendance, IEventRepository, IAttendanceRepository, IBevyEventService, IEventPointsService };
-
 // Use Cases
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
 import { CreateEvent } from "./useCases/CreateEvent";
@@ -17,6 +15,9 @@ import { GetOneEvent } from "./useCases/GetOneEvent";
 import { ListEventAttendees } from "./useCases/ListEventAttendees";
 import { ListEvents } from "./useCases/ListEvents";
 import { UpdateEvent } from "./useCases/UpdateEvent";
+import { GetEventsByType } from "./useCases/GetEventsByType";
+import { GetEventsByTeam } from "./useCases/GetEventsByTeam";
+import { ListEventsByYear } from "./useCases/listEventsByYear";
 
 export {
   CheckinToEvent,
@@ -27,6 +28,8 @@ export {
   ListEventAttendees,
   ListEvents,
   UpdateEvent,
+  GetEventsByType,
+  GetEventsByTeam,
 };
 
 // Infrastructure (Real implementations)
@@ -43,8 +46,6 @@ import { bevyEventController } from "../bevyEvents";
 import { EventSystemController } from "./EventSystemController";
 import { FileStorageAdapter } from "./infrastructure/FileStorageAdapter";
 import { filesModuleController } from "../filesModule"; 
-import { ListEventsByYear } from "./useCases/listEventsByYear";
-export { EventSystemController };
 
 // ============================================================================
 // DEPENDENCY INJECTION & INITIALIZATION
@@ -77,8 +78,9 @@ const listEventAttendeesUseCase = new ListEventAttendees(
 );
 const listEventsUseCase = new ListEvents(eventRepositoryAdapter);
 const updateEventUseCase = new UpdateEvent(eventRepositoryAdapter);
-
 const listEventsByYearUseCase = new ListEventsByYear(eventRepositoryAdapter);
+const getEventsByTypeUseCase = new GetEventsByType(eventRepositoryAdapter);
+const getEventsByTeamUseCase = new GetEventsByTeam(eventRepositoryAdapter);
 
 // Initialize Controller
 export const eventSystemController = new EventSystemController(
@@ -89,5 +91,10 @@ export const eventSystemController = new EventSystemController(
   getOneEventUseCase,
   listEventAttendeesUseCase,
   listEventsUseCase,
-  updateEventUseCase,listEventsByYearUseCase
+  updateEventUseCase,
+  listEventsByYearUseCase,
+  getEventsByTypeUseCase,
+  getEventsByTeamUseCase
 );
+
+export { EventSystemController };

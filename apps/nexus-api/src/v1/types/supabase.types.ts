@@ -144,10 +144,13 @@ export type Database = {
           id: string
           max_capacity: string | null
           short_description: string | null
+          speakers: string[] | null
           start_date: string | null
           tags: string | null
+          team_id: string | null
           thumbnail_url: string | null
           title: string
+          type: string | null
           updated_at: string
           venue: string | null
         }
@@ -164,10 +167,13 @@ export type Database = {
           id?: string
           max_capacity?: string | null
           short_description?: string | null
+          speakers?: string[] | null
           start_date?: string | null
           tags?: string | null
+          team_id?: string | null
           thumbnail_url?: string | null
           title: string
+          type?: string | null
           updated_at?: string
           venue?: string | null
         }
@@ -184,10 +190,13 @@ export type Database = {
           id?: string
           max_capacity?: string | null
           short_description?: string | null
+          speakers?: string[] | null
           start_date?: string | null
           tags?: string | null
+          team_id?: string | null
           thumbnail_url?: string | null
           title?: string
+          type?: string | null
           updated_at?: string
           venue?: string | null
         }
@@ -198,6 +207,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "scraped_gdg_events"
             referencedColumns: ["gdg_id"]
+          },
+          {
+            foreignKeyName: "event_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "events_creator_id_fkey"
@@ -558,7 +574,7 @@ export type Database = {
           id?: string
           tags?: Json | null
           team_id?: string | null
-          thumbnail_url: string | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
           url: string
@@ -570,9 +586,8 @@ export type Database = {
           id?: string
           tags?: Json | null
           team_id?: string | null
-          thumbnail_url?: string
+          thumbnail_url?: string | null
           title?: string
-          type?: string
           updated_at?: string
           url?: string
         }
@@ -601,7 +616,7 @@ export type Database = {
           description: string
           id: string
           showcased_members: string[]
-          thumbnail_url: string | null
+          thumbnail_url: string
           title: string
         }
         Insert: {
@@ -611,7 +626,7 @@ export type Database = {
           description: string
           id: string
           showcased_members?: string[]
-          thumbnail_url: string | null
+          thumbnail_url: string
           title: string
         }
         Update: {

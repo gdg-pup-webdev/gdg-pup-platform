@@ -9,6 +9,8 @@ import { ListEventAttendees } from "./useCases/ListEventAttendees";
 import { ListEvents } from "./useCases/ListEvents";
 import { ListEventsByYear } from "./useCases/listEventsByYear";
 import { UpdateEvent } from "./useCases/UpdateEvent";
+import { GetEventsByType } from "./useCases/GetEventsByType";
+import { GetEventsByTeam } from "./useCases/GetEventsByTeam";
 
 export class EventSystemController {
   constructor(
@@ -21,9 +23,9 @@ export class EventSystemController {
     private readonly listEventsUseCase: ListEvents,
     private readonly updateEventUseCase: UpdateEvent,
     private readonly listEventsByYearUseCase: ListEventsByYear,
+    private readonly getEventsByTypeUseCase: GetEventsByType,
+    private readonly getEventsByTeamUseCase: GetEventsByTeam,
   ) {}
-
-
 
   private flattenEvent(event: Event) {
     return {
@@ -45,6 +47,10 @@ export class EventSystemController {
       tags: event.props.tags,
       max_capacity: event.props.max_capacity,
       short_description: event.props.short_description,
+      // New props
+      speakers: event.props.speakers,
+      type: event.props.type,
+      teamId: event.props.teamId,
     }
   }
 
@@ -87,6 +93,10 @@ export class EventSystemController {
     tags, 
     max_capacity,
     short_description,
+    // New props
+    speakers,
+    type,
+    teamId,
   }: {
     creatorId: string;
     title: string;
@@ -101,7 +111,10 @@ export class EventSystemController {
     tags?: string[];
     max_capacity?: number;
     short_description?: string;
-
+    // New props
+    speakers?: string[];
+    type?: string;
+    teamId?: string;
   }) {
     const result = await this.createEventUseCase.execute(
       {
@@ -118,6 +131,10 @@ export class EventSystemController {
         tags: tags || [],
         max_capacity: max_capacity || 99999999,
         short_description: short_description || null,
+        // New props
+        speakers: speakers || [],
+        type: type || null,
+        teamId: teamId || null,
       },
       image? new FileToUpload({
         buffer: await image.arrayBuffer()  ,
@@ -148,6 +165,22 @@ export class EventSystemController {
     return this.flattenEvent(result);
   }
 
+  async getEventsByType(type: string, pageNumber: number, pageSize: number) {
+    const result = await this.getEventsByTypeUseCase.execute(type, pageNumber, pageSize);
+    return {
+      list: result.list.map((event) => this.flattenEvent(event)),
+      count: result.count,
+    };
+  }
+
+  async getEventsByTeam(teamId: string, pageNumber: number, pageSize: number) {
+    const result = await this.getEventsByTeamUseCase.execute(teamId, pageNumber, pageSize);
+    return {
+      list: result.list.map((event) => this.flattenEvent(event)),
+      count: result.count,
+    };
+  }
+
   async listEventAttendees(
     pageNumber: number,
     pageSize: number,
@@ -170,8 +203,8 @@ export class EventSystemController {
     };
   }
 
-  async listEvents(pageNumber: number, pageSize: number) {
-    const result = await this.listEventsUseCase.execute(pageNumber, pageSize);
+  async listEvents(pageNumber: number, pageSize: number, filters?: { type?: string; teamId?: string }) {
+    const result = await this.listEventsUseCase.execute(pageNumber, pageSize, filters);
     return {
       list: result.list.map((event) =>  this.flattenEvent(event)),
       count: result.count,
