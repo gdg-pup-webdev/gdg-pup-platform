@@ -6,6 +6,7 @@ import { IEventModule } from "../domain/IEventModule";
 
 export type CreateLearningResourceInput = Omit<LearningResourceInsertProps, "thumbnailUrl"> & {
   thumbnailImage?: FileToUpload;
+  thumbnailUrl?: string | null;
 };
 
 export class CreateLearningResource {
@@ -35,14 +36,17 @@ export class CreateLearningResource {
       }
     }
 
-    let thumbnailUrl: string | null = null;
+    let thumbnailUrl: string | null = input.thumbnailUrl || null;
+    
     if (input.thumbnailImage) {
       const uploaded = await this.storage.uploadFile(input.thumbnailImage);
       thumbnailUrl = uploaded.publicUrl;
     }
 
+    const { thumbnailImage, ...resourceData } = input;
+
     const learningResource = LearningResource.create({
-      ...input,
+      ...resourceData,
       thumbnailUrl,
     });
 

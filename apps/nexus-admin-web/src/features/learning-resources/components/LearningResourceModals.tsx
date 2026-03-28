@@ -69,6 +69,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
     tags: [],
     teamId: null,
     eventId: null,
+    thumbnailUrl: null,
   });
   
   const [thumbnail, setThumbnail] = useState<File | undefined>(undefined);
@@ -117,6 +118,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
         tags: initialData.tags,
         teamId: initialData.teamId,
         eventId: initialData.eventId,
+        thumbnailUrl: initialData.thumbnailUrl,
       });
       setPreviewUrl(initialData.thumbnailUrl);
       setSelectedTeamName(initialData.team?.name || (initialData.teamId ? `Team (${initialData.teamId.substring(0,8)}...)` : ""));
@@ -129,6 +131,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
         tags: [],
         teamId: null,
         eventId: null,
+        thumbnailUrl: null,
       });
       setPreviewUrl(null);
       setSelectedTeamName("");
@@ -243,7 +246,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
                   onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
                   readOnly={!!formData.teamId}
                 />
-                {formData.teamId ? (
+                {formData.teamId && (
                   <button 
                     type="button"
                     onClick={() => { setFormData({...formData, teamId: null}); setSelectedTeamName(""); }}
@@ -251,11 +254,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
                   >
                     <X size={16} />
                   </button>
-                ) : isSearchingTeams ? (
-                  <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                    <Loader2 size={16} className="animate-spin text-gray-400" />
-                  </div>
-                ) : null}
+                )}
               </div>
               
               {showTeamDropdown && teamSearchQuery.length >= 2 && (
@@ -295,7 +294,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
                   onClick={() => !formData.eventId && setShowEventDropdown(true)}
                   readOnly
                 />
-                {formData.eventId ? (
+                {formData.eventId && (
                   <button 
                     type="button"
                     onClick={() => { setFormData({...formData, eventId: null}); setSelectedEventTitle(""); }}
@@ -303,7 +302,7 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
                   >
                     <X size={16} />
                   </button>
-                ) : null}
+                )}
               </div>
               
               {showEventDropdown && (
@@ -355,24 +354,41 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
 
           {/* Thumbnail */}
           <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Thumbnail Image</label>
-            <div className="flex items-start gap-4">
-              <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-sm border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
-                {previewUrl ? (
-                  <Image src={previewUrl} alt="Preview" fill className="object-cover" />
-                ) : (
-                  <ImageIcon size={32} />
-                )}
+            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Thumbnail</label>
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-sm border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
+                  {previewUrl ? (
+                    <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                  ) : (
+                    <ImageIcon size={32} />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="mb-3 text-xs text-gray-500 leading-relaxed">
+                    Upload a thumbnail image for this resource. Recommended size: 800x450 (16:9).
+                  </p>
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+                    <Upload size={16} />
+                    Choose Image
+                    <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                  </label>
+                </div>
               </div>
-              <div className="flex-1">
-                <p className="mb-3 text-xs text-gray-500 leading-relaxed">
-                  Upload a thumbnail image for this resource. Recommended size: 800x450 (16:9).
-                </p>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                  <Upload size={16} />
-                  Choose Image
-                  <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                </label>
+              
+              <div className="relative">
+                <ImageIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Or paste a thumbnail URL manually..."
+                  className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                  value={formData.thumbnailUrl || ""}
+                  onChange={(e) => {
+                    const val = e.target.value || null;
+                    setFormData({ ...formData, thumbnailUrl: val });
+                    if (!thumbnail) setPreviewUrl(val);
+                  }}
+                />
               </div>
             </div>
           </div>

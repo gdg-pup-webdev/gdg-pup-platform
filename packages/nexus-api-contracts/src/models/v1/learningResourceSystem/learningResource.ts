@@ -32,7 +32,6 @@ export const LearningResourceInsertModel = LearningResourceModel.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-  thumbnailUrl: true,
   team: true,
   event: true,
 });

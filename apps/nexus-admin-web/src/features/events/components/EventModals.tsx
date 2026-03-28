@@ -6,6 +6,7 @@ import { Event, EventInsert, EventUpdate, EventAttendance } from "../types";
 import { useListAttendees } from "../hooks/useListAttendees";
 import { useCheckinToEvent } from "../hooks/useCheckinToEvent";
 import { useGetBevyEvents } from "@/features/bevy-events/hooks/useGetBevyEvents";
+import { useGetBevyEventDetail } from "@/features/bevy-events/hooks/useGetBevyEventDetail";
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
 import { Pagination } from "@/components/admin/Pagination";
@@ -60,7 +61,7 @@ function Modal({ isOpen, onClose, title, children }: ModalProps) {
 interface BevyEventSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (bevyEvent: any) => void;
+  onSelect: (bevyEventId: string) => void;
   isSubmitting: boolean;
 }
 
@@ -77,7 +78,7 @@ export function BevyEventSearchModal({ isOpen, onClose, onSelect, isSubmitting }
     <Modal isOpen={isOpen} onClose={onClose} title="Select Bevy Event">
       <div className="space-y-4">
         <p className="text-sm text-gray-500">
-          Select a Bevy event to import its details into the community event form.
+          Select a Bevy event to import its details into a new community event.
         </p>
 
         {isLoading ? (
@@ -91,7 +92,7 @@ export function BevyEventSearchModal({ isOpen, onClose, onSelect, isSubmitting }
                 <button
                   key={event.id}
                   disabled={isSubmitting}
-                  onClick={() => onSelect(event)}
+                  onClick={() => onSelect(event.id)}
                   className="flex w-full flex-col p-4 text-left hover:bg-teal-50 transition-colors disabled:opacity-50"
                 >
                   <div className="flex items-center justify-between gap-4">
@@ -178,6 +179,9 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
   const [tagInput, setTagInput] = useState("");
   const [isBevySearchOpen, setIsBevySearchOpen] = useState(false);
   
+  // Bevy import detail hook
+  const bevyImportMutation = useGetBevyEventDetail();
+
   // Team search state
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
   const [debouncedTeamSearch, setDebouncedTeamSearch] = useState("");
@@ -284,24 +288,31 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
     setShowTeamDropdown(false);
   };
 
-  const handleBevySelect = (bevyEvent: any) => {
-    setFormData(prev => ({
-      ...prev,
-      title: bevyEvent.title || prev.title,
-      description: bevyEvent.description || prev.description,
-      short_description: bevyEvent.short_description || prev.short_description,
-      category: bevyEvent.event_type || prev.category,
-      venue: bevyEvent.location || prev.venue,
-      start_date: bevyEvent.start_date ? new Date(bevyEvent.start_date).toISOString().slice(0, 16) : prev.start_date,
-      end_date: bevyEvent.end_date ? new Date(bevyEvent.end_date).toISOString().slice(0, 16) : prev.end_date,
-      image_url: bevyEvent.cover_image_url || prev.image_url,
-      tags: bevyEvent.tags || prev.tags,
-      max_capacity: bevyEvent.total_capacity || prev.max_capacity,
-      bevy_event_id: bevyEvent.id,
-      bevyPreviewUrl: bevyEvent.bevy_url,
-    }));
-    setIsBevySearchOpen(false);
-    toast.info("Imported details from Bevy");
+  const handleBevyImport = async (bevyEventId: string) => {
+    try {
+      const bevyEvent = await bevyImportMutation.mutateAsync(bevyEventId);
+      const data = bevyEvent.data;
+      
+      setFormData(prev => ({
+        ...prev,
+        title: data.title,
+        description: data.description || prev.description,
+        short_description: data.short_description || prev.short_description,
+        category: data.event_type || prev.category,
+        venue: data.location || prev.venue,
+        start_date: data.start_date ? new Date(data.start_date).toISOString().slice(0, 16) : prev.start_date,
+        end_date: data.end_date ? new Date(data.end_date).toISOString().slice(0, 16) : prev.end_date,
+        image_url: data.thumbnail_image_url || prev.image_url,
+        bevy_event_id: data.id,
+        bevyPreviewUrl: data.direct_url,
+        tags: [...new Set([...prev.tags, ...(data.tags || [])])],
+      }));
+
+      toast.success("Imported details from Bevy successfully!");
+      setIsBevySearchOpen(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to import Bevy event");
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -312,281 +323,276 @@ export function EventFormModal({ isOpen, onClose, onSubmit, initialData, isSubmi
   const teamResults = teamsResponse?.body?.data || [];
 
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Event" : "Create New Event"}>
-        <div className="mb-6 flex items-center justify-between rounded-sm border border-teal-100 bg-teal-50 px-4 py-3">
-          <div className="flex items-center gap-3">
-            <Download size={20} className="text-teal-600" />
-            <div>
-              <p className="text-sm font-bold text-teal-900">Import from Bevy</p>
-              <p className="text-xs text-teal-700">Quickly populate fields using data from Bevy.</p>
-            </div>
+    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Event" : "Create New Event"}>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          
+          {/* Bevy Import Trigger */}
+          <div className="sm:col-span-2">
+             <button
+              type="button"
+              onClick={() => setIsBevySearchOpen(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-sm border border-dashed border-teal-200 bg-teal-50/50 py-4 text-sm font-bold text-teal-700 transition-all hover:bg-teal-50 hover:border-teal-300"
+            >
+              <Download size={18} />
+              Import Details from Bevy Event
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => setIsBevySearchOpen(true)}
-            className="rounded-sm bg-teal-600 px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-teal-700"
-          >
-            Choose Event
-          </button>
-        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <WireframeUploadImage image={formData.image} setImage={setThumbnail} />
-            
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Title</label>
-              <input
-                required
-                type="text"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              />
-            </div>
+          <WireframeUploadImage image={formData.image} setImage={setThumbnail} />
+          
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Title</label>
+            <input
+              required
+              type="text"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            />
+          </div>
 
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Short Description</label>
-              <input
-                type="text"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                placeholder="A brief summary of the event..."
-                value={formData.short_description || ""}
-                onChange={(e) => setFormData({ ...formData, short_description: e.target.value || null })}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Full Description</label>
-              <textarea
-                required
-                rows={4}
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Category</label>
-              <input
-                required
-                type="text"
-                placeholder="e.g. Workshop, Talk"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Type (Internal)</label>
-              <input
-                type="text"
-                placeholder="e.g. Study Jam, Special Event"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.type || ""}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value || null })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Venue</label>
-              <input
-                required
-                type="text"
-                placeholder="Online or Physical Location"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.venue}
-                onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Max Capacity</label>
-              <input
-                required
-                type="number"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.max_capacity}
-                onChange={(e) => setFormData({ ...formData, max_capacity: parseInt(e.target.value) || 0 })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Start Date</label>
-              <input
-                required
-                type="datetime-local"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.start_date}
-                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">End Date</label>
-              <input
-                required
-                type="datetime-local"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.end_date}
-                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Attendance Points</label>
-              <input
-                required
-                type="number"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.attendance_points}
-                onChange={(e) => setFormData({ ...formData, attendance_points: parseInt(e.target.value) || 0 })}
-              />
-            </div>
-
-            <div className="relative" ref={teamDropdownRef}>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Related Team</label>
-              <div className="relative">
-                <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search team..."
-                  className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
-                    formData.teamId ? "border-teal-500 bg-teal-50/30" : "border-gray-200 bg-white"
-                  }`}
-                  value={formData.teamId ? selectedTeamName : teamSearchQuery}
-                  onChange={(e) => {
-                    setTeamSearchQuery(e.target.value);
-                    if (!formData.teamId) setShowTeamDropdown(true);
-                  }}
-                  onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
-                  readOnly={!!formData.teamId}
-                />
-                {formData.teamId && (
-                  <button 
-                    type="button"
-                    onClick={() => { setFormData({...formData, teamId: null}); setSelectedTeamName(""); }}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
+          {formData.bevy_event_id && (
+            <div className="sm:col-span-2 rounded-sm bg-blue-50/50 border border-blue-100 p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
+                <Link2 size={14} />
+                Linked to Bevy Event: {formData.bevy_event_id}
               </div>
-              
-              {showTeamDropdown && teamSearchQuery.length >= 2 && (
-                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
-                  {teamResults.length > 0 ? (
-                    teamResults.map((team: any) => (
-                      <button
-                        key={team.id}
-                        type="button"
-                        onClick={() => handleSelectTeam(team)}
-                        className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
-                      >
-                        <span className="text-sm font-bold text-gray-900">{team.name}</span>
-                      </button>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-sm text-gray-500 italic">No teams found.</div>
-                  )}
-                </div>
+              {formData.bevyPreviewUrl && (
+                <a href={formData.bevyPreviewUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold text-blue-600 hover:underline">
+                  View Source
+                </a>
               )}
             </div>
+          )}
 
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Speakers</label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {formData.speakers.map(speaker => (
-                  <span key={speaker} className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
-                    {speaker}
-                    <button type="button" onClick={() => removeSpeaker(speaker)} className="hover:text-red-500">
-                      <X size={12} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="relative">
-                <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
-                  placeholder="Type speaker name and press Enter..."
-                  value={speakerInput}
-                  onChange={(e) => setSpeakerInput(e.target.value)}
-                  onKeyDown={handleAddSpeaker}
-                />
-              </div>
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Short Description</label>
+            <input
+              type="text"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              placeholder="A brief summary of the event..."
+              value={formData.short_description || ""}
+              onChange={(e) => setFormData({ ...formData, short_description: e.target.value || null })}
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Full Description</label>
+            <textarea
+              required
+              rows={4}
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Category</label>
+            <input
+              required
+              type="text"
+              placeholder="e.g. Workshop, Talk"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event Type (Internal)</label>
+            <input
+              type="text"
+              placeholder="e.g. Study Jam, Special Event"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.type || ""}
+              onChange={(e) => setFormData({ ...formData, type: e.target.value || null })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Venue</label>
+            <input
+              required
+              type="text"
+              placeholder="Online or Physical Location"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.venue}
+              onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Max Capacity</label>
+            <input
+              required
+              type="number"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.max_capacity}
+              onChange={(e) => setFormData({ ...formData, max_capacity: parseInt(e.target.value) || 0 })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Start Date</label>
+            <input
+              required
+              type="datetime-local"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.start_date}
+              onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">End Date</label>
+            <input
+              required
+              type="datetime-local"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.end_date}
+              onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Attendance Points</label>
+            <input
+              required
+              type="number"
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
+              value={formData.attendance_points}
+              onChange={(e) => setFormData({ ...formData, attendance_points: parseInt(e.target.value) || 0 })}
+            />
+          </div>
+
+          <div className="relative" ref={teamDropdownRef}>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Related Team</label>
+            <div className="relative">
+              <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search team..."
+                className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
+                  formData.teamId ? "border-teal-500 bg-teal-50/30" : "border-gray-200 bg-white"
+                }`}
+                value={formData.teamId ? selectedTeamName : teamSearchQuery}
+                onChange={(e) => {
+                  setTeamSearchQuery(e.target.value);
+                  if (!formData.teamId) setShowTeamDropdown(true);
+                }}
+                onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
+                readOnly={!!formData.teamId}
+              />
+              {formData.teamId && (
+                <button 
+                  type="button"
+                  onClick={() => { setFormData({...formData, teamId: null}); setSelectedTeamName(""); }}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
+                >
+                  <X size={16} />
+                </button>
+              )}
             </div>
-
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Tags</label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {formData.tags.map(tag => (
-                  <span key={tag} className="flex items-center gap-1 rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-600">
-                    #{tag}
-                    <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">
-                      <X size={12} />
+            
+            {showTeamDropdown && teamSearchQuery.length >= 2 && (
+              <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
+                {teamResults.length > 0 ? (
+                  teamResults.map((team: any) => (
+                    <button
+                      key={team.id}
+                      type="button"
+                      onClick={() => handleSelectTeam(team)}
+                      className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
+                    >
+                      <span className="text-sm font-bold text-gray-900">{team.name}</span>
                     </button>
-                  </span>
-                ))}
-              </div>
-              <div className="relative">
-                <Hash className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
-                  placeholder="Type tag and press Enter..."
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleAddTag}
-                />
-              </div>
-            </div>
-
-            {formData.bevy_event_id && (
-              <div className="sm:col-span-2 flex items-center gap-2 rounded-sm bg-gray-50 px-4 py-2 border border-gray-100">
-                <Link2 size={16} className="text-teal-600" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Linked to Bevy:</span>
-                <span className="text-xs font-medium text-gray-700">{formData.bevy_event_id}</span>
-                {formData.bevyPreviewUrl && (
-                  <a href={formData.bevyPreviewUrl} target="_blank" rel="noopener noreferrer" className="ml-auto text-[10px] font-bold text-teal-600 hover:underline">
-                    View Original
-                  </a>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm text-gray-500 italic">No teams found.</div>
                 )}
               </div>
             )}
           </div>
-          
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
-            >
-              {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-              {initialData ? "Save Changes" : "Create Event"}
-            </button>
+
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Speakers</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {formData.speakers.map(speaker => (
+                <span key={speaker} className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                  {speaker}
+                  <button type="button" onClick={() => removeSpeaker(speaker)} className="hover:text-red-500">
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="relative">
+              <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
+                placeholder="Type speaker name and press Enter..."
+                value={speakerInput}
+                onChange={(e) => setSpeakerInput(e.target.value)}
+                onKeyDown={handleAddSpeaker}
+              />
+            </div>
           </div>
-        </form>
-      </Modal>
+
+          <div className="sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Tags</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {formData.tags.map(tag => (
+                <span key={tag} className="flex items-center gap-1 rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-600">
+                  #{tag}
+                  <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="relative">
+              <Hash className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
+                placeholder="Type tag and press Enter..."
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={handleAddTag}
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
+          >
+            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
+            {initialData ? "Save Changes" : "Create Event"}
+          </button>
+        </div>
+      </form>
 
       <BevyEventSearchModal 
         isOpen={isBevySearchOpen}
         onClose={() => setIsBevySearchOpen(false)}
-        onSelect={handleBevySelect}
-        isSubmitting={false}
+        onSelect={handleBevyImport}
+        isSubmitting={bevyImportMutation.isPending}
       />
-    </>
+    </Modal>
   );
 }
 
