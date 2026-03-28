@@ -1,20 +1,36 @@
-export type LearningResourceType = "studyJam" | "external" | "blog";
+export type LearningResourceTeamSummary = {
+  id: string;
+  name: string;
+  description: string;
+};
+
+export type LearningResourceEventSummary = {
+  id: string;
+  title: string;
+  description: string | null;
+  imageUrl: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  venue: string | null;
+};
 
 export type LearningResourceProps = {
   id: string;
   title: string;
   description: string;
   url: string;
-  type: LearningResourceType;
   tags: string[];
   teamId: string | null;
   eventId: string | null;
   thumbnailUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
+  // Included details
+  team?: LearningResourceTeamSummary | null;
+  event?: LearningResourceEventSummary | null;
 };
 
-export type LearningResourceInsertProps = Omit<LearningResourceProps, "id" | "createdAt" | "updatedAt">;
+export type LearningResourceInsertProps = Omit<LearningResourceProps, "id" | "createdAt" | "updatedAt" | "team" | "event">;
 export type LearningResourceUpdateProps = Partial<LearningResourceInsertProps>;
 
 export class LearningResource {

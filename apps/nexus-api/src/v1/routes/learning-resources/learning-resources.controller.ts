@@ -12,9 +12,8 @@ export class LearningResourcesHttpController {
       const pageNumber = input.query.pageNumber || 1;
       const pageSize = input.query.pageSize || 10;
       const filters = {
-        type: input.query.type,
-        teamId: input.query.teamId,
-        eventId: input.query.eventId,
+        teamId: input.query.teamId as string | undefined,
+        eventId: input.query.eventId as string | undefined,
         search: input.query.search,
       };
 
@@ -32,13 +31,94 @@ export class LearningResourcesHttpController {
           title: r.title,
           description: r.description,
           url: r.url,
-          type: r.type,
           tags: r.tags,
           teamId: r.teamId,
           eventId: r.eventId,
           thumbnailUrl: r.thumbnailUrl,
           createdAt: new Date(r.createdAt),
           updatedAt: new Date(r.updatedAt),
+          team: r.team || null,
+          event: r.event ? {
+            ...r.event,
+            startDate: r.event.startDate ? new Date(r.event.startDate) : null,
+            endDate: r.event.endDate ? new Date(r.event.endDate) : null,
+          } : null,
+        })),
+        meta: {
+          totalRecords: count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(count / pageSize),
+        },
+      });
+    }
+  );
+
+  searchResources: RequestHandler = createExpressController(
+    contract.api.v1.learning_resources.search.GET,
+    async ({ input, output }) => {
+      const result = await this.learningResourceController.searchResources(
+        input.query.q,
+        input.query.limit
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Learning resources searched successfully",
+        data: result.map((r) => ({
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          url: r.url,
+          tags: r.tags,
+          teamId: r.teamId,
+          eventId: r.eventId,
+          thumbnailUrl: r.thumbnailUrl,
+          createdAt: new Date(r.createdAt),
+          updatedAt: new Date(r.updatedAt),
+          team: r.team || null,
+          event: r.event ? {
+            ...r.event,
+            startDate: r.event.startDate ? new Date(r.event.startDate) : null,
+            endDate: r.event.endDate ? new Date(r.event.endDate) : null,
+          } : null,
+        })),
+      });
+    }
+  );
+
+  listByTag: RequestHandler = createExpressController(
+    contract.api.v1.learning_resources.tags.tag.GET,
+    async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+
+      const { list, count } = await this.learningResourceController.listResourcesByTag(
+        input.params.tag,
+        pageNumber,
+        pageSize
+      );
+
+      return output(200, {
+        status: "success",
+        message: `Learning resources with tag ${input.params.tag} fetched successfully`,
+        data: list.map((r) => ({
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          url: r.url,
+          tags: r.tags,
+          teamId: r.teamId,
+          eventId: r.eventId,
+          thumbnailUrl: r.thumbnailUrl,
+          createdAt: new Date(r.createdAt),
+          updatedAt: new Date(r.updatedAt),
+          team: r.team || null,
+          event: r.event ? {
+            ...r.event,
+            startDate: r.event.startDate ? new Date(r.event.startDate) : null,
+            endDate: r.event.endDate ? new Date(r.event.endDate) : null,
+          } : null,
         })),
         meta: {
           totalRecords: count,
@@ -59,7 +139,6 @@ export class LearningResourcesHttpController {
         title: input.body.data.title,
         description: input.body.data.description,
         url: input.body.data.url,
-        type: input.body.data.type,
         tags: input.body.data.tags,
         teamId: input.body.data.teamId,
         eventId: input.body.data.eventId,
@@ -78,13 +157,18 @@ export class LearningResourcesHttpController {
           title: result.title,
           description: result.description,
           url: result.url,
-          type: result.type,
           tags: result.tags,
           teamId: result.teamId,
           eventId: result.eventId,
           thumbnailUrl: result.thumbnailUrl,
           createdAt: new Date(result.createdAt),
           updatedAt: new Date(result.updatedAt),
+          team: result.team || null,
+          event: result.event ? {
+            ...result.event,
+            startDate: result.event.startDate ? new Date(result.event.startDate) : null,
+            endDate: result.event.endDate ? new Date(result.event.endDate) : null,
+          } : null,
         },
       });
     }
@@ -111,13 +195,18 @@ export class LearningResourcesHttpController {
           title: result.title,
           description: result.description,
           url: result.url,
-          type: result.type,
           tags: result.tags,
           teamId: result.teamId,
           eventId: result.eventId,
           thumbnailUrl: result.thumbnailUrl,
           createdAt: new Date(result.createdAt),
           updatedAt: new Date(result.updatedAt),
+          team: result.team || null,
+          event: result.event ? {
+            ...result.event,
+            startDate: result.event.startDate ? new Date(result.event.startDate) : null,
+            endDate: result.event.endDate ? new Date(result.event.endDate) : null,
+          } : null,
         },
       });
     }
@@ -132,7 +221,6 @@ export class LearningResourcesHttpController {
         title: input.body.data.title,
         description: input.body.data.description,
         url: input.body.data.url,
-        type: input.body.data.type,
         tags: input.body.data.tags,
         teamId: input.body.data.teamId,
         eventId: input.body.data.eventId,
@@ -156,13 +244,18 @@ export class LearningResourcesHttpController {
           title: result.title,
           description: result.description,
           url: result.url,
-          type: result.type,
           tags: result.tags,
           teamId: result.teamId,
           eventId: result.eventId,
           thumbnailUrl: result.thumbnailUrl,
           createdAt: new Date(result.createdAt),
           updatedAt: new Date(result.updatedAt),
+          team: result.team || null,
+          event: result.event ? {
+            ...result.event,
+            startDate: result.event.startDate ? new Date(result.event.startDate) : null,
+            endDate: result.event.endDate ? new Date(result.event.endDate) : null,
+          } : null,
         },
       });
     }
@@ -175,8 +268,7 @@ export class LearningResourcesHttpController {
       
       return output(200, {
         status: "success",
-        message: "Learning resource deleted successfully",
-        data: { success: true },
+        message: "Learning resource deleted successfully", 
       });
     }
   );

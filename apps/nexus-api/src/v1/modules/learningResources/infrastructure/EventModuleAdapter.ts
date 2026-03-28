@@ -11,8 +11,13 @@ export class EventModuleAdapter implements IEventModule {
     try {
       const event = await this.eventController.getOneEvent(id);
       return !!event;
-    } catch (e) {
-      return false;
+    } catch (e: any) {
+      if (e.message && e.message.includes("not found")) {
+        return false;
+      }
+      // If it's a different error (e.g. mapping error), rethrow it so we can see it in logs
+      console.error(`[EventModuleAdapter] Unexpected error checking event existence for ID ${id}:`, e);
+      throw e;
     }
   }
 }

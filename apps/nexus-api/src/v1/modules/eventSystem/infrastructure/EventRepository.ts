@@ -135,10 +135,10 @@ export class EventRepository implements IEventRepository {
       .from(this.tableName)
       .select("*")
       .eq("id", eventId)
-      .single();
+      .maybeSingle();
 
     if (error) handlePostgresError(error);
-    if (!data) throw new Error("Event not found");
+    if (!data) throw new Error(`Event with ID ${eventId} not found`);
 
     return this.mapToDomain(data);
   }

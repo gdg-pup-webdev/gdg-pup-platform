@@ -11,8 +11,12 @@ export class TeamModuleAdapter implements ITeamModule {
     try {
       const team = await this.teamController.getTeam(id);
       return !!team;
-    } catch (e) {
-      return false;
+    } catch (e: any) {
+      if (e.message && e.message.includes("not found")) {
+        return false;
+      }
+      console.error(`[TeamModuleAdapter] Unexpected error checking team existence for ID ${id}:`, e);
+      throw e;
     }
   }
 }

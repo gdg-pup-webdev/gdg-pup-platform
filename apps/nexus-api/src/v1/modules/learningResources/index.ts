@@ -7,6 +7,8 @@ import { DeleteLearningResource } from "./useCases/DeleteLearningResource";
 import { GetLearningResource } from "./useCases/GetLearningResource";
 import { ListLearningResources } from "./useCases/ListLearningResources";
 import { UpdateLearningResource } from "./useCases/UpdateLearningResource";
+import { SearchLearningResources } from "./useCases/SearchLearningResources";
+import { ListLearningResourcesByTag } from "./useCases/ListLearningResourcesByTag";
 import { LearningResourceController } from "./LearningResourceController";
 import { teamModuleController } from "../teamsSystem";
 import { filesModuleController } from "../filesModule";
@@ -24,6 +26,8 @@ export const getLearningResource = new GetLearningResource(repository);
 export const listLearningResources = new ListLearningResources(repository);
 export const updateLearningResource = new UpdateLearningResource(repository, storageAdapter, teamModuleAdapter, eventModuleAdapter);
 export const deleteLearningResource = new DeleteLearningResource(repository, storageAdapter);
+export const searchLearningResources = new SearchLearningResources(repository);
+export const listLearningResourcesByTag = new ListLearningResourcesByTag(repository);
 
 // Controller
 export const learningResourceController = new LearningResourceController(
@@ -31,10 +35,12 @@ export const learningResourceController = new LearningResourceController(
   getLearningResource,
   listLearningResources,
   updateLearningResource,
-  deleteLearningResource
+  deleteLearningResource,
+  searchLearningResources,
+  listLearningResourcesByTag
 );
 
 // Exports
-export { CreateLearningResource, DeleteLearningResource, GetLearningResource, ListLearningResources, UpdateLearningResource };
+export { CreateLearningResource, DeleteLearningResource, GetLearningResource, ListLearningResources, UpdateLearningResource, SearchLearningResources, ListLearningResourcesByTag };
 export { LearningResourceController };
 export { SupabaseLearningResourceRepository, LearningResourceStorageAdapter };

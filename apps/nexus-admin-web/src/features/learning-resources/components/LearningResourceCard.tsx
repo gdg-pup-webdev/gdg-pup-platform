@@ -1,18 +1,18 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { MoreVertical, Edit2, Trash2, Eye, ExternalLink, Link2 } from "lucide-react";
-import { TeamResource } from "../types";
+import { MoreVertical, Edit2, Trash2, Eye, ExternalLink, Link2, Users, Calendar } from "lucide-react";
+import { LearningResource } from "../types";
 import Image from "next/image";
 
-interface TeamResourceCardProps {
-  resource: TeamResource;
-  onView: (resource: TeamResource) => void;
-  onEdit: (resource: TeamResource) => void;
-  onDelete: (resource: TeamResource) => void;
+interface LearningResourceCardProps {
+  resource: LearningResource;
+  onView: (resource: LearningResource) => void;
+  onEdit: (resource: LearningResource) => void;
+  onDelete: (resource: LearningResource) => void;
 }
 
-export function TeamResourceCard({ resource, onView, onEdit, onDelete }: TeamResourceCardProps) {
+export function LearningResourceCard({ resource, onView, onEdit, onDelete }: LearningResourceCardProps) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -33,9 +33,9 @@ export function TeamResourceCard({ resource, onView, onEdit, onDelete }: TeamRes
     >
       {/* Thumbnail */}
       <div className="relative h-40 w-full overflow-hidden bg-gray-100">
-        {resource.thumbnail_public_url ? (
+        {resource.thumbnailUrl ? (
           <Image 
-            src={resource.thumbnail_public_url} 
+            src={resource.thumbnailUrl} 
             alt={resource.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -45,11 +45,6 @@ export function TeamResourceCard({ resource, onView, onEdit, onDelete }: TeamRes
             <Link2 size={48} />
           </div>
         )}
-        
-        {/* Resource Type Badge */}
-        <div className="absolute top-3 left-3 rounded bg-white/90 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-700 shadow-sm backdrop-blur-sm">
-          {resource.resource_type}
-        </div>
 
         {/* Action Menu */}
         <div className="absolute top-3 right-3" ref={menuRef} onClick={(e) => e.stopPropagation()}>
@@ -107,13 +102,40 @@ export function TeamResourceCard({ resource, onView, onEdit, onDelete }: TeamRes
           {resource.description || "No description provided."}
         </p>
 
+        {/* Association Info */}
+        <div className="mt-3 flex flex-col gap-1.5">
+          {resource.team && (
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-gray-500">
+              <Users size={12} className="text-teal-500" />
+              <span className="truncate">{resource.team.name}</span>
+            </div>
+          )}
+          {resource.event && (
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-gray-500">
+              <Calendar size={12} className="text-teal-500" />
+              <span className="truncate">{resource.event.title}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Tags */}
+        <div className="mt-3 flex flex-wrap gap-1">
+          {resource.tags.slice(0, 3).map(tag => (
+            <span key={tag} className="bg-teal-50 text-teal-700 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm">
+              {tag}
+            </span>
+          ))}
+          {resource.tags.length > 3 && (
+            <span className="bg-gray-50 text-gray-500 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-sm">
+              +{resource.tags.length - 3}
+            </span>
+          )}
+        </div>
+
         {/* Footer info */}
-        <div className="mt-4 flex items-center justify-between border-t border-gray-50 pt-4">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-teal-600">
-            {resource.team_name}
-          </span>
+        <div className="mt-4 flex items-center justify-end border-t border-gray-50 pt-4">
           <a 
-            href={resource.resource_link}
+            href={resource.url}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

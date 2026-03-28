@@ -1,23 +1,34 @@
 import { LearningResourceFilters } from "./domain/ILearningResourceRepository";
-import { LearningResource, LearningResourceType } from "./domain/LearningResource";
+import { LearningResource, LearningResourceTeamSummary, LearningResourceEventSummary } from "./domain/LearningResource";
 import { CreateLearningResource, CreateLearningResourceInput } from "./useCases/CreateLearningResource";
 import { DeleteLearningResource } from "./useCases/DeleteLearningResource";
 import { GetLearningResource } from "./useCases/GetLearningResource";
 import { ListLearningResources } from "./useCases/ListLearningResources";
 import { UpdateLearningResource, UpdateLearningResourceInput } from "./useCases/UpdateLearningResource";
+import { SearchLearningResources } from "./useCases/SearchLearningResources";
+import { ListLearningResourcesByTag } from "./useCases/ListLearningResourcesByTag";
 
 export interface LearningResourceDTO {
   id: string;
   title: string;
   description: string;
   url: string;
-  type: LearningResourceType;
   tags: string[];
   teamId: string | null;
   eventId: string | null;
   thumbnailUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  team?: LearningResourceTeamSummary | null;
+  event?: {
+    id: string;
+    title: string;
+    description: string | null;
+    imageUrl: string | null;
+    startDate: string | null;
+    endDate: string | null;
+    venue: string | null;
+  } | null;
 }
 
 export class LearningResourceController {
@@ -26,7 +37,9 @@ export class LearningResourceController {
     private readonly getUseCase: GetLearningResource,
     private readonly listUseCase: ListLearningResources,
     private readonly updateUseCase: UpdateLearningResource,
-    private readonly deleteUseCase: DeleteLearningResource
+    private readonly deleteUseCase: DeleteLearningResource,
+    private readonly searchUseCase: SearchLearningResources,
+    private readonly listByTagUseCase: ListLearningResourcesByTag
   ) {}
 
   private toDTO(resource: LearningResource): LearningResourceDTO {
@@ -36,13 +49,18 @@ export class LearningResourceController {
       title: p.title,
       description: p.description,
       url: p.url,
-      type: p.type,
       tags: p.tags,
       teamId: p.teamId,
       eventId: p.eventId,
       thumbnailUrl: p.thumbnailUrl,
       createdAt: p.createdAt.toISOString(),
       updatedAt: p.updatedAt.toISOString(),
+      team: p.team || null,
+      event: p.event ? {
+        ...p.event,
+        startDate: p.event.startDate ? p.event.startDate.toISOString() : null,
+        endDate: p.event.endDate ? p.event.endDate.toISOString() : null,
+      } : null,
     };
   }
 
@@ -63,6 +81,19 @@ export class LearningResourceController {
       list: list.map(r => this.toDTO(r)),
       count,
     };
+  }
+
+  async listResourcesByTag(tag: string, pageNumber: number, pageSize: number) {
+    const { list, count } = await this.listByTagUseCase.execute(tag, pageNumber, pageSize);
+    return {
+      list: list.map(r => this.toDTO(r)),
+      count,
+    };
+  }
+
+  async searchResources(query: string, limit: number = 10) {
+    const list = await this.searchUseCase.execute(query, limit);
+    return list.map(r => this.toDTO(r));
   }
 
   async updateResource(id: string, updates: UpdateLearningResourceInput) {
