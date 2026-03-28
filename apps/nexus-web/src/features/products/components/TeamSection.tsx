@@ -1,26 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { Container, Stack, Text, Button } from "@packages/spark-ui";
 import { AboutTheTeam } from "./AboutTheTeam";
 import { TeamHero } from "./team-section/TeamHero";
-import { StudyJamsGrid } from "./team-section/StudyJamsGrid";
-
+import { StudyJamsGrid } from "./team-section/StudyJamsGrid"; 
 interface TeamSectionProps {
   teamName: string;
   teamSlug: string;
 }
-
-const TEAM_SLUG_TO_TEAM_NAME_MAP = {
-  "cloud-solutions": "Cloud Solutions",
-  "cybersecurity": "Cybersecurity",
-  "data-ml": "Data & ML",
-  "executives": "Executives",
-  iot: "Internet of Things (IoT)",
-  "project-management": "Project Management",
-  "ui-ux": "UI/UX Design",
-  "web-development": "Web Development",
-};
+ 
 
 export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
+ 
+
   return (
     <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
@@ -133,7 +126,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
           </Stack>
 
           {/* ── Study Jams ── */}
-          <StudyJamsGrid />
+          <StudyJamsGrid teamSlug={teamSlug} />
         </Stack>
       </Container>
     </div>
