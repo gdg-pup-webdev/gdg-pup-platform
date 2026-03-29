@@ -17,53 +17,44 @@ export type Database = {
       article: {
         Row: {
           author_id: string | null
-          body: string | null
+          content: string | null
           created_at: string
+          description: string | null
+          eventId: string | null
           id: string
           is_published: boolean
           published_at: string | null
-          related_event_id: string | null
+          thumbnail_url: string | null
           title: string
           updated_at: string
         }
         Insert: {
           author_id?: string | null
-          body?: string | null
+          content?: string | null
           created_at?: string
+          description?: string | null
+          eventId?: string | null
           id?: string
           is_published?: boolean
           published_at?: string | null
-          related_event_id?: string | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           author_id?: string | null
-          body?: string | null
+          content?: string | null
           created_at?: string
+          description?: string | null
+          eventId?: string | null
           id?: string
           is_published?: boolean
           published_at?: string | null
-          related_event_id?: string | null
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "article_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_related_event_id_fkey"
-            columns: ["related_event_id"]
-            isOneToOne: false
-            referencedRelation: "event"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       article_comment: {
         Row: {
@@ -213,13 +204,6 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "team"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "events_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]

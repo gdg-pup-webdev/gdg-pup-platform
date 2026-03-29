@@ -3,6 +3,7 @@ export const EXTERNAL_LINKS = {
 } as const;
 
 export const INTERNAL_LINKS = {
+  ARTICLES: "/admin/articles",
   HOME: "/",
   DASHBOARD: "/admin",
   DEBUG_PAGE: "/admin/debug",

@@ -1,60 +1,64 @@
-import { CreateArticle, CreateArticleComment, DeleteArticle, DeleteArticleComment, GetOneArticle, ListArticleComments, ListArticles, UpdateArticle } from "./useCases/ArticleUseCases";
-
  
+import { CreateArticle, CreateArticleInput } from "./useCases/CreateArticle";
+import { UpdateHighlight, UpdateArticleInputProps } from "./useCases/UpdateArticle";
+import { DeleteArticle } from "./useCases/DeleteArticle";
+import { GetOneArticle } from "./useCases/GetOneArticle";
+import { ListArticles } from "./useCases/ListArticle";
 
-export class ArticleController {
+export class ArticlesController {
   constructor(
-    private createArticle: CreateArticle,
-    private getOneArticle: GetOneArticle,
-    private listArticles: ListArticles,
-    private updateArticle: UpdateArticle,
-    private deleteArticle: DeleteArticle,
-    private createArticleComment: CreateArticleComment,
-    private listArticleComments: ListArticleComments,
-    private deleteArticleComment: DeleteArticleComment
+    private readonly createHighlightUseCase: CreateArticle,
+    private readonly updateHighlightUseCase: UpdateHighlight,
+    private readonly deleteHighlightUseCase: DeleteArticle,
+    private readonly getOneHighlightUseCase: GetOneArticle,
+    private readonly listHighlightsUseCase: ListArticles,
   ) {}
 
-  async create(authorId: string, title: string, content: string) {
-    const result = await this.createArticle.execute({ authorId, title, content });
-    return result.props;
-  }
-
-  async getOne(id: string) {
-    const result = await this.getOneArticle.execute(id);
-    return result.props;
-  }
-
-  async list(pageNumber: number, pageSize: number) {
-    const { list, count } = await this.listArticles.execute(pageNumber, pageSize);
+  async create(input: CreateArticleInput) {
+    const result = await this.createHighlightUseCase.execute(input);
     return {
-      list: list.map(a => a.props),
-      count
+      ...result.props,
+      createdAt: result.props.createdAt.toISOString(),
+      updatedAt: result.props.updatedAt.toISOString(),
     };
   }
 
-  async update(id: string, updates: { title?: string; content?: string }) {
-    const result = await this.updateArticle.execute(id, updates);
-    return result.props;
+  async update(id: string, input: UpdateArticleInputProps) {
+    const result = await this.updateHighlightUseCase.execute(id, input);
+    return {
+      ...result.props,
+      createdAt: result.props.createdAt.toISOString(),
+      updatedAt: result.props.updatedAt.toISOString(),
+    };
   }
 
   async delete(id: string) {
-    return await this.deleteArticle.execute(id);
+    await this.deleteHighlightUseCase.execute(id);
+    return true;
   }
 
-  async createComment(articleId: string, userId: string, body: string) {
-    const result = await this.createArticleComment.execute({ articleId, userId, body });
-    return result.props;
-  }
-
-  async listComments(articleId: string) {
-    const { list, count } = await this.listArticleComments.execute(articleId);
+  async getOne(id: string) {
+    const result = await this.getOneHighlightUseCase.execute(id);
     return {
-      list: list.map(c => c.props),
-      count
+      ...result.props,
+      createdAt: result.props.createdAt.toISOString(),
+      updatedAt: result.props.updatedAt.toISOString(),
     };
   }
 
-  async deleteComment(id: string) {
-    return await this.deleteArticleComment.execute(id);
+  async list(pageNumber: number, pageSize: number, eventId?: string) {
+    const { list, count } = await this.listHighlightsUseCase.execute(
+      pageNumber,
+      pageSize,
+      eventId,
+    );
+    return {
+      list: list.map((item) => ({
+        ...item.props,
+        createdAt: item.props.createdAt.toISOString(),
+        updatedAt: item.props.updatedAt.toISOString(),
+      })),
+      count,
+    };
   }
 }

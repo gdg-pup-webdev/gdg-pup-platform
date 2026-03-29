@@ -34,56 +34,45 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
 
 export const publicArticleRowSchema = z.object({
   author_id: z.string().nullable(),
-  body: z.string().nullable(),
+  content: z.string().nullable(),
   created_at: z.string(),
+  description: z.string().nullable(),
+  eventId: z.string().nullable(),
   id: z.string(),
   is_published: z.boolean(),
   published_at: z.string().nullable(),
-  related_event_id: z.string().nullable(),
+  thumbnail_url: z.string().nullable(),
   title: z.string(),
   updated_at: z.string(),
 });
 
 export const publicArticleInsertSchema = z.object({
   author_id: z.string().optional().nullable(),
-  body: z.string().optional().nullable(),
+  content: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  eventId: z.string().optional().nullable(),
   id: z.string().optional(),
   is_published: z.boolean().optional(),
   published_at: z.string().optional().nullable(),
-  related_event_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
   title: z.string(),
   updated_at: z.string().optional(),
 });
 
 export const publicArticleUpdateSchema = z.object({
   author_id: z.string().optional().nullable(),
-  body: z.string().optional().nullable(),
+  content: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  eventId: z.string().optional().nullable(),
   id: z.string().optional(),
   is_published: z.boolean().optional(),
   published_at: z.string().optional().nullable(),
-  related_event_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
   title: z.string().optional(),
   updated_at: z.string().optional(),
 });
-
-export const publicArticleRelationshipsSchema = z.tuple([
-  z.object({
-    foreignKeyName: z.literal("article_author_id_fkey"),
-    columns: z.tuple([z.literal("author_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("article_related_event_id_fkey"),
-    columns: z.tuple([z.literal("related_event_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("event"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-]);
 
 export const publicArticleCommentRowSchema = z.object({
   article_id: z.string().nullable(),
@@ -237,13 +226,6 @@ export const publicEventRelationshipsSchema = z.tuple([
     columns: z.tuple([z.literal("team_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("team"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("events_creator_id_fkey"),
-    columns: z.tuple([z.literal("creator_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);

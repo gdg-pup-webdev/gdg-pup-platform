@@ -1,4 +1,3 @@
-import { SupabaseGdgMemberRepository } from "./infrastructure/SupabaseGdgMemberRepository";
 import { AddGdgMember } from "./useCases/AddGdgMember";
 import { UpdateMemberByGdgId } from "./useCases/UpdateMemberByGdgId";
 import { ListGdgMembers } from "./useCases/ListGdgMembers";
@@ -8,6 +7,8 @@ import { GdgMembersController } from "./GdgMembersController";
 import { DeleteGdgMember } from "./useCases/DeleteGdgMember";
 import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
 import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
+import { SupabaseGdgMemberRepository } from "./infrastructure/SupabaseGdgMemberRepository";
+import { SearchMember } from "./useCases/SearchMember";
 
 const repo = new SupabaseGdgMemberRepository();
 
@@ -22,6 +23,8 @@ const updateUseCase = new UpdateMemberByGdgId(repo);
 const makeProfilePrivate = new MakeProfilePrivate(repo);
 const makeProfilePublic = new MakeProfilePublic(repo);
 
+const searchUC = new SearchMember(repo);
+
 export const gdgMembersController = new GdgMembersController(
   addUseCase,
   deleteUseCase,
@@ -31,6 +34,7 @@ export const gdgMembersController = new GdgMembersController(
   updateUseCase,
   makeProfilePrivate,
   makeProfilePublic,
+  searchUC,
 );
 
 export { GdgMembersController };

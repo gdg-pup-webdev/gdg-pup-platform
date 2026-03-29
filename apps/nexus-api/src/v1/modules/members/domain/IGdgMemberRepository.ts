@@ -14,4 +14,5 @@ export interface IGdgMemberRepository {
   persistUpdates(member: GdgMember): Promise<GdgMember>;
   deleteByGdgId(gdgId: string): Promise<void>;
   getHighestIdNumberForYear(yearPrefix: string): Promise<number>;
+  search(query: string, limit: number): Promise<GdgMember[]>;
 }

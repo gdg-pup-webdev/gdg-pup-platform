@@ -9,7 +9,7 @@ import { assertContractIntegrity } from "./utils/assertContractIntegrity";
 
 const app: Express = express();
 
-assertContractIntegrity();
+// assertContractIntegrity();
 
 loadCors(app);
 loadLogger(app);

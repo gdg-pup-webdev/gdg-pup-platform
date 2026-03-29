@@ -8,6 +8,7 @@ import { DeleteGdgMember } from "./useCases/DeleteGdgMember";
 import { GdgMember, GdgMemberUpdateProps } from "./domain/GdgMember";
 import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
 import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
+import { SearchMember } from "./useCases/SearchMember";
 
 export class GdgMembersController {
   constructor(
@@ -19,11 +20,18 @@ export class GdgMembersController {
     private readonly updateMemberByGdgIdUseCase: UpdateMemberByGdgId,
     private readonly makeProfilePrivateUseCase: MakeProfilePrivate,
     private readonly makeProfilePublicUseCase: MakeProfilePublic,
+    private readonly searchUseCase: SearchMember
   ) {}
 
   private flattenMemberData(data: GdgMember) {
     return data.props;
   }
+
+  async search(query: string, limit: number) {
+    const result = await this.searchUseCase.execute(query, limit);
+    return result.map((m) => m.props);
+  }
+
 
   async addMember(data: AddGdgMemberInput) {
     const result = await this.addUseCase.execute(data);

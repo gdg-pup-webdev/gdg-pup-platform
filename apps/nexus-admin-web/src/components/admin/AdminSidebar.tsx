@@ -35,6 +35,11 @@ const NAV_ITEMS = [
     icon: User,
   },
   {
+    label: "Articles", 
+    href: INTERNAL_LINKS.ARTICLES,
+    icon: Link2,
+  },
+  {
     label: "Members",
     href: INTERNAL_LINKS.MEMBERS,
     icon: User,
@@ -162,12 +167,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               label: "Nexus Events",
               href: INTERNAL_LINKS.EVENTS,
               icon: Calendar,
-            },
-            {
-              label: "Event Highlights",
-              href: INTERNAL_LINKS.EVENT_HIGHLIGHTS,
-              icon: MessageSquareQuote,
-            },
+            }, 
             {
               label: "Bevy Events",
               href: INTERNAL_LINKS.BEVY_EVENTS,
