@@ -18,6 +18,7 @@
     "@packages/spark-ui": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.90.1",
+    "@tailwindcss/typography": "^0.5.19",
     "@tanstack/react-query": "^5.90.20",
     "cookies-next": "^6.1.1",
     "jwt-decode": "^4.0.0",
@@ -29,7 +30,9 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-icons": "^5.6.0",
+    "react-markdown": "^10.1.0",
     "react-toastify": "^11.0.5",
+    "remark-gfm": "^4.0.1",
     "zod": "^4.3.6",
     "zustand": "^5.0.12"
   },

@@ -5,6 +5,7 @@ import {
   GdgMemberFilters,
 } from "../domain/IGdgMemberRepository";
 import { Tables } from "@/v1/types/supabase.types";
+import { handlePostgresError } from "@/v1/lib/supabase.utils";
 
 export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   private readonly tableName = "gdg_members";
@@ -61,19 +62,29 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       is_public: p.isPublic,
 
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(), 
-      nickname: null, 
+      updated_at: new Date().toISOString(),
+      nickname: null,
       skills_summary: null,
     };
   }
 
-  //   findByGdgId(gdgId: string): Promise<GdgMember | null>;
-  //   findByEmail(email: string): Promise<GdgMember | null>;
-  //   findAll(pageNumber: number, pageSize: number, filters?: GdgMemberFilters): Promise<{ list: GdgMember[]; count: number }>;
-  //   saveNew(member: GdgMember): Promise<GdgMember>;
-  //   persistUpdates(member: GdgMember): Promise<GdgMember>;
-  //   deleteByGdgId(gdgId: string): Promise<void>;
-  //   getHighestIdNumberForYear(yearPrefix: string): Promise<number>;
+  async search(query: string, limit: number): Promise<GdgMember[]> {
+    const searchTerm = `%${query}%`;
+
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .or(
+        `display_name.ilike.${searchTerm},email.ilike.${searchTerm},first_name.ilike.${searchTerm},last_name.ilike.${searchTerm}`,
+      )
+      .limit(limit);
+
+    if (error) {
+      handlePostgresError(error);
+    }
+
+    return data ? data.map((row) => this.mapToDomain(row)) : [];
+  }
 
   async findByGdgId(id: string): Promise<GdgMember | null> {
     const { data: gdg_member, error } = await supabase
@@ -148,7 +159,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
 
     if (error) throw new Error(`Failed to update GdgMember: ${error.message}`);
 
-    return this.mapToDomain(data);  
+    return this.mapToDomain(data);
   }
 
   async deleteByGdgId(id: string): Promise<void> {
@@ -159,25 +170,25 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   async getHighestIdNumberForYear(yearPrefix: string): Promise<number> {
     // Make sure the prefix casing matches what you expect in the DB.
     // E.g., if the DB is lowercase 'gdgpup-26-', adjust this prefix accordingly.
-    const prefix = `GDGPUP-${yearPrefix}-`; 
+    const prefix = `GDGPUP-${yearPrefix}-`;
 
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
       // Use .ilike() instead of .like() if you want to ignore uppercase/lowercase differences
-      .ilike("id", `${prefix}%`) 
+      .ilike("id", `${prefix}%`)
       // This works flawlessly because your IDs are zero-padded!
-      .order("id", { ascending: false }) 
+      .order("id", { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (error) throw new Error(`Failed to get highest ID: ${error.message}`);
     if (!data) return 0;
 
-    // Using .substring() is safer and faster than .replace(), 
+    // Using .substring() is safer and faster than .replace(),
     // avoiding any case-sensitivity bugs when removing the prefix.
-    const numPart = data.gdg_id.substring(prefix.length); 
-    
+    const numPart = data.gdg_id.substring(prefix.length);
+
     return parseInt(numPart, 10) || 0;
   }
 }

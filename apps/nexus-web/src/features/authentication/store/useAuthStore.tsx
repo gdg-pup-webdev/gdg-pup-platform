@@ -54,7 +54,7 @@ export const AuthContextProvider = ({
   const { token, setToken, clearToken, decodedToken, _hasHydrated } =
     useTokenStore();
 
-  console.log("AuthContextProvider rendered with status:", state.status);
+  // console.log("AuthContextProvider rendered with status:", state.status);
 
   const refreshTokenMutation = useRefreshToken();
 

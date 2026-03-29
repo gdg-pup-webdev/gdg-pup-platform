@@ -39,10 +39,9 @@ import { LearningResourcesHttpController } from "../routes/learning-resources/le
 import { LearningResourcesRouter } from "../routes/learning-resources/learning-resources.router";
 import { eventSystemController } from "@/v1/modules/eventSystem";
 import { EventsHttpController } from "../routes/events/events.controller";
-import { EventsRouter } from "../routes/events/events.router";
-import { eventHighlightsController } from "../modules/eventHighlights";
-import { EventHighlightsHttpController } from "../routes/event-highlights/eventHighlights.controller";
-import { EventHighlightsRouter } from "../routes/event-highlights/eventHighlights.router";
+import { EventsRouter } from "../routes/events/events.router"; 
+import { ArticlesHttpController } from "../routes/articles/articles.controller";
+import { ArticlesRouter } from "../routes/articles/articles.router";
 import { AuthenticationHttpController } from "../routes/authentication/authentication.controller";
 import { authenticationController } from "../modules/authentication";
 import { oneTimePinController } from "../modules/oneTimePin";
@@ -56,6 +55,7 @@ import { NfcCardsHttpController } from "../routes/nfc-cards/nfcCards.controller"
 import { nfcCardsModuleController } from "../modules/nfcCards";
 import { memberShowcaseController } from "../modules/MemberShowcase";
 import { MemberShowcaseHttpController, MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcase";
+import { articlesController } from "../modules/articles";
 
 export const loadRoutes = (app: Express) => {
   const supabaseClient = supabase;
@@ -65,11 +65,11 @@ export const loadRoutes = (app: Express) => {
   );
   const gdgMembersRouter = new GdgMembersRouter(gdgMembersHttpController);
 
-  const eventHighlightsHttpController = new EventHighlightsHttpController(
-    eventHighlightsController,
+  const articlesHttpController = new ArticlesHttpController(
+    articlesController,
   );
-  const eventHighlightsRouter = new EventHighlightsRouter(
-    eventHighlightsHttpController,
+  const articlesRouter = new ArticlesRouter(
+    articlesHttpController,
   );
 
   const pointsHttpController = new PointsHttpController(pointSystemController);
@@ -165,7 +165,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/learning-resources", learningResourcesRouter.router);
   app.use("/events", eventsRouter.router);
   app.use("/event-system", eventsRouter.router);
-  app.use("/event-highlights", eventHighlightsRouter.router);
+  app.use("/articles", articlesRouter.router);
   app.use("/authentication", authenticationRouter.router);
   app.use("/gdgmembers", gdgMembersRouter.router);
   app.use("/nfc-cards", nfcCardsRouter.router);
