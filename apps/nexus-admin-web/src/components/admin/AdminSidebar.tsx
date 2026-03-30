@@ -40,6 +40,11 @@ const NAV_ITEMS = [
     icon: Link2,
   },
   {
+    label: "Member Projects", 
+    href: INTERNAL_LINKS.MEMBER_PROJECTS,
+    icon: Link2,
+  },
+  {
     label: "Members",
     href: INTERNAL_LINKS.MEMBERS,
     icon: User,

@@ -592,6 +592,48 @@ export type Database = {
           },
         ]
       }
+      member_projects: {
+        Row: {
+          createdAt: string
+          description: string | null
+          endDate: string | null
+          id: string
+          mainImageUrl: string | null
+          memberGdgId: string | null
+          secondaryImageUrl: string | null
+          startDate: string | null
+          tertiaryImageUrl: string | null
+          title: string | null
+          updatedAt: string | null
+        }
+        Insert: {
+          createdAt?: string
+          description?: string | null
+          endDate?: string | null
+          id?: string
+          mainImageUrl?: string | null
+          memberGdgId?: string | null
+          secondaryImageUrl?: string | null
+          startDate?: string | null
+          tertiaryImageUrl?: string | null
+          title?: string | null
+          updatedAt?: string | null
+        }
+        Update: {
+          createdAt?: string
+          description?: string | null
+          endDate?: string | null
+          id?: string
+          mainImageUrl?: string | null
+          memberGdgId?: string | null
+          secondaryImageUrl?: string | null
+          startDate?: string | null
+          tertiaryImageUrl?: string | null
+          title?: string | null
+          updatedAt?: string | null
+        }
+        Relationships: []
+      }
       member_showcase: {
         Row: {
           article_url: string
