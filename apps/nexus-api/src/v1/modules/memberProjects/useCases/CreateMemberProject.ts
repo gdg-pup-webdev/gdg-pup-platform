@@ -1,7 +1,7 @@
 import { MemberProject } from "../domain/MemberProject";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { IFileStorage, FileToUpload } from "../domain/IFileStorage";
-import { IMemberModule } from "../domain/IMemberModule";
+import { IMemberService } from "../domain/IMemberService";
 
 export type CreateMemberProjectInput = {
   title: string;
@@ -18,7 +18,7 @@ export class CreateMemberProject {
   constructor(
     private repository: IMemberProjectRepository,
     private fileStorage: IFileStorage,
-    private memberModule: IMemberModule
+    private memberModule: IMemberService
   ) {}
 
   async execute(input: CreateMemberProjectInput): Promise<MemberProject> {

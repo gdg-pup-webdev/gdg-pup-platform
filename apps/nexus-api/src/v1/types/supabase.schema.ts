@@ -626,6 +626,48 @@ export const publicLearningResourceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicMemberProjectsRowSchema = z.object({
+  createdAt: z.string(),
+  description: z.string().nullable(),
+  endDate: z.string().nullable(),
+  id: z.string(),
+  mainImageUrl: z.string().nullable(),
+  memberGdgId: z.string().nullable(),
+  secondaryImageUrl: z.string().nullable(),
+  startDate: z.string().nullable(),
+  tertiaryImageUrl: z.string().nullable(),
+  title: z.string().nullable(),
+  updatedAt: z.string().nullable(),
+});
+
+export const publicMemberProjectsInsertSchema = z.object({
+  createdAt: z.string().optional(),
+  description: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  id: z.string().optional(),
+  mainImageUrl: z.string().optional().nullable(),
+  memberGdgId: z.string().optional().nullable(),
+  secondaryImageUrl: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  tertiaryImageUrl: z.string().optional().nullable(),
+  title: z.string().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
+export const publicMemberProjectsUpdateSchema = z.object({
+  createdAt: z.string().optional(),
+  description: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  id: z.string().optional(),
+  mainImageUrl: z.string().optional().nullable(),
+  memberGdgId: z.string().optional().nullable(),
+  secondaryImageUrl: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  tertiaryImageUrl: z.string().optional().nullable(),
+  title: z.string().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
 export const publicMemberShowcaseRowSchema = z.object({
   article_url: z.string(),
   created_at: z.string(),
