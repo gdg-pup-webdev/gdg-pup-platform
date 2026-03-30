@@ -5,7 +5,7 @@
     "dev": "turbo run dev --filter=!identity-api...",
     "dev:nexus": "turbo dev --filter=nexus-api... --filter=nexus-web...",
     "dev:nexus-api": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
-    "dev:backend": "turbo dev --filter=nexus-api...",
+    "dev:backend": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
     "dev:storybook": "turbo dev --filter=storybook...",
     "build": "turbo run build --filter=!storybook --filter=!identity-api...",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=nexus-web...",
