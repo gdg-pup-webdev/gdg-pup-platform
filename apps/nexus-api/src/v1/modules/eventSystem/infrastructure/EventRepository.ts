@@ -162,7 +162,7 @@ export class EventRepository implements IEventRepository {
     }
 
     const { data, count, error } = await query
-      .order("start_date", { ascending: true })
+      .order("start_date", { ascending: false })
       .range(from, to);
 
     if (error) handlePostgresError(error);

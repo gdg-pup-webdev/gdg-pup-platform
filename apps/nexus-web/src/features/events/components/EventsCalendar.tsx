@@ -169,7 +169,7 @@ export function EventsCalendar() {
     return map;
   }, [data]);
 
-  // console.log()
+  console.log("Events by date:", eventsByDate);
 
   const eventColorByDate = useMemo(() => {
     const dateKeys = Array.from(eventsByDate.keys())
