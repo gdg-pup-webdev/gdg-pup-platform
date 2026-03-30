@@ -6,12 +6,12 @@ import { useGetLearningResources } from "@/features/learning-resources/hooks";
 const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
   cybersecurity: "Cybersecurity",
-  "data-ml": "Data & ML",
-  executives: "Executive team",
-  iot: "Internet of Things (IoT)",
+  "data-ml": "Data/ML",
+  executives: "Executives",
+  iot: "IoT",
   "project-management": "Project Management",
-  "ui-ux": "UI/UX Design",
-  "web-development": "webdev team",
+  "ui-ux": "UI/UX",
+  "web-development": "Web Development",
 };
 
 export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
