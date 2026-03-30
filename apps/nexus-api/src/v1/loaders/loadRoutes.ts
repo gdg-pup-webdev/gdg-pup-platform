@@ -55,6 +55,8 @@ import { NfcCardsHttpController } from "../routes/nfc-cards/nfcCards.controller"
 import { nfcCardsModuleController } from "../modules/nfcCards";
 import { memberShowcaseController } from "../modules/MemberShowcase";
 import { MemberShowcaseHttpController, MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcase";
+import { memberProjectsController } from "../modules/memberProjects";
+import { MemberProjectsController, MemberProjectsRouter } from "../routes/member-projects/MemberProjects";
 import { articlesController } from "../modules/articles";
 
 export const loadRoutes = (app: Express) => {
@@ -149,6 +151,11 @@ export const loadRoutes = (app: Express) => {
     memberShowcaseHttpController,
   );
 
+  const memberProjectsHttpController = new MemberProjectsController(
+    memberProjectsController,
+  );
+  const memberProjectsRouter = new MemberProjectsRouter(memberProjectsHttpController);
+
   app.use("/files", filesRouter.router);
   app.use("/folders", foldersRouter.router);
   app.use("/auth-system", authRouter.router);
@@ -170,6 +177,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdgmembers", gdgMembersRouter.router);
   app.use("/nfc-cards", nfcCardsRouter.router);
   app.use("/member-showcase", memberShowcaseRouter.router);
+  app.use("/member-projects", memberProjectsRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });
