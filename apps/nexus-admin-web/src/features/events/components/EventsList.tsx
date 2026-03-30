@@ -13,6 +13,7 @@ import { EventCard } from "./EventCard";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
+import { useSyncAllEventToBevy } from "../hooks/useSyncAllEventToBevy";
 
 export const EventsList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -72,10 +73,23 @@ export const EventsList: React.FC = () => {
   const totalPages = eventsResponse?.meta?.totalPages || 1;
   const totalRecords = eventsResponse?.meta?.totalRecords || 0;
 
+  const syncAllMutation = useSyncAllEventToBevy();
+
+
   // Handlers
   const handleCreate = () => {
     setSelectedEvent(null);
     setIsFormModalOpen(true);
+  };
+
+  const handleSyncAllToBevy = () => {
+    // Implementation for syncing all events to Bevy
+    try {
+      syncAllMutation.mutateAsync();
+      toast.success("All events are being synced to Bevy!");
+    } catch (err: any) {
+      toast.error(err.message || "Sync failed");
+    }
   };
 
   const handleCreateFromBevy = () => {
@@ -197,7 +211,7 @@ export const EventsList: React.FC = () => {
     <div className="space-y-6">
       {/* Action Bar */}
       <div className="flex flex-col gap-4">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="flex flex-col items-start justify-between gap-4 md:flex-col">
           <div className="relative w-full max-w-sm">
             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <input
@@ -209,6 +223,20 @@ export const EventsList: React.FC = () => {
             />
           </div>
           <div className="flex w-full items-center gap-2 md:w-auto">
+            <button
+              onClick={handleSyncAllToBevy}
+              disabled={syncAllMutation.isPending}
+              className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-[#0B1F3B] transition-all hover:bg-gray-50 md:flex-none"
+            >
+              {syncAllMutation.isPending ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span className="ml-1">Syncing...</span>
+                </>
+              ) : (
+                <span>Sync All to Bevy</span>
+              )}
+            </button>
             <button
               onClick={handleCreateFromBevy}
               className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-[#0B1F3B] transition-all hover:bg-gray-50 md:flex-none"

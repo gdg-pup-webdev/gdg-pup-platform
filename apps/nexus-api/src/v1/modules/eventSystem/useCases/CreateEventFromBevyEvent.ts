@@ -5,7 +5,7 @@ import { Event } from "../domain/Event";
 export class CreateEventFromBevyEventUseCase {
   constructor(
     private readonly eventRepository: IEventRepository,
-    private readonly bevyEventService: IBevyEventService
+    private readonly bevyEventService: IBevyEventService,
   ) {}
 
   async execute(bevyEventId: string, creatorId: string): Promise<Event> {
@@ -21,26 +21,7 @@ export class CreateEventFromBevyEventUseCase {
       throw new Error("Bevy Event not found");
     }
 
-    const newEvent = Event.create({
-      title: bevyEvent.props.title,
-      description: bevyEvent.props.description || bevyEvent.props.short_description || "",
-      category: bevyEvent.props.event_type || "No Category",
-      venue: bevyEvent.props.location || "Online",
-      start_date: new Date(bevyEvent.props.start_date),
-      end_date: new Date(bevyEvent.props.end_date),
-      bevy_event_id: bevyEvent.props.id,
-      attendance_points: 10, // Default points
-      creatorId: creatorId,
-      image_url: null,
-      bevyPreviewUrl: bevyEvent.props.url,
-      short_description: bevyEvent.props.short_description || bevyEvent.props.description || "",
-      tags: bevyEvent.props.tags || [],
-      max_capacity: bevyEvent.props.max_capacity || 999999,
-      // New props
-      type: null,
-      teamId: null,
-      speakers: [],
-    });
+    const newEvent = Event.createFromBevyEvent(bevyEvent);
 
     await this.eventRepository.saveNew(newEvent);
 

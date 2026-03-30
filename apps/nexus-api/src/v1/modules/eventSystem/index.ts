@@ -45,7 +45,9 @@ import { bevyEventController } from "../bevyEvents";
 // Controller
 import { EventSystemController } from "./EventSystemController";
 import { FileStorageAdapter } from "./infrastructure/FileStorageAdapter";
-import { filesModuleController } from "../filesModule"; 
+import { filesModuleController } from "../filesModule";
+import { ImportAndSyncAllToBevy } from "./useCases/ImportAndSyncAllToBevy";
+import { SyncEventToBevy } from "./useCases/SyncEventToBevy";
 
 // ============================================================================
 // DEPENDENCY INJECTION & INITIALIZATION
@@ -85,6 +87,15 @@ const listEventsByYearUseCase = new ListEventsByYear(eventRepositoryAdapter);
 const getEventsByTypeUseCase = new GetEventsByType(eventRepositoryAdapter);
 const getEventsByTeamUseCase = new GetEventsByTeam(eventRepositoryAdapter);
 
+const importandsyncuc = new ImportAndSyncAllToBevy(
+  bevyEventServiceAdapter,
+  eventRepositoryAdapter,
+);
+const syncevent = new SyncEventToBevy(
+  eventRepositoryAdapter,
+  bevyEventServiceAdapter,
+);
+
 // Initialize Controller
 export const eventSystemController = new EventSystemController(
   checkinToEventUseCase,
@@ -97,7 +108,9 @@ export const eventSystemController = new EventSystemController(
   updateEventUseCase,
   listEventsByYearUseCase,
   getEventsByTypeUseCase,
-  getEventsByTeamUseCase
+  getEventsByTeamUseCase,
+  importandsyncuc,
+  syncevent,
 );
 
 export { EventSystemController };

@@ -6,6 +6,36 @@ import { RequestHandler } from "express";
 export class EventsHttpController {
   constructor(private eventController: typeof eventSystemController) {}
 
+  syncOneEventToBevy : RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.syncToBevy.POST,
+    async ({ input, output }) => {
+      const result = await this.eventController.syncEventToBevy(
+        input.params.eventId,
+      );
+      return output(200, {
+        status: "success",
+        message: "Event synced successfully",
+        data: result
+      });
+    },
+  );
+
+  syncAllEventToBevy: RequestHandler = createExpressController(
+    contract.api.v1.events.syncAllToBevy.POST,
+    async ({ input, output }) => {
+      const res = await this.eventController.importAndSyncAllToBevy();
+      return output(200, {
+        status: "success",
+        message: "Event synced successfully",
+        data: {
+          success: res.successCount,
+          fail: res.failCount,
+          failMessages: res.failMessages,
+        },
+      });
+    },
+  );
+
   listEvents: RequestHandler = createExpressController(
     contract.api.v1.events.GET,
     async ({ input, output }) => {
@@ -22,7 +52,7 @@ export class EventsHttpController {
       const { list, count } = await this.eventController.listEvents(
         pageNumber,
         pageSize,
-        filters
+        filters,
       );
 
       return output(200, {
@@ -36,7 +66,7 @@ export class EventsHttpController {
           totalPages: Math.ceil(count / pageSize),
         },
       });
-    }
+    },
   );
 
   getEventsByType: RequestHandler = createExpressController(
@@ -48,7 +78,7 @@ export class EventsHttpController {
       const { list, count } = await this.eventController.getEventsByType(
         input.params.type,
         pageNumber,
-        pageSize
+        pageSize,
       );
 
       return output(200, {
@@ -62,7 +92,7 @@ export class EventsHttpController {
           totalPages: Math.ceil(count / pageSize),
         },
       });
-    }
+    },
   );
 
   getEventsByTeam: RequestHandler = createExpressController(
@@ -74,7 +104,7 @@ export class EventsHttpController {
       const { list, count } = await this.eventController.getEventsByTeam(
         input.params.teamId,
         pageNumber,
-        pageSize
+        pageSize,
       );
 
       return output(200, {
@@ -88,7 +118,7 @@ export class EventsHttpController {
           totalPages: Math.ceil(count / pageSize),
         },
       });
-    }
+    },
   );
 
   createEvent: RequestHandler = createExpressController(
@@ -111,20 +141,22 @@ export class EventsHttpController {
         message: "Event created successfully",
         data: result as any,
       });
-    }
+    },
   );
 
   getEventById: RequestHandler = createExpressController(
     contract.api.v1.events.eventId.GET,
     async ({ input, output }) => {
-      const result = await this.eventController.getOneEvent(input.params.eventId);
+      const result = await this.eventController.getOneEvent(
+        input.params.eventId,
+      );
 
       return output(200, {
         status: "success",
         message: "Event fetched successfully",
         data: result as any,
       });
-    }
+    },
   );
 
   updateEvent: RequestHandler = createExpressController(
@@ -132,28 +164,31 @@ export class EventsHttpController {
     async ({ input, output }) => {
       const imageFile = input.files?.thumbnail;
 
-      const result = await this.eventController.updateEvent(input.params.eventId, {
-        ...input.body.data,
-        image: imageFile || null,
-      });
+      const result = await this.eventController.updateEvent(
+        input.params.eventId,
+        {
+          ...input.body.data,
+          image: imageFile || null,
+        },
+      );
 
       return output(200, {
         status: "success",
         message: "Event updated successfully",
         data: result as any,
       });
-    }
+    },
   );
 
   deleteEvent: RequestHandler = createExpressController(
     contract.api.v1.events.eventId.DELETE,
     async ({ input, output }) => {
       await this.eventController.deleteEvent(input.params.eventId);
-      
+
       return output(200, {
         status: "success",
         message: "Event deleted successfully",
       });
-    }
+    },
   );
 }
