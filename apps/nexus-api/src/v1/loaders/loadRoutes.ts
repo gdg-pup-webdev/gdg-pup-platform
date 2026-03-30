@@ -56,7 +56,7 @@ import { nfcCardsModuleController } from "../modules/nfcCards";
 import { memberShowcaseController } from "../modules/MemberShowcase";
 import { MemberShowcaseHttpController, MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcase";
 import { memberProjectsController } from "../modules/memberProjects";
-import { MemberProjectsController, MemberProjectsRouter } from "../routes/member-projects/MemberProjects";
+import { MemberProjectsHttpController, MemberProjectsRouter } from "../routes/member-projects/MemberProjects";
 import { articlesController } from "../modules/articles";
 
 export const loadRoutes = (app: Express) => {
@@ -151,7 +151,7 @@ export const loadRoutes = (app: Express) => {
     memberShowcaseHttpController,
   );
 
-  const memberProjectsHttpController = new MemberProjectsController(
+  const memberProjectsHttpController = new MemberProjectsHttpController(
     memberProjectsController,
   );
   const memberProjectsRouter = new MemberProjectsRouter(memberProjectsHttpController);

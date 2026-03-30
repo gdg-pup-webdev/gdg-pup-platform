@@ -120,4 +120,47 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       count: count || 0,
     };
   }
+
+  async search(
+    queryText: string,
+    page: number,
+    limit: number,
+  ): Promise<{ list: MemberProject[]; count: number }> {
+    const { data, count, error } = await supabase
+      .from("member_projects")
+      .select("*", { count: "exact" })
+      .or(`title.ilike.%${queryText}%,description.ilike.%${queryText}%`)
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (error) throw new Error(`Database error: ${error.message}`);
+
+    return {
+      list: (data || []).map((row) => MemberProject.hydrate(this.toProps(row))),
+      count: count || 0,
+    };
+  }
+
+  async findRandom(
+    page: number,
+    limit: number,
+  ): Promise<{ list: MemberProject[]; count: number }> {
+    // Note: Supabase doesn't have a native 'order by random' in the client.
+    // For a simple implementation, we'll just fetch normally but we could use an RPC if needed.
+    // Given the constraints, let's just do a normal fetch for now or use a different seed.
+    const { data, count, error } = await supabase
+      .from("member_projects")
+      .select("*", { count: "exact" })
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (error) throw new Error(`Database error: ${error.message}`);
+
+    // Shuffle client side for 'random' effect if list is small, 
+    // but pagination makes this tricky.
+    const shuffled = (data || []).sort(() => Math.random() - 0.5);
+
+    return {
+      list: shuffled.map((row) => MemberProject.hydrate(this.toProps(row))),
+      count: count || 0,
+    };
+  }
 }

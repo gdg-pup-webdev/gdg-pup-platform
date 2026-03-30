@@ -3,7 +3,7 @@ import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 import { memberProjectsController as moduleController } from "@/v1/modules/memberProjects";
 
-export class MemberProjectsController {
+export class MemberProjectsHttpController {
   constructor(private readonly module: typeof moduleController) {}
 
   postCreate: RequestHandler = createExpressController(
@@ -141,16 +141,66 @@ export class MemberProjectsController {
       });
     },
   );
+
+  getSearch: RequestHandler = createExpressController(
+    contract.api.v1.member_projects.search.GET,
+    async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+
+      const { list, count } = await this.module.search(
+        input.query.query,
+        pageNumber,
+        pageSize,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "Search results fetched successfully",
+        data: list,
+        meta: {
+          totalRecords: count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(count / pageSize),
+        },
+      });
+    },
+  );
+
+  getRandom: RequestHandler = createExpressController(
+    contract.api.v1.member_projects.random.GET,
+    async ({ input, output }) => {
+      const pageNumber = input.query.pageNumber || 1;
+      const pageSize = input.query.pageSize || 10;
+
+      const { list, count } = await this.module.getRandom(pageNumber, pageSize);
+
+      return output(200, {
+        status: "success",
+        message: "Random projects fetched successfully",
+        data: list,
+        meta: {
+          totalRecords: count,
+          currentPage: pageNumber,
+          pageSize,
+          totalPages: Math.ceil(count / pageSize),
+        },
+      });
+    },
+  );
 }
 
 export class MemberProjectsRouter {
   router: Router;
 
-  constructor(private readonly controller: MemberProjectsController) {
+  constructor(private readonly controller: MemberProjectsHttpController) {
     this.router = Router();
 
     this.router.post("/", this.controller.postCreate);
     this.router.get("/", this.controller.getList);
+    this.router.get("/search", this.controller.getSearch);
+    this.router.get("/random", this.controller.getRandom);
     this.router.get("/:id", this.controller.getOne);
     this.router.patch("/:id", this.controller.patchUpdate);
     this.router.delete("/:id", this.controller.deleteDelete);

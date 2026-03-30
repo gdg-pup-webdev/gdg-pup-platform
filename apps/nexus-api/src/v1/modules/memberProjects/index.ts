@@ -9,6 +9,8 @@ import { GetMemberProject } from "./useCases/GetMemberProject";
 import { GetMemberProjectsByGdgId } from "./useCases/GetMemberProjectsByGdgId";
 import { ListMemberProjects } from "./useCases/ListMemberProjects";
 import { UpdateMemberProject } from "./useCases/UpdateMemberProject";
+import { SearchMemberProjects } from "./useCases/SearchMemberProjects";
+import { GetRandomMemberProjects } from "./useCases/GetRandomMemberProjects";
 
 const repo = new MemberProjectRepository();
 const storage = new FileStorageAdapter(filesModuleController);
@@ -20,6 +22,8 @@ const deleteUC = new DeleteMemberProject(repo);
 const getOneUC = new GetMemberProject(repo);
 const listUC = new ListMemberProjects(repo);
 const getByMemberUC = new GetMemberProjectsByGdgId(repo);
+const searchUC = new SearchMemberProjects(repo);
+const randomUC = new GetRandomMemberProjects(repo);
 
 export const memberProjectsController = new MemberProjectsController(
   createUC,
@@ -28,5 +32,6 @@ export const memberProjectsController = new MemberProjectsController(
   getOneUC,
   listUC,
   getByMemberUC,
+  searchUC,
+  randomUC
 );
-

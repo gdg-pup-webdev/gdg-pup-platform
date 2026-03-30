@@ -5,6 +5,8 @@ import { DeleteMemberProject } from "./useCases/DeleteMemberProject";
 import { GetMemberProject } from "./useCases/GetMemberProject";
 import { ListMemberProjects } from "./useCases/ListMemberProjects";
 import { GetMemberProjectsByGdgId } from "./useCases/GetMemberProjectsByGdgId";
+import { SearchMemberProjects } from "./useCases/SearchMemberProjects";
+import { GetRandomMemberProjects } from "./useCases/GetRandomMemberProjects";
 import { FileToUpload } from "./domain/IFileStorage";
 
 export type MemberProjectDTO = {
@@ -28,7 +30,9 @@ export class MemberProjectsController {
     private deleteUseCase: DeleteMemberProject,
     private getOneUseCase: GetMemberProject,
     private listUseCase: ListMemberProjects,
-    private getByMemberUseCase: GetMemberProjectsByGdgId
+    private getByMemberUseCase: GetMemberProjectsByGdgId,
+    private searchUseCase: SearchMemberProjects,
+    private randomUseCase: GetRandomMemberProjects
   ) {}
 
   private toDTO(project: MemberProject): MemberProjectDTO {
@@ -117,6 +121,22 @@ export class MemberProjectsController {
 
   async getByMember(memberGdgId: string, page: number = 1, limit: number = 10): Promise<{ list: MemberProjectDTO[]; count: number }> {
     const result = await this.getByMemberUseCase.execute(memberGdgId, page, limit);
+    return {
+      list: result.list.map((p) => this.toDTO(p)),
+      count: result.count,
+    };
+  }
+
+  async search(query: string, page: number = 1, limit: number = 10): Promise<{ list: MemberProjectDTO[]; count: number }> {
+    const result = await this.searchUseCase.execute(query, page, limit);
+    return {
+      list: result.list.map((p) => this.toDTO(p)),
+      count: result.count,
+    };
+  }
+
+  async getRandom(page: number = 1, limit: number = 10): Promise<{ list: MemberProjectDTO[]; count: number }> {
+    const result = await this.randomUseCase.execute(page, limit);
     return {
       list: result.list.map((p) => this.toDTO(p)),
       count: result.count,
