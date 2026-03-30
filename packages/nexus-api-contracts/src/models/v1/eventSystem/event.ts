@@ -5,7 +5,7 @@ export const eventRecord = cz.object({
   createdAt: cz.string(),
   updatedAt: cz.string(),
 
-  creatorId: cz.string().uuid(),
+  creatorId: cz.string().uuid().nullable(),
 
   title: cz.string(),
   description: cz.string(),

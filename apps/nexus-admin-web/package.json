@@ -10,13 +10,13 @@
     "g": "tsx scripts/generate-feature.ts"
   },
   "dependencies": {
-    "@packages/spark-tools": "workspace:*",
-    "@packages/spark-ui": "workspace:*",
     "@configs/tailwind-config": "workspace:*",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@packages/nexus-api-contracts": "workspace:*",
+    "@packages/spark-tools": "workspace:*",
+    "@packages/spark-ui": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.90.1",
     "@tailwindcss/typography": "^0.5.19",
@@ -30,6 +30,7 @@
     "ogl": "^1.0.11",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-icons": "^5.6.0",
     "react-markdown": "^10.1.0",
     "react-toastify": "^11.0.5",
     "remark-gfm": "^4.0.1",

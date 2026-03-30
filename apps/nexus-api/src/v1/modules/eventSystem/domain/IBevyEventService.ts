@@ -10,11 +10,17 @@ export class BevyEventDTO {
       start_date: string;
       end_date: string;
       url: string;
-      tags: string[]; 
+      tags: string[];
       max_capacity: number;
+      image_url:string | null;
+      total_attendees: number | null;
     },
   ) {}
 }
 export interface IBevyEventService {
   getById(id: string): Promise<BevyEventDTO | undefined>;
+  listEvents(
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ list: BevyEventDTO[]; totalEvents: number; totalPages: number }>;
 }

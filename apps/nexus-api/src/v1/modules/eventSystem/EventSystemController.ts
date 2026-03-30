@@ -1,5 +1,5 @@
 import { Event, EventUpdateProps } from "./domain/Event";
-import { FileToUpload } from './domain/IFileStorage';
+import { FileToUpload } from "./domain/IFileStorage";
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
 import { CreateEvent } from "./useCases/CreateEvent";
 import { CreateEventFromBevyEventUseCase } from "./useCases/CreateEventFromBevyEvent";
@@ -11,6 +11,8 @@ import { ListEventsByYear } from "./useCases/listEventsByYear";
 import { UpdateEvent } from "./useCases/UpdateEvent";
 import { GetEventsByType } from "./useCases/GetEventsByType";
 import { GetEventsByTeam } from "./useCases/GetEventsByTeam";
+import { ImportAndSyncAllToBevy } from "./useCases/ImportAndSyncAllToBevy";
+import { SyncEventToBevy } from "./useCases/SyncEventToBevy";
 
 export class EventSystemController {
   constructor(
@@ -25,7 +27,18 @@ export class EventSystemController {
     private readonly listEventsByYearUseCase: ListEventsByYear,
     private readonly getEventsByTypeUseCase: GetEventsByType,
     private readonly getEventsByTeamUseCase: GetEventsByTeam,
+    private readonly importallandsyncuc: ImportAndSyncAllToBevy,
+    private readonly synceventtobevy: SyncEventToBevy,
   ) {}
+
+  async syncEventToBevy(eventId: string) {
+    const res = await this.synceventtobevy.execute(eventId);
+    return this.flattenEvent(res);
+  }
+
+  async importAndSyncAllToBevy() {
+    return this.importallandsyncuc.execute();
+  }
 
   private flattenEvent(event: Event) {
     return {
@@ -51,7 +64,7 @@ export class EventSystemController {
       speakers: event.props.speakers,
       type: event.props.type,
       teamId: event.props.teamId,
-    }
+    };
   }
 
   /**
@@ -60,21 +73,30 @@ export class EventSystemController {
    */
   private ensureArray(val: any): string[] {
     if (!val) return [];
-    if (Array.isArray(val)) return val.filter(item => typeof item === 'string');
-    if (typeof val === 'string') {
+    if (Array.isArray(val))
+      return val.filter((item) => typeof item === "string");
+    if (typeof val === "string") {
       try {
         const parsed = JSON.parse(val);
-        if (Array.isArray(parsed)) return parsed.filter(item => typeof item === 'string');
+        if (Array.isArray(parsed))
+          return parsed.filter((item) => typeof item === "string");
       } catch (e) {
         // Not JSON, maybe comma separated
-        return val.split(',').map(s => s.trim()).filter(Boolean);
+        return val
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
       }
     }
     return [];
   }
 
-  async listEventsByYear(pageNumber: number, pageSize: number, year: number) { 
-    const result = await this.listEventsByYearUseCase.execute(pageNumber, pageSize, year);
+  async listEventsByYear(pageNumber: number, pageSize: number, year: number) {
+    const result = await this.listEventsByYearUseCase.execute(
+      pageNumber,
+      pageSize,
+      year,
+    );
     return {
       list: result.list.map(this.flattenEvent.bind(this)),
       count: result.count,
@@ -110,7 +132,7 @@ export class EventSystemController {
     beviPreviewUrl,
     image,
     image_url,
-    tags, 
+    tags,
     max_capacity,
     short_description,
     speakers,
@@ -118,7 +140,7 @@ export class EventSystemController {
     teamId,
     bevy_event_id,
   }: {
-    creatorId: string;
+    creatorId: string | null;
     title: string;
     description: string;
     category: string;
@@ -192,7 +214,11 @@ export class EventSystemController {
   }
 
   async getEventsByType(type: string, pageNumber: number, pageSize: number) {
-    const result = await this.getEventsByTypeUseCase.execute(type, pageNumber, pageSize);
+    const result = await this.getEventsByTypeUseCase.execute(
+      type,
+      pageNumber,
+      pageSize,
+    );
     return {
       list: result.list.map((event) => this.flattenEvent(event)),
       count: result.count,
@@ -200,7 +226,11 @@ export class EventSystemController {
   }
 
   async getEventsByTeam(teamId: string, pageNumber: number, pageSize: number) {
-    const result = await this.getEventsByTeamUseCase.execute(teamId, pageNumber, pageSize);
+    const result = await this.getEventsByTeamUseCase.execute(
+      teamId,
+      pageNumber,
+      pageSize,
+    );
     return {
       list: result.list.map((event) => this.flattenEvent(event)),
       count: result.count,
@@ -229,21 +259,34 @@ export class EventSystemController {
     };
   }
 
-  async listEvents(pageNumber: number, pageSize: number, filters?: { type?: string; teamId?: string; teamName?: string; year?: number }) {
-    const result = await this.listEventsUseCase.execute(pageNumber, pageSize, filters);
+  async listEvents(
+    pageNumber: number,
+    pageSize: number,
+    filters?: {
+      type?: string;
+      teamId?: string;
+      teamName?: string;
+      year?: number;
+    },
+  ) {
+    const result = await this.listEventsUseCase.execute(
+      pageNumber,
+      pageSize,
+      filters,
+    );
     return {
-      list: result.list.map((event) =>  this.flattenEvent(event)),
+      list: result.list.map((event) => this.flattenEvent(event)),
       count: result.count,
     };
   }
 
   async updateEvent(eventId: string, dto: any) {
     const updateProps: any = { ...dto };
-    
+
     if (dto.start_date) updateProps.start_date = new Date(dto.start_date);
     if (dto.end_date) updateProps.end_date = new Date(dto.end_date);
     if (dto.bevyPreviewUrl) updateProps.bevyPreviewUrl = dto.bevyPreviewUrl;
-    
+
     // Explicitly handle array fields that might be stringified in multipart
     if (dto.tags) updateProps.tags = this.ensureArray(dto.tags);
     if (dto.speakers) updateProps.speakers = this.ensureArray(dto.speakers);
