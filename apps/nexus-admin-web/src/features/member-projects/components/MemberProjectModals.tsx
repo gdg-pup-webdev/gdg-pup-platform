@@ -6,6 +6,7 @@ import { MemberProject, CreateMemberProjectDTO, UpdateMemberProjectDTO } from ".
 import { useSearchUsers } from "@/features/teams/api/teams";
 import Image from "next/image";
 import { toast } from "react-toastify";
+import { UserType } from "@/features/articles";
 
 // ==========================================
 // Modal Wrapper
@@ -135,8 +136,8 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
     }
   };
 
-  const handleSelectUser = (user: any) => {
-    setFormData(prev => ({ ...prev, memberGdgId: user.gdg_id }));
+  const handleSelectUser = (user  : UserType) => {
+    setFormData((prev) => ({ ...prev, memberGdgId: user.gdg_id || "" }));
     setSearchQuery(user.display_name);
     setShowDropdown(false);
   };
