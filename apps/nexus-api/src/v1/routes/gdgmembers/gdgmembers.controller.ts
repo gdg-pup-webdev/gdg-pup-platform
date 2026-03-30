@@ -8,6 +8,26 @@ export class GdgMembersHttpController {
     private readonly moduleController: GdgMembersController = gdgMembersController
   ) {}
 
+  changeProfileImage : RequestHandler = createExpressController(
+    contract.api.v1.gdgmembers.gdgId.profile_image.POST, 
+    async ({ input, output }) => {
+      const file = input.files?.newProfile;
+      if (!file) {
+        return output(400, {
+          status: "fail",
+          message: "No file uploaded",
+        });
+      }
+
+      const result = await this.moduleController.changeProfilePicture(input.params.gdgId, file);
+      return output(200, {
+        status: "success",
+        message: "Profile picture updated successfully",
+        data: result,
+      });
+    }
+  )
+
   get: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.GET,
     async ({ input, output }) => {
@@ -35,7 +55,7 @@ export class GdgMembersHttpController {
   post: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.POST,
     async ({ input, output }) => {
-      const result = await this.moduleController.addMember(input.body.data);
+      const result = await this.moduleController.addMember(input.body.data, );
       return output(201, {
         status: "success",
         message: "GDG member added successfully",
