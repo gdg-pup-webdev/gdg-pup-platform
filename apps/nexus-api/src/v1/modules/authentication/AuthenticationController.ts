@@ -10,6 +10,9 @@ import { DeleteUser } from "./useCases/DeleteUser.js";
 import { GetMe } from "./useCases/GetMe.js";
 import { Logout } from "./useCases/Logout.js";
 import { RefreshToken } from "./useCases/RefreshToken.js";
+import { InitiateForgotPassword } from "./useCases/InitiateForgotPassword.js";
+import { FinalizeForgotPassword } from "./useCases/FinalizeForgotPassword.js";
+import { ResendOtp } from "./useCases/ResendOtp.js";
 
 export class AuthenticationController {
   constructor(
@@ -24,7 +27,10 @@ export class AuthenticationController {
     private readonly initiateChangeEmailUC: InitiateChangeEmail,
     private readonly finalizeChangeEmailUC: FinalizeChangeEmail,
     private readonly deleteUserUC: DeleteUser, 
-    private readonly refreshTokenUC: RefreshToken
+    private readonly refreshTokenUC: RefreshToken,
+    private readonly initiateForgotPasswordUC: InitiateForgotPassword,
+    private readonly finalizeForgotPasswordUC: FinalizeForgotPassword,
+    private readonly resendOtpUC: ResendOtp
   ) {}
 
   async refreshToken (token:string) : Promise<string> {
@@ -67,6 +73,21 @@ export class AuthenticationController {
 
   async finalizeChangePassword(body: { referenceCode: string; otp: string }): Promise<{ success: boolean }> {
     const success = await this.finalizeChangePasswordUC.execute(body.referenceCode, body.otp);
+    return { success };
+  }
+
+  async initiateForgotPassword(body: { email: string }): Promise<{ referenceCode: string }> {
+    const referenceCode = await this.initiateForgotPasswordUC.execute(body.email);
+    return { referenceCode };
+  }
+
+  async finalizeForgotPassword(body: { referenceCode: string; otp: string; newPass: string }): Promise<{ success: boolean }> {
+    await this.finalizeForgotPasswordUC.execute(body.referenceCode, body.otp, body.newPass);
+    return { success: true };
+  }
+
+  async resendOtp(body: { referenceCode: string }): Promise<{ success: boolean }> {
+    const success = await this.resendOtpUC.execute(body.referenceCode);
     return { success };
   }
 

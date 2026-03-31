@@ -2,6 +2,7 @@ export const LINKS = {
   landing: "/",
   auth_signin: "/signin",
   auth_signup: "/signup",
+  auth_forgot_password: "/forgot-password",
 
   profile_me: "/me",
 

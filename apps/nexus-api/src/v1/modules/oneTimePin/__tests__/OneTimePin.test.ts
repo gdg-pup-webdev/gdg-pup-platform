@@ -23,10 +23,11 @@ describe("OneTimePin Module", () => {
 
   it("should create and send OTP, then verify it successfully", async () => {
     const email = "user@example.com";
+    const context = "Forgot Password";
     
-    const { reference } = await controller.createAndSendOtpToEmail(email);
+    const { reference } = await controller.createAndSendOtpToEmail(email, context);
     expect(reference).toBeDefined();
-    expect(mailer.sendOtp).toHaveBeenCalledWith(email, expect.any(String));
+    expect(mailer.sendOtp).toHaveBeenCalledWith(email, expect.any(String), context);
 
     const sentOtp = (mailer.sendOtp as any).mock.calls[0][1];
     
