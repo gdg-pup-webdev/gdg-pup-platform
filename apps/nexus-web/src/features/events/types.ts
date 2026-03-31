@@ -1,56 +1,54 @@
+import { contract } from "@packages/nexus-api-contracts";
+import { z } from "zod";
+
+// types inferred from contract models
+export type Event = z.infer<typeof contract.api.v1.events.GET.response[200]>["data"][number];
+export type EventAttendance = z.infer<typeof contract.api.v1.events.eventId.attendees.GET.response[200]>["data"][number];
+
+export type EventInsert = {
+  title: string;
+  description: string;
+  short_description: string | null;
+  category: string;
+  type: string | null;
+  venue: string;
+  start_date: string;
+  end_date: string;
+  attendance_points: number;
+  max_capacity: number;
+  image_url: string | null;
+  image?: File;
+  speakers: string[];
+  tags: string[];
+  teamId: string | null;
+  bevy_event_id: string | null;
+  bevyPreviewUrl: string | null;
+};
+
+export type EventUpdate = Partial<EventInsert>;
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Type definitions for the events feature
  * 
  * This module contains all TypeScript interfaces and types used
  * in the events system.
  */
+ 
 
 /**
  * Core event entity from the API
- */
-export interface Event {
-  /** Unique event identifier */
-  id: string;
-  
-  /** Event title */
-  title: string;
-  
-  /** Event description (optional) */
-  description: string | null;
-  
-  /** Event start date-time (ISO string) */
-  start_date: string;
-  
-  /** Event end date-time (ISO string) */
-  end_date: string;
-  
-  /** Event venue/location */
-  venue: string | null;
-  
-  /** Event category (workshop, meetup, hackathon, etc.) */
-  category: string | null;
-  
-  /** Creator user ID */
-  creator_id?: string;
-  
-  /** Event banner/image URL */
-  banner_url?: string;
-  
-  /** Registration link  */
-  registration_url?: string;
-  
-  /** Current attendee count */
-  attendee_count?: number;
-  
-  /** Maximum capacity */
-  max_capacity?: number;
-  
-  /** Record creation timestamp */
-  created_at: string;
-  
-  /** Record last update timestamp */
-  updated_at: string;
-}
+ */ 
 
 /**
  * Paginated response for events list
@@ -77,6 +75,8 @@ export interface EventsQueryParams {
   
   /** Page size (default: 10) */
   pageSize?: number;
+
+  year?: number;
   
   /** Filter by creator user ID */
   creator_id?: string;

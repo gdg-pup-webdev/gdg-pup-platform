@@ -13,6 +13,8 @@ import {
   ExternalLink,
   Files,
   Link2,
+  User,
+  Sparkles,
 } from "lucide-react";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 
@@ -28,6 +30,26 @@ const NAV_ITEMS = [
     icon: LayoutDashboard,
   },
   {
+    label: "Profile",
+    href: INTERNAL_LINKS.PROFILE,
+    icon: User,
+  },
+  {
+    label: "Articles", 
+    href: INTERNAL_LINKS.ARTICLES,
+    icon: Link2,
+  },
+  {
+    label: "Member Projects", 
+    href: INTERNAL_LINKS.MEMBER_PROJECTS,
+    icon: Link2,
+  },
+  {
+    label: "Members",
+    href: INTERNAL_LINKS.MEMBERS,
+    icon: User,
+  },
+  {
     label: "Teams",
     href: INTERNAL_LINKS.TEAMS,
     icon: Users,
@@ -36,20 +58,30 @@ const NAV_ITEMS = [
     label: "Files",
     href: INTERNAL_LINKS.FILES,
     icon: Files,
-  },
+  }, 
   {
-    label: "Team Resources",
-    href: INTERNAL_LINKS.TEAM_RESOURCES,
+    label: "Learning Resources",
+    href: INTERNAL_LINKS.LEARNING_RESOURCES,
     icon: Link2,
   },
   {
-    label: "Portfolios",
-    href: INTERNAL_LINKS.PORTFOLIOS,
-    icon: Award,
+    label: "Member Showcase",
+    href: INTERNAL_LINKS.MEMBER_SHOWCASE,
+    icon: Sparkles,
   },
+  // {
+  //   label: "Portfolios",
+  //   href: INTERNAL_LINKS.PORTFOLIOS,
+  //   icon: Award,
+  // },
   {
     label: "Debug page",
     href: INTERNAL_LINKS.DEBUG_PAGE,
+    icon: Award, 
+  },
+  {
+    label: "Roles",
+    href: INTERNAL_LINKS.RBAC,
     icon: Award, 
   },
 ];
@@ -140,12 +172,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
               label: "Nexus Events",
               href: INTERNAL_LINKS.EVENTS,
               icon: Calendar,
-            },
-            {
-              label: "Event Highlights",
-              href: INTERNAL_LINKS.EVENT_HIGHLIGHTS,
-              icon: MessageSquareQuote,
-            },
+            }, 
             {
               label: "Bevy Events",
               href: INTERNAL_LINKS.BEVY_EVENTS,

@@ -1,5 +1,5 @@
-import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule";
-import { SparkmatesSource } from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
+import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule_deprecated";
+import { SparkmatesSource } from "@/v1/modules/sparkmatesModule_deprecated/domain/Sparkmates";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
@@ -61,8 +61,7 @@ export class SparkmatesHttpController {
         status: "success",
         message: "Sparkmates profile resolved successfully",
         data: {
-          gdg_id: record.gdgId,
-          owner_user_id: record.ownerUserId,
+          gdg_id: record.gdgId, 
           source: record.source,
           status: record.status,
           portfolio: record.portfolio ? toRow(record.portfolio) : null,

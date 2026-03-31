@@ -3,15 +3,21 @@ export const EXTERNAL_LINKS = {
 } as const;
 
 export const INTERNAL_LINKS = {
+  ARTICLES: "/admin/articles",
+  MEMBER_PROJECTS: "/admin/member-projects",
   HOME: "/",
   DASHBOARD: "/admin",
   DEBUG_PAGE: "/admin/debug",
   TEAMS: "/admin/teams",
-  FILES: "/admin/files",
-  TEAM_RESOURCES: "/admin/team-resources",
+  FILES: "/admin/files", 
+  LEARNING_RESOURCES: "/admin/learning-resources",
   EVENTS: "/admin/events",
   EVENT_HIGHLIGHTS: "/admin/event-highlights",
   BEVY_EVENTS: "/admin/bevy-events",
   PORTFOLIOS: "/admin/portfolios",
-  LOGIN: "/admin/login",
+  PROFILE: "/admin/profile",
+  LOGIN: "/authentication/login",
+  MEMBERS: "/admin/members",
+  MEMBER_SHOWCASE: "/admin/member-showcase",
+  RBAC: "/admin/roles-and-permissions",
 } as const;

@@ -1,84 +1,25 @@
- 
-import { learningResourceUpdateDTO, learningResource } from "#models/v1/learningResourceSystem/externalResource.js";
+import {
+  LearningResourceModel,
+  LearningResourceUpdateModel,
+} from "#models/v1/learningResourceSystem/learningResource.js";
 import { OpenApiSchemas } from "@packages/typed-rest/shared";
 
-export const body = OpenApiSchemas.Request.Body.withPayload(learningResourceUpdateDTO);
+export const body = OpenApiSchemas.Request.Body.withPayload(
+  LearningResourceUpdateModel,
+);
+
+export const files = {
+  thumbnailImage: OpenApiSchemas.Models.file(),
+};
 
 export const response = {
-  200: OpenApiSchemas.Response.single(learningResource),
+  200: OpenApiSchemas.Response.single(LearningResourceModel),
   ...OpenApiSchemas.Response.standardErrors(),
 };
 
-export const docs_summary = "Update external resource";
+export const docs_summary = "Update learning resource";
 export const docs_description = [
-  "Purpose: Update external resource.",
-  "Inputs: Path params: see schema. Body: see schema.",
-  "Outputs: Single external resource.",
-  "Errors: 400, 403, 404, 500.",
-  "Auth: Requires Bearer token.",
+  "Purpose: Update a specific learning resource.",
+  "Inputs: Body: see schema. Files: thumbnailImage (optional). Path param learningResourceId.",
+  "Outputs: Updated single learning resource.",
 ].join("\n\n");
-
-export const docs_example_response_400 = {
-  "status": "error",
-  "message": "Invalid request.",
-  "errors": [
-    {
-      "title": "Bad Request",
-      "detail": "One or more request fields are invalid."
-    }
-  ]
-};
-export const docs_example_response_401 = {
-  "status": "error",
-  "message": "Unauthorized.",
-  "errors": [
-    {
-      "title": "Unauthorized",
-      "detail": "Missing or invalid authentication token."
-    }
-  ]
-};
-export const docs_example_response_403 = {
-  "status": "error",
-  "message": "Forbidden.",
-  "errors": [
-    {
-      "title": "Forbidden",
-      "detail": "You do not have permission to access this resource."
-    }
-  ]
-};
-export const docs_example_response_404 = {
-  "status": "error",
-  "message": "ExternalResourceId not found.",
-  "errors": [
-    {
-      "title": "Not Found",
-      "detail": "No externalresourceid found for the provided identifier."
-    }
-  ]
-};
-export const docs_example_response_500 = {
-  "status": "error",
-  "message": "Internal server error.",
-  "errors": [
-    {
-      "title": "Internal Server Error",
-      "detail": "An unexpected error occurred."
-    }
-  ]
-};
-
-export const docs_example_response = {
-  "status": "success",
-  "message": "Resource updated",
-  "data": {
-    "id": "external-1",
-    "title": "Updated title",
-    "description": "Performance fundamentals",
-    "resource_url": "https://example.com/perf",
-    "uploader_id": "user-1",
-    "created_at": "2026-01-01T00:00:00.000Z",
-    "updated_at": "2026-01-01T00:00:00.000Z"
-  }
-};

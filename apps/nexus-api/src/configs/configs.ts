@@ -7,4 +7,16 @@ export const configs = {
   supabase: {
     storageBucket: process.env.SUPABASE_STORAGE_BUCKET || "public",
   },
+  jwt: {
+    secret: process.env.JWT_SECRET || "secret",
+    expiresIn: process.env.JWT_EXPIRES_IN || "1h",
+  },
+  zeptoMail: {
+    url: process.env.ZEPTOMAIL_URL || "https://api.zeptomail.com/v1.1/email",
+    token: process.env.ZEPTOMAIL_TOKEN || "",
+    from: {
+      address: process.env.ZEPTOMAIL_FROM_ADDRESS || "noreply@gdgpup.org",
+      name: process.env.ZEPTOMAIL_FROM_NAME || "GDG PUP",
+    },
+  },
 };

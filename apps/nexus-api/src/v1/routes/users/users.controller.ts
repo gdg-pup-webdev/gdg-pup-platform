@@ -1,6 +1,6 @@
 import { FilesModuleController } from "@/v1/modules/filesModule";
 import { RbacModuleController } from "@/v1/modules/rbacSystem/RbacModuleController";
-import { userModuleController, UserModuleController } from "@/v1/modules/UserModule";
+import { userModuleController, UserModuleController } from "@/v1/modules/UserModule_deprecated";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";

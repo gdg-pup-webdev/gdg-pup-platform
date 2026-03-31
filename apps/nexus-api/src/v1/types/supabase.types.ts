@@ -17,53 +17,44 @@ export type Database = {
       article: {
         Row: {
           author_id: string | null
-          body: string | null
+          content: string | null
           created_at: string
+          description: string | null
+          eventId: string | null
           id: string
           is_published: boolean
           published_at: string | null
-          related_event_id: string | null
+          thumbnail_url: string | null
           title: string
           updated_at: string
         }
         Insert: {
           author_id?: string | null
-          body?: string | null
+          content?: string | null
           created_at?: string
+          description?: string | null
+          eventId?: string | null
           id?: string
           is_published?: boolean
           published_at?: string | null
-          related_event_id?: string | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           author_id?: string | null
-          body?: string | null
+          content?: string | null
           created_at?: string
+          description?: string | null
+          eventId?: string | null
           id?: string
           is_published?: boolean
           published_at?: string | null
-          related_event_id?: string | null
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "article_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "article_related_event_id_fkey"
-            columns: ["related_event_id"]
-            isOneToOne: false
-            referencedRelation: "event"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       article_comment: {
         Row: {
@@ -134,6 +125,7 @@ export type Database = {
         Row: {
           attendance_points: number
           attendees_count: number
+          bevy_preview_url: string | null
           category: string | null
           created_at: string
           creator_id: string | null
@@ -141,14 +133,22 @@ export type Database = {
           end_date: string | null
           gdg_event_id: number | null
           id: string
+          max_capacity: string | null
+          short_description: string | null
+          speakers: string[] | null
           start_date: string | null
+          tags: string | null
+          team_id: string | null
+          thumbnail_url: string | null
           title: string
+          type: string | null
           updated_at: string
           venue: string | null
         }
         Insert: {
           attendance_points?: number
           attendees_count?: number
+          bevy_preview_url?: string | null
           category?: string | null
           created_at?: string
           creator_id?: string | null
@@ -156,14 +156,22 @@ export type Database = {
           end_date?: string | null
           gdg_event_id?: number | null
           id?: string
+          max_capacity?: string | null
+          short_description?: string | null
+          speakers?: string[] | null
           start_date?: string | null
+          tags?: string | null
+          team_id?: string | null
+          thumbnail_url?: string | null
           title: string
+          type?: string | null
           updated_at?: string
           venue?: string | null
         }
         Update: {
           attendance_points?: number
           attendees_count?: number
+          bevy_preview_url?: string | null
           category?: string | null
           created_at?: string
           creator_id?: string | null
@@ -171,8 +179,15 @@ export type Database = {
           end_date?: string | null
           gdg_event_id?: number | null
           id?: string
+          max_capacity?: string | null
+          short_description?: string | null
+          speakers?: string[] | null
           start_date?: string | null
+          tags?: string | null
+          team_id?: string | null
+          thumbnail_url?: string | null
           title?: string
+          type?: string | null
           updated_at?: string
           venue?: string | null
         }
@@ -185,10 +200,10 @@ export type Database = {
             referencedColumns: ["gdg_id"]
           },
           {
-            foreignKeyName: "events_creator_id_fkey"
-            columns: ["creator_id"]
+            foreignKeyName: "event_team_id_fkey"
+            columns: ["team_id"]
             isOneToOne: false
-            referencedRelation: "user"
+            referencedRelation: "team"
             referencedColumns: ["id"]
           },
         ]
@@ -411,43 +426,85 @@ export type Database = {
       }
       gdg_members: {
         Row: {
+          avatar_image_url: string | null
+          bio: string | null
           created_at: string | null
           department: string | null
           display_name: string | null
           email: string
           first_name: string | null
           gdg_id: string
-          id: string
+          github_url: string | null
+          is_public: boolean | null
           last_name: string | null
+          learning_interests: string | null
+          linkedin_url: string | null
+          membership_type: string | null
+          middle_name: string | null
+          nickname: string | null
+          other_links: string | null
+          portfolio_url: string | null
           program: string | null
+          skills_summary: string | null
           suffix: string | null
+          technical_skills: string | null
+          tools_and_technologies: string | null
           updated_at: string | null
+          year_level: number | null
         }
         Insert: {
+          avatar_image_url?: string | null
+          bio?: string | null
           created_at?: string | null
           department?: string | null
           display_name?: string | null
           email: string
           first_name?: string | null
           gdg_id: string
-          id?: string
+          github_url?: string | null
+          is_public?: boolean | null
           last_name?: string | null
+          learning_interests?: string | null
+          linkedin_url?: string | null
+          membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
+          other_links?: string | null
+          portfolio_url?: string | null
           program?: string | null
+          skills_summary?: string | null
           suffix?: string | null
+          technical_skills?: string | null
+          tools_and_technologies?: string | null
           updated_at?: string | null
+          year_level?: number | null
         }
         Update: {
+          avatar_image_url?: string | null
+          bio?: string | null
           created_at?: string | null
           department?: string | null
           display_name?: string | null
           email?: string
           first_name?: string | null
           gdg_id?: string
-          id?: string
+          github_url?: string | null
+          is_public?: boolean | null
           last_name?: string | null
+          learning_interests?: string | null
+          linkedin_url?: string | null
+          membership_type?: string | null
+          middle_name?: string | null
+          nickname?: string | null
+          other_links?: string | null
+          portfolio_url?: string | null
           program?: string | null
+          skills_summary?: string | null
           suffix?: string | null
+          technical_skills?: string | null
+          tools_and_technologies?: string | null
           updated_at?: string | null
+          year_level?: number | null
         }
         Relationships: []
       }
@@ -481,14 +538,143 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_resource: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_id: string | null
+          id: string
+          tags: Json | null
+          team_id: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          tags?: Json | null
+          team_id?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          id?: string
+          tags?: Json | null
+          team_id?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_resource_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_resource_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_projects: {
+        Row: {
+          createdAt: string
+          description: string | null
+          endDate: string | null
+          id: string
+          mainImageUrl: string | null
+          memberGdgId: string | null
+          secondaryImageUrl: string | null
+          startDate: string | null
+          tertiaryImageUrl: string | null
+          title: string | null
+          updatedAt: string | null
+        }
+        Insert: {
+          createdAt?: string
+          description?: string | null
+          endDate?: string | null
+          id?: string
+          mainImageUrl?: string | null
+          memberGdgId?: string | null
+          secondaryImageUrl?: string | null
+          startDate?: string | null
+          tertiaryImageUrl?: string | null
+          title?: string | null
+          updatedAt?: string | null
+        }
+        Update: {
+          createdAt?: string
+          description?: string | null
+          endDate?: string | null
+          id?: string
+          mainImageUrl?: string | null
+          memberGdgId?: string | null
+          secondaryImageUrl?: string | null
+          startDate?: string | null
+          tertiaryImageUrl?: string | null
+          title?: string | null
+          updatedAt?: string | null
+        }
+        Relationships: []
+      }
+      member_showcase: {
+        Row: {
+          article_url: string
+          created_at: string
+          date: string
+          description: string
+          id: string
+          showcased_members: string[]
+          thumbnail_url: string
+          title: string
+        }
+        Insert: {
+          article_url: string
+          created_at?: string
+          date: string
+          description: string
+          id: string
+          showcased_members?: string[]
+          thumbnail_url: string
+          title: string
+        }
+        Update: {
+          article_url?: string
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          showcased_members?: string[]
+          thumbnail_url?: string
+          title?: string
+        }
+        Relationships: []
+      }
       nfc_cards: {
         Row: {
           activated_at: string | null
           created_at: string
+          destination_url: string | null
           gdg_id: string
           id: string
           notes: string | null
-          owner_user_id: string | null
           revoked_at: string | null
           status: Database["public"]["Enums"]["nfc_card_status"]
           suspended_at: string | null
@@ -497,10 +683,10 @@ export type Database = {
         Insert: {
           activated_at?: string | null
           created_at?: string
+          destination_url?: string | null
           gdg_id: string
           id?: string
           notes?: string | null
-          owner_user_id?: string | null
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["nfc_card_status"]
           suspended_at?: string | null
@@ -509,10 +695,10 @@ export type Database = {
         Update: {
           activated_at?: string | null
           created_at?: string
+          destination_url?: string | null
           gdg_id?: string
           id?: string
           notes?: string | null
-          owner_user_id?: string | null
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["nfc_card_status"]
           suspended_at?: string | null
@@ -526,14 +712,37 @@ export type Database = {
             referencedRelation: "gdg_members"
             referencedColumns: ["gdg_id"]
           },
-          {
-            foreignKeyName: "nfc_cards_owner_user_id_fkey"
-            columns: ["owner_user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
         ]
+      }
+      one_time_pins: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          is_used: boolean
+          otp_code: string
+          reference: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          is_used: boolean
+          otp_code: string
+          reference: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          otp_code?: string
+          reference?: string
+        }
+        Relationships: []
       }
       resource_tag: {
         Row: {
@@ -725,35 +934,97 @@ export type Database = {
           },
         ]
       }
-      study_jam: {
+      survey: {
         Row: {
+          attendance_code: string | null
+          close_time: string | null
           created_at: string
-          creator_id: string | null
-          description: string
+          event_id: string
           id: string
-          recording_url: string | null
-          summary: string
-          title: string
+          is_active: boolean
+          questions_schema: Json | null
+          slug: string
+          updated_at: string
         }
         Insert: {
+          attendance_code?: string | null
+          close_time?: string | null
           created_at?: string
-          creator_id?: string | null
-          description: string
+          event_id: string
           id?: string
-          recording_url?: string | null
-          summary: string
-          title: string
+          is_active?: boolean
+          questions_schema?: Json | null
+          slug: string
+          updated_at?: string
         }
         Update: {
+          attendance_code?: string | null
+          close_time?: string | null
           created_at?: string
-          creator_id?: string | null
-          description?: string
+          event_id?: string
           id?: string
-          recording_url?: string | null
-          summary?: string
-          title?: string
+          is_active?: boolean
+          questions_schema?: Json | null
+          slug?: string
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "survey_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      survey_response: {
+        Row: {
+          certificate_url: string | null
+          created_at: string
+          email: string
+          event_id: string
+          gdg_id: string | null
+          id: string
+          survey_data: Json
+          survey_id: string
+        }
+        Insert: {
+          certificate_url?: string | null
+          created_at?: string
+          email: string
+          event_id: string
+          gdg_id?: string | null
+          id?: string
+          survey_data: Json
+          survey_id: string
+        }
+        Update: {
+          certificate_url?: string | null
+          created_at?: string
+          email?: string
+          event_id?: string
+          gdg_id?: string | null
+          id?: string
+          survey_data?: Json
+          survey_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_response_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survey_response_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "survey"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       task: {
         Row: {
@@ -866,45 +1137,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      team_resource: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          resource_link: string
-          resource_type: string
-          team_name: string
-          thumbnail_public_url: string
-          thumbnail_storage_reference: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_link: string
-          resource_type: string
-          team_name: string
-          thumbnail_public_url: string
-          thumbnail_storage_reference: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_link?: string
-          resource_type?: string
-          team_name?: string
-          thumbnail_public_url?: string
-          thumbnail_storage_reference?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
       test: {
         Row: {
@@ -1044,12 +1276,71 @@ export type Database = {
           },
         ]
       }
-      user_profile: {
+      user_credential: {
         Row: {
+          created_at: string
+          email_address: string
+          id: string
+          password_hash: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          email_address: string
+          id?: string
+          password_hash: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          email_address?: string
+          id?: string
+          password_hash?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      user_credential_reference_code: {
+        Row: {
+          created_at: string | null
+          email_address: string | null
+          id: string
+          otp_reference: string | null
+          payload: Json | null
+          reference_code: string
+          type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_address?: string | null
+          id?: string
+          otp_reference?: string | null
+          payload?: Json | null
+          reference_code: string
+          type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email_address?: string | null
+          id?: string
+          otp_reference?: string | null
+          payload?: Json | null
+          reference_code?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
+      user_portfolio: {
+        Row: {
+          avatar_image_url: string | null
           bio: string | null
           created_at: string
           department: string | null
           first_name: string | null
+          gdg_id: string | null
           github_url: string | null
           id: string
           is_public: boolean
@@ -1061,7 +1352,6 @@ export type Database = {
           nickname: string | null
           other_links: string[] | null
           portfolio_url: string | null
-          profile_image: string | null
           program: string | null
           skills_summary: string | null
           technical_skills: string[] | null
@@ -1071,10 +1361,12 @@ export type Database = {
           year_level: number | null
         }
         Insert: {
+          avatar_image_url?: string | null
           bio?: string | null
           created_at?: string
           department?: string | null
           first_name?: string | null
+          gdg_id?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
@@ -1086,7 +1378,6 @@ export type Database = {
           nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
-          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
           technical_skills?: string[] | null
@@ -1096,10 +1387,12 @@ export type Database = {
           year_level?: number | null
         }
         Update: {
+          avatar_image_url?: string | null
           bio?: string | null
           created_at?: string
           department?: string | null
           first_name?: string | null
+          gdg_id?: string | null
           github_url?: string | null
           id?: string
           is_public?: boolean
@@ -1111,7 +1404,6 @@ export type Database = {
           nickname?: string | null
           other_links?: string[] | null
           portfolio_url?: string | null
-          profile_image?: string | null
           program?: string | null
           skills_summary?: string | null
           technical_skills?: string[] | null
@@ -1120,15 +1412,7 @@ export type Database = {
           user_id?: string
           year_level?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_profile_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_project: {
         Row: {
@@ -1191,30 +1475,30 @@ export type Database = {
       }
       user_role_junction: {
         Row: {
+          gdg_id: string
           role_id: string
-          user_id: string
         }
         Insert: {
+          gdg_id: string
           role_id: string
-          user_id: string
         }
         Update: {
+          gdg_id?: string
           role_id?: string
-          user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_role_junction_gdg_id_fkey"
+            columns: ["gdg_id"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
           {
             foreignKeyName: "user_role_junction_role_id_fkey"
             columns: ["role_id"]
             isOneToOne: false
             referencedRelation: "user_role"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_role_junction_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]
@@ -1349,6 +1633,72 @@ export type Database = {
       }
     }
     Views: {
+      flat_survey_data: {
+        Row: {
+          college: string | null
+          comments_for_speakers: string | null
+          created_at: string | null
+          id: string | null
+          is_pupian: boolean | null
+          missing_content: string | null
+          name: string | null
+          organization: string | null
+          overall_satisfaction: number | null
+          program: string | null
+          questions_for_speakers: string | null
+          rating_duration: number | null
+          rating_program_flow: number | null
+          rating_schedule: number | null
+          rating_speakers: number | null
+          rating_subject: number | null
+          suggestions: string | null
+          valuable_aspects: string | null
+          year_level: string | null
+        }
+        Insert: {
+          college?: never
+          comments_for_speakers?: never
+          created_at?: string | null
+          id?: string | null
+          is_pupian?: never
+          missing_content?: never
+          name?: never
+          organization?: never
+          overall_satisfaction?: never
+          program?: never
+          questions_for_speakers?: never
+          rating_duration?: never
+          rating_program_flow?: never
+          rating_schedule?: never
+          rating_speakers?: never
+          rating_subject?: never
+          suggestions?: never
+          valuable_aspects?: never
+          year_level?: never
+        }
+        Update: {
+          college?: never
+          comments_for_speakers?: never
+          created_at?: string | null
+          id?: string | null
+          is_pupian?: never
+          missing_content?: never
+          name?: never
+          organization?: never
+          overall_satisfaction?: never
+          program?: never
+          questions_for_speakers?: never
+          rating_duration?: never
+          rating_program_flow?: never
+          rating_schedule?: never
+          rating_speakers?: never
+          rating_subject?: never
+          suggestions?: never
+          valuable_aspects?: never
+          year_level?: never
+        }
+        Relationships: []
+      }
       sparkmates_scan_counts: {
         Row: {
           gdg_id: string | null
@@ -1377,17 +1727,31 @@ export type Database = {
       verify_member: {
         Args: { search_term: string }
         Returns: {
+          avatar_image_url: string | null
+          bio: string | null
           created_at: string | null
           department: string | null
           display_name: string | null
           email: string
           first_name: string | null
           gdg_id: string
-          id: string
+          github_url: string | null
+          is_public: boolean | null
           last_name: string | null
+          learning_interests: string | null
+          linkedin_url: string | null
+          membership_type: string | null
+          middle_name: string | null
+          nickname: string | null
+          other_links: string | null
+          portfolio_url: string | null
           program: string | null
+          skills_summary: string | null
           suffix: string | null
+          technical_skills: string | null
+          tools_and_technologies: string | null
           updated_at: string | null
+          year_level: number | null
         }[]
         SetofOptions: {
           from: "*"

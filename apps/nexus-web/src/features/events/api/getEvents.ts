@@ -1,13 +1,162 @@
 /**
- * API function to fetch events from Nexus API
- * 
- * Retrieves a paginated list of events with optional filtering.
+ * API function to fetch events from Nexus API via Next.js proxy route.
  */
 
-import { callEndpoint } from "@packages/typed-rest/clientReact";
-import { contract } from "@packages/nexus-api-contracts";
-import { configs } from "@/configs/servers.config";
 import { EventsException, EventsQueryParams, EventsResponse } from "../types";
+
+const buildQueryString = (params: Record<string, unknown>) => {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      searchParams.append(key, String(value));
+    }
+  });
+  return searchParams.toString();
+};
+
+type RawEvent = {
+  venue?: string | null;
+  location?: string | null;
+  url?: string | null;
+  registration_url?: string | null;
+  attendee_virtual_venue_url?: string | null;
+  attendee_virtual_venue_link?: string | null;
+  bevy_url?: string | null;
+  is_virtual_event?: boolean;
+  banner_url?: string | null;
+  cover_image_url?: string | null;
+  gallery_images?: unknown;
+  image_urls?: unknown;
+  images?: unknown;
+  media?: unknown;
+  short_description?: string | null;
+  description_short?: string | null;
+  tags?: string[] | null;
+  category?: string | null;
+  event_type?: string | null;
+  attendee_count?: number;
+  attendees?: number;
+  max_capacity?: number;
+  total_capacity?: number;
+} & Record<string, unknown>;
+
+const firstNonEmptyString = (...values: Array<unknown>): string | null => {
+  for (const value of values) {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.length > 0) return trimmed;
+    }
+  }
+  return null;
+};
+
+const isImageLikeUrl = (value: string): boolean => {
+  const normalized = value.trim();
+  if (!normalized) return false;
+  if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+    return true;
+  }
+  if (normalized.startsWith("/")) return true;
+  return false;
+};
+
+const extractImageUrls = (value: unknown): string[] => {
+  if (!value) return [];
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    if (
+      (trimmed.startsWith("[") && trimmed.endsWith("]")) ||
+      (trimmed.startsWith("{") && trimmed.endsWith("}"))
+    ) {
+      try {
+        return extractImageUrls(JSON.parse(trimmed));
+      } catch {
+        return isImageLikeUrl(trimmed) ? [trimmed] : [];
+      }
+    }
+
+    return isImageLikeUrl(trimmed) ? [trimmed] : [];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap(extractImageUrls);
+  }
+
+  if (typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    const commonKeys = [
+      "url",
+      "src",
+      "image_url",
+      "imageUrl",
+      "public_url",
+      "publicUrl",
+      "secure_url",
+      "secureUrl",
+      "link",
+      "href",
+    ];
+
+    for (const key of commonKeys) {
+      const urls = extractImageUrls(obj[key]);
+      if (urls.length > 0) return urls;
+    }
+  }
+
+  return [];
+};
+
+const dedupeUrls = (urls: string[]): string[] => {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (const url of urls) {
+    const normalized = url.trim();
+    if (!normalized) continue;
+    if (seen.has(normalized)) continue;
+    seen.add(normalized);
+    result.push(normalized);
+  }
+
+  return result;
+};
+
+const normalizeGalleryImages = (event: RawEvent): string[] =>
+  dedupeUrls([
+    ...extractImageUrls(event?.gallery_images),
+    ...extractImageUrls(event?.image_urls),
+    ...extractImageUrls(event?.images),
+    ...extractImageUrls(event?.media),
+  ]);
+
+const normalizeEvent = (event: RawEvent) => ({
+  ...event,
+  short_description: firstNonEmptyString(
+    event?.short_description,
+    event?.description_short,
+  ),
+  venue: firstNonEmptyString(
+    event?.venue,
+    event?.location,
+    event?.attendee_virtual_venue_url,
+    event?.attendee_virtual_venue_link,
+  ) ?? (event?.is_virtual_event ? "Online" : null),
+  banner_url: firstNonEmptyString(event?.banner_url, event?.cover_image_url),
+  cover_image_url: firstNonEmptyString(event?.cover_image_url, event?.banner_url),
+  gallery_images: normalizeGalleryImages(event),
+  category: event?.category ?? event?.event_type ?? null,
+  tags: Array.isArray(event?.tags) ? event.tags : [],
+  registration_url: firstNonEmptyString(
+    event?.registration_url,
+    event?.bevy_url,
+    event?.url,
+  ),
+  attendee_count: event?.attendee_count ?? event?.attendees,
+  max_capacity: event?.max_capacity ?? event?.total_capacity,
+});
 
 /**
  * Fetch events from the Nexus API
@@ -26,7 +175,7 @@ import { EventsException, EventsQueryParams, EventsResponse } from "../types";
  * });
  * ```
  */
-export async function getEvents(
+export async function getEvents_deprecated(
   params: EventsQueryParams = {}
 ): Promise<EventsResponse> {
   try {
@@ -37,32 +186,39 @@ export async function getEvents(
       ...params,
     };
 
-    // Call the events endpoint
-    const result = await callEndpoint(
-      configs.nexusApiBaseUrl,
-      contract.api.event_system.events.GET,
-      {
-        query: queryParams,
-      }
-    );
+    const qs = buildQueryString(queryParams as Record<string, unknown>);
+    const response = await fetch(`/api/events?${qs}`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    const payload = await response.json();
 
     // Check for successful response
-    if (result.status == 200 && result.body) {
-      return result.body as EventsResponse;
+    if (
+      response.ok &&
+      payload?.status === "success" &&
+      Array.isArray(payload?.data)
+    ) {
+      return {
+        ...payload,
+        data: payload.data.map(normalizeEvent),
+      } as EventsResponse;
     }
 
     // Handle error responses
+    const detail =
+      payload?.errors?.[0]?.detail || payload?.message || `Received status ${response.status}`;
     throw new EventsException(
       "Failed to fetch events",
       "FETCH_ERROR",
-      `Received status ${result.status}`
+      detail
     );
 
   } catch (error) {
     // Network errors
     if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new EventsException(
-        `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`,
+        "Failed to connect to events proxy. Please check if Nexus Web and Nexus API are running.",
         "NETWORK_ERROR",
         error.message
       );

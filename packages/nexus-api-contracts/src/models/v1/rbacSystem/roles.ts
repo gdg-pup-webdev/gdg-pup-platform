@@ -16,10 +16,18 @@ export const roleRow = cz.object({
 
   name: cz.string().min(1),
   description: cz.string().min(1),
+
+  permissions: cz.array(
+    cz.object({
+      resource: cz.string(),
+      action: cz.string(),
+    }),
+  ),
 });
 
 export const roleInsertDTO = roleRow.omit({
   id: true,
+  permissions: true,
 });
 
 export const roleUpdateDTO = roleInsertDTO.partial();

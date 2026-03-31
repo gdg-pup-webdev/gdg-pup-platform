@@ -57,16 +57,16 @@ export function EventCard({ event }: EventCardProps) {
     }
   };
 
-  const isUpcoming = new Date(event.start_date) > new Date();
+  const isUpcoming = new Date(event.start_date || "") > new Date();
 
   return (
     <Link href={`/events/${event.id}`} className="block">
       <Card className="h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer overflow-hidden">
         {/* Event Banner */}
-        {event.banner_url ? (
+        {event.image_url ? (
           <div className="relative h-48 w-full overflow-hidden bg-gray-50">
             <img
-              src={event.banner_url}
+              src={event.image_url}
               alt={event.title}
               className="w-full h-full object-cover"
             />
@@ -119,11 +119,11 @@ export function EventCard({ event }: EventCardProps) {
             <Inline gap="xs" align="center" className="text-sm">
               <span>📅</span>
               <Text variant="body-sm" className="font-medium">
-                {formatDate(event.start_date)}
+                {formatDate(event.start_date || "")}
               </Text>
               <span className="text-gray-400">•</span>
               <Text variant="body-sm" className="text-gray-600">
-                {formatTime(event.start_date)}
+                {formatTime(event.start_date || "")}
               </Text>
             </Inline>
 
@@ -136,11 +136,11 @@ export function EventCard({ event }: EventCardProps) {
             )}
 
             {/* Attendees */}
-            {event.attendee_count !== undefined && (
+            {event.attendees_count !== undefined && (
               <Inline gap="xs" align="center" className="text-sm">
                 <span>👥</span>
                 <Text variant="body-sm">
-                  {event.attendee_count}
+                  {event.attendees_count}
                   {event.max_capacity && ` / ${event.max_capacity}`} attending
                 </Text>
               </Inline>

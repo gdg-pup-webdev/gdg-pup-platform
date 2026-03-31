@@ -1,26 +1,41 @@
- import { ArticleController } from "./ArticleController";
-import { SupabaseArticleRepository, SupabaseArticleCommentRepository } from "./infrastructure/SupabaseRepositories";
-import { 
-  CreateArticle, GetOneArticle, ListArticles, UpdateArticle, DeleteArticle, 
-  CreateArticleComment, ListArticleComments, DeleteArticleComment 
-} from "./useCases/ArticleUseCases";
+import { CreateArticle } from "./useCases/CreateArticle";
+import { UpdateHighlight } from "./useCases/UpdateArticle";
+import { DeleteArticle } from "./useCases/DeleteArticle";
+import { GetOneArticle } from "./useCases/GetOneArticle";
+import { ListArticles } from "./useCases/ListArticle";
+import { UserAdapter } from "./infrastructure/UserAdapter";
+import { EventAdapter } from "./infrastructure/EventAdapter";
+import { ArticlesController } from "./ArticleController";
 
-// 1. Adapters
-const articleRepo = new SupabaseArticleRepository();
-const commentRepo = new SupabaseArticleCommentRepository();
+// External dependencies (Will be injected or used from other modules)
+import { eventSystemController } from "../eventSystem";
+import { filesModuleController } from "../filesModule";
+import { StorageAdapter } from "./infrastructure/StorageAdapter";
+import { ArticleRepository } from "./infrastructure/ArticleRepo";
+import { gdgMembersController } from "../members";
 
-// 2. Use Cases
-const createUC = new CreateArticle(articleRepo);
+const articleRepo = new ArticleRepository();
+const userServiceAdapter = new UserAdapter(gdgMembersController);
+const eventServiceAdapter = new EventAdapter(eventSystemController);
+const storageAdapter = new StorageAdapter(filesModuleController);
+
+// Initialize Use Cases
+const createUC = new CreateArticle(
+  articleRepo,
+  userServiceAdapter,
+  eventServiceAdapter,
+  storageAdapter,
+);
+const updateUC = new UpdateHighlight(articleRepo, storageAdapter);
+const deleteUC = new DeleteArticle(articleRepo);
 const getOneUC = new GetOneArticle(articleRepo);
 const listUC = new ListArticles(articleRepo);
-const updateUC = new UpdateArticle(articleRepo);
-const deleteUC = new DeleteArticle(articleRepo);
-const createCommentUC = new CreateArticleComment(commentRepo);
-const listCommentsUC = new ListArticleComments(commentRepo);
-const deleteCommentUC = new DeleteArticleComment(commentRepo);
 
-// 3. Controller
-export const articleController = new ArticleController(
-  createUC, getOneUC, listUC, updateUC, deleteUC, 
-  createCommentUC, listCommentsUC, deleteCommentUC
+// Initialize Controller
+export const articlesController = new ArticlesController(
+  createUC,
+  updateUC,
+  deleteUC,
+  getOneUC,
+  listUC,
 );

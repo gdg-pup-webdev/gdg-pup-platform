@@ -1,38 +1,49 @@
 export type ArticleProps = {
   id: string;
-  authorId: string;
-  title: string;
-  content: string;
   createdAt: Date;
+  updatedAt: Date;
+  published_at: Date | null;
+  is_published: boolean; 
+  authorId: string | null;
+  title: string;
+  description: string | null;
+  content: string;
+  imageUrl?: string;
+  eventId: string | null;
 };
 
-export type ArticleInsertProps = Omit<ArticleProps, "id" | "createdAt">;
-export type ArticleUpdateProps = Partial<Omit<ArticleProps, "id" | "authorId" | "createdAt">>;
+export type ArticleInsertProps = Omit<
+  ArticleProps,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+export type ArticleUpdateProps = Partial<ArticleInsertProps>;
 
 export class Article {
-  _props: ArticleProps;
+  private constructor(private _props: ArticleProps) {}
 
-  constructor(props: ArticleProps) {
-    this._props = props;
+  static hydrate(props: ArticleProps) {
+    return new Article(props);
   }
 
-  static create = (props: ArticleInsertProps) => {
+  static create(props: ArticleInsertProps) {
     return new Article({
       ...props,
       id: crypto.randomUUID(),
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
-  };
-
-  static hydrate = (props: ArticleProps) => {
-    return new Article(props);
-  };
+  }
 
   get props() {
     return this._props;
   }
 
-  update = (props: ArticleUpdateProps) => {
-    this._props = { ...this._props, ...props };
-  };
+  update(props: ArticleUpdateProps) {
+    this._props = {
+      ...this._props,
+      ...props,
+      updatedAt: new Date(),
+    };
+  }
 }

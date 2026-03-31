@@ -11,12 +11,18 @@ import {
   SECTION_DELAYS,
   SECTION_VIEWPORT,
 } from "./memberShowcaseMotion";
+import { useSpotlight } from "../hooks/useSpotlight";
+import Link from "next/link";
 
-const spotlightSectionVariants = createSectionVariants(SECTION_DELAYS.spotlight);
+const spotlightSectionVariants = createSectionVariants(
+  SECTION_DELAYS.spotlight,
+);
 const spotlightContainerVariants = createContainerVariants(0.16, 0.16);
 
 export function MemberShowcaseSpotlight() {
   const prefersReduced = useReducedMotion();
+
+  const { data, error, isLoading } = useSpotlight();
 
   return (
     <motion.div
@@ -27,7 +33,12 @@ export function MemberShowcaseSpotlight() {
     >
       <Stack>
         <motion.div variants={prefersReduced ? undefined : ITEM_VARIANTS}>
-          <Text variant="heading-4" gradient="white-blue" weight="bold" align="center">
+          <Text
+            variant="heading-4"
+            gradient="white-blue"
+            weight="bold"
+            align="center"
+          >
             Spotlight of the Day
           </Text>
         </motion.div>
@@ -40,10 +51,14 @@ export function MemberShowcaseSpotlight() {
             className="relative w-full shrink-0 lg:w-120"
             variants={prefersReduced ? undefined : ITEM_VARIANTS}
             whileHover={prefersReduced ? undefined : { rotate: -2, y: -4 }}
-            transition={prefersReduced ? undefined : { type: "spring", stiffness: 220, damping: 18 }}
+            transition={
+              prefersReduced
+                ? undefined
+                : { type: "spring", stiffness: 220, damping: 18 }
+            }
           >
             <Image
-              src={ASSETS.MEMBER_SHOWCASE.ICONS.SPOTLIGHT_PLACEHOLDER}
+              src={data ? data.data.thumbnailUrl : ASSETS.PLACEHOLDERS.DEFAULT}
               alt="Spotlight featured image"
               width={480}
               height={340}
@@ -51,7 +66,11 @@ export function MemberShowcaseSpotlight() {
             />
             <motion.div
               whileHover={prefersReduced ? undefined : { rotate: 4, y: -6 }}
-              transition={prefersReduced ? undefined : { type: "spring", stiffness: 240, damping: 18 }}
+              transition={
+                prefersReduced
+                  ? undefined
+                  : { type: "spring", stiffness: 240, damping: 18 }
+              }
             >
               <Image
                 src={ASSETS.MEMBER_SHOWCASE.ICONS.SPARKY_LEADERBOARD}
@@ -69,26 +88,35 @@ export function MemberShowcaseSpotlight() {
           >
             <Stack gap="md" className="text-center lg:text-left">
               <Inline justify="between">
-              <Text variant="heading-6" gradient="white-yellow" weight="bold">
-                Lorem Ipsum dolor sit amet con.
-              </Text>
-                    <Button className="w-fit lg:hidden" size="md" subVariant="blue" variant="colored">
-                      <Image src={ASSETS.MEMBER_SHOWCASE.ICONS.LINK} alt="Link" width={27} height={27} />
-                    </Button>
+                <Text variant="heading-6" gradient="white-yellow" weight="bold">
+                  {data ? data.data.title : "Loading..."}
+                </Text>
+                <Button
+                  className="w-fit lg:hidden"
+                  size="md"
+                  subVariant="blue"
+                  variant="colored"
+                >
+                  <Image
+                    src={ASSETS.MEMBER_SHOWCASE.ICONS.LINK}
+                    alt="Link"
+                    width={27}
+                    height={27}
+                  />
+                </Button>
               </Inline>
               <Text variant="body" color="secondary">
-                January 1, 2026
+                {data ? data.data.createdAt : "Loading description..."}
               </Text>
               <Text variant="body" color="on-primary">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry&apos;s standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
+                {data ? data.data.description : "Loading description..."}
               </Text>
               <div className="justify-center hidden lg:flex lg:justify-start">
-                <Button variant="colored" subVariant="blue" size="lg">
-                  Learn more
-                </Button>
+                <Link href={data ? data.data.articleUrl : "#"}>
+                  <Button variant="colored" subVariant="blue" size="lg">
+                    Learn more
+                  </Button>
+                </Link>
               </div>
             </Stack>
           </motion.div>

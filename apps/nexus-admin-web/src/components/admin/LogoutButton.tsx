@@ -4,26 +4,19 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { INTERNAL_LINKS } from "@/lib/constants/links";
 import { LogOut } from "lucide-react";
+import { useAuthStore } from "@/features/authentication/store/useAuthStore";
 
 export function LogoutButton() {
-  // const logout = useUserStore((state) => state.logout);
+  const clearToken = useAuthStore((state) => state.clearToken);
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      const res = await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      if (res.ok) {
-        // logout();
-        router.push(INTERNAL_LINKS.LOGIN);
-        router.refresh();
-      } else {
-        console.error("Failed to log out");
-      }
+      clearToken();
+      router.push(INTERNAL_LINKS.LOGIN);
+      router.refresh();
     } catch (error) {
       console.error(error);
     } finally {

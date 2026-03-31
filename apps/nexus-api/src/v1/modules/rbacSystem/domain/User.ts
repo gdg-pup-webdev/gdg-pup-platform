@@ -1,7 +1,7 @@
 import { Role } from "./Role";
 
 export type UserProps = {
-  id: string;
+  gdgId: string;
   roles: string[];
   rolesWithPermissions: Role[];
 };

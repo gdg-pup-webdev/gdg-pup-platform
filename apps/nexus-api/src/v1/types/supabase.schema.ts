@@ -34,56 +34,45 @@ export const jsonSchema: z.ZodSchema<Json> = z.lazy(() =>
 
 export const publicArticleRowSchema = z.object({
   author_id: z.string().nullable(),
-  body: z.string().nullable(),
+  content: z.string().nullable(),
   created_at: z.string(),
+  description: z.string().nullable(),
+  eventId: z.string().nullable(),
   id: z.string(),
   is_published: z.boolean(),
   published_at: z.string().nullable(),
-  related_event_id: z.string().nullable(),
+  thumbnail_url: z.string().nullable(),
   title: z.string(),
   updated_at: z.string(),
 });
 
 export const publicArticleInsertSchema = z.object({
   author_id: z.string().optional().nullable(),
-  body: z.string().optional().nullable(),
+  content: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  eventId: z.string().optional().nullable(),
   id: z.string().optional(),
   is_published: z.boolean().optional(),
   published_at: z.string().optional().nullable(),
-  related_event_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
   title: z.string(),
   updated_at: z.string().optional(),
 });
 
 export const publicArticleUpdateSchema = z.object({
   author_id: z.string().optional().nullable(),
-  body: z.string().optional().nullable(),
+  content: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  eventId: z.string().optional().nullable(),
   id: z.string().optional(),
   is_published: z.boolean().optional(),
   published_at: z.string().optional().nullable(),
-  related_event_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
   title: z.string().optional(),
   updated_at: z.string().optional(),
 });
-
-export const publicArticleRelationshipsSchema = z.tuple([
-  z.object({
-    foreignKeyName: z.literal("article_author_id_fkey"),
-    columns: z.tuple([z.literal("author_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("article_related_event_id_fkey"),
-    columns: z.tuple([z.literal("related_event_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("event"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-]);
 
 export const publicArticleCommentRowSchema = z.object({
   article_id: z.string().nullable(),
@@ -155,6 +144,7 @@ export const publicDpDownloadAnalyticsUpdateSchema = z.object({
 export const publicEventRowSchema = z.object({
   attendance_points: z.number(),
   attendees_count: z.number(),
+  bevy_preview_url: z.string().nullable(),
   category: z.string().nullable(),
   created_at: z.string(),
   creator_id: z.string().nullable(),
@@ -162,8 +152,15 @@ export const publicEventRowSchema = z.object({
   end_date: z.string().nullable(),
   gdg_event_id: z.number().nullable(),
   id: z.string(),
+  max_capacity: z.string().nullable(),
+  short_description: z.string().nullable(),
+  speakers: z.array(z.string()).nullable(),
   start_date: z.string().nullable(),
+  tags: z.string().nullable(),
+  team_id: z.string().nullable(),
+  thumbnail_url: z.string().nullable(),
   title: z.string(),
+  type: z.string().nullable(),
   updated_at: z.string(),
   venue: z.string().nullable(),
 });
@@ -171,6 +168,7 @@ export const publicEventRowSchema = z.object({
 export const publicEventInsertSchema = z.object({
   attendance_points: z.number().optional(),
   attendees_count: z.number().optional(),
+  bevy_preview_url: z.string().optional().nullable(),
   category: z.string().optional().nullable(),
   created_at: z.string().optional(),
   creator_id: z.string().optional().nullable(),
@@ -178,8 +176,15 @@ export const publicEventInsertSchema = z.object({
   end_date: z.string().optional().nullable(),
   gdg_event_id: z.number().optional().nullable(),
   id: z.string().optional(),
+  max_capacity: z.string().optional().nullable(),
+  short_description: z.string().optional().nullable(),
+  speakers: z.array(z.string()).optional().nullable(),
   start_date: z.string().optional().nullable(),
+  tags: z.string().optional().nullable(),
+  team_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
   title: z.string(),
+  type: z.string().optional().nullable(),
   updated_at: z.string().optional(),
   venue: z.string().optional().nullable(),
 });
@@ -187,6 +192,7 @@ export const publicEventInsertSchema = z.object({
 export const publicEventUpdateSchema = z.object({
   attendance_points: z.number().optional(),
   attendees_count: z.number().optional(),
+  bevy_preview_url: z.string().optional().nullable(),
   category: z.string().optional().nullable(),
   created_at: z.string().optional(),
   creator_id: z.string().optional().nullable(),
@@ -194,8 +200,15 @@ export const publicEventUpdateSchema = z.object({
   end_date: z.string().optional().nullable(),
   gdg_event_id: z.number().optional().nullable(),
   id: z.string().optional(),
+  max_capacity: z.string().optional().nullable(),
+  short_description: z.string().optional().nullable(),
+  speakers: z.array(z.string()).optional().nullable(),
   start_date: z.string().optional().nullable(),
+  tags: z.string().optional().nullable(),
+  team_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
   title: z.string().optional(),
+  type: z.string().optional().nullable(),
   updated_at: z.string().optional(),
   venue: z.string().optional().nullable(),
 });
@@ -209,10 +222,10 @@ export const publicEventRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("gdg_id")]),
   }),
   z.object({
-    foreignKeyName: z.literal("events_creator_id_fkey"),
-    columns: z.tuple([z.literal("creator_id")]),
+    foreignKeyName: z.literal("event_team_id_fkey"),
+    columns: z.tuple([z.literal("team_id")]),
     isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
+    referencedRelation: z.literal("team"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
@@ -444,45 +457,87 @@ export const publicFilesystemFolderRelationshipsSchema = z.tuple([
 ]);
 
 export const publicGdgMembersRowSchema = z.object({
+  avatar_image_url: z.string().nullable(),
+  bio: z.string().nullable(),
   created_at: z.string().nullable(),
   department: z.string().nullable(),
   display_name: z.string().nullable(),
   email: z.string(),
   first_name: z.string().nullable(),
   gdg_id: z.string(),
-  id: z.string(),
+  github_url: z.string().nullable(),
+  is_public: z.boolean().nullable(),
   last_name: z.string().nullable(),
+  learning_interests: z.string().nullable(),
+  linkedin_url: z.string().nullable(),
+  membership_type: z.string().nullable(),
+  middle_name: z.string().nullable(),
+  nickname: z.string().nullable(),
+  other_links: z.string().nullable(),
+  portfolio_url: z.string().nullable(),
   program: z.string().nullable(),
+  skills_summary: z.string().nullable(),
   suffix: z.string().nullable(),
+  technical_skills: z.string().nullable(),
+  tools_and_technologies: z.string().nullable(),
   updated_at: z.string().nullable(),
+  year_level: z.number().nullable(),
 });
 
 export const publicGdgMembersInsertSchema = z.object({
+  avatar_image_url: z.string().optional().nullable(),
+  bio: z.string().optional().nullable(),
   created_at: z.string().optional().nullable(),
   department: z.string().optional().nullable(),
   display_name: z.string().optional().nullable(),
   email: z.string(),
   first_name: z.string().optional().nullable(),
   gdg_id: z.string(),
-  id: z.string().optional(),
+  github_url: z.string().optional().nullable(),
+  is_public: z.boolean().optional().nullable(),
   last_name: z.string().optional().nullable(),
+  learning_interests: z.string().optional().nullable(),
+  linkedin_url: z.string().optional().nullable(),
+  membership_type: z.string().optional().nullable(),
+  middle_name: z.string().optional().nullable(),
+  nickname: z.string().optional().nullable(),
+  other_links: z.string().optional().nullable(),
+  portfolio_url: z.string().optional().nullable(),
   program: z.string().optional().nullable(),
+  skills_summary: z.string().optional().nullable(),
   suffix: z.string().optional().nullable(),
+  technical_skills: z.string().optional().nullable(),
+  tools_and_technologies: z.string().optional().nullable(),
   updated_at: z.string().optional().nullable(),
+  year_level: z.number().optional().nullable(),
 });
 
 export const publicGdgMembersUpdateSchema = z.object({
+  avatar_image_url: z.string().optional().nullable(),
+  bio: z.string().optional().nullable(),
   created_at: z.string().optional().nullable(),
   department: z.string().optional().nullable(),
   display_name: z.string().optional().nullable(),
   email: z.string().optional(),
   first_name: z.string().optional().nullable(),
   gdg_id: z.string().optional(),
-  id: z.string().optional(),
+  github_url: z.string().optional().nullable(),
+  is_public: z.boolean().optional().nullable(),
   last_name: z.string().optional().nullable(),
+  learning_interests: z.string().optional().nullable(),
+  linkedin_url: z.string().optional().nullable(),
+  membership_type: z.string().optional().nullable(),
+  middle_name: z.string().optional().nullable(),
+  nickname: z.string().optional().nullable(),
+  other_links: z.string().optional().nullable(),
+  portfolio_url: z.string().optional().nullable(),
   program: z.string().optional().nullable(),
+  skills_summary: z.string().optional().nullable(),
   suffix: z.string().optional().nullable(),
+  technical_skills: z.string().optional().nullable(),
+  tools_and_technologies: z.string().optional().nullable(),
   updated_at: z.string().optional().nullable(),
+  year_level: z.number().optional().nullable(),
 });
 
 export const publicGdgMerchRowSchema = z.object({
@@ -515,13 +570,144 @@ export const publicGdgMerchUpdateSchema = z.object({
   updated_at: z.string().optional().nullable(),
 });
 
+export const publicLearningResourceRowSchema = z.object({
+  created_at: z.string(),
+  description: z.string().nullable(),
+  event_id: z.string().nullable(),
+  id: z.string(),
+  tags: jsonSchema.nullable(),
+  team_id: z.string().nullable(),
+  thumbnail_url: z.string().nullable(),
+  title: z.string(),
+  updated_at: z.string(),
+  url: z.string(),
+});
+
+export const publicLearningResourceInsertSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  event_id: z.string().optional().nullable(),
+  id: z.string().optional(),
+  tags: jsonSchema.optional().nullable(),
+  team_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
+  title: z.string(),
+  updated_at: z.string().optional(),
+  url: z.string(),
+});
+
+export const publicLearningResourceUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  description: z.string().optional().nullable(),
+  event_id: z.string().optional().nullable(),
+  id: z.string().optional(),
+  tags: jsonSchema.optional().nullable(),
+  team_id: z.string().optional().nullable(),
+  thumbnail_url: z.string().optional().nullable(),
+  title: z.string().optional(),
+  updated_at: z.string().optional(),
+  url: z.string().optional(),
+});
+
+export const publicLearningResourceRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("learning_resource_event_id_fkey"),
+    columns: z.tuple([z.literal("event_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("event"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("learning_resource_team_id_fkey"),
+    columns: z.tuple([z.literal("team_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("team"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicMemberProjectsRowSchema = z.object({
+  createdAt: z.string(),
+  description: z.string().nullable(),
+  endDate: z.string().nullable(),
+  id: z.string(),
+  mainImageUrl: z.string().nullable(),
+  memberGdgId: z.string().nullable(),
+  secondaryImageUrl: z.string().nullable(),
+  startDate: z.string().nullable(),
+  tertiaryImageUrl: z.string().nullable(),
+  title: z.string().nullable(),
+  updatedAt: z.string().nullable(),
+});
+
+export const publicMemberProjectsInsertSchema = z.object({
+  createdAt: z.string().optional(),
+  description: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  id: z.string().optional(),
+  mainImageUrl: z.string().optional().nullable(),
+  memberGdgId: z.string().optional().nullable(),
+  secondaryImageUrl: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  tertiaryImageUrl: z.string().optional().nullable(),
+  title: z.string().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
+export const publicMemberProjectsUpdateSchema = z.object({
+  createdAt: z.string().optional(),
+  description: z.string().optional().nullable(),
+  endDate: z.string().optional().nullable(),
+  id: z.string().optional(),
+  mainImageUrl: z.string().optional().nullable(),
+  memberGdgId: z.string().optional().nullable(),
+  secondaryImageUrl: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
+  tertiaryImageUrl: z.string().optional().nullable(),
+  title: z.string().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
+export const publicMemberShowcaseRowSchema = z.object({
+  article_url: z.string(),
+  created_at: z.string(),
+  date: z.string(),
+  description: z.string(),
+  id: z.string(),
+  showcased_members: z.array(z.string()),
+  thumbnail_url: z.string(),
+  title: z.string(),
+});
+
+export const publicMemberShowcaseInsertSchema = z.object({
+  article_url: z.string(),
+  created_at: z.string().optional(),
+  date: z.string(),
+  description: z.string(),
+  id: z.string(),
+  showcased_members: z.array(z.string()).optional(),
+  thumbnail_url: z.string(),
+  title: z.string(),
+});
+
+export const publicMemberShowcaseUpdateSchema = z.object({
+  article_url: z.string().optional(),
+  created_at: z.string().optional(),
+  date: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  showcased_members: z.array(z.string()).optional(),
+  thumbnail_url: z.string().optional(),
+  title: z.string().optional(),
+});
+
 export const publicNfcCardsRowSchema = z.object({
   activated_at: z.string().nullable(),
   created_at: z.string(),
+  destination_url: z.string().nullable(),
   gdg_id: z.string(),
   id: z.string(),
   notes: z.string().nullable(),
-  owner_user_id: z.string().nullable(),
   revoked_at: z.string().nullable(),
   status: publicNfcCardStatusSchema,
   suspended_at: z.string().nullable(),
@@ -531,10 +717,10 @@ export const publicNfcCardsRowSchema = z.object({
 export const publicNfcCardsInsertSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  destination_url: z.string().optional().nullable(),
   gdg_id: z.string(),
   id: z.string().optional(),
   notes: z.string().optional().nullable(),
-  owner_user_id: z.string().optional().nullable(),
   revoked_at: z.string().optional().nullable(),
   status: publicNfcCardStatusSchema.optional(),
   suspended_at: z.string().optional().nullable(),
@@ -544,10 +730,10 @@ export const publicNfcCardsInsertSchema = z.object({
 export const publicNfcCardsUpdateSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  destination_url: z.string().optional().nullable(),
   gdg_id: z.string().optional(),
   id: z.string().optional(),
   notes: z.string().optional().nullable(),
-  owner_user_id: z.string().optional().nullable(),
   revoked_at: z.string().optional().nullable(),
   status: publicNfcCardStatusSchema.optional(),
   suspended_at: z.string().optional().nullable(),
@@ -562,14 +748,37 @@ export const publicNfcCardsRelationshipsSchema = z.tuple([
     referencedRelation: z.literal("gdg_members"),
     referencedColumns: z.tuple([z.literal("gdg_id")]),
   }),
-  z.object({
-    foreignKeyName: z.literal("nfc_cards_owner_user_id_fkey"),
-    columns: z.tuple([z.literal("owner_user_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
 ]);
+
+export const publicOneTimePinsRowSchema = z.object({
+  created_at: z.string(),
+  email: z.string(),
+  expires_at: z.string(),
+  id: z.string(),
+  is_used: z.boolean(),
+  otp_code: z.string(),
+  reference: z.string(),
+});
+
+export const publicOneTimePinsInsertSchema = z.object({
+  created_at: z.string().optional(),
+  email: z.string(),
+  expires_at: z.string(),
+  id: z.string().optional(),
+  is_used: z.boolean(),
+  otp_code: z.string(),
+  reference: z.string(),
+});
+
+export const publicOneTimePinsUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  email: z.string().optional(),
+  expires_at: z.string().optional(),
+  id: z.string().optional(),
+  is_used: z.boolean().optional(),
+  otp_code: z.string().optional(),
+  reference: z.string().optional(),
+});
 
 export const publicResourceTagRowSchema = z.object({
   id: z.string(),
@@ -767,35 +976,101 @@ export const publicSparkmatesMetricEventsRelationshipsSchema = z.tuple([
   }),
 ]);
 
-export const publicStudyJamRowSchema = z.object({
+export const publicSurveyRowSchema = z.object({
+  attendance_code: z.string().nullable(),
+  close_time: z.string().nullable(),
   created_at: z.string(),
-  creator_id: z.string().nullable(),
-  description: z.string(),
+  event_id: z.string(),
   id: z.string(),
-  recording_url: z.string().nullable(),
-  summary: z.string(),
-  title: z.string(),
+  is_active: z.boolean(),
+  questions_schema: jsonSchema.nullable(),
+  slug: z.string(),
+  updated_at: z.string(),
 });
 
-export const publicStudyJamInsertSchema = z.object({
+export const publicSurveyInsertSchema = z.object({
+  attendance_code: z.string().optional().nullable(),
+  close_time: z.string().optional().nullable(),
   created_at: z.string().optional(),
-  creator_id: z.string().optional().nullable(),
-  description: z.string(),
+  event_id: z.string(),
   id: z.string().optional(),
-  recording_url: z.string().optional().nullable(),
-  summary: z.string(),
-  title: z.string(),
+  is_active: z.boolean().optional(),
+  questions_schema: jsonSchema.optional().nullable(),
+  slug: z.string(),
+  updated_at: z.string().optional(),
 });
 
-export const publicStudyJamUpdateSchema = z.object({
+export const publicSurveyUpdateSchema = z.object({
+  attendance_code: z.string().optional().nullable(),
+  close_time: z.string().optional().nullable(),
   created_at: z.string().optional(),
-  creator_id: z.string().optional().nullable(),
-  description: z.string().optional(),
+  event_id: z.string().optional(),
   id: z.string().optional(),
-  recording_url: z.string().optional().nullable(),
-  summary: z.string().optional(),
-  title: z.string().optional(),
+  is_active: z.boolean().optional(),
+  questions_schema: jsonSchema.optional().nullable(),
+  slug: z.string().optional(),
+  updated_at: z.string().optional(),
 });
+
+export const publicSurveyRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("survey_event_id_fkey"),
+    columns: z.tuple([z.literal("event_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("event"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
+export const publicSurveyResponseRowSchema = z.object({
+  certificate_url: z.string().nullable(),
+  created_at: z.string(),
+  email: z.string(),
+  event_id: z.string(),
+  gdg_id: z.string().nullable(),
+  id: z.string(),
+  survey_data: jsonSchema,
+  survey_id: z.string(),
+});
+
+export const publicSurveyResponseInsertSchema = z.object({
+  certificate_url: z.string().optional().nullable(),
+  created_at: z.string().optional(),
+  email: z.string(),
+  event_id: z.string(),
+  gdg_id: z.string().optional().nullable(),
+  id: z.string().optional(),
+  survey_data: jsonSchema,
+  survey_id: z.string(),
+});
+
+export const publicSurveyResponseUpdateSchema = z.object({
+  certificate_url: z.string().optional().nullable(),
+  created_at: z.string().optional(),
+  email: z.string().optional(),
+  event_id: z.string().optional(),
+  gdg_id: z.string().optional().nullable(),
+  id: z.string().optional(),
+  survey_data: jsonSchema.optional(),
+  survey_id: z.string().optional(),
+});
+
+export const publicSurveyResponseRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("survey_response_event_id_fkey"),
+    columns: z.tuple([z.literal("event_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("event"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("survey_response_survey_id_fkey"),
+    columns: z.tuple([z.literal("survey_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("survey"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicTaskRowSchema = z.object({
   completed_at: z.string().nullable(),
@@ -914,45 +1189,6 @@ export const publicTeamMemberRelationshipsSchema = z.tuple([
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
-
-export const publicTeamResourceRowSchema = z.object({
-  created_at: z.string(),
-  description: z.string().nullable(),
-  id: z.string(),
-  resource_link: z.string(),
-  resource_type: z.string(),
-  team_name: z.string(),
-  thumbnail_public_url: z.string(),
-  thumbnail_storage_reference: z.string(),
-  title: z.string(),
-  updated_at: z.string(),
-});
-
-export const publicTeamResourceInsertSchema = z.object({
-  created_at: z.string().optional(),
-  description: z.string().optional().nullable(),
-  id: z.string().optional(),
-  resource_link: z.string(),
-  resource_type: z.string(),
-  team_name: z.string(),
-  thumbnail_public_url: z.string(),
-  thumbnail_storage_reference: z.string(),
-  title: z.string(),
-  updated_at: z.string().optional(),
-});
-
-export const publicTeamResourceUpdateSchema = z.object({
-  created_at: z.string().optional(),
-  description: z.string().optional().nullable(),
-  id: z.string().optional(),
-  resource_link: z.string().optional(),
-  resource_type: z.string().optional(),
-  team_name: z.string().optional(),
-  thumbnail_public_url: z.string().optional(),
-  thumbnail_storage_reference: z.string().optional(),
-  title: z.string().optional(),
-  updated_at: z.string().optional(),
-});
 
 export const publicTestRowSchema = z.object({
   description: z.string().nullable(),
@@ -1098,11 +1334,70 @@ export const publicUserCertificateRelationshipsSchema = z.tuple([
   }),
 ]);
 
-export const publicUserProfileRowSchema = z.object({
+export const publicUserCredentialRowSchema = z.object({
+  created_at: z.string(),
+  email_address: z.string(),
+  id: z.string(),
+  password_hash: z.string(),
+  updated_at: z.string(),
+  username: z.string(),
+});
+
+export const publicUserCredentialInsertSchema = z.object({
+  created_at: z.string().optional(),
+  email_address: z.string(),
+  id: z.string().optional(),
+  password_hash: z.string(),
+  updated_at: z.string().optional(),
+  username: z.string(),
+});
+
+export const publicUserCredentialUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  email_address: z.string().optional(),
+  id: z.string().optional(),
+  password_hash: z.string().optional(),
+  updated_at: z.string().optional(),
+  username: z.string().optional(),
+});
+
+export const publicUserCredentialReferenceCodeRowSchema = z.object({
+  created_at: z.string().nullable(),
+  email_address: z.string().nullable(),
+  id: z.string(),
+  otp_reference: z.string().nullable(),
+  payload: jsonSchema.nullable(),
+  reference_code: z.string(),
+  type: z.string().nullable(),
+});
+
+export const publicUserCredentialReferenceCodeInsertSchema = z.object({
+  created_at: z.string().optional().nullable(),
+  email_address: z.string().optional().nullable(),
+  id: z.string().optional(),
+  otp_reference: z.string().optional().nullable(),
+  payload: jsonSchema.optional().nullable(),
+  reference_code: z.string(),
+  type: z.string().optional().nullable(),
+});
+
+export const publicUserCredentialReferenceCodeUpdateSchema = z.object({
+  created_at: z.string().optional().nullable(),
+  email_address: z.string().optional().nullable(),
+  id: z.string().optional(),
+  otp_reference: z.string().optional().nullable(),
+  payload: jsonSchema.optional().nullable(),
+  reference_code: z.string().optional(),
+  type: z.string().optional().nullable(),
+});
+
+export const publicUserPortfolioRowSchema = z.object({
+  avatar_image_url: z.string().nullable(),
   bio: z.string().nullable(),
   created_at: z.string(),
   department: z.string().nullable(),
   first_name: z.string().nullable(),
+  gdg_id: z.string().nullable(),
   github_url: z.string().nullable(),
   id: z.string(),
   is_public: z.boolean(),
@@ -1114,7 +1409,6 @@ export const publicUserProfileRowSchema = z.object({
   nickname: z.string().nullable(),
   other_links: z.array(z.string()).nullable(),
   portfolio_url: z.string().nullable(),
-  profile_image: z.string().nullable(),
   program: z.string().nullable(),
   skills_summary: z.string().nullable(),
   technical_skills: z.array(z.string()).nullable(),
@@ -1124,11 +1418,13 @@ export const publicUserProfileRowSchema = z.object({
   year_level: z.number().nullable(),
 });
 
-export const publicUserProfileInsertSchema = z.object({
+export const publicUserPortfolioInsertSchema = z.object({
+  avatar_image_url: z.string().optional().nullable(),
   bio: z.string().optional().nullable(),
   created_at: z.string().optional(),
   department: z.string().optional().nullable(),
   first_name: z.string().optional().nullable(),
+  gdg_id: z.string().optional().nullable(),
   github_url: z.string().optional().nullable(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
@@ -1140,7 +1436,6 @@ export const publicUserProfileInsertSchema = z.object({
   nickname: z.string().optional().nullable(),
   other_links: z.array(z.string()).optional().nullable(),
   portfolio_url: z.string().optional().nullable(),
-  profile_image: z.string().optional().nullable(),
   program: z.string().optional().nullable(),
   skills_summary: z.string().optional().nullable(),
   technical_skills: z.array(z.string()).optional().nullable(),
@@ -1150,11 +1445,13 @@ export const publicUserProfileInsertSchema = z.object({
   year_level: z.number().optional().nullable(),
 });
 
-export const publicUserProfileUpdateSchema = z.object({
+export const publicUserPortfolioUpdateSchema = z.object({
+  avatar_image_url: z.string().optional().nullable(),
   bio: z.string().optional().nullable(),
   created_at: z.string().optional(),
   department: z.string().optional().nullable(),
   first_name: z.string().optional().nullable(),
+  gdg_id: z.string().optional().nullable(),
   github_url: z.string().optional().nullable(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
@@ -1166,7 +1463,6 @@ export const publicUserProfileUpdateSchema = z.object({
   nickname: z.string().optional().nullable(),
   other_links: z.array(z.string()).optional().nullable(),
   portfolio_url: z.string().optional().nullable(),
-  profile_image: z.string().optional().nullable(),
   program: z.string().optional().nullable(),
   skills_summary: z.string().optional().nullable(),
   technical_skills: z.array(z.string()).optional().nullable(),
@@ -1175,16 +1471,6 @@ export const publicUserProfileUpdateSchema = z.object({
   user_id: z.string().optional(),
   year_level: z.number().optional().nullable(),
 });
-
-export const publicUserProfileRelationshipsSchema = z.tuple([
-  z.object({
-    foreignKeyName: z.literal("user_profile_user_id_fkey"),
-    columns: z.tuple([z.literal("user_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-]);
 
 export const publicUserProjectRowSchema = z.object({
   created_at: z.string(),
@@ -1248,33 +1534,33 @@ export const publicUserRoleUpdateSchema = z.object({
 });
 
 export const publicUserRoleJunctionRowSchema = z.object({
+  gdg_id: z.string(),
   role_id: z.string(),
-  user_id: z.string(),
 });
 
 export const publicUserRoleJunctionInsertSchema = z.object({
+  gdg_id: z.string(),
   role_id: z.string(),
-  user_id: z.string(),
 });
 
 export const publicUserRoleJunctionUpdateSchema = z.object({
+  gdg_id: z.string().optional(),
   role_id: z.string().optional(),
-  user_id: z.string().optional(),
 });
 
 export const publicUserRoleJunctionRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("user_role_junction_gdg_id_fkey"),
+    columns: z.tuple([z.literal("gdg_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
+  }),
   z.object({
     foreignKeyName: z.literal("user_role_junction_role_id_fkey"),
     columns: z.tuple([z.literal("role_id")]),
     isOneToOne: z.literal(false),
     referencedRelation: z.literal("user_role"),
-    referencedColumns: z.tuple([z.literal("id")]),
-  }),
-  z.object({
-    foreignKeyName: z.literal("user_role_junction_user_id_fkey"),
-    columns: z.tuple([z.literal("user_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
     referencedColumns: z.tuple([z.literal("id")]),
   }),
 ]);
@@ -1415,6 +1701,72 @@ export const publicWalletTransactionRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicFlatSurveyDataRowSchema = z.object({
+  college: z.string().nullable(),
+  comments_for_speakers: z.string().nullable(),
+  created_at: z.string().nullable(),
+  id: z.string().nullable(),
+  is_pupian: z.boolean().nullable(),
+  missing_content: z.string().nullable(),
+  name: z.string().nullable(),
+  organization: z.string().nullable(),
+  overall_satisfaction: z.number().nullable(),
+  program: z.string().nullable(),
+  questions_for_speakers: z.string().nullable(),
+  rating_duration: z.number().nullable(),
+  rating_program_flow: z.number().nullable(),
+  rating_schedule: z.number().nullable(),
+  rating_speakers: z.number().nullable(),
+  rating_subject: z.number().nullable(),
+  suggestions: z.string().nullable(),
+  valuable_aspects: z.string().nullable(),
+  year_level: z.string().nullable(),
+});
+
+export const publicFlatSurveyDataInsertSchema = z.object({
+  college: z.never().optional(),
+  comments_for_speakers: z.never().optional(),
+  created_at: z.string().optional().nullable(),
+  id: z.string().optional().nullable(),
+  is_pupian: z.never().optional(),
+  missing_content: z.never().optional(),
+  name: z.never().optional(),
+  organization: z.never().optional(),
+  overall_satisfaction: z.never().optional(),
+  program: z.never().optional(),
+  questions_for_speakers: z.never().optional(),
+  rating_duration: z.never().optional(),
+  rating_program_flow: z.never().optional(),
+  rating_schedule: z.never().optional(),
+  rating_speakers: z.never().optional(),
+  rating_subject: z.never().optional(),
+  suggestions: z.never().optional(),
+  valuable_aspects: z.never().optional(),
+  year_level: z.never().optional(),
+});
+
+export const publicFlatSurveyDataUpdateSchema = z.object({
+  college: z.never().optional(),
+  comments_for_speakers: z.never().optional(),
+  created_at: z.string().optional().nullable(),
+  id: z.string().optional().nullable(),
+  is_pupian: z.never().optional(),
+  missing_content: z.never().optional(),
+  name: z.never().optional(),
+  organization: z.never().optional(),
+  overall_satisfaction: z.never().optional(),
+  program: z.never().optional(),
+  questions_for_speakers: z.never().optional(),
+  rating_duration: z.never().optional(),
+  rating_program_flow: z.never().optional(),
+  rating_schedule: z.never().optional(),
+  rating_speakers: z.never().optional(),
+  rating_subject: z.never().optional(),
+  suggestions: z.never().optional(),
+  valuable_aspects: z.never().optional(),
+  year_level: z.never().optional(),
+});
+
 export const publicSparkmatesScanCountsRowSchema = z.object({
   gdg_id: z.string().nullable(),
   scan_count: z.number().nullable(),
@@ -1448,16 +1800,30 @@ export const publicVerifyMemberArgsSchema = z.object({
 
 export const publicVerifyMemberReturnsSchema = z.array(
   z.object({
+    avatar_image_url: z.string().nullable(),
+    bio: z.string().nullable(),
     created_at: z.string().nullable(),
     department: z.string().nullable(),
     display_name: z.string().nullable(),
     email: z.string(),
     first_name: z.string().nullable(),
     gdg_id: z.string(),
-    id: z.string(),
+    github_url: z.string().nullable(),
+    is_public: z.boolean().nullable(),
     last_name: z.string().nullable(),
+    learning_interests: z.string().nullable(),
+    linkedin_url: z.string().nullable(),
+    membership_type: z.string().nullable(),
+    middle_name: z.string().nullable(),
+    nickname: z.string().nullable(),
+    other_links: z.string().nullable(),
+    portfolio_url: z.string().nullable(),
     program: z.string().nullable(),
+    skills_summary: z.string().nullable(),
     suffix: z.string().nullable(),
+    technical_skills: z.string().nullable(),
+    tools_and_technologies: z.string().nullable(),
     updated_at: z.string().nullable(),
+    year_level: z.number().nullable(),
   }),
 );

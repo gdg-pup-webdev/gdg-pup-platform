@@ -6,8 +6,6 @@ import { IAttendanceRepository } from "./domain/IAttendanceRepository";
 import { IBevyEventService } from "./domain/IBevyEventService";
 import { IEventPointsService } from "./domain/IEventPointsService";
 
-// export { Event, Attendance, IEventRepository, IAttendanceRepository, IBevyEventService, IEventPointsService };
-
 // Use Cases
 import { CheckinToEvent } from "./useCases/CheckinToEvent";
 import { CreateEvent } from "./useCases/CreateEvent";
@@ -17,6 +15,9 @@ import { GetOneEvent } from "./useCases/GetOneEvent";
 import { ListEventAttendees } from "./useCases/ListEventAttendees";
 import { ListEvents } from "./useCases/ListEvents";
 import { UpdateEvent } from "./useCases/UpdateEvent";
+import { GetEventsByType } from "./useCases/GetEventsByType";
+import { GetEventsByTeam } from "./useCases/GetEventsByTeam";
+import { ListEventsByYear } from "./useCases/listEventsByYear";
 
 export {
   CheckinToEvent,
@@ -27,6 +28,8 @@ export {
   ListEventAttendees,
   ListEvents,
   UpdateEvent,
+  GetEventsByType,
+  GetEventsByTeam,
 };
 
 // Infrastructure (Real implementations)
@@ -41,7 +44,10 @@ import { bevyEventController } from "../bevyEvents";
 
 // Controller
 import { EventSystemController } from "./EventSystemController";
-export { EventSystemController };
+import { FileStorageAdapter } from "./infrastructure/FileStorageAdapter";
+import { filesModuleController } from "../filesModule";
+import { ImportAndSyncAllToBevy } from "./useCases/ImportAndSyncAllToBevy";
+import { SyncEventToBevy } from "./useCases/SyncEventToBevy";
 
 // ============================================================================
 // DEPENDENCY INJECTION & INITIALIZATION
@@ -51,6 +57,7 @@ const eventPointsServiceAdapter = new EventPointsService(pointSystemController);
 const eventRepositoryAdapter = new EventRepository();
 const attendanceRepositoryAdapter = new AttendanceRepository();
 const bevyEventServiceAdapter = new BevyEventService(bevyEventController);
+const filestorageAdapter = new FileStorageAdapter(filesModuleController);
 
 // Initialize Use Cases
 const checkinToEventUseCase = new CheckinToEvent(
@@ -58,7 +65,10 @@ const checkinToEventUseCase = new CheckinToEvent(
   attendanceRepositoryAdapter,
   eventPointsServiceAdapter,
 );
-const createEventUseCase = new CreateEvent(eventRepositoryAdapter);
+const createEventUseCase = new CreateEvent(
+  eventRepositoryAdapter,
+  filestorageAdapter,
+);
 const createEventFromBevyEventUseCase = new CreateEventFromBevyEventUseCase(
   eventRepositoryAdapter,
   bevyEventServiceAdapter,
@@ -69,7 +79,22 @@ const listEventAttendeesUseCase = new ListEventAttendees(
   attendanceRepositoryAdapter,
 );
 const listEventsUseCase = new ListEvents(eventRepositoryAdapter);
-const updateEventUseCase = new UpdateEvent(eventRepositoryAdapter);
+const updateEventUseCase = new UpdateEvent(
+  eventRepositoryAdapter,
+  filestorageAdapter,
+);
+const listEventsByYearUseCase = new ListEventsByYear(eventRepositoryAdapter);
+const getEventsByTypeUseCase = new GetEventsByType(eventRepositoryAdapter);
+const getEventsByTeamUseCase = new GetEventsByTeam(eventRepositoryAdapter);
+
+const importandsyncuc = new ImportAndSyncAllToBevy(
+  bevyEventServiceAdapter,
+  eventRepositoryAdapter,
+);
+const syncevent = new SyncEventToBevy(
+  eventRepositoryAdapter,
+  bevyEventServiceAdapter,
+);
 
 // Initialize Controller
 export const eventSystemController = new EventSystemController(
@@ -81,4 +106,11 @@ export const eventSystemController = new EventSystemController(
   listEventAttendeesUseCase,
   listEventsUseCase,
   updateEventUseCase,
+  listEventsByYearUseCase,
+  getEventsByTypeUseCase,
+  getEventsByTeamUseCase,
+  importandsyncuc,
+  syncevent,
 );
+
+export { EventSystemController };
