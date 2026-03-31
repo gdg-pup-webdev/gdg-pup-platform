@@ -6,6 +6,8 @@ import { useAuthContext } from "../store/useAuthStore";
 import Link from "next/link";
 import { Mail, Key, Eye, EyeOff } from "lucide-react";
 
+const gradientHoverUnderlineStyles = "relative inline-flex items-center after:absolute after:left-0 after:-bottom-[3px] after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-[#FB2C36] after:via-[#F0B100] after:to-[#2B7FFF] after:transition-transform after:duration-300 hover:after:scale-x-100";
+
 export const LoginForm = () => {
   const { status, login, error } = useAuthContext();
 
@@ -82,7 +84,7 @@ export const LoginForm = () => {
           <div className="flex justify-end mt-1">
             <a
               href="/forgot-password"
-              className="text-white/80 text-[16px] font-medium hover:underline hover:text-white transition-colors"
+              className={`${gradientHoverUnderlineStyles} text-white/80 text-[16px] font-medium hover:text-white transition-colors`}
             >
               Forgot Password?
             </a>
@@ -104,7 +106,7 @@ export const LoginForm = () => {
         <span className="text-white/80 text-[16px] font-medium">
           Don't have an account yet?
         </span>
-        <Link href="/signup" className="text-white font-bold hover:underline">
+        <Link href="/signup" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>
           Sign Up
         </Link>
       </div>

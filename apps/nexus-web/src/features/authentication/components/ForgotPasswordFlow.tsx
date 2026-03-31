@@ -9,6 +9,8 @@ import Link from "next/link";
 import { Mail, Key, Eye, EyeOff, Check } from "lucide-react";
 import { OtpInput } from "./OtpInput";
 
+const gradientHoverUnderlineStyles = "relative inline-flex items-center after:absolute after:left-0 after:-bottom-[3px] after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-[#FB2C36] after:via-[#F0B100] after:to-[#2B7FFF] after:transition-transform after:duration-300 hover:after:scale-x-100";
+
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
     {children}
@@ -271,7 +273,7 @@ export const ForgotPasswordFlow = () => {
               type="button"
               onClick={handleResendOtp}
               disabled={resendTimer > 0 || isResending}
-              className="text-white font-bold underline underline-offset-2 hover:text-[#2B7FFF] disabled:opacity-40 disabled:no-underline transition-colors"
+              className={`${gradientHoverUnderlineStyles} text-white font-bold transition-colors disabled:opacity-40 disabled:after:scale-x-0`}
             >
               {isResending ? "Sending..." : "Resend"}
             </button>
@@ -281,7 +283,7 @@ export const ForgotPasswordFlow = () => {
 
       <div className="flex justify-center mt-6 items-center gap-[8px]">
         <span className="text-white/80 text-[16px] font-medium">Remembered your password?</span>
-        <Link href="/signin" className="text-white font-bold hover:underline">Sign In</Link>
+        <Link href="/signin" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>Sign In</Link>
       </div>
     </Stack>
   );

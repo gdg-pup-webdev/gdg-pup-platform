@@ -6,6 +6,8 @@ import { useChangePasswordInitiate, useChangePasswordFinalize, useResendOtp } fr
 import { LINKS } from "@/lib/constants/links";
 import { Stack, Input } from '@packages/spark-ui';
 
+const gradientHoverUnderlineStyles = "relative inline-flex items-center after:absolute after:left-0 after:-bottom-[3px] after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-[#FB2C36] after:via-[#F0B100] after:to-[#2B7FFF] after:transition-transform after:duration-300 hover:after:scale-x-100";
+
 const ICON_URL = "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
@@ -22,7 +24,7 @@ export const PasswordResetFlow = () => {
   const { mutateAsync: finalizeReset, isPending: isFinalizing, error: finalError } = useChangePasswordFinalize();
   const { mutateAsync: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2>(2);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -122,7 +124,7 @@ export const PasswordResetFlow = () => {
           type="button"
           onClick={handleResendOtp}
           disabled={resendTimer > 0 || isResending}
-          className="text-[14px] font-medium text-indigo-600 hover:text-indigo-500 disabled:opacity-50 disabled:no-underline"
+          className={`${gradientHoverUnderlineStyles} text-[14px] font-medium text-indigo-600 hover:text-indigo-500 transition-colors disabled:opacity-50 disabled:after:scale-x-0`}
         >
           {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
         </button>
