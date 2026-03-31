@@ -23,7 +23,7 @@ export const SignupFlow = () => {
   const { mutateAsync: finalizeSignup, isPending: isFinalizing, error: finalError } = useSignupFinalize();
   const { mutateAsync: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
-  const [step, setStep] = useState<1 | 2>(2);
+  const [step, setStep] = useState<1 | 2>(1);
   const [gdgId, setGdgId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
