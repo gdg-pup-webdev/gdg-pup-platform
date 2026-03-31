@@ -21,7 +21,7 @@ export class InitiateChangePassword {
     }
 
     const newPasswordHash = await this.encryptionService.hash(newPassword);
-    const otpReference = await this.otpService.createAndSendOtpToEmail(email);
+    const otpReference = await this.otpService.createAndSendOtpToEmail(email, "Change Password");
 
     const reference = UserCredentialReferenceCode.create({
       emailAddress: email,

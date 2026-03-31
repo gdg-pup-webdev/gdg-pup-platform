@@ -7,5 +7,5 @@ export interface IOTPRepository {
 }
 
 export interface IOTPMailerService {
-  sendOtp(email: string, otp: string): Promise<void>;
+  sendOtp(email: string, otp: string, context?: string): Promise<void>;
 }

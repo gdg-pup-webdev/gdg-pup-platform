@@ -21,7 +21,7 @@ export class InitiateChangeEmail {
     }
 
     // Usually OTP is sent to the NEW email to verify ownership
-    const otpReference = await this.otpService.createAndSendOtpToEmail(newEmail);
+    const otpReference = await this.otpService.createAndSendOtpToEmail(email, "Change Email");
 
     const reference = UserCredentialReferenceCode.create({
       emailAddress: email,

@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSignupInitiate, useSignupFinalize } from "../hooks"; 
+import { useSignupInitiate, useSignupFinalize, useResendOtp } from "../hooks"; 
 import { LINKS } from "@/lib/constants/links";
 import { Stack, Input } from '@packages/spark-ui';
 import Link from "next/link";
 
 const ICON_URL = "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
 
-// 1. MOVE THIS OUTSIDE THE MAIN COMPONENT
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
     {children}
@@ -22,6 +21,7 @@ export const SignupFlow = () => {
   const router = useRouter();
   const { mutateAsync: initiateSignup, isPending: isInitiating, error: initError } = useSignupInitiate();
   const { mutateAsync: finalizeSignup, isPending: isFinalizing, error: finalError } = useSignupFinalize();
+  const { mutateAsync: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
@@ -30,6 +30,18 @@ export const SignupFlow = () => {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [referenceCode, setReferenceCode] = useState("");
   const [otp, setOtp] = useState("");
+  const [resendTimer, setResendTimer] = useState(0);
+  const [resendSuccess, setResendSuccess] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
 
   const handleInitiate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +57,7 @@ export const SignupFlow = () => {
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);
+        setResendTimer(60);
       }
     } catch (err) {}
   };
@@ -59,11 +72,21 @@ export const SignupFlow = () => {
     } catch (err) {}
   };
 
+  const handleResendOtp = async () => {
+    if (resendTimer > 0 || isResending) return;
+    setResendSuccess(false);
+    try {
+      await resendOtp({ data: { referenceCode } });
+      setResendTimer(60);
+      setResendSuccess(true);
+    } catch (err) {}
+  };
+
   return (
     <Stack gap="lg" className="w-full">
-      {(initError || finalError || validationError) && (
+      {(initError || finalError || validationError || resendError) && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
-          {validationError || initError?.message || finalError?.message}
+          {validationError || initError?.message || finalError?.message || resendError?.message}
         </div>
       )}
 
@@ -135,6 +158,12 @@ export const SignupFlow = () => {
             OTP sent to <span className="font-bold text-white">{email}</span>. Please verify to continue.
           </div>
 
+          {resendSuccess && (
+            <div className="bg-green-900/30 border border-green-500/50 rounded-lg p-4 text-sm text-green-200">
+              A new OTP has been sent to your email.
+            </div>
+          )}
+
           <div className="flex flex-col gap-[8px]">
             <label className="text-[18px] font-bold text-white">One-Time Password (OTP)</label>
             <StyledInputContainer>
@@ -149,6 +178,17 @@ export const SignupFlow = () => {
                 placeholder="Enter 6-digit OTP"
               />
             </StyledInputContainer>
+          </div>
+
+          <div className="flex justify-between items-center px-1">
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={resendTimer > 0 || isResending}
+              className="text-[14px] font-medium text-white hover:underline disabled:opacity-50 disabled:no-underline"
+            >
+              {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+            </button>
           </div>
 
           <button
