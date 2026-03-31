@@ -102,7 +102,7 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
   };
 
   return (
-    <div className="flex items-center justify-center gap-[12px]">
+    <div className="flex items-center justify-center gap-[6px] sm:gap-[12px]">
       {digits.map((digit, index) => {
         const isFilled = digit !== "";
         const isActive = activeIndex === index;
@@ -110,7 +110,7 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
           <div
             key={index}
             className={`
-              relative rounded-[10px] transition-all duration-200
+              relative rounded-[8px] sm:rounded-[10px] transition-all duration-200
               ${isFilled
                 ? "p-[1px] bg-[conic-gradient(from_315deg_at_50%_50%,#2B7FFF_0deg,#F0B100_90deg,#FB2C36_180deg,#F0B100_270deg,#2B7FFF_360deg)]"
                 : isActive
@@ -131,7 +131,9 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
               onFocus={() => handleFocus(index)}
               onBlur={handleBlur}
               className={`
-                w-[64px] h-[76px] text-center text-[24px] font-bold text-white rounded-[8px]
+                w-[42px] h-[52px] sm:w-[64px] sm:h-[76px]
+                text-center text-[18px] sm:text-[24px] font-bold text-white
+                rounded-[7px] sm:rounded-[8px]
                 bg-[#060f21] outline-none border-none caret-transparent
                 ${isFilled
                   ? "bg-[#030a17] shadow-[inset_0_0_18px_rgba(255,255,255,0.08)]"

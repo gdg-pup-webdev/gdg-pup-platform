@@ -6,7 +6,7 @@ import { useAuthContext } from "../store/useAuthStore";
 import Link from "next/link";
 import { Mail, Key, Eye, EyeOff } from "lucide-react";
 
-const gradientHoverUnderlineStyles = "relative inline-flex items-center after:absolute after:left-0 after:-bottom-[3px] after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-[#FB2C36] after:via-[#F0B100] after:to-[#2B7FFF] after:transition-transform after:duration-300 hover:after:scale-x-100";
+const gradientHoverUnderlineStyles = "relative inline-flex items-center after:absolute after:left-0 after:-bottom-[3px] after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-[#FB2C36] after:via-[#F0B100] after:to-[#2B7FFF] after:transition-transform after:duration-300 hover:after:scale-x-100 [@media(hover:none)]:after:scale-x-100";
 
 export const LoginForm = () => {
   const { status, login, error } = useAuthContext();
