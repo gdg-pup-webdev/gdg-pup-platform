@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useChangeEmailInitiate, useChangeEmailFinalize, useResendOtp } from "../hooks"; 
+import { useForgotPasswordInitiate, useForgotPasswordFinalize, useResendOtp } from "../hooks"; 
 import { LINKS } from "@/lib/constants/links";
 import { Stack, Input } from '@packages/spark-ui';
+import Link from "next/link";
 
 const ICON_URL = "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
 
@@ -16,16 +17,17 @@ const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
 
 const inputBaseStyles = "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
 
-export const EmailChangeFlow = () => {
+export const ForgotPasswordFlow = () => {
   const router = useRouter();
-  const { mutateAsync: initiateEmailChange, isPending: isInitiating, error: initError } = useChangeEmailInitiate();
-  const { mutateAsync: finalizeEmailChange, isPending: isFinalizing, error: finalError } = useChangeEmailFinalize();
+  const { mutateAsync: initiateForgot, isPending: isInitiating, error: initError } = useForgotPasswordInitiate();
+  const { mutateAsync: finalizeForgot, isPending: isFinalizing, error: finalError } = useForgotPasswordFinalize();
   const { mutateAsync: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [referenceCode, setReferenceCode] = useState("");
   const [otp, setOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
@@ -43,8 +45,15 @@ export const EmailChangeFlow = () => {
 
   const handleInitiate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
+
+    if (newPassword !== confirmPassword) {
+      setValidationError("Passwords do not match.");
+      return;
+    }
+
     try {
-      const res = await initiateEmailChange({ data: { email, pass: password, newEmail } });
+      const res = await initiateForgot({ data: { email } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);
@@ -56,9 +65,9 @@ export const EmailChangeFlow = () => {
   const handleFinalize = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await finalizeEmailChange({ data: { referenceCode, otp } });
+      const res = await finalizeForgot({ data: { referenceCode, otp, newPass: newPassword } });
       if (res?.data?.success) {
-        router.push(LINKS.profile_me);
+        router.push(LINKS.auth_signin);
       }
     } catch (err) {}
   };
@@ -75,16 +84,16 @@ export const EmailChangeFlow = () => {
 
   return (
     <Stack gap="lg" className="w-full">
-      {(initError || finalError || resendError) && (
+      {(initError || finalError || validationError || resendError) && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
-          {initError?.message || finalError?.message || resendError?.message}
+          {validationError || initError?.message || finalError?.message || resendError?.message}
         </div>
       )}
 
       {step === 1 ? (
         <form onSubmit={handleInitiate} className="flex flex-col gap-[24px]">
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">Current Email</label>
+            <label className="text-[18px] font-bold text-white">Email Address</label>
             <StyledInputContainer>
               <Input
                 type="email"
@@ -94,39 +103,40 @@ export const EmailChangeFlow = () => {
                 containerClassName={inputBaseStyles}
                 className="text-[18px] text-white placeholder:text-[#737373]"
                 leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
-                placeholder="current@email.com"
+                placeholder="e.g., mail@mail.com"
               />
             </StyledInputContainer>
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">Current Password</label>
+            <label className="text-[18px] font-bold text-white">New Password</label>
             <StyledInputContainer>
               <Input
                 type="password"
                 required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                minLength={8}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 containerClassName={inputBaseStyles}
                 className="text-[18px] text-white placeholder:text-[#737373]"
                 leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
-                placeholder="Enter Your Password"
+                placeholder="Enter New Password"
               />
             </StyledInputContainer>
           </div>
 
           <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">New Email</label>
+            <label className="text-[18px] font-bold text-white">Confirm New Password</label>
             <StyledInputContainer>
               <Input
-                type="email"
+                type="password"
                 required
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 containerClassName={inputBaseStyles}
                 className="text-[18px] text-white placeholder:text-[#737373]"
                 leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
-                placeholder="new@email.com"
+                placeholder="Re-enter New Password"
               />
             </StyledInputContainer>
           </div>
@@ -136,13 +146,13 @@ export const EmailChangeFlow = () => {
             disabled={isInitiating}
             className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] gap-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-70 transition-all"
           >
-            {isInitiating ? "Sending OTP..." : "Initiate Email Change"}
+            {isInitiating ? "Sending OTP..." : "Send Reset OTP"}
           </button>
         </form>
       ) : (
         <form onSubmit={handleFinalize} className="flex flex-col gap-[24px]">
           <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-4 text-sm text-blue-200">
-            OTP sent to <span className="font-bold text-white">{email}</span>. Please verify to change your email.
+            OTP sent to <span className="font-bold text-white">{email}</span>. Please verify to reset your password.
           </div>
 
           {resendSuccess && (
@@ -183,10 +193,15 @@ export const EmailChangeFlow = () => {
             disabled={isFinalizing}
             className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] gap-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-70 transition-all"
           >
-            {isFinalizing ? "Verifying..." : "Verify & Change Email"}
+            {isFinalizing ? "Verifying..." : "Verify & Reset Password"}
           </button>
         </form>
       )}
+
+      <div className="flex justify-center mt-6 items-center gap-[8px]">
+        <span className="text-white/80 text-[16px] font-medium">Remembered your password?</span>
+        <Link href="/signin" className="text-white font-bold hover:underline">Sign In</Link>
+      </div>
     </Stack>
   );
 };

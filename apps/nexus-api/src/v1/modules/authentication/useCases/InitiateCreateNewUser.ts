@@ -25,7 +25,7 @@ export class InitiateCreateNewUser {
 
 
     const passwordHash = await this.encryptionService.hash(password);
-    const otpReference = await this.otpService.createAndSendOtpToEmail(email);
+    const otpReference = await this.otpService.createAndSendOtpToEmail(email, "Sign up");
 
     const reference = UserCredentialReferenceCode.create({
       emailAddress: email,

@@ -13,6 +13,9 @@ export abstract class IUserCredentialReferenceRepository {
   abstract saveNew(
     reference: UserCredentialReferenceCode,
   ): Promise<UserCredentialReferenceCode>;
+  abstract persistUpdates(
+    reference: UserCredentialReferenceCode,
+  ): Promise<UserCredentialReferenceCode>;
   abstract findByReferenceCode(
     code: string,
   ): Promise<UserCredentialReferenceCode | null>;
@@ -30,7 +33,7 @@ export abstract class IJWTService {
 }
 
 export abstract class IOTPService {
-  abstract createAndSendOtpToEmail(email: string): Promise<string>;
+  abstract createAndSendOtpToEmail(email: string, context?: string): Promise<string>;
   abstract verifyOtp(reference: string, otp: string): Promise<boolean>;
 }
 

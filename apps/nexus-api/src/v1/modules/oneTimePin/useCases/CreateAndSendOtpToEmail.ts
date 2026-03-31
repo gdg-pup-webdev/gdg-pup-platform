@@ -7,7 +7,7 @@ export class CreateAndSendOtpToEmail {
     private readonly mailer: IOTPMailerService
   ) {}
 
-  async execute(email: string): Promise<string> {
+  async execute(email: string, context?: string): Promise<string> {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
@@ -18,7 +18,7 @@ export class CreateAndSendOtpToEmail {
     });
 
     await this.repo.saveNew(otp);
-    await this.mailer.sendOtp(email, otpCode);
+    await this.mailer.sendOtp(email, otpCode, context);
 
     return otp.props.reference;
   }

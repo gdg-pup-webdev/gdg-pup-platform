@@ -7,8 +7,8 @@ export class OneTimePinController {
     private readonly verifyUC: VerifyOtp
   ) {}
 
-  async createAndSendOtpToEmail(email: string) {
-    const reference = await this.createAndSendUC.execute(email);
+  async createAndSendOtpToEmail(email: string, context?: string) {
+    const reference = await this.createAndSendUC.execute(email, context);
     return { reference };
   }
 

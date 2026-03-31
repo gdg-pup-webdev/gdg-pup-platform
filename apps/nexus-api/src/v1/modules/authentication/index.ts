@@ -25,6 +25,9 @@ import { gdgMembersController } from "../members/index.js";
 import { rbacController } from "../rbacSystem/index.js";
 import { TokenPayloadProps } from "./domain/TokenPayload";
 import { RefreshToken } from "./useCases/RefreshToken.js";
+import { InitiateForgotPassword } from "./useCases/InitiateForgotPassword.js";
+import { FinalizeForgotPassword } from "./useCases/FinalizeForgotPassword.js";
+import { ResendOtp } from "./useCases/ResendOtp.js";
 
 // Infrastructure
 const credentialRepo = new SupabaseUserCredentialRepository(supabase);
@@ -70,6 +73,17 @@ const finalizeChangePasswordUC = new FinalizeChangePassword(
   referenceRepo,
   otpService,
 );
+const initiateForgotPasswordUC = new InitiateForgotPassword(
+  credentialRepo,
+  referenceRepo,
+  otpService,
+);
+const finalizeForgotPasswordUC = new FinalizeForgotPassword(
+  credentialRepo,
+  referenceRepo,
+  encryptionService,
+  otpService,
+);
 const initiateChangeEmailUC = new InitiateChangeEmail(
   credentialRepo,
   referenceRepo,
@@ -83,6 +97,7 @@ const finalizeChangeEmailUC = new FinalizeChangeEmail(
 );
 const deleteUserUC = new DeleteUser(credentialRepo);
 const refreshTokenUC = new RefreshToken(jwtService);
+const resendOtpUC = new ResendOtp(referenceRepo, otpService);
 
 // Controller
 export const authenticationController = new AuthenticationController(
@@ -98,6 +113,9 @@ export const authenticationController = new AuthenticationController(
   finalizeChangeEmailUC,
   deleteUserUC,
   refreshTokenUC,
+  initiateForgotPasswordUC,
+  finalizeForgotPasswordUC,
+  resendOtpUC,
 );
 
 export { AuthenticationController, type TokenPayloadProps };

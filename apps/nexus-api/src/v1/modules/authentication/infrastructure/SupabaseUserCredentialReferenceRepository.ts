@@ -30,6 +30,30 @@ export class SupabaseUserCredentialReferenceRepository implements IUserCredentia
     });
   }
 
+  async persistUpdates(reference: UserCredentialReferenceCode): Promise<UserCredentialReferenceCode> {
+    const { data, error } = await this.supabase
+      .from("user_credential_reference_code")
+      .update({
+        email_address: reference.props.emailAddress,
+        payload: reference.props.payload,
+        type: reference.props.type,
+        otp_reference: reference.props.otpReference,
+      })
+      .eq("reference_code", reference.props.referenceCode)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return UserCredentialReferenceCode.hydrate({
+      referenceCode: data.reference_code,
+      emailAddress: data.email_address || "",
+      payload: (data.payload || {}) as Record<string, any>,
+      type: data.type as ReferenceCodeType,
+      otpReference: data.otp_reference || "",
+      createdAt: new Date(data.created_at || ""),
+    });
+  }
+
   async findByReferenceCode(code: string): Promise<UserCredentialReferenceCode | null> {
     const { data, error } = await this.supabase
       .from("user_credential_reference_code")

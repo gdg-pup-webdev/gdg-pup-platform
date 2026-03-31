@@ -2,6 +2,7 @@
   CREATE_USER = "CREATE_USER",
   CHANGE_PASSWORD = "CHANGE_PASSWORD",
   CHANGE_EMAIL = "CHANGE_EMAIL",
+  FORGOT_PASSWORD = "FORGOT_PASSWORD",
 }
 
 export type UserCredentialReferenceCodeProps = {
@@ -33,6 +34,10 @@ export class UserCredentialReferenceCode {
 
   get props(): UserCredentialReferenceCodeProps {
     return { ...this._props };
+  }
+
+  updateOtpReference(newReference: string): void {
+    this._props.otpReference = newReference;
   }
 }
 

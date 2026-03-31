@@ -136,6 +136,48 @@ export class AuthenticationHttpController {
     }
   );
 
+  public initiateForgotPassword: RequestHandler = createExpressController(
+    contract.api.v1.authentication.password.forgot.initiate.POST,
+    async ({ input, output }) => {
+      const { email } = input.body.data;
+      const result = await this.moduleController.initiateForgotPassword({ email });
+      
+      return output(200, {
+        status: "success",
+        message: "Forgot password initiated",
+        data: result,
+      });
+    }
+  );
+
+  public finalizeForgotPassword: RequestHandler = createExpressController(
+    contract.api.v1.authentication.password.forgot.finalize.POST,
+    async ({ input, output }) => {
+      const { referenceCode, otp, newPass } = input.body.data;
+      const result = await this.moduleController.finalizeForgotPassword({ referenceCode, otp, newPass });
+      
+      return output(200, {
+        status: "success",
+        message: "Password reset successfully",
+        data: result,
+      });
+    }
+  );
+
+  public resendOtp: RequestHandler = createExpressController(
+    contract.api.v1.authentication.otp.resend.POST,
+    async ({ input, output }) => {
+      const { referenceCode } = input.body.data;
+      const result = await this.moduleController.resendOtp({ referenceCode });
+      
+      return output(200, {
+        status: "success",
+        message: "OTP resent successfully",
+        data: result,
+      });
+    }
+  );
+
   public initiateChangeEmail: RequestHandler = createExpressController(
     contract.api.v1.authentication.email.change.initiate.POST,
     async ({ input, output }) => {

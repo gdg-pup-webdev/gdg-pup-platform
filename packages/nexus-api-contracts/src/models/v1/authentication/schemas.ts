@@ -52,6 +52,24 @@ export const finalizeChangePasswordResponse = z.object({
   success: z.boolean(),
 });
 
+export const initiateForgotPasswordRequest = z.object({
+  email: z.string().email(),
+});
+
+export const initiateForgotPasswordResponse = z.object({
+  referenceCode: z.string(),
+});
+
+export const finalizeForgotPasswordRequest = z.object({
+  referenceCode: z.string(),
+  otp: z.string(),
+  newPass: z.string().min(8),
+});
+
+export const finalizeForgotPasswordResponse = z.object({
+  success: z.boolean(),
+});
+
 export const initiateChangeEmailRequest = z.object({
   email: z.string().email().optional(), // Adjust based on token or body
   pass: z.string(),
@@ -68,6 +86,14 @@ export const finalizeChangeEmailRequest = z.object({
 });
 
 export const finalizeChangeEmailResponse = z.object({
+  success: z.boolean(),
+});
+
+export const resendOtpRequest = z.object({
+  referenceCode: z.string(),
+});
+
+export const resendOtpResponse = z.object({
   success: z.boolean(),
 });
 

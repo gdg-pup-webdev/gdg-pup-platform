@@ -7,8 +7,18 @@ describe("OtpEmailTemplate", () => {
     const html = OtpEmailTemplate.render(otp);
     
     expect(html).toContain(otp);
-    expect(html).toContain("Google Developers Group");
+    expect(html).toContain("Google Developer Groups");
     expect(html).toContain("Verification Code");
+  });
+
+  it("should render with custom context", () => {
+    const otp = "123456";
+    const context = "Forgot Password";
+    const html = OtpEmailTemplate.render(otp, context);
+    
+    expect(html).toContain(otp);
+    expect(html).toContain(context);
+    expect(html).toContain("forgot password"); // lowercase version in message
   });
 
   it("should contain GDG branding colors", () => {
@@ -16,7 +26,7 @@ describe("OtpEmailTemplate", () => {
     
     expect(html).toContain("#4285F4"); // Blue
     expect(html).toContain("#EA4335"); // Red
-    expect(html).toContain("#FBBC05"); // Yellow
+    expect(html).toContain("#FBBC04"); // Yellow
     expect(html).toContain("#34A853"); // Green
   });
 });

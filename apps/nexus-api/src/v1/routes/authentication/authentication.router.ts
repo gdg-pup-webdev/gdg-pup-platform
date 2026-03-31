@@ -21,6 +21,11 @@ export class AuthenticationRouter {
 
     this.router.post("/password/change/finalize", this.controller.finalizeChangePassword);
     
+    this.router.post("/password/forgot/initiate", this.controller.initiateForgotPassword);
+    this.router.post("/password/forgot/finalize", this.controller.finalizeForgotPassword);
+
+    this.router.post("/otp/resend", this.controller.resendOtp);
+    
     this.router.post("/email/change/initiate", this.controller.initiateChangeEmail);
     this.router.post("/email/change/finalize", this.controller.finalizeChangeEmail);
     

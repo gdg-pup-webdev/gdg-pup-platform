@@ -13,6 +13,14 @@ export class MockUserCredentialReferenceRepository implements IUserCredentialRef
     return reference;
   }
 
+  async persistUpdates(reference: UserCredentialReferenceCode): Promise<UserCredentialReferenceCode> {
+    const index = this.references.findIndex((r) => r.props.referenceCode === reference.props.referenceCode);
+    if (index !== -1) {
+      this.references[index] = reference;
+    }
+    return reference;
+  }
+
   async findByReferenceCode(code: string): Promise<UserCredentialReferenceCode | null> {
     const reference = this.references.find((r) => r.props.referenceCode === code);
     return reference || null;

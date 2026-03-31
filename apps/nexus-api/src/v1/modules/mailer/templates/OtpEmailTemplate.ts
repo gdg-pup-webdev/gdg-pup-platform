@@ -1,5 +1,5 @@
 export class OtpEmailTemplate {
-  static render(otp: string): string {
+  static render(otp: string, context?: string): string {
     // GDG Brand Colors
     const gdgColors = {
       blue: "#4285F4",
@@ -15,6 +15,11 @@ export class OtpEmailTemplate {
       navy: "#000614",
     };
 
+    const heading = context ? `${context}` : "Verification Code";
+    const message = context 
+      ? `Hello Sparkmate! Use the code below to <strong>${context.toLowerCase()}</strong>. This code will expire in <strong>10 minutes</strong>.`
+      : `Hello Sparkmate! Use the code below to verify your identity. This code will expire in <strong>10 minutes</strong>.`;
+
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +28,7 @@ export class OtpEmailTemplate {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light dark">
   <meta name="supported-color-schemes" content="light dark">
-  <title>Verification Code | GDG on Campus PUP</title>
+  <title>${heading} | GDG on Campus PUP</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -83,7 +88,7 @@ export class OtpEmailTemplate {
           <tr>
             <td align="center" class="header-padding header-bg" style="padding: 40px 24px 16px 24px;">
               <h1 class="heading-text" style="margin: 0; font-size: 24px; font-weight: 800; color: #1a1a1a; letter-spacing: -0.5px;">
-                Verification Code
+                ${heading}
               </h1>
               <p style="margin: 8px 0 0 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: ${gdgColors.blue};">
                 GDG on Campus PUP
@@ -98,7 +103,7 @@ export class OtpEmailTemplate {
                 <tr>
                   <td style="padding: 32px;" align="center">
                     <p class="body-text" style="margin: 0 0 24px 0; font-size: 16px; line-height: 1.6; color: #333333;">
-                      Hello Sparkmate! Use the code below to verify your identity. This code will expire in <strong>10 minutes</strong>.
+                      ${message}
                     </p>
                     
                     <!-- OTP Display -->
