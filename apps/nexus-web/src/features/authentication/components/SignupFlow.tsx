@@ -6,16 +6,16 @@ import { useSignupInitiate, useSignupFinalize, useResendOtp } from "../hooks";
 import { LINKS } from "@/lib/constants/links";
 import { Stack, Input } from '@packages/spark-ui';
 import Link from "next/link";
-import { IdCard, Mail, Key, Eye, EyeOff, Check } from "lucide-react";
+import { Mail, Key, Eye, EyeOff, Check } from "lucide-react";
 import { OtpInput } from "./OtpInput";
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0px_0px_16px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
+  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
     {children}
   </div>
 );
 
-const inputBaseStyles = "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
+const inputBaseStyles = "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 !ring-offset-0 focus-within:!ring-0 focus-within:!ring-offset-0 focus-within:!shadow-none w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
 
 export const SignupFlow = () => {
   const router = useRouter();
@@ -24,7 +24,6 @@ export const SignupFlow = () => {
   const { mutateAsync: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
   const [step, setStep] = useState<1 | 2>(1);
-  const [gdgId, setGdgId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -86,8 +85,7 @@ export const SignupFlow = () => {
     }
 
     try {
-      // @ts-ignore - Backend is still updating the schema for gdgId
-      const res = await initiateSignup({ data: { email, pass: password, gdgId } });
+      const res = await initiateSignup({ data: { email, pass: password } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);
@@ -126,23 +124,6 @@ export const SignupFlow = () => {
 
       {step === 1 ? (
         <form onSubmit={handleInitiate} className="flex flex-col gap-[24px]">
-          {/* GDG ID Field */}
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">GDG ID</label>
-            <StyledInputContainer>
-              <Input
-                type="text"
-                required
-                value={gdgId}
-                onChange={(e) => setGdgId(e.target.value)}
-                containerClassName={inputBaseStyles}
-                className="text-[18px] text-white placeholder:text-[#737373]"
-                leftIcon={<IdCard size={24} className="text-white shrink-0" />}
-                placeholder="e.g., GDG-XX-XXXXXX"
-              />
-            </StyledInputContainer>
-          </div>
-
           {/* Email Field */}
           <div className="flex flex-col gap-[8px]">
             <label className="text-[18px] font-bold text-white">Email</label>
