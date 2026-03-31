@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from "vitest";
 import { LearningResourceController } from "../LearningResourceController";
 import { CreateLearningResource } from "../useCases/CreateLearningResource";
 import { GetLearningResource } from "../useCases/GetLearningResource";
