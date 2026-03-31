@@ -7,6 +7,7 @@ import { LINKS } from "@/lib/constants/links";
 import { Stack, Input } from '@packages/spark-ui';
 import Link from "next/link";
 import { Mail, Key, Eye, EyeOff, Check } from "lucide-react";
+import { OtpInput } from "./OtpInput";
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0px_0px_16px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
@@ -22,7 +23,7 @@ export const ForgotPasswordFlow = () => {
   const { mutateAsync: finalizeForgot, isPending: isFinalizing, error: finalError } = useForgotPasswordFinalize();
   const { mutateAsync: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2>(2);
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -231,51 +232,50 @@ export const ForgotPasswordFlow = () => {
           </button>
         </form>
       ) : (
-        <form onSubmit={handleFinalize} className="flex flex-col gap-[24px]">
-          <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-4 text-[14px] text-blue-200">
-            OTP sent to <span className="font-bold text-white">{email}</span>. Please verify to reset your password.
+        <form onSubmit={handleFinalize} className="flex flex-col gap-[28px]">
+          {/* Header */}
+          <div className="flex flex-col gap-[8px] text-center">
+            <h2 className="text-[24px] font-bold text-white">Enter Verification Code</h2>
+            <p className="text-[14px] text-[#a3a3a3]">
+              Please enter the code we sent to your email
+            </p>
+            <p className="text-[14px] font-semibold text-white">{email || "your email"}</p>
           </div>
 
           {resendSuccess && (
-            <div className="bg-green-900/30 border border-green-500/50 rounded-lg p-4 text-[14px] text-green-200">
+            <div className="bg-green-900/30 border border-green-500/50 rounded-lg p-3 text-[13px] text-green-200 text-center">
               A new OTP has been sent to your email.
             </div>
           )}
 
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">One-Time Password (OTP)</label>
-            <StyledInputContainer>
-              <Input
-                type="text"
-                required
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                containerClassName={inputBaseStyles}
-                className="text-[18px] text-white placeholder:text-[#737373]"
-                leftIcon={<Key size={24} className="text-white shrink-0" />}
-                placeholder="Enter 6-digit OTP"
-              />
-            </StyledInputContainer>
-          </div>
+          {/* 6-box OTP input */}
+          <OtpInput value={otp} onChange={setOtp} />
 
-          <div className="flex justify-between items-center px-1">
+          {/* Verify button */}
+          <button
+            type="submit"
+            disabled={isFinalizing || otp.length < 6}
+            className="w-full flex items-center justify-center bg-gradient-to-r from-[#2b7fff] to-[#1a4fd8] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.25)] text-white text-[18px] font-semibold py-[14px] px-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-50 transition-all"
+          >
+            {isFinalizing ? "Verifying..." : "Verify"}
+          </button>
+
+          {/* Resend row */}
+          <div className="flex justify-center items-center gap-[6px] text-[14px] text-[#a3a3a3]">
+            {resendTimer > 0 ? (
+              <span>Code expires in <span className="text-white font-medium">{resendTimer}s</span></span>
+            ) : (
+              <span>Didn't receive a code?</span>
+            )}
             <button
               type="button"
               onClick={handleResendOtp}
               disabled={resendTimer > 0 || isResending}
-              className="text-[16px] font-medium text-white hover:underline disabled:opacity-50 disabled:no-underline"
+              className="text-white font-bold underline underline-offset-2 hover:text-[#2B7FFF] disabled:opacity-40 disabled:no-underline transition-colors"
             >
-              {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+              {isResending ? "Sending..." : "Resend"}
             </button>
           </div>
-
-          <button
-            type="submit"
-            disabled={isFinalizing}
-            className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] gap-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-70 transition-all"
-          >
-            {isFinalizing ? "Verifying..." : "Verify & Reset Password"}
-          </button>
         </form>
       )}
 
