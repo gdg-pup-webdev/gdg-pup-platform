@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import { Stack, Input } from "@packages/spark-ui";
-import { useAuthContext } from "../store/useAuthStore"; 
+import { useAuthContext } from "../store/useAuthStore";
 import Link from "next/link";
+import { Mail, Key, Eye, EyeOff } from "lucide-react";
 
-
-export const LoginForm = () => { 
-  const { status, login, error} = useAuthContext();
+export const LoginForm = () => {
+  const { status, login, error } = useAuthContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password); 
-    } catch (err) { 
+      await login(email, password);
+    } catch (err) {
     }
   };
 
@@ -26,7 +27,7 @@ export const LoginForm = () => {
   return (
     <Stack gap="lg" className="w-full">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-sm text-red-700">
+        <div className="bg-red-50/10 border border-red-500/50 rounded-lg p-4 mb-4 text-[14px] text-red-200">
           {error.message}
         </div>
       )}
@@ -46,9 +47,7 @@ export const LoginForm = () => {
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={
-                <img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />
-              }
+              leftIcon={<Mail size={24} className="text-white shrink-0" />}
               placeholder="e.g., sparkylorenzo@gmail.com"
             />
           </StyledInputContainer>
@@ -65,23 +64,25 @@ export const LoginForm = () => {
           <StyledInputContainer>
             <Input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={
-                <img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />
+              leftIcon={<Key size={24} className="text-white shrink-0" />}
+              rightIcon={
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-[#a3a3a3] hover:text-white transition-colors shrink-0">
+                  {showPassword ? <Eye size={24} /> : <EyeOff size={24} />}
+                </button>
               }
               placeholder="Enter Your Password"
             />
           </StyledInputContainer>
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-1">
             <a
               href="/forgot-password"
-              opacity-80
-              className="text-white text-[16px] font-medium hover:underline"
+              className="text-white/80 text-[16px] font-medium hover:underline hover:text-white transition-colors"
             >
               Forgot Password?
             </a>
@@ -111,13 +112,9 @@ export const LoginForm = () => {
   );
 };
 
-
-const ICON_URL =
-  "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
-
 // Moved outside to prevent re-renders and input defocusing
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
+  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#C81D26] focus-within:via-[#C28E00] focus-within:to-[#1853B8] focus-within:shadow-[0px_0px_16px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
     {children}
   </div>
 );

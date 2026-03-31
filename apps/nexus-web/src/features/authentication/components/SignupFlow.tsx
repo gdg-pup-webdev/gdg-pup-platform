@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSignupInitiate, useSignupFinalize, useResendOtp } from "../hooks"; 
+import { useSignupInitiate, useSignupFinalize, useResendOtp } from "../hooks";
 import { LINKS } from "@/lib/constants/links";
 import { Stack, Input } from '@packages/spark-ui';
 import Link from "next/link";
 import { IdCard, Mail, Key, Eye, EyeOff, Check } from "lucide-react";
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
+  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0px_0px_16px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
     {children}
   </div>
 );
@@ -30,7 +30,7 @@ export const SignupFlow = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
-  
+
   const [referenceCode, setReferenceCode] = useState("");
   const [otp, setOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
@@ -92,7 +92,7 @@ export const SignupFlow = () => {
         setStep(2);
         setResendTimer(60);
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handleFinalize = async (e: React.FormEvent) => {
@@ -102,7 +102,7 @@ export const SignupFlow = () => {
       if (res?.data?.success) {
         router.push(LINKS.auth_signin);
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   const handleResendOtp = async () => {
@@ -112,7 +112,7 @@ export const SignupFlow = () => {
       await resendOtp({ data: { referenceCode } });
       setResendTimer(60);
       setResendSuccess(true);
-    } catch (err) {}
+    } catch (err) { }
   };
 
   return (
