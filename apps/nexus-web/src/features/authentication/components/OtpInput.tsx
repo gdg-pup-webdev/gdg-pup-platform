@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, KeyboardEvent, ClipboardEvent } from "react";
+import React, { useRef, useState, KeyboardEvent, ClipboardEvent } from "react";
 
 interface OtpInputProps {
   value: string;
@@ -12,12 +12,52 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const digits = Array.from({ length }, (_, i) => value[i] ?? "");
 
+  // Always-current value ref — avoids stale closures in async focus events.
+  // Updated on every render so handlers always read the latest value.
+  const valueRef = useRef(value);
+  valueRef.current = value;
+
+  // Distinguishes programmatic focus (our code calling .focus()) from
+  // user-initiated focus (mouse click / tab). If programmatic, skip redirection.
+  const isProgrammaticFocus = useRef(false);
+
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   const focusBox = (index: number) => {
+    isProgrammaticFocus.current = true;
     inputRefs.current[index]?.focus();
   };
 
+  /** First empty slot index using the always-fresh valueRef — never stale. */
+  const getCorrectIndex = () => {
+    const current = Array.from({ length }, (_, i) => valueRef.current[i] ?? "");
+    const firstEmpty = current.findIndex((d) => d === "");
+    return firstEmpty === -1 ? length - 1 : firstEmpty;
+  };
+
+  const handleFocus = (index: number) => {
+    if (isProgrammaticFocus.current) {
+      // Our code moved focus — trust it, don't redirect
+      isProgrammaticFocus.current = false;
+      setActiveIndex(index);
+      inputRefs.current[index]?.select();
+      return;
+    }
+    // User-initiated focus (click / tab) — enforce sequential order
+    const correct = getCorrectIndex();
+    if (index !== correct) {
+      focusBox(correct);
+      return;
+    }
+    setActiveIndex(index);
+    inputRefs.current[index]?.select();
+  };
+
+  const handleBlur = () => {
+    setActiveIndex(null);
+  };
+
   const handleChange = (index: number, char: string) => {
-    // Only accept single digits
     const digit = char.replace(/\D/g, "").slice(-1);
     const newDigits = [...digits];
     newDigits[index] = digit;
@@ -32,12 +72,10 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
     if (e.key === "Backspace") {
       e.preventDefault();
       if (digits[index]) {
-        // Clear current box
         const newDigits = [...digits];
         newDigits[index] = "";
         onChange(newDigits.join(""));
       } else if (index > 0) {
-        // Move to previous and clear it
         const newDigits = [...digits];
         newDigits[index - 1] = "";
         onChange(newDigits.join(""));
@@ -59,7 +97,6 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
       newDigits[i] = char;
     });
     onChange(newDigits.join(""));
-    // Focus the box after the last pasted digit
     const nextFocus = Math.min(pasted.length, length - 1);
     focusBox(nextFocus);
   };
@@ -68,14 +105,17 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
     <div className="flex items-center justify-center gap-[12px]">
       {digits.map((digit, index) => {
         const isFilled = digit !== "";
+        const isActive = activeIndex === index;
         return (
           <div
             key={index}
             className={`
               relative rounded-[10px] transition-all duration-200
               ${isFilled
-                ? "p-[2px] bg-gradient-to-r from-[#FB2C36] via-[#F0B100] to-[#2B7FFF]"
-                : "p-[1px] bg-[#404040] focus-within:p-[2px] focus-within:bg-gradient-to-r focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF]"
+                ? "p-[1px] bg-[conic-gradient(from_315deg_at_50%_50%,#2B7FFF_0deg,#F0B100_90deg,#FB2C36_180deg,#F0B100_270deg,#2B7FFF_360deg)]"
+                : isActive
+                  ? "p-[1px] bg-[conic-gradient(from_315deg_at_50%_50%,#2B7FFF_0deg,#F0B100_90deg,#FB2C36_180deg,#F0B100_270deg,#2B7FFF_360deg)]"
+                  : "p-[1px] bg-white/40"
               }
             `}
           >
@@ -88,11 +128,17 @@ export const OtpInput = ({ value, onChange, length = 6 }: OtpInputProps) => {
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={handlePaste}
-              onFocus={(e) => e.target.select()}
+              onFocus={() => handleFocus(index)}
+              onBlur={handleBlur}
               className={`
-                w-[52px] h-[60px] text-center text-[24px] font-bold text-white rounded-[8px]
-                bg-[#0d1b35] outline-none border-none caret-transparent
-                ${isFilled ? "bg-[#0a1628]" : ""}
+                w-[64px] h-[76px] text-center text-[24px] font-bold text-white rounded-[8px]
+                bg-[#060f21] outline-none border-none caret-transparent
+                ${isFilled
+                  ? "bg-[#030a17] shadow-[inset_0_0_18px_rgba(255,255,255,0.08)]"
+                  : isActive
+                    ? "shadow-[inset_0_0_16px_rgba(255,255,255,0.07)]"
+                    : ""
+                }
               `}
             />
           </div>

@@ -260,7 +260,7 @@ export const SignupFlow = () => {
           <button
             type="submit"
             disabled={isFinalizing || otp.length < 6}
-            className="w-full flex items-center justify-center bg-gradient-to-r from-[#2b7fff] to-[#1a4fd8] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.25)] text-white text-[18px] font-semibold py-[14px] px-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-50 transition-all"
+            className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-50 transition-all"
           >
             {isFinalizing ? "Verifying..." : "Verify"}
           </button>
