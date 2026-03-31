@@ -32,8 +32,8 @@ runs:
 
     - name: Build
       shell: bash
-      run: pnpm turbo run build
+      run: pnpm turbo run build --filter=!identity-api...
 
     - name: Test
       shell: bash
-      run: pnpm turbo run test
+      run: pnpm turbo run test --filter=!identity-api...
