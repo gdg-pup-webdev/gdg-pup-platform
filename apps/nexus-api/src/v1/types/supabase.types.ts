@@ -841,6 +841,7 @@ export type Database = {
           event_type: string | null
           event_type_slug: string | null
           gdg_id: number
+          image_square_url: string | null
           is_virtual_event: boolean | null
           last_scraped_at: string | null
           location: string | null
@@ -864,6 +865,7 @@ export type Database = {
           event_type?: string | null
           event_type_slug?: string | null
           gdg_id: number
+          image_square_url?: string | null
           is_virtual_event?: boolean | null
           last_scraped_at?: string | null
           location?: string | null
@@ -887,6 +889,7 @@ export type Database = {
           event_type?: string | null
           event_type_slug?: string | null
           gdg_id?: number
+          image_square_url?: string | null
           is_virtual_event?: boolean | null
           last_scraped_at?: string | null
           location?: string | null
