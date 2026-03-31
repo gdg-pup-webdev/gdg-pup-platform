@@ -536,7 +536,7 @@ export function HistorySection() {
           <FadeInSection delay={0.1} className="mb-32">
             <Stack gap="xl" align="center">
               {/* ── Mobile layout ────────────────────────────────────── */}
-             <div className="grid grid-cols-2 gap-4 w-full lg:hidden">
+             <div className="grid grid-cols-1 gap-4 w-full lg:hidden">
                 {milestones.map((milestone) => (
                   <AnimatedCard key={milestone.slug}>
                     <MilestoneCard milestone={milestone} />
