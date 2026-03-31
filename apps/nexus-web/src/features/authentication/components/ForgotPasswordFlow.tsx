@@ -25,7 +25,7 @@ export const ForgotPasswordFlow = () => {
   const { mutateAsync: finalizeForgot, isPending: isFinalizing, error: finalError } = useForgotPasswordFinalize();
   const { mutateAsync: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
-  const [step, setStep] = useState<1 | 2>(2);
+  const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

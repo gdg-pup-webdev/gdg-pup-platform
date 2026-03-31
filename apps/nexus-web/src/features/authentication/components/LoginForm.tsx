@@ -84,7 +84,7 @@ export const LoginForm = () => {
           <div className="flex justify-end mt-1">
             <a
               href="/forgot-password"
-              className={`${gradientHoverUnderlineStyles} text-white/80 text-[16px] font-medium hover:text-white transition-colors`}
+              className={`${gradientHoverUnderlineStyles} text-white/80 text-[16px] font-bold hover:text-white transition-colors`}
             >
               Forgot Password?
             </a>
