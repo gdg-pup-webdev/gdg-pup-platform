@@ -34,6 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle scroll to show/hide navbar
   useEffect(() => {
@@ -59,7 +60,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(target)) {
+      if (
+        (mobileMenuRef.current && !mobileMenuRef.current.contains(target)) &&
+        (!dropdownRef.current || !dropdownRef.current.contains(target))
+      ) {
         setIsMobileMenuOpen(false);
       }
       
@@ -264,15 +268,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                   )}
                 </button>
 
-                {/* Mobile Menu Dropdown */}
-                {isMobileMenuOpen && (
-                  <Box
-                    className="absolute right-4 top-full mt-4 w-64 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
-                  >
+              </Box>
+            </Inline>
+          </Box>
+
+          {/* Mobile Menu Dropdown */}
+          {isMobileMenuOpen && (
+            <div
+              ref={dropdownRef}
+              className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] animate-in fade-in slide-in-from-top-2 duration-200 min-[75rem]:hidden"
+            >
+              <Box
+                className={cn(
+                  "py-3 w-full",
+                  "bg-black/95 backdrop-blur-2xl rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
+                  "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]"
+                )}
+              >
                     <Stack gap="none">
                       {/* About Section */}
-                      <Box className="px-4 py-2 border-b border-slate-700">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase">
+                      <Box className="px-5 py-3 border-b border-white/10">
+                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
                           About
                         </Text>
                       </Box>
@@ -280,7 +296,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <Link
                           key={link.href}
                           href={link.href}
-                          className="block px-6 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {link.label}
@@ -288,8 +304,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                       ))}
 
                       {/* Community Section */}
-                      <Box className="px-4 py-2 border-b border-slate-700 mt-2">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase">
+                      <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
                           Community
                         </Text>
                       </Box>
@@ -297,7 +313,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <Link
                           key={link.href}
                           href={link.href}
-                          className="block px-6 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {link.label}
@@ -305,8 +321,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                       ))}
 
                       {/* Nav Links */}
-                      <Box className="px-4 py-2 border-b border-slate-700 mt-2">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase">
+                      <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
                           Navigation
                         </Text>
                       </Box>
@@ -314,7 +330,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <Link
                           key={link.href}
                           href={link.href}
-                          className="block px-6 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+                          className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           {link.label}
@@ -323,10 +339,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                       {/* Auth Section */}
                       {!hideAuth && (
-                        <Box className="px-4 py-3 mt-2 border-t border-slate-700">
+                        <Box className="px-5 py-5 mt-2 border-t border-white/10">
                           <Stack gap="sm">
-                            <Link href="/sparkmates" onClick={() => setIsMobileMenuOpen(false)}>
-                              <Button variant="colored" subVariant="blue" size="md" >
+                            <Link href="/sparkmates" onClick={() => setIsMobileMenuOpen(false)} className="block w-full">
+                              <Button variant="colored" subVariant="blue" size="md" className="w-full">
                                 Get ID
                               </Button>
                             </Link>
@@ -358,7 +374,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             ) : (
                               <Link
                                 href="/signin"
-                                className="block text-center py-2 px-4 rounded-lg border border-gray-500 text-gray-300 hover:bg-slate-700 hover:text-white transition-colors"
+                                className="block w-full text-center py-3 px-4 rounded-lg border border-gray-500 text-base font-bold text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 Sign In
@@ -368,11 +384,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </Box>
                       )}
                     </Stack>
-                  </Box>
-                )}
               </Box>
-            </Inline>
-          </Box>
+            </div>
+          )}
         </Box>
       </Box>
   );
