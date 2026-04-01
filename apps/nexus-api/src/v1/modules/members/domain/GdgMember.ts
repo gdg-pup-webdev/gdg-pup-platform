@@ -1,3 +1,4 @@
+import { ChangeProfilePicture } from '../useCases/ChangeProfilePicture';
 export type GdgMemberProps = {
   // Core Identifiers
   gdgId: string;
@@ -81,5 +82,9 @@ export class GdgMember {
 
   makePortfolioPrivate() : void {
     this._props.isPublic = false
+  }
+
+  changeProfilePicture(url: string) : void {
+    this._props.avatarUrl = url
   }
 }

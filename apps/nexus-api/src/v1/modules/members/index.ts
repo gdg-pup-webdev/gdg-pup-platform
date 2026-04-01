@@ -9,8 +9,12 @@ import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
 import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
 import { SupabaseGdgMemberRepository } from "./infrastructure/SupabaseGdgMemberRepository";
 import { SearchMember } from "./useCases/SearchMember";
+import { ChangeProfilePicture } from "./useCases/ChangeProfilePicture";
+import { StorageAdapter } from "./infrastructure/StorageAdapter";
+import { filesModuleController } from "../filesModule";
 
 const repo = new SupabaseGdgMemberRepository();
+const storage = new StorageAdapter(filesModuleController);
 
 const addUseCase = new AddGdgMember(repo);
 const deleteUseCase = new DeleteGdgMember(repo);
@@ -25,6 +29,8 @@ const makeProfilePublic = new MakeProfilePublic(repo);
 
 const searchUC = new SearchMember(repo);
 
+const changepfpuc = new ChangeProfilePicture(storage, repo);
+
 export const gdgMembersController = new GdgMembersController(
   addUseCase,
   deleteUseCase,
@@ -35,6 +41,7 @@ export const gdgMembersController = new GdgMembersController(
   makeProfilePrivate,
   makeProfilePublic,
   searchUC,
+  changepfpuc,
 );
 
 export { GdgMembersController };
