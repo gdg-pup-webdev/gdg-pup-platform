@@ -117,7 +117,7 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
         }}
       />
 
-       {/* Left blob — lower down, mouse follow */}
+       {/* Left blob — bottom down, mouse follow */}
       <motion.div
         ref={leftRef}
         initial={{ opacity: 0, scale: 0.4 }}
@@ -210,8 +210,8 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
     <ArticleBlobBackground colors={colors} />
 
       {/* ── Card container — bordered card wrapping all article content ── */}
-      <div className="relative z-10 max-w-4xl mx-auto rounded-2xl border border-white/20 bg-[#0F0E0E]/80 backdrop-blur-sm p-6 md:p-10">
-
+      <div className="relative z-10 max-w-2xl mx-auto rounded-2xl p-6 md:p-10 mt-24 bg-[#0F0E0E]">
+       
         {/* ── Top navigation bar — back button and published date + read time ── */}
         <div className="flex items-center justify-between mb-8 text-sm text-gray-400">
           <Link
