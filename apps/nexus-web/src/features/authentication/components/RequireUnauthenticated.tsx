@@ -29,15 +29,7 @@ export const RequireUnauthenticated = ({
     );
   }
 
-  if (status === STATUS.CHECKING) {
-    return (
-      <>
-        <div className="w-full h-full min-h-full flex justify-center items-center">
-          Checking authentication...
-        </div>
-      </>
-    );
-  }
+
 
   if (status === STATUS.LOGGINGOUT) {
     <>

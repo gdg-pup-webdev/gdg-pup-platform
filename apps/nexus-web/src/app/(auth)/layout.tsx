@@ -22,19 +22,19 @@ export default function AuthLayout({
         disableRotation={false}
         className="bg-[#010b1d] min-h-screen"
       >
-        <div className="flex flex-col items-center pt-[168px] pb-16 relative w-full min-h-screen overflow-hidden z-10">
+        <div className="flex flex-col items-center pt-[100px] sm:pt-[168px] pb-16 relative w-full min-h-screen overflow-hidden z-10">
           {/* Parallax Background graphics anchored to a centralized 1440px canvas */}
           <AuthParallaxBackground />
 
           {/* Content Container */}
-          <div className="flex flex-col md:flex-row gap-[148px] items-start justify-center relative z-10 w-full max-w-7xl px-4">
-            {/* Left Side Illustration */}
-            <div className="hidden md:flex relative py-[100px]">
+          <div className="flex flex-col md:flex-row gap-[148px] items-start justify-center relative z-10 w-full max-w-7xl px-4 sm:px-6">
+            {/* Left Side Illustration — only visible at xl (≥1280px) */}
+            <div className="hidden xl:flex relative py-[100px]">
               <AuthParallaxMascot />
             </div>
 
             {/* Right Side Auth Form */}
-            <div className="flex flex-col gap-[32px] items-center shrink-0 w-full md:w-[500px]">
+            <div className="flex flex-col gap-[32px] items-center shrink-0 min-w-0 w-full md:w-[500px]">
               <div className="py-[40px] flex flex-col items-center">
                 <div
                   className="text-[32px] font-bold text-white leading-[1.4] whitespace-nowrap"
