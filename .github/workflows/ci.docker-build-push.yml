@@ -22,19 +22,10 @@ env:
 jobs:
   detect-changes:
     name: Detect Changes
-    runs-on: ubuntu-latest
-    outputs:
-      nexus-web: ${{ steps.detect.outputs.nexus-web }}
-      nexus-api: ${{ steps.detect.outputs.nexus-api }}
-      environment: ${{ steps.detect.outputs.environment }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Detect changes
-        id: detect
-        uses: ./.github/workflows/ci.detect-changes
-        with:
-          head-sha: ${{ github.sha }}
-          head-branch: ${{ github.ref_name }}
+    uses: ./.github/workflows/ci.detect-changes.yml
+    with:
+      head-sha: ${{ github.sha }}
+      head-branch: ${{ github.ref_name }}
 
   build-nexus-web:
     name: nexus-web
