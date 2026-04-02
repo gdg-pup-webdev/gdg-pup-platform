@@ -1,5 +1,7 @@
 "use client";
 import React from "react";
+import { useEffect, useRef } from "react";
+import { motion } from "motion/react";
 import { Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -34,6 +36,150 @@ interface ArticleDetailsModalProps {
   articleId: string;
 }
 
+function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let mouseX = 0;
+    let mouseY = 0;
+    let leftX = 0, leftY = 0;
+    let rightX = 0, rightY = 0;
+    let rafId: number;
+
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      mouseX = e.clientX - rect.left - rect.width / 2;
+      mouseY = e.clientY - rect.top - rect.height / 2;
+    };
+
+    const tick = () => {
+      leftX += (mouseX * 0.18 - leftX) * 0.08;
+      leftY += (mouseY * 0.18 - leftY) * 0.08;
+      rightX += (mouseX * -0.18 - rightX) * 0.08;
+      rightY += (mouseY * -0.18 - rightY) * 0.08;
+
+      if (leftRef.current) {
+        leftRef.current.style.translate = `${leftX.toFixed(1)}px ${leftY.toFixed(1)}px`;
+      }
+      if (rightRef.current) {
+        rightRef.current.style.translate = `${rightX.toFixed(1)}px ${rightY.toFixed(1)}px`;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  const blobStyle: React.CSSProperties = {
+    position: "absolute",
+    borderRadius: "50%",
+    pointerEvents: "none",
+    willChange: "transform",
+  };
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden">
+
+      {/* Top center blob — fade in, no mouse follow */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.2, ease: "easeOut", delay: 0 }}
+        style={{
+          ...blobStyle,
+          width: 700, height: 600,
+          top: -100, left: "calc(50% - 400px)",
+          background: colors.blob,
+          filter: "blur(150px)",
+        }}
+      />
+
+      {/* Left blob — higher up, mouse follow */}
+      <motion.div
+        ref={leftRef}
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.2, ease: "easeOut", delay: 0.35 }}
+        style={{
+          ...blobStyle,
+          width: 500, height: 500,
+          top: "20%", left: "-150px",
+          background: colors.blob,
+          filter: "blur(200px)",
+        }}
+      />
+
+       {/* Left blob — lower down, mouse follow */}
+      <motion.div
+        ref={leftRef}
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.2, ease: "easeOut", delay: 0.35 }}
+        style={{
+          ...blobStyle,
+          width: 500, height: 500,
+          top: "50%", left: "-150px",
+          background: colors.blob,
+          filter: "blur(250px)",
+        }}
+      />
+
+      {/* Right blob — higher up, mouse follow opposite */}
+      <motion.div
+        ref={rightRef}
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.2, ease: "easeOut", delay: 0.7 }}
+        style={{
+          ...blobStyle,
+          width: 500, height: 500,
+          top: "30%", right: "-150px",
+          background: colors.blob,
+          filter: "blur(250px)",
+        }}
+      />
+
+      {/* Right blob — lower down, mouse follow opposite */}
+      <motion.div
+        ref={rightRef}
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.2, ease: "easeOut", delay: 0.7 }}
+        style={{
+          ...blobStyle,
+          width: 500, height: 500,
+          top: "60%", right: "-150px",
+          background: colors.blob,
+          filter: "blur(200px)",
+        }}
+      />
+
+      {/* Bottom center blob — fade in, no mouse follow */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 2.2, ease: "easeOut", delay: 1.05 }}
+        style={{
+          ...blobStyle,
+          width: 800, height: 600,
+          bottom: -100, left: "calc(50% - 400px)",
+          background: colors.blob,
+          filter: "blur(180px)",
+        }}
+      />
+
+    </div>
+  );
+}
+
 export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
   const { data, isLoading } = useGetOneArticle(articleId);
   const colors = ARTICLE_COLOR_MAP[articleId] ?? DEFAULT_COLOR;
@@ -61,19 +207,7 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
     <div className="relative min-h-screen bg-[#0F0E0E] px-4 py-16 md:px-8 lg:px-16 overflow-hidden">
 
       {/* Gradient blob background */}
-      <div
-        className="absolute pointer-events-none rounded-full"
-        style={{
-          width: 800,
-          height: 600,
-          top: -100,
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: colors.blob,
-          filter: "blur(180px)",
-          zIndex: 0,
-        }}
-      />
+    <ArticleBlobBackground colors={colors} />
 
       {/* ── Card container — bordered card wrapping all article content ── */}
       <div className="relative z-10 max-w-4xl mx-auto rounded-2xl border border-white/20 bg-[#0F0E0E]/80 backdrop-blur-sm p-6 md:p-10">
