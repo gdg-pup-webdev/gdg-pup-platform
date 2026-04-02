@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image"; 
 import { usePathname } from "next/navigation";
+import { motion } from "motion/react";
 import { ASSETS } from "@/lib/constants/assets";
 import { cn } from "@/lib/utils";
 import {
@@ -30,31 +31,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   const isHomePage = pathname === "/";
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Handle scroll to show/hide navbar
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > 100) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-
-      lastScrollY = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Click outside handler to close mobile menu and dropdowns
   useEffect(() => {
@@ -113,17 +94,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   );
 
   return (
-    <Box
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 transition-all duration-700 ease-out pointer-events-none",
-        isHomePage && !isVisible ? "opacity-0 -translate-y-4" : "opacity-100 translate-y-0"
+        "fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 transition-all duration-700 ease-out"
       )}
     >
       <Box
         as="nav"
         className={cn(
-          "mx-auto animate-in fade-in zoom-in-95 duration-700 h-22 max-w-7xl md:rounded-[1.875rem]",
-          isHomePage && !isVisible ? "pointer-events-none" : "pointer-events-auto",
+          "mx-auto h-22 max-w-7xl md:rounded-[1.875rem]",
+          "pointer-events-auto",
           "shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040,0px_4px_36px_0px_#FFFFFF40_inset]",
           "bg-black/80 backdrop-blur-xl",
           "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]"
@@ -388,6 +371,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
         </Box>
-      </Box>
+      </motion.div>
   );
 };
