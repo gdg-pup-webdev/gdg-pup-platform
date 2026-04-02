@@ -17,6 +17,10 @@ export class GdgMemberService implements IGdgMemberService {
       middleName: member.middleName,
       lastName: member.lastName,
       suffix: member.suffix,
+      avatarUrl: member.avatarUrl,
+      program: member.program,
+      yearLevel: member.yearLevel,
+      department: member.department,
     };
   }
 }

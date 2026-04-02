@@ -18,6 +18,10 @@ export class MockGdgMemberService implements IGdgMemberService {
       middleName: "A",
       lastName: "Doe",
       suffix: "",
+      avatarUrl: "https://example.com/avatar.jpg",
+      program: "Computer Science",
+      yearLevel: 3,
+      department: "Software Engineering",
     };
   }
 }
