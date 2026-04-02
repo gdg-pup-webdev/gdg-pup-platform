@@ -1,12 +1,19 @@
 export type TeamMemberProps = {
   id: string;
   teamId: string;
-  userId: string;
+  gdgId: string;
   role: string;
   joinedAt: Date;
+  memberName: string | null;
+  thumbnailImageUrl: string | null;
 };
 
-export type TeamMemberInsertProps = Omit<TeamMemberProps, "id" | "joinedAt">;
+export type TeamMemberInsertProps = Omit<
+  TeamMemberProps,
+  "id" | "joinedAt" | "name" | "image"
+>;
+
+export type TeamMemberUpdateProps = Partial<Pick<TeamMemberProps, "role">>;
 
 export class TeamMember {
   private _props: TeamMemberProps;
@@ -20,6 +27,8 @@ export class TeamMember {
       ...props,
       id: crypto.randomUUID(),
       joinedAt: new Date(),
+      memberName: null,
+      thumbnailImageUrl: null,
     });
   }
 
@@ -29,5 +38,12 @@ export class TeamMember {
 
   get props(): TeamMemberProps {
     return this._props;
+  }
+
+  update(props: TeamMemberUpdateProps): void {
+    this._props = {
+      ...this._props,
+      ...props,
+    };
   }
 }

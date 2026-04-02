@@ -27,8 +27,15 @@ import type { BadgeProps } from "./Badge.types";
  * ```
  */
 export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
-  ({ className, variant, size, as, children, ...props }, ref) => {
+  ({ className, variant, size, as, children, leadingIcon, trailingIcon, ...props }, ref) => {
     const Component = as || "div";
+    const defaultIdIcon = (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+        <path d="M12 3 6.5 8.5v7L12 21l5.5-5.5v-7L12 3z" strokeLinejoin="round" />
+        <path d="M8.5 12h7" strokeLinecap="round" />
+      </svg>
+    );
+    const resolvedLeadingIcon = leadingIcon ?? (variant === "id" ? defaultIdIcon : null);
 
     return (
       <Component
@@ -36,7 +43,9 @@ export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
         className={cn(badgeVariants({ variant, size }), className)}
         {...props}
       >
-        {children}
+        {resolvedLeadingIcon ? <span className="mr-2 inline-flex items-center justify-center">{resolvedLeadingIcon}</span> : null}
+        <span>{children}</span>
+        {trailingIcon ? <span className="ml-2 inline-flex items-center justify-center">{trailingIcon}</span> : null}
       </Component>
     );
   }

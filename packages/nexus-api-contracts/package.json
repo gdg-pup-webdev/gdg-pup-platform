@@ -6,13 +6,14 @@
   "imports": {
     "#*": "./dist/*"
   },
-  "scripts": { 
+  "scripts": {
     "dev": "typed-rest dev",
-    "build": "typed-rest build"  
+    "build": "typed-rest build"
   },
   "dependencies": {
     "@configs/typescript-config": "workspace:*",
     "@packages/typed-rest": "workspace:*",
+    "bcrypt": "^6.0.0",
     "concurrently": "9.2.1",
     "express": "5.2.1",
     "supazod": "^4.5.0",

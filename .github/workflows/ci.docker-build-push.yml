@@ -1,77 +1,64 @@
 # =============================================================================
 # Docker Build & Push
 # =============================================================================
-# Trigger: push to deploy branches (or manual dispatch).
-# Mode:    non-selective (builds all services, including storybook).
-# CONFIGURE TO USE SELECTIVE BUILDINGS
+# Trigger: after CI Build & Test succeeds (or manual dispatch).
+# Mode:    selective builds (only changed services)
 # =============================================================================
 
 name: Docker Build & Push
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI Build & Test"]
+    types: [completed]
     branches: [deploy-develop, staging, main]
   workflow_dispatch:
 
 concurrency:
-  group: docker-${{ github.ref }}
+  group: docker-${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}-${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
   cancel-in-progress: true
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && (github.event.workflow_run.head_branch == 'deploy-develop' || github.event.workflow_run.head_branch == 'staging' || github.event.workflow_run.head_branch == 'main')) }}
+    uses: ./.github/workflows/ci.detect-changes.yml
+    with:
+      head-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+      head-branch: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}
+
   build-nexus-web:
     name: nexus-web
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
         with:
           service: nexus-web
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-web/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
           build-args: |
-            NEXT_PUBLIC_NEXUS_API_URL=${{ github.ref_name == 'main' && 'https://api.gdgpup.org' || github.ref_name == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
-            NEXT_PUBLIC_IDENTITY_API_URL=${{ github.ref_name == 'main' && 'https://identity.gdgpup.org' || github.ref_name == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
+            NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
+            NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
 
   build-nexus-api:
     name: nexus-api
     runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.nexus-api == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
         with:
           service: nexus-api
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
+          environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-api/Dockerfile
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
-
-  build-identity-api:
-    name: identity-api
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/builds
-        with:
-          service: identity-api
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
-          dockerfile: apps/identity-api/Dockerfile
-          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
-
-  build-storybook:
-    name: storybook
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/builds
-        with:
-          service: storybook
-          environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}
-          dockerfile: apps/storybook/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}

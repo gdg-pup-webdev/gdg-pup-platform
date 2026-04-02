@@ -6,6 +6,11 @@ export class GetOneEvent {
 
   async execute(eventId: string): Promise<Event> {
     const event = await this.eventRepository.findById(eventId);
+
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
     return event;
   }
 }

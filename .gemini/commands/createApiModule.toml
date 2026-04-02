@@ -1,0 +1,28 @@
+description = "Create a new api module using clean architecture" 
+
+
+prompt = '''
+You will be making a new API module as described here - {{args}}
+
+You need to strictly follow the rules of clean architecture. 
+
+Your job is to: 
+
+1. Create a new folder in the modules folder of the api. The name of the folder will be derived from the name of the module. 
+
+2. Create the Domain. The domain should contain the entities and value objects that are relevant to the module. The entities manage their own state. Must use factory methods (`create`, `hydrate`) and controlled update methods (`update`). Validates data integrity. Agnostic to DBs/frameworks.
+
+3. Create the Interfaces. Abstract contracts defining external needs (e.g., `findById`, `saveNew`, `persistUpdates`). Agnostic to DBs/frameworks. This defines your connect to external systems including other modules since you cannot directly use or reference other module within a module. You can only make an interface that will be implemented in the infrastructure layer.
+
+4. Create the Use Cases. One class per operation (e.g., `CreateStudyJam`). Orchestrates domain entities and interfaces.
+
+5. Create the Controller. Entry point for the module. Adapts primitive inputs from the Presentation layer into Use Case structures. **NO BUSINESS LOGIC.** Controller methods are mirrors of use cases methods. Controller methods should accept plain and flat parameters and convert them into objects that the use cases require. After the use case function, the controller will then convert the data structure from the use case into a flat and plain response for external users. 
+
+6. Create the mock infrastructure and the supabase infrastructure.
+
+7. Create the index file which initializes and exports the classe and an instance of the controller, classes of the use cases, and classes of the interfaces. 
+
+8. Create the test cases for each use case and the controller using vitest. 
+
+9. Create a short and straight to the point summary of your changes.
+'''

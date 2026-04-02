@@ -115,9 +115,9 @@ async function syncEvents() {
       // Prioritize cropped banner if available, otherwise fall back to picture or null
       cover_image_url:
         event.cropped_banner_url ||
-        event.picture?.url ||
         event.cropped_picture_url ||
         null,
+      image_square_url: event.picture.url || event.event_type_logo.url || null,
       status: event.status,
       event_type: event.event_type_title,
       event_type_slug: event.event_type_slug || null,

@@ -16,8 +16,8 @@ export const dropdownContentVariants = cva(
         full: "w-full",
       },
       position: {
-        "bottom-start": "left-0 mt-2",
-        "bottom-end": "right-0 mt-2",
+        "bottom-start": "left-0 top-full mt-2",
+        "bottom-end": "right-0 top-full mt-2",
         "top-start": "left-0 bottom-full mb-2",
         "top-end": "right-0 bottom-full mb-2",
       },

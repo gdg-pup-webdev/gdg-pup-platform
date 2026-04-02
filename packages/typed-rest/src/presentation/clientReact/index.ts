@@ -1,7 +1,9 @@
-import { Contract, ValidatedInputObject } from "#application/enforcement/domains/serverTypes.js";
+import {
+  Contract,
+  ValidatedInputObject,
+} from "#application/enforcement/domains/serverTypes.js";
 import { HandlerOutput } from "#presentation/serverExpress/types.js";
 
- 
 // Helper: Extra options like Auth
 type FetchOptions = Omit<RequestInit, "body" | "method"> & {
   token?: string; // Helper for "Authorization: Bearer <token>"
@@ -16,12 +18,12 @@ export const callEndpoint = async <T extends Contract>(
   endpoint: T,
   args: ClientArgs<T>,
 ): HandlerOutput<T> => {
-  const { token, headers, ...customConfig } = args;
+  const { token, headers, params, query, body, files, ...customConfig } = args;
 
   let urlPath = endpoint.path;
 
-  if (args.params) {
-    Object.entries(args.params).forEach(([key, value]) => {
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
       // We encode URI component to handle special characters in IDs
       urlPath = urlPath.replace(`[${key}]`, encodeURIComponent(String(value)));
     });
@@ -34,8 +36,8 @@ export const callEndpoint = async <T extends Contract>(
 
   const url = new URL(cleanBase + cleanPath);
 
-  if (args.query) {
-    Object.entries(args.query).forEach(([key, value]) => {
+  if (query) {
+    Object.entries(query).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         // Handle arrays in query (e.g. ?ids=1&ids=2)
         if (Array.isArray(value)) {
@@ -56,7 +58,7 @@ export const callEndpoint = async <T extends Contract>(
   };
 
   // process body
-  let processedBody = null;
+  let processedBody: string | FormData | undefined = undefined;
   if (endpoint.request.files) {
     // remove content type from header. it defaults to "application/json"
     const { "Content-Type": noContentTypeHeader, ...restOfHeader } =
@@ -64,26 +66,47 @@ export const callEndpoint = async <T extends Contract>(
     requestHeaders = restOfHeader;
 
     const formData = new FormData();
-    if (args.body) {
-      Object.entries(args.body).forEach(([key, value]) => {
-        formData.append(
-          key,
-          value instanceof File
-            ? value
-            : Array.isArray(value) && value instanceof File
+    if (body) {
+      Object.entries(body).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            formData.append(
+              key,
+              v instanceof File || v instanceof Blob ? v : JSON.stringify(v),
+            );
+          });
+        } else {
+          formData.append(
+            key,
+            value instanceof File || value instanceof Blob
               ? value
               : JSON.stringify(value),
-        );
+          );
+        }
+      });
+    }
+
+    if (files) {
+      Object.entries(files).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          (value as any[]).forEach((v) => {
+            if (v instanceof File || v instanceof Blob) {
+              formData.append(key, v);
+            }
+          });
+        } else {
+          if (value instanceof File || value instanceof Blob) {
+            formData.append(key, value);
+          }
+        }
       });
     }
     processedBody = formData;
+  } else if (body) {
+    processedBody = JSON.stringify(body);
   }
 
-  if (args.body && !endpoint.request.files) {
-    processedBody = JSON.stringify(args.body);
-  }
-
-  if (endpoint.request.body && !processedBody)
+  if (endpoint.request.body && processedBody === undefined)
     throw new Error("Request body is undefined");
 
   // 6. Execute Request
@@ -91,7 +114,7 @@ export const callEndpoint = async <T extends Contract>(
     const response = await fetch(url.toString(), {
       method: endpoint.method,
       headers: requestHeaders,
-      body: endpoint.request.body ? processedBody : undefined,
+      body: processedBody,
       ...customConfig,
     });
 

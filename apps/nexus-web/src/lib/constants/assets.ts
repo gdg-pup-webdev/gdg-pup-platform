@@ -49,6 +49,39 @@ export const ASSETS = {
         },
         /** Diamond bullet-point SVG used in list sections */
         BULLET_DIAMOND: "/home/home-bullet-diamond.svg",
+
+        // Newly added assets
+        LOGOS_FRAMEV2_NEUTRAL1: "/home/home-logos-framev2-neutral1.webp",
+        SPARKY_LEADERBOARD1: "/home/home-sparky-leaderboard1.webp",
+        CIRBY_STICKER21: "/home/home-cirby-sticker21.webp",
+        SPARKY_THINKING1: "/home/home-sparky-thinking1.webp",
+        STARS1: "/home/home-stars1.webp",
+        STARS2: "/home/home-stars2.webp",
+        STARS3: "/home/home-stars3.webp",
+        STARS4: "/home/home-stars4.webp",
+        STARS5: "/home/home-stars5.webp",
+        STARS6: "/home/home-stars6.webp",
+        ELLIPSE203: "/home/home-ellipse203.webp",
+        ELLIPSE204: "/home/home-ellipse204.webp",
+        ELLIPSE208: "/home/home-ellipse208.webp",
+        SPACE_DUST_BLUE1: "/home/home-space-dust-blue1.webp",
+        SPACE_DUST_BLUE12: "/home/home-space-dust-blue12.webp",
+        SPACE_DUST_BLUE2: "/home/home-space-dust-blue2.webp",
+        SPACE_DUST_BLUE3: "/home/home-space-dust-blue3.webp",
+        HORIZON: "/home/home-horizon.webp",
+        SPIRAL: "/home/home-spiral.webp",
+        BLUE_IMG_PLACEHOLDER: "/home/home-blue-img-placeholder.webp",
+        GREEN_IMG_PLACEHOLDER: "/home/home-green-img-placeholder.webp",
+        RED_IMG_PLACEHOLDER: "/home/home-red-img-placeholder.webp",
+        YELLOW_IMG_PLACEHOLDER: "/home/home-yellow-img-placeholder.webp",
+        BLUE_CORNER: "/home/home-blue-corner.webp",
+        GREEN_CORNER: "/home/home-green-corner.webp",
+        RED_CORNER: "/home/home-red-corner.webp",
+        YELLOW_CORNER: "/home/home-yellow-corner.webp",
+        HANDSHAKE_ICON: "/home/handshake-icon.svg",
+        LIGHTBULB_ICON: "/home/lightbulb-icon.svg",
+        TEAM_ICON: "/home/team-icon.svg",
+        TECH_ICON: "/home/tech-icon.svg",
     },
 
     // ─── About ────────────────────────────────────────────────────────────────────
@@ -234,12 +267,12 @@ export const ASSETS = {
 
     // ─── Partners ─────────────────────────────────────────────────────────────────
     PARTNERS: {
-        ACADARENA: "/partners/partner-acadarena.webp",
-        DATACAMP: "/partners/partner-datacamp.webp",
+        ACADARENA: "/partners/partner-acadarena-white.png",
+        DATACAMP: "/partners/partner-datacamp-new.png",
         YSPACE: "/partners/partner-yspace.webp",
         POCKY: "/partners/partner-pocky.webp",
         PLDT: "/partners/partner-pldt.webp",
-        GLOBE: "/partners/partner-globe.webp",
+        GLOBE: "/partners/partner-globe-white.png",
         MOUNTAIN_DEW: "/partners/partner-mountain-dew.webp",
         WHITECLOAK: "/partners/partner-whitecloak.webp",
         FLOWERSTORE: "/partners/partner-flowerstore.webp",
@@ -248,8 +281,16 @@ export const ASSETS = {
         HEY_ROOMIE: "/partners/partner-hey-roomie.webp",
         HOMEROOM: "/partners/partner-homeroom.webp",
         GEN_AI_PH: "/partners/partner-gen-ai-ph.webp",
+        DEVCON: "/partners/partner-devcon.png",
+        /** Aurora/glow SVG overlay matching Figma background */
+        BG_AURORA_OVERLAY: "/partners/bg-aurora-overlay.svg",
         /** Cirby sticker mascot shown in the CTA card */
         CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
+        /** Figma decorative floating assets */
+        DECOR_ASSET_1: "/partners/decor-asset-1.png",
+        DECOR_ASSET_2: "/partners/decor-asset-2.png",
+        DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
+        DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
     },
 
     // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -258,6 +299,31 @@ export const ASSETS = {
         AVATAR_DEFAULT: "/auth/auth-avatar-default.webp",
         SIGNIN_LOGO: "/auth/auth-signin-logo.webp",
         SIGNIN_HORIZON: "/auth/auth-signin-horizon.webp",
+    },
+    MEMBER_SHOWCASE: {
+        ACHIEVEMENTS: {
+            CICADA: "/member-showcase/member-showcase-cicada.webp",
+            OMAGAD: "/member-showcase/member-showcase-omagad.webp",
+            SPARKPLUG: "/member-showcase/member-showcase-sparkplug.webp",
+        },
+        BACKGROUND: {
+            ORANGE_COLOR: "/member-showcase/member-showcase-orange-color.webp",
+            GREEN_COLOR: "/member-showcase/member-showcase-green-color.webp",
+            STARS_1: "/member-showcase/member-showcase-stars-1.webp",
+            STARS_2: "/member-showcase/member-showcase-stars-2.webp",
+            GDG_SHADOW: "/member-showcase/member-showcase-gdg.webp",
+            VECTOR_1296: "/member-showcase/member-showcase-vector-1296.webp",
+            VECTOR_1297: "/member-showcase/member-showcase-vector-1297.webp",
+            VECTOR_1298: "/member-showcase/member-showcase-vector-1298.webp",
+        },
+        SUBMIT_STORY: {
+            SPARKY_CIRBY: "/member-showcase/member-showcase-sparky-and-cirby-1-1.webp",
+        },
+        ICONS: {
+            LINK: "/member-showcase/member-showcase-link.svg",
+            SPOTLIGHT_PLACEHOLDER: "/member-showcase/member-showcase-spotlight-placeholder.svg",
+            SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.svg",
+        },
     },
     PROFILE: {},
     SPARKY_POINTS: {
@@ -295,6 +361,13 @@ export const ASSETS = {
         ELEMENT_BOTTOMLEFT: "/leaderboard/leaderboard-element-bottomleft.svg",
         DIAL_GROUP_248: "/leaderboard/leaderboard-dial-group-248.svg",
     },
+
+
+    
+    // ─── PLACEHOLDERS ──────────────────────────────────────────────────────────────
+    PLACEHOLDERS: {
+        DEFAULT : "/placeholders/default.webp",
+    }
 } as const;
 
 /** Convenience type for any value in the ASSETS tree */

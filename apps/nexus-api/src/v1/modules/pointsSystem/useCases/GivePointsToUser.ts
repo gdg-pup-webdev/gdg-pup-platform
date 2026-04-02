@@ -1,7 +1,15 @@
-import { ITransactionRepository } from "../domain/ITransactionRepository";
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { TransactionRecordPrototype } from "../domain/TransactionRecord"; 
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { PointEntry, TransactionRecordPrototype } from "../domain/TransactionRecord.js";
+import { TransactionRecord } from "../domain/TransactionRecord.js";
+import { Wallet } from "../domain/Wallet.js";
 
+/**
+ * GivePointsToUser Use Case
+ *
+ * Accepts an array of {pointType, amount} entries (each must be positive),
+ * credits them to the user's wallet, and records a single transaction.
+ */
 export class GivePointsToUser {
   constructor(
     private readonly walletRepository: IWalletRepository,
@@ -10,35 +18,42 @@ export class GivePointsToUser {
 
   async execute(
     userId: string,
-    pointsType: string,
-    points: number,
-    sourceReference: string,
-    sourceType: string,
-  ) {
-    const wallet = await this.walletRepository.findByUserId(userId);
-
-    if (!wallet) {
-      throw new Error("Wallet not found");
+    entries: PointEntry[],
+    sourceReference?: string,
+    sourceType?: string,
+  ): Promise<{ wallet: Wallet; transaction: TransactionRecord }> {
+    if (!entries || entries.length === 0) {
+      throw new Error("At least one point entry is required.");
     }
 
-    wallet.updatePoints(pointsType, points);
+    for (const entry of entries) {
+      if (entry.amount <= 0) {
+        throw new Error(
+          `Point amount must be positive for type "${entry.pointType}".`,
+        );
+      }
+    }
 
-    // create new transaction
-    const transactionPrototype = new TransactionRecordPrototype({
-      pointsChange: points,
-      pointsType,
-      sourceReference,
-      sourceType,
-      userId,
-    });
+    const wallet = await this.walletRepository.findByUserId(userId);
+    if (!wallet) {
+      throw new Error(`Wallet not found for user "${userId}".`);
+    }
+
+    for (const entry of entries) {
+      wallet.applyPointsDelta(entry.pointType, entry.amount);
+    }
 
     const updatedWallet = await this.walletRepository.persistUpdates(wallet);
-    const newTransaction =
-      await this.transactionRepository.savePrototype(transactionPrototype);
 
-    return {
-      updatedWallet: updatedWallet,
-      transactionRecord: newTransaction,
-    };
+    const prototype = new TransactionRecordPrototype({
+      userId,
+      entries,
+      sourceReference,
+      sourceType,
+    });
+    const transaction =
+      await this.transactionRepository.savePrototype(prototype);
+
+    return { wallet: updatedWallet, transaction };
   }
 }

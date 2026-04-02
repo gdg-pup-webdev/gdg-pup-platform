@@ -1,6 +1,6 @@
-import { ITransactionRepository } from "../domain/ITransactionRepository";
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { TransactionRecordPrototype } from "../domain/TransactionRecord";
+import { ITransactionRepository } from "../domain/ITransactionRepository.js";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { TransactionRecordPrototype } from "../domain/TransactionRecord.js";
 
 export class TakePointsFromUser {
   constructor(
@@ -23,15 +23,19 @@ export class TakePointsFromUser {
 
     const changeInPoints = -points;
 
-    wallet.updatePoints(pointsType, changeInPoints);
+    wallet.applyPointsDelta(pointsType, changeInPoints);
 
     // create new transaction
     const transactionPrototype = new TransactionRecordPrototype({
-      pointsChange: changeInPoints,
-      pointsType,
+      userId,
+      entries: [
+        {
+          pointType: pointsType,
+          amount: changeInPoints,
+        },
+      ],
       sourceReference,
       sourceType,
-      userId,
     });
 
     const updatedWallet = await this.walletRepository.persistUpdates(wallet);

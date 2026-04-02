@@ -11,24 +11,30 @@ export class FilesHttpController {
     async ({ input, output, ctx }) => {
       const pageNumber = input.query.pageNumber || 1;
       const pageSize = input.query.pageSize || 10;
+      const folderId = input.query.folderId || null;
+      const path = input.query.path;
 
-      const { list, count } =
-        await this.filesModuleController.listFIlesWithPagination(
+      let result;
+      if (path) {
+        result = await this.filesModuleController.listFilesByPathWithPagination(
           pageNumber,
           pageSize,
+          path,
         );
+      } else {
+        result = await this.filesModuleController.listFilesByFolderWithPagination(
+          pageNumber,
+          pageSize,
+          folderId,
+        );
+      }
+
+      const { list, count } = result;
 
       return output(200, {
         status: "success",
         message: "Files fetched successfully",
-        data: list.map((f) => {
-          return {
-            ...f,
-            fileName: f.name,
-            fileDescription: f.description,
-            filePath: f.path,
-          };
-        }),
+        data: list,
         meta: {
           totalRecords: count,
           currentPage: pageNumber,
@@ -56,18 +62,14 @@ export class FilesHttpController {
         file.type,
         input.body.data.fileName,
         input.body.data.fileDescription,
-        input.body.data.filePath,
+        input.body.data.folderId || null,
+        input.body.data.path,
       );
 
       return output(200, {
         status: "success",
         message: "File uploaded successfully",
-        data: {
-          ...result,
-          fileName: result.name,
-          fileDescription: result.description,
-          filePath: result.path,
-        },
+        data: result,
       });
     },
   );
@@ -88,17 +90,11 @@ export class FilesHttpController {
     contract.api.v1.files.fileId.GET,
     async ({ input, output, ctx }) => {
       const id = input.params.fileId;
-      console.log("id", id);
       const result = await this.filesModuleController.getOneFileById(id);
       return output(200, {
         status: "success",
         message: "File fetched successfully",
-        data: {
-          ...result,
-          fileName: result.name,
-          fileDescription: result.description,
-          filePath: result.path,
-        },
+        data: result,
       });
     },
   );
@@ -115,12 +111,7 @@ export class FilesHttpController {
       return output(200, {
         status: "success",
         message: "File updated successfully",
-        data: {
-          ...result,
-          fileName: result.name,
-          fileDescription: result.description,
-          filePath: result.path,
-        },
+        data: result,
       });
     },
   );

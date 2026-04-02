@@ -1,7 +1,7 @@
   
 import { supabase } from "@/v1/lib/supabase";
-import { IWalletRepository } from "../domain/IWalletRepository";
-import { Wallet } from "../domain/Wallet";
+import { IWalletRepository } from "../domain/IWalletRepository.js";
+import { Wallet } from "../domain/Wallet.js";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 
 export class WalletRepository extends IWalletRepository {

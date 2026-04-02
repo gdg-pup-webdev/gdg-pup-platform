@@ -58,14 +58,57 @@ const ADMINISTRATIVE_MEMBERS = [
 
 export default function AdministrativePage() {
   return (
-    <Stack gap="xl">
-      <Stack gap="xs">
-        <Text variant="heading-3" weight="bold" gradient="white-yellow">
+    <Stack gap="xl" className="w-full max-md:items-center">
+      <Stack gap="xs" className="w-full">
+        <div className="hidden md:grid grid-cols-4 items-end w-full gap-4">
+          <Text
+            variant="heading-4"
+            weight="bold"
+            gradient="white-yellow"
+            className="col-span-2 ml-3 whitespace-nowrap"
+          >
+            Administrative
+          </Text>
+          <Text
+            variant="heading-4"
+            weight="bold"
+            gradient="white-yellow"
+            className="col-span-2 ml-3 whitespace-nowrap"
+          >
+            Secretariat
+          </Text>
+        </div>
+        <Text
+          variant="heading-4"
+          weight="bold"
+          gradient="white-yellow"
+          className="ml-3 max-md:w-full max-md:ml-0 max-md:text-center max-md:self-center max-md:text-[40px] max-md:leading-[1.1] md:hidden"
+        >
           Administrative
         </Text>
       </Stack>
       <AnimatedTeamGrid>
-        {ADMINISTRATIVE_MEMBERS.map((member) => (
+        {ADMINISTRATIVE_MEMBERS.slice(0, 4).map((member) => (
+          <TeamCard
+            key={member.name}
+            name={member.name}
+            role={member.role}
+            imageSrc={member.imageSrc}
+            mascotSrc={member.mascotSrc}
+            socials={member.socials}
+          />
+        ))}
+        <div data-grid-span="full">
+          <Text
+            variant="heading-4"
+            weight="bold"
+            gradient="white-yellow"
+            className="ml-3 whitespace-nowrap max-md:w-full max-md:ml-0 max-md:text-center max-md:self-center max-md:text-[40px] max-md:leading-[1.1]"
+          >
+            Finance
+          </Text>
+        </div>
+        {ADMINISTRATIVE_MEMBERS.slice(4).map((member) => (
           <TeamCard
             key={member.name}
             name={member.name}
@@ -79,3 +122,7 @@ export default function AdministrativePage() {
     </Stack>
   );
 }
+
+
+
+

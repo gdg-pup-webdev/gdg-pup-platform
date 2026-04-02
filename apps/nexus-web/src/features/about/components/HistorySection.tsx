@@ -1,8 +1,4 @@
 /* For improvements:
- *
- * Revamp the whole page because this is just the initial design.
- * Add decorative elements based on figma
- * Proper image sizing and optimization
  * Add real links to the Read More buttons when article pages are built
  * Update "Join Our Journey" href when a dedicated join page is created
  */
@@ -34,59 +30,39 @@ import { ASSETS } from "@/lib/constants/assets";
 /** Motion patterns available for each blob */
 type BlobMotion = "vertical" | "horizontal" | "diagonal" | "none";
 
-// ── Edit these values to tune the blobs ─────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 const BLOBS = {
   green: {
-    // Size & position
-    width: 420, height: 420,
-    top: 475, left: "calc(85% - 350px)" as const,
-    // Appearance
-    color: "#4DB368CC",   // last 2 hex = opacity  CC=80%  99=60%  66=40%
-    blur: 200,            // px — lower=more visible, higher=softer
-    // Movement
-    motion: "vertical" as BlobMotion,  // "vertical" | "horizontal" | "diagonal" | "none"
-    duration: 88,         // seconds for one full cycle
-    travel: 38,           // px — max drift distance
-    delay: "0s",
-    // Interactivity
-    interactive: true,   // true = blob subtly follows the mouse
-    interactiveStrength: 0.18, // 0–1, how strongly it follows (0.04 = very subtle)
+    width: 620, height: 600,
+    top: 550, left: "calc(15% - 60px)" as const,
+    color: "#4DB368CC", blur: 310,
+    motion: "diagonal" as BlobMotion,
+    duration: 80, travel: 38, delay: "-30s",
+    interactive: true, interactiveStrength: 0.18,
   },
   yellow: {
     width: 640, height: 640,
     top: 760, left: "calc(38% - 80px)" as const,
-    color: "#F9AB00B3",   // B3=70%
-    blur: 210,
+    color: "#F9AB00B3", blur: 210,
     motion: "horizontal" as BlobMotion,
-    duration: 58,
-    travel: 34,
-    delay: "-14s",
-    interactive: false,
-    interactiveStrength: 0.04,
+    duration: 58, travel: 34, delay: "-14s",
+    interactive: false, interactiveStrength: 0.04,
   },
   blue: {
-    width: 600, height: 600,
-    top: 1280, left: "calc(5% - 60px)" as const,
-    color: "#4285F4B3",   // B3=70%
-    blur: 310,
-    motion: "diagonal" as BlobMotion,
-    duration: 80,
-    travel: 28,
-    delay: "-30s",
-    interactive: true,
-    interactiveStrength: 0.35,
+    width: 620, height: 600,
+    top: 1200, left: "calc(85% - 350px)" as const,
+    color: "#4285F4B3", blur: 310,
+    motion: "vertical" as BlobMotion,
+    duration: 88, travel: 38, delay: "-20s",
+    interactive: true, interactiveStrength: 0.18,
   },
   red: {
     width: 500, height: 500,
-    top: 2020, right: "calc(5% - 80px)" as const,
-    color: "#EA4335BF",   // BF=75%
-    blur: 210,
+    top: 2000, left: "calc(5% - 60px)" as const,
+    color: "#EA4335BF", blur: 250,
     motion: "horizontal" as BlobMotion,
-    duration: 96,
-    travel: 38,
-    delay: "-48s",
-    interactive: false,
-    interactiveStrength: 0.04,
+    duration: 96, travel: 38, delay: "-30s",
+    interactive: false, interactiveStrength: 0.04,
   },
 } satisfies Record<string, {
   width: number; height: number;
@@ -208,7 +184,7 @@ function HistoryBlobBackground() {
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.35 }}
       />
 
-      {/* ── Blue — below yellow, further left ── */}
+      {/* ── Blue — below yellow, further right ── */}
       <motion.div
         ref={blueRef}
         style={blobStyle(BLOBS.blue, { top: BLOBS.blue.top, left: BLOBS.blue.left })}
@@ -217,10 +193,10 @@ function HistoryBlobBackground() {
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.7 }}
       />
 
-      {/* ── Red — below blue, right side ── */}
+      {/* ── Red — below blue, left side ── */}
       <motion.div
         ref={redRef}
-        style={blobStyle(BLOBS.red, { top: BLOBS.red.top, right: BLOBS.red.right })}
+        style={blobStyle(BLOBS.red, { top: BLOBS.red.top, left: BLOBS.red.left })}
         initial={{ opacity: 0, scale: 0.4 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 1.05 }}
@@ -284,40 +260,74 @@ const milestones = [
   {
     slug: "the-spark",
     title: "The Spark",
-    excerpt:
-      "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.",
+    excerpt: "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.",
+    buttonColor: "green" as const,
+    image: "/about/history/the-spark.jpg",
+    href: "/articles/a5e895ea-1223-4958-af05-1319cc98ec0a"
   },
   {
     slug: "year-one",
     title: "Year One: Everything at Once",
-    excerpt:
-      "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.",
+    excerpt: "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.",
+    buttonColor: "yellow" as const,
+    image: "/about/history/year-one-everything.png",
+    href: "/articles/3e672b68-5890-4990-86a8-4622e019e7d3"
   },
   {
     slug: "year-two",
     title: "Year Two: The Test",
-    excerpt:
-      "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.",
+    excerpt: "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.",
+    buttonColor: "red" as const,
+    image: "/about/history/year-two-test.jpg",
+    href: "/articles/55cf5ee1-1ab1-4a9d-b9d0-497d644baa53"
   },
   {
     slug: "year-three",
     title: "Year Three: The Turnaround",
-    excerpt:
-      "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.",
+    excerpt: "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.",
+    buttonColor: "blue" as const,
+    image: "/about/history/year-three-turnaround.jpg",
+    href: "/articles/aa4ec512-a068-4866-ba5d-8bf9bb90325c"
   },
   {
     slug: "the-impact",
     title: "The Impact",
-    excerpt:
-      "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.",
+    excerpt: "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.",
+    buttonColor: "green" as const,
+    image: "/about/history/the-impact.png",
+    href: "/articles/e5c96ec3-71c2-4e36-b065-0105aee46a08"
   },
   {
     slug: "living-community",
     title: "The Living Community",
-    excerpt:
-      "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.",
+    excerpt: "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.",
+    buttonColor: "yellow" as const,
+    image: "/about/history/the-living-community.jpg",
+    href: "/articles/1713f93d-558b-4eab-9530-29d0770080f9"
+  },
+  {
+    slug: "your-chapter",
+    title: "Your Chapter Hasn't Been Written Yet",
+    excerpt: "Three years and counting proved something important: this community is built by the people who show up. That includes you.",
+    buttonColor: "red" as const,
+    image: "/about/history/your-chapter.jpg",
+    href: "/articles/f946e2dd-e0e2-41f2-9329-360b5dc44c2c"
   },
 ];
+
+const buttonColorMap: Record<string, string> = {
+  green: "bg-gradient-to-b from-[#016630] to-[#00C950] hover:brightness-110 text-white",
+  yellow: "bg-gradient-to-b from-[#8E7200] to-[#F0B100] hover:brightness-110 text-black",
+  red: "bg-gradient-to-b from-[#82181A] to-[#EA4335] hover:brightness-110 text-white",
+  blue: "bg-gradient-to-b from-[#162456] to-[#2B7FFF] hover:brightness-110 text-white",
+};
+
+const borderGradientMap: Record<string, string> = {
+  green:  "bg-gradient-to-r from-[#016630] via-[#00C950] to-[#016630]",
+  yellow: "bg-gradient-to-r from-[#8E7200] via-[#F0B100] to-[#8E7200]",
+  red:    "bg-gradient-to-r from-[#82181A] via-[#EA4335] to-[#82181A]",
+  blue:   "bg-gradient-to-r from-[#162456] via-[#2B7FFF] to-[#162456]",
+};
 
 // Single milestone card — thumbnail + title + excerpt + Read More button
 const MilestoneCard = ({
@@ -325,44 +335,171 @@ const MilestoneCard = ({
 }: {
   milestone: (typeof milestones)[number];
 }) => (
-  <Card>
-    <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
-      <Image
-        src={ASSETS.HOME.HERO.LAYER_BG}
-        alt={milestone.title}
-        fill
-        className="object-cover"
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.display = "none";
-        }}
-      />
-    </div>
-    <CardHeader>
-      <CardTitle>{milestone.title}</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <Text variant="body-sm" className="text-gray-300">
-        {milestone.excerpt}
-      </Text>
-    </CardContent>
-    <CardFooter>
-      <Link href="#">
-        <Button variant="default" size="sm">
-          Read More
-        </Button>
-      </Link>
-    </CardFooter>
-  </Card>
+  <div className="relative w-full">
+    <div
+      className={`absolute inset-0 rounded-3xl p-[1px] pointer-events-none z-10 ${borderGradientMap[milestone.buttonColor]}`}
+      style={{
+        WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+        WebkitMaskComposite: "xor",
+        maskComposite: "exclude",
+      }}
+    />
+    <Card className="border-0 flex flex-col justify-between w-full">
+      {milestone.image && (
+        <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
+          <Image
+            src={milestone.image}
+            alt={milestone.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
+      <CardHeader>
+        <CardTitle className="text-4xl md:text-2xl lg:text-4xl font-bold text-center">{milestone.title}</CardTitle>      </CardHeader>
+      <CardContent className="flex-1">
+      <Text variant="body" className="text-gray-300 line-clamp-3 text-center text-sm md:text-base lg:text-xl">          {milestone.excerpt}
+          {milestone.excerpt}
+        </Text>
+      </CardContent>
+      <CardFooter className="justify-center">
+        <Link href={milestone.href}>
+          <button
+            className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
+          >
+            Read More
+          </button>
+        </Link>
+      </CardFooter>
+    </Card>
+  </div>
 );
 
+
+// ─── Stats section ────────────────────────────────────────────────────────────
+
+const stats = [
+  {
+   icon: (
+  <svg width="100" height="80" viewBox="0 0 120 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="blueGradReverse" x1="60" y1="0" x2="60" y2="110" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#162456" />
+        <stop offset="100%" stopColor="#2B7FFF" />
+      </linearGradient>
+      <mask id="gapMask">
+        <rect width="120" height="110" fill="white" />
+        {/* Enlarged mask shapes = bigger gap around center person */}
+        <circle cx="60" cy="30" r="22" fill="black" stroke="black" strokeWidth="10" />
+        <path d="M22 110 Q22 55 60 55 Q98 55 98 110Z" fill="black" stroke="black" strokeWidth="15" strokeLinejoin="round" />
+      </mask>
+    </defs>
+
+    {/* Side figures — paths clamped to x=0 and x=120 so no hard viewport cut */}
+    <g mask="url(#gapMask)">
+      <circle cx="20" cy="45" r="16" fill="url(#blueGradReverse)" />
+      <path d="M0 110 Q0 70 20 70 Q50 70 50 110Z" fill="url(#blueGradReverse)" />
+
+      <circle cx="100" cy="45" r="16" fill="url(#blueGradReverse)" />
+      <path d="M70 110 Q70 70 100 70 Q120 70 120 110Z" fill="url(#blueGradReverse)" />
+    </g>
+
+    {/* Center figure on top */}
+    <circle cx="60" cy="30" r="22" fill="url(#blueGradReverse)" />
+    <path d="M22 110 Q22 55 60 55 Q98 55 98 110Z" fill="url(#blueGradReverse)" />
+  </svg>
+),
+    value: "100+",
+    label: "Members Empowered",
+  },
+  {
+    icon: (
+      <svg width="100" height="80" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="redGrad" x1="60" y1="0" x2="60" y2="100" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#82181A" />
+            <stop offset="100%" stopColor="#EA4335" />
+          </linearGradient>
+        </defs>
+        <rect width="120" height="100" rx="16" fill="url(#redGrad)" />
+        <polyline points="32,35 14,50 32,65" stroke="#111" strokeWidth="11" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+        <polyline points="88,35 106,50 88,65" stroke="#111" strokeWidth="11" strokeLinecap="square" strokeLinejoin="miter" fill="none" />
+        <line x1="68" y1="28" x2="52" y2="72" stroke="#111" strokeWidth="11" strokeLinecap="square" />
+      </svg>
+    ),
+    value: "200+",
+    label: "Study Jam",
+  },
+  {
+    icon: (
+      <svg width="100" height="80" viewBox="0 0 110 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="greenGrad" x1="55" y1="0" x2="55" y2="120" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#00C950" />
+            <stop offset="100%" stopColor="#016630" />
+          </linearGradient>
+        </defs>
+        <circle cx="55" cy="48" r="40" fill="url(#greenGrad)" />
+        <circle cx="55" cy="48" r="26" fill="#111" />
+        <circle cx="55" cy="48" r="18" fill="url(#greenGrad)" />
+        <path d="M35 78 L35 115 L55 100 L75 115 L75 78Z" fill="url(#greenGrad)" />
+        <path d="M35 115 L55 100 L75 115" fill="#111" />
+      </svg>
+    ),
+    value: "4+",
+    label: "Years of Innovation",
+  },
+];
+
+const nexusStroke = "linear-gradient(to right, #EA4335, #F9AB00, #34A853, #4285F4)";
+
+const StatCard = ({
+  stat,
+}: {
+  stat: (typeof stats)[number];
+}) => (
+  <div
+    className="p-[1.5px] rounded-2xl"
+    style={{ background: nexusStroke }}
+  >
+    <div className="flex flex-col items-center gap-4 rounded-2xl p-8 h-full bg-[#0F0E0E]">
+      {stat.icon}
+      <Text variant="heading-1" weight="bold" align="center" className="text-white">
+        {stat.value}
+      </Text>
+      <Text variant="body" weight="bold" align="center" className="text-gray-300">
+        {stat.label}
+      </Text>
+    </div>
+  </div>
+);
+
+// ─── Main component ───────────────────────────────────────────────────────────
 export function HistorySection() {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16 bg-[#0F0E0E]">
       {/* Zoned blob background — pinned per region, history page only */}
       <HistoryBlobBackground />
 
-      <Container maxWidth="7xl" padding="lg" className="relative z-10">
-        <Stack gap="2xl">
+{/* Orbital rings */}
+<div className="absolute pointer-events-none"
+  style={{ top: "12%", left: "50%", transform: "translateX(-50%)", width: "70%", opacity: 0.9 }}>
+  <Image src="/about/history/bg-orbital-rings.png" alt="" width={900} height={900} className="w-full h-auto" />
+</div>
+
+{/* Gear */}
+<div className="absolute pointer-events-none hidden lg:block"
+  style={{ top: "45%", right: "-8%", width: "25%", opacity: 0.20 }}>
+  <Image src="/about/history/bg-gear.png" alt="" width={400} height={400} className="w-full h-auto" />
+</div>
+
+{/* Star */}
+<div className="absolute pointer-events-none hidden lg:block"
+  style={{ top: "55%", left: "-15%", width: "50%", opacity: 0.20, transform: "rotate(20deg)" }}>
+  <Image src="/about/history/bg-star.png" alt="" width={300} height={300} className="w-full h-auto" />
+</div>
+
+    <Container maxWidth="7xl" padding="lg" className="relative z-10 w-full overflow-hidden">        <Stack gap="2xl">
           {/* Section 1 — Hero */}
           <FadeInSection className="mb-32">
             <Stack gap="lg" align="center">
@@ -377,176 +514,97 @@ export function HistorySection() {
                 A Journey Through GDG PUP Milestones
               </Text>
 
-              <Text
-                variant="body"
-                align="center"
-                className="text-white max-w-3xl mx-auto"
-              >
+            <div className="w-full max-w-5xl mx-auto border border-white rounded-2xl px-8 py-6">                <Text
+                  variant="body"
+                  align="center"
+                  className="text-white text-lg"
+                >
                 Over two hundred students in PUP showed up to something that
                 didn&apos;t exist yet, drawn by Google&apos;s name alone. August
                 28, 2022. A Facebook page had just gone live. No track record,
                 no proven value, just a promise: we&apos;re building a space
                 where PUP students turn ideas into real projects.
               </Text>
+            </div>
             </Stack>
           </FadeInSection>
 
-          {/* Section 2 — History Cards */}
-          <FadeInSection delay={0.1} className="mb-32">
-            <Stack gap="xl" align="center">
-              {/* ── Mobile layout ────────────────────────────────────── */}
-              <div className="grid grid-cols-2 gap-4 w-full lg:hidden">
-                {milestones.map((milestone) => (
-                  <AnimatedCard key={milestone.slug}>
-                    <MilestoneCard milestone={milestone} />
-                  </AnimatedCard>
-                ))}
+         {/* Section 2 — History Cards */}
+      <FadeInSection delay={0.1} className="mb-32">
+        <div className="w-full">
+          {/* ── Mobile layout ────────────────────────────────────── */}
+          <div className="flex flex-col gap-4 w-full lg:hidden">
+            {milestones.map((milestone) => (
+              <div key={milestone.slug} className="w-full">
+                <MilestoneCard milestone={milestone} />
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop staircase layout */}
+          <div className="hidden lg:grid lg:grid-cols-4 gap-6 w-full items-start">
+            {/* Col 1 — The Spark → Your Chapter */}
+            <div className="flex flex-col">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[0]} />
+              </AnimatedCard>
+              <div className="lg:mt-[52rem]">
                 <AnimatedCard>
-                  <Card className="opacity-50">
-                    <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2 bg-white/5" />
-                    <CardHeader>
-                      <CardTitle>More Coming Soon</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text variant="body-sm" className="text-gray-400">
-                        The journey doesn&apos;t stop here. New chapters are
-                        still being written.
-                      </Text>
-                    </CardContent>
-                  </Card>
+                  <MilestoneCard milestone={milestones[6]} />
                 </AnimatedCard>
               </div>
+            </div>
 
-              {/* ── Desktop staircase ─────────────────────────────────── */}
-              <div className="hidden lg:grid lg:grid-cols-4 gap-6 w-full items-start">
-                {/* Col 1 — Year Three: deepest */}
-                <div className="lg:pt-[37rem]">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[3]} />
-                  </AnimatedCard>
-                </div>
-
-                {/* Col 2 — Year Two (row 1) → The Impact (row 2) */}
-                <div className="flex flex-col lg:pt-[20rem]">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[2]} />
-                  </AnimatedCard>
-                  <div className="lg:mt-[12rem]">
-                    <AnimatedCard>
-                      <MilestoneCard milestone={milestones[4]} />
-                    </AnimatedCard>
-                  </div>
-                </div>
-
-                {/* Col 3 — Year One (row 1) → The Living Community (row 2) */}
-                <div className="flex flex-col lg:pt-[10rem]">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[1]} />
-                  </AnimatedCard>
-                  <div className="lg:mt-[32rem]">
-                    <AnimatedCard>
-                      <MilestoneCard milestone={milestones[5]} />
-                    </AnimatedCard>
-                  </div>
-                </div>
-
-                {/* Col 4 — The Spark (row 1) → Coming Soon (row 2) */}
-                <div className="flex flex-col">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[0]} />
-                  </AnimatedCard>
-                  <div className="lg:mt-[52rem]">
-                    <AnimatedCard>
-                      <Card className="opacity-50">
-                        <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2 bg-white/5" />
-                        <CardHeader>
-                          <CardTitle>More Coming Soon</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <Text variant="body-sm" className="text-gray-400">
-                            The journey doesn&apos;t stop here. New chapters are
-                            still being written.
-                          </Text>
-                        </CardContent>
-                      </Card>
-                    </AnimatedCard>
-                  </div>
-                </div>
+            {/* Col 2 — Year One → The Living Community */}
+            <div className="flex flex-col lg:pt-[10rem]">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[1]} />
+              </AnimatedCard>
+              <div className="lg:mt-[32rem]">
+                <AnimatedCard>
+                  <MilestoneCard milestone={milestones[5]} />
+                </AnimatedCard>
               </div>
-            </Stack>
-          </FadeInSection>
+            </div>
 
-          {/* Section 3 — Statistics */}
-          <FadeInSection delay={0.2}>
-            <Stack gap="xl" align="center">
-              <Grid className="grid-cols-1 sm:grid-cols-3 gap-8 w-full">
-                <Stack align="center" gap="xs">
-                  <Text
-                    variant="heading-1"
-                    weight="bold"
-                    gradient="white-green"
-                    align="center"
-                  >
-                    100+
-                  </Text>
-                  <Text
-                    variant="body"
-                    weight="bold"
-                    align="center"
-                    className="text-white"
-                  >
-                    Members Empowered
-                  </Text>
-                </Stack>
+            {/* Col 3 — Year Two → The Impact */}
+            <div className="flex flex-col lg:pt-[20rem]">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[2]} />
+              </AnimatedCard>
+              <div className="lg:mt-[12rem]">
+                <AnimatedCard>
+                  <MilestoneCard milestone={milestones[4]} />
+                </AnimatedCard>
+              </div>
+            </div>
 
-                <Stack align="center" gap="xs">
-                  <Text
-                    variant="heading-1"
-                    weight="bold"
-                    gradient="white-green"
-                    align="center"
-                  >
-                    200+
-                  </Text>
-                  <Text
-                    variant="body"
-                    weight="bold"
-                    align="center"
-                    className="text-white"
-                  >
-                    Study Jams
-                  </Text>
-                </Stack>
+            {/* Col 4 — Year Three: deepest */}
+            <div className="lg:pt-[37rem]">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[3]} />
+              </AnimatedCard>
+            </div>
+          </div>
+        </div>
+      </FadeInSection>
 
-                <Stack align="center" gap="xs">
-                  <Text
-                    variant="heading-1"
-                    weight="bold"
-                    gradient="white-green"
-                    align="center"
-                  >
-                    4+
-                  </Text>
-                  <Text
-                    variant="body"
-                    weight="bold"
-                    align="center"
-                    className="text-white"
-                  >
-                    Years of Innovation
-                  </Text>
-                </Stack>
-              </Grid>
-
-              <Box>
-                <Link href="/signup">
-                  <Button size="lg" variant="default">
-                    Join Our Journey
-                  </Button>
-                </Link>
-              </Box>
-            </Stack>
-          </FadeInSection>
+          {/* ── Section 3: Stats + CTA ───────────────────────────── */}
+<FadeInSection delay={0.2}>
+  <Stack gap="xl" align="center">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">      {stats.map((stat) => (
+        <StatCard key={stat.label} stat={stat} />
+      ))}
+    </div>
+    <Box>
+      <Link href="/signup">
+        <Button size="lg" variant="default">
+          Join Our Journey
+        </Button>
+      </Link>
+    </Box>
+  </Stack>
+</FadeInSection>
         </Stack>
       </Container>
     </div>
