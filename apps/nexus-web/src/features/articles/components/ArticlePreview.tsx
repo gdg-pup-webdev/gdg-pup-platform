@@ -1,43 +1,39 @@
 "use client";
-
-import React, { useState, useEffect, useRef } from "react";
-import {
-  X,
-  Loader2,
-  AlertTriangle,
-  Calendar,
-  User,
-  Info,
-  Edit2,
-  Trash2,
-  Image as ImageIcon,
-  Type,
-  FileText,
-  Search,
-  MapPin,
-  Upload,
-  CheckCircle2,
-  Globe,
-} from "lucide-react";
+import React from "react";
+import { Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Article, ArticleInsert, ArticleUpdate, UserType } from "../types";
-import { useGetOneArticle } from "../hooks/useGetOneArticle";
+import { useGetOneArticle } from "@/features/articles/hooks/useGetOneArticle";
+import Link from "next/link";
 
-// ==========================================
-// Article Details Modal
-// ==========================================
+// Maps article ID to its milestone color
+const ARTICLE_COLOR_MAP: Record<string, {
+  blob: string;
+  border: string;
+}> = {
+  "a5e895ea-1223-4958-af05-1319cc98ec0a": { blob: "#4DB368CC", border: "#00C950" }, // The Spark — green
+  "3e672b68-5890-4990-86a8-4622e019e7d3": { blob: "#F9AB00B3", border: "#F0B100" }, // Year One — yellow
+  "55cf5ee1-1ab1-4a9d-b9d0-497d644baa53": { blob: "#EA4335BF", border: "#EA4335" }, // Year Two — red
+  "aa4ec512-a068-4866-ba5d-8bf9bb90325c": { blob: "#4285F4B3", border: "#2B7FFF" }, // Year Three — blue
+  "e5c96ec3-71c2-4e36-b065-0105aee46a08": { blob: "#4DB368CC", border: "#00C950" }, // The Impact — green
+  "1713f93d-558b-4eab-9530-29d0770080f9": { blob: "#F9AB00B3", border: "#F0B100" }, // Living Community — yellow
+  "f946e2dd-e0e2-41f2-9329-360b5dc44c2c": { blob: "#EA4335BF", border: "#EA4335" }, // Your Chapter — red
+};
+
+const DEFAULT_COLOR = { blob: "#4DB368CC", border: "#00C950" };
+
 interface ArticleDetailsModalProps {
   articleId: string;
 }
 
 export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
-  const { data, error, isLoading } = useGetOneArticle(articleId);
+  const { data, isLoading } = useGetOneArticle(articleId);
+  const colors = ARTICLE_COLOR_MAP[articleId] ?? DEFAULT_COLOR;
 
   if (!data || isLoading) {
     return (
-      <div className="flex h-40 items-center justify-center">
-        <Loader2 size={32} className="animate-spin text-teal-600" />
+      <div className="flex h-screen items-center justify-center bg-[#0F0E0E]">
+        <Loader2 size={32} className="animate-spin" style={{ color: colors.border }} />
       </div>
     );
   }
@@ -45,62 +41,66 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
   const article = data?.data;
 
   return (
-    <div className="flex mx-auto mt-50 max-w-5xl border-3 p-6">
-      <div className="space-y-6 w-full">
-        <div className="space-y-4">
-          {article.image_url && (
-            <img
-              src={article.image_url}
-              alt={article.title}
-              className="w-full h-48 sm:h-64 object-cover rounded-sm border border-gray-100"
-            />
-          )}
+    <div className="relative min-h-screen bg-[#0F0E0E] px-4 py-16 md:px-8 lg:px-16 overflow-hidden">
 
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-2xl font-bold text-gray-900">
-                {article.title}
-              </h3>
-              {article.is_published ? (
-                <span className="flex items-center gap-1 rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-bold text-teal-600 uppercase border border-teal-100">
-                  <Globe size={10} />
-                  Published
-                </span>
-              ) : (
-                <span className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-bold text-gray-400 uppercase border border-gray-100">
-                  <X size={10} />
-                  Draft
-                </span>
-              )}
-            </div>
-            <p className="mt-2 text-sm text-gray-500 italic border-l-4 border-teal-500 pl-4">
-              {article.description}
-            </p>
-          </div>
+      {/* Gradient blob background */}
+      <div
+        className="absolute pointer-events-none rounded-full"
+        style={{
+          width: 600,
+          height: 600,
+          top: -100,
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: colors.blob,
+          filter: "blur(180px)",
+          zIndex: 0,
+        }}
+      />
 
-          <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-            <div className="flex items-center gap-1.5">
-              <Calendar size={14} className="text-teal-600" />
-              Created: {new Date(article.created_at).toLocaleDateString()}
-            </div>
-            {article.published_at && (
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 size={14} className="text-teal-600" />
-                Published: {new Date(article.published_at).toLocaleDateString()}
-              </div>
-            )}
-            <div className="flex items-center gap-1.5">
-              <User size={14} className="text-teal-600" />
-              Author ID: {article.author_id}
+      <div className="relative z-10 max-w-4xl mx-auto">
+
+        {/* Back button */}
+        <Link
+          href="/about/history"
+          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-8 transition-colors"
+        >
+          ← Back to History
+        </Link>
+
+        {/* Hero image with border */}
+        {article.image_url && (
+          <div
+            className="w-full rounded-2xl overflow-hidden mb-10 p-[1.5px]"
+            style={{
+              background: `linear-gradient(to right, transparent, ${colors.border}, transparent)`,
+            }}
+          >
+            <div className="rounded-2xl overflow-hidden">
+              <img
+                src={article.image_url}
+                alt={article.title}
+                className="w-full h-64 md:h-96 object-cover"
+              />
             </div>
           </div>
+        )}
 
-          <div className="prose prose-sm max-w-none rounded-sm border border-gray-100 bg-gray-50 p-6">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {article.content}
-            </ReactMarkdown>
-          </div>
+        {/* Title */}
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">
+          {article.title}
+        </h1>
+
+        {/* Content */}
+        <div
+          className="prose prose-invert prose-lg max-w-none rounded-2xl border p-8"
+          style={{ borderColor: `${colors.border}33`, background: "rgba(255,255,255,0.03)" }}
+        >
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {article.content}
+          </ReactMarkdown>
         </div>
+
       </div>
     </div>
   );
