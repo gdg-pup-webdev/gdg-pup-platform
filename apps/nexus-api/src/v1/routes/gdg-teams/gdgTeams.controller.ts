@@ -106,7 +106,7 @@ export class GdgTeamsHttpController {
         (input.body.data.members || []).map((member) =>
           teamModuleController.addMember({
             teamId: team.id,
-            userId: member.user_id,
+            gdgId: member.user_id,
             role: member.position,
           }),
         ),
@@ -164,7 +164,7 @@ export class GdgTeamsHttpController {
           input.body.data.members.map((member) =>
             teamModuleController.addMember({
               teamId: team.id,
-              userId: member.user_id,
+              gdgId: member.user_id,
               role: member.position,
             }),
           ),
@@ -217,7 +217,7 @@ export class GdgTeamsHttpController {
     async ({ input, output }) => {
       const member = await teamModuleController.addMember({
         teamId: input.params.gdgTeamId,
-        userId: input.body.data.user_id,
+        gdgId: input.body.data.user_id,
         role: input.body.data.position,
       });
 

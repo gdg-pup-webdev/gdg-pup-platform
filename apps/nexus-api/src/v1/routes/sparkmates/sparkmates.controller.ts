@@ -1,5 +1,5 @@
-import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule";
-import { SparkmatesSource } from "@/v1/modules/sparkmatesModule/domain/Sparkmates";
+import { SparkmatesModuleController } from "@/v1/modules/sparkmatesModule_deprecated";
+import { SparkmatesSource } from "@/v1/modules/sparkmatesModule_deprecated/domain/Sparkmates";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
@@ -10,12 +10,15 @@ function toRow(props: any) {
     user_id: props.userId,
     created_at: props.createdAt,
     updated_at: props.updatedAt,
-    full_name: props.fullName,
+    first_name: props.firstName,
+    middle_name: props.middleName,
+    last_name: props.lastName,
     nickname: props.nickname,
     gdg_id: props.gdgId,
     membership_type: props.membershipType,
     department: props.department,
-    year_and_program: props.yearAndProgram,
+    year_level: props.yearLevel,
+    program: props.program,
     bio: props.bio,
     github_url: props.githubUrl,
     linkedin_url: props.linkedinUrl,
@@ -25,6 +28,7 @@ function toRow(props: any) {
     learning_interests: props.learningInterests,
     tools_and_technologies: props.toolsAndTechnologies,
     is_public: props.isPublic,
+    profile_image: props.profileImage,
   };
 }
 
@@ -57,8 +61,7 @@ export class SparkmatesHttpController {
         status: "success",
         message: "Sparkmates profile resolved successfully",
         data: {
-          gdg_id: record.gdgId,
-          owner_user_id: record.ownerUserId,
+          gdg_id: record.gdgId, 
           source: record.source,
           status: record.status,
           portfolio: record.portfolio ? toRow(record.portfolio) : null,

@@ -3,6 +3,7 @@ import { ITeamMemberRepository, TeamMemberFilters } from "../domain/ITeamMemberR
 import { IUserRepository } from "../domain/IUserRepository";
 import { Team } from "../domain/Team";
 import { TeamMember } from "../domain/TeamMember";
+import { User } from "../domain/User";
 
 export class MockTeamRepository implements ITeamRepository {
   public teams: Team[] = [];
@@ -26,7 +27,7 @@ export class MockTeamMemberRepository implements ITeamMemberRepository {
   async findAllWithFilters(p: number, s: number, f: TeamMemberFilters) {
     let res = this.members;
     if (f.teamId) res = res.filter(m => m.props.teamId === f.teamId);
-    if (f.userId) res = res.filter(m => m.props.userId === f.userId);
+    if (f.userId) res = res.filter(m => m.props.gdgId === f.userId);
     if (f.role) res = res.filter(m => m.props.role === f.role);
     return { list: res.slice((p-1)*s, p*s), count: res.length };
   }
@@ -37,6 +38,6 @@ export class MockTeamMemberRepository implements ITeamMemberRepository {
 
 // Minimal mock to simulate the external user module
 export class MockUserRepository implements IUserRepository {
-  public users: { id: string }[] = [];
-  async findById(id: string) { return this.users.find(u => u.id === id) || null; }
+  public users: User[] = [];
+  async findById(id: string) { return this.users.find(u => u.props.gdgId === id) || null; }
 }

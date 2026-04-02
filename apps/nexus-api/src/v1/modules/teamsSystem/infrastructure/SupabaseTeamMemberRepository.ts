@@ -29,11 +29,11 @@ export class SupabaseTeamMemberRepository implements ITeamMemberRepository {
     return TeamMember.hydrate({
       id: row.id,
       teamId: row.team_id,
-      userId: row.user_id,
+      gdgId: row.user_id,
       role: row.role,
       joinedAt: new Date(),
-      name: row.user?.display_name ?? null,
-      image: row.user?.avatar_url ?? null,
+      memberName: row.user?.display_name ?? null,
+      thumbnailImageUrl: row.user?.avatar_url ?? null,
     });
   }
 
@@ -81,7 +81,7 @@ export class SupabaseTeamMemberRepository implements ITeamMemberRepository {
       .insert({
         id: props.id,
         team_id: props.teamId,
-        user_id: props.userId,
+        user_id: props.gdgId,
         role: props.role,
       })
       .select(this.selectClause)

@@ -11,7 +11,7 @@
 export * from "./components";
 
 // Hooks
-export { useDebugAuth } from "./hooks/useDebugAuth";
+// export { useDebugAuth } from "./hooks/useDebugAuth";
 
 // Types
 export type {

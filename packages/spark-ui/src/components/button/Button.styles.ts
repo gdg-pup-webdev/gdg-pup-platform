@@ -103,34 +103,18 @@ export const buttonVariants = cva(
         subVariant: "blue",
         class: [
           "bg-[linear-gradient(90deg,#162456_0%,#2B7FFF_50%,#162456_100%)]",
-          "active:bg-[linear-gradient(0deg,#2B7FFF_0%,#162456_100%)]",
-        ],
-      },
-      {
-        variant: "colored",
-        subVariant: "blue",
-        size: "lg",
-        class: [
-          "bg-[linear-gradient(0deg,#2B7FFF_0%,#162456_100%)]",
           "hover:bg-[linear-gradient(90deg,#162456_0%,#2B7FFF_50%,#162456_100%)]",
+          "active:bg-[linear-gradient(0deg,#2B7FFF_0%,#162456_100%)]",
           "not-active:hover:shadow-[0px_6px_4px_0px_#00000040,0px_4px_0px_0px_#FFFFFF4D_inset,0px_-4px_0px_0px_#0000004D_inset,0px_0px_8px_0px_#155DFC]"
-        ]
+        ],
       },
       {
         variant: "colored",
         subVariant: "yellow",
         class: [
           "bg-[linear-gradient(90deg,#8E7200_0%,#F0B100_50%,#8E7200_100%)]",
-          "active:bg-[linear-gradient(360deg,#F0B100_0%,#8E7200_100%)]"
-        ],
-      },
-      {
-        variant: "colored",
-        subVariant: "yellow",
-        size: "lg",
-        class: [
-          "bg-[linear-gradient(360deg,#F0B100_0%,#8E7200_100%)]",
           "hover:bg-[linear-gradient(90deg,#8E7200_0%,#F0B100_50%,#8E7200_100%)]",
+          "active:bg-[linear-gradient(360deg,#F0B100_0%,#8E7200_100%)]",
           "not-active:hover:shadow-[0px_6px_4px_0px_#00000040,0px_4px_0px_0px_#FFFFFF4D_inset,0px_-4px_0px_0px_#0000004D_inset,0px_0px_8px_0px_#997F17]"
         ],
       },
@@ -139,16 +123,8 @@ export const buttonVariants = cva(
         subVariant: "green",
         class: [
           "bg-[linear-gradient(90deg,#016630_0%,#00C950_50%,#016630_100%)]",
-          "active:bg-[linear-gradient(360deg,#00C950_0%,#016630_100%)]"
-        ],
-      },
-      {
-        variant: "colored",
-        subVariant: "green",
-        size: "lg",
-        class: [
-          "bg-[linear-gradient(360deg,#00C950_0%,#016630_100%)]",
           "hover:bg-[linear-gradient(90deg,#016630_0%,#00C950_50%,#016630_100%)]",
+          "active:bg-[linear-gradient(360deg,#00C950_0%,#016630_100%)]",
           "not-active:hover:shadow-[0px_6px_4px_0px_#00000040,0px_4px_0px_0px_#FFFFFF4D_inset,0px_-4px_0px_0px_#0000004D_inset,0px_0px_8px_0px_#31753A]"
         ],
       },
@@ -157,16 +133,8 @@ export const buttonVariants = cva(
         subVariant: "red",
         class: [
           "bg-[linear-gradient(90deg,#82181A_0%,#EA4335_50%,#82181A_100%)]",
-          "active:bg-[linear-gradient(360deg,#EA4335_0%,#82181A_100%)]"
-        ],
-      },
-      {
-        variant: "colored",
-        subVariant: "red",
-        size: "lg",
-        class: [
-          "bg-[linear-gradient(360deg,#EA4335_0%,#82181A_100%)]",
           "hover:bg-[linear-gradient(90deg,#82181A_0%,#EA4335_50%,#82181A_100%)]",
+          "active:bg-[linear-gradient(360deg,#EA4335_0%,#82181A_100%)]",
           "not-active:hover:shadow-[0px_6px_4px_0px_#00000040,0px_4px_0px_0px_#FFFFFF4D_inset,0px_-4px_0px_0px_#0000004D_inset,0px_0px_8px_0px_#84261E]"
         ],
       },

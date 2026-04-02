@@ -1,5 +1,20 @@
 import { CommunityShowcaseSection } from "@/features/community-showcase";
+import { CosmosParticles } from "@/components/shared";
 
 export default function CommunityShowcasePage() {
-  return <CommunityShowcaseSection />;
+  return (
+    <CosmosParticles
+      particleColors={["#ffffff", "#4285f4"]}
+      particleCount={350}
+      particleSpread={15}
+      speed={0.03}
+      particleBaseSize={80}
+      moveParticlesOnHover
+      alphaParticles={true}
+      disableRotation={false}
+      className="bg-[#010b1d] min-h-screen"
+    >
+      <CommunityShowcaseSection />{" "}
+    </CosmosParticles>
+  );
 }

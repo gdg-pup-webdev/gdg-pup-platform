@@ -143,7 +143,7 @@ export class TsFile extends TsThing {
    */
   addImport(importStmt: TsImportStatement) {
     // Create a unique key based on the module path and the local alias/name
-    const uniqueKey = `${importStmt.path}|${importStmt.alias}`;
+    const uniqueKey = `${importStmt.alias}`;
 
     if (!this.importMap.has(uniqueKey)) {
       this.importMap.set(uniqueKey, importStmt);

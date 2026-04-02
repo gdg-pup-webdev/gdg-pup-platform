@@ -1,5 +1,5 @@
 import { Event } from "../domain/Event";
-import { IEventRepository } from "../domain/IEventRepository";
+import { IEventRepository, EventFilters } from "../domain/IEventRepository";
 
 export class ListEvents {
   constructor(private eventRepository: IEventRepository) {}
@@ -7,11 +7,8 @@ export class ListEvents {
   async execute(
     pageNumber: number,
     pageSize: number,
-  ): Promise<{
-    list: Event[];
-    count: number;
-  }> {
-    const result = await this.eventRepository.listEvents(pageNumber, pageSize);
-    return result;
+    filters?: EventFilters
+  ): Promise<{ list: Event[]; count: number }> {
+    return await this.eventRepository.listEvents(pageNumber, pageSize, filters);
   }
 }

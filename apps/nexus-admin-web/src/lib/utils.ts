@@ -27,29 +27,45 @@ export function formatDate(date:Date) {
 export function extractErrorMessage(errorBody: any, defaultMessage = "An unexpected error occurred"): string {
   if (!errorBody) return defaultMessage;
 
+  let rawMessage = "";
+
   // Case 1: Simple message property
-  if (typeof errorBody.message === "string") return errorBody.message;
-
-  // Case 2: Highly nested errors from the provided example
-  // body.errors[0].errors[0].detail
-  try {
-    const firstLevelError = errorBody.errors?.[0];
-    if (firstLevelError) {
-      // If the first level has its own errors array (like the example provided)
-      const secondLevelError = firstLevelError.errors?.[0];
-      if (secondLevelError?.detail) return secondLevelError.detail;
-      
-      // Fallback to title of the first level error
-      if (firstLevelError.title) return firstLevelError.title;
+  if (typeof errorBody.message === "string") {
+    rawMessage = errorBody.message;
+  } else {
+    // Case 2: Highly nested errors from the provided example
+    // body.errors[0].errors[0].detail
+    try {
+      const firstLevelError = errorBody.errors?.[0];
+      if (firstLevelError) {
+        // If the first level has its own errors array (like the example provided)
+        const secondLevelError = firstLevelError.errors?.[0];
+        if (secondLevelError?.detail) {
+          rawMessage = secondLevelError.detail;
+        } else if (firstLevelError.title) {
+          rawMessage = firstLevelError.title;
+        }
+      }
+    } catch (e) {
+      // ignore parsing errors
     }
-  } catch (e) {
-    // ignore parsing errors
+
+    // Case 3: Standard error list structure { errors: [ { detail: string } ] }
+    if (!rawMessage && Array.isArray(errorBody.errors) && errorBody.errors[0]?.detail) {
+      rawMessage = errorBody.errors[0].detail;
+    }
   }
 
-  // Case 3: Standard error list structure { errors: [ { detail: string } ] }
-  if (Array.isArray(errorBody.errors) && errorBody.errors[0]?.detail) {
-    return errorBody.errors[0].detail;
+  if (!rawMessage) return defaultMessage;
+
+  // Map raw database/validation messages to user-friendly ones
+  if (rawMessage.includes("event_gdg_event_id_key")) {
+    return "This Bevy event has already been imported to Nexus.";
+  }
+  
+  if (rawMessage.includes("duplicate key value violates unique constraint")) {
+    return "This item already exists in the system.";
   }
 
-  return defaultMessage;
+  return rawMessage;
 }

@@ -1,7 +1,8 @@
-import { sanitizeToIdentifier } from "#utils/core.utils.js";
+import { generateDeterministicID, sanitizeToIdentifier } from "#utils/core.utils.js";
 import { listExportsSync } from "#utils/filesystem/listExportsSync.js";
 import path from "node:path"; 
 import { ImportDeclarationStructure, OptionalKind } from "ts-morph";
+// import * as bcrypt from 'bcrypt';
  
 
 /**
@@ -39,8 +40,10 @@ export class TsRealFile {
     rootDirAbsolute: string, // root dir where file lives
     dirRelative: string, // dir of file relative to root
     baseName: string, // full filename including extension
-  ) {
-    this.id = crypto.randomUUID();
+  ) { 
+    this.id = generateDeterministicID(
+      `${rootDirAbsolute}|${dirRelative}|${baseName}`,
+    );
 
     this.pathAbsolute = path
       .resolve(rootDirAbsolute, dirRelative, baseName)

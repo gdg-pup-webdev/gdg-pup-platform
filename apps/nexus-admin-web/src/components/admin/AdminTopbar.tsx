@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Menu, User, LogOut, ChevronDown, ExternalLink } from "lucide-react";
-// import { useUserStore } from "@/store/useUserStore";
+import { useAuthStore } from "@/features/authentication/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 import { ASSETS } from "@/lib/constants/assets";
@@ -16,7 +16,7 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  // const logout = useUserStore((state) => state.logout);
+  const clearToken = useAuthStore((state) => state.clearToken);
   const router = useRouter();
 
   // Close dropdown when clicking outside
@@ -36,14 +36,9 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      const res = await fetch("/api/auth/logout", { method: "POST" });
-      if (res.ok) {
-        // logout();
-        router.push(INTERNAL_LINKS.LOGIN);
-        router.refresh();
-      } else {
-        console.error("Failed to log out");
-      }
+      clearToken();
+      router.push(INTERNAL_LINKS.LOGIN);
+      router.refresh();
     } catch (error) {
       console.error(error);
     } finally {
@@ -93,6 +88,14 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
           {/* Dropdown menu */}
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 origin-top-right overflow-hidden rounded border border-gray-100 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-2">
+              <Link
+                href={INTERNAL_LINKS.PROFILE}
+                onClick={() => setIsDropdownOpen(false)}
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <User size={16} className="text-gray-400" />
+                Profile
+              </Link>
               <Link
                 href={EXTERNAL_LINKS.LIVE_WEBSITE}
                 onClick={() => setIsDropdownOpen(false)}

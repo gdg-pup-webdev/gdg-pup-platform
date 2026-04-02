@@ -73,6 +73,16 @@ export async function generateContract(
     printWidth: 80,
   });
 
+  // DETECTING IF CONTRACT CHANGED
+  // if it did not change, skip writing to prevent compilation
+  if (fs.existsSync(outputPath)) {
+    const existingContractString = fs.readFileSync(outputPath, "utf-8"); 
+    if (formattedText === existingContractString) { 
+      logger.log("No changes detected in contract. Skipping write.");
+      return; 
+    }
+  }
+
   logger.log("Writing output file");
   fs.writeFileSync(outputPath, formattedText);
 }

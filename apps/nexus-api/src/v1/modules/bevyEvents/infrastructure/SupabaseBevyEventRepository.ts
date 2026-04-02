@@ -20,6 +20,7 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
       end_date: row.end_date,
       location: row.location ?? undefined,
       cover_image_url: row.cover_image_url ?? undefined,
+      image_square_url: row.image_square_url ?? undefined,
       status: row.status ?? undefined,
       event_type: row.event_type ?? undefined,
       created_at: row.created_at ?? undefined,

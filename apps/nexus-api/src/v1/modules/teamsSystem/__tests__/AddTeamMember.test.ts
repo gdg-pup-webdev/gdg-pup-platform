@@ -6,6 +6,7 @@ import {
   MockUserRepository,
 } from "../infrastructure/MockRepositories";
 import { buildTeam } from "./test-helpers";
+import { User } from "../domain/User";
 
 describe("AddTeamMember", () => {
   let memberRepo: MockTeamMemberRepository;
@@ -22,27 +23,27 @@ describe("AddTeamMember", () => {
 
   it("adds a member when the team and user exist", async () => {
     teamRepo.teams = [buildTeam({ id: "team-1" })];
-    userRepo.users = [{ id: "user-1" }];
+    userRepo.users = [User.hydrate({ gdgId: "user-1",  memberName: null, thumbnailImageUrl: null })];
 
     const result = await useCase.execute({
       teamId: "team-1",
-      userId: "user-1",
+      gdgId: "user-1",
       role: "Lead",
     });
 
     expect(result.props.id).toBeTruthy();
     expect(result.props.teamId).toBe("team-1");
-    expect(result.props.userId).toBe("user-1");
+    expect(result.props.gdgId).toBe("user-1");
     expect(memberRepo.members).toHaveLength(1);
   });
 
   it("throws when the team does not exist", async () => {
-    userRepo.users = [{ id: "user-1" }];
+    userRepo.users = [User.hydrate({ gdgId: "user-1",  memberName: null, thumbnailImageUrl: null })];
 
     await expect(
       useCase.execute({
         teamId: "missing-team",
-        userId: "user-1",
+        gdgId: "user-1",
         role: "Lead",
       }),
     ).rejects.toThrow(

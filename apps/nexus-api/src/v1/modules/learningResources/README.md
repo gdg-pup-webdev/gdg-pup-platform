@@ -1,0 +1,2 @@
+# TODO 
+- on domain/TeamResource, it only references the name of the team, not its id. Team's name is editable. When someone updates the name of the team, it will no longer be able to locate the team it is attached to. 

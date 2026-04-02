@@ -8,8 +8,7 @@
  * - Authenticated (show confirmation)
  */
 
-import React from "react";
-import { useAuthContext } from "@/providers/AuthProvider";
+import React from "react"; 
 import { useCardActivation } from "../hooks/useCardActivation";
 import { BackgroundGradients } from "./BackgroundGradients";
 import { ActivationHeader } from "./ActivationHeader";
@@ -17,6 +16,8 @@ import { LoadingState } from "./LoadingState";
 import { AuthPrompt } from "./AuthPrompt";
 import { UserConfirmation } from "./UserConfirmation";
 import { Text } from '@packages/spark-ui';
+import { STATUS, useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { ASSETS } from "@/lib/constants/assets";
 
 interface ActivationCardProps {
   /** The unique identifier of the card to activate */
@@ -40,7 +41,7 @@ interface ActivationCardProps {
 export const ActivationCard: React.FC<ActivationCardProps> = ({ cardUid }) => {
   // Get authentication context
   // This gives us the current user, their token, and auth status
-  const { user, loginWithGoogle, token, status: authStatus } = useAuthContext();
+  const { decodedToken, token, status: authStatus } = useAuthContext();
 
   // Get card activation function from our custom hook
   const { activate, isActivating } = useCardActivation();
@@ -53,7 +54,7 @@ export const ActivationCard: React.FC<ActivationCardProps> = ({ cardUid }) => {
    */
   const handleActivate = () => {
     // Safety check: Make sure we have a user and token
-    if (!user || !token) {
+    if (!decodedToken || !token) {
       console.error("Missing user or token");
       return;
     }
@@ -61,7 +62,7 @@ export const ActivationCard: React.FC<ActivationCardProps> = ({ cardUid }) => {
     // Call the activation mutation
     activate({
       cardUid,
-      userId: user.id,
+      userId: decodedToken?.memberInfo.gdgId,
       token,
     });
   };
@@ -77,20 +78,13 @@ export const ActivationCard: React.FC<ActivationCardProps> = ({ cardUid }) => {
         <ActivationHeader cardUid={cardUid} />
 
         {/* Content area - changes based on auth status */}
-        {authStatus === "checking" ? (
-          // Show loading spinner while checking authentication
-          <LoadingState />
-        ) : !user ? (
-          // Show login prompt if user is not authenticated
-          <AuthPrompt onLoginClick={loginWithGoogle} />
-        ) : (
-          // Show confirmation screen if user is authenticated
-          <UserConfirmation
-            user={user}
+         <UserConfirmation
+            username={decodedToken?.memberInfo.firstName || "User"}
+            useremail={decodedToken?.email || ""}
+            useravatar={ASSETS.AUTH.AVATAR_DEFAULT}
             isActivating={isActivating}
             onConfirm={handleActivate}
           />
-        )}
 
         {/* Footer with disclaimer */}
         <div className="mt-8 pt-6 border-t border-zinc-800 text-center">
