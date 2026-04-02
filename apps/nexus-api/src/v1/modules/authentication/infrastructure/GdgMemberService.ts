@@ -4,6 +4,8 @@ import { MemberInfo } from "../domain/TokenPayload.js";
 
 export class GdgMemberService implements IGdgMemberService {
   constructor(private readonly gdgMembersController: GdgMembersController) {}
+ 
+
 
   async getMemberInfoByEmail(email: string): Promise<MemberInfo> {
     const member = await this.gdgMembersController.findByEmail(email);
@@ -12,6 +14,7 @@ export class GdgMemberService implements IGdgMemberService {
     }
 
     return {
+      email: member.email,
       gdgId: member.gdgId,
       firstName: member.firstName,
       middleName: member.middleName,
@@ -22,5 +25,25 @@ export class GdgMemberService implements IGdgMemberService {
       yearLevel: member.yearLevel,
       department: member.department,
     };
+  }
+
+  async getMemberInfoByGdgId(gdgId: string): Promise<MemberInfo> {
+    const member = await this.gdgMembersController.findByGdgId(gdgId);
+    if (!member) {
+      throw new Error("Member not found");
+    }
+
+    return {
+      email: member.email,
+      gdgId: member.gdgId,
+      firstName: member.firstName,
+      middleName: member.middleName,
+      lastName: member.lastName,
+      suffix: member.suffix,
+      avatarUrl: member.avatarUrl,
+      program: member.program,
+      yearLevel: member.yearLevel,
+      department: member.department,
+    }
   }
 }

@@ -5,6 +5,7 @@ export type Permission = {
 };
 
 export type MemberInfo = {
+  email: string;
   gdgId: string;
   firstName: string;
   middleName: string | null;
