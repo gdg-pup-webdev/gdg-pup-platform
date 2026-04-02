@@ -20,8 +20,15 @@ const ARTICLE_COLOR_MAP: Record<string, {
   "f946e2dd-e0e2-41f2-9329-360b5dc44c2c": { blob: "#EA4335BF", border: "#EA4335" }, // Your Chapter — red
 };
 
-const DEFAULT_COLOR = { blob: "#4DB368CC", border: "#00C950" };
+// Fallback color if article ID is not in the map
+const DEFAULT_COLOR = { blob: "#4DB368CC", border: "#00C950", accent: "#00C950" };
 
+// ── Read time estimator — estimates reading time based on word count ──
+// Average reading speed: 200 words per minute
+function estimateReadTime(content: string): number {
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / 200));
+}
 interface ArticleDetailsModalProps {
   articleId: string;
 }
@@ -39,7 +46,16 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
   }
 
   const article = data?.data;
-
+  const readTime = estimateReadTime(article.content ?? "");
+  const publishedDate = article.published_at
+    ? new Date(article.published_at).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : null;
+  
+{/* ── Page wrapper — dark background matching history page ── */}
   return (
     <div className="relative min-h-screen bg-[#0F0E0E] px-4 py-16 md:px-8 lg:px-16 overflow-hidden">
 
@@ -47,7 +63,7 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
       <div
         className="absolute pointer-events-none rounded-full"
         style={{
-          width: 600,
+          width: 800,
           height: 600,
           top: -100,
           left: "50%",
@@ -58,7 +74,21 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
         }}
       />
 
-      <div className="relative z-10 max-w-4xl mx-auto">
+      {/* ── Card container — bordered card wrapping all article content ── */}
+      <div className="relative z-10 max-w-4xl mx-auto rounded-2xl border border-white/20 bg-[#0F0E0E]/80 backdrop-blur-sm p-6 md:p-10">
+
+        {/* ── Top navigation bar — back button and published date + read time ── */}
+        <div className="flex items-center justify-between mb-8 text-sm text-gray-400">
+          <Link
+            href="/about/history"
+            className="flex items-center gap-1 hover:text-white transition-colors"
+          >
+            ← Back to History
+          </Link>
+          {publishedDate && (
+            <span>{publishedDate} • {readTime} min read</span>
+          )}
+        </div>
 
         {/* Back button */}
         <Link
