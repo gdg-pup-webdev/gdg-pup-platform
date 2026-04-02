@@ -27,7 +27,11 @@ export const docs_description = [
 export const docs_example_body = {
   data: {
     title: "Study Jam: TypeScript",
+    team_id: "team-1",
     description: "Hands-on TypeScript session",
+    image_url: "https://example.com/study-jam-thumb.png",
+    tags: ["typescript", "beginner"],
+    categories: ["workshop"],
     summary: "Covers types, narrowing, and inference.",
     recording_url: "https://example.com/recording",
   },
@@ -38,8 +42,12 @@ export const docs_example_response = {
   data: {
     id: "studyjam-1",
     title: "Study Jam: TypeScript",
+    team_id: "team-1",
     description: "Hands-on TypeScript session",
     summary: "Covers types, narrowing, and inference.",
+    image_url: "https://example.com/study-jam-thumb.png",
+    tags: ["typescript", "beginner"],
+    categories: ["workshop"],
     recording_url: "https://example.com/recording",
     created_at: "2026-01-02T00:00:00.000Z",
   },

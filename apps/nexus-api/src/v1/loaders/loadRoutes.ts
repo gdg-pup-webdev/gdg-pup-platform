@@ -40,6 +40,8 @@ import { PointsRouter } from "../routes/points/points.router";
 import { teamResourceController } from "@/v1/modules/teamResources";
 import { TeamResourcesHttpController } from "../routes/teamResources/team-resources.controller";
 import { TeamResourcesRouter } from "../routes/teamResources/team-resources.router";
+import { StudyJamsHttpController } from "../routes/study-jams/studyJams.controller";
+import { StudyJamsRouter } from "../routes/study-jams/studyJams.router";
 import { eventSystemController } from "@/v1/modules/eventSystem";
 import { EventsHttpController } from "../routes/events/events.controller";
 import { EventsRouter } from "../routes/events/events.router";
@@ -56,7 +58,9 @@ export const loadRoutes = (app: Express) => {
   const filesHttpController = new FilesHttpController(filesModuleController);
   const filesRouter = new FilesRouter(filesHttpController);
 
-  const foldersHttpController = new FoldersHttpController(filesModuleController);
+  const foldersHttpController = new FoldersHttpController(
+    filesModuleController,
+  );
   const foldersRouter = new FoldersRouter(foldersHttpController);
 
   const authService = new AuthService(supabaseClient);
@@ -101,9 +105,14 @@ export const loadRoutes = (app: Express) => {
   const gdgMerchHttpController = new GdgMerchHttpController(gdgMerchController);
   const gdgMerchRouter = new GdgMerchRouter(gdgMerchHttpController);
 
-  const teamResourcesHttpController = new TeamResourcesHttpController(teamResourceController);
-  const teamResourcesRouter = new TeamResourcesRouter(teamResourcesHttpController);
-
+  const teamResourcesHttpController = new TeamResourcesHttpController(
+    teamResourceController,
+  );
+  const teamResourcesRouter = new TeamResourcesRouter(
+    teamResourcesHttpController,
+  );
+  const studyJamsHttpController = new StudyJamsHttpController();
+  const studyJamsRouter = new StudyJamsRouter(studyJamsHttpController);
 
   app.use("/files", filesRouter.router);
   app.use("/folders", foldersRouter.router);
@@ -120,6 +129,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdg-merch", gdgMerchRouter.router);
   app.use("/points", pointsRouter.router);
   app.use("/team-resources", teamResourcesRouter.router);
+  app.use("/study-jams", studyJamsRouter.router);
   app.use("/events", eventsRouter.router);
   app.use("/event-system", eventsRouter.router);
 

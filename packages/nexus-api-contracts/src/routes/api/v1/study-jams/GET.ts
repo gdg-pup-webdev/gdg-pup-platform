@@ -1,11 +1,16 @@
 // list study jams
- import { studyJamRow } from "#models/v1/learningResourceSystem/studyJam.js";
-import { OpenApiSchemas } from "@packages/typed-rest/shared"; 
+import { studyJamRow } from "#models/v1/learningResourceSystem/studyJam.js";
+import { OpenApiSchemas } from "@packages/typed-rest/shared";
+import { cz as z } from "@packages/typed-rest/shared";
 
-export const query = OpenApiSchemas.Request.Query.paginated() 
+export const query = OpenApiSchemas.Request.Query.paginated().extend({
+  search: z.string().optional(),
+  createdFrom: z.string().optional(),
+  createdTo: z.string().optional(),
+});
 
 export const response = {
-  200: OpenApiSchemas.Response.paginated( studyJamRow),
+  200: OpenApiSchemas.Response.paginated(studyJamRow),
   ...OpenApiSchemas.Response.standardErrors(),
 };
 
@@ -84,8 +89,12 @@ export const docs_example_response = {
     {
       id: "studyjam-1",
       title: "Study Jam: TypeScript",
+      team_id: "team-1",
       description: "Hands-on TypeScript session",
       summary: "Covers types, narrowing, and inference.",
+      image_url: "https://example.com/study-jam-thumb.png",
+      tags: ["typescript", "beginner"],
+      categories: ["workshop"],
       recording_url: "https://example.com/recording",
       created_at: "2026-01-01T00:00:00.000Z",
     },
