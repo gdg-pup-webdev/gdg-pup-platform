@@ -10,14 +10,15 @@ import Link from "next/link";
 const ARTICLE_COLOR_MAP: Record<string, {
   blob: string;
   border: string;
+  accent: string;
 }> = {
-  "a5e895ea-1223-4958-af05-1319cc98ec0a": { blob: "#4DB368CC", border: "#00C950" }, // The Spark — green
-  "3e672b68-5890-4990-86a8-4622e019e7d3": { blob: "#F9AB00B3", border: "#F0B100" }, // Year One — yellow
-  "55cf5ee1-1ab1-4a9d-b9d0-497d644baa53": { blob: "#EA4335BF", border: "#EA4335" }, // Year Two — red
-  "aa4ec512-a068-4866-ba5d-8bf9bb90325c": { blob: "#4285F4B3", border: "#2B7FFF" }, // Year Three — blue
-  "e5c96ec3-71c2-4e36-b065-0105aee46a08": { blob: "#4DB368CC", border: "#00C950" }, // The Impact — green
-  "1713f93d-558b-4eab-9530-29d0770080f9": { blob: "#F9AB00B3", border: "#F0B100" }, // Living Community — yellow
-  "f946e2dd-e0e2-41f2-9329-360b5dc44c2c": { blob: "#EA4335BF", border: "#EA4335" }, // Your Chapter — red
+  "a5e895ea-1223-4958-af05-1319cc98ec0a": { blob: "#4DB368CC", border: "#00C950", accent: "#00C950" }, // The Spark — green
+  "3e672b68-5890-4990-86a8-4622e019e7d3": { blob: "#F9AB00B3", border: "#F0B100", accent: "#F0B100" }, // Year One — yellow
+  "55cf5ee1-1ab1-4a9d-b9d0-497d644baa53": { blob: "#EA4335BF", border: "#EA4335", accent: "#EA4335" }, // Year Two — red
+  "aa4ec512-a068-4866-ba5d-8bf9bb90325c": { blob: "#4285F4B3", border: "#2B7FFF", accent: "#2B7FFF" }, // Year Three — blue
+  "e5c96ec3-71c2-4e36-b065-0105aee46a08": { blob: "#4DB368CC", border: "#00C950", accent: "#00C950" }, // The Impact — green
+  "1713f93d-558b-4eab-9530-29d0770080f9": { blob: "#F9AB00B3", border: "#F0B100", accent: "#F0B100" }, // Living Community — yellow
+  "f946e2dd-e0e2-41f2-9329-360b5dc44c2c": { blob: "#EA4335BF", border: "#EA4335", accent: "#EA4335" }, // Your Chapter — red
 };
 
 // Fallback color if article ID is not in the map
@@ -90,47 +91,49 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
           )}
         </div>
 
-        {/* Back button */}
-        <Link
-          href="/about/history"
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-8 transition-colors"
-        >
-          ← Back to History
-        </Link>
+        {/* ── Article title — large heading ── */}
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+            {article.title}
+          </h1>
+        </div>
 
-        {/* Hero image with border */}
+        {/* ── Hero image — main article image with rounded border ── */}
         {article.image_url && (
-          <div
-            className="w-full rounded-2xl overflow-hidden mb-10 p-[1.5px]"
-            style={{
-              background: `linear-gradient(to right, transparent, ${colors.border}, transparent)`,
-            }}
-          >
-            <div className="rounded-2xl overflow-hidden">
-              <img
-                src={article.image_url}
-                alt={article.title}
-                className="w-full h-64 md:h-96 object-cover"
-              />
-            </div>
+          <div className="w-full rounded-xl overflow-hidden mb-10 border border-white/10">
+            <img
+              src={article.image_url}
+              alt={article.title}
+              className="w-full h-56 md:h-72 object-cover"
+            />
           </div>
         )}
 
-        {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">
-          {article.title}
-        </h1>
-
-        {/* Content */}
+        {/* ── Article content — markdown rendered with dark theme typography ──
+        * prose-invert: dark mode text colors
+        * prose-headings: white bold headers
+        * prose-code: dark code blocks with border
+        * prose-blockquote: colored left border matching milestone color
+        * prose-img: rounded images with border
+        */}
         <div
-          className="prose prose-invert prose-lg max-w-none rounded-2xl border p-8"
-          style={{ borderColor: `${colors.border}33`, background: "rgba(255,255,255,0.03)" }}
+          className="prose prose-invert prose-base md:prose-lg max-w-none
+            prose-headings:text-white prose-headings:font-bold
+            prose-p:text-gray-300 prose-p:leading-relaxed
+            prose-strong:text-white
+            prose-code:bg-white/10 prose-code:rounded prose-code:px-1
+            prose-pre:bg-[#1a1a1a] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl
+            prose-blockquote:border-l-4 prose-blockquote:text-gray-300 prose-blockquote:italic prose-blockquote:pl-4
+            prose-img:rounded-xl prose-img:border prose-img:border-white/10"
+          style={{
+            ["--tw-prose-quote-borders" as string]: colors.accent,
+          }}
         >
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {article.content}
-          </ReactMarkdown>
-        </div>
-
+          {/* This removes the first instance of a # Header from the string */}
+          {article.content.replace(/^#\s+.+\n?/, '')}
+        </ReactMarkdown>
+          </div>
       </div>
     </div>
   );
