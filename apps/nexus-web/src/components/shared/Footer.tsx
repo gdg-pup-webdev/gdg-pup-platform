@@ -105,10 +105,10 @@ export const Footer: React.FC = () => {
     >
       <Box className="max-w-7xl mx-auto px-8 md:px-12 lg:px-20 py-12">
         {/* Main Footer Content */}
-        <Box className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-8 md:gap-10 mb-10">
+        <Box className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-8 md:gap-10 mb-10 text-center md:text-left">
           {/* Brand Section */}
           <Box className="lg:col-span-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Link href="/" className="flex items-center gap-3 mb-6 group">
+            <Link href="/" className="flex items-center justify-center md:justify-start gap-3 mb-6 group">
               <Image
                 src={ASSETS.BRANDING.GDG_LOGO_WEBP}
                 alt="GDG Logo"
@@ -123,11 +123,11 @@ export const Footer: React.FC = () => {
           </Box>
 
           {/* About */}
-          <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
             <Text variant="body" weight="semibold" gradient="blue">
               About
             </Text>
-            <Stack gap="xs">
+            <Stack gap="xs" className="items-center md:items-start">
               {footerSections.about.map((link) => (
                 <Link
                   key={link.href}
@@ -143,11 +143,11 @@ export const Footer: React.FC = () => {
           </Box>
 
           {/* Network */}
-          <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+          <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <Text variant="body" weight="semibold" gradient="yellow">
               Network
             </Text>
-            <Stack gap="xs">
+            <Stack gap="xs" className="items-center md:items-start">
               {footerSections.network.map((link) => (
                 <Link
                   key={link.href}
@@ -163,11 +163,11 @@ export const Footer: React.FC = () => {
           </Box>
 
           {/* Nexus */}
-          <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+          <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
             <Text variant="body" weight="semibold" gradient="green">
               Nexus
             </Text>
-            <Stack gap="xs">
+            <Stack gap="xs" className="items-center md:items-start">
               {footerSections.nexus.map((link) => (
                 <Link
                   key={link.href}
@@ -183,11 +183,11 @@ export const Footer: React.FC = () => {
           </Box>
 
           {/* Address */}
-          <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
+          <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
             <Text variant="body" weight="semibold" gradient="red">
               Address
             </Text>
-            <Text variant="body-sm" className="text-gray-300 mb-4">
+            <Text variant="body-sm" className="text-gray-300 mb-4 text-center md:text-left">
               1016 Anonas, Sta. Mesa,
               <br />
               Manila, Kalakhang Maynila
@@ -206,18 +206,28 @@ export const Footer: React.FC = () => {
           </Box>
 
           {/* Contact */}
-          <Box className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
+          <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
             <Text variant="body" weight="semibold" gradient="red">
               Contact
             </Text>
-            <Link
-              href="mailto:support@gdgpup.org"
-              className="text-gray-300 hover:text-white transition-colors duration-200"
-            >
-              <Text variant="body-sm" className="text-inherit">
-                support@gdgpup.org
-              </Text>
-            </Link>
+            <Stack gap="xs" className="items-center md:items-start text-center md:text-left">
+              <Link
+                href="mailto:support@gdgpup.org"
+                className="text-gray-300 hover:text-white transition-colors duration-200"
+              >
+                <Text variant="body-sm" className="text-inherit">
+                  support@gdgpup.org
+                </Text>
+              </Link>
+              <Link
+                href="mailto:hello@gdgpup.org"
+                className="text-gray-300 hover:text-white transition-colors duration-200"
+              >
+                <Text variant="body-sm" className="text-inherit">
+                  hello@gdgpup.org
+                </Text>
+              </Link>
+            </Stack>
           </Box>
         </Box>
 
@@ -228,14 +238,14 @@ export const Footer: React.FC = () => {
         <Inline
           justify="between"
           align="center"
-          className="flex-col md:flex-row gap-6 animate-in fade-in duration-500 delay-700"
+          className="flex-col-reverse md:flex-row gap-6 animate-in fade-in duration-500 delay-700"
         >
-          <Text variant="body-sm" className="text-gray-400">
+          <Text variant="body-sm" className="text-gray-400 text-center md:text-left">
             Google Developer Group on Campus PUP Nexus @ {currentYear}. All
             rights reserved.
           </Text>
 
-          <Inline gap="md" align="center">
+          <Inline gap="md" align="center" className="justify-center">
             {socialLinks.map((social) => (
               <a
                 key={social.label}

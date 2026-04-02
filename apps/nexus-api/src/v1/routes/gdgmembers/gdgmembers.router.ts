@@ -14,5 +14,6 @@ export class GdgMembersRouter {
     this.router.delete("/:id", this.controller.getIdDelete);
     this.router.post("/:id/make-private", this.controller.getIdMakePrivatePost);
     this.router.post("/:id/make-public", this.controller.getIdMakePublicPost); 
+    this.router.post("/:id/profile-image", this.controller.changeProfileImage);
   }
 }

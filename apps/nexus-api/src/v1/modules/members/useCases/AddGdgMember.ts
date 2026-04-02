@@ -1,7 +1,7 @@
 import { IGdgMemberRepository } from "../domain/IGdgMemberRepository";
-import { GdgMember, GdgMemberProps } from "../domain/GdgMember";
+import { GdgMember, GdgMemberInsertProps, GdgMemberProps } from "../domain/GdgMember";
 
-export type AddGdgMemberInput = Omit<GdgMemberProps, "gdgId">;
+export type AddGdgMemberInput =   Omit<GdgMemberProps,  "gdgId" | "isPublic" | "avatarUrl">;;
 
 export class AddGdgMember {
   constructor(private readonly repo: IGdgMemberRepository) {}
@@ -15,7 +15,7 @@ export class AddGdgMember {
     const id = `GDGPUP-${yearPrefix}-${paddedNumber}`;
 
     // Create the GDG member
-    const member = GdgMember.create({ ...input, gdgId: id });
+    const member = GdgMember.create({ ...input, gdgId: id , avatarUrl: null, isPublic: true});
 
     // Save the GDG member
     return await this.repo.saveNew(member);

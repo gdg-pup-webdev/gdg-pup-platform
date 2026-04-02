@@ -33,6 +33,7 @@ export const gdgMemberRecord = cz.object({
  */
 export const gdgMemberRecordInsertDTO = gdgMemberRecord.omit({
   gdgId: true,
+  avatarUrl: true, 
 });
 
 /**
