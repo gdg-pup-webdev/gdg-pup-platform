@@ -31,6 +31,7 @@ export const useDropdownContext = () => {
  */
 export const Dropdown: React.FC<DropdownProps> = ({
   children,
+  className,
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
@@ -57,7 +58,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <DropdownContext.Provider value={value}>
-      <div className="relative inline-block">
+      <div className={`relative inline-block ${className || ""}`}>
         {children}
       </div>
     </DropdownContext.Provider>

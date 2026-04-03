@@ -9,11 +9,12 @@ inputs:
     description: "Target environment (dev, staging, prod)"
     required: true
   gcp-sa-key:
-    description: "GCP service account JSON key (base64 or raw JSON)"
+    description: "GCP service account JSON key (raw JSON)"
     required: true
   gcp-project-id:
     description: "GCP project ID"
-    required: true
+    required: false
+    default: "gdgpup-484914"
   region:
     description: "Cloud Run region"
     required: false
@@ -29,6 +30,8 @@ runs:
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v2
       with:
+        # Note: If your secret is base64 encoded, this action usually handles it,
+        # but ensure it is the raw JSON string for best compatibility.
         credentials_json: ${{ inputs.gcp-sa-key }}
 
     - name: Set up Cloud SDK
@@ -37,6 +40,7 @@ runs:
         project_id: ${{ inputs.gcp-project-id }}
 
     - name: Deploy to Cloud Run
+      id: deploy
       shell: bash
       run: |
         SERVICE_NAME="${{ inputs.service }}-${{ inputs.environment }}"
@@ -50,20 +54,51 @@ runs:
           --project="${{ inputs.gcp-project-id }}" \
           --quiet
 
-        echo "==> Deployment complete."
-
     - name: Health check
+      id: healthcheck
       if: ${{ inputs.health-check-url != '' }}
       shell: bash
       run: |
-        echo "==> Waiting for service to be ready..."
-        sleep 10
+        echo "==> Waiting for service to stabilize..."
+        # Loop to give Cloud Run a few attempts to pass the health check
+        for i in {1..5}; do
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 10 "${{ inputs.health-check-url }}")
+          if [[ "$STATUS" -ge 200 && "$STATUS" -lt 400 ]]; then
+            echo "==> Health check passed (HTTP $STATUS)"
+            exit 0
+          fi
+          echo "==> Attempt $i: Health check returned $STATUS. Retrying in 5s..."
+          sleep 5
+        done
+        echo "::error::Health check failed after 5 attempts."
+        exit 1
 
-        STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 15 "${{ inputs.health-check-url }}")
+    - name: Rollback on failure
+      # Only rollback if the health check failed after a "successful" deployment.
+      # If the 'deploy' step itself fails, Cloud Run keeps the previous revision active.
+      if: ${{ failure() && steps.healthcheck.outcome == 'failure' }}
+      shell: bash
+      run: |
+        SERVICE_NAME="${{ inputs.service }}-${{ inputs.environment }}"
+        echo "==> Health check failed, rolling back to the previous stable revision..."
 
-        if [[ "$STATUS" -ge 200 && "$STATUS" -lt 400 ]]; then
-          echo "==> Health check passed (HTTP $STATUS)"
+        # Get the previous 'Ready' revision (the one before the broken LATEST)
+        PREVIOUS_REVISION=$(gcloud run revisions list \
+          --service="$SERVICE_NAME" \
+          --region="${{ inputs.region }}" \
+          --project="${{ inputs.gcp-project-id }}" \
+          --filter="status.conditions.type:Ready AND status.conditions.status:'True'" \
+          --format="value(metadata.name)" \
+          --sort-by="~metadata.creationTimestamp" \
+          | sed -n '2p')
+
+        if [[ -n "$PREVIOUS_REVISION" ]]; then
+          echo "==> Rolling back traffic to: $PREVIOUS_REVISION"
+          gcloud run services update-traffic "$SERVICE_NAME" \
+            --to-revisions="$PREVIOUS_REVISION=100" \
+            --region="${{ inputs.region }}" \
+            --project="${{ inputs.gcp-project-id }}"
+          echo "==> Rollback to stable version complete."
         else
-          echo "::error::Health check failed for ${{ inputs.health-check-url }} (HTTP $STATUS)"
-          exit 1
+          echo "::warning::Could not identify a previous stable revision to roll back to."
         fi

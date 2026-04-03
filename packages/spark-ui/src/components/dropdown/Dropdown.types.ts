@@ -16,6 +16,10 @@ export interface DropdownContextValue {
 export interface DropdownProps {
   children: ReactNode;
   /**
+   * Additional class name for the wrapper
+   */
+  className?: string;
+  /**
    * Control the open state (controlled mode)
    */
   open?: boolean;

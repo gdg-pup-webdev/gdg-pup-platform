@@ -1,132 +1,70 @@
-import Link from "next/link";
-import {
-  Container,
-  Stack,
-  Grid,
-  Text,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@packages/spark-ui";
+"use client";
 
-const RESOURCE_LIBRARY = [
-  { header: "Technology", body: "IoT", href: "/products/iot" },
-  { header: "Technology", body: "Cybersecurity", href: "/products/cybersecurity" },
-  { header: "Technology", body: "Data / ML", href: "/products/data-ml" },
-  { header: "Technology", body: "UI/UX", href: "/products/ui-ux" },
-  { header: "Technology", body: "Cloud Solutions", href: "/products/cloud-solutions" },
-  { header: "Technology", body: "Project Management", href: "/products/project-management" },
-  { header: "Technology", body: "Web Development", href: "/products/web-development" },
-  { header: "Executives", body: "Executives", href: "/products/executives" },
-];
-
-const GDG_PRODUCTS = [
-  "GDG ID Platform",
-  "GDG Sparky Fortune",
-  "GDG Photobooth",
-  "Product Name",
-  "Product Name",
-  "Product Name",
-];
+import { Container, Stack, Text } from "@packages/spark-ui";
+import { ResourceLibraryGrid } from "./products-section/ResourceLibraryGrid";
+import { GdgProductsGrid } from "./products-section/GdgProductsGrid";
 
 export function ProductsSection() {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
-      {/* Decorative blob \u2014 top left */}
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: "min(1000px, 70vw)",
-          height: "min(900px, 75vh)",
-          top: "calc(4rem - 350px)",
-          left: "max(calc((100vw - 80rem) / 2), 0px)",
-          background: "#34A85333",
-          filter: "blur(579px)",
-          zIndex: 0,
-        }}
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
+      {/* Background layers */}
+      <img
+        src="/products/SPACE_BG_3_3.png"
+        alt=""
+        className="absolute top-250 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
-      {/* Decorative blob \u2014 right */}
-      <div
-        className="absolute rounded-full pointer-events-none"
+      <img
+        src="/products/SPACE_BG_3_2.png"
+        alt=""
+        className="absolute top-135 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
+      />
+      <img
+        src="/products/SPACE_BG_3_1.png"
+        alt=""
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
-          width: "min(800px, 60vw)",
-          height: "min(850px, 70vh)",
-          top: "calc(4rem + 300px)",
-          right: "max(calc((100vw - 80rem) / 2 - 300px), -150px)",
-          background: "#4285F433",
-          filter: "blur(579px)",
-          zIndex: 0,
+          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+          maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         }}
       />
 
-      <Container>
+      {/* Decorative elements */}
+      <div className="absolute w-[1000px] h-[1000px] origin-top-left rotate-[7.71deg] opacity-10 mix-blend-hard-light bg-white/80 rounded-full blur-[200px] -translate-x-1/3" />
+      <div className="absolute w-[792px] h-[640px] opacity-60 bg-blue-500/20 rounded-full blur-[289.55px] translate-y-9/10" />
+      <img
+        src="/products/gold-1.jpg"
+        alt=""
+        className="absolute -top-40 -left-40 w-[1200px] h-[1600px] rotate-[-162deg] mix-blend-screen blur-[150px] pointer-events-none z-0 -translate-x-3/5 -translate-y-1/10 opacity-30"
+      />
+      <img
+        className="w-155 h-auto absolute top-90 -left-125 opacity-25 translate-x-1/3"
+        src="/products/cogwheel-asset.png"
+        alt=""
+      />
+      <img
+        className="w-140 h-auto absolute bottom-235 -right-25 opacity-25 translate-x-1/3 rotate-[-18.99deg] z-10"
+        src="/products/star-bubble.png"
+        alt=""
+      />
+      <img
+        className="w-auto absolute bottom-0 right-0"
+        src="/products/gold-2.png"
+        alt=""
+      />
+      <img
+        className="w-140 h-auto absolute bottom-10 -left-105 translate-x-1/3 rotate-[158.50deg] opacity-40"
+        src="/products/cross-bubble.png"
+        alt=""
+      />
+
+      <Container className="max-w-[1700px]">
         <Stack gap="2xl" className="relative z-10">
-          {/* \u2500\u2500 Page heading \u2500\u2500 */}
-          <Text
-            variant="heading-1"
-            gradient="white-blue"
-            align="center"
-            weight="bold"
-          >
+          <Text variant="heading-1" gradient="white-blue" align="center" weight="bold">
             PRODUCTS
           </Text>
 
-          {/* \u2500\u2500 Resource Library \u2500\u2500 */}
-          <Stack gap="xl">
-            <Text
-              variant="heading-1"
-              gradient="white-green"
-              align="center"
-              weight="bold"
-            >
-              Resource Library
-            </Text>
-
-            <div className="grid grid-cols-2 gap-6">
-              {RESOURCE_LIBRARY.map((item) => (
-                <Link key={item.href} href={item.href} className="block">
-                  <Card className="h-full transition-opacity hover:opacity-80">
-                    <CardHeader>
-                      <CardTitle>{item.header}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <Text variant="body" color="secondary">
-                        {item.body}
-                      </Text>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          </Stack>
-
-          {/* \u2500\u2500 GDG Products \u2500\u2500 */}
-          <Stack gap="xl">
-            <Text
-              variant="heading-1"
-              gradient="white-green"
-              align="center"
-              weight="bold"
-            >
-              GDG Products
-            </Text>
-
-            <div className="grid grid-cols-3 gap-6">
-              {GDG_PRODUCTS.map((name, i) => (
-                <Card key={i}>
-                  <CardHeader>
-                    <CardTitle>{name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Text variant="body" color="secondary">
-                      Coming soon
-                    </Text>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </Stack>
+          <ResourceLibraryGrid />
+          <GdgProductsGrid />
         </Stack>
       </Container>
     </div>

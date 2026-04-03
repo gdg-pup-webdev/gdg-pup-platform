@@ -1,77 +1,96 @@
 import { supabase } from "@/v1/lib/supabase";
+import { InternalServerError, NotFoundError } from "@/v1/errors/HttpError";
 import { IUserRepository } from "../domain/IUserRepository";
 import { User } from "../domain/User";
 import { Role } from "../domain/Role";
 
 export class UserRepository implements IUserRepository {
-  private readonly userTable = "user";
+  private readonly userTable = "gdg_members";
   private readonly junctionTable = "user_role_junction";
 
-  async findById(userId: string): Promise<User> {
-    const { data, error } = await supabase
+  async findById(gdgId: string): Promise<User> {
+    // Step 1: Ensure the user exists in the app user table.
+    const { data: userRow, error: userError } = await supabase
       .from(this.userTable)
-      .select(
-        `
-        id,
-        user_role_junction(
-          user_role(
-            id,
-            name,
-            description,
-            user_role_permission(
-              resource,
-              action
-            )
-          )
-        )
-      `
-      )
-      .eq("id", userId)
+      .select("*")
+      .eq("gdg_id", gdgId)
       .single();
 
-    if (error || !data) throw new Error(`User not found: ${userId}`);
+    if (userError) {
+      throw new InternalServerError(
+        `Failed to query user '${gdgId}' from table '${this.userTable}'.`,
+        userError,
+      );
+    }
+
+    if (!userRow) {
+      throw new NotFoundError(`User not found: ${gdgId}`);
+    }
+
+    // Step 2: Load assigned roles and permissions from the junction table.
+    const { data: junctionRows, error: junctionError } = await supabase
+      .from(this.junctionTable)
+      .select(
+        `
+        user_role(
+          id,
+          name,
+          description,
+          user_role_permission(
+            resource,
+            action
+          )
+        )
+      `,
+      )
+      .eq("user_id", gdgId);
+
+    if (junctionError) {
+      throw new InternalServerError(
+        `Failed to load roles and permissions for user: ${gdgId}`,
+        junctionError,
+      );
+    }
 
     const roleNames: string[] = [];
     const rolesWithPermissions: Role[] = [];
 
-    // Map the deep-joined data back into strings and Role domain entities
-    const junctions = data.user_role_junction || [];
-    
+    // Map role relations back into domain entities.
+    const junctions = junctionRows || [];
+
     for (const junction of junctions) {
-      // Supabase returns referenced relations as objects or arrays of objects.
-      // Type assertion handles the potential single/array return depending on exact PostgREST types.
-      const roleData = junction.user_role as any;
+      const roleData = junction.user_role;
 
       if (roleData) {
         roleNames.push(roleData.name);
-        
+
         rolesWithPermissions.push(
           Role.hydrate({
             id: roleData.id,
             name: roleData.name,
             description: roleData.description,
             permissions: roleData.user_role_permission || [],
-          })
+          }),
         );
       }
     }
 
     // Reconstruct the User domain entity with all required props
     return User.hydrate({
-      id: data.id,
+      gdgId: userRow.gdg_id,
       roles: roleNames,
       rolesWithPermissions,
     });
   }
 
   async persistUpdates(user: User): Promise<boolean> {
-    const { id: userId, roles: roleNames } = user.props;
+    const { gdgId, roles: roleNames } = user.props;
 
     // 1. Wipe existing relations
     const { error: deleteError } = await supabase
       .from(this.junctionTable)
       .delete()
-      .eq("user_id", userId);
+      .eq("gdg_id", gdgId);
 
     if (deleteError)
       throw new Error(`Failed to clear old user roles: ${deleteError.message}`);
@@ -85,12 +104,14 @@ export class UserRepository implements IUserRepository {
         .in("name", roleNames);
 
       if (roleLookupError) {
-        throw new Error(`Failed to lookup role IDs: ${roleLookupError.message}`);
+        throw new Error(
+          `Failed to lookup role IDs: ${roleLookupError.message}`,
+        );
       }
 
       // Construct rows according to your schema: user_role_junction uses role_id and user_id
       const junctionRows = (roleRecords || []).map((role) => ({
-        user_id: userId,
+        gdg_id: gdgId,
         role_id: role.id,
       }));
 
@@ -100,7 +121,7 @@ export class UserRepository implements IUserRepository {
 
       if (insertError)
         throw new Error(
-          `Failed to insert new user roles: ${insertError.message}`
+          `Failed to insert new user roles: ${insertError.message}`,
         );
     }
 

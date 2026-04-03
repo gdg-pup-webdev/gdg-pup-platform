@@ -14,4 +14,8 @@ export class MockBevyEventRepository implements IBevyEventRepository {
       count: this.bevyEvents.length 
     };
   }
+
+  async findById(id: string): Promise<BevyEvent | undefined> {
+    return this.bevyEvents.find((event) => event.props.id === id);
+  }
 }

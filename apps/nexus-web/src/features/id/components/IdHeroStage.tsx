@@ -60,8 +60,20 @@ export function IdHeroStage() {
         animate={{ opacity: 0.7, scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 1.1, ease: "easeOut", delay: 0.7 }}
       >
-        <div className="relative" style={{ width: "clamp(300px, 83.6vw, 1204px)", aspectRatio: "1204 / 188" }}>
-          <Image src={ASSETS.ID.SPIRAL_OUTER} alt="" aria-hidden fill className="object-contain" />
+        <div
+          className="relative"
+          style={{
+            width: "clamp(520px, 90vw, 1204px)",
+            aspectRatio: "1204 / 188",
+          }}
+        >
+          <Image
+            src={ASSETS.ID.SPIRAL_OUTER}
+            alt=""
+            aria-hidden
+            fill
+            className="object-contain"
+          />
         </div>
       </motion.div>
 
@@ -73,8 +85,20 @@ export function IdHeroStage() {
         animate={{ opacity: 0.85, scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 1.0, ease: "easeOut", delay: 0.35 }}
       >
-        <div className="relative" style={{ width: "clamp(250px, 70.7vw, 1018px)", aspectRatio: "1018 / 125" }}>
-          <Image src={ASSETS.ID.SPIRAL_CENTER} alt="" aria-hidden fill className="object-contain" />
+        <div
+          className="relative"
+          style={{
+            width: "clamp(480px, 80vw, 1018px)",
+            aspectRatio: "1018 / 125",
+          }}
+        >
+          <Image
+            src={ASSETS.ID.SPIRAL_CENTER}
+            alt=""
+            aria-hidden
+            fill
+            className="object-contain"
+          />
         </div>
       </motion.div>
 
@@ -86,22 +110,44 @@ export function IdHeroStage() {
         animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
         transition={{ duration: 0.9, ease: "easeOut", delay: 0 }}
       >
-        <div className="relative" style={{ width: "clamp(180px, 48.4vw, 697px)", aspectRatio: "697 / 66" }}>
-          <Image src={ASSETS.ID.SPIRAL_INNER} alt="" aria-hidden fill className="object-contain" />
+        <div
+          className="relative"
+          style={{
+            width: "clamp(840px, 60vw, 697px)",
+            aspectRatio: "697 / 66",
+          }}
+        >
+          <Image
+            src={ASSETS.ID.SPIRAL_INNER}
+            alt=""
+            aria-hidden
+            fill
+            className="object-contain"
+          />
         </div>
       </motion.div>
 
       {/* Decorative left — z 40, hidden on mobile */}
       <motion.div
-        className="absolute pointer-events-none select-none hidden md:block"
-        style={{ left: "clamp(0px, 4vw, 60px)", top: "50%", y: "-50%", zIndex: 40 }}
-        initial={{ opacity: 0, x: "50%" }}
+        className="absolute pointer-events-none select-none"
+        style={{
+          left: "clamp(0px, 1vw, 16px)",
+          top: "45%",
+          y: "-50%",
+          zIndex: 60,
+        }}
+        initial={{ opacity: 0, x: 0 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 1.1 }}
       >
         <motion.div
           animate={{ y: [0, -25, 0], rotate: [0, -3, 0] }}
-          transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+          transition={{
+            duration: 4.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.5,
+          }}
         >
           <Image
             src={ASSETS.ID.DECOR_LEFT}
@@ -116,15 +162,25 @@ export function IdHeroStage() {
 
       {/* Decorative right — z 40, hidden on mobile */}
       <motion.div
-        className="absolute pointer-events-none select-none hidden md:block"
-        style={{ right: "clamp(0px, 4vw, 60px)", top: "50%", y: "-50%", zIndex: 40 }}
-        initial={{ opacity: 0, x: "-50%" }}
+        className="absolute pointer-events-none select-none"
+        style={{
+          right: "clamp(0px, 1vw, 16px)",
+          top: "45%",
+          y: "-50%",
+          zIndex: 60,
+        }}
+        initial={{ opacity: 0, x: 0 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 1.1 }}
       >
         <motion.div
           animate={{ y: [0, -30, 0], rotate: [0, 3, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.2,
+          }}
         >
           <Image
             src={ASSETS.ID.DECOR_RIGHT}
@@ -139,13 +195,13 @@ export function IdHeroStage() {
 
       {/* GDG ID card + CTA button — z 50 (topmost) */}
       <motion.div
-        className="relative flex flex-col items-center gap-6"
+        className="relative flex flex-col items-center gap-0 sm:gap-6"
         style={{ zIndex: 50 }}
         initial={{ opacity: 0, scale: 0.82, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.75, ease: [0.34, 1.56, 0.64, 1], delay: 1.3 }}
       >
-        <div className="scale-[0.68] sm:scale-[0.82] md:scale-95 lg:scale-100 origin-center">
+        <div className="scale-[0.55] sm:scale-[0.7] md:scale-95 lg:scale-100 origin-center">
           <GdgIdCard
             name="Arky"
             gdgId="GDG-PUP-26-001"
@@ -159,7 +215,7 @@ export function IdHeroStage() {
           />
         </div>
 
-        <Link href="#">
+        <Link href="#" className="relative -top-23 sm:top-0">
           <Button variant="default">Get Your Digital ID</Button>
         </Link>
       </motion.div>

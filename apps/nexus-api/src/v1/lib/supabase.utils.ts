@@ -1,17 +1,28 @@
- 
 import { PostgrestError } from "@supabase/supabase-js";
 import { DatabaseError, UniqueConstraintError, ForeignKeyConstraintError, QueryTimeoutError, DatabaseConnectionError } from "../errors/DatabaseError";
 
-export function handlePostgresError(err: PostgrestError): never {
-  const code = err.code;
-  const message = err.message;
+function isPostgrestLike(err: unknown): err is Pick<PostgrestError, "code" | "message"> {
+  return Boolean(
+    err &&
+      typeof err === "object" &&
+      "code" in err &&
+      "message" in err &&
+      typeof (err as { code: unknown }).code === "string" &&
+      typeof (err as { message: unknown }).message === "string",
+  );
+}
 
-  if (!(err instanceof PostgrestError))
+export function handlePostgresError(err: unknown): never {
+  if (!isPostgrestLike(err)) {
     throw new DatabaseError(
       "An unknown error has been passed to handlePostgresError. ",
       "Expected PostgrestError. Passed unknown error.",
       { cause: err },
     );
+  }
+
+  const code = err.code;
+  const message = err.message;
 
   switch (code) {
     case "23505": // Unique violation

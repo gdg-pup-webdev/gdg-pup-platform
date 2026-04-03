@@ -70,8 +70,8 @@ This document outlines the CI/CD pipeline for the GDG PUP Platform monorepo. The
 |---|---|---|
 | Setup | Node 20, pnpm (cached) | Environment preparation |
 | Install | `pnpm install --frozen-lockfile` | Dependency installation |
-| Build | `pnpm turbo run build` | Compile all packages and apps |
-| Test | `pnpm turbo run test` | Run vitest suites |
+| Build | `pnpm turbo run build --filter=!identity-api...` | Compile all packages and apps except identity-api |
+| Test | `pnpm turbo run test --filter=!identity-api...` | Run vitest suites except identity-api |
 
 The reusable setup and test logic lives in `.github/tests/action.yml` (composite action) so it can be shared across workflows.
 

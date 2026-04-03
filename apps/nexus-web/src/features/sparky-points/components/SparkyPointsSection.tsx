@@ -2,9 +2,8 @@
 "use client";
 
 import { ASSETS } from "@/lib/constants/assets";
-import { cn } from "@/lib/utils";
-import { useAuthContext } from "@/providers/AuthProvider";
-import {  Button, Container, Dropdown, DropdownContent, DropdownItem, DropdownTrigger, Grid, Stack, Text } from "@packages/spark-ui";
+import { cn } from "@/lib/utils"; 
+import {  Button, Container, Dropdown, DropdownContent, DropdownItem, DropdownTrigger, Grid, Modal, Stack, Text } from "@packages/spark-ui";
 import { useEffect, useRef, useState } from "react";
 import { useSparkyPoints } from "../hooks/useSparkyPoints";
 import { RightIconSvg } from "../icons/RightIconSvg";
@@ -19,7 +18,8 @@ import { RewardItem } from "./RewardItem";
 import { GuideItem } from "./GuideItem";
 import { HistoryItem } from "./HistoryItem";
 import { RewardItemType } from "../types";
-import { Modal } from "../../../components/shared/Modal";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { useMe } from "@/features/profile/hooks";
 
 type mobileSections = "main" | "guide" | "redeem" | "history";
 
@@ -28,7 +28,8 @@ const RAINBOW_GRADIENT_COLOR = "before:bg-[linear-gradient(to_bottom_right,#FB2C
 export const RAINBOW_BORDER = cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR);
 
 export function SparkyPointsSection() {
-  const {user} = useAuthContext();
+  const {decodedToken } = useAuthContext();
+  const {data : user } = useMe();
   const { userPoints, userHistory, tasks, rewards } = useSparkyPoints();
   // TODO - pass user information
 
@@ -152,7 +153,7 @@ export function SparkyPointsSection() {
                 <Stack gap="xl">
                   <PointsDisplay points={userPoints}/>
                   <Stack>
-                    {userHistory.map(history => <HistoryItem key={`history-${history.data.id}`} avatar={user?.user_metadata.avatar_url} {...history}/>)}
+                    {userHistory.map(history => <HistoryItem key={`history-${history.data.id}`} avatar={ASSETS.AUTH.AVATAR_DEFAULT} {...history}/>)}
                   </Stack>
                 </Stack>
               </>
@@ -256,7 +257,7 @@ export function SparkyPointsSection() {
                     >
                       <Text gradient="white-blue" weight="bold" align="center" className="text-xl">Points History</Text>  
                       <Stack>
-                        {userHistory.map(history => <HistoryItem key={`historylg-${history.data.id}`} avatar={user?.user_metadata.avatar_url} {...history}/>)}
+                        {userHistory.map(history => <HistoryItem key={`historylg-${history.data.id}`} avatar={ASSETS.AUTH.AVATAR_DEFAULT} {...history}/>)}
                       </Stack>
                     </DropdownContent>
                   </Dropdown>
@@ -266,7 +267,12 @@ export function SparkyPointsSection() {
             </Stack>
           </div>
         </Container>
-        <Modal isOpen={modalState !== null} onClose={closeModal}>
+        <Modal 
+          open={modalState !== null} 
+          onClose={closeModal} 
+          className="bg-[#010B1D] max-w-112 flex flex-col text-white gap-4 lg:gap-6 p-4 lg:p-6 rounded-2xl"
+          placement="center"
+        >
           <div className="w-full aspect-square grid">
             {
               isModalRedeem
@@ -278,28 +284,30 @@ export function SparkyPointsSection() {
                 )
             }
           </div>
-          {
-            isModalRedeem
-              ? (
-                <>
-                  <Text gradient="white-blue" variant="heading-6" weight="bold" align="center">
-                    Confirm Redemption
-                  </Text>
-                  <Text variant="body" align="center" className="text-inherit">
-                    Redeem <strong>{itemRedeemed?.name}</strong> for <strong>{itemRedeemed?.cost}</strong> points? This action cannot be undone.
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text gradient="white-red" variant="heading-6" weight="bold" align="center">
-                    Insufficient Points
-                  </Text>
-                  <Text variant="body" align="center" className="text-inherit">
-                    Need <strong>{(itemRedeemed?.cost ?? 0) - userPoints}</strong> more points.
-                  </Text>
-                </>
-              )
-          }
+          <div className="flex flex-col p-2">
+            {
+              isModalRedeem
+                ? (
+                  <>
+                    <Text gradient="white-blue" variant="heading-6" weight="bold" align="center">
+                      Confirm Redemption
+                    </Text>
+                    <Text variant="body" align="center" className="text-inherit">
+                      Redeem <strong>{itemRedeemed?.name}</strong> for <strong>{itemRedeemed?.cost}</strong> points? This action cannot be undone.
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Text gradient="white-red" variant="heading-6" weight="bold" align="center">
+                      Insufficient Points
+                    </Text>
+                    <Text variant="body" align="center" className="text-inherit">
+                      Need <strong>{(itemRedeemed?.cost ?? 0) - userPoints}</strong> more points.
+                    </Text>
+                  </>
+                )
+            }
+          </div>
           <div className="flex gap-4 w-full">
             <Button subVariant="plain" className="grow m-auto" onClick={closeModal}>
               Cancel

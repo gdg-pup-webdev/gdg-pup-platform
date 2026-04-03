@@ -1,7 +1,7 @@
 /**
  * Cleans a string by replacing non-alphanumeric characters with underscores
  * and preventing consecutive underscores.
- */
+ */import crypto from "crypto";
 export function sanitizeToIdentifier(str: string): string {
   return (
     str
@@ -30,3 +30,22 @@ export function debounce(func: Function, wait: number) {
  */
 export const stringIsCodeBlock_DEPRECATED = (str: string) =>
   str.startsWith("__CODE_START__") && str.endsWith("__CODE_END__");
+
+
+export function generateDeterministicID(input: string, length = 16): string {
+  // sha256 provides 32 bytes of data
+  const hash = crypto.createHash("sha256").update(input).digest();
+  const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    // 1. Get the byte safely. 
+    // 2. We use % 32 to "wrap around" if length > 32 (prevents undefined)
+    const byte = hash[i % hash.length]; 
+    
+    // The '!' tells TS we know this exists, or use '?? 0'
+    result += alphabet[byte! % alphabet.length];
+  }
+
+  return result;
+}

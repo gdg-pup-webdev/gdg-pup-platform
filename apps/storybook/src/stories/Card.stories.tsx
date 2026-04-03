@@ -240,6 +240,10 @@ export const TitleOnly: Story = {
  * Perfect for simple content blocks or widgets.
  */
 export const ContentOnly: Story = {
+  args: {
+    className: ""
+  },
+
   render: () => (
     <Card className="w-80">
       <CardContent>
@@ -252,13 +256,14 @@ export const ContentOnly: Story = {
       </CardContent>
     </Card>
   ),
+
   parameters: {
     docs: {
       description: {
         story: "Minimalist approach with only CardContent. Useful for quotes, stats, or simple widgets.",
       },
     },
-  },
+  }
 };
 
 // ====================

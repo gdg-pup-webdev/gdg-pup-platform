@@ -32,13 +32,17 @@ export class AuthMiddleware {
   constructor() {}
 
   requireAuth = (): RequestHandler => (req, res, next) => {
-    const user = req.user;
+    const decodedToken = req.decodedToken;
 
-    if (!user) {
+    console.log("Checking authentication for request. Decoded token:", decodedToken);
+
+    if (!decodedToken) {
       throw new UnauthorizedError(
         "Authentication required. Please provide a valid Bearer token.",
       );
     }
+
+    console.log("passed")
 
     next();
   };
@@ -50,7 +54,7 @@ export class AuthMiddleware {
     (allowedRoles: string[]): RequestHandler =>
     async (req, res, next) => {
       try {
-        const userId = req.user?.id;
+        const userId = req.decodedToken?.memberInfo.gdgId;
 
         if (!userId) {
           throw new UnauthorizedError(

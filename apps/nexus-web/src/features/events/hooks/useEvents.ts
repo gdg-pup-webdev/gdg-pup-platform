@@ -1,6 +1,6 @@
 /**
  * Custom hooks for events feature
- * 
+ *
  * These hooks use TanStack Query for efficient data fetching,
  * caching, and state management.
  */
@@ -9,18 +9,20 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
-import { getEvents } from "../api/getEvents";
 import { EventsQueryParams, EventFilters, Event } from "../types";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { contract } from "@packages/nexus-api-contracts";
+import { configs } from "@/lib/constants/configs";
 
 /**
  * Hook to fetch events with TanStack Query
- * 
+ *
  * Provides automatic caching, background refetching, and state management
  * for events data.
- * 
+ *
  * @param params - Query parameters for filtering events
  * @returns Query result with events data, loading state, and error
- * 
+ *
  * @example
  * ```tsx
  * function EventsList() {
@@ -28,10 +30,10 @@ import { EventsQueryParams, EventFilters, Event } from "../types";
  *     category: "workshop",
  *     pageSize: 20
  *   });
- * 
+ *
  *   if (isLoading) return <LoadingState />;
  *   if (error) return <ErrorState error={error} />;
- * 
+ *
  *   return <EventGrid events={data.data} />;
  * }
  * ```
@@ -39,7 +41,51 @@ import { EventsQueryParams, EventFilters, Event } from "../types";
 export function useEvents(params: EventsQueryParams = {}) {
   return useQuery({
     queryKey: ["events", params],
-    queryFn: () => getEvents(params),
+    queryFn: async () => { 
+      const result = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.GET,
+        {
+          query: {
+            pageNumber: params.pageNumber || 1,
+            pageSize: params.pageSize || 10,
+            year: params.year || undefined,
+          },
+        },
+      );
+
+      if (result.status === 200) {
+        return result.body;
+      }
+
+      throw new Error(`Failed to fetch events: ${result.body.message}`);
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
+    retry: 2,
+  });
+}
+
+export function useEvent(eventId: string) {
+  return useQuery({
+    queryKey: ["event", eventId],
+    queryFn: async () => {
+      const result = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.eventId.GET,
+        {
+          params: {
+            eventId,
+          },
+        },
+      );
+
+      if (result.status === 200) {
+        return result.body.data;
+      }
+
+      throw new Error(`Failed to fetch event: ${result.body.message}`);
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
     retry: 2,
@@ -48,12 +94,12 @@ export function useEvents(params: EventsQueryParams = {}) {
 
 /**
  * Hook to manage event filters
- * 
+ *
  * Provides state management and helper functions for filtering
  * events in the UI.
- * 
+ *
  * @returns Filter state and update functions
- * 
+ *
  * @example
  * ```tsx
  * function EventsPage() {
@@ -63,9 +109,9 @@ export function useEvents(params: EventsQueryParams = {}) {
  *     resetFilters,
  *     queryParams
  *   } = useEventFilters();
- * 
+ *
  *   const { data } = useEvents(queryParams);
- * 
+ *
  *   return (
  *     <>
  *       <FilterBar filters={filters} onChange={updateFilter} />
@@ -90,7 +136,7 @@ export function useEventFilters() {
    */
   const updateFilter = <K extends keyof EventFilters>(
     key: K,
-    value: EventFilters[K]
+    value: EventFilters[K],
   ) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -144,7 +190,7 @@ export function useEventFilters() {
         (event) =>
           event.title.toLowerCase().includes(searchLower) ||
           event.description?.toLowerCase().includes(searchLower) ||
-          event.venue?.toLowerCase().includes(searchLower)
+          event.venue?.toLowerCase().includes(searchLower),
       );
     }
 
@@ -154,13 +200,14 @@ export function useEventFilters() {
 
       switch (filters.sortBy) {
         case "date":
-          comparison = new Date(a.start_date).getTime() - new Date(b.start_date).getTime();
+          comparison =
+            new Date(a.start_date || "").getTime() - new Date(b.start_date || "").getTime();
           break;
         case "title":
           comparison = a.title.localeCompare(b.title);
           break;
         case "attendees":
-          comparison = (a.attendee_count || 0) - (b.attendee_count || 0);
+          comparison = (a.attendees_count || 0) - (b.attendees_count || 0);
           break;
       }
 

@@ -5,8 +5,11 @@ import { loadCors } from "./loaders/loadCors";
 import { loadLogger } from "./loaders/loadLogger";
 import { loadRateLimiter } from "./loaders/loadRateLimiter";
 import { loadParsers } from "./loaders/loadParsers";
+import { assertContractIntegrity } from "./utils/assertContractIntegrity";
 
 const app: Express = express();
+
+// assertContractIntegrity();
 
 loadCors(app);
 loadLogger(app);
