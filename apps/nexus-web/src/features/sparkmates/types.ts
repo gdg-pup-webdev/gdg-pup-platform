@@ -13,8 +13,7 @@ export type SparkmatesSource = "nfc_card" | "qr_code" | "direct_link";
 /**
  * @deprecated 
  */
-export type SparkmatesProfile =
-  contract.api.v1.sparkmates.gdgId.GET.response[200]["data"];
+export type SparkmatesProfile = UserProfile
 
 export type SuggestedSparkmate = {
   gdgId: string;
