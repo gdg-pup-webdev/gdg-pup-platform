@@ -11,7 +11,7 @@ export function TeamHero({ teamName }: TeamHeroProps) {
       {/* Main image */}
       <div className="w-full flex justify-center">
         <Image
-          src="/products/ui-ux-logo.png"
+          src="/products/ui-ux-logo.webp"
           alt={`${teamName} team`}
           width={900}
           height={500}
