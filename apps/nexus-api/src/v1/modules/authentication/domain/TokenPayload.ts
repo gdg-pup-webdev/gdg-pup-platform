@@ -5,11 +5,16 @@ export type Permission = {
 };
 
 export type MemberInfo = {
+  email: string;
   gdgId: string;
   firstName: string;
   middleName: string | null;
   lastName: string;
   suffix: string | null;
+  avatarUrl: string | null;
+  program: string | null;
+  yearLevel: number | null;
+  department: string | null;
 };
 
 export type TokenPayloadProps = {
