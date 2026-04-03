@@ -298,7 +298,7 @@ export function ProfilePublicView({
  
   const suggestedUsers = useSuggestedSparkmates({
     search,
-    viewerGdgId: profile?.gdg_id,
+    viewerGdgId: profile?.gdgId,
     // viewerPortfolio: profile?.portfolio ?? null,
   });
 
@@ -339,53 +339,53 @@ export function ProfilePublicView({
     );
   }
 
-  const requiresActivation = profile.source === "nfc_card";
-  const showActivationGate =
-    requiresActivation && profile.status !== "activated";
+  // const requiresActivation = profile.source === "nfc_card";
+  // const showActivationGate =
+    // requiresActivation && profile.status !== "activated";
 
-  if (showActivationGate) {
-    return (
-      <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-        <div className="mx-auto max-w-2xl rounded-3xl border border-white/15 bg-white/5 p-8 text-center">
-          <Text variant="heading-5" className="text-white">
-            Sparkmates Profile Not Active
-          </Text>
-          <Text variant="body" className="mt-2 text-[#C1C7CD]">
-            This digital portfolio is not activated yet.
-          </Text>
-          {/* {isOwner ? (
-            <Button
-              variant="colored"
-              subVariant="blue"
-              size="lg"
-              className="mt-6 w-full"
-              disabled={activateMutation.isPending}
-              onClick={() => {
-                if (!token) return;
-                activateMutation.mutate(token);
-              }}
-            >
-              {activateMutation.isPending
-                ? "Activating..."
-                : "Activate Sparkmates Profile"}
-            </Button>
-          ) : null} */}
-        </div>
-      </div>
-    );
-  }
+  // if (showActivationGate) {
+  //   return (
+  //     <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
+  //       <div className="mx-auto max-w-2xl rounded-3xl border border-white/15 bg-white/5 p-8 text-center">
+  //         <Text variant="heading-5" className="text-white">
+  //           Sparkmates Profile Not Active
+  //         </Text>
+  //         <Text variant="body" className="mt-2 text-[#C1C7CD]">
+  //           This digital portfolio is not activated yet.
+  //         </Text>
+  //         {/* {isOwner ? (
+  //           <Button
+  //             variant="colored"
+  //             subVariant="blue"
+  //             size="lg"
+  //             className="mt-6 w-full"
+  //             disabled={activateMutation.isPending}
+  //             onClick={() => {
+  //               if (!token) return;
+  //               activateMutation.mutate(token);
+  //             }}
+  //           >
+  //             {activateMutation.isPending
+  //               ? "Activating..."
+  //               : "Activate Sparkmates Profile"}
+  //           </Button>
+  //         ) : null} */}
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
 
 
   const displayName =
-    profile.portfolio?.first_name ||
-    profile.portfolio?.nickname ||
+    profile?.firstName ||
+    profile?.displayName ||
     // user?.user_metadata?.full_name ||
-    profile.gdg_id;
+    profile.gdgId;
 
   const avatarUrl = ASSETS.BRANDING.GDG_LOGO_WEBP; //resolveAuthenticatedAvatar(user);
 
-  const customLinks = (profile.portfolio?.other_links ?? []).map((url) => ({
+  const customLinks = (profile?.otherLinks ?? []).map((url) => ({
     title: getLinkTitle(url),
     url,
   }));
@@ -399,15 +399,15 @@ export function ProfilePublicView({
   ];
 
   const socialLinks = [
-    { key: "github", url: profile.portfolio?.github_url, label: "GitHub" },
+    { key: "github", url: profile?.githubUrl, label: "GitHub" },
     {
       key: "linkedin",
-      url: profile.portfolio?.linkedin_url,
+      url: profile?.linkedinUrl,
       label: "LinkedIn",
     },
     {
       key: "website",
-      url: profile.portfolio?.portfolio_website_url,
+      url: profile?.portfolioWebsiteUrl,
       label: "Website",
     },
   ] as const;
@@ -467,7 +467,7 @@ export function ProfilePublicView({
                       {displayName}
                     </Text>
                     <Text variant="body-sm" className="text-[#C1C7CD]">
-                      {profile.portfolio?.program ||
+                      {profile?.program ||
                         "Program and Year not set"}
                     </Text>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -478,14 +478,14 @@ export function ProfilePublicView({
                         Marketing
                       </Badge>
                       <Badge variant={SPARK_BADGE.variantId as never}>
-                        {profile.gdg_id}
+                        {profile.gdgId}
                       </Badge>
                     </div>
                     <Text
                       variant="body-sm"
                       className="mt-2 max-w-130 text-[#E5E5E5]"
                     >
-                      {profile.portfolio?.bio ||
+                      {profile?.bio ||
                         "Share your story to let sparkmates know what you are building."}
                     </Text>
                     <div className="mt-3 flex gap-2">

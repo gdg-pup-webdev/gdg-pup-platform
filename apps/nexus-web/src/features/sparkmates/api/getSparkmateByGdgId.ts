@@ -12,12 +12,9 @@ export async function getSparkmateByGdgId({
 }) : Promise<SparkmatesProfile> { 
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
-    contract.api.v1.sparkmates.gdgId.GET,
+    contract.api.v1.gdgmembers.gdgId.GET,
     {
-      params: { gdgId },
-      query: {
-        source,
-      },
+      params: { gdgId }, 
     },
   );
 

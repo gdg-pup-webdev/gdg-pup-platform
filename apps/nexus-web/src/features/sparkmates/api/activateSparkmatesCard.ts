@@ -3,17 +3,17 @@ import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { configs } from "@/configs/servers.config";
 
 export async function activateSparkmatesCard({
-  gdgId,
+  cardId,
   token,
 }: {
-  gdgId: string;
+  cardId: string;
   token: string;
 }) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
-    contract.api.v1.nfc_system.nfc.gdgId.activate.POST,
+    contract.api.v1.nfc_cards.cardId.activate.POST,
     {
-      params: { gdgId },
+      params: { cardId },
       token,
     },
   );
