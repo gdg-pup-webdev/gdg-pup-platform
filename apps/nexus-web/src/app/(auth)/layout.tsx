@@ -9,8 +9,9 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
+  console.log("auth layout rendered") 
   return (
-    <RequireUnauthenticated>
+    <>
       <CosmosParticles
         particleColors={["#ffffff", "#4285f4"]}
         particleCount={350}
@@ -62,6 +63,6 @@ export default function AuthLayout({
           </div>
         </div>
       </CosmosParticles>
-    </RequireUnauthenticated>
+    </>
   );
 }
