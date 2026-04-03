@@ -396,7 +396,7 @@ export function EventsCalendar() {
                       />
                       <div className="relative overflow-hidden rounded-md border border-white/15 h-full">
                         <img
-                          src="/pages/events/event-cover.png"
+                          src="/pages/events/event-cover.webp"
                           alt={selectedMobileEvent.title}
                           className="absolute inset-0 h-full w-full object-cover"
                         />

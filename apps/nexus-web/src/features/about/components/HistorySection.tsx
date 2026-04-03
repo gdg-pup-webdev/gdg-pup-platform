@@ -270,7 +270,7 @@ const milestones = [
     title: "Year One: Everything at Once",
     excerpt: "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.",
     buttonColor: "yellow" as const,
-    image: "/about/history/year-one-everything.png",
+    image: "/about/history/year-one-everything.webp",
     href: "/articles/3e672b68-5890-4990-86a8-4622e019e7d3"
   },
   {
@@ -302,7 +302,7 @@ const milestones = [
     title: "The Living Community",
     excerpt: "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.",
     buttonColor: "yellow" as const,
-    image: "/about/history/the-living-community.jpg",
+    image: "/about/history/the-living-community.webp",
     href: "/articles/1713f93d-558b-4eab-9530-29d0770080f9"
   },
   {
@@ -310,7 +310,7 @@ const milestones = [
     title: "Your Chapter Hasn't Been Written Yet",
     excerpt: "Three years and counting proved something important: this community is built by the people who show up. That includes you.",
     buttonColor: "red" as const,
-    image: "/about/history/your-chapter.jpg",
+    image: "/about/history/your-chapter.webp",
     href: "/articles/f946e2dd-e0e2-41f2-9329-360b5dc44c2c"
   },
 ];
@@ -496,7 +496,7 @@ export function HistorySection() {
 {/* Star */}
 <div className="absolute pointer-events-none hidden lg:block"
   style={{ top: "55%", left: "-15%", width: "50%", opacity: 0.20, transform: "rotate(20deg)" }}>
-  <Image src="/about/history/bg-star.png" alt="" width={300} height={300} className="w-full h-auto" />
+  <Image src="/about/history/bg-star.webp" alt="" width={300} height={300} className="w-full h-auto" />
 </div>
 
     <Container maxWidth="7xl" padding="lg" className="relative z-10 w-full overflow-hidden">        <Stack gap="2xl">
