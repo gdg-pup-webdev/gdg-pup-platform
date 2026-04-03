@@ -100,3 +100,4 @@ jobs:
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ secrets.GCP_PROJECT_ID }}
           health-check-url: ${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org/api/health' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org/api/health' || 'https://api.dev.gdgpup.org/api/health' }}
+          env-vars: "ZEPTOMAIL_TOKEN=${{ secrets.ZEPTOMAIL_TOKEN }},ZEPTOMAIL_FROM_ADDRESS=${{ secrets.ZEPTOMAIL_FROM_ADDRESS }},ZEPTOMAIL_FROM_NAME=${{ secrets.ZEPTOMAIL_FROM_NAME }}"
