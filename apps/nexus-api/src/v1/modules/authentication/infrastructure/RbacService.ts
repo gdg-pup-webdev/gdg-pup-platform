@@ -27,4 +27,11 @@ export class RbacService implements IRbacService {
     // return roles.map((role) => role.name);
     return ["admin"];
   }
+
+
+  async listPermissionsAndRolesByGdgId(gdgId: string): Promise<{ permissions: Permission[], roles: string[] }> {
+    // const { permissions, roles } = await this.rbacController.getPermissionsAndRolesOfUserByGdgId(gdgId);
+    // return { permissions, roles: roles.map((role) => role.name) };
+    return { permissions: [], roles: ["admin"] };
+  }
 }

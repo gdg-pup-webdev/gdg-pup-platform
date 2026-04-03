@@ -4,15 +4,15 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
-export const useSearchUsers = (q: string, limit = "10") => {
+export const useSearchUsers = (q: string, limit =10) => {
   return useQuery({
     queryKey: ["users", "search", q, limit],
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.users.search.GET,
+        contract.api.v1.gdgmembers.GET,
         {
-          query: { q, limit },
+          query: { search: q, pageNumber: 1, pageSize: limit },
         }
       );
 

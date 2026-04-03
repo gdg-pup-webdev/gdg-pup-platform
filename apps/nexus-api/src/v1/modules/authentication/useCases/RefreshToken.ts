@@ -1,18 +1,35 @@
-import { IJWTService } from "../domain/IAuthenticationInterfaces.js";
+import { IGdgMemberService, IJWTService, IRbacService } from "../domain/IAuthenticationInterfaces.js";
+import { TokenPayload } from "../domain/TokenPayload.js";
 
 export class RefreshToken {
-  constructor(private readonly jwtService: IJWTService) {}
+  constructor(private readonly jwtService: IJWTService,
+      private readonly rbacService: IRbacService,
+      private readonly gdgMemberService: IGdgMemberService,) {}
 
   async execute(token: string) {
     const payload = await this.jwtService.verify(token);
-
-    if (payload) {
-      const newToken = await this.jwtService.sign(payload);
-      return newToken;
+ 
+    if (!payload) {
+      throw new Error("Invalid token.");
     }
+ 
+    const gdgId = payload.props.memberInfo.gdgId;
 
-    throw new Error(
-      "Cannot refresh invalid token. It is either malformed or expired.",
-    );
+    const {permissions , roles} = await this.rbacService.listPermissionsAndRolesByGdgId(gdgId);
+    const memberInfo = await this.gdgMemberService.getMemberInfoByGdgId(gdgId);
+
+    const email = memberInfo.email;
+
+    const tokenPayload = TokenPayload.create({
+      email: email,
+      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(),
+      memberInfo,
+      permissions,
+      roles,
+    });
+
+    const newToken = await this.jwtService.sign(tokenPayload);
+
+    return newToken;
   }
 }
