@@ -41,7 +41,8 @@ jobs:
     name: nexus-web
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.nexus-web == 'true' }}
+    # Always rebuild on release branch push; selective only for manual dispatch
+    if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
@@ -59,7 +60,8 @@ jobs:
     name: nexus-api
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.nexus-api == 'true' }}
+    # Always rebuild on release branch push; selective only for manual dispatch
+    if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-api == 'true' }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/builds
