@@ -122,10 +122,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       <Box
         as="nav"
         className={cn(
-          "mx-auto animate-in fade-in zoom-in-95 duration-700 h-22 max-w-7xl md:rounded-[1.875rem]",
+          "mx-auto animate-in fade-in zoom-in-95 duration-700 h-16 md:h-22 max-w-7xl md:rounded-[1.875rem]",
           isHomePage && !isVisible ? "pointer-events-none" : "pointer-events-auto",
           "shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040,0px_4px_36px_0px_#FFFFFF40_inset]",
-          "bg-black/80 backdrop-blur-xl",
+          "bg-black/95 md:bg-black/80 backdrop-blur-2xl md:backdrop-blur-xl",
           "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]"
         )}
       >
@@ -272,122 +272,125 @@ export const Navbar: React.FC<NavbarProps> = ({
             </Inline>
           </Box>
 
-          {/* Mobile Menu Dropdown */}
-          {isMobileMenuOpen && (
-            <div
-              ref={dropdownRef}
-              className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] animate-in fade-in slide-in-from-top-2 duration-200 min-[75rem]:hidden"
-            >
-              <Box
-                className={cn(
-                  "py-3 w-full",
-                  "bg-black/95 backdrop-blur-2xl rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
-                  "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]"
-                )}
-              >
-                    <Stack gap="none">
-                      {/* About Section */}
-                      <Box className="px-5 py-3 border-b border-white/10">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
-                          About
-                        </Text>
-                      </Box>
-                      {dropdownLinks.about.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
-
-                      {/* Community Section */}
-                      <Box className="px-5 py-3 border-b border-white/10 mt-2">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
-                          Community
-                        </Text>
-                      </Box>
-                      {dropdownLinks.community.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
-
-                      {/* Nav Links */}
-                      <Box className="px-5 py-3 border-b border-white/10 mt-2">
-                        <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
-                          Navigation
-                        </Text>
-                      </Box>
-                      {navLinks.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
-
-                      {/* Auth Section */}
-                      {!hideAuth && (
-                        <Box className="px-5 py-5 mt-2 border-t border-white/10">
-                          <Stack gap="sm">
-                            <Link href="/sparkmates" onClick={() => setIsMobileMenuOpen(false)} className="block w-full">
-                              <Button variant="colored" subVariant="blue" size="md" className="w-full">
-                                Get ID
-                              </Button>
-                            </Link>
-                            {status === "checking" ? (
-                              <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse"> </Box>
-                            ) : status === STATUS.AUTHENTICATED ? (
-                              <Link
-                                href="/sparkmates"
-                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                              >
-                                <Avatar
-                                  src={
-                                    // user.user_metadata?.avatar_url || 
-                                    ASSETS.AUTH.AVATAR_DEFAULT}
-                                  // alt={user.user_metadata?.full_name || user.email || "User"}
-                                  // size="sm"
-                                  // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
-                                />
-                                <Stack gap="none">
-                                  <Text variant="body-sm" weight="semibold" className="text-white">
-                                    {decodedToken?.memberInfo.firstName|| "User"}
-                                  </Text>
-                                  <Text variant="body-sm" className="text-gray-400">
-                                    View Profile
-                                  </Text>
-                                </Stack>
-                              </Link>
-                            ) : (
-                              <Link
-                                href="/signin"
-                                className="block w-full text-center py-3 px-4 rounded-lg border border-gray-500 text-base font-bold text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                              >
-                                Sign In
-                              </Link>
-                            )}
-                          </Stack>
-                        </Box>
-                      )}
-                    </Stack>
-              </Box>
-            </div>
-          )}
         </Box>
+        
+        {/* Mobile Menu Dropdown - Moved outside nav to prevent clipping by h-22 and borders */}
+        {isMobileMenuOpen && (
+          <div
+            ref={dropdownRef}
+            className="mt-4 px-4 z-[100] animate-in fade-in slide-in-from-top-2 duration-200 min-[75rem]:hidden pointer-events-auto w-full max-w-7xl mx-auto"
+          >
+            <div
+              className={cn(
+                "w-full max-h-[calc(100svh-120px)] flex flex-col",
+                "bg-black/95 backdrop-blur-2xl rounded-[16px] border border-white/10 shadow-[0px_4px_36px_0px_#FFFFFF10_inset] overflow-hidden",
+                "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]"
+              )}
+            >
+              <div className="overflow-y-auto scrollbar-hide py-3 px-2 flex-1">
+                  <Stack gap="none">
+                    {/* About Section */}
+                    <Box className="px-5 py-3 border-b border-white/10">
+                      <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
+                        About
+                      </Text>
+                    </Box>
+                    {dropdownLinks.about.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+
+                    {/* Community Section */}
+                    <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                      <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
+                        Community
+                      </Text>
+                    </Box>
+                    {dropdownLinks.community.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+
+                    {/* Nav Links */}
+                    <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                      <Text variant="body-sm" weight="semibold" className="text-gray-400 uppercase tracking-wider">
+                        Navigation
+                      </Text>
+                    </Box>
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+
+                    {/* Auth Section */}
+                    {!hideAuth && (
+                      <Box className="px-5 py-5 mt-2 border-t border-white/10">
+                        <Stack gap="sm">
+                          <Link href="/sparkmates" onClick={() => setIsMobileMenuOpen(false)} className="block w-full">
+                            <Button variant="colored" subVariant="blue" size="md" className="w-full">
+                              Get ID
+                            </Button>
+                          </Link>
+                          {status === "checking" ? (
+                            <Box className="w-full h-10 rounded-lg bg-slate-700 animate-pulse"> </Box>
+                          ) : status === STATUS.AUTHENTICATED ? (
+                            <Link
+                              href="/sparkmates"
+                              className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              <Avatar
+                                src={
+                                  // user.user_metadata?.avatar_url || 
+                                  ASSETS.AUTH.AVATAR_DEFAULT}
+                                // alt={user.user_metadata?.full_name || user.email || "User"}
+                                // size="sm"
+                                // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+                              />
+                              <Stack gap="none">
+                                <Text variant="body-sm" weight="semibold" className="text-white">
+                                  {decodedToken?.memberInfo.firstName|| "User"}
+                                </Text>
+                                <Text variant="body-sm" className="text-gray-400">
+                                  View Profile
+                                </Text>
+                              </Stack>
+                            </Link>
+                          ) : (
+                            <Link
+                              href="/signin"
+                              className="block w-full text-center py-3 px-4 rounded-lg border border-gray-500 text-base font-bold text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              Sign In
+                            </Link>
+                          )}
+                        </Stack>
+                      </Box>
+                    )}
+                  </Stack>
+              </div>
+            </div>
+          </div>
+        )}
       </Box>
   );
 };
