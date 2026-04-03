@@ -238,7 +238,7 @@ export const generateOpenApiOptions = ({
     // this block enables support for multiform data
     if (endpoint.files || endpoint.body) {
       let contentType = "application/json";
-      let requestSchema = endpoint.body || cz.object({});
+      let requestSchema = endpoint.body  ;
 
       if (endpoint.files) {
         contentType = "multipart/form-data";

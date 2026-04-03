@@ -22,6 +22,7 @@ export const useChangeProfileImage = () => {
         {
           params: { gdgId: gdgId },
           files: { newProfile: profileImage },
+          body: { data: {}}
           // files: { profile_image: profileImage || undefined },
         },
       );
