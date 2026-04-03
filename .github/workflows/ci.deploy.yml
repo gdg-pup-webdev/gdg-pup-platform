@@ -50,6 +50,7 @@ env:
 jobs:
   detect-changes:
     name: Detect Changes
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.head_branch == 'deploy-develop' || github.event.workflow_run.head_branch == 'staging' || github.event.workflow_run.head_branch == 'main')) }}
     uses: ./.github/workflows/ci.detect-changes.yml
     with:
       head-sha: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
