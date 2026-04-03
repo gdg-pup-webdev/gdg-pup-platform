@@ -95,8 +95,8 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
         transition={{ duration: 2.2, ease: "easeOut", delay: 0 }}
         style={{
           ...blobStyle,
-          width: 700, height: 600,
-          top: -100, left: "calc(50% - 400px)",
+          width: 500, height: 500,
+          top: -100, left: "calc(50% - 250px)",
           background: colors.blob,
           filter: "blur(150px)",
         }}
@@ -110,10 +110,10 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.35 }}
         style={{
           ...blobStyle,
-          width: 500, height: 500,
+          width: 500, height: 700,
           top: "20%", left: "-150px",
           background: colors.blob,
-          filter: "blur(200px)",
+          filter: "blur(250px)",
         }}
       />
 
@@ -126,7 +126,7 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
         style={{
           ...blobStyle,
           width: 500, height: 500,
-          top: "50%", left: "-150px",
+          top: "55%", left: "-150px",
           background: colors.blob,
           filter: "blur(250px)",
         }}
@@ -140,7 +140,7 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.7 }}
         style={{
           ...blobStyle,
-          width: 500, height: 500,
+          width: 500, height: 700,
           top: "30%", right: "-150px",
           background: colors.blob,
           filter: "blur(250px)",
@@ -156,9 +156,9 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
         style={{
           ...blobStyle,
           width: 500, height: 500,
-          top: "60%", right: "-150px",
+          top: "65%", right: "-150px",
           background: colors.blob,
-          filter: "blur(200px)",
+          filter: "blur(250px)",
         }}
       />
 
@@ -169,10 +169,10 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
         transition={{ duration: 2.2, ease: "easeOut", delay: 1.05 }}
         style={{
           ...blobStyle,
-          width: 800, height: 600,
-          bottom: -100, left: "calc(50% - 400px)",
+          width: 500, height: 500,
+          bottom: -100, left: "calc(50% - 250px)",
           background: colors.blob,
-          filter: "blur(180px)",
+          filter: "blur(200px)",
         }}
       />
 
@@ -194,81 +194,103 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
 
   const article = data?.data;
   const readTime = estimateReadTime(article.content ?? "");
-  const publishedDate = article.published_at
-    ? new Date(article.published_at).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : null;
-  
-{/* ── Page wrapper — dark background matching history page ── */}
-  return (
-    <div className="relative min-h-screen bg-[#0F0E0E] px-4 py-16 md:px-8 lg:px-16 overflow-hidden">
+const publishedDate = article.published_at
+  ? new Date(article.published_at).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  : null;
 
-      {/* Gradient blob background */}
+// ── Page wrapper — dark background matching history page ──
+return (
+    <div className="relative min-h-screen bg-[#0F0E0E] overflow-hidden px-4 pb-24 md:px-8">
+    {/* Gradient blob background */}
     <ArticleBlobBackground colors={colors} />
 
-      {/* ── Card container — bordered card wrapping all article content ── */}
-      <div className="relative z-10 max-w-2xl mx-auto rounded-2xl p-6 md:p-10 mt-24 bg-[#0F0E0E]">
-       
-        {/* ── Top navigation bar — back button and published date + read time ── */}
-        <div className="flex items-center justify-between mb-8 text-sm text-gray-400">
-          <Link
-            href="/about/history"
-            className="flex items-center gap-1 hover:text-white transition-colors"
-          >
-            ← Back to History
-          </Link>
-          {publishedDate && (
-            <span>{publishedDate} • {readTime} min read</span>
-          )}
-        </div>
+    {/* ── Main Article Container ── */}
+    <div className="relative z-10 max-w-5xl mx-auto mt-24">
+      
+      {/*  THE GLASS CONTAINER 
+          - bg-white/[0.03]: Adds that subtle "white opacity"
+          - backdrop-blur-xl: Makes the blobs behind it look creamy and professional
+      */}
+      <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-2xl">
+        
+        {/* THE GRADIENT BORDER OVERLAY (Matching History Page) */}
+        <div
+          className="absolute inset-0 rounded-3xl pointer-events-none z-10"
+          style={{
+            /* 1. Use a solid or 45deg gradient so color exists on all sides */
+            background: `linear-gradient(45deg, ${colors.border}, ${colors.accent}, ${colors.border})`,
+            
+            /* 2. THE SECRET: Adjust the inner mask with 'inset' */
+            /* top/bottom: 3px (Thick) | left/right: 0.5px (Thin) */
+            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+            
+            /* 3. Set padding to the THICKEST value you want (top/bottom) */
+            padding: "3px 0.5px", 
+          }}
+        />
+        {/*  INNER CONTENT PADDING */}
+        <div className="p-6 md:p-12 lg:p-16">
 
-        {/* ── Article title — large heading ── */}
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+          {/* ── Top navigation bar ── */}
+          <div className="flex items-center justify-between mb-12 text-sm font-medium">
+            <Link
+              href="/about/history"
+              className="flex items-center gap-2 text-gray-400 hover:text-white transition-all group"
+            >
+              <span className="transition-transform group-hover:-translate-x-1">←</span> 
+              Back to History
+            </Link>
+            {publishedDate && (
+              <span className="text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                {publishedDate} • {readTime} min read
+              </span>
+            )}
+          </div>
+
+          {/* ── Article title ── */}
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-10 tracking-tight">
             {article.title}
           </h1>
+
+          {/* ── Hero image ── */}
+          {article.image_url && (
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-12 border border-white/10 shadow-lg">
+              <img
+                src={article.image_url}
+                alt={article.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          {/* ── Article content (Typography) ── */}
+          <div
+            className="prose prose-invert prose-base md:prose-lg max-w-none
+              prose-headings:text-white prose-headings:font-bold
+              prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
+              prose-strong:text-white
+              prose-code:bg-white/10 prose-code:rounded prose-code:px-1 prose-code:before:content-none prose-code:after:content-none
+              prose-pre:bg-black/40 prose-pre:backdrop-blur-sm prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl
+              prose-blockquote:border-l-4 prose-blockquote:text-gray-200 prose-blockquote:italic prose-blockquote:pl-6 prose-blockquote:bg-white/5 prose-blockquote:py-2 prose-blockquote:rounded-r-lg
+              prose-img:rounded-2xl prose-img:border prose-img:border-white/10
+              prose-li:text-gray-300"
+            style={{
+              ["--tw-prose-quote-borders" as string]: colors.accent,
+            }}
+          >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {article.content.replace(/^#\s+.+\n?/, '')}
+            </ReactMarkdown>
+          </div>
         </div>
-
-        {/* ── Hero image — main article image with rounded border ── */}
-        {article.image_url && (
-          <div className="w-full rounded-xl overflow-hidden mb-10 border border-white/10">
-            <img
-              src={article.image_url}
-              alt={article.title}
-              className="w-full h-56 md:h-72 object-cover"
-            />
-          </div>
-        )}
-
-        {/* ── Article content — markdown rendered with dark theme typography ──
-        * prose-invert: dark mode text colors
-        * prose-headings: white bold headers
-        * prose-code: dark code blocks with border
-        * prose-blockquote: colored left border matching milestone color
-        * prose-img: rounded images with border
-        */}
-        <div
-          className="prose prose-invert prose-base md:prose-lg max-w-none
-            prose-headings:text-white prose-headings:font-bold
-            prose-p:text-gray-300 prose-p:leading-relaxed
-            prose-strong:text-white
-            prose-code:bg-white/10 prose-code:rounded prose-code:px-1
-            prose-pre:bg-[#1a1a1a] prose-pre:border prose-pre:border-white/10 prose-pre:rounded-xl
-            prose-blockquote:border-l-4 prose-blockquote:text-gray-300 prose-blockquote:italic prose-blockquote:pl-4
-            prose-img:rounded-xl prose-img:border prose-img:border-white/10"
-          style={{
-            ["--tw-prose-quote-borders" as string]: colors.accent,
-          }}
-        >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {/* This removes the first instance of a # Header from the string */}
-          {article.content.replace(/^#\s+.+\n?/, '')}
-        </ReactMarkdown>
-          </div>
       </div>
     </div>
+  </div>
   );
 }
