@@ -38,8 +38,10 @@ interface ArticleDetailsModalProps {
 
 function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
+  const leftTopRef = useRef<HTMLDivElement>(null);
+  const leftBottomRef = useRef<HTMLDivElement>(null);
+  const rightTopRef = useRef<HTMLDivElement>(null);
+  const rightBottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let mouseX = 0;
@@ -56,19 +58,28 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
     };
 
     const tick = () => {
-      leftX += (mouseX * 0.18 - leftX) * 0.08;
-      leftY += (mouseY * 0.18 - leftY) * 0.08;
-      rightX += (mouseX * -0.18 - rightX) * 0.08;
-      rightY += (mouseY * -0.18 - rightY) * 0.08;
+  // Use slightly different multipliers (0.18, 0.15, etc.) for variety
+  const lx = mouseX * 0.18;
+  const ly = mouseY * 0.18;
+  const rx = mouseX * -0.18;
+  const ry = mouseY * -0.18;
 
-      if (leftRef.current) {
-        leftRef.current.style.translate = `${leftX.toFixed(1)}px ${leftY.toFixed(1)}px`;
-      }
-      if (rightRef.current) {
-        rightRef.current.style.translate = `${rightX.toFixed(1)}px ${rightY.toFixed(1)}px`;
-      }
-      rafId = requestAnimationFrame(tick);
-    };
+  // Apply to all 4 refs with the same values for left and right blobs
+  if (leftTopRef.current) {
+    leftTopRef.current.style.translate = `${lx.toFixed(1)}px ${ly.toFixed(1)}px`;
+  }
+  if (leftBottomRef.current) {
+    leftBottomRef.current.style.translate = `${lx.toFixed(1)}px ${ly.toFixed(1)}px`;
+  }
+  if (rightTopRef.current) {
+    rightTopRef.current.style.translate = `${rx.toFixed(1)}px ${ry.toFixed(1)}px`;
+  }
+  if (rightBottomRef.current) {
+    rightBottomRef.current.style.translate = `${rx.toFixed(1)}px ${ry.toFixed(1)}px`;
+  }
+  
+  rafId = requestAnimationFrame(tick);
+};
 
     window.addEventListener("mousemove", onMouseMove);
     rafId = requestAnimationFrame(tick);
@@ -104,7 +115,7 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
 
       {/* Left blob — higher up, mouse follow */}
       <motion.div
-        ref={leftRef}
+        ref={leftTopRef}
         initial={{ opacity: 0, scale: 0.4 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.35 }}
@@ -119,7 +130,7 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
 
        {/* Left blob — bottom down, mouse follow */}
       <motion.div
-        ref={leftRef}
+        ref={leftBottomRef}
         initial={{ opacity: 0, scale: 0.4 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.35 }}
@@ -134,7 +145,7 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
 
       {/* Right blob — higher up, mouse follow opposite */}
       <motion.div
-        ref={rightRef}
+        ref={rightTopRef}
         initial={{ opacity: 0, scale: 0.4 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.7 }}
@@ -149,7 +160,7 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
 
       {/* Right blob — lower down, mouse follow opposite */}
       <motion.div
-        ref={rightRef}
+        ref={rightBottomRef}
         initial={{ opacity: 0, scale: 0.4 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.7 }}
