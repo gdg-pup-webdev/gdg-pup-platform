@@ -3,6 +3,7 @@
 # =============================================================================
 # Trigger: after CI Build & Test succeeds (or manual dispatch).
 # Mode:    selective builds (only changed services)
+# Note:    always dispatches Deploy at the end, even if no builds ran.
 # =============================================================================
 
 name: Docker Build & Push
@@ -13,9 +14,15 @@ on:
     types: [completed]
     branches: [deploy-develop, staging, main]
   workflow_dispatch:
+    inputs:
+      head_branch:
+        description: "Branch to build & deploy (deploy-develop / staging / main)"
+        required: false
+        type: string
+        default: "deploy-develop"
 
 concurrency:
-  group: docker-${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}-${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+  group: docker-${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.head_branch || github.ref_name) || github.event.workflow_run.head_branch }}-${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
   cancel-in-progress: true
 
 env:
@@ -28,7 +35,7 @@ jobs:
     uses: ./.github/workflows/ci.detect-changes.yml
     with:
       head-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
-      head-branch: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}
+      head-branch: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.head_branch || github.ref_name) || github.event.workflow_run.head_branch }}
 
   build-nexus-web:
     name: nexus-web
@@ -62,3 +69,33 @@ jobs:
           dockerfile: apps/nexus-api/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
+
+  trigger-deploy:
+    name: Trigger Deploy
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-nexus-web, build-nexus-api]
+    # Run when detect-changes passed AND all builds either succeeded or were skipped (no failures)
+    if: ${{ always() && needs.detect-changes.result == 'success' && needs.build-nexus-web.result != 'failure' && needs.build-nexus-api.result != 'failure' }}
+    steps:
+      - name: Dispatch Deploy workflow
+        env:
+<<<<<<< Updated upstream
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+=======
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+>>>>>>> Stashed changes
+          HEAD_BRANCH: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.head_branch || github.ref_name) || github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+        run: |
+          TARGET_ENV="dev"
+          if [[ "$HEAD_BRANCH" == "main" ]]; then TARGET_ENV="prod"
+          elif [[ "$HEAD_BRANCH" == "staging" ]]; then TARGET_ENV="staging"
+          fi
+
+          echo "Dispatching Deploy for branch=$HEAD_BRANCH sha=$HEAD_SHA env=$TARGET_ENV"
+          gh workflow run ci.deploy.yml \
+            --repo ${{ github.repository }} \
+            --ref dev \
+            --field target_environment="$TARGET_ENV" \
+            --field triggered_branch="$HEAD_BRANCH" \
+            --field triggered_sha="$HEAD_SHA"
