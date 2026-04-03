@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { MemberShowcaseList } from "@/features/member-showcase/components/MemberShowcaseList";
-import { ShowcaseFormModal, DeleteConfirmModal, ShowcaseViewModal } from "@/features/member-showcase/components/MemberShowcaseModals";
+import { ShowcaseFormModal, ShowcaseViewModal } from "@/features/member-showcase/components/MemberShowcaseModals";
 import { MemberShowcase, CreateMemberShowcaseDTO, UpdateMemberShowcaseDTO } from "@/features/member-showcase/types";
 import { useCreateMemberShowcase } from "@/features/member-showcase/hooks/useCreateMemberShowcase";
 import { useUpdateMemberShowcase } from "@/features/member-showcase/hooks/useUpdateMemberShowcase";
@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 
 export default function MemberShowcasePage() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedShowcase, setSelectedShowcase] = useState<MemberShowcase | null>(null);
 
@@ -29,9 +28,13 @@ export default function MemberShowcasePage() {
     setIsFormModalOpen(true);
   };
 
-  const handleDelete = (showcase: MemberShowcase) => {
-    setSelectedShowcase(showcase);
-    setIsDeleteModalOpen(true);
+  const handleDelete = async (showcase: MemberShowcase) => {
+    try {
+      await deleteMutation.mutateAsync(showcase.id);
+      toast.success("Showcase deleted successfully");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete showcase");
+    }
   };
 
   const handleView = (showcase: MemberShowcase) => {
@@ -65,17 +68,6 @@ export default function MemberShowcasePage() {
     }
   };
 
-  const confirmDelete = async () => {
-    if (!selectedShowcase) return;
-    try {
-      await deleteMutation.mutateAsync(selectedShowcase.id);
-      toast.success("Showcase deleted successfully");
-      setIsDeleteModalOpen(false);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete showcase");
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-10">
@@ -98,14 +90,6 @@ export default function MemberShowcasePage() {
         onSubmit={handleSubmit}
         initialData={selectedShowcase || undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
-      />
-
-      <DeleteConfirmModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={confirmDelete}
-        itemName={selectedShowcase?.title || ""}
-        isDeleting={deleteMutation.isPending}
       />
 
       <ShowcaseViewModal

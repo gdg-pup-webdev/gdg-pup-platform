@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, AlertCircle, Search, Shield, Plus, Edit2, Eye, Trash2 } from "lucide-react";
+import { Shield, Plus, Edit2, Eye, Trash2 } from "lucide-react";
 import { useListRoles, useCreateRole, useUpdateRole, useDeleteRole } from "../hooks";
 import { Pagination } from "@/components/admin/Pagination";
 import { RoleFormModal, RoleDetailsModal } from "./RoleModals";
@@ -9,6 +9,9 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/Button";
 import { z } from "zod";
 import { contract } from "@packages/nexus-api-contracts";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { SearchInput } from "@/components/ui/SearchInput";
 
 type Role = z.infer<typeof contract.api.v1.roles.GET.response[200]>;
 type RoleItem = Role["data"][number];
@@ -84,26 +87,16 @@ export const RoleList: React.FC = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-blue-600" />
-      </div>
-    );
+    return <ListLoadingState accent="blue" message="Loading roles..." />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-lg font-bold text-red-900">Failed to load roles</h3>
-        <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load roles"
+        message={(error as any)?.message || "An unexpected error occurred."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
@@ -112,16 +105,13 @@ export const RoleList: React.FC = () => {
       {/* Action Bar */}
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div className="flex gap-2 w-full max-w-sm">
-          <div className="relative flex-1">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search roles..."
-              className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-          </div>
+          <SearchInput
+            value={searchValue}
+            onValueChange={setSearchValue}
+            placeholder="Search roles..."
+            accent="blue"
+            containerClassName="flex-1"
+          />
           <Button variant="outline" onClick={handleSearch}>Search</Button>
         </div>
         <Button onClick={handleCreate} className="flex items-center gap-2">

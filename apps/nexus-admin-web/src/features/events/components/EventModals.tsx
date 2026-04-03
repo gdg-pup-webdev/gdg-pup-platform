@@ -33,49 +33,8 @@ import { toast } from "react-toastify";
 import { Pagination } from "@/components/admin/Pagination";
 import { WireframeUploadImage } from "@/components/wireframeUi/WireframeUploadImage";
 import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";
-
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">{children}</div>
-      </div>
-    </div>
-  );
-}
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 // ==========================================
 // Bevy Event Search Modal
@@ -140,7 +99,7 @@ export function BevyEventSearchModal({
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin size={12} className="text-teal-600" />
-                      <span className="truncate max-w-[150px]">
+                      <span className="max-w-37.5 truncate">
                         {event.location || "TBA"}
                       </span>
                     </div>
@@ -1004,7 +963,7 @@ export function EventDetailsModal({
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {attendees.map((attendee: any) => (
                     <tr key={attendee.id}>
-                      <td className="px-4 py-2.5 text-xs font-medium text-gray-900 truncate max-w-[120px]">
+                      <td className="max-w-30 truncate px-4 py-2.5 text-xs font-medium text-gray-900">
                         {attendee.user_id}
                       </td>
                       <td className="px-4 py-2.5 text-[10px] text-gray-600">
@@ -1059,43 +1018,21 @@ export function DeleteConfirmModal({
   isDeleting,
 }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delete Event">
-      <div className="space-y-5">
-        <div className="flex items-start gap-4 rounded-sm bg-red-50 p-4">
-          <div className="shrink-0 text-red-600">
-            <AlertTriangle size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-red-900">
-              Warning: Dangerous Action
-            </p>
-            <p className="mt-1 text-sm text-red-700 leading-relaxed">
-              Are you sure you want to delete{" "}
-              <span className="font-bold underline">"{itemName}"</span>? This
-              action is permanent and cannot be undone.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex items-center gap-2 rounded-sm bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 disabled:opacity-50"
-          >
-            {isDeleting && <Loader2 size={16} className="animate-spin" />}
-            Confirm Delete
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title="Delete Event"
+      confirmLabel="Confirm Delete"
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
+          <p className="mt-1">
+            Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
+          </p>
+        </>
+      }
+    />
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, AlertCircle, Search, User } from "lucide-react";
+import { User } from "lucide-react";
 import { useListPortfolios } from "../hooks/useListPortfolios";
 import { useUpdatePortfolio } from "../hooks/useUpdatePortfolio";
 import { Portfolio, PortfolioUpdate } from "../types";
@@ -9,6 +9,9 @@ import { Pagination } from "@/components/admin/Pagination";
 import { PortfolioDetailsModal, PortfolioFormModal } from "./PortfolioModals";
 import { PortfolioCard } from "./PortfolioCard";
 import { toast } from "react-toastify";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { SearchInput } from "@/components/ui/SearchInput";
 
 export const PortfolioList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -67,26 +70,16 @@ export const PortfolioList: React.FC = () => {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-blue-600" />
-      </div>
-    );
+    return <ListLoadingState accent="blue" message="Loading portfolios..." />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-lg font-bold text-red-900">Failed to load portfolios</h3>
-        <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load portfolios"
+        message={(error as any)?.message || "An unexpected error occurred."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
@@ -94,16 +87,13 @@ export const PortfolioList: React.FC = () => {
     <div className="space-y-6">
       {/* Action Bar */}
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search portfolios..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          placeholder="Search portfolios..."
+          accent="blue"
+          containerClassName="w-full max-w-sm"
+        />
       </div>
 
       {/* Pagination */}
@@ -124,6 +114,7 @@ export const PortfolioList: React.FC = () => {
               key={portfolio.id}
               portfolio={portfolio}
               onClick={handleView}
+              onEdit={handleEdit}
             />
           ))}
         </div>

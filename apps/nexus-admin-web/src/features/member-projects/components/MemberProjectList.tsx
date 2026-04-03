@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Plus, Loader2, Search, AlertCircle, Layout, ChevronLeft, ChevronRight, X, User, Filter } from "lucide-react";
+import React, { useState } from "react";
+import { Plus, Layout, X, User, Filter } from "lucide-react";
 import { MemberProject } from "../types";
 import { MemberProjectCard } from "./MemberProjectCard";
 import { useMemberProjects } from "../hooks/useMemberProjects";
 import { useMemberProjectsByGdgId } from "../hooks/useMemberProjectsByGdgId";
 import { useSearchMemberProjects } from "../hooks/useSearchMemberProjects";
 import { Pagination } from "@/components/admin/Pagination";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
 
 interface MemberProjectListProps {
   onCreate: () => void;
@@ -70,23 +74,17 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
   };
 
   if (isLoading && !isFetching) {
-    return (
-      <div className="flex h-96 flex-col items-center justify-center gap-4">
-        <Loader2 className="h-10 w-10 animate-spin text-teal-600" />
-        <p className="text-sm font-medium text-gray-500 italic">Loading projects...</p>
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading projects..." className="h-96" />;
   }
 
   if (isError) {
     return (
-      <div className="flex h-96 flex-col items-center justify-center gap-4 rounded-sm border border-dashed border-red-200 bg-red-50/30 p-8 text-center">
-        <AlertCircle className="h-12 w-12 text-red-500" />
-        <div>
-          <h3 className="text-lg font-bold text-red-900">Failed to load projects</h3>
-          <p className="mt-1 text-sm text-red-700">Please check your connection and try again.</p>
-        </div>
-      </div>
+      <ListErrorState
+        title="Failed to load projects"
+        message="Please check your connection and try again."
+        className="h-96"
+        onRetry={() => refetch()}
+      />
     );
   }
 
@@ -101,13 +99,15 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
           </p>
         </div>
 
-        <button
+        <AdminActionButton
           onClick={onCreate}
-          className="flex items-center justify-center gap-2 rounded-sm bg-teal-600 px-8 py-3 text-sm font-black text-white transition-all hover:bg-teal-700 hover:shadow-lg active:scale-95 uppercase tracking-widest"
+          variant="teal"
+          size="lg"
+          className="uppercase tracking-widest hover:shadow-lg active:scale-95"
         >
           <Plus size={20} />
           Create Project
-        </button>
+        </AdminActionButton>
       </div>
 
       {/* Filter Toolbar */}
@@ -115,16 +115,13 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
         <form onSubmit={handleApplyFilters} className="flex flex-col gap-4 md:flex-row md:items-center">
           <div className="flex-1 space-y-1.5">
             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Search Content</label>
-            <div className="relative group">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400 group-focus-within:text-teal-500 transition-colors" />
-              <input
-                type="text"
-                placeholder="Search by title or description..."
-                className="w-full rounded-sm border border-gray-200 bg-white py-2 pl-10 pr-4 text-xs font-medium outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                value={localSearchQuery}
-                onChange={(e) => setLocalSearchQuery(e.target.value)}
-              />
-            </div>
+            <SearchInput
+              value={localSearchQuery}
+              onValueChange={setLocalSearchQuery}
+              placeholder="Search by title or description..."
+              accent="teal"
+              inputClassName="py-2 text-xs font-medium"
+            />
           </div>
 
           <div className="flex-1 space-y-1.5">
@@ -142,22 +139,26 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
           </div>
 
           <div className="flex items-end gap-2 pt-5">
-            <button
+            <AdminActionButton
               type="submit"
-              className="flex items-center gap-2 rounded-sm bg-gray-900 px-6 py-2.5 text-xs font-bold text-white transition-all hover:bg-gray-800 active:scale-95 shadow-sm"
+              variant="dark"
+              size="sm"
+              className="px-6 shadow-sm"
             >
               <Filter size={14} />
               Apply Filters
-            </button>
+            </AdminActionButton>
             {(appliedFilters.search || appliedFilters.memberGdgId) && (
-              <button
+              <AdminActionButton
                 type="button"
                 onClick={clearFilters}
-                className="flex items-center gap-1.5 rounded-sm border border-gray-200 bg-white px-4 py-2.5 text-xs font-bold text-gray-500 hover:bg-gray-50 hover:text-red-500 transition-all"
+                variant="neutral"
+                size="sm"
+                className="border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 hover:text-red-500"
               >
                 <X size={14} />
                 Clear
-              </button>
+              </AdminActionButton>
             )}
           </div>
         </form>
@@ -202,19 +203,23 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
               </p>
             </div>
             {(appliedFilters.search || appliedFilters.memberGdgId) ? (
-              <button
+              <AdminActionButton
                 onClick={clearFilters}
-                className="mt-4 rounded-sm border border-gray-900 px-6 py-2 text-xs font-bold text-gray-900 transition-all hover:bg-gray-900 hover:text-white"
+                variant="dark"
+                size="sm"
+                className="mt-4"
               >
                 Clear All Filters
-              </button>
+              </AdminActionButton>
             ) : (
-              <button
+              <AdminActionButton
                 onClick={onCreate}
-                className="mt-4 rounded-sm border border-teal-600 px-6 py-2 text-xs font-bold text-teal-600 transition-all hover:bg-teal-600 hover:text-white"
+                variant="tealOutline"
+                size="sm"
+                className="mt-4"
               >
                 Launch First Project
-              </button>
+              </AdminActionButton>
             )}
           </div>
         )}

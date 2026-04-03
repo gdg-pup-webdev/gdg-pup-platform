@@ -9,6 +9,10 @@ import { LearningResource, CreateLearningResourceDTO, UpdateLearningResourceDTO 
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { toast } from "react-toastify";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
 
 export function LearningResourceList() {
   const [params, setParams] = useState({ 
@@ -103,6 +107,15 @@ export function LearningResourceList() {
     setIsDeleteModalOpen(true);
   };
 
+  const handleDeleteFromCard = async (resource: LearningResource) => {
+    try {
+      await deleteMutation.mutateAsync(resource.id);
+      toast.success("Resource deleted successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete resource");
+    }
+  };
+
   const handleFormSubmit = async (data: any, thumbnail?: File) => {
     try {
       if (selectedResource) {
@@ -150,11 +163,7 @@ export function LearningResourceList() {
   };
 
   if (isLoading && !params.search && !params.teamId && !params.eventId && !params.teamName) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-teal-600" />
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading resources..." />;
   }
 
   return (
@@ -163,17 +172,14 @@ export function LearningResourceList() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div className="flex w-full max-w-2xl items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search resources..."
-                className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                value={localSearch}
-                onChange={(e) => setLocalSearch(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSearchTrigger()}
-              />
-            </div>
+            <SearchInput
+              value={localSearch}
+              onValueChange={setLocalSearch}
+              placeholder="Search resources..."
+              accent="teal"
+              containerClassName="flex-1"
+              onKeyDown={(e) => e.key === "Enter" && handleSearchTrigger()}
+            />
             
             <div className="relative flex-1">
               <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -187,23 +193,24 @@ export function LearningResourceList() {
               />
             </div>
 
-            <button
+            <AdminActionButton
               onClick={handleSearchTrigger}
               disabled={isFetching}
-              className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
+              variant="teal"
             >
               {isFetching ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
               Search
-            </button>
+            </AdminActionButton>
           </div>
           
-          <button
+          <AdminActionButton
             onClick={handleAdd}
-            className="flex w-full items-center justify-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 md:w-auto"
+            variant="brand"
+            className="w-full md:w-auto"
           >
             <Plus size={18} />
             Add Resource
-          </button>
+          </AdminActionButton>
         </div>
 
         {/* Filters */}
@@ -325,17 +332,11 @@ export function LearningResourceList() {
       </div>
 
       {isError && (
-        <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
-          <AlertCircle size={48} className="mb-4 text-red-500" />
-          <h3 className="text-lg font-bold text-red-900">Failed to load resources</h3>
-          <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-          <button 
-            onClick={() => refetch()}
-            className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
-          >
-            Try Again
-          </button>
-        </div>
+        <ListErrorState
+          title="Failed to load resources"
+          message={(error as any)?.message || "An unexpected error occurred."}
+          onRetry={() => refetch()}
+        />
       )}
 
       {/* Grid of Cards */}
@@ -349,7 +350,7 @@ export function LearningResourceList() {
                   resource={resource}
                   onView={handleView}
                   onEdit={handleEdit}
-                  onDelete={handleDeleteClick}
+                  onDelete={handleDeleteFromCard}
                 />
               ))}
             </div>
@@ -367,19 +368,23 @@ export function LearningResourceList() {
                       : "Get started by adding your first learning resource."}
                   </p>
                   {(params.teamId || params.eventId || params.search || params.teamName) ? (
-                    <button 
+                    <AdminActionButton
                       onClick={() => setParams({ pageNumber: 1, pageSize: 12, search: undefined, teamId: undefined, teamName: undefined, eventId: undefined })}
-                      className="mt-6 rounded-sm bg-gray-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-gray-800"
+                      variant="dark"
+                      size="sm"
+                      className="mt-6"
                     >
                       Clear Filters
-                    </button>
+                    </AdminActionButton>
                   ) : (
-                    <button 
+                    <AdminActionButton
                       onClick={handleAdd}
-                      className="mt-6 rounded-sm bg-teal-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-teal-700"
+                      variant="teal"
+                      size="sm"
+                      className="mt-6"
                     >
                       Create Resource
-                    </button>
+                    </AdminActionButton>
                   )}
                 </>
               )}

@@ -1,90 +1,89 @@
 "use client";
 
 import React from "react";
-import { Calendar, MapPin, Users, Star, Tag } from "lucide-react";
+import { Calendar, MapPin, Users, Star } from "lucide-react";
 import { Event } from "../types";
+import { AdminEntityCard } from "@/components/admin/AdminEntityCard";
 
 interface EventCardProps {
   event: Event;
-  onClick: (event: Event) => void;
+  onView: (event: Event) => void;
+  onEdit?: (event: Event) => void;
+  onDelete?: (event: Event) => void | Promise<void>;
 }
 
-export function EventCard({ event, onClick }: EventCardProps) {
+export function EventCard({ event, onView, onEdit, onDelete }: EventCardProps) {
+  const eventDate = new Date(event.start_date || "").toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
   return (
-    <div 
-      className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
-      onClick={() => onClick(event)}
-    >
-      {/* Banner Image or Placeholder */}
-      {event.image_url ? (
-        <div className="relative h-40 w-full overflow-hidden bg-gray-100">
-          <img
-            src={event.image_url}
-            alt={event.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          {event.type && (
-            <div className="absolute top-3 left-3 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-teal-700 shadow-sm backdrop-blur-sm">
-              {event.type}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100/50">
-          <Calendar size={48} className="text-teal-200" />
-          {event.type && (
-            <div className="absolute top-3 left-3 rounded-full bg-white/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-teal-700 shadow-sm backdrop-blur-sm">
-              {event.type}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col p-5">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-teal-600">
-            {event.category || "Event"}
+    <AdminEntityCard
+      title={event.title}
+      description={event.description || "No event description provided."}
+      mediaImageUrl={event.image_url}
+      mediaAlt={event.title}
+      mediaFallback={<Calendar size={56} />}
+      mediaLabel={
+        event.type ? (
+          <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-teal-700 shadow-sm">
+            {event.type}
           </span>
-          <div className="flex items-center gap-1 text-xs font-bold text-amber-500">
-            <Star size={12} fill="currentColor" />
-            {event.attendance_points} pts
-          </div>
-        </div>
-
-        <h3 className="mb-2 line-clamp-1 text-lg font-bold text-gray-900 group-hover:text-teal-600 transition-colors">
-          {event.title}
-        </h3>
-        
-        <div className="mt-auto space-y-2.5">
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <Calendar size={14} className="text-gray-400" />
-            <span>{new Date(event.start_date || "").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-          </div>
-          
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <MapPin size={14} className="text-gray-400" />
-            <span className="line-clamp-1">{event.venue || "TBA"}</span>
-          </div>
-
-          <div className="flex items-center justify-between border-t border-gray-50 pt-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-              <Users size={14} />
-              <span>{event.attendees_count} Attendees</span>
-            </div>
-            {event.speakers && event.speakers.length > 0 && (
-              <div className="flex items-center gap-1 text-[10px] font-bold text-teal-500 uppercase">
-                <Users size={12} />
-                <span>{event.speakers.length} Speakers</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Decorative bar at top (visible on hover) */}
-      <div className="absolute top-0 left-0 h-1 w-full bg-teal-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-    </div>
+        ) : undefined
+      }
+      mediaStatus={
+        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-amber-700 shadow-sm">
+          <Star size={11} fill="currentColor" />
+          {event.attendance_points} pts
+        </span>
+      }
+      topMetaLeft={
+        <span className="rounded-full bg-teal-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-teal-700">
+          {event.category || "Event"}
+        </span>
+      }
+      topMetaRight={
+        <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-600">
+          {event.attendees_count} attendees
+        </span>
+      }
+      metaItems={[
+        {
+          key: "date",
+          icon: <Calendar size={13} />,
+          content: eventDate,
+        },
+        {
+          key: "venue",
+          icon: <MapPin size={13} />,
+          content: event.venue || "Venue TBA",
+        },
+        ...(event.speakers && event.speakers.length > 0
+          ? [
+              {
+                key: "speakers",
+                icon: <Users size={13} />,
+                content: `${event.speakers.length} speakers`,
+                className: "font-semibold uppercase tracking-wider text-[10px]",
+              },
+            ]
+          : []),
+      ]}
+      onClick={() => onView(event)}
+      actions={{
+        onView: () => onView(event),
+        onEdit: onEdit ? () => onEdit(event) : undefined,
+        onDelete: onDelete ? () => onDelete(event) : undefined,
+        editLabel: "Update Event",
+        deleteDialogTitle: "Delete Event",
+        deleteDialogDescription: (
+          <>
+            Event <strong>{event.title}</strong> will be permanently deleted.
+          </>
+        ),
+      }}
+    />
   );
 }

@@ -21,49 +21,8 @@ import {
   Trash2
 } from "lucide-react";
 import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
-
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 // ==========================================
 // Folder Form Modal (Create / Update)
@@ -488,42 +447,25 @@ interface DeleteConfirmModalProps {
 
 export function DeleteConfirmModal({ isOpen, onClose, onConfirm, fileName, isDeleting, isFolder }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isFolder ? "Delete Folder" : "Delete File"}>
-      <div className="flex flex-col items-center text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
-          <AlertTriangle size={32} />
-        </div>
-        <h3 className="text-xl font-bold text-gray-900">Are you sure?</h3>
-        <p className="mt-2 text-gray-600">
-          You are about to delete <span className="font-bold text-gray-900">"{fileName}"</span>.
-          {isFolder 
-            ? " This will permanently remove the folder and ALL of its contents (files and subfolders). This action cannot be undone."
-            : " This action cannot be undone and will permanently remove the file from storage."}
-        </p>
-
-        <div className="mt-8 flex w-full items-center gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 rounded-sm bg-gray-100 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            No, Keep it
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-red-600 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:opacity-70"
-          >
-            {isDeleting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              "Yes, Delete it"
-            )}
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title={isFolder ? "Delete Folder" : "Delete File"}
+      cancelLabel="No, Keep it"
+      confirmLabel={isDeleting ? "Deleting..." : "Yes, Delete it"}
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Are you sure?</p>
+          <p className="mt-1 text-sm">
+            You are about to delete <span className="font-bold text-gray-900">"{fileName}"</span>.
+            {isFolder
+              ? " This will permanently remove the folder and ALL of its contents (files and subfolders). This action cannot be undone."
+              : " This action cannot be undone and will permanently remove the file from storage."}
+          </p>
+        </>
+      }
+    />
   );
 }

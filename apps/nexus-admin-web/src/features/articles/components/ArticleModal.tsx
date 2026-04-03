@@ -11,49 +11,8 @@ import { Pagination } from "@/components/admin/Pagination";
 import { useUploadFile } from "@/features/file-system/hooks/useUploadFile";
 import Image from "next/image";
 import { contract } from "@packages/nexus-api-contracts";
-
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 // ==========================================
 // Event Selection Modal
@@ -105,7 +64,7 @@ export function EventSearchModal({ isOpen, onClose, onSelect }: EventSearchModal
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin size={12} className="text-teal-600" />
-                      <span className="truncate max-w-[150px]">{event.venue || "TBA"}</span>
+                      <span className="max-w-37.5 truncate">{event.venue || "TBA"}</span>
                     </div>
                   </div>
                 </button>
@@ -167,7 +126,7 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
             <Loader2 size={32} className="animate-spin text-teal-600" />
           </div>
         ) : users.length > 0 ? (
-          <div className="divide-y divide-gray-100 rounded-sm border border-gray-100 bg-white shadow-sm max-h-[400px] overflow-y-auto">
+          <div className="max-h-100 divide-y divide-gray-100 overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-sm">
             {users.map((user) => (
               <button
                 key={user.gdgId}
@@ -177,7 +136,7 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
                 }}
                 className="flex w-full items-center gap-3 p-4 text-left hover:bg-teal-50 transition-colors"
               >
-                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
                   {user.avatarUrl ? (
                     <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
                   ) : (
@@ -662,39 +621,21 @@ interface DeleteConfirmModalProps {
 
 export function DeleteConfirmModal({ isOpen, onClose, onConfirm, itemName, isDeleting }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delete Article">
-      <div className="space-y-5">
-        <div className="flex items-start gap-4 rounded-sm bg-red-50 p-4">
-          <div className="shrink-0 text-red-600">
-            <AlertTriangle size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
-            <p className="mt-1 text-sm text-red-700 leading-relaxed">
-              Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex items-center gap-2 rounded-sm bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 disabled:opacity-50"
-          >
-            {isDeleting && <Loader2 size={16} className="animate-spin" />}
-            Confirm Delete
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title="Delete Article"
+      confirmLabel="Confirm Delete"
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
+          <p className="mt-1">
+            Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
+          </p>
+        </>
+      }
+    />
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, AlertCircle, Calendar, Search, Plus, FileText } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import { useListArticles } from "../hooks/useListArticle";
 import { useDeleteArticle } from "../hooks/useDeleteArticle";
 import { useCreateArticle } from "../hooks/useCreateArticle";
@@ -11,6 +11,10 @@ import { Pagination } from "@/components/admin/Pagination";
 import { ArticleFormModal, ArticleDetailsModal, DeleteConfirmModal } from "./ArticleModal";
 import { ArticleCard } from "./ArticleCard";
 import { toast } from "react-toastify";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
 
 export const ArticlesList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -56,6 +60,15 @@ export const ArticlesList: React.FC = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleDeleteFromCard = async (article: Article) => {
+    try {
+      await deleteMutation.mutateAsync(article.id);
+      toast.success("Article deleted successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Delete failed");
+    }
+  };
+
   const handleFormSubmit = async (data: ArticleInsert | ArticleUpdate, thumbnail?: File) => {
     try {
       if (selectedArticle) {
@@ -90,26 +103,16 @@ export const ArticlesList: React.FC = () => {
   );
 
   if (isLoading && !searchQuery) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-teal-600" />
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading articles..." />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-lg font-bold text-red-900">Failed to load articles</h3>
-        <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load articles"
+        message={(error as any)?.message || "An unexpected error occurred."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
@@ -117,23 +120,21 @@ export const ArticlesList: React.FC = () => {
     <div className="space-y-6">
       {/* Action Bar */}
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search articles..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <button
+        <SearchInput
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          placeholder="Search articles..."
+          accent="teal"
+          containerClassName="w-full max-w-sm"
+        />
+        <AdminActionButton
           onClick={handleCreate}
-          className="flex w-full items-center justify-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 md:w-auto"
+          variant="brand"
+          className="w-full md:w-auto"
         >
           <Plus size={18} />
           Create Article
-        </button>
+        </AdminActionButton>
       </div>
 
       {/* Pagination */}
@@ -153,7 +154,9 @@ export const ArticlesList: React.FC = () => {
             <ArticleCard
               key={article.id}
               article={article}
-              onClick={handleView}
+              onView={handleView}
+              onEdit={handleEdit}
+              onDelete={handleDeleteFromCard}
             />
           ))}
         </div>
@@ -167,19 +170,23 @@ export const ArticlesList: React.FC = () => {
             {searchQuery ? "Try adjusting your search terms." : "Get started by creating your first article."}
           </p>
           {searchQuery ? (
-            <button 
+            <AdminActionButton
               onClick={() => setSearchQuery("")}
-              className="mt-6 rounded-sm bg-gray-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-gray-800"
+              variant="dark"
+              size="sm"
+              className="mt-6"
             >
               Clear Search
-            </button>
+            </AdminActionButton>
           ) : (
-            <button 
+            <AdminActionButton
               onClick={handleCreate}
-              className="mt-6 rounded-sm bg-teal-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-teal-700"
+              variant="teal"
+              size="sm"
+              className="mt-6"
             >
               Create Article
-            </button>
+            </AdminActionButton>
           )}
         </div>
       )}

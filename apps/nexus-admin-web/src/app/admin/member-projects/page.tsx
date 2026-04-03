@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { MemberProjectList } from "@/features/member-projects/components/MemberProjectList";
-import { ProjectFormModal, DeleteConfirmModal, ProjectViewModal } from "@/features/member-projects/components/MemberProjectModals";
+import { ProjectFormModal, ProjectViewModal } from "@/features/member-projects/components/MemberProjectModals";
 import { useCreateMemberProject } from "@/features/member-projects/hooks/useCreateMemberProject";
 import { useUpdateMemberProject } from "@/features/member-projects/hooks/useUpdateMemberProject";
 import { useDeleteMemberProject } from "@/features/member-projects/hooks/useDeleteMemberProject";
@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 export default function MemberProjectsPage() {
   // State for modals
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<MemberProject | undefined>(undefined);
 
@@ -31,9 +30,13 @@ export default function MemberProjectsPage() {
     setIsFormModalOpen(true);
   };
 
-  const handleDelete = (project: MemberProject) => {
-    setSelectedProject(project);
-    setIsDeleteModalOpen(true);
+  const handleDelete = async (project: MemberProject) => {
+    try {
+      await deleteMutation.mutateAsync(project.id);
+      toast.success("Project deleted successfully");
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred while deleting the project");
+    }
   };
 
   const handleView = (project: MemberProject) => {
@@ -66,18 +69,6 @@ export default function MemberProjectsPage() {
     }
   };
 
-  const handleDeleteConfirm = async () => {
-    if (selectedProject) {
-      try {
-        await deleteMutation.mutateAsync(selectedProject.id);
-        toast.success("Project deleted successfully");
-        setIsDeleteModalOpen(false);
-      } catch (error: any) {
-        toast.error(error.message || "An error occurred while deleting the project");
-      }
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <MemberProjectList 
@@ -94,14 +85,6 @@ export default function MemberProjectsPage() {
         onSubmit={handleFormSubmit}
         initialData={selectedProject}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
-      />
-
-      <DeleteConfirmModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteConfirm}
-        itemName={selectedProject?.title || ""}
-        isDeleting={deleteMutation.isPending}
       />
 
       <ProjectViewModal

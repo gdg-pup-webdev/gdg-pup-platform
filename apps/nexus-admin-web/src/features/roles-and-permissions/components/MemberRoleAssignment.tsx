@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Loader2, AlertCircle, Search, Shield, Plus, X, User } from "lucide-react";
+import { X, User } from "lucide-react";
 import { useListMembers } from "@/features/members/hooks/useListMembers";
 import { useGetMemberRoles, useAssignRoleToUser, useRemoveRoleFromUser, useListRoles } from "../hooks";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { Pagination } from "@/components/admin/Pagination";
 import { toast } from "react-toastify";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { SearchInput } from "@/components/ui/SearchInput";
 
 export const MemberRoleAssignment: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -56,21 +58,18 @@ export const MemberRoleAssignment: React.FC = () => {
     }
   };
 
-  if (isLoading) return <Loader2 className="animate-spin text-blue-600" size={40} />;
+  if (isLoading) return <ListLoadingState accent="blue" message="Loading members..." className="h-32" iconSize={32} />;
 
   return (
     <div className="space-y-6">
       <div className="flex gap-2 w-full max-w-sm">
-        <div className="relative flex-1">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search members..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
-        </div>
+        <SearchInput
+          value={searchValue}
+          onValueChange={setSearchValue}
+          placeholder="Search members..."
+          accent="blue"
+          containerClassName="flex-1"
+        />
         <Button variant="outline" onClick={handleSearch}>Search</Button>
       </div>
 

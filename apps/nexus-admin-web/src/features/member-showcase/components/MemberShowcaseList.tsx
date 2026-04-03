@@ -1,12 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Loader2, Search, AlertCircle, Users, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Users, Sparkles } from "lucide-react";
 import { MemberShowcase } from "../types";
 import { MemberShowcaseCard } from "./MemberShowcaseCard";
 import { useMemberShowcases } from "../hooks/useMemberShowcases";
 import { useSpotlight } from "../hooks/useSpotlight";
 import Image from "next/image";
+import { Pagination } from "@/components/admin/Pagination";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
 
 interface MemberShowcaseListProps {
   onCreate: () => void;
@@ -17,33 +21,26 @@ interface MemberShowcaseListProps {
 
 export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: MemberShowcaseListProps) {
   const [page, setPage] = useState(1);
-  const pageSize = 8;
+  const [pageSize, setPageSize] = useState(8);
 
   const { data: listResponse, isLoading, isError } = useMemberShowcases(page, pageSize);
   const { data: spotlight, isLoading: isLoadingSpotlight } = useSpotlight();
 
   const showcases = listResponse?.data || [];
   const totalRecords = listResponse?.meta?.totalRecords || 0;
-  const totalPages = Math.ceil(totalRecords / pageSize);
+  const totalPages = listResponse?.meta?.totalPages || 1;
 
   if (isLoading) {
-    return (
-      <div className="flex h-96 flex-col items-center justify-center gap-4">
-        <Loader2 className="h-10 w-10 animate-spin text-teal-600" />
-        <p className="text-sm font-medium text-gray-500 italic">Loading showcases...</p>
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading showcases..." className="h-96" />;
   }
 
   if (isError) {
     return (
-      <div className="flex h-96 flex-col items-center justify-center gap-4 rounded-sm border border-dashed border-red-200 bg-red-50/30 p-8 text-center">
-        <AlertCircle className="h-12 w-12 text-red-500" />
-        <div>
-          <h3 className="text-lg font-bold text-red-900">Failed to load showcases</h3>
-          <p className="mt-1 text-sm text-red-700">Please check your connection and try again.</p>
-        </div>
-      </div>
+      <ListErrorState
+        title="Failed to load showcases"
+        message="Please check your connection and try again."
+        className="h-96"
+      />
     );
   }
 
@@ -51,7 +48,7 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
     <div className="space-y-10 pb-20">
       {/* Spotlight Section */}
       {spotlight?.data && (
-        <section className="relative overflow-hidden rounded-sm border border-teal-100 bg-gradient-to-br from-teal-50/50 to-white p-6 shadow-sm">
+        <section className="relative overflow-hidden rounded-sm border border-teal-100 bg-linear-to-br from-teal-50/50 to-white p-6 shadow-sm">
           <div className="absolute -top-6 -right-6 text-teal-100/20">
             <Sparkles size={120} />
           </div>
@@ -104,13 +101,14 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
             <h2 className="text-xl font-black text-gray-900 uppercase tracking-tight">Showcase Archive</h2>
             <p className="text-xs font-medium text-gray-500 mt-1 uppercase tracking-widest">Total: {totalRecords} records found</p>
           </div>
-          <button
+          <AdminActionButton
             onClick={onCreate}
-            className="flex items-center justify-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md active:scale-95"
+            variant="teal"
+            className="hover:shadow-md active:scale-95"
           >
             <Plus size={18} />
             Add New Showcase
-          </button>
+          </AdminActionButton>
         </div>
 
         {showcases.length > 0 ? (
@@ -127,38 +125,17 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
               ))}
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex items-center justify-center gap-2">
-                <button
-                  disabled={page === 1}
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  className="flex h-10 w-10 items-center justify-center rounded-sm border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 disabled:opacity-30"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`h-10 w-10 rounded-sm text-sm font-bold transition-all ${
-                      page === p
-                        ? "bg-teal-600 text-white shadow-md scale-110"
-                        : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
-                <button
-                  disabled={page === totalPages}
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  className="flex h-10 w-10 items-center justify-center rounded-sm border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 disabled:opacity-30"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            )}
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              totalRecords={totalRecords}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+            />
           </>
         ) : (
           <div className="flex h-64 flex-col items-center justify-center gap-4 rounded-sm border border-dashed border-gray-200 bg-gray-50/50 p-8 text-center">
@@ -169,12 +146,14 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
               <h3 className="text-base font-bold text-gray-900">No showcases found</h3>
               <p className="mt-1 text-xs text-gray-500">Get started by creating your first member showcase.</p>
             </div>
-            <button
+            <AdminActionButton
               onClick={onCreate}
-              className="mt-2 text-sm font-bold text-teal-600 hover:text-teal-700 underline underline-offset-4"
+              variant="tealOutline"
+              size="sm"
+              className="mt-2"
             >
               Create New Showcase
-            </button>
+            </AdminActionButton>
           </div>
         )}
       </section>

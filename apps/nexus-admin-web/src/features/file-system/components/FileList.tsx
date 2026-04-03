@@ -2,11 +2,16 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Plus, Loader2, Search, AlertCircle, FileStack, Folder as FolderIcon, ChevronRight, Home, ArrowLeft, FolderPlus } from "lucide-react";
+import { Plus, FileStack, Folder as FolderIcon, ChevronRight, Home, ArrowLeft, FolderPlus } from "lucide-react";
 import { FileCard } from "./FileCard";
 import { FileFormModal, FileDetailsModal, DeleteConfirmModal, FolderFormModal } from "./FileModals";
 import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile, useGetFolders, useCreateFolder, useGetFolder, useDeleteFolder } from "../hooks";
 import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
+import { SearchInput } from "@/components/ui/SearchInput";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { Pagination } from "@/components/admin/Pagination";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
 
 // Type for both files and folders to avoid 'any'
 type FileOrFolder = (FileRecord | Folder) & { isFolder: boolean };
@@ -138,6 +143,19 @@ export function FileList() {
     setIsDeleteModalOpen(true);
   };
 
+  const handleDeleteFromCard = async (item: FileRecord | Folder) => {
+    try {
+      if ((item as any).isFolder) {
+        await deleteFolderMutation.mutateAsync(item.id);
+      } else {
+        await deleteMutation.mutateAsync(item.id);
+      }
+      refetch();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
+
   const handleFolderClick = (folder: Folder) => {
     updateQueryParams({ folderId: folder.id, pageNumber: "1" });
   };
@@ -210,27 +228,16 @@ export function FileList() {
   const error = filesError || foldersError;
 
   if (isLoading) {
-    return (
-      <div className="flex h-96 flex-col items-center justify-center gap-4">
-        <Loader2 size={48} className="animate-spin text-teal-600" />
-        <p className="text-sm font-medium text-gray-500">Loading your files...</p>
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading your files..." className="h-96" iconSize={48} />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center shadow-sm">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-xl font-bold text-red-900">Failed to load files</h3>
-        <p className="mt-2 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred while fetching files."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-8 rounded-sm bg-red-600 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 hover:shadow-md"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load files"
+        message={(error as any)?.message || "An unexpected error occurred while fetching files."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
@@ -276,32 +283,34 @@ export function FileList() {
 
       {/* Header & Search */}
       <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-        <div className="relative w-full max-md:max-w-none max-w-md">
-          <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search in this folder..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-sm border border-gray-100 bg-white py-3 pl-11 pr-4 text-sm shadow-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-          />
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          placeholder="Search in this folder..."
+          accent="teal"
+          containerClassName="w-full max-w-md max-md:max-w-none"
+          inputClassName="border-gray-100 py-3 shadow-sm"
+        />
         
         <div className="flex w-full gap-2 md:w-auto">
-            <button 
-                onClick={handleCreateFolderClick}
-                className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-teal-600 text-teal-600 px-6 py-3 text-sm font-bold transition-all hover:bg-teal-50 md:w-auto"
-            >
-                <FolderPlus size={18} />
-                New Folder
-            </button>
-            <button 
-                onClick={handleUpload}
-                className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 px-8 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-lg md:w-auto"
-            >
-                <Plus size={18} />
-                Upload
-            </button>
+          <AdminActionButton
+            onClick={handleCreateFolderClick}
+            variant="tealOutline"
+            size="lg"
+            className="flex-1 md:w-auto"
+          >
+            <FolderPlus size={18} />
+            New Folder
+          </AdminActionButton>
+          <AdminActionButton
+            onClick={handleUpload}
+            variant="teal"
+            size="lg"
+            className="flex-1 hover:shadow-lg md:w-auto"
+          >
+            <Plus size={18} />
+            Upload
+          </AdminActionButton>
         </div>
       </div>
 
@@ -313,7 +322,7 @@ export function FileList() {
               key={item.id} 
               file={item} 
               onEdit={handleEdit}
-              onDelete={handleDeleteClick}
+              onDelete={handleDeleteFromCard}
               onView={handleView}
               onOpen={item.isFolder ? (f) => handleFolderClick(f as Folder) : undefined}
               isFolder={item.isFolder}
@@ -326,85 +335,33 @@ export function FileList() {
           <h3 className="text-lg font-bold text-gray-900">Folder is empty</h3>
           <p className="mt-1 text-sm text-gray-500">No files or subfolders found in the current folder.</p>
           <div className="mt-8 flex items-center justify-center gap-3">
-            <button 
-                onClick={handleCreateFolderClick}
-                className="rounded-sm border border-teal-600 text-teal-600 px-6 py-2.5 text-sm font-bold transition-all hover:bg-teal-50"
+            <AdminActionButton
+              onClick={handleCreateFolderClick}
+              variant="tealOutline"
             >
-                Create Folder
-            </button>
-            <button 
-                onClick={handleUpload}
-                className="rounded-sm bg-teal-600 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md"
+              Create Folder
+            </AdminActionButton>
+            <AdminActionButton
+              onClick={handleUpload}
+              variant="teal"
+              className="px-8 hover:shadow-md"
             >
-                Upload Now
-            </button>
+              Upload Now
+            </AdminActionButton>
           </div>
         </div>
       )}
 
       {/* Pagination */}
-      <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-8 md:flex-row">
-        <div className="flex items-center gap-3">
-          <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Items per page</label>
-          <select
-            value={pageSizeFromUrl}
-            onChange={(e) => updateQueryParams({ pageSize: e.target.value, pageNumber: "1" })}
-            className="rounded-sm border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium focus:border-teal-500 focus:outline-none"
-          >
-            {[10, 20, 50, 100].map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {totalPages > 1 && (
-          <div className="flex items-center gap-2">
-            <button
-              disabled={pageNumberFromUrl === 1}
-              onClick={() => updateQueryParams({ pageNumber: Math.max(1, pageNumberFromUrl - 1).toString() })}
-              className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50 hover:bg-gray-50 transition-colors"
-            >
-              Previous
-            </button>
-            <div className="flex items-center gap-1">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 5) pageNum = i + 1;
-                else if (pageNumberFromUrl <= 3) pageNum = i + 1;
-                else if (pageNumberFromUrl >= totalPages - 2) pageNum = totalPages - 4 + i;
-                else pageNum = pageNumberFromUrl - 2 + i;
-
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => updateQueryParams({ pageNumber: pageNum.toString() })}
-                    className={`h-9 w-9 rounded-sm text-sm font-bold transition-all ${
-                        pageNumberFromUrl === pageNum
-                        ? "bg-teal-600 text-white shadow-md"
-                        : "bg-white text-gray-600 border border-gray-100 hover:bg-gray-50"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-            </div>
-            <button
-              disabled={pageNumberFromUrl === totalPages}
-              onClick={() => updateQueryParams({ pageNumber: (pageNumberFromUrl + 1).toString() })}
-              className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50 hover:bg-gray-50 transition-colors"
-            >
-              Next
-            </button>
-          </div>
-        )}
-
-        <div className="text-xs font-medium text-gray-500">
-          Showing <span className="font-bold text-gray-900">{items.length}</span> of{" "}
-          <span className="font-bold text-gray-900">{meta?.totalRecords || items.length}</span> items
-        </div>
+      <div className="border-t border-gray-100 pt-8">
+        <Pagination
+          currentPage={pageNumberFromUrl}
+          totalPages={totalPages}
+          pageSize={pageSizeFromUrl}
+          totalRecords={meta?.totalRecords || items.length}
+          onPageChange={(nextPage) => updateQueryParams({ pageNumber: nextPage.toString() })}
+          onPageSizeChange={(nextSize) => updateQueryParams({ pageSize: nextSize.toString(), pageNumber: "1" })}
+        />
       </div>
 
       {/* Modals */}
