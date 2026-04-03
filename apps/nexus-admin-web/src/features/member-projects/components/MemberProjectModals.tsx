@@ -137,8 +137,8 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
   };
 
   const handleSelectUser = (user  : UserType) => {
-    setFormData((prev) => ({ ...prev, memberGdgId: user.gdg_id || "" }));
-    setSearchQuery(user.display_name);
+    setFormData((prev) => ({ ...prev, memberGdgId: user.gdgId || "" }));
+    setSearchQuery(user.displayName || user.firstName + " " + user.lastName || "Unnamed User");
     setShowDropdown(false);
   };
 

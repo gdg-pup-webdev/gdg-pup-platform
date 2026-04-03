@@ -114,6 +114,8 @@ export const AuthContextProvider = ({
     try {
       clearToken();
       setState({ status: STATUS.UNAUTHENTICATED, error: null });
+
+      console.log("logged out");
     } catch (error) {
       setState({
         status: STATUS.UNAUTHENTICATED,

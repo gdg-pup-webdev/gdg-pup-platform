@@ -1,19 +1,28 @@
 # =============================================================================
 # Docker Build & Push
 # =============================================================================
-# Trigger: push to deploy branches (or manual dispatch).
+# Trigger: after CI Build & Test succeeds (or manual dispatch).
 # Mode:    selective builds (only changed services)
+# Note:    always dispatches Deploy at the end, even if no builds ran.
 # =============================================================================
 
 name: Docker Build & Push
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI Build & Test"]
+    types: [completed]
     branches: [deploy-develop, staging, main]
   workflow_dispatch:
+    inputs:
+      head_branch:
+        description: "Branch to build & deploy (deploy-develop / staging / main)"
+        required: false
+        type: string
+        default: "deploy-develop"
 
 concurrency:
-  group: docker-${{ github.ref }}
+  group: docker-${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.head_branch || github.ref_name) || github.event.workflow_run.head_branch }}-${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
   cancel-in-progress: true
 
 env:
@@ -22,27 +31,23 @@ env:
 jobs:
   detect-changes:
     name: Detect Changes
-    runs-on: ubuntu-latest
-    outputs:
-      nexus-web: ${{ steps.detect.outputs.nexus-web }}
-      nexus-api: ${{ steps.detect.outputs.nexus-api }}
-      environment: ${{ steps.detect.outputs.environment }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Detect changes
-        id: detect
-        uses: ./.github/workflows/ci.detect-changes
-        with:
-          head-sha: ${{ github.sha }}
-          head-branch: ${{ github.ref_name }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && (github.event.workflow_run.head_branch == 'deploy-develop' || github.event.workflow_run.head_branch == 'staging' || github.event.workflow_run.head_branch == 'main')) }}
+    uses: ./.github/workflows/ci.detect-changes.yml
+    with:
+      head-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+      head-branch: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.head_branch || github.ref_name) || github.event.workflow_run.head_branch }}
 
   build-nexus-web:
     name: nexus-web
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.nexus-web == 'true' }}
+    environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets' || 'Dev Secrets' }}
+    # Always rebuild on release branch push; selective only for manual dispatch
+    if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
       - uses: ./.github/builds
         with:
           service: nexus-web
@@ -53,14 +58,19 @@ jobs:
           build-args: |
             NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
             NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_PUB_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_PUB_KEY }}
 
   build-nexus-api:
     name: nexus-api
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.nexus-api == 'true' }}
+    # Always rebuild on release branch push; selective only for manual dispatch
+    if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-api == 'true' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
       - uses: ./.github/builds
         with:
           service: nexus-api
@@ -68,3 +78,29 @@ jobs:
           dockerfile: apps/nexus-api/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
+
+  trigger-deploy:
+    name: Trigger Deploy
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-nexus-web, build-nexus-api]
+    # Run when detect-changes passed AND all builds either succeeded or were skipped (no failures)
+    if: ${{ always() && needs.detect-changes.result == 'success' && needs.build-nexus-web.result != 'failure' && needs.build-nexus-api.result != 'failure' }}
+    steps:
+      - name: Dispatch Deploy workflow
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          HEAD_BRANCH: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.head_branch || github.ref_name) || github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+        run: |
+          TARGET_ENV="dev"
+          if [[ "$HEAD_BRANCH" == "main" ]]; then TARGET_ENV="prod"
+          elif [[ "$HEAD_BRANCH" == "staging" ]]; then TARGET_ENV="staging"
+          fi
+
+          echo "Dispatching Deploy for branch=$HEAD_BRANCH sha=$HEAD_SHA env=$TARGET_ENV"
+          gh workflow run ci.deploy.yml \
+            --repo ${{ github.repository }} \
+            --ref dev \
+            --field target_environment="$TARGET_ENV" \
+            --field triggered_branch="$HEAD_BRANCH" \
+            --field triggered_sha="$HEAD_SHA"

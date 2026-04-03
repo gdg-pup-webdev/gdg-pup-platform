@@ -7,18 +7,19 @@ import { extractErrorMessage } from "@/lib/utils";
 export const useGetMemberRoles = (gdgId: string) => {
   return useQuery({
     queryKey: ["members", "roles", gdgId],
-    queryFn: async () => {
-      const res = await callEndpoint(
-        configs.nexusApiBaseUrl,
-        contract.api.v1.users.userId.roles.GET,
-        {
-          params: { userId: gdgId },
-        }
-      );
+    queryFn: async () : Promise<{ roles: string[] }> => {
+      throw new Error("This endpoint has not been implemented yet.");
+      // const res = await callEndpoint(
+      //   configs.nexusApiBaseUrl,
+      //   contract.api.v1.users.userId.roles.GET,
+      //   {
+      //     params: { userId: gdgId },
+      //   }
+      // );
 
-      if (res.status === 200) return res.body;
+      // if (res.status === 200) return res.body;
 
-      throw new Error(extractErrorMessage(res.body));
+      // throw new Error(extractErrorMessage(res.body));
     },
     enabled: !!gdgId,
   });
