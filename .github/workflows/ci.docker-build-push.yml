@@ -45,6 +45,8 @@ jobs:
     if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
       - uses: ./.github/builds
         with:
           service: nexus-web
@@ -64,6 +66,8 @@ jobs:
     if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-api == 'true' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
       - uses: ./.github/builds
         with:
           service: nexus-api
