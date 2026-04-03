@@ -41,6 +41,7 @@ jobs:
     name: nexus-web
     runs-on: ubuntu-latest
     needs: detect-changes
+    environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets' || 'Dev Secrets' }}
     # Always rebuild on release branch push; selective only for manual dispatch
     if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
@@ -57,6 +58,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
             NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_PUB_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_PUB_KEY }}
 
   build-nexus-api:
     name: nexus-api
