@@ -16,11 +16,46 @@ import {
   Stack,
 } from "@packages/spark-ui";
 import { STATUS, useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { MemberInfo } from '../../../../nexus-api/src/v1/modules/authentication/domain/TokenPayload';
 
 interface NavbarProps {
   transparent?: boolean;
   hideAuth?: boolean;
 }
+
+
+const NavbarAvatarWidget = () => {
+  const {decodedToken : user, status} = useAuthContext();
+
+//  href="/sparkmates"
+  return <>
+   {status === "checking" ? (
+                      <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
+                    ) : status === STATUS.AUTHENTICATED ? (
+                      <div className="flex justify-center items-center hover:opacity-80 hover:scale-105 transition-all duration-200">
+                        <Avatar
+                          src={
+                            // user?.memberInfo.avatarUrl || 
+                            // user.user_metadata?.avatar_url || 
+                            ASSETS.AUTH.AVATAR_DEFAULT}
+                          // alt={user.user_metadata?.full_name || user.email || "User"}
+                          // size="sm"
+                          // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
+                        />
+                      </div>
+                    ) : (
+                      <Link href="/signin" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
+                        <Avatar
+                          size="sm"
+                          className="opacity-70"
+                        />
+                      </Link>
+                    )}
+  
+  </>
+}
+
+
 
 export const Navbar: React.FC<NavbarProps> = ({
   transparent = false,
@@ -35,6 +70,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const user = decodedToken;
 
 
   // Click outside handler to close mobile menu and dropdowns
@@ -208,27 +245,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       </Button>
                     </Link>
 
-                    {status === "checking" ? (
-                      <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
-                    ) : status === STATUS.AUTHENTICATED ? (
-                      <Link href="/sparkmates" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
-                        <Avatar
-                          src={
-                            // user.user_metadata?.avatar_url || 
-                            ASSETS.AUTH.AVATAR_DEFAULT}
-                          // alt={user.user_metadata?.full_name || user.email || "User"}
-                          // size="sm"
-                          // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
-                        />
-                      </Link>
-                    ) : (
-                      <Link href="/signin" className="hover:opacity-80 hover:scale-105 transition-all duration-200">
-                        <Avatar
-                          size="sm"
-                          className="opacity-70"
-                        />
-                      </Link>
-                    )}
+                   <NavbarAvatarWidget/>
                   </Inline>
                 )}
               </Inline>
