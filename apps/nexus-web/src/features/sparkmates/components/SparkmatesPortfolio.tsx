@@ -17,7 +17,7 @@ import { useActivateSparkmatesCard } from "../hooks/useActivateSparkmatesCard";
 import { useSparkmateProfile } from "../hooks/useSparkmateProfile";
 import { useSuggestedSparkmates } from "../hooks/useSuggestedSparkmates";
 import type { SparkmatesSource } from "../types";
-import { ASSETS } from "../../../../../nexus-admin-web/src/lib/constants/assets";
+import { ASSETS } from "@/lib/constants/assets";
 
 const addIcon = (
   <svg

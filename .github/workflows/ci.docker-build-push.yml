@@ -1,19 +1,21 @@
 # =============================================================================
 # Docker Build & Push
 # =============================================================================
-# Trigger: push to deploy branches (or manual dispatch).
+# Trigger: after CI Build & Test succeeds (or manual dispatch).
 # Mode:    selective builds (only changed services)
 # =============================================================================
 
 name: Docker Build & Push
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI Build & Test"]
+    types: [completed]
     branches: [deploy-develop, staging, main]
   workflow_dispatch:
 
 concurrency:
-  group: docker-${{ github.ref }}
+  group: docker-${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}-${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
   cancel-in-progress: true
 
 env:
@@ -22,19 +24,11 @@ env:
 jobs:
   detect-changes:
     name: Detect Changes
-    runs-on: ubuntu-latest
-    outputs:
-      nexus-web: ${{ steps.detect.outputs.nexus-web }}
-      nexus-api: ${{ steps.detect.outputs.nexus-api }}
-      environment: ${{ steps.detect.outputs.environment }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Detect changes
-        id: detect
-        uses: ./.github/workflows/ci.detect-changes
-        with:
-          head-sha: ${{ github.sha }}
-          head-branch: ${{ github.ref_name }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && (github.event.workflow_run.head_branch == 'deploy-develop' || github.event.workflow_run.head_branch == 'staging' || github.event.workflow_run.head_branch == 'main')) }}
+    uses: ./.github/workflows/ci.detect-changes.yml
+    with:
+      head-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+      head-branch: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.event.workflow_run.head_branch }}
 
   build-nexus-web:
     name: nexus-web
