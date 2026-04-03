@@ -115,10 +115,10 @@ export function PublicSkillsAndLinksSection({
   portfolio: SparkmatesProfile | null;
   onOpenExternal: (url: string) => void;
 }) {
-  const skills = portfolio?.portfolio?.technical_skills ?? [];
-  const interests = portfolio?.portfolio?.learning_interests ?? [];
-  const tools = portfolio?.portfolio?.tools_and_technologies ?? [];
-  const otherLinks = portfolio?.portfolio?.other_links ?? [];
+  const skills = portfolio?.technicalSkills ?? [];
+  const interests = portfolio?.learningInterests ?? [];
+  const tools = portfolio?.toolsAndTechnologies ?? [];
+  const otherLinks = portfolio?.otherLinks ?? [];
 
   return (
     <section className="space-y-4 pt-6">

@@ -72,24 +72,24 @@ export function ProfileOwnerView({
     );
   }
 
-  const requiresActivation = profile.source === "nfc_card";
-  const showActivationGate =
-    requiresActivation && profile.status !== "activated";
+  // const requiresActivation = profile.source === "nfc_card";
+  // const showActivationGate =
+  //   requiresActivation && profile.status !== "activated";
 
-  if (showActivationGate) {
-    return (
-      <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-        <div className="mx-auto max-w-2xl rounded-3xl border border-white/15 bg-white/5 p-8 text-center">
-          <Text variant="heading-5" className="text-white">
-            Sparkmates Profile Not Active
-          </Text>
-          <Text variant="body" className="mt-2 text-[#C1C7CD]">
-            This digital portfolio is not activated yet.
-          </Text>
-        </div>
-      </div>
-    );
-  }
+  // if (showActivationGate) {
+  //   return (
+  //     <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
+  //       <div className="mx-auto max-w-2xl rounded-3xl border border-white/15 bg-white/5 p-8 text-center">
+  //         <Text variant="heading-5" className="text-white">
+  //           Sparkmates Profile Not Active
+  //         </Text>
+  //         <Text variant="body" className="mt-2 text-[#C1C7CD]">
+  //           This digital portfolio is not activated yet.
+  //         </Text>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <CosmosParticles

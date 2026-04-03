@@ -106,10 +106,10 @@ export const MemberRoleAssignment: React.FC = () => {
           <div className="space-y-2">
             <h3 className="font-semibold text-sm text-gray-500 uppercase">Assigned Roles</h3>
             <div className="flex flex-wrap gap-2">
-              {memberRoles?.data?.map((role: any) => (
-                <span key={role.name} className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
-                  {role.name}
-                  <button onClick={() => handleRemoveRole(role.name)}><X size={14} /></button>
+              {memberRoles?.roles.map((role ) => (
+                <span key={role} className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
+                  {role}
+                  <button onClick={() => handleRemoveRole(role)}><X size={14} /></button>
                 </span>
               ))}
             </div>
@@ -118,8 +118,8 @@ export const MemberRoleAssignment: React.FC = () => {
             <h3 className="font-semibold text-sm text-gray-500 uppercase">Available Roles</h3>
             <div className="grid grid-cols-2 gap-2">
               {roles.map((role: any) => (
-                <Button key={role.id} variant="outline" onClick={() => handleAssignRole(role.name)}>
-                  {role.name}
+                <Button key={role.id} variant="outline" onClick={() => handleAssignRole(role)}>
+                  {role}
                 </Button>
               ))}
             </div>
