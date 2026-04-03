@@ -54,14 +54,14 @@ export function PartnershipSection() {
     <div className="bg-[#010B1D] relative w-full overflow-hidden pt-60 pb-48 font-['Google_Sans',sans-serif]">
       {/* Stars Background */}
       <div className="absolute inset-x-0 bottom-0 pointer-events-none opacity-40 h-[100%] w-full z-0">
-         <div 
-           className="absolute inset-0 w-full h-full opacity-60"
-           style={{
-             backgroundImage: `url(${ASSETS.LEADERBOARD.STARS_BG})`,
-             backgroundRepeat: "repeat",
-             backgroundSize: "cover"
-           }}
-         />
+        <div
+          className="absolute inset-0 w-full h-full opacity-60"
+          style={{
+            backgroundImage: `url(${ASSETS.LEADERBOARD.STARS_BG})`,
+            backgroundRepeat: "repeat",
+            backgroundSize: "cover"
+          }}
+        />
       </div>
 
       {/* Figma Perfect Background Elements Wrapper */}
@@ -91,13 +91,13 @@ export function PartnershipSection() {
             <img src={ASSETS.PARTNERS.DECOR_ASSET_1} alt="" width={329} height={329} className="opacity-20 object-contain" />
           </div>
         </div>
-        
+
         {/* Asset1.3 — far left, opacity 20% (node 81:2259) */}
         <div className="absolute" style={{ left: -327, top: 160, width: 543, height: 543 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={ASSETS.PARTNERS.DECOR_ASSET_2} alt="" className="w-full h-full opacity-20 object-contain" />
         </div>
-        
+
       </div>
 
       {/* Bottom-left decorative elements — positioned to peek from left edge */}
@@ -108,7 +108,7 @@ export function PartnershipSection() {
           <img src={ASSETS.PARTNERS.DECOR_ELEMENT_3} alt="" width={212} height={212} style={{ opacity: 0.3 }} />
         </div>
       </div>
-      
+
       {/* Small Element SVG (node 81:2263) */}
       <div className="absolute flex items-center justify-center pointer-events-none z-[1]" style={{ left: 0, bottom: 160, width: 95.4, height: 95.4 }}>
         <div style={{ transform: "scaleY(-1) rotate(-168.31deg)" }}>
@@ -122,8 +122,8 @@ export function PartnershipSection() {
           {/* Section 1 — Hero */}
           <FadeInSection className="mb-32 flex flex-col items-center w-full">
             <Stack align="center" style={{ gap: "24px" }} className="w-full">
-              <h1 className="text-center font-bold text-[60px] leading-[1.2] w-full tracking-normal">
-                <span className="text-white">Innovation Through</span><br/>
+              <h1 className="text-center font-bold text-[50px] sm:text-[48px] md:text-[60px] leading-[1.2] w-full tracking-normal">
+                <span className="text-white">Innovation Through</span><br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A]">Collaboration</span>
               </h1>
 
@@ -131,7 +131,7 @@ export function PartnershipSection() {
                 <Text
                   variant="body"
                   align="center"
-                  className="text-white text-[24px] leading-[1.5]"
+                  className="text-white text-[20px] sm:text-[18px] md:text-[24px] leading-[1.5]"
                 >
                   We collaborate with forward-thinking organizations to foster
                   innovation, deliver meaningful programs, and bridge the gap
@@ -185,7 +185,7 @@ export function PartnershipSection() {
 
               {/* eslint-disable @next/next/no-img-element */}
               <div
-                className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4"
+                className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
               >
                 {/* ROW 1 — No white backgrounds */}
                 <div className="flex items-center justify-center relative h-[60px] sm:h-[80px]">
@@ -245,14 +245,14 @@ export function PartnershipSection() {
 
           {/* Section 4 — CTA Card */}
           <FadeInSection delay={0.2} className="w-full">
-            <div className="flex items-center justify-between p-[50px] relative w-full flex-wrap xl:flex-nowrap rounded-[28px]" style={{ gap: "20px" }}>
+            <div className="flex flex-col-reverse xl:flex-row items-center xl:items-center xl:justify-between p-6 sm:p-[50px] relative w-full rounded-[28px]" style={{ gap: "20px" }}>
               {/* Content */}
-              <div className="flex flex-col items-start shrink-0 z-10 w-full xl:w-auto" style={{ gap: "23px", maxWidth: "648px" }}>
-                <h2 className="font-['Roboto',sans-serif] font-bold text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
+              <div className="flex flex-col items-center xl:items-start text-center xl:text-left shrink-0 z-10 w-full xl:w-auto" style={{ gap: "23px", maxWidth: "648px" }}>
+                <h2 className="font-['Roboto',sans-serif] font-bold text-[36px] sm:text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
                   Ready to Partner With Us?
                 </h2>
-                
-                <p className="text-[20px] leading-[1.5] text-white">
+
+                <p className="text-[16px] sm:text-[20px] leading-[1.5] text-white">
                   Let&apos;s build something impactful together. By partnering
                   with GDG PUP, you gain access to a dynamic community of
                   aspiring developers, innovators, and changemakers eager to
@@ -275,7 +275,7 @@ export function PartnershipSection() {
               </div>
 
               {/* Cirby Mascot */}
-              <div className="relative shrink-0 flex items-center justify-center w-full xl:w-[411px] h-[411px] z-10 mt-10 xl:mt-0">
+              <div className="relative shrink-0 flex items-center justify-center w-[250px] sm:w-[300px] xl:w-[411px] h-[250px] sm:h-[300px] xl:h-[411px] z-10">
                 <Image
                   src={ASSETS.PARTNERS.CIRBY_STICKER}
                   alt="Cirby Mascot"
