@@ -186,8 +186,11 @@ export const useUsers = (pageNumber = 1, pageSize = 20) => {
   return useQuery({
     queryKey: ["users", pageNumber, pageSize],
     queryFn: async () => {
-      const res = await callEndpoint(API_URL, contract.api.v1.users.GET, {
-        query: { pageNumber, pageSize, sortBy: "name", sortDirection: "asc" },
+      const res = await callEndpoint(API_URL, contract.api.v1.gdgmembers.GET, {
+        query: { pageNumber, pageSize,
+          //  sortBy: "name",
+            // sortDirection: "asc"
+           },
       });
       if (res.status !== 200) throw new Error(res.body.message);
       return res;
@@ -199,8 +202,8 @@ export const useSearchUsers = (query: string) => {
   return useQuery({
     queryKey: ["users", "search", query],
     queryFn: async () => {
-      const res = await callEndpoint(API_URL, contract.api.v1.users.search.GET, {
-        query: { q: query, limit: "10" },
+      const res = await callEndpoint(API_URL, contract.api.v1.gdgmembers.GET, {
+        query: { search: query, pageNumber: 1, pageSize: 10 },
       });
       if (res.status !== 200) throw new Error(res.body.message);
       return res;

@@ -170,7 +170,7 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
           <div className="divide-y divide-gray-100 rounded-sm border border-gray-100 bg-white shadow-sm max-h-[400px] overflow-y-auto">
             {users.map((user) => (
               <button
-                key={user.id}
+                key={user.gdgId}
                 onClick={() => {
                   onSelect(user);
                   onClose();
@@ -178,8 +178,8 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
                 className="flex w-full items-center gap-3 p-4 text-left hover:bg-teal-50 transition-colors"
               >
                 <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
-                  {user.avatar_url ? (
-                    <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-gray-400">
                       <User size={20} />
@@ -187,11 +187,11 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-gray-900 truncate">{user.display_name}</p>
+                  <p className="text-sm font-bold text-gray-900 truncate">{user.displayName}</p>
                   <p className="text-xs text-gray-500 truncate">{user.email}</p>
                 </div>
                 <span className="text-[10px] font-mono text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border">
-                  {user.id.slice(0, 8)}...
+                  {user.gdgId.slice(0, 8)}...
                 </span>
               </button>
             ))}
@@ -540,8 +540,8 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
         onClose={() => setIsUserSearchOpen(false)}
         onSelect={(users) => { 
           console.log(users); 
-          setFormData({ ...formData, author_id: users.gdg_id });
-          setSelectedAuthorName(users.display_name || users.first_name + " " + users.last_name);
+          setFormData({ ...formData, author_id: users.gdgId });
+          setSelectedAuthorName(users.displayName || users.firstName + " " + users.lastName);
         }}
       />
     </>

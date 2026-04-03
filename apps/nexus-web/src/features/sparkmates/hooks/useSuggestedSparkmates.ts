@@ -126,24 +126,22 @@ function getSimilarityScore(
 
 export function useSuggestedSparkmates({
   search,
-  viewerGdgId,
-  viewerPortfolio,
+  viewerGdgId, 
 }: {
   search: string;
-  viewerGdgId?: string;
-  viewerPortfolio: SparkmatesPortfolio | null;
+  viewerGdgId?: string; 
 }) {
   return useMemo(() => {
     const searchTerm = search.trim().toLowerCase();
 
     const sorted = [...DUMMY_SUGGESTED_SPARKMATES]
-      .filter((candidate) => candidate.gdgId !== viewerGdgId)
-      .map((candidate) => ({
-        candidate,
-        score: getSimilarityScore(viewerPortfolio, candidate),
-      }))
-      .sort((left, right) => right.score - left.score)
-      .map((entry) => entry.candidate);
+      // .filter((candidate) => candidate.gdgId !== viewerGdgId)
+      // .map((candidate) => ({
+      //   candidate,
+      //   score: getSimilarityScore(viewerPortfolio, candidate),
+      // }))
+      // .sort((left, right) => right.score - left.score)
+      // .map((entry) => entry.candidate);
 
     if (!searchTerm) {
       return sorted;
@@ -153,5 +151,5 @@ export function useSuggestedSparkmates({
       const haystack = `${candidate.name} ${candidate.bio} ${candidate.programYear}`.toLowerCase();
       return haystack.includes(searchTerm);
     });
-  }, [search, viewerGdgId, viewerPortfolio]);
+  }, [search, viewerGdgId]);
 }
