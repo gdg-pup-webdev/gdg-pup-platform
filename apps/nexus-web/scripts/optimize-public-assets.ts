@@ -58,7 +58,7 @@ async function optimizeRaster(asset: RasterAssetConfig) {
   const outputPath = toAbsolutePublicPath(asset.target);
 
   if (!fs.existsSync(inputPath)) {
-    throw new Error(`Missing source file: ${asset.source}`);
+    return null;
   }
 
   const beforeSize = fs.statSync(inputPath).size;
@@ -90,7 +90,7 @@ function optimizeSvg(relativePath: string) {
   const absolutePath = toAbsolutePublicPath(relativePath);
 
   if (!fs.existsSync(absolutePath)) {
-    throw new Error(`Missing SVG file: ${relativePath}`);
+    return null;
   }
 
   const beforeSize = fs.statSync(absolutePath).size;
@@ -122,12 +122,18 @@ async function main() {
   const rasterResults = [];
   for (const asset of rasterAssets) {
     const result = await optimizeRaster(asset);
-    rasterResults.push(result);
+    if (result) {
+      rasterResults.push(result);
+    } else {
+      console.warn(`- skipped missing source: ${asset.source}`);
+    }
   }
 
   console.log("Optimizing SVG assets...");
 
-  const svgResults = svgAssets.map((svg) => optimizeSvg(svg));
+  const svgResults = svgAssets
+    .map((svg) => optimizeSvg(svg))
+    .filter((result) => result !== null);
 
   console.log("\nRaster summary:");
   for (const item of rasterResults) {
