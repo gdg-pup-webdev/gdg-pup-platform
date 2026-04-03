@@ -1,9 +1,9 @@
 # =============================================================================
 # Deploy to Cloud Run
 # =============================================================================
-# Trigger: after Docker Build & Push succeeds.
+# Trigger: after Docker Build & Push succeeds — always deploys all services.
 # Manual:  workflow_dispatch for branch testing with selectable environment.
-# Mode:    Selective deployments (only changed services)
+# Mode:    Always deploy on workflow_run; selective on workflow_dispatch (path filter + force_deploy).
 # Logic:   deploy → .github/deployments/action.yml
 # Note:    never cancel in-progress deploys (cancel-in-progress: false)
 # Note:    Storybook deploy is intentionally disabled until Cloud Run resources
@@ -59,7 +59,7 @@ jobs:
   deploy-nexus-web:
     name: nexus-web
     needs: detect-changes
-    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && needs.detect-changes.outputs.nexus-web == 'true') || (github.event_name == 'workflow_dispatch' && (inputs.force_deploy || needs.detect-changes.outputs.nexus-web == 'true')) }}
+    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && (inputs.force_deploy || needs.detect-changes.outputs.nexus-web == 'true')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
   deploy-nexus-api:
     name: nexus-api
     needs: detect-changes
-    if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && needs.detect-changes.outputs.nexus-api == 'true') || (github.event_name == 'workflow_dispatch' && (inputs.force_deploy || needs.detect-changes.outputs.nexus-api == 'true')) }}
+    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && (inputs.force_deploy || needs.detect-changes.outputs.nexus-api == 'true')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
