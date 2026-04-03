@@ -10,8 +10,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { checkNexusHealth } from '../api/checkNexusHealth';
-import { checkIdentityHealth } from '../api/checkIdentityHealth';
+import { checkNexusHealth } from '../api/checkNexusHealth'; 
 import { HealthCheckResponse, HealthCheckException } from '../types';
 
 /**
@@ -112,79 +111,4 @@ export function useNexusHealthCheck(): UseHealthCheckReturn {
     isFetched,
   };
 }
-
-/**
- * Custom hook to check Identity API health
- * 
- * By default, this hook does NOT automatically run the health check.
- * You must call `refetch()` to trigger the check (e.g., on button click).
- * 
- * @returns UseHealthCheckReturn - Health data, loading state, and error info
- * 
- * @example
- * ```typescript
- * function IdentityHealthCheck() {
- *   const { data, isLoading, error, refetch } = useIdentityHealthCheck();
- * 
- *   return (
- *     <div>
- *       <button onClick={refetch}>Check Health</button>
- *       {isLoading && <Spinner />}
- *       {error && <ErrorMessage message={error} />}
- *       {data && <p>Status: {data.status}</p>}
- *     </div>
- *   );
- * }
- * ```
- */
-export function useIdentityHealthCheck(): UseHealthCheckReturn {
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    isFetched,
-  } = useQuery({
-    // Unique key for this query
-    queryKey: ['health-check', 'identity'],
-    
-    // The function that performs the health check
-    queryFn: checkIdentityHealth,
-    
-    // Don't run automatically - wait for manual trigger
-    enabled: false,
-    
-    // Don't retry on failure
-    retry: false,
-    
-    // Don't cache for long
-    staleTime: 30 * 1000, // 30 seconds
-    gcTime: 60 * 1000, // 1 minute
-  });
-
-  // Extract error information if the check failed
-  let errorMessage: string | null = null;
-  let errorType: HealthCheckException['type'] | null = null;
-
-  if (error) {
-    if (error instanceof HealthCheckException) {
-      errorMessage = error.message;
-      errorType = error.type;
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-      errorType = 'UNKNOWN_ERROR';
-    } else {
-      errorMessage = 'An unknown error occurred';
-      errorType = 'UNKNOWN_ERROR';
-    }
-  }
-
-  return {
-    data: data || null,
-    isLoading,
-    error: errorMessage,
-    errorType,
-    refetch,
-    isFetched,
-  };
-}
+  
