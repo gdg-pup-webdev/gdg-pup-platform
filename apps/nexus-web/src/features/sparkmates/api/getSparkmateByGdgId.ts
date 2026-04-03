@@ -1,7 +1,7 @@
 import { contract } from "@packages/nexus-api-contracts";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { configs } from "@/configs/servers.config";
-import type { SparkmateApiSuccess, SparkmateProfile, SparkmatesSource } from "../types";
+import type { SparkmatesProfile, SparkmatesSource } from "../types"; 
 
 export async function getSparkmateByGdgId({
   gdgId,
@@ -9,7 +9,7 @@ export async function getSparkmateByGdgId({
 }: {
   gdgId: string;
   source?: SparkmatesSource;
-}): Promise<SparkmateProfile> {
+}) : Promise<SparkmatesProfile> { 
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.sparkmates.gdgId.GET,
@@ -22,7 +22,7 @@ export async function getSparkmateByGdgId({
   );
 
   if (result.status === 200 && result.body) {
-    return (result.body as SparkmateApiSuccess<SparkmateProfile>).data;
+    return (result.body ).data;
   }
 
   const message =

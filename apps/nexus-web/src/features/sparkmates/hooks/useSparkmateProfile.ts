@@ -11,7 +11,7 @@ export function useSparkmateProfile({
 }) {
   return useQuery({
     queryKey: ["sparkmates-profile", gdgId, source],
-    queryFn: () => getSparkmateByGdgId({ gdgId, source }),
+    queryFn: async () => getSparkmateByGdgId({ gdgId, source }),
     enabled: Boolean(gdgId),
   });
 }
