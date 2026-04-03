@@ -40,8 +40,12 @@ export abstract class IOTPService {
 export abstract class IRbacService {
   abstract listPermissionsOfUser(email: string): Promise<Permission[]>;
   abstract listRolesOfUser(email: string): Promise<string[]>;
+
+
+  abstract listPermissionsAndRolesByGdgId(gdgId: string): Promise<{ permissions: Permission[], roles: string[] }>;
 }
 
 export abstract class IGdgMemberService {
   abstract getMemberInfoByEmail(email: string): Promise<MemberInfo>;
+  abstract getMemberInfoByGdgId(gdgId: string): Promise<MemberInfo>;
 }
