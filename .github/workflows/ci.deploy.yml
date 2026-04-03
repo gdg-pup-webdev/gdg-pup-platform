@@ -11,7 +11,7 @@
 # =============================================================================
 
 name: Deploy [Environment]
-run-name: Deploy [${{ github.event.inputs.target_environment }}] @ ${{ github.event.inputs.triggered_branch || github.event.inputs.test_ref || github.ref_name }}
+run-name: Deploy [${{ github.event.inputs.target_environment }}] @ ${{ github.event.inputs.triggered_branch || github.event.inputs.test_ref || github.ref_name }} (branch)
 
 on:
   workflow_dispatch:
