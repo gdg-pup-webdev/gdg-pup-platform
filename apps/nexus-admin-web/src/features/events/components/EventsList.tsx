@@ -7,7 +7,6 @@ import { useDeleteEvent } from "../hooks/useDeleteEvent";
 import { useCreateEvent } from "../hooks/useCreateEvent";
 import { useUpdateEvent } from "../hooks/useUpdateEvent";
 import { Event, EventInsert, EventUpdate } from "../types";
-import { Pagination } from "@/components/admin/Pagination";
 import { EventFormModal, EventDetailsModal, DeleteConfirmModal, BevyEventSearchModal } from "./EventModals";
 import { EventCard } from "./EventCard";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
@@ -16,8 +15,11 @@ import { toast } from "react-toastify";
 import { useSyncAllEventToBevy } from "../hooks/useSyncAllEventToBevy";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";
-import { SearchInput } from "@/components/ui/SearchInput";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 
 export const EventsList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -210,54 +212,8 @@ export const EventsList: React.FC = () => {
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col items-start justify-between gap-4 md:flex-col">
-          <SearchInput
-            value={searchQuery}
-            onValueChange={setSearchQuery}
-            placeholder="Search events..."
-            accent="teal"
-            containerClassName="w-full max-w-sm"
-          />
-          <div className="flex w-full items-center gap-2 md:w-auto">
-            <AdminActionButton
-              onClick={handleSyncAllToBevy}
-              disabled={syncAllMutation.isPending}
-              variant="brandOutline"
-              className="flex-1 md:flex-none"
-            >
-              {syncAllMutation.isPending ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" />
-                  <span className="ml-1">Syncing...</span>
-                </>
-              ) : (
-                <span>Sync All to Bevy</span>
-              )}
-            </AdminActionButton>
-            <AdminActionButton
-              onClick={handleCreateFromBevy}
-              variant="brandOutline"
-              className="flex-1 md:flex-none"
-            >
-              Import from Bevy
-            </AdminActionButton>
-            <AdminActionButton
-              onClick={handleCreate}
-              variant="brand"
-              className="flex-1 md:flex-none"
-            >
-              <Plus size={18} />
-              Create Event
-            </AdminActionButton>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3">
+  const filtersSection = (
+    <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 mr-2">
             <Filter size={12} />
             Filter by:
@@ -419,68 +375,116 @@ export const EventsList: React.FC = () => {
             </button>
           )}
         </div>
-      </div>
+  );
 
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
-
-      {/* Grid of Cards */}
-      {filteredEvents.length > 0 ? (
-        <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-200 ${isFetching ? "opacity-50" : "opacity-100"}`}>
-          {filteredEvents.map((event: Event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDeleteFromCard}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <Calendar size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery || filters.teamId || filters.type || filters.teamName ? "No matching events found" : "No events found"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchQuery || filters.teamId || filters.type || filters.teamName ? "Try adjusting your filters." : "Get started by creating your first community event."}
-          </p>
-          {(searchQuery || filters.teamId || filters.type || filters.teamName || filters.year) ? (
-            <AdminActionButton
-              onClick={() => {
-                setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
-                setLocalType("");
-                setLocalTeamName("");
-                setLocalYear("");
-                setSelectedTeamName("");
-                setSearchQuery("");
-              }}
-              variant="dark"
-              size="sm"
-              className="mt-6"
-            >
-              Clear Filters
-            </AdminActionButton>
+  return (
+    <>
+      <AdminListScaffold
+        search={
+          <AdminSearchSection
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+            placeholder="Search events..."
+            accent="teal"
+            actions={
+              <>
+                <AdminActionButton
+                  onClick={handleSyncAllToBevy}
+                  disabled={syncAllMutation.isPending}
+                  variant="brandOutline"
+                  className="flex-1 md:flex-none"
+                >
+                  {syncAllMutation.isPending ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span className="ml-1">Syncing...</span>
+                    </>
+                  ) : (
+                    <span>Sync All to Bevy</span>
+                  )}
+                </AdminActionButton>
+                <AdminActionButton
+                  onClick={handleCreateFromBevy}
+                  variant="brandOutline"
+                  className="flex-1 md:flex-none"
+                >
+                  Import from Bevy
+                </AdminActionButton>
+                <AdminActionButton
+                  onClick={handleCreate}
+                  variant="brand"
+                  className="flex-1 md:flex-none"
+                >
+                  <Plus size={18} />
+                  Create Event
+                </AdminActionButton>
+              </>
+            }
+          />
+        }
+        filters={filtersSection}
+        content={
+          filteredEvents.length > 0 ? (
+            <AdminCardGrid className={`transition-opacity duration-200 ${isFetching ? "opacity-50" : "opacity-100"}`}>
+              {filteredEvents.map((event: Event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onView={handleView}
+                  onEdit={handleEdit}
+                  onDelete={handleDeleteFromCard}
+                />
+              ))}
+            </AdminCardGrid>
           ) : (
-            <AdminActionButton
-              onClick={handleCreate}
-              variant="teal"
-              size="sm"
-              className="mt-6"
-            >
-              Create Event
-            </AdminActionButton>
-          )}
-        </div>
-      )}
+            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+              <Calendar size={48} className="mb-4 text-gray-300" />
+              <h3 className="text-lg font-bold text-gray-900">
+                {searchQuery || filters.teamId || filters.type || filters.teamName ? "No matching events found" : "No events found"}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {searchQuery || filters.teamId || filters.type || filters.teamName ? "Try adjusting your filters." : "Get started by creating your first community event."}
+              </p>
+              {(searchQuery || filters.teamId || filters.type || filters.teamName || filters.year) ? (
+                <AdminActionButton
+                  onClick={() => {
+                    setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
+                    setLocalType("");
+                    setLocalTeamName("");
+                    setLocalYear("");
+                    setSelectedTeamName("");
+                    setSearchQuery("");
+                  }}
+                  variant="dark"
+                  size="sm"
+                  className="mt-6"
+                >
+                  Clear Filters
+                </AdminActionButton>
+              ) : (
+                <AdminActionButton
+                  onClick={handleCreate}
+                  variant="teal"
+                  size="sm"
+                  className="mt-6"
+                >
+                  Create Event
+                </AdminActionButton>
+              )}
+            </div>
+          )
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
+      />
 
       {/* Modals */}
       <EventFormModal
@@ -513,6 +517,6 @@ export const EventsList: React.FC = () => {
         onSelect={handleSelectBevyEvent}
         isSubmitting={createFromBevyMutation.isPending}
       />
-    </div>
+    </>
   );
 };

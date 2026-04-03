@@ -30,11 +30,11 @@ import { useGetBevyEvents } from "@/features/bevy-events/hooks/useGetBevyEvents"
 import { useGetBevyEventDetail } from "@/features/bevy-events/hooks/useGetBevyEventDetail";
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
-import { Pagination } from "@/components/admin/Pagination";
 import { WireframeUploadImage } from "@/components/wireframeUi/WireframeUploadImage";
 import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 
 // ==========================================
 // Bevy Event Search Modal
@@ -108,7 +108,7 @@ export function BevyEventSearchModal({
               ))}
             </div>
 
-            <Pagination
+            <AdminPaginationSection
               currentPage={page}
               totalPages={totalPages}
               pageSize={pageSize}

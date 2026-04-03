@@ -6,12 +6,14 @@ import { TeamCard } from "./TeamCard";
 import { TeamFormModal, TeamDetailsModal } from "./TeamModals";
 import { useTeams, useCreateTeam, useUpdateTeam, useDeleteTeam } from "../api/teams";
 import { Team, TeamInsert, TeamUpdate } from "../types";
-import { Pagination } from "@/components/admin/Pagination";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";
-import { SearchInput } from "@/components/ui/SearchInput";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { toast } from "react-toastify";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 
 export function TeamList() {
   const [page, setPage] = useState(1);
@@ -91,78 +93,80 @@ export function TeamList() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <SearchInput
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          placeholder="Search teams..."
-          accent="teal"
-          containerClassName="w-full max-w-sm"
-        />
-        <AdminActionButton
-          onClick={handleCreate}
-          variant="brand"
-          className="w-full md:w-auto"
-        >
-          <Plus size={18} />
-          Create Team
-        </AdminActionButton>
-      </div>
-
-      {/* Grid of Cards */}
-      {filteredTeams.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredTeams.map((team: Team) => (
-            <TeamCard
-              key={team.id}
-              team={team}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <Users size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery ? "No matching teams found" : "No teams found"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchQuery ? "Try adjusting your search terms." : "Get started by creating your first GDG team."}
-          </p>
-          {searchQuery ? (
-            <AdminActionButton
-              onClick={() => setSearchQuery("")}
-              variant="dark"
-              size="sm"
-              className="mt-6"
-            >
-              Clear Search
-            </AdminActionButton>
+    <>
+      <AdminListScaffold
+        search={
+          <AdminSearchSection
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+            placeholder="Search teams..."
+            accent="teal"
+            actions={
+              <AdminActionButton
+                onClick={handleCreate}
+                variant="brand"
+                className="w-full md:w-auto"
+              >
+                <Plus size={18} />
+                Create Team
+              </AdminActionButton>
+            }
+          />
+        }
+        content={
+          filteredTeams.length > 0 ? (
+            <AdminCardGrid>
+              {filteredTeams.map((team: Team) => (
+                <TeamCard
+                  key={team.id}
+                  team={team}
+                  onView={handleView}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </AdminCardGrid>
           ) : (
-            <AdminActionButton
-              onClick={handleCreate}
-              variant="teal"
-              size="sm"
-              className="mt-6"
-            >
-              Create Team
-            </AdminActionButton>
-          )}
-        </div>
-      )}
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
+            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+              <Users size={48} className="mb-4 text-gray-300" />
+              <h3 className="text-lg font-bold text-gray-900">
+                {searchQuery ? "No matching teams found" : "No teams found"}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {searchQuery ? "Try adjusting your search terms." : "Get started by creating your first GDG team."}
+              </p>
+              {searchQuery ? (
+                <AdminActionButton
+                  onClick={() => setSearchQuery("")}
+                  variant="dark"
+                  size="sm"
+                  className="mt-6"
+                >
+                  Clear Search
+                </AdminActionButton>
+              ) : (
+                <AdminActionButton
+                  onClick={handleCreate}
+                  variant="teal"
+                  size="sm"
+                  className="mt-6"
+                >
+                  Create Team
+                </AdminActionButton>
+              )}
+            </div>
+          )
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
       />
 
       {/* Modals */}
@@ -179,6 +183,6 @@ export function TeamList() {
         onClose={() => setIsDetailsModalOpen(false)}
         team={selectedTeam}
       />
-    </div>
+    </>
   );
 }

@@ -50,7 +50,7 @@ export function Pagination({
     const effectiveTotalPages = Math.max(1, totalPages);
 
     return (
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             {/* Page size selector */}
             <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">Rows per page:</span>

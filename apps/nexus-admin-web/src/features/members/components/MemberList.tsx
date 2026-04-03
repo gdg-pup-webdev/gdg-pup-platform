@@ -5,13 +5,15 @@ import { User } from "lucide-react";
 import { useListMembers } from "../hooks/useListMembers";
 import { useUpdateMember } from "../hooks/useUpdateMembers";
 import { GdgMember, GdgMemberUpdate } from "../types";
-import { Pagination } from "@/components/admin/Pagination";
 import { MemberDetailsModal, MemberFormModal } from "./MemberModals";
 import { MemberCard } from "./MemberCard";
 import { toast } from "react-toastify";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";
-import { SearchInput } from "@/components/ui/SearchInput";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 
 export const MemberList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -84,51 +86,51 @@ export const MemberList: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <SearchInput
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          placeholder="Search members..."
-          accent="blue"
-          containerClassName="w-full max-w-sm"
-        />
-      </div>
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
+    <>
+      <AdminListScaffold
+        search={
+          <AdminSearchSection
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+            placeholder="Search members..."
+            accent="blue"
+          />
+        }
+        content={
+          filteredMembers.length > 0 ? (
+            <AdminCardGrid>
+              {filteredMembers.map((member: GdgMember) => (
+                <MemberCard
+                  key={member.gdgId}
+                  member={member}
+                  onClick={handleView}
+                  onEdit={handleEdit}
+                />
+              ))}
+            </AdminCardGrid>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+              <User size={48} className="mb-4 text-gray-300" />
+              <h3 className="text-lg font-bold text-gray-900">
+                {searchQuery ? "No matching members found" : "No members found"}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {searchQuery ? "Try adjusting your search terms." : "No member members have been created yet."}
+              </p>
+            </div>
+          )
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
       />
-
-      {/* Grid of Cards */}
-      {filteredMembers.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredMembers.map((member: GdgMember) => (
-            <MemberCard
-              key={member.gdgId}
-              member={member}
-              onClick={handleView}
-              onEdit={handleEdit}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <User size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery ? "No matching members found" : "No members found"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchQuery ? "Try adjusting your search terms." : "No member members have been created yet."}
-          </p>
-        </div>
-      )}
 
       {/* Modals */}
       <MemberFormModal
@@ -145,6 +147,6 @@ export const MemberList: React.FC = () => {
         member={selectedMember}
         onEdit={handleEdit}
       />
-    </div>
+    </>
   );
 };

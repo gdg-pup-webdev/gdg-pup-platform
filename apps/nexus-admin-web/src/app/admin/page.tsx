@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Award, MessageSquareQuote, ArrowRight, ExternalLink, Globe } from "lucide-react";
+import { Users, Award, ArrowRight, ExternalLink, Globe } from "lucide-react";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
+import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
 
 const SECTIONS = [
   {
@@ -27,14 +28,7 @@ const SECTIONS = [
 
 export default function AdminDashboardPage() {
   return (
-    <div className="mx-auto max-w-5xl">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-gray-500">
-          Welcome back. Manage your site content from here.
-        </p>
-      </div>
+    <AdminPageScaffold pageKey="dashboard">
 
       {/* Section Cards */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -57,7 +51,7 @@ export default function AdminDashboardPage() {
               <h2 className="mb-1 text-lg font-bold text-gray-900">
                 {section.title}
               </h2>
-              <p className="mb-4 flex-grow text-sm leading-relaxed text-gray-500">
+              <p className="mb-4 grow text-sm leading-relaxed text-gray-500">
                 {section.description}
               </p>
 
@@ -74,7 +68,7 @@ export default function AdminDashboardPage() {
 
               {/* Decorative gradient bar at top */}
               <div
-                className={`absolute top-0 left-0 h-1 w-full bg-gradient-to-r ${section.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                className={`absolute top-0 left-0 h-1 w-full bg-linear-to-r ${section.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
               />
             </Link>
           );
@@ -109,9 +103,9 @@ export default function AdminDashboardPage() {
           />
 
           {/* Decorative gradient bar at top */}
-          <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-teal-400 to-emerald-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <div className="absolute top-0 left-0 h-1 w-full bg-linear-to-r from-teal-400 to-emerald-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         </a>
       </div>
-    </div>
+    </AdminPageScaffold>
   );
 }

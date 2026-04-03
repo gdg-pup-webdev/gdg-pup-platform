@@ -6,10 +6,12 @@ import { useListMembers } from "@/features/members/hooks/useListMembers";
 import { useGetMemberRoles, useAssignRoleToUser, useRemoveRoleFromUser, useListRoles } from "../hooks";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Pagination } from "@/components/admin/Pagination";
 import { toast } from "react-toastify";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
-import { SearchInput } from "@/components/ui/SearchInput";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 
 export const MemberRoleAssignment: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -61,39 +63,46 @@ export const MemberRoleAssignment: React.FC = () => {
   if (isLoading) return <ListLoadingState accent="blue" message="Loading members..." className="h-32" iconSize={32} />;
 
   return (
-    <div className="space-y-6">
-      <div className="flex gap-2 w-full max-w-sm">
-        <SearchInput
-          value={searchValue}
-          onValueChange={setSearchValue}
-          placeholder="Search members..."
-          accent="blue"
-          containerClassName="flex-1"
-        />
-        <Button variant="outline" onClick={handleSearch}>Search</Button>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {members.map((member: any) => (
-          <div key={member.gdgId} className="flex items-center justify-between rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                <User size={20} />
+    <>
+      <AdminListScaffold
+        search={
+          <AdminSearchSection
+            value={searchValue}
+            onValueChange={setSearchValue}
+            placeholder="Search members..."
+            accent="blue"
+            actions={
+              <AdminActionButton variant="brandOutline" onClick={handleSearch}>
+                Search
+              </AdminActionButton>
+            }
+          />
+        }
+        content={
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {members.map((member: any) => (
+              <div key={member.gdgId} className="flex items-center justify-between rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <User size={20} />
+                  </div>
+                  <span className="font-medium text-gray-900">{member.displayName}</span>
+                </div>
+                <Button variant="outline" onClick={() => handleOpenRoleModal(member)}>Manage Roles</Button>
               </div>
-              <span className="font-medium text-gray-900">{member.displayName}</span>
-            </div>
-            <Button variant="outline" onClick={() => handleOpenRoleModal(member)}>Manage Roles</Button>
+            ))}
           </div>
-        ))}
-      </div>
-
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
       />
 
       <Modal open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen} className="max-w-lg rounded-lg">
@@ -125,6 +134,6 @@ export const MemberRoleAssignment: React.FC = () => {
           </div>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };

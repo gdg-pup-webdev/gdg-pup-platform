@@ -7,14 +7,16 @@ import { useDeleteArticle } from "../hooks/useDeleteArticle";
 import { useCreateArticle } from "../hooks/useCreateArticle";
 import { useUpdateArticle } from "../hooks/useUpdateArticle";
 import { Article, ArticleInsert, ArticleUpdate } from "../types";
-import { Pagination } from "@/components/admin/Pagination";
 import { ArticleFormModal, ArticleDetailsModal, DeleteConfirmModal } from "./ArticleModal";
 import { ArticleCard } from "./ArticleCard";
 import { toast } from "react-toastify";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";
-import { SearchInput } from "@/components/ui/SearchInput";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 
 export const ArticlesList: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -36,7 +38,6 @@ export const ArticlesList: React.FC = () => {
   const articles = articlesResponse?.data || [];
   const totalPages = articlesResponse?.meta?.totalPages || 1;
   const totalRecords = articlesResponse?.meta?.totalRecords || 0;
-
   // Handlers
   const handleCreate = () => {
     setSelectedArticle(null);
@@ -117,79 +118,80 @@ export const ArticlesList: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <SearchInput
+    <AdminListScaffold
+      search={
+        <AdminSearchSection
           value={searchQuery}
           onValueChange={setSearchQuery}
           placeholder="Search articles..."
           accent="teal"
-          containerClassName="w-full max-w-sm"
-        />
-        <AdminActionButton
-          onClick={handleCreate}
-          variant="brand"
-          className="w-full md:w-auto"
-        >
-          <Plus size={18} />
-          Create Article
-        </AdminActionButton>
-      </div>
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
-
-      {/* Grid of Cards */}
-      {filteredArticles.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredArticles.map((article: Article) => (
-            <ArticleCard
-              key={article.id}
-              article={article}
-              onView={handleView}
-              onEdit={handleEdit}
-              onDelete={handleDeleteFromCard}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <FileText size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery ? "No matching articles found" : "No articles found"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchQuery ? "Try adjusting your search terms." : "Get started by creating your first article."}
-          </p>
-          {searchQuery ? (
-            <AdminActionButton
-              onClick={() => setSearchQuery("")}
-              variant="dark"
-              size="sm"
-              className="mt-6"
-            >
-              Clear Search
-            </AdminActionButton>
-          ) : (
+          actions={
             <AdminActionButton
               onClick={handleCreate}
-              variant="teal"
-              size="sm"
-              className="mt-6"
+              variant="brand"
+              className="w-full md:w-auto"
             >
+              <Plus size={18} />
               Create Article
             </AdminActionButton>
-          )}
-        </div>
-      )}
+          }
+        />
+      }
+      content={
+        filteredArticles.length > 0 ? (
+          <AdminCardGrid>
+            {filteredArticles.map((article: Article) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDeleteFromCard}
+              />
+            ))}
+          </AdminCardGrid>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+            <FileText size={48} className="mb-4 text-gray-300" />
+            <h3 className="text-lg font-bold text-gray-900">
+              {searchQuery ? "No matching articles found" : "No articles found"}
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {searchQuery ? "Try adjusting your search terms." : "Get started by creating your first article."}
+            </p>
+            {searchQuery ? (
+              <AdminActionButton
+                onClick={() => setSearchQuery("")}
+                variant="dark"
+                size="sm"
+                className="mt-6"
+              >
+                Clear Search
+              </AdminActionButton>
+            ) : (
+              <AdminActionButton
+                onClick={handleCreate}
+                variant="teal"
+                size="sm"
+                className="mt-6"
+              >
+                Create Article
+              </AdminActionButton>
+            )}
+          </div>
+        )
+      }
+      pagination={
+        <AdminPaginationSection
+          currentPage={page}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalRecords={totalRecords}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
+      }
+    >
 
       {/* Modals */}
       <ArticleFormModal
@@ -215,6 +217,6 @@ export const ArticlesList: React.FC = () => {
         itemName={selectedArticle?.title || ""}
         isDeleting={deleteMutation.isPending}
       />
-    </div>
+    </AdminListScaffold>
   );
 };

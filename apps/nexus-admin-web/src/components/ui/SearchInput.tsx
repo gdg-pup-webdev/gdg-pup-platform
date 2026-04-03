@@ -4,7 +4,7 @@ import React from "react";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type SearchInputAccent = "teal" | "blue" | "indigo" | "gray";
+export type SearchInputAccent = "teal" | "blue" | "indigo" | "gray";
 
 const ACCENT_CLASS_MAP: Record<SearchInputAccent, string> = {
   teal: "focus:border-teal-500 focus:ring-1 focus:ring-teal-500",

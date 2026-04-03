@@ -67,7 +67,7 @@ export function CardActionMenu({
       {open ? (
         <div
           className={cn(
-            "absolute z-20 mt-1 w-40 origin-top-right rounded border border-gray-100 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-1",
+            "absolute z-80 mt-1 w-40 origin-top-right rounded border border-gray-100 bg-white py-1 shadow-xl animate-in fade-in slide-in-from-top-1",
             align === "right" ? "right-0" : "left-0",
             panelClassName,
           )}

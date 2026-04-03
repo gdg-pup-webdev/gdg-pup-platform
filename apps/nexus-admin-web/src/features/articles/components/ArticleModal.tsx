@@ -7,12 +7,12 @@ import remarkGfm from "remark-gfm";
 import { Article, ArticleInsert, ArticleUpdate, UserType } from "../types";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { useSearchUsers } from "@/features/users/hooks/useSearchUsers";
-import { Pagination } from "@/components/admin/Pagination";
 import { useUploadFile } from "@/features/file-system/hooks/useUploadFile";
 import Image from "next/image";
 import { contract } from "@packages/nexus-api-contracts";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 
 // ==========================================
 // Event Selection Modal
@@ -71,7 +71,7 @@ export function EventSearchModal({ isOpen, onClose, onSelect }: EventSearchModal
               ))}
             </div>
 
-            <Pagination
+            <AdminPaginationSection
               currentPage={page}
               totalPages={totalPages}
               pageSize={pageSize}

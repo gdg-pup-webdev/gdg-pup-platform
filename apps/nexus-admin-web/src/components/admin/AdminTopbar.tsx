@@ -4,9 +4,10 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Menu, User, LogOut, ChevronDown, ExternalLink } from "lucide-react";
 import { useAuthStore } from "@/features/authentication/store/useAuthStore";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 import { ASSETS } from "@/lib/constants/assets";
+import { getAdminPageMetaByPathname } from "@/lib/constants/pages";
 
 interface AdminTopbarProps {
   onToggleSidebar: () => void;
@@ -18,6 +19,8 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const clearToken = useAuthStore((state) => state.clearToken);
   const router = useRouter();
+  const pathname = usePathname();
+  const activePage = getAdminPageMetaByPathname(pathname);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -49,7 +52,7 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B1F3B] shadow-lg shadow-black/10">
-      <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
+      <div className="flex h-16 w-full items-center justify-between px-4 md:px-6">
         {/* Left: Hamburger + Logo */}
         <div className="flex items-center gap-3">
           <button
@@ -69,6 +72,17 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
           </Link>
         </div>
 
+        <div className="hidden min-w-0 flex-1 px-6 md:block">
+          {activePage ? (
+            <div className="truncate">
+              <p className="truncate text-sm font-bold tracking-wide text-white">
+                {activePage.title}
+              </p>
+              <p className="truncate text-xs text-white/60">{activePage.description}</p>
+            </div>
+          ) : null}
+        </div>
+
         {/* Right: Avatar dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
@@ -76,7 +90,7 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
             className="flex items-center gap-2 rounded px-3 py-2 transition-colors hover:bg-white/10"
             aria-label="User menu"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#2F80ED] to-[#2FB7A8] shadow-inner">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-[#2F80ED] to-[#2FB7A8] shadow-inner">
               <User size={18} className="text-white" />
             </div>
             <ChevronDown

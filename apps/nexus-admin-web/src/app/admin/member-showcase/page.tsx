@@ -8,6 +8,7 @@ import { useCreateMemberShowcase } from "@/features/member-showcase/hooks/useCre
 import { useUpdateMemberShowcase } from "@/features/member-showcase/hooks/useUpdateMemberShowcase";
 import { useDeleteMemberShowcase } from "@/features/member-showcase/hooks/useDeleteMemberShowcase";
 import { toast } from "react-toastify";
+import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
 
 export default function MemberShowcasePage() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -69,14 +70,7 @@ export default function MemberShowcasePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-10">
-        <h1 className="text-4xl font-black text-gray-900 uppercase tracking-tighter">Member Showcase</h1>
-        <p className="mt-2 text-sm font-medium text-gray-500 uppercase tracking-widest">
-          Manage and spotlight GDG members and their achievements.
-        </p>
-      </div>
-
+    <AdminPageScaffold pageKey="memberShowcase">
       <MemberShowcaseList
         onCreate={handleCreate}
         onEdit={handleEdit}
@@ -97,6 +91,6 @@ export default function MemberShowcasePage() {
         onClose={() => setIsViewModalOpen(false)}
         showcase={selectedShowcase}
       />
-    </div>
+    </AdminPageScaffold>
   );
 }

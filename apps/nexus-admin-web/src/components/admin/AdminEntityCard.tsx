@@ -149,33 +149,35 @@ export function AdminEntityCard({
       >
         <div
           className={cn(
-            "relative h-40 w-full overflow-hidden border-b border-gray-100 bg-linear-to-br from-teal-50 via-white to-cyan-50",
+            "relative h-40 w-full border-b border-gray-100 bg-linear-to-br from-teal-50 via-white to-cyan-50",
             mediaClassName,
           )}
         >
-          {mediaImageUrl ? (
-            <img
-              src={mediaImageUrl}
-              alt={mediaAlt || title}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center text-teal-300">
-              {mediaFallback || <ImageIcon size={52} />}
-            </div>
-          )}
+          <div className="absolute inset-0 overflow-hidden">
+            {mediaImageUrl ? (
+              <img
+                src={mediaImageUrl}
+                alt={mediaAlt || title}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-teal-300">
+                {mediaFallback || <ImageIcon size={52} />}
+              </div>
+            )}
 
-          <div className="absolute inset-0 bg-linear-to-t from-black/20 via-black/0 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-black/0 to-transparent" />
+          </div>
 
           {(mediaLabel || mediaStatus) && (
-            <div className="pointer-events-none absolute inset-x-3 top-3 flex items-start justify-between gap-2">
+            <div className="pointer-events-none absolute inset-x-3 top-3 z-10 flex items-start justify-between gap-2">
               <div>{mediaLabel}</div>
               <div>{mediaStatus}</div>
             </div>
           )}
 
           {menuItems.length > 0 ? (
-            <div className="absolute right-3 bottom-3 z-10" onClick={(event) => event.stopPropagation()}>
+            <div className="absolute right-3 bottom-3 z-30" onClick={(event) => event.stopPropagation()}>
               <CardActionMenu
                 items={menuItems}
                 triggerClassName="bg-white/95 text-gray-700 shadow-sm backdrop-blur-sm hover:bg-white hover:text-teal-600"

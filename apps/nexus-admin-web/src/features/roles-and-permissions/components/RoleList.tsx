@@ -3,15 +3,16 @@
 import React, { useState } from "react";
 import { Shield, Plus, Edit2, Eye, Trash2 } from "lucide-react";
 import { useListRoles, useCreateRole, useUpdateRole, useDeleteRole } from "../hooks";
-import { Pagination } from "@/components/admin/Pagination";
 import { RoleFormModal, RoleDetailsModal } from "./RoleModals";
 import { toast } from "react-toastify";
-import { Button } from "@/components/ui/Button";
 import { z } from "zod";
 import { contract } from "@packages/nexus-api-contracts";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";
-import { SearchInput } from "@/components/ui/SearchInput";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 
 type Role = z.infer<typeof contract.api.v1.roles.GET.response[200]>;
 type RoleItem = Role["data"][number];
@@ -101,98 +102,102 @@ export const RoleList: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="flex gap-2 w-full max-w-sm">
-          <SearchInput
+    <>
+      <AdminListScaffold
+        search={
+          <AdminSearchSection
             value={searchValue}
             onValueChange={setSearchValue}
             placeholder="Search roles..."
             accent="blue"
-            containerClassName="flex-1"
+            actions={
+              <>
+                <AdminActionButton variant="brandOutline" onClick={handleSearch}>
+                  Search
+                </AdminActionButton>
+                <AdminActionButton onClick={handleCreate} className="w-full md:w-auto">
+                  <Plus size={18} />
+                  Create Role
+                </AdminActionButton>
+              </>
+            }
           />
-          <Button variant="outline" onClick={handleSearch}>Search</Button>
-        </div>
-        <Button onClick={handleCreate} className="flex items-center gap-2">
-          <Plus size={18} />
-          Create Role
-        </Button>
-      </div>
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
-
-      {/* Roles List */}
-      <div className="overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Role Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Description
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {roles.length > 0 ? (
-              roles.map((role) => (
-                <tr key={role.id} className="hover:bg-gray-50">
-                  <td className="whitespace-nowrap px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="rounded-full bg-blue-50 p-2 text-blue-600">
-                        <Shield size={16} />
-                      </div>
-                      <span className="font-medium text-gray-900">{role.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="line-clamp-1 text-sm text-gray-600">{role.description}</p>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    <div className="flex justify-end gap-2">
-                      <button onClick={() => handleView(role)} className="text-gray-400 hover:text-blue-600">
-                        <Eye size={18} />
-                      </button>
-                      <button onClick={() => handleEdit(role)} className="text-gray-400 hover:text-blue-600">
-                        <Edit2 size={18} />
-                      </button>
-                      <button 
-                        onClick={() => {
-                          if (confirm(`Are you sure you want to delete the role "${role.name}"?`)) {
-                            handleDelete(role.name);
-                          }
-                        }}
-                        className="text-gray-400 hover:text-red-600"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
+        }
+        content={
+          <div className="overflow-hidden rounded-sm border border-gray-200 bg-white shadow-sm">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Role Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Description
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                    Actions
+                  </th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
-                  No roles found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {roles.length > 0 ? (
+                  roles.map((role) => (
+                    <tr key={role.id} className="hover:bg-gray-50">
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="rounded-full bg-blue-50 p-2 text-blue-600">
+                            <Shield size={16} />
+                          </div>
+                          <span className="font-medium text-gray-900">{role.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="line-clamp-1 text-sm text-gray-600">{role.description}</p>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => handleView(role)} className="text-gray-400 hover:text-blue-600">
+                            <Eye size={18} />
+                          </button>
+                          <button onClick={() => handleEdit(role)} className="text-gray-400 hover:text-blue-600">
+                            <Edit2 size={18} />
+                          </button>
+                          <button 
+                            onClick={() => {
+                              if (confirm(`Are you sure you want to delete the role "${role.name}"?`)) {
+                                handleDelete(role.name);
+                              }
+                            }}
+                            className="text-gray-400 hover:text-red-600"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
+                      No roles found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
+      />
 
       {/* Modals */}
       <RoleFormModal
@@ -210,6 +215,6 @@ export const RoleList: React.FC = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
-    </div>
+    </>
   );
 };

@@ -8,6 +8,7 @@ import { useUpdateMemberProject } from "@/features/member-projects/hooks/useUpda
 import { useDeleteMemberProject } from "@/features/member-projects/hooks/useDeleteMemberProject";
 import { MemberProject, CreateMemberProjectDTO, UpdateMemberProjectDTO } from "@/features/member-projects/types";
 import { toast } from "react-toastify";
+import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
 
 export default function MemberProjectsPage() {
   // State for modals
@@ -70,7 +71,7 @@ export default function MemberProjectsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <AdminPageScaffold pageKey="memberProjects">
       <MemberProjectList 
         onCreate={handleCreate}
         onEdit={handleEdit}
@@ -92,6 +93,6 @@ export default function MemberProjectsPage() {
         onClose={() => setIsViewModalOpen(false)}
         project={selectedProject || null}
       />
-    </div>
+    </AdminPageScaffold>
   );
 }
