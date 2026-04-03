@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { CosmosParticles } from "@/components/shared";
 import { AuthParallaxBackground } from "@/features/auth/components/AuthParallaxBackground";
-import { AuthParallaxMascot } from "@/features/auth/components/AuthParallaxMascot";
-import { RequireUnauthenticated } from "@/features/authentication/components/RequireUnauthenticated";
+import { AuthParallaxMascot } from "@/features/auth/components/AuthParallaxMascot"; 
 
 export default function AuthLayout({
   children,

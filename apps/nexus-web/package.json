@@ -1,6 +1,6 @@
 {
   "name": "nexus-web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,8 +11,7 @@
     "webp": "tsx scripts/convert-to-webp.ts"
   },
   "dependencies": {
-    "@configs/tailwind-config": "workspace:*",
-    "@packages/identity-api-contracts": "workspace:*",
+    "@configs/tailwind-config": "workspace:*", 
     "@packages/nexus-api-contracts": "workspace:*",
     "@packages/spark-tools": "workspace:*",
     "@packages/spark-ui": "workspace:*",

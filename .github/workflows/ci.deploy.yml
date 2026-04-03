@@ -1,9 +1,9 @@
 # =============================================================================
 # Deploy to Cloud Run
 # =============================================================================
-# Trigger: after Docker Build & Push succeeds — always deploys all services.
+# Trigger: dispatched by Docker Build & Push with explicit branch parameter.
 # Manual:  workflow_dispatch for branch testing with selectable environment.
-# Mode:    Always deploy on workflow_run; selective on workflow_dispatch (path filter + force_deploy).
+# Mode:    Always deploy on workflow_dispatch from Docker B&P; selective on manual dispatch.
 # Logic:   deploy → .github/deployments/action.yml
 # Note:    never cancel in-progress deploys (cancel-in-progress: false)
 # Note:    Storybook deploy is intentionally disabled until Cloud Run resources
@@ -11,13 +11,9 @@
 # =============================================================================
 
 name: Deploy [Environment]
-run-name: Deploy [${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment || github.event.workflow_run.head_branch == 'main' && 'prod' || github.event.workflow_run.head_branch == 'staging' && 'staging' || 'dev' }}]
+run-name: Deploy [${{ github.event.inputs.target_environment }}] @ ${{ github.event.inputs.triggered_branch || github.event.inputs.test_ref || github.ref_name }} (branch)
 
 on:
-  workflow_run:
-    workflows: ["Docker Build & Push"]
-    types: [completed]
-    branches: [deploy-develop, staging, main]
   workflow_dispatch:
     inputs:
       target_environment:
@@ -29,11 +25,21 @@ on:
           - staging
           - prod
         default: dev
-      test_ref:
-        description: "Branch, tag, or SHA to deploy"
+      triggered_branch:
+        description: "Release branch that triggered this deploy (set by Docker B&P automation)"
         required: false
         type: string
-        default: "feat/ci-cd-implementation"
+        default: ""
+      triggered_sha:
+        description: "Commit SHA from the release branch (set by Docker B&P automation)"
+        required: false
+        type: string
+        default: ""
+      test_ref:
+        description: "Branch, tag, or SHA to deploy (manual override)"
+        required: false
+        type: string
+        default: ""
       force_deploy:
         description: "Deploy services even if no changes are detected"
         required: false
@@ -41,7 +47,7 @@ on:
         default: false
 
 concurrency:
-  group: deploy-${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.target_environment == 'prod' && 'prod' || github.event.inputs.target_environment == 'staging' && 'staging' || 'dev') || github.event.workflow_run.head_branch }}-${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.ref_name) || github.event.workflow_run.head_sha }}
+  group: deploy-${{ github.event.inputs.target_environment }}-${{ github.event.inputs.triggered_branch || github.event.inputs.test_ref || github.ref_name }}
   cancel-in-progress: false
 
 env:
@@ -50,21 +56,23 @@ env:
 jobs:
   detect-changes:
     name: Detect Changes
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.head_branch == 'deploy-develop' || github.event.workflow_run.head_branch == 'staging' || github.event.workflow_run.head_branch == 'main')) }}
     uses: ./.github/workflows/ci.detect-changes.yml
     with:
-      head-sha: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
-      head-branch: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'prod' && 'main' || github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'staging' && 'staging' || github.event_name == 'workflow_dispatch' && github.event.inputs.target_environment == 'dev' && 'deploy-develop' || github.event.workflow_run.head_branch }}
+      head-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
+      head-branch: ${{ github.event.inputs.triggered_branch || (github.event.inputs.target_environment == 'prod' && 'main') || (github.event.inputs.target_environment == 'staging' && 'staging') || 'deploy-develop' }}
 
   deploy-nexus-web:
     name: nexus-web
     needs: detect-changes
-    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && (inputs.force_deploy || needs.detect-changes.outputs.nexus-web == 'true')) }}
+    # From Docker B&P automation: triggered_branch is set → always deploy
+    # From manual dispatch: respect path filter unless force_deploy is true
+    if: ${{ github.event.inputs.triggered_branch != '' || inputs.force_deploy || needs.detect-changes.outputs.nexus-web == 'true' }}
     runs-on: ubuntu-latest
+    environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets'}}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
       - uses: ./.github/deployments
         with:
           service: nexus-web
@@ -76,12 +84,15 @@ jobs:
   deploy-nexus-api:
     name: nexus-api
     needs: detect-changes
-    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && (inputs.force_deploy || needs.detect-changes.outputs.nexus-api == 'true')) }}
+    # From Docker B&P automation: triggered_branch is set → always deploy
+    # From manual dispatch: respect path filter unless force_deploy is true
+    if: ${{ github.event.inputs.triggered_branch != '' || inputs.force_deploy || needs.detect-changes.outputs.nexus-api == 'true' }}
     runs-on: ubuntu-latest
+    environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets'}}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.test_ref || github.sha) || github.event.workflow_run.head_sha }}
+          ref: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
       - uses: ./.github/deployments
         with:
           service: nexus-api
