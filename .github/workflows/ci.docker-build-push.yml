@@ -79,11 +79,7 @@ jobs:
     steps:
       - name: Dispatch Deploy workflow
         env:
-<<<<<<< Updated upstream
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-=======
           GH_TOKEN: ${{ secrets.GH_PAT }}
->>>>>>> Stashed changes
           HEAD_BRANCH: ${{ github.event_name == 'workflow_dispatch' && (github.event.inputs.head_branch || github.ref_name) || github.event.workflow_run.head_branch }}
           HEAD_SHA: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
         run: |
