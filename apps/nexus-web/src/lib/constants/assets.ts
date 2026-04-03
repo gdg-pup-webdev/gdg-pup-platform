@@ -325,7 +325,11 @@ export const ASSETS = {
             SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.svg",
         },
     },
-    PROFILE: {},
+    PROFILE: {
+        AVATAR_RING: "/profile-avatar-ring.png",
+        DEFAULT_AVATAR: "/profile-default-avatar.png",
+        DEFAULT_BADGE: "/profile-badge-default.png",
+    },
     SPARKY_POINTS: {
         SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
         CIRBY_DISPLAY: "/sparky-points/sparkypoints-cirby-display.webp",
