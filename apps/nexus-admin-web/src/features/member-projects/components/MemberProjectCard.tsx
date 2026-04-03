@@ -65,11 +65,11 @@ export function MemberProjectCard({ project, onView, onEdit, onDelete }: MemberP
 
 export function MemberProjectCardSkeleton() {
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-120 flex flex-col">
       <CardHeader>
         <Skeleton className="h-40 w-full" />
       </CardHeader>
-      <CardContent className="flex-grow">
+      <CardContent className="grow">
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-4 w-full mt-4" />
         <Skeleton className="h-4 w-full mt-2" />

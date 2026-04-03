@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar, Edit2 } from "lucide-react";
+import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, ExternalLink, Calendar, Edit2 } from "lucide-react";
 import { MemberShowcase, CreateMemberShowcaseDTO, UpdateMemberShowcaseDTO, ShowcasedMember } from "../types";
 import { useSearchUsers } from "@/features/teams/api/teams";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import { AdminFormModal, AdminImageUploadField, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
 
 // ==========================================
 // Showcase Form Modal (Create / Update)
@@ -72,16 +73,9 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
     setSearchQuery("");
   }, [initialData, isOpen]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setThumbnail(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleThumbnailChange = (file: File | null, nextPreviewUrl: string | null) => {
+    setThumbnail(file || undefined);
+    setPreviewUrl(nextPreviewUrl);
   };
 
   const handleSelectUser = (user: any) => {
@@ -132,175 +126,142 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
   ) || [];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Showcase" : "Create New Showcase"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Showcase Title</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="e.g. Member of the Month - March 2026"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            />
-          </div>
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Update Showcase" : "Create New Showcase"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={initialData ? "Save Changes" : "Create Showcase"}
+    >
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="md:col-span-2">
+          <AdminInputField
+            label="Showcase Title"
+            required
+            type="text"
+            placeholder="e.g. Member of the Month - March 2026"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          />
+        </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Date</label>
-            <input
-              required
-              type="date"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-            />
-          </div>
+        <div>
+          <AdminInputField
+            label="Date"
+            required
+            type="date"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          />
+        </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Article URL</label>
-            <input
-              required
-              type="url"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="https://gdgpup.org/blog/..."
-              value={formData.articleUrl}
-              onChange={(e) => setFormData({ ...formData, articleUrl: e.target.value })}
-            />
-          </div>
+        <div>
+          <AdminInputField
+            label="Article URL"
+            required
+            type="url"
+            placeholder="https://gdgpup.org/blog/..."
+            value={formData.articleUrl}
+            onChange={(e) => setFormData({ ...formData, articleUrl: e.target.value })}
+          />
+        </div>
 
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description</label>
-            <textarea
-              required
-              rows={3}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="Describe the achievements of the showcased members..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
+        <div className="md:col-span-2">
+          <AdminTextAreaField
+            label="Description"
+            required
+            rows={3}
+            placeholder="Describe the achievements of the showcased members..."
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+        </div>
 
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Showcased Members</label>
-            <div className="space-y-3">
-              <div className="relative" ref={dropdownRef}>
-                <div className="relative">
-                  <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search members to add..."
-                    className="w-full rounded-sm border border-gray-200 py-2.5 pr-10 pl-10 text-sm outline-none transition-all focus:border-teal-500"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setShowDropdown(true);
-                    }}
-                    onFocus={() => setShowDropdown(true)}
-                  />
-                  {isSearching && (
-                    <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                      <Loader2 size={16} className="animate-spin text-gray-400" />
-                    </div>
-                  )}
+        <div className="md:col-span-2">
+          <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Showcased Members</label>
+          <div className="space-y-3">
+            <div className="relative" ref={dropdownRef}>
+              <div className="relative">
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search members to add..."
+                  className="w-full rounded-sm border border-gray-200 py-2.5 pr-10 pl-10 text-sm outline-none transition-all focus:border-teal-500"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowDropdown(true);
+                  }}
+                  onFocus={() => setShowDropdown(true)}
+                />
+                {isSearching ? (
+                  <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                    <Loader2 size={16} className="animate-spin text-gray-400" />
+                  </div>
+                ) : null}
+              </div>
+
+              {showDropdown && searchQuery.length >= 2 ? (
+                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
+                  {searchResults.length > 0 ? (
+                    searchResults.map((user: any) => (
+                      <button
+                        key={user.id}
+                        type="button"
+                        onClick={() => handleSelectUser(user)}
+                        className="flex w-full flex-col border-b border-gray-50 px-4 py-3 text-left transition-colors last:border-0 hover:bg-teal-50"
+                      >
+                        <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
+                        <span className="text-xs text-gray-500">{user.email} ({user.gdg_id})</span>
+                      </button>
+                    ))
+                  ) : !isSearching ? (
+                    <div className="p-4 text-center text-sm italic text-gray-500">No matching users found.</div>
+                  ) : null}
                 </div>
-                
-                {showDropdown && searchQuery.length >= 2 && (
-                  <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
-                    {searchResults.length > 0 ? (
-                      searchResults.map((user: any) => (
-                        <button
-                          key={user.id}
-                          type="button"
-                          onClick={() => handleSelectUser(user)}
-                          className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
-                        >
-                          <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
-                          <span className="text-xs text-gray-500">{user.email} ({user.gdg_id})</span>
-                        </button>
-                      ))
-                    ) : !isSearching ? (
-                      <div className="p-4 text-center text-sm text-gray-500 italic">
-                        No matching users found.
+              ) : null}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {selectedMembers.map((member) => (
+                <div key={member.gdgId} className="flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 py-1 pl-1.5 pr-2">
+                  <div className="relative h-5 w-5 overflow-hidden rounded-full bg-teal-200">
+                    {member.avatarUrl ? (
+                      <Image src={member.avatarUrl} alt={member.fullName} fill className="object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[8px] font-bold text-teal-700">
+                        {member.firstName[0]}
                       </div>
-                    ) : null}
+                    )}
                   </div>
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {selectedMembers.map((member) => (
-                  <div key={member.gdgId} className="flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 py-1 pl-1.5 pr-2">
-                    <div className="relative h-5 w-5 overflow-hidden rounded-full bg-teal-200">
-                      {member.avatarUrl ? (
-                        <Image src={member.avatarUrl} alt={member.fullName} fill className="object-cover" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-[8px] font-bold text-teal-700">
-                          {member.firstName[0]}
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-xs font-bold text-teal-900">{member.fullName}</span>
-                    <button 
-                      type="button"
-                      onClick={() => removeMember(member.gdgId)}
-                      className="text-teal-600 hover:text-teal-800"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-                {selectedMembers.length === 0 && (
-                  <p className="text-xs text-gray-400 italic py-1">No members selected yet.</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Thumbnail Image</label>
-            <div className="flex items-start gap-4">
-              <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-sm border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
-                {previewUrl ? (
-                  <Image src={previewUrl} alt="Preview" fill className="object-cover" />
-                ) : (
-                  <ImageIcon size={32} />
-                )}
-              </div>
-              <div className="flex-1">
-                <p className="mb-3 text-xs text-gray-500 leading-relaxed">
-                  Upload a thumbnail image. Recommended size: 800x450 (16:9).
-                </p>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                  <Upload size={16} />
-                  Choose Image
-                  <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                </label>
-              </div>
+                  <span className="text-xs font-bold text-teal-900">{member.fullName}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeMember(member.gdgId)}
+                    className="text-teal-600 hover:text-teal-800"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              {selectedMembers.length === 0 ? (
+                <p className="py-1 text-xs italic text-gray-400">No members selected yet.</p>
+              ) : null}
             </div>
           </div>
         </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            {initialData ? "Save Changes" : "Create Showcase"}
-          </button>
+
+        <div className="md:col-span-2">
+          <AdminImageUploadField
+            label="Thumbnail Image"
+            previewUrl={previewUrl}
+            onImageChange={handleThumbnailChange}
+            helperText="Upload a thumbnail image. Recommended size: 800x450 (16:9)."
+          />
         </div>
-      </form>
-    </Modal>
+      </div>
+    </AdminFormModal>
   );
 }
 

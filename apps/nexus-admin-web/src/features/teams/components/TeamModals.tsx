@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
 
 // ==========================================
 // Team Form Modal (Create / Update)
@@ -50,60 +51,41 @@ export function TeamFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Team" : "Create New Team"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Team Name</label>
-          <input
-            required
-            type="text"
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="e.g. Web Development Team"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description</label>
-          <textarea
-            required
-            rows={3}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="Briefly describe what this team does..."
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Responsibilities</label>
-          <textarea
-            rows={4}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="List the key responsibilities (one per line)..."
-            value={formData.responsibilities || ""}
-            onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
-          />
-        </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            {initialData ? "Save Changes" : "Create Team"}
-          </button>
-        </div>
-      </form>
-    </Modal>
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Update Team" : "Create New Team"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={initialData ? "Save Changes" : "Create Team"}
+    >
+      <AdminInputField
+        label="Team Name"
+        required
+        type="text"
+        placeholder="e.g. Web Development Team"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+      />
+
+      <AdminTextAreaField
+        label="Description"
+        required
+        rows={3}
+        placeholder="Briefly describe what this team does..."
+        value={formData.description}
+        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+      />
+
+      <AdminTextAreaField
+        label="Responsibilities"
+        rows={4}
+        placeholder="List the key responsibilities (one per line)..."
+        helperText="Tip: put one responsibility per line."
+        value={formData.responsibilities || ""}
+        onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
+      />
+    </AdminFormModal>
   );
 }
 
@@ -130,7 +112,7 @@ export function TeamDetailsModal({
   const { data: teamResponse, isLoading: isLoadingTeam } = useTeam(initialTeam?.id || "");
   const team = teamResponse?.body?.data || initialTeam;
 
-  const [isAddingMember, setIsAddingMember] = useState(false);
+  const [isAddingMember, setIsAddingMember] = useState(openAddMemberOnOpen);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
@@ -160,21 +142,21 @@ export function TeamDetailsModal({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    setIsAddingMember(openAddMemberOnOpen);
-
-    if (!openAddMemberOnOpen) {
-      setSelectedUser(null);
-      setPosition("");
-      setSearchQuery("");
-    }
-  }, [isOpen, openAddMemberOnOpen, initialTeam?.id]);
-
   if (!initialTeam) return null;
 
   const activeTeam = team || initialTeam;
+
+  const toggleAddMember = () => {
+    setIsAddingMember((value) => {
+      const nextValue = !value;
+      if (!nextValue) {
+        setSelectedUser(null);
+        setPosition("");
+        setSearchQuery("");
+      }
+      return nextValue;
+    });
+  };
 
   const searchResults = usersResponse?.body?.data?.filter((user: any) => 
     !team?.members?.some((m: TeamMember) => m.user_id === user.id)
@@ -254,9 +236,7 @@ export function TeamDetailsModal({
                 label: isAddingMember ? "Cancel Add Member" : "Add Member",
                 icon: isAddingMember ? X : UserPlus,
                 tone: isAddingMember ? "neutral" : "primary",
-                onClick: () => {
-                  setIsAddingMember((value) => !value);
-                },
+                onClick: toggleAddMember,
               },
               {
                 key: "edit",
@@ -308,7 +288,7 @@ export function TeamDetailsModal({
             <div className="mb-4 flex items-center justify-between">
               <h4 className="text-sm font-bold text-gray-900">Members ({team?.members?.length || 0})</h4>
               <button
-                onClick={() => setIsAddingMember(!isAddingMember)}
+                onClick={toggleAddMember}
                 className="flex items-center gap-1.5 text-xs font-bold text-teal-600 hover:text-teal-700"
               >
                 {isAddingMember ? <X size={14} /> : <Plus size={14} />}

@@ -143,7 +143,7 @@ export function AdminEntityCard({
         accentBarClassName="bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-500"
         accentBarPosition="bottom"
         className={cn(
-          "rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:border-teal-200 hover:shadow-xl",
+          "h-120 rounded-sm border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:border-teal-200 hover:shadow-xl",
           className,
         )}
       >

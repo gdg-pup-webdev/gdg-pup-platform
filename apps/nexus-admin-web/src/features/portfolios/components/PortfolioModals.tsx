@@ -1,11 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info, Code, BookOpen, Settings, Camera, Upload } from "lucide-react";
+import { User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info, Code, BookOpen, Settings } from "lucide-react";
 import { Portfolio, PortfolioUpdate } from "../types";
 import Image from "next/image";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import {
+  AdminAvatarUploadField,
+  AdminCheckboxField,
+  AdminFormModal,
+  AdminInputField,
+  AdminListField,
+  AdminTextAreaField,
+} from "@/components/admin/form";
 
 // ==========================================
 // Portfolio Form Modal (Update Only)
@@ -43,14 +51,6 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Helper to manage tag inputs as comma-separated strings
-  const [tagInputs, setTagInputs] = useState({
-    other_links: "",
-    technical_skills: "",
-    learning_interests: "",
-    tools_and_technologies: "",
-  });
-
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -75,33 +75,13 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
       });
 
       setPreviewUrl(initialData.profile_image || null);
-
-      setTagInputs({
-        other_links: (initialData.other_links || []).join(", "),
-        technical_skills: (initialData.technical_skills || []).join(", "),
-        learning_interests: (initialData.learning_interests || []).join(", "),
-        tools_and_technologies: (initialData.tools_and_technologies || []).join(", "),
-      });
     }
     setProfileImage(null);
   }, [initialData, isOpen]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleTagChange = (field: keyof typeof tagInputs, value: string) => {
-    setTagInputs((prev: typeof tagInputs) => ({ ...prev, [field]: value }));
-    const arrayValue = value.split(",").map(v => v.trim()).filter(Boolean);
-    setFormData((prev: PortfolioUpdate) => ({ ...prev, [field]: arrayValue }));
+  const handleAvatarChange = (file: File | null, nextPreviewUrl: string | null) => {
+    setProfileImage(file);
+    setPreviewUrl(nextPreviewUrl);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -110,228 +90,165 @@ export function PortfolioFormModal({ isOpen, onClose, onSubmit, initialData, isS
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Update Portfolio">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {/* Profile Image Upload */}
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Profile Image</label>
-            <div className="flex items-center gap-6">
-              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
-                {previewUrl ? (
-                  <Image src={previewUrl} alt="Profile Preview" fill className="object-cover" />
-                ) : (
-                  <Camera size={32} />
-                )}
-              </div>
-              <div className="flex-1">
-                <p className="mb-3 text-xs text-gray-500 leading-relaxed">
-                  Upload a profile photo. Best as a square aspect ratio. Max size: 2MB.
-                </p>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                  <Upload size={16} />
-                  Choose Photo
-                  <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">First Name</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.first_name || ""}
-              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Middle Name</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.middle_name || ""}
-              onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Last Name</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.last_name || ""}
-              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Nickname</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.nickname || ""}
-              onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">GDG ID</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.gdg_id || ""}
-              onChange={(e) => setFormData({ ...formData, gdg_id: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Membership Type</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.membership_type || ""}
-              onChange={(e) => setFormData({ ...formData, membership_type: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Department</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.department || ""}
-              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Year Level</label>
-              <input
-                type="number"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-                value={formData.year_level || ""}
-                onChange={(e) => setFormData({ ...formData, year_level: e.target.value ? parseInt(e.target.value) : null })}
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Program</label>
-              <input
-                type="text"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-                value={formData.program || ""}
-                onChange={(e) => setFormData({ ...formData, program: e.target.value })}
-              />
-            </div>
-          </div>
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Bio</label>
-            <textarea
-              rows={3}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.bio || ""}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">GitHub URL</label>
-            <input
-              type="url"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.github_url || ""}
-              onChange={(e) => setFormData({ ...formData, github_url: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">LinkedIn URL</label>
-            <input
-              type="url"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.linkedin_url || ""}
-              onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Portfolio URL</label>
-            <input
-              type="url"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.portfolio_website_url || ""}
-              onChange={(e) => setFormData({ ...formData, portfolio_website_url: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Other Links (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. https://link1.com, https://link2.com"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.other_links}
-              onChange={(e) => handleTagChange("other_links", e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Technical Skills (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. React, Node.js, TypeScript"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.technical_skills}
-              onChange={(e) => handleTagChange("technical_skills", e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Learning Interests (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. AI, Rust, Web3"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.learning_interests}
-              onChange={(e) => handleTagChange("learning_interests", e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Tools & Technologies (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. Docker, Git, VS Code"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.tools_and_technologies}
-              onChange={(e) => handleTagChange("tools_and_technologies", e.target.value)}
-            />
-          </div>
-
-          <div className="flex items-center gap-2 pt-6">
-            <input
-              type="checkbox"
-              id="is_public"
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              checked={formData.is_public}
-              onChange={(e) => setFormData({ ...formData, is_public: e.target.checked })}
-            />
-            <label htmlFor="is_public" className="text-sm font-medium text-gray-700 select-none">Make Portfolio Public</label>
-          </div>
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Update Portfolio"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel="Save Changes"
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <AdminAvatarUploadField
+            label="Profile Image"
+            previewUrl={previewUrl}
+            onImageChange={handleAvatarChange}
+            helperText="Upload a profile photo. Best as a square aspect ratio."
+          />
         </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            Save Changes
-          </button>
+
+        <AdminInputField
+          label="First Name"
+          type="text"
+          value={formData.first_name || ""}
+          onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+        />
+        <AdminInputField
+          label="Middle Name"
+          type="text"
+          value={formData.middle_name || ""}
+          onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })}
+        />
+        <AdminInputField
+          label="Last Name"
+          type="text"
+          value={formData.last_name || ""}
+          onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+        />
+        <AdminInputField
+          label="Nickname"
+          type="text"
+          value={formData.nickname || ""}
+          onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
+        />
+        <AdminInputField
+          label="GDG ID"
+          type="text"
+          value={formData.gdg_id || ""}
+          onChange={(e) => setFormData({ ...formData, gdg_id: e.target.value })}
+        />
+        <AdminInputField
+          label="Membership Type"
+          type="text"
+          value={formData.membership_type || ""}
+          onChange={(e) => setFormData({ ...formData, membership_type: e.target.value })}
+        />
+        <AdminInputField
+          label="Department"
+          type="text"
+          value={formData.department || ""}
+          onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+        />
+
+        <div className="grid grid-cols-2 gap-4 sm:col-span-2">
+          <AdminInputField
+            label="Year Level"
+            type="number"
+            value={formData.year_level || ""}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                year_level: e.target.value ? parseInt(e.target.value, 10) : null,
+              })
+            }
+          />
+          <AdminInputField
+            label="Program"
+            type="text"
+            value={formData.program || ""}
+            onChange={(e) => setFormData({ ...formData, program: e.target.value })}
+          />
         </div>
-      </form>
-    </Modal>
+
+        <div className="sm:col-span-2">
+          <AdminTextAreaField
+            label="Bio"
+            rows={3}
+            value={formData.bio || ""}
+            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+          />
+        </div>
+
+        <AdminInputField
+          label="GitHub URL"
+          type="url"
+          value={formData.github_url || ""}
+          onChange={(e) => setFormData({ ...formData, github_url: e.target.value })}
+        />
+        <AdminInputField
+          label="LinkedIn URL"
+          type="url"
+          value={formData.linkedin_url || ""}
+          onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
+        />
+        <div className="sm:col-span-2">
+          <AdminInputField
+            label="Portfolio URL"
+            type="url"
+            value={formData.portfolio_website_url || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, portfolio_website_url: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Other Links"
+            items={formData.other_links || []}
+            onChange={(items) => setFormData({ ...formData, other_links: items })}
+            placeholder="Add a URL and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Technical Skills"
+            items={formData.technical_skills || []}
+            onChange={(items) => setFormData({ ...formData, technical_skills: items })}
+            placeholder="Add a skill and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Learning Interests"
+            items={formData.learning_interests || []}
+            onChange={(items) => setFormData({ ...formData, learning_interests: items })}
+            placeholder="Add an interest and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Tools & Technologies"
+            items={formData.tools_and_technologies || []}
+            onChange={(items) => setFormData({ ...formData, tools_and_technologies: items })}
+            placeholder="Add a tool and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminCheckboxField
+            id="is_public"
+            label="Make Portfolio Public"
+            checked={formData.is_public}
+            onChange={(e) => setFormData({ ...formData, is_public: e.target.checked })}
+          />
+        </div>
+      </div>
+    </AdminFormModal>
   );
 }
 

@@ -42,6 +42,7 @@ export interface AdminPageMeta {
 	sidebarLabel?: string;
 	matchMode?: AdminPageMatchMode;
 	sidebarVisible?: boolean;
+	dashboardVisible?: boolean;
 }
 
 export const ADMIN_PAGE_META: Record<AdminPageKey, AdminPageMeta> = {
@@ -52,6 +53,7 @@ export const ADMIN_PAGE_META: Record<AdminPageKey, AdminPageMeta> = {
 		description: "Manage your platform content and operations from one place.",
 		icon: LayoutDashboard,
 		matchMode: "exact",
+		dashboardVisible: false,
 	},
 	profile: {
 		key: "profile",
@@ -195,6 +197,34 @@ export const ADMIN_EXTERNAL_NAV_ITEMS: Array<{
 		icon: Globe,
 	},
 ];
+
+function uniquePageKeys(keys: AdminPageKey[]): AdminPageKey[] {
+	const seen = new Set<AdminPageKey>();
+	return keys.filter((key) => {
+		if (seen.has(key)) {
+			return false;
+		}
+		seen.add(key);
+		return true;
+	});
+}
+
+const ADMIN_SIDEBAR_PAGE_KEYS = ADMIN_SIDEBAR_SECTIONS.flatMap((section) => section.items);
+
+const ADMIN_META_PAGE_KEYS = Object.keys(ADMIN_PAGE_META) as AdminPageKey[];
+
+export const ADMIN_PAGE_KEYS_IN_ORDER: AdminPageKey[] = uniquePageKeys([
+	...ADMIN_SIDEBAR_PAGE_KEYS,
+	...ADMIN_META_PAGE_KEYS,
+]);
+
+export const ADMIN_PAGES_IN_ORDER: AdminPageMeta[] = ADMIN_PAGE_KEYS_IN_ORDER.map(
+	(key) => ADMIN_PAGE_META[key],
+);
+
+export const ADMIN_DASHBOARD_PAGES: AdminPageMeta[] = ADMIN_PAGES_IN_ORDER.filter(
+	(page) => page.dashboardVisible !== false && page.key !== "dashboard",
+);
 
 export function getAdminPageMetaByPathname(pathname: string): AdminPageMeta | null {
 	const sortedBySpecificity = Object.values(ADMIN_PAGE_META).sort(

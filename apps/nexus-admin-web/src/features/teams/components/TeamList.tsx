@@ -70,6 +70,11 @@ export function TeamList() {
     setIsDetailsModalOpen(true);
   };
 
+  const handleCloseDetails = () => {
+    setIsDetailsModalOpen(false);
+    setOpenAddMemberOnDetails(false);
+  };
+
   const handleDelete = async (team: Team) => {
     try {
       await deleteMutation.mutateAsync(team.id);
@@ -85,7 +90,7 @@ export function TeamList() {
     }
 
     await handleDelete(team);
-    setIsDetailsModalOpen(false);
+    handleCloseDetails();
   };
 
   const handleFormSubmit = async (data: TeamInsert | TeamUpdate) => {
@@ -199,8 +204,9 @@ export function TeamList() {
       />
 
       <TeamDetailsModal
+        key={`${selectedTeam?.id ?? "none"}-${openAddMemberOnDetails ? "add" : "view"}`}
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={handleCloseDetails}
         team={selectedTeam}
         onEdit={handleEdit}
         onDelete={handleDeleteFromDetails}
