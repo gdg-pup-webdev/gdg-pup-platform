@@ -12,7 +12,9 @@ import {
   STATUS,
   useAuthContext,
 } from "@/features/authentication/store/useAuthStore";
-import { MemberInfo } from "../../../../nexus-api/src/v1/modules/authentication/domain/TokenPayload";
+
+// import { MemberInfo } from "../../../../nexus-api/src/v1/modules/authentication/domain/TokenPayload";
+
 
 interface NavbarProps {
   transparent?: boolean;
