@@ -447,6 +447,9 @@ importers:
       '@configs/tailwind-config':
         specifier: workspace:*
         version: link:../../configs/tailwind-config
+      '@packages/identity-api-contracts':
+        specifier: workspace:*
+        version: link:../../packages/identity-api-contracts
       '@packages/nexus-api-contracts':
         specifier: workspace:*
         version: link:../../packages/nexus-api-contracts
