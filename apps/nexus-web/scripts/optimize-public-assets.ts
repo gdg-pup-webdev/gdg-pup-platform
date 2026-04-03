@@ -53,11 +53,14 @@ function formatBytes(bytes: number): string {
   return `${mb.toFixed(2)} MB`;
 }
 
-async function optimizeRaster(asset: RasterAssetConfig) {
+async function optimizeRaster(
+  asset: RasterAssetConfig,
+): Promise<{ source: string; target: string; beforeSize: number; afterSize: number } | null> {
   const inputPath = toAbsolutePublicPath(asset.source);
   const outputPath = toAbsolutePublicPath(asset.target);
 
   if (!fs.existsSync(inputPath)) {
+    console.warn(`Missing source file: ${asset.source}`);
     return null;
   }
 
@@ -86,10 +89,13 @@ async function optimizeRaster(asset: RasterAssetConfig) {
   };
 }
 
-function optimizeSvg(relativePath: string) {
+function optimizeSvg(
+  relativePath: string,
+): { path: string; beforeSize: number; afterSize: number } | null {
   const absolutePath = toAbsolutePublicPath(relativePath);
 
   if (!fs.existsSync(absolutePath)) {
+    console.warn(`Missing SVG file: ${relativePath}`);
     return null;
   }
 
