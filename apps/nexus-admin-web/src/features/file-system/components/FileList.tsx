@@ -285,6 +285,26 @@ export function FileList() {
             ))}
           </div>
         }
+        actions={
+          <>
+            <AdminActionButton
+              onClick={handleCreateFolderClick}
+              variant="brandOutline"
+              className="flex-1 md:flex-none"
+            >
+              <FolderPlus size={18} />
+              New Folder
+            </AdminActionButton>
+            <AdminActionButton
+              onClick={handleUpload}
+              variant="brand"
+              className="flex-1 md:flex-none"
+            >
+              <Plus size={18} />
+              Upload
+            </AdminActionButton>
+          </>
+        }
         search={
           <AdminSearchSection
             value={searchQuery}
@@ -293,28 +313,6 @@ export function FileList() {
             accent="teal"
             searchContainerClassName="max-w-md"
             inputClassName="border-gray-100 py-3 shadow-sm"
-            actions={
-              <>
-                <AdminActionButton
-                  onClick={handleCreateFolderClick}
-                  variant="tealOutline"
-                  size="lg"
-                  className="flex-1 md:w-auto"
-                >
-                  <FolderPlus size={18} />
-                  New Folder
-                </AdminActionButton>
-                <AdminActionButton
-                  onClick={handleUpload}
-                  variant="teal"
-                  size="lg"
-                  className="flex-1 hover:shadow-lg md:w-auto"
-                >
-                  <Plus size={18} />
-                  Upload
-                </AdminActionButton>
-              </>
-            }
           />
         }
         content={
@@ -347,7 +345,6 @@ export function FileList() {
                 <AdminActionButton
                   onClick={handleUpload}
                   variant="teal"
-                  className="px-8 hover:shadow-md"
                 >
                   Upload Now
                 </AdminActionButton>

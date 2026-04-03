@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Calendar, MapPin, Users, Star } from "lucide-react";
+import { Calendar, MapPin, Users, Star, RefreshCw, ExternalLink } from "lucide-react";
 import { Event } from "../types";
 import { AdminEntityCard } from "@/components/admin/AdminEntityCard";
 
@@ -10,14 +10,42 @@ interface EventCardProps {
   onView: (event: Event) => void;
   onEdit?: (event: Event) => void;
   onDelete?: (event: Event) => void | Promise<void>;
+  onSync?: (event: Event) => void | Promise<void>;
 }
 
-export function EventCard({ event, onView, onEdit, onDelete }: EventCardProps) {
+export function EventCard({ event, onView, onEdit, onDelete, onSync }: EventCardProps) {
   const eventDate = new Date(event.start_date || "").toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+
+  const extraItems = [
+    ...(event.bevyPreviewUrl
+      ? [
+          {
+            key: "open-bevy",
+            label: "Open Bevy Page",
+            icon: ExternalLink,
+            onClick: () => {
+              window.open(event.bevyPreviewUrl as string, "_blank", "noopener,noreferrer");
+            },
+          },
+        ]
+      : []),
+    ...(onSync
+      ? [
+          {
+            key: "sync-bevy",
+            label: "Sync with Bevy",
+            icon: RefreshCw,
+            onClick: () => {
+              void onSync(event);
+            },
+          },
+        ]
+      : []),
+  ];
 
   return (
     <AdminEntityCard
@@ -76,6 +104,7 @@ export function EventCard({ event, onView, onEdit, onDelete }: EventCardProps) {
         onView: () => onView(event),
         onEdit: onEdit ? () => onEdit(event) : undefined,
         onDelete: onDelete ? () => onDelete(event) : undefined,
+        extraItems: extraItems.length > 0 ? extraItems : undefined,
         editLabel: "Update Event",
         deleteDialogTitle: "Delete Event",
         deleteDialogDescription: (

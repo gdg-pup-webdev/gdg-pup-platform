@@ -16,6 +16,19 @@ interface MemberShowcaseCardProps {
 export function MemberShowcaseCard({ showcase, onView, onEdit, onDelete }: MemberShowcaseCardProps) {
   const showcaseDate = new Date(showcase.date).toLocaleDateString();
 
+  const extraItems = showcase.articleUrl
+    ? [
+        {
+          key: "open-article",
+          label: "Open Article",
+          icon: ExternalLink,
+          onClick: () => {
+            window.open(showcase.articleUrl, "_blank", "noopener,noreferrer");
+          },
+        },
+      ]
+    : undefined;
+
   return (
     <AdminEntityCard
       title={showcase.title}
@@ -77,6 +90,7 @@ export function MemberShowcaseCard({ showcase, onView, onEdit, onDelete }: Membe
         onView: () => onView(showcase),
         onEdit: () => onEdit(showcase),
         onDelete: () => onDelete(showcase),
+        extraItems,
         editLabel: "Update Showcase",
         deleteDialogTitle: "Delete Showcase",
         deleteDialogDescription: (

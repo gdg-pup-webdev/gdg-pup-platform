@@ -97,6 +97,7 @@ export function LearningResourceList() {
 
   const handleEdit = (resource: LearningResource) => {
     setSelectedResource(resource);
+    setIsViewModalOpen(false);
     setIsFormModalOpen(true);
   };
 
@@ -107,6 +108,7 @@ export function LearningResourceList() {
 
   const handleDeleteClick = (resource: LearningResource) => {
     setSelectedResource(resource);
+    setIsViewModalOpen(false);
     setIsDeleteModalOpen(true);
   };
 
@@ -300,6 +302,16 @@ export function LearningResourceList() {
   return (
     <>
       <AdminListScaffold
+        actions={
+          <AdminActionButton
+            onClick={handleAdd}
+            variant="brand"
+            className="w-full md:w-auto"
+          >
+            <Plus size={18} />
+            Add Resource
+          </AdminActionButton>
+        }
         search={
           <AdminSearchSection
             value={localSearch}
@@ -330,15 +342,6 @@ export function LearningResourceList() {
                 >
                   {isFetching ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
                   Search
-                </AdminActionButton>
-
-                <AdminActionButton
-                  onClick={handleAdd}
-                  variant="brand"
-                  className="w-full md:w-auto"
-                >
-                  <Plus size={18} />
-                  Add Resource
                 </AdminActionButton>
               </>
             }
@@ -420,6 +423,8 @@ export function LearningResourceList() {
         isOpen={isViewModalOpen}
         onClose={() => setIsViewModalOpen(false)}
         resource={selectedResource}
+        onEdit={handleEdit}
+        onDelete={handleDeleteClick}
       />
 
       <DeleteConfirmModal

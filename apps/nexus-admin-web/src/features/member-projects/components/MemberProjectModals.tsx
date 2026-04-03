@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Plus, Trash2, Search, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar, Layout, FileText } from "lucide-react";
+import { X, Loader2, AlertTriangle, Plus, Trash2, Search, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar, Layout, FileText, Edit2 } from "lucide-react";
 import { MemberProject, CreateMemberProjectDTO, UpdateMemberProjectDTO } from "../types";
 import { useSearchUsers } from "@/features/teams/api/teams";
 import Image from "next/image";
@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import { UserType } from "@/features/articles";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminFormModal, AdminInputField, AdminTextAreaField, AdminImageUploadField } from "@/components/admin/form";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Project Form Modal (Create / Update)
@@ -113,149 +115,139 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
   const searchResults = usersResponse?.body?.data || [];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Project" : "Create New Project"}>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Project Title</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="e.g. GDG Platform Redesign"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            />
-          </div>
+    <AdminFormModal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      onSubmit={handleSubmit}
+      title={initialData ? "Update Project" : "Create New Project"}
+      isSubmitting={isSubmitting}
+      submitLabel={initialData ? "Update Project" : "Create Project"}
+    >
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="md:col-span-2">
+          <AdminInputField
+            label="Project Title"
+            required
+            type="text"
+            placeholder="e.g. GDG Platform Redesign"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          />
+        </div>
 
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Associated Member</label>
-            <div className="relative" ref={dropdownRef}>
-              <div className="relative">
-                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search member by name..."
-                  className="w-full rounded-sm border border-gray-200 py-2.5 pr-10 pl-10 text-sm outline-none transition-all focus:border-teal-500"
-                  value={searchQuery || (initialData ? formData.memberGdgId : "")}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setShowDropdown(true);
-                  }}
-                  onFocus={() => setShowDropdown(true)}
-                />
-                {isSearching && (
-                  <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                    <Loader2 size={16} className="animate-spin text-gray-400" />
-                  </div>
-                )}
-              </div>
-              
-              {showDropdown && searchQuery.length >= 2 && (
-                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
-                  {searchResults.length > 0 ? (
-                    searchResults.map((user: any) => (
-                      <button
-                        key={user.id}
-                        type="button"
-                        onClick={() => handleSelectUser(user)}
-                        className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
-                      >
-                        <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
-                        <span className="text-xs text-gray-500">{user.gdg_id}</span>
-                      </button>
-                    ))
-                  ) : !isSearching ? (
-                    <div className="p-4 text-center text-sm text-gray-500 italic">No matching users found.</div>
-                  ) : null}
+        <div className="md:col-span-2">
+          <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Associated Member</label>
+          <div className="relative" ref={dropdownRef}>
+            <div className="relative">
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search member by name..."
+                className="w-full rounded-sm border border-gray-200 py-2.5 pr-10 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+                value={searchQuery || (initialData ? formData.memberGdgId : "")}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
+              />
+              {isSearching && (
+                <div className="absolute top-1/2 right-3 -translate-y-1/2">
+                  <Loader2 size={16} className="animate-spin text-gray-400" />
                 </div>
               )}
             </div>
-            {formData.memberGdgId && (
-              <div className="mt-2 flex items-center gap-2 text-[10px] font-bold text-teal-600">
-                <UserPlus size={12} />
-                Selected: {formData.memberGdgId}
+            
+            {showDropdown && searchQuery.length >= 2 && (
+              <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
+                {searchResults.length > 0 ? (
+                  searchResults.map((user: any) => (
+                    <button
+                      key={user.id}
+                      type="button"
+                      onClick={() => handleSelectUser(user)}
+                      className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
+                    >
+                      <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
+                      <span className="text-xs text-gray-500">{user.gdg_id}</span>
+                    </button>
+                  ))
+                ) : !isSearching ? (
+                  <div className="p-4 text-center text-sm text-gray-500 italic">No matching users found.</div>
+                ) : null}
               </div>
             )}
           </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Start Date</label>
-            <input
-              required
-              type="date"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              value={formData.startDate}
-              onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">End Date (Optional)</label>
-            <input
-              type="date"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              value={formData.endDate || ""}
-              onChange={(e) => setFormData({ ...formData, endDate: e.target.value || null })}
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Description</label>
-            <textarea
-              required
-              rows={4}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="Provide a detailed description of the project, role, and achievements..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
-
-          {/* Image Uploads */}
-          <div className="md:col-span-2 space-y-4">
-            <label className="block text-xs font-bold uppercase tracking-widest text-gray-500">Project Gallery</label>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {(['main', 'secondary', 'tertiary'] as const).map((imgType) => (
-                <div key={imgType} className="space-y-2">
-                  <div className="relative aspect-video w-full overflow-hidden rounded-sm border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
-                    {previews[imgType] ? (
-                      <Image src={previews[imgType]!} alt={`${imgType} preview`} fill className="object-cover" />
-                    ) : (
-                      <ImageIcon size={24} />
-                    )}
-                  </div>
-                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-sm border border-gray-200 bg-white py-2 text-[10px] font-bold text-gray-700 hover:bg-gray-50 transition-colors uppercase tracking-wider">
-                    <Upload size={14} />
-                    {imgType} Image
-                    <input type="file" className="hidden" accept="image/*" onChange={handleFileChange(imgType)} />
-                  </label>
-                </div>
-              ))}
+          {formData.memberGdgId && (
+            <div className="mt-2 flex items-center gap-2 text-[10px] font-bold text-teal-600">
+              <UserPlus size={12} />
+              Selected: {formData.memberGdgId}
             </div>
+          )}
+        </div>
+
+        <div>
+          <AdminInputField
+            label="Start Date"
+            required
+            type="date"
+            value={formData.startDate}
+            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+          />
+        </div>
+
+        <div>
+          <AdminInputField
+            label="End Date (Optional)"
+            type="date"
+            value={formData.endDate || ""}
+            onChange={(e) => setFormData({ ...formData, endDate: e.target.value || null })}
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <AdminTextAreaField
+            label="Description"
+            required
+            rows={4}
+            placeholder="Provide a detailed description of the project, role, and achievements..."
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+        </div>
+
+        {/* Image Uploads */}
+        <div className="md:col-span-2">
+          <label className="mb-3 block text-xs font-bold uppercase tracking-widest text-gray-500">Project Gallery</label>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <AdminImageUploadField
+              label="Main Image"
+              previewUrl={previews.main || null}
+              onImageChange={(file, url) => {
+                setFiles(prev => ({ ...prev, mainImage: file || undefined }));
+                setPreviews(prev => ({ ...prev, main: url }));
+              }}
+            />
+            <AdminImageUploadField
+              label="Secondary Image"
+              previewUrl={previews.secondary || null}
+              onImageChange={(file, url) => {
+                setFiles(prev => ({ ...prev, secondaryImage: file || undefined }));
+                setPreviews(prev => ({ ...prev, secondary: url }));
+              }}
+            />
+            <AdminImageUploadField
+              label="Tertiary Image"
+              previewUrl={previews.tertiary || null}
+              onImageChange={(file, url) => {
+                setFiles(prev => ({ ...prev, tertiaryImage: file || undefined }));
+                setPreviews(prev => ({ ...prev, tertiary: url }));
+              }}
+            />
           </div>
         </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            {initialData ? "Save Changes" : "Create Project"}
-          </button>
-        </div>
-      </form>
-    </Modal>
+      </div>
+    </AdminFormModal>
   );
 }
 
@@ -298,14 +290,40 @@ interface ProjectViewModalProps {
   isOpen: boolean;
   onClose: () => void;
   project: MemberProject | null;
+  onEdit: (project: MemberProject) => void;
+  onDelete: (project: MemberProject) => void;
 }
 
-export function ProjectViewModal({ isOpen, onClose, project }: ProjectViewModalProps) {
+export function ProjectViewModal({ isOpen, onClose, project, onEdit, onDelete }: ProjectViewModalProps) {
   if (!project) return null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Project Details">
       <div className="space-y-6">
+        <ModalActionRow
+          actions={[
+            {
+              key: "edit",
+              label: "Edit Project",
+              icon: Edit2,
+              onClick: () => {
+                onClose();
+                onEdit(project);
+              },
+            },
+            {
+              key: "delete",
+              label: "Delete",
+              icon: Trash2,
+              tone: "danger",
+              onClick: () => {
+                onClose();
+                onDelete(project);
+              },
+            },
+          ]}
+        />
+
         {/* Main Image */}
         <div className="relative h-64 w-full overflow-hidden rounded-sm bg-gray-100 border border-gray-100 shadow-inner">
           {project.mainImageUrl ? (

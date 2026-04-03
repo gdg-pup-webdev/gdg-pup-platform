@@ -4,6 +4,7 @@ import React from "react";
 import { 
   File as FileIcon, 
   Download, 
+  ExternalLink,
   Folder as FolderIcon,
   Video as VideoIcon,
   FileText,
@@ -90,19 +91,40 @@ export function FileCard({ file, onEdit, onDelete, onView, onOpen, isFolder }: F
     }
   };
 
-  const extraItems: CardActionMenuItem[] = !isFolder
-    ? [
-        {
-          key: "download",
-          label: "Download",
-          icon: Download,
-          onClick: () => {
-            const downloadUrl = (file as FileRecord).downloadUrl;
-            window.open(downloadUrl, "_blank", "noopener,noreferrer");
-          },
+  const extraItems: CardActionMenuItem[] = [];
+
+  if (isFolder) {
+    if (onOpen) {
+      extraItems.push({
+        key: "open-folder",
+        label: "Open Folder",
+        icon: FolderIcon,
+        onClick: () => onOpen(file),
+      });
+    }
+  } else {
+    const fileRecord = file as FileRecord;
+
+    if (fileRecord.previewUrl) {
+      extraItems.push({
+        key: "preview",
+        label: "Preview",
+        icon: ExternalLink,
+        onClick: () => {
+          window.open(fileRecord.previewUrl, "_blank", "noopener,noreferrer");
         },
-      ]
-    : [];
+      });
+    }
+
+    extraItems.push({
+      key: "download",
+      label: "Download",
+      icon: Download,
+      onClick: () => {
+        window.open(fileRecord.downloadUrl, "_blank", "noopener,noreferrer");
+      },
+    });
+  }
 
   const fileTypeLabel = isFolder ? "Folder" : (file as FileRecord).fileType?.split("/")[1] || "File";
   const fileCreatedLabel = !isFolder

@@ -11,6 +11,7 @@ type AdminActionButtonVariant =
   | "tealOutline"
   | "danger"
   | "neutral"
+  | "neutralOutline"
   | "dark";
 
 type AdminActionButtonSize = "sm" | "md" | "lg";
@@ -22,6 +23,7 @@ interface AdminActionButtonProps
   isLoading?: boolean;
   loadingLabel?: string;
   fullWidth?: boolean;
+  label?: string; // added to support the previous interface
 }
 
 const VARIANT_CLASS_MAP: Record<AdminActionButtonVariant, string> = {
@@ -33,6 +35,7 @@ const VARIANT_CLASS_MAP: Record<AdminActionButtonVariant, string> = {
   tealOutline: "border border-teal-600 bg-white text-teal-600 hover:bg-teal-50",
   danger: "bg-red-600 text-white shadow-sm shadow-red-600/25 hover:bg-red-700",
   neutral: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+  neutralOutline: "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50",
   dark: "bg-gray-900 text-white shadow-sm shadow-black/20 hover:bg-gray-800",
 };
 
@@ -52,6 +55,8 @@ export function AdminActionButton({
   children,
   className,
   type = "button",
+  label,
+  onClick,
   ...rest
 }: AdminActionButtonProps) {
   return (
@@ -65,10 +70,11 @@ export function AdminActionButton({
         className,
       )}
       disabled={disabled || isLoading}
+      onClick={onClick}
       {...rest}
     >
       {isLoading ? <Loader2 size={16} className="animate-spin" /> : null}
-      {isLoading && loadingLabel ? loadingLabel : children}
+      {isLoading && loadingLabel ? loadingLabel : (label || children)}
     </button>
   );
 }

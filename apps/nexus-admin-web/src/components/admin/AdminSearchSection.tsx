@@ -30,7 +30,7 @@ export function AdminSearchSection({
   ...rest
 }: AdminSearchSectionProps) {
   return (
-    <div className={cn("rounded-xl border border-gray-200 bg-white p-3 shadow-sm", className)}>
+    <div className={cn("rounded-sm border border-gray-200 bg-white p-3", className)}>
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <SearchInput
           value={value}

@@ -30,6 +30,7 @@ export function TeamList() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [openAddMemberOnDetails, setOpenAddMemberOnDetails] = useState(false);
 
   const teams = teamsResponse?.body?.data || [];
   const totalPages = teamsResponse?.body?.meta?.totalPages || 1;
@@ -52,11 +53,20 @@ export function TeamList() {
 
   const handleEdit = (team: Team) => {
     setSelectedTeam(team);
+    setIsDetailsModalOpen(false);
+    setOpenAddMemberOnDetails(false);
     setIsFormModalOpen(true);
   };
 
   const handleView = (team: Team) => {
     setSelectedTeam(team);
+    setOpenAddMemberOnDetails(false);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleAddMember = (team: Team) => {
+    setSelectedTeam(team);
+    setOpenAddMemberOnDetails(true);
     setIsDetailsModalOpen(true);
   };
 
@@ -67,6 +77,15 @@ export function TeamList() {
     } catch (err: any) {
       toast.error(err.message || "Failed to delete team");
     }
+  };
+
+  const handleDeleteFromDetails = async (team: Team) => {
+    if (!window.confirm(`Are you sure you want to delete team \"${team.name}\"?`)) {
+      return;
+    }
+
+    await handleDelete(team);
+    setIsDetailsModalOpen(false);
   };
 
   const handleFormSubmit = async (data: TeamInsert | TeamUpdate) => {
@@ -95,22 +114,22 @@ export function TeamList() {
   return (
     <>
       <AdminListScaffold
+        actions={
+          <AdminActionButton
+            onClick={handleCreate}
+            variant="brand"
+            className="w-full md:w-auto"
+          >
+            <Plus size={18} />
+            Create Team
+          </AdminActionButton>
+        }
         search={
           <AdminSearchSection
             value={searchQuery}
             onValueChange={setSearchQuery}
             placeholder="Search teams..."
             accent="teal"
-            actions={
-              <AdminActionButton
-                onClick={handleCreate}
-                variant="brand"
-                className="w-full md:w-auto"
-              >
-                <Plus size={18} />
-                Create Team
-              </AdminActionButton>
-            }
           />
         }
         content={
@@ -123,6 +142,7 @@ export function TeamList() {
                   onView={handleView}
                   onEdit={handleEdit}
                   onDelete={handleDelete}
+                  onAddMember={handleAddMember}
                 />
               ))}
             </AdminCardGrid>
@@ -182,6 +202,9 @@ export function TeamList() {
         isOpen={isDetailsModalOpen}
         onClose={() => setIsDetailsModalOpen(false)}
         team={selectedTeam}
+        onEdit={handleEdit}
+        onDelete={handleDeleteFromDetails}
+        openAddMemberOnOpen={openAddMemberOnDetails}
       />
     </>
   );

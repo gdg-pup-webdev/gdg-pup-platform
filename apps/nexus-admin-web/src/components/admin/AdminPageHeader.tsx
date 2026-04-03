@@ -28,12 +28,12 @@ export function AdminPageHeader({
   return (
     <div
       className={cn(
-        "relative mb-8 overflow-hidden rounded-2xl border border-gray-200/90 bg-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.55)]",
+        "relative mb-8 overflow-hidden rounded-sm border border-gray-200/90 bg-white shadow-[0_10px_24px_-22px_rgba(15,23,42,0.55)]",
         className,
       )}
     >
-      <div className="pointer-events-none absolute -top-24 -right-16 h-48 w-48 rounded-full bg-teal-300/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-28 left-12 h-52 w-52 rounded-full bg-cyan-300/20 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-16 h-48 w-48 rounded-full bg-teal-300/15 blur-2xl" />
+      <div className="pointer-events-none absolute -bottom-28 left-12 h-52 w-52 rounded-full bg-cyan-300/15 blur-2xl" />
       <div className="absolute inset-y-0 left-0 w-1 bg-linear-to-b from-teal-400 via-cyan-500 to-emerald-500" />
 
       <div className="relative z-10 border-b border-gray-100/80 bg-white/70 px-5 py-3 pl-7 backdrop-blur-sm">
@@ -56,11 +56,11 @@ export function AdminPageHeader({
           </p>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-100 bg-teal-50/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-teal-700">
+            <span className="inline-flex items-center gap-1.5 rounded-sm border border-teal-100 bg-teal-50/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-teal-700">
               <Icon size={13} />
               Workspace Module
             </span>
-            <span className="rounded-full border border-gray-200 bg-white px-3 py-1 text-[11px] font-semibold text-gray-600">
+            <span className="rounded-sm border border-gray-200 bg-white px-3 py-1 text-[11px] font-semibold text-gray-600">
               Route: {pageMeta.href}
             </span>
             {badge ? <div>{badge}</div> : null}
@@ -68,7 +68,7 @@ export function AdminPageHeader({
         </div>
 
         {actions ? (
-          <div className="shrink-0 rounded-xl border border-gray-200/90 bg-white/90 p-2 shadow-sm md:self-start">
+          <div className="shrink-0 rounded-sm border border-gray-200/90 bg-white/90 p-2 md:self-start">
             {actions}
           </div>
         ) : null}

@@ -4,6 +4,8 @@ import React from "react";
 import { Calendar, User, Layout } from "lucide-react";
 import { MemberProject } from "../types";
 import { AdminEntityCard } from "@/components/admin/AdminEntityCard";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface MemberProjectCardProps {
   project: MemberProject;
@@ -58,5 +60,24 @@ export function MemberProjectCard({ project, onView, onEdit, onDelete }: MemberP
         ),
       }}
     />
+  );
+}
+
+export function MemberProjectCardSkeleton() {
+  return (
+    <Card className="h-full flex flex-col">
+      <CardHeader>
+        <Skeleton className="h-40 w-full" />
+      </CardHeader>
+      <CardContent className="flex-grow">
+        <Skeleton className="h-6 w-3/4" />
+        <Skeleton className="h-4 w-full mt-4" />
+        <Skeleton className="h-4 w-full mt-2" />
+        <Skeleton className="h-4 w-2/3 mt-2" />
+      </CardContent>
+      <CardFooter>
+        <Skeleton className="h-8 w-1/2" />
+      </CardFooter>
+    </Card>
   );
 }

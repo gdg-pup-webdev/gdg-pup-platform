@@ -26,11 +26,13 @@ export default function MemberShowcasePage() {
 
   const handleEdit = (showcase: MemberShowcase) => {
     setSelectedShowcase(showcase);
+    setIsViewModalOpen(false);
     setIsFormModalOpen(true);
   };
 
   const handleDelete = async (showcase: MemberShowcase) => {
     try {
+      setIsViewModalOpen(false);
       await deleteMutation.mutateAsync(showcase.id);
       toast.success("Showcase deleted successfully");
     } catch (error: any) {
@@ -90,6 +92,8 @@ export default function MemberShowcasePage() {
         isOpen={isViewModalOpen}
         onClose={() => setIsViewModalOpen(false)}
         showcase={selectedShowcase}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     </AdminPageScaffold>
   );

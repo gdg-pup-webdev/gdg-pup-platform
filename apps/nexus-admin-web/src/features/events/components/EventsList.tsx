@@ -13,6 +13,7 @@ import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEven
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
 import { useSyncAllEventToBevy } from "../hooks/useSyncAllEventToBevy";
+import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
@@ -67,6 +68,7 @@ export const EventsList: React.FC = () => {
   const createFromBevyMutation = useCreateEventFromBevyEvent();
   const updateMutation = useUpdateEvent();
   const deleteMutation = useDeleteEvent();
+  const syncOneMutation = useSyncOneEventToBevy();
 
   // State for modals
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -74,6 +76,7 @@ export const EventsList: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isBevySearchModalOpen, setIsBevySearchModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [syncingEventId, setSyncingEventId] = useState<string | null>(null);
 
   const events = eventsResponse?.data || [];
   const totalPages = eventsResponse?.meta?.totalPages || 1;
@@ -100,6 +103,18 @@ export const EventsList: React.FC = () => {
 
   const handleCreateFromBevy = () => {
     setIsBevySearchModalOpen(true);
+  };
+
+  const handleSyncOneEvent = async (event: Event) => {
+    try {
+      setSyncingEventId(event.id);
+      await syncOneMutation.mutateAsync({ eventId: event.id });
+      toast.success("Event synced successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Sync failed");
+    } finally {
+      setSyncingEventId((current) => (current === event.id ? null : current));
+    }
   };
 
   const handleSelectBevyEvent = async (bevyEventId: string) => {
@@ -380,46 +395,46 @@ export const EventsList: React.FC = () => {
   return (
     <>
       <AdminListScaffold
+        actions={
+          <>
+            <AdminActionButton
+              onClick={handleSyncAllToBevy}
+              disabled={syncAllMutation.isPending}
+              variant="brandOutline"
+              className="flex-1 md:flex-none"
+            >
+              {syncAllMutation.isPending ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span className="ml-1">Syncing...</span>
+                </>
+              ) : (
+                <span>Sync All to Bevy</span>
+              )}
+            </AdminActionButton>
+            <AdminActionButton
+              onClick={handleCreateFromBevy}
+              variant="brandOutline"
+              className="flex-1 md:flex-none"
+            >
+              Import from Bevy
+            </AdminActionButton>
+            <AdminActionButton
+              onClick={handleCreate}
+              variant="brand"
+              className="flex-1 md:flex-none"
+            >
+              <Plus size={18} />
+              Create Event
+            </AdminActionButton>
+          </>
+        }
         search={
           <AdminSearchSection
             value={searchQuery}
             onValueChange={setSearchQuery}
             placeholder="Search events..."
             accent="teal"
-            actions={
-              <>
-                <AdminActionButton
-                  onClick={handleSyncAllToBevy}
-                  disabled={syncAllMutation.isPending}
-                  variant="brandOutline"
-                  className="flex-1 md:flex-none"
-                >
-                  {syncAllMutation.isPending ? (
-                    <>
-                      <Loader2 size={14} className="animate-spin" />
-                      <span className="ml-1">Syncing...</span>
-                    </>
-                  ) : (
-                    <span>Sync All to Bevy</span>
-                  )}
-                </AdminActionButton>
-                <AdminActionButton
-                  onClick={handleCreateFromBevy}
-                  variant="brandOutline"
-                  className="flex-1 md:flex-none"
-                >
-                  Import from Bevy
-                </AdminActionButton>
-                <AdminActionButton
-                  onClick={handleCreate}
-                  variant="brand"
-                  className="flex-1 md:flex-none"
-                >
-                  <Plus size={18} />
-                  Create Event
-                </AdminActionButton>
-              </>
-            }
           />
         }
         filters={filtersSection}
@@ -433,6 +448,7 @@ export const EventsList: React.FC = () => {
                   onView={handleView}
                   onEdit={handleEdit}
                   onDelete={handleDeleteFromCard}
+                  onSync={handleSyncOneEvent}
                 />
               ))}
             </AdminCardGrid>
@@ -501,6 +517,8 @@ export const EventsList: React.FC = () => {
         event={selectedEvent}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
+        onSync={handleSyncOneEvent}
+        isSyncing={Boolean(selectedEvent && syncingEventId === selectedEvent.id && syncOneMutation.isPending)}
       />
 
       <DeleteConfirmModal

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar } from "lucide-react";
+import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar, Edit2 } from "lucide-react";
 import { MemberShowcase, CreateMemberShowcaseDTO, UpdateMemberShowcaseDTO, ShowcasedMember } from "../types";
 import { useSearchUsers } from "@/features/teams/api/teams";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Showcase Form Modal (Create / Update)
@@ -342,14 +343,48 @@ interface ShowcaseViewModalProps {
   isOpen: boolean;
   onClose: () => void;
   showcase: MemberShowcase | null;
+  onEdit: (showcase: MemberShowcase) => void;
+  onDelete: (showcase: MemberShowcase) => void;
 }
 
-export function ShowcaseViewModal({ isOpen, onClose, showcase }: ShowcaseViewModalProps) {
+export function ShowcaseViewModal({ isOpen, onClose, showcase, onEdit, onDelete }: ShowcaseViewModalProps) {
   if (!showcase) return null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Showcase Details">
       <div className="space-y-6">
+        <ModalActionRow
+          actions={[
+            {
+              key: "open-article",
+              label: "Open Article",
+              icon: ExternalLink,
+              onClick: () => {
+                window.open(showcase.articleUrl, "_blank", "noopener,noreferrer");
+              },
+            },
+            {
+              key: "edit",
+              label: "Edit Showcase",
+              icon: Edit2,
+              onClick: () => {
+                onClose();
+                onEdit(showcase);
+              },
+            },
+            {
+              key: "delete",
+              label: "Delete",
+              icon: Trash2,
+              tone: "danger",
+              onClick: () => {
+                onClose();
+                onDelete(showcase);
+              },
+            },
+          ]}
+        />
+
         <div className="relative h-64 w-full overflow-hidden rounded-sm bg-gray-100 border border-gray-100">
           {showcase.thumbnailUrl ? (
             <Image src={showcase.thumbnailUrl} alt={showcase.title} fill className="object-cover" />

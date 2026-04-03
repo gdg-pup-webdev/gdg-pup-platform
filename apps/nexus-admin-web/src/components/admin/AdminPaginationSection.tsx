@@ -12,7 +12,7 @@ interface AdminPaginationSectionProps extends PaginationProps {
 
 export function AdminPaginationSection({ className, ...paginationProps }: AdminPaginationSectionProps) {
   return (
-    <div className={cn("rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm", className)}>
+    <div className={cn("rounded-sm border border-gray-200 bg-white px-4 py-3", className)}>
       <Pagination {...paginationProps} />
     </div>
   );

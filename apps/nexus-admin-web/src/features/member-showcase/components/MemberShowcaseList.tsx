@@ -97,20 +97,22 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
           </section>
         ) : null
       }
+      actions={
+        <AdminActionButton
+          onClick={onCreate}
+          variant="teal"
+          className="hover:shadow-md active:scale-95"
+        >
+          <Plus size={18} />
+          Add New Showcase
+        </AdminActionButton>
+      }
       search={
-        <div className="mb-2 flex flex-col gap-4 border-b border-gray-100 pb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
           <div>
             <h2 className="text-xl font-black tracking-tight text-gray-900 uppercase">Showcase Archive</h2>
             <p className="mt-1 text-xs font-medium tracking-widest text-gray-500 uppercase">Total: {totalRecords} records found</p>
           </div>
-          <AdminActionButton
-            onClick={onCreate}
-            variant="teal"
-            className="hover:shadow-md active:scale-95"
-          >
-            <Plus size={18} />
-            Add New Showcase
-          </AdminActionButton>
         </div>
       }
       content={

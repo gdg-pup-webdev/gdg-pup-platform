@@ -3,7 +3,10 @@
 import React, { useState } from "react";
 import { Plus, Layout, X, User, Filter } from "lucide-react";
 import { MemberProject } from "../types";
-import { MemberProjectCard } from "./MemberProjectCard";
+import {
+  MemberProjectCard,
+  MemberProjectCardSkeleton,
+} from "./MemberProjectCard";
 import { useMemberProjects } from "../hooks/useMemberProjects";
 import { useMemberProjectsByGdgId } from "../hooks/useMemberProjectsByGdgId";
 import { useSearchMemberProjects } from "../hooks/useSearchMemberProjects";
@@ -70,7 +73,13 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
   };
 
   if (isLoading && !isFetching) {
-    return <ListLoadingState accent="teal" message="Loading projects..." className="h-96" />;
+    return (
+      <AdminCardGrid>
+        {Array.from({ length: pageSize }).map((_, i) => (
+          <MemberProjectCardSkeleton key={i} />
+        ))}
+      </AdminCardGrid>
+    );
   }
 
   if (isError) {
@@ -119,7 +128,6 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
             type="submit"
             variant="dark"
             size="sm"
-            className="px-6 shadow-sm"
           >
             <Filter size={14} />
             Apply Filters
@@ -128,9 +136,8 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
             <AdminActionButton
               type="button"
               onClick={clearFilters}
-              variant="neutral"
+              variant="neutralOutline"
               size="sm"
-              className="border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 hover:text-red-500"
             >
               <X size={14} />
               Clear
@@ -144,18 +151,15 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
   return (
     <AdminListScaffold
       className="space-y-8 pb-20"
-      search={
-        <div className="flex justify-end border-b border-gray-100 pb-6">
-          <AdminActionButton
-            onClick={onCreate}
-            variant="teal"
-            size="lg"
-            className="uppercase tracking-widest hover:shadow-lg active:scale-95"
-          >
-            <Plus size={20} />
-            Create Project
-          </AdminActionButton>
-        </div>
+      actions={
+        <AdminActionButton
+          onClick={onCreate}
+          variant="brand"
+          className="w-full md:w-auto"
+        >
+          <Plus size={18} />
+          Create Project
+        </AdminActionButton>
       }
       filters={filtersSection}
       content={

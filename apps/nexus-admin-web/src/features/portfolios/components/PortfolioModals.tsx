@@ -5,6 +5,7 @@ import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, Ex
 import { Portfolio, PortfolioUpdate } from "../types";
 import Image from "next/image";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Portfolio Form Modal (Update Only)
@@ -354,16 +355,16 @@ export function PortfolioDetailsModal({ isOpen, onClose, portfolio, onEdit }: Po
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Portfolio Details">
       <div className="space-y-6">
-        {/* Action Buttons */}
-        <div className="flex justify-end gap-2 border-b border-gray-50 pb-4">
-          <button
-            onClick={() => onEdit(portfolio)}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Edit2 size={14} />
-            Edit Portfolio
-          </button>
-        </div>
+        <ModalActionRow
+          actions={[
+            {
+              key: "edit",
+              label: "Edit Portfolio",
+              icon: Edit2,
+              onClick: () => onEdit(portfolio),
+            },
+          ]}
+        />
 
         <div className="flex flex-col sm:flex-row gap-6">
           <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-sm bg-blue-50 border border-blue-100 flex items-center justify-center">

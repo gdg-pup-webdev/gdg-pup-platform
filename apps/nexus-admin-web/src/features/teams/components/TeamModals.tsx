@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Edit2, Check, User as UserIcon } from "lucide-react";
 import { Team, TeamInsert, TeamUpdate, TeamMember } from "../types";
-import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useUsers, useTeam, useSearchUsers } from "../api/teams";
+import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useTeam, useSearchUsers } from "../api/teams";
 import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Team Form Modal (Create / Update)
@@ -113,9 +114,19 @@ interface TeamDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   team: Team | null;
+  onEdit: (team: Team) => void;
+  onDelete: (team: Team) => void;
+  openAddMemberOnOpen?: boolean;
 }
 
-export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDetailsModalProps) {
+export function TeamDetailsModal({
+  isOpen,
+  onClose,
+  team: initialTeam,
+  onEdit,
+  onDelete,
+  openAddMemberOnOpen = false,
+}: TeamDetailsModalProps) {
   const { data: teamResponse, isLoading: isLoadingTeam } = useTeam(initialTeam?.id || "");
   const team = teamResponse?.body?.data || initialTeam;
 
@@ -149,7 +160,21 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setIsAddingMember(openAddMemberOnOpen);
+
+    if (!openAddMemberOnOpen) {
+      setSelectedUser(null);
+      setPosition("");
+      setSearchQuery("");
+    }
+  }, [isOpen, openAddMemberOnOpen, initialTeam?.id]);
+
   if (!initialTeam) return null;
+
+  const activeTeam = team || initialTeam;
 
   const searchResults = usersResponse?.body?.data?.filter((user: any) => 
     !team?.members?.some((m: TeamMember) => m.user_id === user.id)
@@ -222,6 +247,39 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
         </div>
       ) : (
         <div className="space-y-6">
+          <ModalActionRow
+            actions={[
+              {
+                key: "add-member",
+                label: isAddingMember ? "Cancel Add Member" : "Add Member",
+                icon: isAddingMember ? X : UserPlus,
+                tone: isAddingMember ? "neutral" : "primary",
+                onClick: () => {
+                  setIsAddingMember((value) => !value);
+                },
+              },
+              {
+                key: "edit",
+                label: "Edit Team",
+                icon: Edit2,
+                onClick: () => {
+                  onClose();
+                  onEdit(activeTeam);
+                },
+              },
+              {
+                key: "delete",
+                label: "Delete Team",
+                icon: Trash2,
+                tone: "danger",
+                onClick: () => {
+                  onClose();
+                  onDelete(activeTeam);
+                },
+              },
+            ]}
+          />
+
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded bg-teal-50 text-teal-600">
               <Users size={28} />

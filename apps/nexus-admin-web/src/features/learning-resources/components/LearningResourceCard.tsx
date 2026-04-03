@@ -13,6 +13,17 @@ interface LearningResourceCardProps {
 }
 
 export function LearningResourceCard({ resource, onView, onEdit, onDelete }: LearningResourceCardProps) {
+  const extraItems = [
+    {
+      key: "visit-link",
+      label: "Visit Link",
+      icon: ExternalLink,
+      onClick: () => {
+        window.open(resource.url, "_blank", "noopener,noreferrer");
+      },
+    },
+  ];
+
   return (
     <AdminEntityCard
       title={resource.title}
@@ -83,6 +94,7 @@ export function LearningResourceCard({ resource, onView, onEdit, onDelete }: Lea
         onView: () => onView(resource),
         onEdit: () => onEdit(resource),
         onDelete: () => onDelete(resource),
+        extraItems,
         editLabel: "Update Resource",
         deleteDialogTitle: "Delete Resource",
         deleteDialogDescription: (

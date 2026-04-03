@@ -1,5 +1,4 @@
 "use client";
-import { FaSyncAlt } from "react-icons/fa";
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -22,6 +21,8 @@ import {
   Link2,
   Hash,
   Download,
+  RefreshCw,
+  ExternalLink,
 } from "lucide-react";
 import { Event, EventInsert, EventUpdate, EventAttendance } from "../types";
 import { useListAttendees } from "../hooks/useListAttendees";
@@ -31,10 +32,10 @@ import { useGetBevyEventDetail } from "@/features/bevy-events/hooks/useGetBevyEv
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
 import { WireframeUploadImage } from "@/components/wireframeUi/WireframeUploadImage";
-import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Bevy Event Search Modal
@@ -743,6 +744,8 @@ interface EventDetailsModalProps {
   event: Event | null;
   onEdit: (event: Event) => void;
   onDelete: (event: Event) => void;
+  onSync: (event: Event) => void | Promise<void>;
+  isSyncing?: boolean;
 }
 
 export function EventDetailsModal({
@@ -751,6 +754,8 @@ export function EventDetailsModal({
   event,
   onEdit,
   onDelete,
+  onSync,
+  isSyncing = false,
 }: EventDetailsModalProps) {
   const [page, setPage] = useState(1);
   const { data: attendeesResponse, isLoading: isAttendeesLoading } =
@@ -758,25 +763,47 @@ export function EventDetailsModal({
   const checkinMutation = useCheckinToEvent();
   const [attendeeId, setAttendeeId] = useState("");
 
-  const [syncin, setSyncing] = useState(false);
-
-  const syncMutation = useSyncOneEventToBevy();
-
   if (!event) return null;
 
   const attendees = attendeesResponse?.data || [];
 
-  const handleOnSync = async () => {
-    try {
-      setSyncing(true);
-      await syncMutation.mutateAsync({ eventId: event.id });
-      toast.success("Event synced successfully!");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to sync event");
-    } finally {
-      setSyncing(false);
-    }
-  };
+  const eventActions = [
+    ...(event.bevyPreviewUrl
+      ? [
+          {
+            key: "open-bevy-page",
+            label: "Open Bevy Page",
+            icon: ExternalLink,
+            onClick: () => {
+              window.open(event.bevyPreviewUrl as string, "_blank", "noopener,noreferrer");
+            },
+          },
+        ]
+      : []),
+    {
+      key: "sync",
+      label: "Sync with Bevy",
+      loadingLabel: "Syncing...",
+      icon: RefreshCw,
+      onClick: () => {
+        void onSync(event);
+      },
+      isLoading: isSyncing,
+    },
+    {
+      key: "edit",
+      label: "Edit Event",
+      icon: Edit2,
+      onClick: () => onEdit(event),
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      icon: Trash2,
+      tone: "danger" as const,
+      onClick: () => onDelete(event),
+    },
+  ];
 
   const handleCheckin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -797,32 +824,9 @@ export function EventDetailsModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Event Details & Attendance">
       <div className="space-y-6">
-        {/* Action Buttons for the Event */}
-        <div className="flex justify-end gap-2 border-b border-gray-50 pb-4">
-          <button
-            onClick={() => handleOnSync()}
-            disabled={syncMutation.isPending}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <FaSyncAlt size={14} />
-            {syncMutation.isPending ? "Syncing..." : "Sync with Bevy"}
-          </button>
-
-          <button
-            onClick={() => onEdit(event)}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Edit2 size={14} />
-            Edit Event
-          </button>
-          <button
-            onClick={() => onDelete(event)}
-            className="flex items-center gap-1.5 rounded-sm bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-100 transition-colors"
-          >
-            <Trash2 size={14} />
-            Delete
-          </button>
-        </div>
+        <ModalActionRow
+          actions={eventActions}
+        />
 
         <div className="flex flex-col sm:flex-row gap-4">
           {event.image_url && (

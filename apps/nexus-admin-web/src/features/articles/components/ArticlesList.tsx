@@ -119,22 +119,22 @@ export const ArticlesList: React.FC = () => {
 
   return (
     <AdminListScaffold
+      actions={
+        <AdminActionButton
+          onClick={handleCreate}
+          variant="brand"
+          className="w-full md:w-auto"
+        >
+          <Plus size={18} />
+          Create Article
+        </AdminActionButton>
+      }
       search={
         <AdminSearchSection
           value={searchQuery}
           onValueChange={setSearchQuery}
           placeholder="Search articles..."
           accent="teal"
-          actions={
-            <AdminActionButton
-              onClick={handleCreate}
-              variant="brand"
-              className="w-full md:w-auto"
-            >
-              <Plus size={18} />
-              Create Article
-            </AdminActionButton>
-          }
         />
       }
       content={

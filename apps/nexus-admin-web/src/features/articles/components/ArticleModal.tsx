@@ -13,6 +13,7 @@ import { contract } from "@packages/nexus-api-contracts";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Event Selection Modal
@@ -524,22 +525,23 @@ export function ArticleDetailsModal({ isOpen, onClose, article, onEdit, onDelete
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Article Details">
       <div className="space-y-6">
-        <div className="flex justify-end gap-2 border-b border-gray-50 pb-4">
-          <button
-            onClick={() => onEdit(article)}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Edit2 size={14} />
-            Edit
-          </button>
-          <button
-            onClick={() => onDelete(article)}
-            className="flex items-center gap-1.5 rounded-sm bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-100 transition-colors"
-          >
-            <Trash2 size={14} />
-            Delete
-          </button>
-        </div>
+        <ModalActionRow
+          actions={[
+            {
+              key: "edit",
+              label: "Edit",
+              icon: Edit2,
+              onClick: () => onEdit(article),
+            },
+            {
+              key: "delete",
+              label: "Delete",
+              icon: Trash2,
+              tone: "danger",
+              onClick: () => onDelete(article),
+            },
+          ]}
+        />
 
         <div className="space-y-4">
           {article.image_url && (

@@ -23,6 +23,8 @@ import {
 import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
+import { ModalActionRow, type ModalActionItem } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Folder Form Modal (Create / Update)
@@ -67,61 +69,33 @@ export function FolderFormModal({ isOpen, onClose, onSubmit, initialData, isSubm
   const isEditing = !!initialData?.id;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEditing ? "Update Folder" : "Create New Folder"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Folder Name</label>
-          <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                <FolderIcon size={18} />
-            </div>
-            <input
-                required
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full rounded-sm border border-gray-200 pl-10 pr-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                placeholder="e.g. Project Documents"
-            />
-          </div>
-        </div>
+    <AdminFormModal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={isEditing ? "Update Folder" : "Create New Folder"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={isEditing ? "Update Folder" : "Create Folder"}
+    >
+      <div className="space-y-5">
+        <AdminInputField
+          label="Folder Name"
+          required
+          type="text"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          placeholder="e.g. Project Documents"
+        />
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description (Optional)</label>
-          <textarea
-            rows={3}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="What will be stored in this folder?"
-          />
-        </div>
-
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-sm bg-gray-100 px-6 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-8 py-2 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md disabled:opacity-70"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                {isEditing ? "Updating..." : "Creating..."}
-              </>
-            ) : (
-              <>{isEditing ? "Update Folder" : "Create Folder"}</>
-            )}
-          </button>
-        </div>
-      </form>
-    </Modal>
+        <AdminTextAreaField
+          label="Description (Optional)"
+          rows={3}
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          placeholder="What will be stored in this folder?"
+        />
+      </div>
+    </AdminFormModal>
   );
 }
 
@@ -187,8 +161,15 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
   const isEditing = !!initialData?.id;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEditing ? "Update File Info" : "Upload New File"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
+    <AdminFormModal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={isEditing ? "Update File Info" : "Upload New File"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={isEditing ? "Update File" : "Upload File"}
+    >
+      <div className="space-y-5">
         {!isEditing && (
             <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-700">File</label>
@@ -225,75 +206,43 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
             </div>
         )}
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">File Name</label>
-          <input
-            required
-            type="text"
-            value={formData.fileName}
-            onChange={(e) => setFormData({ ...formData, fileName: e.target.value })}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="e.g. project-report.pdf"
-          />
-        </div>
+        <AdminInputField
+          label="File Name"
+          required
+          type="text"
+          value={formData.fileName}
+          onChange={(e) => setFormData({ ...formData, fileName: e.target.value })}
+          placeholder="e.g. project-report.pdf"
+        />
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description</label>
-          <textarea
-            required
-            rows={3}
-            value={formData.fileDescription}
-            onChange={(e) => setFormData({ ...formData, fileDescription: e.target.value })}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="Briefly describe what this file is for..."
-          />
-        </div>
+        <AdminTextAreaField
+          label="Description"
+          required
+          rows={3}
+          value={formData.fileDescription}
+          onChange={(e) => setFormData({ ...formData, fileDescription: e.target.value })}
+          placeholder="Briefly describe what this file is for..."
+        />
 
         {!isEditing && (
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Add to Subfolder (Optional)</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Add to Subfolder (Optional)</label>
             <div className="mb-2 flex items-center gap-2 rounded-sm bg-gray-50 p-2 text-xs text-gray-500 border border-gray-100">
               <span className="font-bold">Base Folder:</span>
               <span className="truncate">{currentPath || "Root"}</span>
             </div>
-            <input
+            <AdminInputField
+              label=""
               type="text"
               value={formData.path}
               onChange={(e) => setFormData({ ...formData, path: e.target.value })}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               placeholder="Enter subfolder path to create new folder..."
+              helperText="Relative to the current base folder. Leave empty to upload directly to base folder."
             />
-            <p className="mt-1 text-[10px] font-medium text-gray-400 italic">
-              Relative to the current base folder. Leave empty to upload directly to base folder.
-            </p>
           </div>
         )}
-
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-sm bg-gray-100 px-6 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-8 py-2 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md disabled:opacity-70"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                {isEditing ? "Updating..." : "Uploading..."}
-              </>
-            ) : (
-              <>{isEditing ? "Update Info" : "Upload File"}</>
-            )}
-          </button>
-        </div>
-      </form>
-    </Modal>
+      </div>
+    </AdminFormModal>
   );
 }
 
@@ -334,9 +283,67 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
   const createdAt = isFolder ? (item as Folder).createdAt : (item as FileRecord).createdAt;
   const updatedAt = isFolder ? (item as Folder).updatedAt : (item as FileRecord).updatedAt;
 
+  const resourceActions: ModalActionItem[] = isFolder
+    ? [
+        {
+          key: "open-folder",
+          label: "Open Folder",
+          icon: FolderIcon,
+          onClick: () => {
+            if (!onOpen) return;
+            onOpen(item as Folder);
+            onClose();
+          },
+          disabled: !onOpen,
+        },
+      ]
+    : [
+        {
+          key: "preview",
+          label: "Preview",
+          icon: ExternalLink,
+          onClick: () => {
+            window.open((item as FileRecord).previewUrl, "_blank", "noopener,noreferrer");
+          },
+        },
+        {
+          key: "download",
+          label: "Download",
+          icon: Download,
+          onClick: () => {
+            window.open((item as FileRecord).downloadUrl, "_blank", "noopener,noreferrer");
+          },
+        },
+      ];
+
+  resourceActions.push(
+    {
+      key: "edit",
+      label: "Edit Details",
+      icon: Edit2,
+      onClick: () => {
+        onEdit(item);
+        onClose();
+      },
+      tone: "neutral",
+    },
+    {
+      key: "delete",
+      label: `Delete ${isFolder ? "Folder" : "File"}`,
+      icon: Trash2,
+      tone: "danger",
+      onClick: () => {
+        onDelete(item);
+        onClose();
+      },
+    },
+  );
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={isFolder ? "Folder Details" : "File Details"}>
       <div className="space-y-6">
+        <ModalActionRow actions={resourceActions} />
+
         <div className={`flex items-start gap-4 rounded-xl border p-5 ${isFolder ? "border-teal-100 bg-teal-50/30" : "border-gray-100 bg-gray-50/30"}`}>
           <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl shadow-sm ${isFolder ? "bg-teal-100 text-teal-600" : "bg-white text-gray-400"}`}>
             <IconComponent size={32} strokeWidth={1.5} />
@@ -378,55 +385,6 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
         <div>
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Description</h4>
           <p className="mt-1 text-sm leading-relaxed text-gray-600">{description || "No description provided."}</p>
-        </div>
-
-        <div className="flex flex-col gap-3 pt-6 border-t border-gray-100">
-            <div className="flex gap-3">
-                {isFolder ? (
-                    <button 
-                        onClick={() => { onOpen?.(item as Folder); onClose(); }}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 shadow-md"
-                    >
-                        <FolderIcon size={18} />
-                        Open Folder
-                    </button>
-                ) : (
-                    <>
-                        <a 
-                            href={(item as FileRecord).previewUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-gray-200 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
-                        >
-                            <ExternalLink size={18} />
-                            Preview
-                        </a>
-                        <a 
-                            href={(item as FileRecord).downloadUrl} 
-                            className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 shadow-md"
-                        >
-                            <Download size={18} />
-                            Download
-                        </a>
-                    </>
-                )}
-            </div>
-            <div className="flex gap-3">
-                <button 
-                    onClick={() => { onEdit(item); onClose(); }}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-gray-200 py-2.5 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-50"
-                >
-                    <Edit2 size={14} />
-                    Edit Details
-                </button>
-                <button 
-                    onClick={() => { onDelete(item); onClose(); }}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-red-100 py-2.5 text-xs font-bold text-red-600 transition-colors hover:bg-red-50"
-                >
-                    <Trash2 size={14} />
-                    Delete {isFolder ? "Folder" : "File"}
-                </button>
-            </div>
         </div>
       </div>
     </Modal>

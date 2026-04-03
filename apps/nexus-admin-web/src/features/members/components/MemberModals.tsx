@@ -5,6 +5,7 @@ import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, Ex
 import { GdgMember, GdgMemberUpdate } from "../types";
 import Image from "next/image";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Member Form Modal (Update Only)
@@ -323,16 +324,16 @@ export function MemberDetailsModal({ isOpen, onClose, member, onEdit }: MemberDe
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Member Details">
       <div className="space-y-6">
-        {/* Action Buttons */}
-        <div className="flex justify-end gap-2 border-b border-gray-50 pb-4">
-          <button
-            onClick={() => onEdit(member)}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Edit2 size={14} />
-            Edit Member
-          </button>
-        </div>
+        <ModalActionRow
+          actions={[
+            {
+              key: "edit",
+              label: "Edit Member",
+              icon: Edit2,
+              onClick: () => onEdit(member),
+            },
+          ]}
+        />
 
         <div className="flex flex-col sm:flex-row gap-6">
           <div className="flex-1">

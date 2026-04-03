@@ -104,6 +104,12 @@ export const RoleList: React.FC = () => {
   return (
     <>
       <AdminListScaffold
+        actions={
+          <AdminActionButton onClick={handleCreate}>
+            <Plus size={18} />
+            Create Role
+          </AdminActionButton>
+        }
         search={
           <AdminSearchSection
             value={searchValue}
@@ -111,15 +117,9 @@ export const RoleList: React.FC = () => {
             placeholder="Search roles..."
             accent="blue"
             actions={
-              <>
-                <AdminActionButton variant="brandOutline" onClick={handleSearch}>
-                  Search
-                </AdminActionButton>
-                <AdminActionButton onClick={handleCreate} className="w-full md:w-auto">
-                  <Plus size={18} />
-                  Create Role
-                </AdminActionButton>
-              </>
+              <AdminActionButton variant="brandOutline" onClick={handleSearch}>
+                Search
+              </AdminActionButton>
             }
           />
         }

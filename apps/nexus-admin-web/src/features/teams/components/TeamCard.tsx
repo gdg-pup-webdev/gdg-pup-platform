@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Users } from "lucide-react";
+import { Users, UserPlus } from "lucide-react";
 import { Team } from "../types";
 import { AdminEntityCard } from "@/components/admin/AdminEntityCard";
 
@@ -10,10 +10,22 @@ interface TeamCardProps {
   onView: (team: Team) => void;
   onEdit: (team: Team) => void;
   onDelete: (team: Team) => void | Promise<void>;
+  onAddMember?: (team: Team) => void;
 }
 
-export function TeamCard({ team, onView, onEdit, onDelete }: TeamCardProps) {
+export function TeamCard({ team, onView, onEdit, onDelete, onAddMember }: TeamCardProps) {
   const memberCount = team.members?.length || 0;
+
+  const extraItems = onAddMember
+    ? [
+        {
+          key: "add-member",
+          label: "Add Member",
+          icon: UserPlus,
+          onClick: () => onAddMember(team),
+        },
+      ]
+    : undefined;
 
   return (
     <AdminEntityCard
@@ -42,6 +54,7 @@ export function TeamCard({ team, onView, onEdit, onDelete }: TeamCardProps) {
         onView: () => onView(team),
         onEdit: () => onEdit(team),
         onDelete: () => onDelete(team),
+        extraItems,
         editLabel: "Update Team",
         deleteDialogTitle: "Delete Team",
         deleteDialogDescription: (

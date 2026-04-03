@@ -2,17 +2,18 @@
 
 import React, { useState } from "react";
 import { MemberProjectList } from "@/features/member-projects/components/MemberProjectList";
-import { ProjectFormModal, ProjectViewModal } from "@/features/member-projects/components/MemberProjectModals";
+import { ProjectFormModal, ProjectViewModal, DeleteConfirmModal } from "@/features/member-projects/components/MemberProjectModals";
 import { useCreateMemberProject } from "@/features/member-projects/hooks/useCreateMemberProject";
-import { useUpdateMemberProject } from "@/features/member-projects/hooks/useUpdateMemberProject";
 import { useDeleteMemberProject } from "@/features/member-projects/hooks/useDeleteMemberProject";
-import { MemberProject, CreateMemberProjectDTO, UpdateMemberProjectDTO } from "@/features/member-projects/types";
+import { useUpdateMemberProject } from "@/features/member-projects/hooks/useUpdateMemberProject";
+import { CreateMemberProjectDTO, MemberProject, UpdateMemberProjectDTO } from "@/features/member-projects/types";
 import { toast } from "react-toastify";
 import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
 
 export default function MemberProjectsPage() {
   // State for modals
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<MemberProject | undefined>(undefined);
 
@@ -28,21 +29,30 @@ export default function MemberProjectsPage() {
 
   const handleEdit = (project: MemberProject) => {
     setSelectedProject(project);
+    setIsViewModalOpen(false);
     setIsFormModalOpen(true);
   };
 
-  const handleDelete = async (project: MemberProject) => {
-    try {
-      await deleteMutation.mutateAsync(project.id);
-      toast.success("Project deleted successfully");
-    } catch (error: any) {
-      toast.error(error.message || "An error occurred while deleting the project");
-    }
+  const handleDelete = (project: MemberProject) => {
+    setSelectedProject(project);
+    setIsViewModalOpen(false);
+    setIsDeleteModalOpen(true);
   };
 
   const handleView = (project: MemberProject) => {
     setSelectedProject(project);
     setIsViewModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedProject) return;
+    try {
+      await deleteMutation.mutateAsync(selectedProject.id);
+      toast.success("Project deleted successfully");
+      setIsDeleteModalOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred while deleting the project");
+    }
   };
 
   const handleFormSubmit = async (
@@ -72,7 +82,7 @@ export default function MemberProjectsPage() {
 
   return (
     <AdminPageScaffold pageKey="memberProjects">
-      <MemberProjectList 
+      <MemberProjectList
         onCreate={handleCreate}
         onEdit={handleEdit}
         onDelete={handleDelete}
@@ -88,10 +98,20 @@ export default function MemberProjectsPage() {
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        isDeleting={deleteMutation.isPending}
+        itemName={selectedProject?.title || "this project"}
+      />
+
       <ProjectViewModal
         isOpen={isViewModalOpen}
         onClose={() => setIsViewModalOpen(false)}
         project={selectedProject || null}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     </AdminPageScaffold>
   );

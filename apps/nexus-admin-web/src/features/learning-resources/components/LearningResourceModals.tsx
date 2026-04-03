@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Link2, ExternalLink, Image as ImageIcon, Upload, Search, Calendar, Users, Tags, Info, MapPin, Clock } from "lucide-react";
+import { X, Loader2, AlertTriangle, Link2, ExternalLink, Image as ImageIcon, Upload, Search, Calendar, Users, Tags, Info, MapPin, Clock, Edit2, Trash2 } from "lucide-react";
 import { LearningResource, CreateLearningResourceDTO, UpdateLearningResourceDTO } from "../types";
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import Image from "next/image";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
 // Resource Form Modal (Create / Update)
@@ -414,14 +415,48 @@ interface ResourceViewModalProps {
   isOpen: boolean;
   onClose: () => void;
   resource: LearningResource | null;
+  onEdit: (resource: LearningResource) => void;
+  onDelete: (resource: LearningResource) => void;
 }
 
-export function ResourceViewModal({ isOpen, onClose, resource }: ResourceViewModalProps) {
+export function ResourceViewModal({ isOpen, onClose, resource, onEdit, onDelete }: ResourceViewModalProps) {
   if (!resource) return null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Resource Details">
       <div className="space-y-6">
+        <ModalActionRow
+          actions={[
+            {
+              key: "visit-link",
+              label: "Visit Link",
+              icon: ExternalLink,
+              onClick: () => {
+                window.open(resource.url, "_blank", "noopener,noreferrer");
+              },
+            },
+            {
+              key: "edit",
+              label: "Edit Resource",
+              icon: Edit2,
+              onClick: () => {
+                onClose();
+                onEdit(resource);
+              },
+            },
+            {
+              key: "delete",
+              label: "Delete",
+              icon: Trash2,
+              tone: "danger",
+              onClick: () => {
+                onClose();
+                onDelete(resource);
+              },
+            },
+          ]}
+        />
+
         <div className="relative h-64 w-full overflow-hidden rounded-sm bg-gray-100 border border-gray-100">
           {resource.thumbnailUrl ? (
             <Image src={resource.thumbnailUrl} alt={resource.title} fill className="object-cover" />
