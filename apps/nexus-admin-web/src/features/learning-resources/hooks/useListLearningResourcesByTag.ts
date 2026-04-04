@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
-
 export function useListLearningResourcesByTag(tag: string, pageNumber: number = 1, pageSize: number = 10) {
+  const callEndpoint = useFetchApi();
   return useQuery({
     queryKey: ["learning-resources", "tag", tag, pageNumber, pageSize],
     queryFn: async () => {

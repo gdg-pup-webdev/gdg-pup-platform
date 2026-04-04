@@ -1,17 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
-import { useFetchApi } from "@/hooks/useFetchApi";
-
 export const useDeleteArticle = () => {
+  const callEndpoint = useFetchApi();
   const queryClient = useQueryClient();
-    const fetchapi = useFetchApi();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetchapi(
+      const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.articles.id.DELETE,
         {

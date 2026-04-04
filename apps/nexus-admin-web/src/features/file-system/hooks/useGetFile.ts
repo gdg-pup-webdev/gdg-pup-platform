@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 
 const API_URL = "http://localhost:8000";
-
 export const useGetFile = (id: string) => {
+  const callEndpoint = useFetchApi();
   return useQuery({
     queryKey: ["file", id],
     queryFn: async () => {
