@@ -25,10 +25,20 @@ export function FileList() {
 
   // URL State
   const folderIdFromUrl = searchParams.get("folderId") || null;
-  const pageNumberFromUrl = parseInt(searchParams.get("pageNumber") || "1");
-  const pageSizeFromUrl = parseInt(searchParams.get("pageSize") || "10");
+  const pageNumberFromUrl = (() => {
+    const parsed = Number.parseInt(searchParams.get("pageNumber") || "1", 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+  })();
+  const pageSizeFromUrl = (() => {
+    const parsed = Number.parseInt(searchParams.get("pageSize") || "10", 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 10;
+  })();
+  const searchQuery = searchParams.get("q") || "";
+  const modalFromUrl = searchParams.get("modal") || "";
+  const selectedItemIdFromUrl = searchParams.get("itemId") || "";
+  const selectedItemTypeFromUrl = searchParams.get("itemType") || "";
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState(searchQuery);
   const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
   
   // API Hooks
@@ -42,13 +52,6 @@ export function FileList() {
   const deleteFolderMutation = useDeleteFolder();
   const createFolderMutation = useCreateFolder();
   
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<FileRecord | Folder | null>(null);
-
   // Sync breadcrumbs when currentFolder changes (especially on direct link load)
   useEffect(() => {
     if (currentFolder) {
@@ -63,6 +66,10 @@ export function FileList() {
         setFolderHistory([]);
     }
   }, [currentFolder, folderIdFromUrl]);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
 
   const updateQueryParams = (params: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -83,6 +90,37 @@ export function FileList() {
 
   const rawFiles = filesResponse?.body?.data || [];
   const rawFolders = foldersResponse?.body?.data || [];
+
+  const selectedItem = useMemo(() => {
+    if (!selectedItemIdFromUrl) {
+      return null;
+    }
+
+    if (selectedItemTypeFromUrl === "folder") {
+      return rawFolders.find((folder) => folder.id === selectedItemIdFromUrl) || null;
+    }
+
+    if (selectedItemTypeFromUrl === "file") {
+      return rawFiles.find((file) => file.id === selectedItemIdFromUrl) || null;
+    }
+
+    return (
+      rawFolders.find((folder) => folder.id === selectedItemIdFromUrl) ||
+      rawFiles.find((file) => file.id === selectedItemIdFromUrl) ||
+      null
+    );
+  }, [rawFiles, rawFolders, selectedItemIdFromUrl, selectedItemTypeFromUrl]);
+
+  const selectedItemIsFolder =
+    selectedItemTypeFromUrl === "folder" ||
+    Boolean(selectedItem && "name" in selectedItem && !("fileName" in selectedItem));
+
+  const isFormModalOpen =
+    modalFromUrl === "upload" || (modalFromUrl === "editFile" && Boolean(selectedItem));
+  const isFolderModalOpen =
+    modalFromUrl === "newFolder" || (modalFromUrl === "editFolder" && Boolean(selectedItem));
+  const isDetailsModalOpen = modalFromUrl === "view" && Boolean(selectedItem);
+  const isDeleteModalOpen = modalFromUrl === "delete" && Boolean(selectedItem);
   
   const meta = filesResponse?.body?.meta;
   const totalPages = meta?.totalPages || 1;
@@ -115,34 +153,52 @@ export function FileList() {
     return combinedItems;
   }, [rawFiles, rawFolders, searchQuery]);
 
+  const closeModal = () => {
+    updateQueryParams({ modal: null, itemId: null, itemType: null });
+  };
+
+  const openModal = (nextModal: string, item?: FileRecord | Folder) => {
+    const itemType = item ? ((item as any).isFolder ? "folder" : "file") : null;
+    updateQueryParams({
+      modal: nextModal,
+      itemId: item?.id || null,
+      itemType,
+    });
+  };
+
+  const applySearch = () => {
+    updateQueryParams({ q: searchInput.trim() || null, pageNumber: "1" });
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    updateQueryParams({ q: null, pageNumber: "1" });
+  };
+
   // Handlers
   const handleUpload = () => {
-    setSelectedItem(null);
-    setIsFormModalOpen(true);
+    openModal("upload");
   };
 
   const handleCreateFolderClick = () => {
-    setSelectedItem(null);
-    setIsFolderModalOpen(true);
+    openModal("newFolder");
   };
 
   const handleEdit = (item: FileRecord | Folder) => {
-    setSelectedItem(item);
-    if (!(item as any).isFolder) {
-      setIsFormModalOpen(true);
-    } else {
-      setIsFolderModalOpen(true);
+    if ((item as any).isFolder) {
+      openModal("editFolder", item);
+      return;
     }
+
+    openModal("editFile", item);
   };
 
   const handleView = (item: FileRecord | Folder) => {
-    setSelectedItem(item);
-    setIsDetailsModalOpen(true);
+    openModal("view", item);
   };
 
   const handleDeleteClick = (item: FileRecord | Folder) => {
-    setSelectedItem(item);
-    setIsDeleteModalOpen(true);
+    openModal("delete", item);
   };
 
   const handleDeleteFromCard = async (item: FileRecord | Folder) => {
@@ -176,7 +232,7 @@ export function FileList() {
 
   const handleFormSubmit = async (data: any, file?: File) => {
     try {
-        if (selectedItem && !(selectedItem as any).isFolder) {
+        if (selectedItem && !selectedItemIsFolder) {
           await updateMutation.mutateAsync({ id: selectedItem.id, data: data as FileRecordUpdate });
         } else if (file) {
           const formData = { 
@@ -186,7 +242,7 @@ export function FileList() {
           
           await uploadMutation.mutateAsync({ data: formData, file });
         }
-        setIsFormModalOpen(false);
+        closeModal();
         refetch();
     } catch (err) {
         console.error("Form submission failed:", err);
@@ -195,14 +251,14 @@ export function FileList() {
 
   const handleFolderSubmit = async (data: FolderInsert | FolderUpdate) => {
     try {
-        if (selectedItem && (selectedItem as any).isFolder) {
+        if (selectedItem && selectedItemIsFolder) {
             // This is an update, which is not implemented.
             throw new Error("Update folder functionality is not implemented yet.");
         } else {
             // This is a create.
             await createFolderMutation.mutateAsync(data as FolderInsert);
         }
-        setIsFolderModalOpen(false);
+          closeModal();
         refetch();
     } catch (err) {
         console.error("Folder creation/update failed:", err);
@@ -212,12 +268,12 @@ export function FileList() {
   const handleDeleteConfirm = async () => {
     if (selectedItem) {
       try {
-        if ((selectedItem as any).isFolder) {
+        if (selectedItemIsFolder) {
           await deleteFolderMutation.mutateAsync(selectedItem.id);
         } else {
           await deleteMutation.mutateAsync(selectedItem.id);
         }
-        setIsDeleteModalOpen(false);
+        closeModal();
         refetch();
     } catch (err) {
         console.error("Delete failed:", err);
@@ -307,12 +363,30 @@ export function FileList() {
         }
         search={
           <AdminSearchSection
-            value={searchQuery}
-            onValueChange={setSearchQuery}
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
             placeholder="Search in this folder..."
             accent="teal"
             searchContainerClassName="max-w-md"
             inputClassName="border-gray-100 py-3 shadow-sm"
+            actions={
+              <>
+                <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                  Search
+                </AdminActionButton>
+                {searchQuery ? (
+                  <AdminActionButton variant="neutralOutline" size="sm" onClick={clearSearch}>
+                    Clear
+                  </AdminActionButton>
+                ) : null}
+              </>
+            }
           />
         }
         content={
@@ -369,25 +443,25 @@ export function FileList() {
       {/* Modals */}
       <FileFormModal 
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
         currentPath={currentFolder?.name || "Root"}
-        initialData={selectedItem && !(selectedItem as any).isFolder ? (selectedItem as FileRecord) : undefined}
+        initialData={selectedItem && !selectedItemIsFolder ? (selectedItem as FileRecord) : undefined}
         isSubmitting={uploadMutation.isPending || updateMutation.isPending}
       />
 
       <FolderFormModal
         isOpen={isFolderModalOpen}
-        onClose={() => setIsFolderModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFolderSubmit}
         currentParentId={folderIdFromUrl}
-        initialData={selectedItem && (selectedItem as any).isFolder ? (selectedItem as Folder) : undefined}
+        initialData={selectedItem && selectedItemIsFolder ? (selectedItem as Folder) : undefined}
         isSubmitting={createFolderMutation.isPending}
       />
 
       <FileDetailsModal 
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         item={selectedItem}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
@@ -396,11 +470,11 @@ export function FileList() {
 
       <DeleteConfirmModal 
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         fileName={(selectedItem as any)?.fileName || (selectedItem as any)?.name || ""}
         isDeleting={deleteMutation.isPending || deleteFolderMutation.isPending}
-        isFolder={(selectedItem as any)?.isFolder}
+        isFolder={selectedItemIsFolder}
       />
     </>
   );

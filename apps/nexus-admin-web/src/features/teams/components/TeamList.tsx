@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Plus, Users } from "lucide-react";
 import { TeamCard } from "./TeamCard";
 import { TeamFormModal, TeamDetailsModal } from "./TeamModals";
@@ -14,27 +14,42 @@ import { AdminPaginationSection } from "@/components/admin/AdminPaginationSectio
 import { toast } from "react-toastify";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export function TeamList() {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 10);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedTeamId = getString("itemId", "");
   
   // API Hooks
   const { data: teamsResponse, isLoading, isError, error, refetch } = useTeams(page, pageSize);
   const createMutation = useCreateTeam();
   const updateMutation = useUpdateTeam();
   const deleteMutation = useDeleteTeam();
-  
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-  const [openAddMemberOnDetails, setOpenAddMemberOnDetails] = useState(false);
 
   const teams = teamsResponse?.body?.data || [];
+  const selectedTeam = useMemo(
+    () => teams.find((team) => team.id === selectedTeamId) || null,
+    [teams, selectedTeamId],
+  );
+
+  const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedTeam));
+  const isDetailsModalOpen = (modal === "view" || modal === "addMember") && Boolean(selectedTeam);
+  const openAddMemberOnDetails = modal === "addMember";
+
   const totalPages = teamsResponse?.body?.meta?.totalPages || 1;
   const totalRecords = teamsResponse?.body?.meta?.totalRecords || 0;
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
   const normalizedSearch = searchQuery.trim().toLowerCase();
   const filteredTeams = teams.filter((team: Team) => {
     if (!normalizedSearch) return true;
@@ -45,34 +60,53 @@ export function TeamList() {
     );
   });
 
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setQueryParams({ q: null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, team?: Team | null) => {
+    setQueryParams({
+      modal: nextModal,
+      itemId: team?.id || null,
+    });
+  };
+
   // Handlers
   const handleCreate = () => {
-    setSelectedTeam(null);
-    setIsFormModalOpen(true);
+    openModal("create");
   };
 
   const handleEdit = (team: Team) => {
-    setSelectedTeam(team);
-    setIsDetailsModalOpen(false);
-    setOpenAddMemberOnDetails(false);
-    setIsFormModalOpen(true);
+    openModal("edit", team);
   };
 
   const handleView = (team: Team) => {
-    setSelectedTeam(team);
-    setOpenAddMemberOnDetails(false);
-    setIsDetailsModalOpen(true);
+    openModal("view", team);
   };
 
   const handleAddMember = (team: Team) => {
-    setSelectedTeam(team);
-    setOpenAddMemberOnDetails(true);
-    setIsDetailsModalOpen(true);
+    openModal("addMember", team);
   };
 
   const handleCloseDetails = () => {
-    setIsDetailsModalOpen(false);
-    setOpenAddMemberOnDetails(false);
+    closeModal();
   };
 
   const handleDelete = async (team: Team) => {
@@ -99,7 +133,7 @@ export function TeamList() {
     } else {
       await createMutation.mutateAsync(data as TeamInsert);
     }
-    setIsFormModalOpen(false);
+    closeModal();
   };
 
   if (isLoading) {
@@ -131,10 +165,21 @@ export function TeamList() {
         }
         search={
           <AdminSearchSection
-            value={searchQuery}
-            onValueChange={setSearchQuery}
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
             placeholder="Search teams..."
             accent="teal"
+            actions={
+              <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                Search
+              </AdminActionButton>
+            }
           />
         }
         content={
@@ -162,7 +207,7 @@ export function TeamList() {
               </p>
               {searchQuery ? (
                 <AdminActionButton
-                  onClick={() => setSearchQuery("")}
+                    onClick={clearSearch}
                   variant="dark"
                   size="sm"
                   className="mt-6"
@@ -197,9 +242,9 @@ export function TeamList() {
       {/* Modals */}
       <TeamFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedTeam || undefined}
+        initialData={modal === "edit" ? selectedTeam || undefined : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 

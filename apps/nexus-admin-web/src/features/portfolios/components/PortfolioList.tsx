@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { User } from "lucide-react";
 import { useListPortfolios } from "../hooks/useListPortfolios";
 import { useUpdatePortfolio } from "../hooks/useUpdatePortfolio";
@@ -14,35 +14,66 @@ import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const PortfolioList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 10);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedPortfolioId = getString("itemId", "");
   
   // API Hooks
   const { data: portfoliosResponse, isLoading, isError, error, refetch } = useListPortfolios(page, pageSize);
   const updateMutation = useUpdatePortfolio();
 
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
-
   const portfolios = portfoliosResponse?.data || [];
+  const selectedPortfolio = useMemo(
+    () => portfolios.find((portfolio) => portfolio.id === selectedPortfolioId) || null,
+    [portfolios, selectedPortfolioId],
+  );
+
+  const isFormModalOpen = modal === "edit" && Boolean(selectedPortfolio);
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedPortfolio);
+
   const totalPages = portfoliosResponse?.meta?.totalPages || 1;
   const totalRecords = portfoliosResponse?.meta?.totalRecords || 0;
 
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, portfolio: Portfolio) => {
+    setQueryParams({ modal: nextModal, itemId: portfolio.id });
+  };
+
   // Handlers
   const handleEdit = (portfolio: Portfolio) => {
-    setSelectedPortfolio(portfolio);
-    setIsDetailsModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", portfolio);
   };
 
   const handleView = (portfolio: Portfolio) => {
-    setSelectedPortfolio(portfolio);
-    setIsDetailsModalOpen(true);
+    openModal("view", portfolio);
   };
 
   const handleFormSubmit = async (data: PortfolioUpdate, profileImage?: File | null) => {
@@ -55,7 +86,7 @@ export const PortfolioList: React.FC = () => {
         profileImage
       });
       toast.success("Portfolio updated successfully");
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Update failed");
     }
@@ -90,10 +121,21 @@ export const PortfolioList: React.FC = () => {
       <AdminListScaffold
         search={
           <AdminSearchSection
-            value={searchQuery}
-            onValueChange={setSearchQuery}
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
             placeholder="Search portfolios..."
             accent="blue"
+            actions={
+              <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                Search
+              </AdminActionButton>
+            }
           />
         }
         content={
@@ -135,7 +177,7 @@ export const PortfolioList: React.FC = () => {
       {/* Modals */}
       <PortfolioFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
         initialData={selectedPortfolio}
         isSubmitting={updateMutation.isPending}
@@ -143,7 +185,7 @@ export const PortfolioList: React.FC = () => {
 
       <PortfolioDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         portfolio={selectedPortfolio}
         onEdit={handleEdit}
       />

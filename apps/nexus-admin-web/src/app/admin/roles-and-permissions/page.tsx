@@ -1,20 +1,17 @@
 "use client";
 
 import React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import { RoleList, MemberRoleAssignment } from "@/features/roles-and-permissions";
 import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export default function RolesAndPermissionsPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const activeTab = searchParams.get("tab") || "roles";
+  const { getString, setQueryParams } = useAdminQueryParams();
+  const activeTab = getString("tab", "roles");
 
   const handleTabChange = (tab: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", tab);
-    router.push(`?${params.toString()}`);
+    setQueryParams({ tab }, { method: "push" });
   };
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Plus, FileText } from "lucide-react";
 import { useListArticles } from "../hooks/useListArticle";
 import { useDeleteArticle } from "../hooks/useDeleteArticle";
@@ -17,11 +17,16 @@ import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const ArticlesList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 12);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedArticleId = getString("itemId", "");
   
   // API Hooks
   const { data: articlesResponse, isLoading, isError, error, refetch } = useListArticles(page, pageSize);
@@ -29,36 +34,68 @@ export const ArticlesList: React.FC = () => {
   const updateMutation = useUpdateArticle();
   const deleteMutation = useDeleteArticle();
 
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-
   const articles = articlesResponse?.data || [];
+  const selectedArticle = useMemo(
+    () => articles.find((article) => article.id === selectedArticleId) || null,
+    [articles, selectedArticleId],
+  );
+
+  const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedArticle));
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedArticle);
+  const isDeleteModalOpen = modal === "delete" && Boolean(selectedArticle);
+
   const totalPages = articlesResponse?.meta?.totalPages || 1;
   const totalRecords = articlesResponse?.meta?.totalRecords || 0;
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, article?: Article | null) => {
+    setQueryParams({
+      modal: nextModal,
+      itemId: article?.id || null,
+    });
+  };
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setQueryParams({ q: null, page: 1 });
+  };
+
   // Handlers
   const handleCreate = () => {
-    setSelectedArticle(null);
-    setIsFormModalOpen(true);
+    openModal("create");
   };
 
   const handleEdit = (article: Article) => {
-    setSelectedArticle(article);
-    setIsDetailsModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", article);
   };
 
   const handleView = (article: Article) => {
-    setSelectedArticle(article);
-    setIsDetailsModalOpen(true);
+    openModal("view", article);
   };
 
   const handleDeleteClick = (article: Article) => {
-    setSelectedArticle(article);
-    setIsDetailsModalOpen(false);
-    setIsDeleteModalOpen(true);
+    openModal("delete", article);
   };
 
   const handleDeleteFromCard = async (article: Article) => {
@@ -79,7 +116,7 @@ export const ArticlesList: React.FC = () => {
         await createMutation.mutateAsync({ data: data as ArticleInsert, thumbnailImage: thumbnail });
         toast.success("Article created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Operation failed");
     }
@@ -90,7 +127,7 @@ export const ArticlesList: React.FC = () => {
       try {
         await deleteMutation.mutateAsync(selectedArticle.id);
         toast.success("Article deleted successfully");
-        setIsDeleteModalOpen(false);
+        closeModal();
       } catch (err: any) {
         toast.error(err.message || "Delete failed");
       }
@@ -131,10 +168,21 @@ export const ArticlesList: React.FC = () => {
       }
       search={
         <AdminSearchSection
-          value={searchQuery}
-          onValueChange={setSearchQuery}
+          value={searchInput}
+          onValueChange={setSearchInput}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              applySearch();
+            }
+          }}
           placeholder="Search articles..."
           accent="teal"
+          actions={
+            <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+              Search
+            </AdminActionButton>
+          }
         />
       }
       content={
@@ -161,7 +209,7 @@ export const ArticlesList: React.FC = () => {
             </p>
             {searchQuery ? (
               <AdminActionButton
-                onClick={() => setSearchQuery("")}
+                onClick={clearSearch}
                 variant="dark"
                 size="sm"
                 className="mt-6"
@@ -196,15 +244,15 @@ export const ArticlesList: React.FC = () => {
       {/* Modals */}
       <ArticleFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedArticle}
+        initialData={modal === "edit" ? selectedArticle : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       <ArticleDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         article={selectedArticle}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
@@ -212,7 +260,7 @@ export const ArticlesList: React.FC = () => {
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         itemName={selectedArticle?.title || ""}
         isDeleting={deleteMutation.isPending}

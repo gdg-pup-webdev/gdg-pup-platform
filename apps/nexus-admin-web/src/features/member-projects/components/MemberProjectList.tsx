@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Plus, Layout, X, User, Filter } from "lucide-react";
 import { MemberProject } from "../types";
 import {
@@ -17,6 +17,7 @@ import { AdminPaginationSection } from "@/components/admin/AdminPaginationSectio
 import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 interface MemberProjectListProps {
   onCreate: () => void;
@@ -26,15 +27,28 @@ interface MemberProjectListProps {
 }
 
 export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: MemberProjectListProps) {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(8);
-  const [localSearchQuery, setLocalSearchQuery] = useState("");
-  const [localMemberGdgId, setLocalMemberGdgId] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
 
-  const [appliedFilters, setAppliedFilters] = useState({
-    search: "",
-    memberGdgId: "",
-  });
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 8);
+  const [localSearchQuery, setLocalSearchQuery] = useState(getString("search", ""));
+  const [localMemberGdgId, setLocalMemberGdgId] = useState(getString("memberGdgId", ""));
+
+  const appliedFilters = useMemo(
+    () => ({
+      search: getString("search", ""),
+      memberGdgId: getString("memberGdgId", ""),
+    }),
+    [getString],
+  );
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
 
   const listQuery = useMemberProjects(page, pageSize);
   const memberQuery = useMemberProjectsByGdgId(appliedFilters.memberGdgId, page, pageSize);
@@ -53,23 +67,28 @@ export function MemberProjectList({ onCreate, onEdit, onDelete, onView }: Member
   const totalRecords = response?.meta?.totalRecords || 0;
   const totalPages = response?.meta?.totalPages || 1;
 
+  useEffect(() => {
+    setLocalSearchQuery(appliedFilters.search);
+    setLocalMemberGdgId(appliedFilters.memberGdgId);
+  }, [appliedFilters.memberGdgId, appliedFilters.search]);
+
   const handleApplyFilters = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    setAppliedFilters({
-      search: localSearchQuery.trim(),
-      memberGdgId: localMemberGdgId.trim(),
+    setQueryParams({
+      search: localSearchQuery.trim() || null,
+      memberGdgId: localMemberGdgId.trim() || null,
+      page: 1,
     });
-    setPage(1);
   };
 
   const clearFilters = () => {
     setLocalSearchQuery("");
     setLocalMemberGdgId("");
-    setAppliedFilters({
-      search: "",
-      memberGdgId: "",
+    setQueryParams({
+      search: null,
+      memberGdgId: null,
+      page: 1,
     });
-    setPage(1);
   };
 
   if (isLoading && !isFetching) {

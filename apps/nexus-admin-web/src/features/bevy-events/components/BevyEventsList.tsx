@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Loader2, AlertCircle, Zap, ChevronRight } from "lucide-react";
 import { useGetBevyEvents } from "../hooks/useGetBevyEvents";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
@@ -10,15 +10,47 @@ import { AdminActionButton } from "@/components/admin/AdminActionButton";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const BevyEventsList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 10);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedEventId = getString("itemId", "") || null;
+
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedEventId);
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, itemId: string) => {
+    setQueryParams({ modal: nextModal, itemId });
+  };
+
   const { data: bevyResponse, isLoading, isError, error, refetch } = useGetBevyEvents(page, pageSize);
   const createEventMutation = useCreateEventFromBevyEvent();
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const events = bevyResponse?.data || [];
   const filteredEvents = events.filter((event: any) => {
@@ -72,10 +104,21 @@ export const BevyEventsList: React.FC = () => {
     <AdminListScaffold
       search={
         <AdminSearchSection
-          value={searchQuery}
-          onValueChange={setSearchQuery}
+          value={searchInput}
+          onValueChange={setSearchInput}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              applySearch();
+            }
+          }}
           placeholder="Search Bevy events..."
           accent="teal"
+          actions={
+            <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+              Search
+            </AdminActionButton>
+          }
         />
       }
       content={
@@ -86,8 +129,7 @@ export const BevyEventsList: React.FC = () => {
               key={event.id}
               className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
               onClick={() => {
-                setSelectedEventId(event.id);
-                setIsDetailsModalOpen(true);
+                openModal("view", event.id);
               }}
             >
               {/* Banner Image */}
@@ -173,7 +215,7 @@ export const BevyEventsList: React.FC = () => {
       {/* Modal */}
       <BevyEventDetails
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         eventId={selectedEventId}
       />
     </AdminListScaffold>

@@ -1,48 +1,84 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { MemberShowcaseList } from "@/features/member-showcase/components/MemberShowcaseList";
 import { ShowcaseFormModal, ShowcaseViewModal } from "@/features/member-showcase/components/MemberShowcaseModals";
 import { MemberShowcase, CreateMemberShowcaseDTO, UpdateMemberShowcaseDTO } from "@/features/member-showcase/types";
 import { useCreateMemberShowcase } from "@/features/member-showcase/hooks/useCreateMemberShowcase";
 import { useUpdateMemberShowcase } from "@/features/member-showcase/hooks/useUpdateMemberShowcase";
 import { useDeleteMemberShowcase } from "@/features/member-showcase/hooks/useDeleteMemberShowcase";
+import { useMemberShowcase } from "@/features/member-showcase/hooks/useMemberShowcase";
 import { toast } from "react-toastify";
 import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export default function MemberShowcasePage() {
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedShowcase, setSelectedShowcase] = useState<MemberShowcase | null>(null);
+  const { getString, setQueryParams } = useAdminQueryParams();
+  const modal = getString("modal", "");
+  const selectedShowcaseId = getString("itemId", "");
+
+  const [selectedShowcaseSnapshot, setSelectedShowcaseSnapshot] = useState<MemberShowcase | null>(null);
+  const { data: selectedShowcaseResponse } = useMemberShowcase(selectedShowcaseId);
+
+  const selectedShowcase = useMemo(() => {
+    const hydrated = ((selectedShowcaseResponse as any)?.data || selectedShowcaseResponse) as
+      | MemberShowcase
+      | null
+      | undefined;
+
+    if (hydrated?.id) {
+      return hydrated;
+    }
+
+    if (selectedShowcaseSnapshot?.id === selectedShowcaseId) {
+      return selectedShowcaseSnapshot;
+    }
+
+    return selectedShowcaseSnapshot;
+  }, [selectedShowcaseId, selectedShowcaseResponse, selectedShowcaseSnapshot]);
+
+  const isFormModalOpen = modal === "create" || modal === "edit";
+  const isViewModalOpen = modal === "view";
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, showcase?: MemberShowcase | null) => {
+    setSelectedShowcaseSnapshot(showcase || null);
+    setQueryParams({
+      modal: nextModal,
+      itemId: showcase?.id || null,
+    });
+  };
 
   const createMutation = useCreateMemberShowcase();
   const updateMutation = useUpdateMemberShowcase();
   const deleteMutation = useDeleteMemberShowcase();
 
   const handleCreate = () => {
-    setSelectedShowcase(null);
-    setIsFormModalOpen(true);
+    setSelectedShowcaseSnapshot(null);
+    openModal("create");
   };
 
   const handleEdit = (showcase: MemberShowcase) => {
-    setSelectedShowcase(showcase);
-    setIsViewModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", showcase);
   };
 
   const handleDelete = async (showcase: MemberShowcase) => {
     try {
-      setIsViewModalOpen(false);
+      setSelectedShowcaseSnapshot(showcase);
+      setQueryParams({ modal: "delete", itemId: showcase.id });
       await deleteMutation.mutateAsync(showcase.id);
       toast.success("Showcase deleted successfully");
+      closeModal();
     } catch (error: any) {
       toast.error(error.message || "Failed to delete showcase");
     }
   };
 
   const handleView = (showcase: MemberShowcase) => {
-    setSelectedShowcase(showcase);
-    setIsViewModalOpen(true);
+    openModal("view", showcase);
   };
 
   const handleSubmit = async (data: CreateMemberShowcaseDTO | UpdateMemberShowcaseDTO, thumbnail?: File) => {
@@ -65,7 +101,7 @@ export default function MemberShowcasePage() {
         });
         toast.success("Showcase created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (error: any) {
       toast.error(error.message || "An error occurred");
     }
@@ -82,15 +118,15 @@ export default function MemberShowcasePage() {
 
       <ShowcaseFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleSubmit}
-        initialData={selectedShowcase || undefined}
+        initialData={modal === "edit" ? selectedShowcase || undefined : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       <ShowcaseViewModal
         isOpen={isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
+        onClose={closeModal}
         showcase={selectedShowcase}
         onEdit={handleEdit}
         onDelete={handleDelete}

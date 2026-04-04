@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { X, User } from "lucide-react";
 import { useListMembers } from "@/features/members/hooks/useListMembers";
 import { useGetMemberRoles, useAssignRoleToUser, useRemoveRoleFromUser, useListRoles } from "../hooks";
@@ -12,34 +12,70 @@ import { AdminActionButton } from "@/components/admin/AdminActionButton";
 import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const MemberRoleAssignment: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchValue, setSearchValue] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMember, setSelectedMember] = useState<any | null>(null);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("memberRolesPage", 1);
+  const pageSize = getNumber("memberRolesPageSize", 10);
+  const searchQuery = getString("memberRolesSearch", "");
+  const selectedMemberId = getString("memberRolesItem", "");
+  const modal = getString("memberRolesModal", "");
+
+  const [searchValue, setSearchValue] = useState(searchQuery);
+  const [selectedMemberSnapshot, setSelectedMemberSnapshot] = useState<any | null>(null);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ memberRolesPage: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ memberRolesPageSize: nextPageSize, memberRolesPage: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ memberRolesModal: null, memberRolesItem: null });
+  };
 
   const { data: membersResponse, isLoading } = useListMembers(page, pageSize, searchQuery);
   const { data: rolesResponse } = useListRoles({ pageSize: 100 });
-  const { data: memberRoles } = useGetMemberRoles(selectedMember?.gdgId || "");
   const assignRole = useAssignRoleToUser();
   const removeRole = useRemoveRoleFromUser();
 
   const members = membersResponse?.data || [];
+  const selectedMember = useMemo(() => {
+    const memberFromList = members.find((member: any) => member.gdgId === selectedMemberId);
+    if (memberFromList) {
+      return memberFromList;
+    }
+
+    if (selectedMemberSnapshot?.gdgId === selectedMemberId) {
+      return selectedMemberSnapshot;
+    }
+
+    return selectedMemberSnapshot;
+  }, [members, selectedMemberId, selectedMemberSnapshot]);
+
+  const isRoleModalOpen = modal === "manage" && Boolean(selectedMember);
+
+  const { data: memberRoles } = useGetMemberRoles(selectedMember?.gdgId || "");
+
   const totalPages = membersResponse?.meta?.totalPages || 1;
   const totalRecords = membersResponse?.meta?.totalRecords || 0;
   const roles = rolesResponse?.data || [];
 
+  useEffect(() => {
+    setSearchValue(searchQuery);
+  }, [searchQuery]);
+
   const handleSearch = () => {
-    setSearchQuery(searchValue);
-    setPage(1);
+    setQueryParams({ memberRolesSearch: searchValue || null, memberRolesPage: 1 });
   };
 
   const handleOpenRoleModal = (member: any) => {
-    setSelectedMember(member);
-    setIsRoleModalOpen(true);
+    setSelectedMemberSnapshot(member);
+    setQueryParams({ memberRolesModal: "manage", memberRolesItem: member.gdgId });
   };
 
   const handleAssignRole = async (roleName: string) => {
@@ -69,6 +105,12 @@ export const MemberRoleAssignment: React.FC = () => {
           <AdminSearchSection
             value={searchValue}
             onValueChange={setSearchValue}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                handleSearch();
+              }
+            }}
             placeholder="Search members..."
             accent="blue"
             actions={
@@ -105,10 +147,18 @@ export const MemberRoleAssignment: React.FC = () => {
         }
       />
 
-      <Modal open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen} className="max-w-lg rounded-lg">
+      <Modal
+        open={isRoleModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeModal();
+          }
+        }}
+        className="max-w-lg rounded-lg"
+      >
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="text-xl font-bold">Manage Roles for {selectedMember?.displayName}</h2>
-          <button onClick={() => setIsRoleModalOpen(false)}><X size={20} /></button>
+          <button onClick={closeModal}><X size={20} /></button>
         </div>
         <div className="p-6 space-y-6">
           <div className="space-y-2">

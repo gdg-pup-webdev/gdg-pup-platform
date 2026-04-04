@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Plus, Users, Sparkles } from "lucide-react";
 import { MemberShowcase } from "../types";
 import { MemberShowcaseCard } from "./MemberShowcaseCard";
@@ -13,6 +13,7 @@ import { AdminActionButton } from "@/components/admin/AdminActionButton";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 interface MemberShowcaseListProps {
   onCreate: () => void;
@@ -22,8 +23,18 @@ interface MemberShowcaseListProps {
 }
 
 export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: MemberShowcaseListProps) {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(8);
+  const { getNumber, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 8);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
 
   const { data: listResponse, isLoading, isError } = useMemberShowcases(page, pageSize);
   const { data: spotlight, isLoading: isLoadingSpotlight } = useSpotlight();
@@ -157,7 +168,6 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
           onPageChange={setPage}
           onPageSizeChange={(size) => {
             setPageSize(size);
-            setPage(1);
           }}
         />
       }

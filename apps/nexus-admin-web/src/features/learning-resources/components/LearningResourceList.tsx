@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Plus, Loader2, Search, AlertCircle, Link2, Users, Calendar, X } from "lucide-react";
 import { LearningResourceCard } from "./LearningResourceCard";
 import { ResourceFormModal, ResourceViewModal, DeleteConfirmModal } from "./LearningResourceModals";
@@ -16,20 +16,51 @@ import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export function LearningResourceList() {
-  const [params, setParams] = useState({ 
-    pageNumber: 1, 
-    pageSize: 12, 
-    search: undefined as string | undefined,
-    teamId: undefined as string | undefined,
-    teamName: undefined as string | undefined,
-    eventId: undefined as string | undefined
-  });
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
 
-  // Local input states for the filter fields (to avoid fetching on every keystroke)
-  const [localSearch, setLocalSearch] = useState("");
-  const [localTeamName, setLocalTeamName] = useState("");
+  const pageNumber = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 12);
+  const modal = getString("modal", "");
+  const selectedResourceId = getString("itemId", "");
+
+  const params = useMemo(
+    () => ({
+      pageNumber,
+      pageSize,
+      search: getString("search", "") || undefined,
+      teamId: getString("teamId", "") || undefined,
+      teamName: getString("teamName", "") || undefined,
+      eventId: getString("eventId", "") || undefined,
+    }),
+    [getString, pageNumber, pageSize],
+  );
+
+  const [localSearch, setLocalSearch] = useState(params.search || "");
+  const [localTeamName, setLocalTeamName] = useState(params.teamName || "");
+  const selectedTeamName = getString("teamLabel", "");
+  const selectedEventTitle = getString("eventLabel", "");
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, resource?: LearningResource | null) => {
+    setQueryParams({
+      modal: nextModal,
+      itemId: resource?.id || null,
+    });
+  };
   
   // API Hooks
   const { data: response, isLoading, isFetching, isError, error, refetch } = useGetLearningResources(params);
@@ -41,21 +72,13 @@ export function LearningResourceList() {
   const [teamSearch, setTeamSearch] = useState("");
   const [debouncedTeamSearch, setDebouncedTeamSearch] = useState("");
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
-  const [selectedTeamName, setSelectedTeamName] = useState("");
   const teamRef = useRef<HTMLDivElement>(null);
 
   const [showEventDropdown, setShowEventDropdown] = useState(false);
-  const [selectedEventTitle, setSelectedEventTitle] = useState("");
   const eventRef = useRef<HTMLDivElement>(null);
 
   const { data: teamsResponse, isLoading: isSearchingTeams } = useSearchTeams(debouncedTeamSearch);
   const { data: eventsResponse } = useListEvents(1, 20);
-
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedResource, setSelectedResource] = useState<LearningResource | null>(null);
 
   // Debouncing for search fields (optional but added per requirement)
   useEffect(() => {
@@ -67,14 +90,18 @@ export function LearningResourceList() {
     return () => clearTimeout(timer);
   }, [teamSearch]);
 
+  useEffect(() => {
+    setLocalSearch(params.search || "");
+    setLocalTeamName(params.teamName || "");
+  }, [params.search, params.teamName]);
+
   // Handler for manual search button
   const handleSearchTrigger = () => {
-    setParams(prev => ({
-      ...prev,
-      search: localSearch.trim() || undefined,
-      teamName: localTeamName.trim() || undefined,
-      pageNumber: 1
-    }));
+    setQueryParams({
+      search: localSearch.trim() || null,
+      teamName: localTeamName.trim() || null,
+      page: 1,
+    });
   };
 
   useEffect(() => {
@@ -88,28 +115,30 @@ export function LearningResourceList() {
 
   const resources = response?.data || [];
   const meta = response?.meta;
+  const selectedResource = useMemo(
+    () => resources.find((resource) => resource.id === selectedResourceId) || null,
+    [resources, selectedResourceId],
+  );
+
+  const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedResource));
+  const isViewModalOpen = modal === "view" && Boolean(selectedResource);
+  const isDeleteModalOpen = modal === "delete" && Boolean(selectedResource);
 
   // Handlers
   const handleAdd = () => {
-    setSelectedResource(null);
-    setIsFormModalOpen(true);
+    openModal("create");
   };
 
   const handleEdit = (resource: LearningResource) => {
-    setSelectedResource(resource);
-    setIsViewModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", resource);
   };
 
   const handleView = (resource: LearningResource) => {
-    setSelectedResource(resource);
-    setIsViewModalOpen(true);
+    openModal("view", resource);
   };
 
   const handleDeleteClick = (resource: LearningResource) => {
-    setSelectedResource(resource);
-    setIsViewModalOpen(false);
-    setIsDeleteModalOpen(true);
+    openModal("delete", resource);
   };
 
   const handleDeleteFromCard = async (resource: LearningResource) => {
@@ -137,7 +166,7 @@ export function LearningResourceList() {
         });
         toast.success("Resource created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "An error occurred");
     }
@@ -148,7 +177,7 @@ export function LearningResourceList() {
       try {
         await deleteMutation.mutateAsync(selectedResource.id);
         toast.success("Resource deleted successfully");
-        setIsDeleteModalOpen(false);
+        closeModal();
       } catch (err: any) {
         toast.error(err.message || "Failed to delete resource");
       }
@@ -156,15 +185,18 @@ export function LearningResourceList() {
   };
 
   const clearTeamFilter = () => {
-    setParams(prev => ({ ...prev, teamId: undefined, teamName: undefined }));
     setLocalTeamName("");
-    setSelectedTeamName("");
+    setQueryParams({
+      teamId: null,
+      teamName: null,
+      teamLabel: null,
+      page: 1,
+    });
     setTeamSearch("");
   };
 
   const clearEventFilter = () => {
-    setParams(prev => ({ ...prev, eventId: undefined }));
-    setSelectedEventTitle("");
+    setQueryParams({ eventId: null, eventLabel: null, page: 1 });
   };
 
   if (isLoading && !params.search && !params.teamId && !params.eventId && !params.teamName) {
@@ -223,9 +255,13 @@ export function LearningResourceList() {
                   <button
                     key={team.id}
                     onClick={() => {
-                      setParams(prev => ({ ...prev, teamId: team.id, teamName: undefined, pageNumber: 1 }));
+                      setQueryParams({
+                        teamId: team.id,
+                        teamName: null,
+                        teamLabel: team.name,
+                        page: 1,
+                      });
                       setLocalTeamName("");
-                      setSelectedTeamName(team.name);
                       setShowTeamDropdown(false);
                     }}
                     className="w-full rounded px-3 py-2 text-left text-xs hover:bg-teal-50 hover:text-teal-700"
@@ -264,8 +300,11 @@ export function LearningResourceList() {
                   <button
                     key={event.id}
                     onClick={() => {
-                      setParams(prev => ({ ...prev, eventId: event.id, pageNumber: 1 }));
-                      setSelectedEventTitle(event.title);
+                      setQueryParams({
+                        eventId: event.id,
+                        eventLabel: event.title,
+                        page: 1,
+                      });
                       setShowEventDropdown(false);
                     }}
                     className="w-full rounded px-3 py-2 text-left text-xs hover:bg-teal-50 hover:text-teal-700"
@@ -284,11 +323,17 @@ export function LearningResourceList() {
       {(params.teamId || params.eventId || params.search || params.teamName) && (
         <button
           onClick={() => {
-            setParams({ pageNumber: 1, pageSize: 12, search: "", teamId: undefined, teamName: undefined, eventId: undefined });
+            setQueryParams({
+              page: 1,
+              search: null,
+              teamId: null,
+              teamName: null,
+              teamLabel: null,
+              eventId: null,
+              eventLabel: null,
+            });
             setLocalSearch("");
             setLocalTeamName("");
-            setSelectedTeamName("");
-            setSelectedEventTitle("");
             setTeamSearch("");
           }}
           className="text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors ml-2"
@@ -376,7 +421,17 @@ export function LearningResourceList() {
                   </p>
                   {(params.teamId || params.eventId || params.search || params.teamName) ? (
                     <AdminActionButton
-                      onClick={() => setParams({ pageNumber: 1, pageSize: 12, search: undefined, teamId: undefined, teamName: undefined, eventId: undefined })}
+                      onClick={() =>
+                        setQueryParams({
+                          page: 1,
+                          search: null,
+                          teamId: null,
+                          teamName: null,
+                          teamLabel: null,
+                          eventId: null,
+                          eventLabel: null,
+                        })
+                      }
                       variant="dark"
                       size="sm"
                       className="mt-6"
@@ -400,12 +455,12 @@ export function LearningResourceList() {
         }
         pagination={
           <AdminPaginationSection
-            currentPage={params.pageNumber}
+            currentPage={pageNumber}
             totalPages={meta?.totalPages || 1}
-            pageSize={params.pageSize}
+            pageSize={pageSize}
             totalRecords={meta?.totalRecords || resources.length}
-            onPageChange={(nextPage) => setParams((prev) => ({ ...prev, pageNumber: nextPage }))}
-            onPageSizeChange={(nextSize) => setParams((prev) => ({ ...prev, pageSize: nextSize, pageNumber: 1 }))}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
           />
         }
       />
@@ -413,15 +468,15 @@ export function LearningResourceList() {
       {/* Modals */}
       <ResourceFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedResource || undefined}
+        initialData={modal === "edit" ? selectedResource || undefined : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       <ResourceViewModal
         isOpen={isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
+        onClose={closeModal}
         resource={selectedResource}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
@@ -429,7 +484,7 @@ export function LearningResourceList() {
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         itemName={selectedResource?.title || ""}
         isDeleting={deleteMutation.isPending}

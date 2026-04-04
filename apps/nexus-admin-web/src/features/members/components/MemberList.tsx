@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { User } from "lucide-react";
 import { useListMembers } from "../hooks/useListMembers";
 import { useUpdateMember } from "../hooks/useUpdateMembers";
@@ -14,35 +14,66 @@ import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const MemberList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 10);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedMemberId = getString("itemId", "");
   
   // API Hooks
   const { data: membersResponse, isLoading, isError, error, refetch } = useListMembers(page, pageSize);
   const updateMutation = useUpdateMember();
 
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<GdgMember | null>(null);
-
   const members = membersResponse?.data || [];
+  const selectedMember = useMemo(
+    () => members.find((member) => member.gdgId === selectedMemberId) || null,
+    [members, selectedMemberId],
+  );
+
+  const isFormModalOpen = modal === "edit" && Boolean(selectedMember);
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedMember);
+
   const totalPages = membersResponse?.meta?.totalPages || 1;
   const totalRecords = membersResponse?.meta?.totalRecords || 0;
 
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, member: GdgMember) => {
+    setQueryParams({ modal: nextModal, itemId: member.gdgId });
+  };
+
   // Handlers
   const handleEdit = (member: GdgMember) => {
-    setSelectedMember(member);
-    setIsDetailsModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", member);
   };
 
   const handleView = (member: GdgMember) => {
-    setSelectedMember(member);
-    setIsDetailsModalOpen(true);
+    openModal("view", member);
   };
 
   const handleFormSubmit = async (data: GdgMemberUpdate, profileImage?: File | null) => {
@@ -55,7 +86,7 @@ export const MemberList: React.FC = () => {
         profileImage
       });
       toast.success("Member updated successfully");
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Update failed");
     }
@@ -90,10 +121,21 @@ export const MemberList: React.FC = () => {
       <AdminListScaffold
         search={
           <AdminSearchSection
-            value={searchQuery}
-            onValueChange={setSearchQuery}
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
             placeholder="Search members..."
             accent="blue"
+            actions={
+              <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                Search
+              </AdminActionButton>
+            }
           />
         }
         content={
@@ -135,7 +177,7 @@ export const MemberList: React.FC = () => {
       {/* Modals */}
       <MemberFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
         initialData={selectedMember}
         isSubmitting={updateMutation.isPending}
@@ -143,7 +185,7 @@ export const MemberList: React.FC = () => {
 
       <MemberDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         member={selectedMember}
         onEdit={handleEdit}
       />

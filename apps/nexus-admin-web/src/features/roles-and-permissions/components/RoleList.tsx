@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Shield, Plus, Edit2, Eye, Trash2 } from "lucide-react";
 import { useListRoles, useCreateRole, useUpdateRole, useDeleteRole } from "../hooks";
 import { RoleFormModal, RoleDetailsModal } from "./RoleModals";
@@ -13,15 +13,40 @@ import { AdminActionButton } from "@/components/admin/AdminActionButton";
 import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 type Role = z.infer<typeof contract.api.v1.roles.GET.response[200]>;
 type RoleItem = Role["data"][number];
 
 export const RoleList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchValue, setSearchValue] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("rolesPage", 1);
+  const pageSize = getNumber("rolesPageSize", 10);
+  const searchQuery = getString("rolesSearch", "");
+  const modal = getString("rolesModal", "");
+  const selectedRoleId = getString("rolesItem", "");
+
+  const [searchValue, setSearchValue] = useState(searchQuery);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ rolesPage: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ rolesPageSize: nextPageSize, rolesPage: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ rolesModal: null, rolesItem: null });
+  };
+
+  const openModal = (nextModal: string, role?: RoleItem | null) => {
+    setQueryParams({
+      rolesModal: nextModal,
+      rolesItem: role?.id || null,
+    });
+  };
   
   // API Hooks
   const { data: rolesResponse, isLoading, isError, error, refetch } = useListRoles({ pageNumber: page, pageSize, resourceName: searchQuery });
@@ -29,35 +54,37 @@ export const RoleList: React.FC = () => {
   const deleteMutation = useDeleteRole();
   const updateMutation = useUpdateRole();
 
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<RoleItem | null>(null);
-
   const roles = rolesResponse?.data || [];
+  const selectedRole = useMemo(
+    () => roles.find((role) => role.id === selectedRoleId) || null,
+    [roles, selectedRoleId],
+  );
+
+  const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedRole));
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedRole);
+
   const totalPages = rolesResponse?.meta?.totalPages || 1;
   const totalRecords = rolesResponse?.meta?.totalRecords || 0;
 
+  useEffect(() => {
+    setSearchValue(searchQuery);
+  }, [searchQuery]);
+
   // Handlers
   const handleSearch = () => {
-    setSearchQuery(searchValue);
-    setPage(1);
+    setQueryParams({ rolesSearch: searchValue || null, rolesPage: 1 });
   };
 
   const handleCreate = () => {
-    setSelectedRole(null);
-    setIsFormModalOpen(true);
+    openModal("create");
   };
 
   const handleEdit = (role: RoleItem) => {
-    setSelectedRole(role);
-    setIsDetailsModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", role);
   };
 
   const handleView = (role: RoleItem) => {
-    setSelectedRole(role);
-    setIsDetailsModalOpen(true);
+    openModal("view", role);
   };
 
   const handleDelete = async (roleName: string) => {
@@ -81,7 +108,7 @@ export const RoleList: React.FC = () => {
         await createMutation.mutateAsync(data);
         toast.success("Role created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Operation failed");
     }
@@ -114,6 +141,12 @@ export const RoleList: React.FC = () => {
           <AdminSearchSection
             value={searchValue}
             onValueChange={setSearchValue}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                handleSearch();
+              }
+            }}
             placeholder="Search roles..."
             accent="blue"
             actions={
@@ -202,15 +235,15 @@ export const RoleList: React.FC = () => {
       {/* Modals */}
       <RoleFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedRole}
+        initialData={modal === "edit" ? selectedRole : undefined}
         isSubmitting={selectedRole ? updateMutation.isPending : createMutation.isPending}
       />
 
       <RoleDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         role={selectedRole}
         onEdit={handleEdit}
         onDelete={handleDelete}

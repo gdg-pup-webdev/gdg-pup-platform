@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Loader2, AlertCircle, Calendar, Search, Plus, Users, X, Filter } from "lucide-react";
 import { useListEvents } from "../hooks/useListEvents";
 import { useDeleteEvent } from "../hooks/useDeleteEvent";
@@ -21,30 +21,64 @@ import { AdminPaginationSection } from "@/components/admin/AdminPaginationSectio
 import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const EventsList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  // Filter state (actual filters applied to the query)
-  const [filters, setFilters] = useState({
-    type: undefined as string | undefined,
-    teamId: undefined as string | undefined,
-    teamName: undefined as string | undefined,
-    year: undefined as number | undefined,
-  });
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
 
-  // Local input state (values in the text fields before clicking Search)
-  const [localType, setLocalType] = useState("");
-  const [localTeamName, setLocalTeamName] = useState("");
-  const [localYear, setLocalYear] = useState("");
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 12);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedEventId = getString("itemId", "");
+
+  const filters = useMemo(
+    () => ({
+      type: getString("type", "") || undefined,
+      teamId: getString("teamId", "") || undefined,
+      teamName: getString("teamName", "") || undefined,
+      year: (() => {
+        const rawYear = getNumber("year", 0);
+        return rawYear > 0 ? rawYear : undefined;
+      })(),
+    }),
+    [getNumber, getString],
+  );
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+  const [localType, setLocalType] = useState(filters.type || "");
+  const [localTeamName, setLocalTeamName] = useState(filters.teamName || "");
+  const [localYear, setLocalYear] = useState(filters.year ? String(filters.year) : "");
+
+  const selectedTeamName = getString("teamLabel", "");
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, event?: Event | null) => {
+    setQueryParams({
+      modal: nextModal,
+      itemId: event?.id || null,
+    });
+  };
 
   // Team search state for filter
   const [teamSearch, setTeamSearch] = useState("");
   const [debouncedTeamSearch, setDebouncedTeamSearch] = useState("");
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
-  const [selectedTeamName, setSelectedTeamName] = useState("");
   const teamRef = useRef<HTMLDivElement>(null);
 
   const { data: teamsResponse, isLoading: isSearchingTeams } = useSearchTeams(debouncedTeamSearch);
@@ -53,6 +87,16 @@ export const EventsList: React.FC = () => {
     const timer = setTimeout(() => setDebouncedTeamSearch(teamSearch), 300);
     return () => clearTimeout(timer);
   }, [teamSearch]);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setLocalType(filters.type || "");
+    setLocalTeamName(filters.teamName || "");
+    setLocalYear(filters.year ? String(filters.year) : "");
+  }, [filters.type, filters.teamName, filters.year]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -69,16 +113,19 @@ export const EventsList: React.FC = () => {
   const updateMutation = useUpdateEvent();
   const deleteMutation = useDeleteEvent();
   const syncOneMutation = useSyncOneEventToBevy();
-
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isBevySearchModalOpen, setIsBevySearchModalOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [syncingEventId, setSyncingEventId] = useState<string | null>(null);
 
   const events = eventsResponse?.data || [];
+  const selectedEvent = useMemo(
+    () => events.find((event) => event.id === selectedEventId) || null,
+    [events, selectedEventId],
+  );
+
+  const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedEvent));
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedEvent);
+  const isDeleteModalOpen = modal === "delete" && Boolean(selectedEvent);
+  const isBevySearchModalOpen = modal === "importBevy";
+
   const totalPages = eventsResponse?.meta?.totalPages || 1;
   const totalRecords = eventsResponse?.meta?.totalRecords || 0;
 
@@ -87,8 +134,7 @@ export const EventsList: React.FC = () => {
 
   // Handlers
   const handleCreate = () => {
-    setSelectedEvent(null);
-    setIsFormModalOpen(true);
+    openModal("create");
   };
 
   const handleSyncAllToBevy = () => {
@@ -102,7 +148,7 @@ export const EventsList: React.FC = () => {
   };
 
   const handleCreateFromBevy = () => {
-    setIsBevySearchModalOpen(true);
+    setQueryParams({ modal: "importBevy", itemId: null });
   };
 
   const handleSyncOneEvent = async (event: Event) => {
@@ -121,27 +167,22 @@ export const EventsList: React.FC = () => {
     try {
       await createFromBevyMutation.mutateAsync(bevyEventId);
       toast.success("Event imported from Bevy successfully");
-      setIsBevySearchModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Import failed");
     }
   };
 
   const handleEdit = (event: Event) => {
-    setSelectedEvent(event);
-    setIsDetailsModalOpen(false); // Close details if open
-    setIsFormModalOpen(true);
+    openModal("edit", event);
   };
 
   const handleView = (event: Event) => {
-    setSelectedEvent(event);
-    setIsDetailsModalOpen(true);
+    openModal("view", event);
   };
 
   const handleDeleteClick = (event: Event) => {
-    setSelectedEvent(event);
-    setIsDetailsModalOpen(false); // Close details if open
-    setIsDeleteModalOpen(true);
+    openModal("delete", event);
   };
 
   const handleDeleteFromCard = async (event: Event) => {
@@ -162,7 +203,7 @@ export const EventsList: React.FC = () => {
         await createMutation.mutateAsync(data as EventInsert);
         toast.success("Event created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Operation failed");
     }
@@ -173,7 +214,7 @@ export const EventsList: React.FC = () => {
       try {
         await deleteMutation.mutateAsync(selectedEvent.id);
         toast.success("Event deleted successfully");
-        setIsDeleteModalOpen(false);
+        closeModal();
       } catch (err: any) {
         toast.error(err.message || "Delete failed");
       }
@@ -181,26 +222,23 @@ export const EventsList: React.FC = () => {
   };
 
   const clearTeamFilter = () => {
-    setFilters(prev => ({ ...prev, teamId: undefined }));
-    setSelectedTeamName("");
+    setQueryParams({ teamId: null, teamLabel: null, page: 1 });
     setTeamSearch("");
-    setPage(1);
   };
 
   const clearTypeFilter = () => {
     setLocalType("");
-    setFilters(prev => ({ ...prev, type: undefined }));
-    setPage(1);
+    setQueryParams({ type: null, page: 1 });
   };
 
   const handleApplyFilters = () => {
-    setFilters(prev => ({
-      ...prev,
-      type: localType.trim() || undefined,
-      teamName: localTeamName.trim() || undefined,
-      year: localYear.trim() ? parseInt(localYear) : undefined
-    }));
-    setPage(1);
+    const parsedYear = localYear.trim() ? Number.parseInt(localYear, 10) : null;
+    setQueryParams({
+      type: localType.trim() || null,
+      teamName: localTeamName.trim() || null,
+      year: parsedYear && Number.isFinite(parsedYear) ? parsedYear : null,
+      page: 1,
+    });
     // Explicitly refetch to handle cases where the filter value might be the same
     // but the user wants to refresh the list manually
     refetch();
@@ -270,10 +308,12 @@ export const EventsList: React.FC = () => {
                       <button
                         key={team.id}
                         onClick={() => {
-                          setFilters(prev => ({ ...prev, teamId: team.id }));
-                          setSelectedTeamName(team.name);
+                          setQueryParams({
+                            teamId: team.id,
+                            teamLabel: team.name,
+                            page: 1,
+                          });
                           setShowTeamDropdown(false);
-                          setPage(1);
                         }}
                         className="w-full rounded px-3 py-2 text-left text-xs hover:bg-teal-50 hover:text-teal-700"
                       >
@@ -327,9 +367,11 @@ export const EventsList: React.FC = () => {
                 size={14} 
                 className="cursor-pointer hover:text-red-500" 
                 onClick={() => {
+                  setQueryParams({
+                    teamName: null,
+                    page: 1,
+                  });
                   setLocalTeamName("");
-                  setFilters(prev => ({ ...prev, teamName: undefined }));
-                  setPage(1);
                 }} 
               />
             )}
@@ -353,9 +395,11 @@ export const EventsList: React.FC = () => {
                 size={14} 
                 className="cursor-pointer hover:text-red-500" 
                 onClick={() => {
+                  setQueryParams({
+                    year: null,
+                    page: 1,
+                  });
                   setLocalYear("");
-                  setFilters(prev => ({ ...prev, year: undefined }));
-                  setPage(1);
                 }} 
               />
             )}
@@ -375,14 +419,20 @@ export const EventsList: React.FC = () => {
           {(filters.teamId || filters.type || filters.teamName || filters.year || searchQuery || localType || localTeamName || localYear) && (
             <button
               onClick={() => {
-                setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
+                setQueryParams({
+                  type: null,
+                  teamId: null,
+                  teamName: null,
+                  year: null,
+                  teamLabel: null,
+                  q: null,
+                  page: 1,
+                });
+                setSearchInput("");
                 setLocalType("");
                 setLocalTeamName("");
                 setLocalYear("");
-                setSelectedTeamName("");
                 setTeamSearch("");
-                setSearchQuery("");
-                setPage(1);
               }}
               className="text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors ml-2"
             >
@@ -431,10 +481,21 @@ export const EventsList: React.FC = () => {
         }
         search={
           <AdminSearchSection
-            value={searchQuery}
-            onValueChange={setSearchQuery}
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
             placeholder="Search events..."
             accent="teal"
+            actions={
+              <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                Search
+              </AdminActionButton>
+            }
           />
         }
         filters={filtersSection}
@@ -464,12 +525,19 @@ export const EventsList: React.FC = () => {
               {(searchQuery || filters.teamId || filters.type || filters.teamName || filters.year) ? (
                 <AdminActionButton
                   onClick={() => {
-                    setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
+                    setQueryParams({
+                      type: null,
+                      teamId: null,
+                      teamName: null,
+                      year: null,
+                      teamLabel: null,
+                      q: null,
+                      page: 1,
+                    });
+                    setSearchInput("");
                     setLocalType("");
                     setLocalTeamName("");
                     setLocalYear("");
-                    setSelectedTeamName("");
-                    setSearchQuery("");
                   }}
                   variant="dark"
                   size="sm"
@@ -505,15 +573,15 @@ export const EventsList: React.FC = () => {
       {/* Modals */}
       <EventFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedEvent}
+        initialData={modal === "edit" ? selectedEvent : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       <EventDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         event={selectedEvent}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
@@ -523,7 +591,7 @@ export const EventsList: React.FC = () => {
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         itemName={selectedEvent?.title || ""}
         isDeleting={deleteMutation.isPending}
@@ -531,7 +599,7 @@ export const EventsList: React.FC = () => {
 
       <BevyEventSearchModal
         isOpen={isBevySearchModalOpen}
-        onClose={() => setIsBevySearchModalOpen(false)}
+        onClose={closeModal}
         onSelect={handleSelectBevyEvent}
         isSubmitting={createFromBevyMutation.isPending}
       />
