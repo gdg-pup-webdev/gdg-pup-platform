@@ -84,27 +84,6 @@ export function AboutSection() {
         }}
       />
 
-      {/* Spiral Stand Decoration - positioned below video */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: "100vw",
-          left: "50%",
-          transform: "translateX(-50%)",
-          top: "calc(43rem + 400px)",
-          opacity: 0.9,
-          zIndex: 0,
-        }}
-      >
-        <Image
-          src={ASSETS.ABOUT.WHO.SPIRAL}
-          alt="Spiral decoration"
-          width={1400}
-          height={900}
-          className="w-full h-auto"
-        />
-      </div>
-
       {/* Decorative Element 1 - Right Side */}
       <div
         className="absolute pointer-events-none hidden md:block"
@@ -182,24 +161,46 @@ export function AboutSection() {
 
           {/* Section 2: Hero Media */}
           <FadeInSection delay={0.2}>
-            <Box className="relative aspect-video rounded-3xl overflow-hidden lg:mb-20"
-              style={{
-                boxShadow: "0px 10px 50px 0px #EA443480",
-                zIndex: 10,
-              }}
-            >
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/HMQjlHLlmwM?si=yZRjYhCsDY1lee1h"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-                className="absolute inset-0"
-              />
-            </Box>
+            <div className="relative w-full flex justify-center lg:mb-28">
+              {/* Spiral decoration anchored to BOTTOM of video */}
+              <div
+                className="absolute pointer-events-none z-0"
+                style={{
+                  width: "min(1800px, 100vw)",
+                  left: "50%",
+                  top: "90%",
+                  transform: "translate(-50%, -15%)",
+                  opacity: 0.9,
+                }}
+              >
+                <Image
+                  src={ASSETS.ABOUT.WHO.SPIRAL}
+                  alt="Spiral decoration"
+                  width={1400}
+                  height={900}
+                  className="w-full h-auto"
+                />
+              </div>
+
+              <Box
+                className="relative aspect-video rounded-3xl overflow-hidden w-full z-10"
+                style={{
+                  boxShadow: "0px 10px 50px 0px #EA443480",
+                }}
+              >
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/HMQjlHLlmwM?si=yZRjYhCsDY1lee1h"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="absolute inset-0"
+                />
+              </Box>
+            </div>
           </FadeInSection>
 
           {/* Section 3: Hero Description */}
