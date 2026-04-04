@@ -4,6 +4,7 @@ import {
   authMiddlewareInstance,
 } from "@/v1/middlewares/auth.middleware";
 import { FoldersHttpController } from "./folders.controller";
+import { requirePermissions } from "@/v1/middlewares/rbac.middleware";
 
 export class FoldersRouter {
   router: Router;
@@ -14,25 +15,18 @@ export class FoldersRouter {
   ) {
     this.router = Router();
 
-    this.router.get(
-      "/",
-      // this.authMiddleware.requirePermissions({ "folders": ["read"] }),
-      this.foldersHttpController.listFolders,
-    );
-    this.router.post(
-      "/",
-      // this.authMiddleware.requirePermissions({ "folders": ["create"] }),
-      this.foldersHttpController.createFolder,
+    this.router.use(
+      requirePermissions({
+        folders: ["queries", "mutations"],
+      }),
     );
 
-    this.router.get(
-      "/:folderId",
-      // this.authMiddleware.requirePermissions({ "folders": ["read"] }),
-      this.foldersHttpController.getOneFolderById,
-    );
+    this.router.get("/", this.foldersHttpController.listFolders);
+    this.router.post("/", this.foldersHttpController.createFolder);
+
+    this.router.get("/:folderId", this.foldersHttpController.getOneFolderById);
     this.router.delete(
       "/:folderId",
-      // this.authMiddleware.requirePermissions({ "folders": ["delete"] }),
       this.foldersHttpController.deleteFolderById,
     );
   }

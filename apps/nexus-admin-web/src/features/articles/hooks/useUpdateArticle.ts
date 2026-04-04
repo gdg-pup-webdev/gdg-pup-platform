@@ -1,15 +1,24 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { ArticleUpdate } from "../types";
+import { useFetchApi } from "@/hooks/useFetchApi";
 
 export const useUpdateArticle = () => {
   const queryClient = useQueryClient();
+  const callEndpoint = useFetchApi();
 
   return useMutation({
-    mutationFn: async ({ id, data, thumbnailImage }: { id: string; data: ArticleUpdate; thumbnailImage?: File }) => {
+    mutationFn: async ({
+      id,
+      data,
+      thumbnailImage,
+    }: {
+      id: string;
+      data: ArticleUpdate;
+      thumbnailImage?: File;
+    }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.articles.id.PATCH,
@@ -19,7 +28,7 @@ export const useUpdateArticle = () => {
           files: {
             thumbnail_image: thumbnailImage,
           },
-        }
+        },
       );
 
       if (res.status === 200) return res.body;
@@ -28,7 +37,9 @@ export const useUpdateArticle = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["articles"] });
-      queryClient.invalidateQueries({ queryKey: ["articles", "detail", variables.id] });
+      queryClient.invalidateQueries({
+        queryKey: ["articles", "detail", variables.id],
+      });
     },
   });
 };

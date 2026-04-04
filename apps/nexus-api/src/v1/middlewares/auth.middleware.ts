@@ -17,6 +17,18 @@ type UserAccessProfile = {
   permissions: UserPermission[];
 };
 
+export const requireAuthenticated = (): RequestHandler => (req, res, next) => {
+  const decodedToken = req.decodedToken;
+
+  if (!decodedToken) {
+    throw new UnauthorizedError(
+      "Authentication required. Please provide a valid Bearer token.",
+    );
+  }
+
+  next();
+};
+
 /**
  * USAGE:
  * - insert into dependencies of the router
@@ -27,6 +39,9 @@ type UserAccessProfile = {
  *
  * - use in specific route
  * router.get('/admin', this.authMiddleware.requireAdminRole(), this.adminController.getAdminData);
+ */
+/**
+ * @deprecated
  */
 export class AuthMiddleware {
   constructor() {}
@@ -46,7 +61,6 @@ export class AuthMiddleware {
 
     next();
   };
-
 
   /**
    * @deprecated
@@ -169,9 +183,7 @@ export class AuthMiddleware {
    * @deprecated
    */
   requirePermissions =
-    (
-      requiredPermissions: Record<string, string[]>,
-    ): RequestHandler =>
+    (requiredPermissions: Record<string, string[]>): RequestHandler =>
     async (req, res, next) => {
       const userId = req.user?.id;
       if (!userId) {
@@ -189,16 +201,18 @@ export class AuthMiddleware {
 
       const missingPermissions = Object.entries(requiredPermissions).flatMap(
         ([resource, actions]) =>
-          actions.filter((action) => {
-            return !userPermissions.some(
-              (userPermission) =>
-                userPermission.action === action &&
-                userPermission.resource === resource,
-            );
-          }).map((action) => ({
-            resource: resource,
-            action,
-          })),
+          actions
+            .filter((action) => {
+              return !userPermissions.some(
+                (userPermission) =>
+                  userPermission.action === action &&
+                  userPermission.resource === resource,
+              );
+            })
+            .map((action) => ({
+              resource: resource,
+              action,
+            })),
       );
 
       if (missingPermissions.length > 0) {
@@ -215,4 +229,7 @@ export class AuthMiddleware {
     };
 }
 
+/**
+ * @deprecated
+ */
 export const authMiddlewareInstance = new AuthMiddleware();

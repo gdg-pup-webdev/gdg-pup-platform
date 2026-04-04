@@ -1,10 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useQuery } from "@tanstack/react-query"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+import { useFetchApi } from "@/hooks/useFetchApi";
 
 export const useGetBevyEvent = (gdgId: string) => {
+  const callEndpoint = useFetchApi();
   return useQuery({
     queryKey: ["bevy-event", gdgId],
     queryFn: async () => {

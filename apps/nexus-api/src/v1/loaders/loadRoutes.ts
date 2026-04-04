@@ -43,9 +43,11 @@ import { NfcCardsRouter } from "../routes/nfc-cards/nfcCards.router";
 import { NfcCardsHttpController } from "../routes/nfc-cards/nfcCards.controller";
 import { nfcCardsModuleController } from "../modules/nfcCards";
 import { memberShowcaseController } from "../modules/MemberShowcase";
-import { MemberShowcaseHttpController, MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcase";
+import { MemberShowcaseHttpController } from "../routes/member-showcase/MemberShowcase";
+import { MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcaseRouter";
 import { memberProjectsController } from "../modules/memberProjects";
-import { MemberProjectsHttpController, MemberProjectsRouter } from "../routes/member-projects/MemberProjects";
+import { MemberProjectsHttpController } from "../routes/member-projects/MemberProjects";
+import { MemberProjectsRouter } from "../routes/member-projects/MemberProjectsRouter";
 import { articlesController } from "../modules/articles";
 
 export const loadRoutes = (app: Express) => { 

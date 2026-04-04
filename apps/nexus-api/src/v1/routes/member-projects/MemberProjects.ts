@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from "express";
+import { RequestHandler } from "express";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 import { memberProjectsController as moduleController } from "@/v1/modules/memberProjects";
@@ -191,19 +191,3 @@ export class MemberProjectsHttpController {
   );
 }
 
-export class MemberProjectsRouter {
-  router: Router;
-
-  constructor(private readonly controller: MemberProjectsHttpController) {
-    this.router = Router();
-
-    this.router.post("/", this.controller.postCreate);
-    this.router.get("/", this.controller.getList);
-    this.router.get("/search", this.controller.getSearch);
-    this.router.get("/random", this.controller.getRandom);
-    this.router.get("/:id", this.controller.getOne);
-    this.router.patch("/:id", this.controller.patchUpdate);
-    this.router.delete("/:id", this.controller.deleteDelete);
-    this.router.get("/member/:memberGdgId", this.controller.getByMember);
-  }
-}

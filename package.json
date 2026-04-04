@@ -2,7 +2,7 @@
   "name": "gdg-pup-platform",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev --filter=!identity-api... --filter=!@packages/identity-api-contracts",
+    "dev": "turbo run dev --filter=!identity-api  --filter=!@packages/identity-api-contracts",
     "dev:nexus": "turbo dev --filter=nexus-api... --filter=nexus-web...",
     "dev:nexus-api": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
     "dev:backend": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",

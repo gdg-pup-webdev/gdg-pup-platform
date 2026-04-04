@@ -4,13 +4,15 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { ArticleInsert } from "../types";
+import { useFetchApi } from "@/hooks/useFetchApi";
 
 export const useCreateArticle = () => {
   const queryClient = useQueryClient();
+  const fetchapi = useFetchApi();
 
   return useMutation({
     mutationFn: async ({ data, thumbnailImage }: { data: ArticleInsert; thumbnailImage?: File }) => {
-      const res = await callEndpoint(
+      const res = await fetchapi(
         configs.nexusApiBaseUrl,
         contract.api.v1.articles.POST,
         {

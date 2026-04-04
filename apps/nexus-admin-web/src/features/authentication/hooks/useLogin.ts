@@ -1,10 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useMutation } from "@tanstack/react-query"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+import { useFetchApi } from "@/hooks/useFetchApi";
 
 export const useLogin = () => {
+  const callEndpoint = useFetchApi();
   return useMutation({
     mutationFn: async (payload: { email: string; pass: string }) => {
       const res = await callEndpoint(
