@@ -136,11 +136,10 @@ export function MemberShowcaseBackground({
       <Image
         src={ASSETS.MEMBER_SHOWCASE.BACKGROUND.GDG_SHADOW}
         alt="gdg shadow"
-        className="z-3 pointer-events-none absolute -bottom-50 -right-15 h-auto w-auto max-w-none"
+        className="z-3 pointer-events-none absolute -bottom-50 -right-15 w-126.5 h-auto"
         width={506}
         height={507}
-      >
-      </Image>
+      />
       <Image
         src={ASSETS.MEMBER_SHOWCASE.BACKGROUND.VECTOR_1296}
         alt="vector decoration left"
