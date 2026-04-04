@@ -4,20 +4,9 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import { Button, Inline, Skeleton, Stack, Text } from "@packages/spark-ui";
 import { ASSETS } from "@/lib/constants/assets";
-import {
-  createContainerVariants,
-  createSectionVariants,
-  ITEM_VARIANTS,
-  SECTION_DELAYS,
-  SECTION_VIEWPORT,
-} from "./memberShowcaseMotion";
+import { ITEM_VARIANTS } from "./memberShowcaseMotion";
 import { useSpotlight } from "../hooks/useSpotlight";
 import Link from "next/link";
-
-const spotlightSectionVariants = createSectionVariants(
-  SECTION_DELAYS.spotlight,
-);
-const spotlightContainerVariants = createContainerVariants(0.16, 0.16);
 
 function SpotlightSkeleton() {
   return (
@@ -47,15 +36,9 @@ export function MemberShowcaseSpotlight() {
   const { data, isLoading, error} = useSpotlight();
 
   return (
-    <motion.div
-      variants={prefersReduced ? undefined : spotlightSectionVariants}
-      initial={prefersReduced ? undefined : "hidden"}
-      whileInView={prefersReduced ? undefined : "visible"}
-      viewport={SECTION_VIEWPORT}
-    >
-      <Stack 
-      >
-        <motion.div variants={prefersReduced ? undefined : ITEM_VARIANTS}>
+    <div>
+      <Stack>
+        <div>
           <Text
             variant="heading-4"
             gradient="white-blue"
@@ -65,14 +48,15 @@ export function MemberShowcaseSpotlight() {
           >
             Spotlight of the Day
           </Text>
-        </motion.div>
+        </div>
 
         {isLoading ? (
           <SpotlightSkeleton />
         ) : (
           <motion.div
             className="flex flex-col items-center gap-8 px-0 md:gap-10 md:px-6 lg:flex-row lg:gap-12 lg:px-24"
-            variants={prefersReduced ? undefined : spotlightContainerVariants}
+            initial={prefersReduced ? undefined : "hidden"}
+            animate={prefersReduced ? undefined : "visible"}
           >
             <motion.div
               className="relative w-full shrink-0 lg:w-120"
@@ -151,6 +135,6 @@ export function MemberShowcaseSpotlight() {
           </motion.div>
         )}
       </Stack>
-    </motion.div>
+    </div>
   );
 }
