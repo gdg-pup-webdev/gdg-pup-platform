@@ -37,9 +37,6 @@ import { PointsRouter } from "../routes/points/points.router";
 import { learningResourceController } from "@/v1/modules/learningResources";
 import { LearningResourcesHttpController } from "../routes/learning-resources/learning-resources.controller";
 import { LearningResourcesRouter } from "../routes/learning-resources/learning-resources.router";
-import { teamResourceController } from "@/v1/modules/teamResources";
-import { TeamResourcesHttpController } from "../routes/teamResources/team-resources.controller";
-import { TeamResourcesRouter } from "../routes/teamResources/team-resources.router";
 import { StudyJamsHttpController } from "../routes/study-jams/studyJams.controller";
 import { StudyJamsRouter } from "../routes/study-jams/studyJams.router";
 import { eventSystemController } from "@/v1/modules/eventSystem";
@@ -90,9 +87,6 @@ export const loadRoutes = (app: Express) => {
   const filesHttpController = new FilesHttpController(filesModuleController);
   const filesRouter = new FilesRouter(filesHttpController);
 
-  const foldersHttpController = new FoldersHttpController(
-    filesModuleController,
-  );
   const foldersHttpController = new FoldersHttpController(
     filesModuleController,
   );
@@ -167,12 +161,6 @@ export const loadRoutes = (app: Express) => {
   const memberProjectsRouter = new MemberProjectsRouter(
     memberProjectsHttpController,
   );
-  const teamResourcesHttpController = new TeamResourcesHttpController(
-    teamResourceController,
-  );
-  const teamResourcesRouter = new TeamResourcesRouter(
-    teamResourcesHttpController,
-  );
   const studyJamsHttpController = new StudyJamsHttpController();
   const studyJamsRouter = new StudyJamsRouter(studyJamsHttpController);
 
@@ -190,7 +178,6 @@ export const loadRoutes = (app: Express) => {
   app.use("/gdg-merch", gdgMerchRouter.router);
   app.use("/points", pointsRouter.router);
   app.use("/learning-resources", learningResourcesRouter.router);
-  app.use("/team-resources", teamResourcesRouter.router);
   app.use("/study-jams", studyJamsRouter.router);
   app.use("/events", eventsRouter.router);
   app.use("/event-system", eventsRouter.router);

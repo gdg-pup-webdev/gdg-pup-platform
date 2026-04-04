@@ -1,4 +1,4 @@
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 import { authenticationController } from "../modules/authentication/index.js";
 
 export const tokenParserFromHeaders: RequestHandler = async (
@@ -13,7 +13,7 @@ export const tokenParserFromHeaders: RequestHandler = async (
       ? authHeader.split(" ")[1]
       : undefined;
 
-      console.log("header", authHeader, authHeader?.split(" "))
+    console.log("header", authHeader, authHeader?.split(" "));
     console.log("Extracted access token from header:", accessToken);
 
     if (accessToken) {

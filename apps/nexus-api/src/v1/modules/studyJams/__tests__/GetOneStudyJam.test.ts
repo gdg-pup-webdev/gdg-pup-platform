@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { GetOneStudyJam } from "../useCases/GetOneStudyJam";
 import { MockStudyJamRepository } from "../infrastructure/MockStudyJamRepository";
 import { buildStudyJam } from "./test-helpers";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 describe("GetOneStudyJam", () => {
   let repo: MockStudyJamRepository;
@@ -21,8 +22,8 @@ describe("GetOneStudyJam", () => {
   });
 
   it("throws when no study jam matches the given ID", async () => {
-    await expect(useCase.execute("missing-id")).rejects.toThrow(
-      "Study Jam with ID missing-id not found.",
+    await expect(useCase.execute("missing-id")).rejects.toBeInstanceOf(
+      NotFoundError,
     );
   });
 });

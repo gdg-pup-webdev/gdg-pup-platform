@@ -46,12 +46,16 @@
     "skipLibCheck": true,
 
     // Paths
-    "baseUrl": ".",
+    "baseUrl": ".", // Deprecated
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "src/v1/modules/portfolioModule_deprecated","src/v1/routes/portfolios"
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/v1/modules/portfolioModule_deprecated",
+    "src/v1/routes/portfolios"
   ]
 }

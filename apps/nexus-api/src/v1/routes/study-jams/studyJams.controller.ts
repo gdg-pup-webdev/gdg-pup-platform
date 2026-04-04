@@ -27,8 +27,8 @@ function toStudyJamRow(
 ): StudyJamRow {
   return {
     id: studyJam.id,
-    created_at: studyJam.createdAt,
-    updated_at: extras.updated_at ?? studyJam.createdAt,
+    created_at: studyJam.createdAt.toISOString(),
+    updated_at: extras.updated_at ?? studyJam.createdAt.toISOString(),
     uploader_id: extras.uploader_id ?? studyJam.creatorId,
     title: studyJam.title,
     team_id: extras.team_id ?? null,
@@ -61,7 +61,7 @@ export class StudyJamsHttpController {
       return output(200, {
         status: "success",
         message: "Study jams fetched successfully",
-        data: list.map((studyJam) => toStudyJamRow(studyJam)),
+        data: list.map((studyJam: StudyJamDTO) => toStudyJamRow(studyJam)),
         meta: buildPaginationMeta(count, pageNumber, pageSize),
       });
     },
@@ -70,9 +70,14 @@ export class StudyJamsHttpController {
   createStudyJam: RequestHandler = createExpressController(
     contract.api.v1.study_jams.POST,
     async ({ input, output, ctx }) => {
-      const creatorId = ctx.req.user?.id || "anonymous";
+      const creatorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ??
+        ctx.req.user?.id ??
+        "anonymous";
 
-      await teamModuleController.getTeam(input.body.data.team_id);
+      if (input.body.data.team_id) {
+        await teamModuleController.getTeam(input.body.data.team_id);
+      }
 
       const studyJam = await studyJamController.create(
         {
@@ -87,7 +92,7 @@ export class StudyJamsHttpController {
         status: "success",
         message: "Study jam created successfully",
         data: toStudyJamRow(studyJam, {
-          updated_at: studyJam.createdAt,
+          updated_at: studyJam.createdAt.toISOString(),
           uploader_id: creatorId,
           team_id: input.body.data.team_id ?? null,
           image_url: input.body.data.image_url ?? null,
@@ -132,7 +137,7 @@ export class StudyJamsHttpController {
         status: "success",
         message: "Study jam updated successfully",
         data: toStudyJamRow(studyJam, {
-          updated_at: studyJam.createdAt,
+          updated_at: studyJam.createdAt.toISOString(),
           team_id: input.body.data.team_id ?? null,
           image_url: input.body.data.image_url ?? null,
           tags: input.body.data.tags ?? [],
