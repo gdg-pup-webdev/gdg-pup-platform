@@ -7,9 +7,9 @@ import {
 import { TeamMember } from "../domain/TeamMember";
 
 type TeamMemberRow = Tables<"team_member">;
-type UserRow = Tables<"user">;
+type UserRow = Tables<"gdg_members">;
 type TeamMemberSelectRow = TeamMemberRow & {
-  user: Pick<UserRow, "display_name" | "avatar_url"> | null;
+  user: Pick<UserRow, "display_name" | "avatar_image_url"> | null;
 };
 
 export class SupabaseTeamMemberRepository implements ITeamMemberRepository {
@@ -21,7 +21,7 @@ export class SupabaseTeamMemberRepository implements ITeamMemberRepository {
     user_id,
     user:user_id(
       display_name,
-      avatar_url
+      avatar_image_url
     )
   `;
 
@@ -33,7 +33,7 @@ export class SupabaseTeamMemberRepository implements ITeamMemberRepository {
       role: row.role,
       joinedAt: new Date(),
       memberName: row.user?.display_name ?? null,
-      thumbnailImageUrl: row.user?.avatar_url ?? null,
+      thumbnailImageUrl: row.user?.avatar_image_url ?? null,
     });
   }
 

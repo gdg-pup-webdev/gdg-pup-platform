@@ -4,7 +4,7 @@ on:
   push:
     branches: [deploy-develop, staging, main]
   pull_request:
-    branches: [deploy-develop, staging, main]
+    branches: [staging, main]
 
 concurrency:
   group: test-${{ github.ref }}

@@ -8,11 +8,13 @@ export const useRemoveRoleFromUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {
+      
+      // throw new Error("This endpoint has not been implemented yet.");
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.users.userId.roles.roleName.DELETE,
+        contract.api.v1.gdgmembers.gdgId.roles.roleName.DELETE,
         {
-          params: { userId: gdgId, roleName },
+          params: { gdgId: gdgId, roleName },
         }
       );
 

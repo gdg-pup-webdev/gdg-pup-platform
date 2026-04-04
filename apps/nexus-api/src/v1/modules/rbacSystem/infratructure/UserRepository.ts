@@ -43,11 +43,11 @@ export class UserRepository implements IUserRepository {
         )
       `,
       )
-      .eq("user_id", gdgId);
+      .eq("gdg_id", gdgId);
 
     if (junctionError) {
       throw new InternalServerError(
-        `Failed to load roles and permissions for user: ${gdgId}`,
+        `Failed to load roles and permissions for user: ${gdgId}. Error: ${junctionError.message}`,
         junctionError,
       );
     }
@@ -83,7 +83,7 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async persistUpdates(user: User): Promise<boolean> {
+  async persistUpdates(user: User): Promise<void> {
     const { gdgId, roles: roleNames } = user.props;
 
     // 1. Wipe existing relations
@@ -124,7 +124,6 @@ export class UserRepository implements IUserRepository {
           `Failed to insert new user roles: ${insertError.message}`,
         );
     }
-
-    return true;
+ 
   }
 }
