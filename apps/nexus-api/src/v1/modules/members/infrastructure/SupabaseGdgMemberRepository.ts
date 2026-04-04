@@ -32,7 +32,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technicalSkills: row.technical_skills?.split(",") || [],
       learningInterests: row.learning_interests?.split(",") || [],
       toolsAndTechnologies: row.tools_and_technologies?.split(",") || [],
-      isPublic: row.is_public || false,
+      isPublic: row.is_public,
     });
   }
 

@@ -7,14 +7,13 @@ export class MemberProjectRepository implements IMemberProjectRepository {
   constructor() {}
 
   private toDb(project: MemberProject) {
+    const { member, ...props } = project.props;
     return {
-      ...project.props,
-      createdAt: project.props.createdAt.toISOString(),
-      updatedAt: project.props.updatedAt.toISOString(),
-      startDate: project.props.startDate.toISOString(),
-      endDate: project.props.endDate
-        ? project.props.endDate.toISOString()
-        : null,
+      ...props,
+      createdAt: props.createdAt.toISOString(),
+      updatedAt: props.updatedAt.toISOString(),
+      startDate: props.startDate.toISOString(),
+      endDate: props.endDate ? props.endDate.toISOString() : null,
     };
   }
 

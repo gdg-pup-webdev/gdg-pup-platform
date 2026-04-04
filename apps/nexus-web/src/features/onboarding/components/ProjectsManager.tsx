@@ -72,11 +72,31 @@ export function ProjectsManager({ projects, updateProject, addProject, removePro
             />
 
             <div>
-              <label className="text-xs text-zinc-400 block mb-2">Main image (optional)</label>
+              <label className="text-xs text-zinc-400 block mb-2">Main Image (Optional)</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(event) => updateProject(index, "mainImageFile", event.target.files?.[0] ?? null)}
+                className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-zinc-400 block mb-2">Secondary Image (Optional)</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => updateProject(index, "secondaryImageFile", event.target.files?.[0] ?? null)}
+                className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs text-zinc-400 block mb-2">Tertiary Image (Optional)</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(event) => updateProject(index, "tertiaryImageFile", event.target.files?.[0] ?? null)}
                 className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
               />
             </div>

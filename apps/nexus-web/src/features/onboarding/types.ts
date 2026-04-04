@@ -11,6 +11,7 @@ export type FormState = {
   learningInterests: string;
   toolsAndTechnologies: string;
   otherLinks: string;
+  isPublic: boolean | null;
 };
 
 export type ProjectFormState = {
@@ -21,4 +22,8 @@ export type ProjectFormState = {
   description: string;
   mainImageFile: File | null;
   mainImageUrl: string | null;
+  secondaryImageFile: File | null;
+  secondaryImageUrl: string | null;
+  tertiaryImageFile: File | null;
+  tertiaryImageUrl: string | null;
 };

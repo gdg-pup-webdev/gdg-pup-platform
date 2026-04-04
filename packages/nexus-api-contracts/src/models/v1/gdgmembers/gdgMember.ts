@@ -24,7 +24,7 @@ export const gdgMemberRecord = cz.object({
   technicalSkills: cz.array(cz.string()),
   learningInterests: cz.array(cz.string()),
   toolsAndTechnologies: cz.array(cz.string()),
-  isPublic: cz.boolean(),
+  isPublic: cz.boolean().nullable(),
 });
 
 /**

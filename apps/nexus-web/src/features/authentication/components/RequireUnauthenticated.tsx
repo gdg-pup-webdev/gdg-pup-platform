@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { LINKS } from "@/lib/constants/links";
 import { STATUS, useAuthContext } from "../store/useAuthStore";
-import { isOnboardingCompleted } from "@/features/onboarding/utils/onboardingStorage";
 
 export const RequireUnauthenticated = ({
   children,
@@ -13,32 +12,32 @@ export const RequireUnauthenticated = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { status, decodedToken } = useAuthContext();
+  const { status, memberProfile } = useAuthContext();
 
   useEffect(() => {
     if (status === STATUS.AUTHENTICATED) {
-      const gdgId = decodedToken?.memberInfo.gdgId;
+      // Wait for profile to load before making redirection decisions
+      if (!memberProfile) return;
 
-      if (
-        gdgId &&
-        !isOnboardingCompleted(gdgId) &&
-        pathname !== LINKS.onboarding
-      ) {
+      // If isPublic is null, it means they haven't finished onboarding
+      if (memberProfile.isPublic === null && pathname !== LINKS.onboarding) {
         router.push(LINKS.onboarding);
         return;
       }
 
-      router.push(LINKS.landing);
+      // Already onboarded, redirect away from auth pages to their profile
+      if (pathname !== LINKS.onboarding) {
+        router.push(LINKS.sparkmates_me);
+      }
     }
-  }, [status, decodedToken, pathname, router]);
+  }, [status, memberProfile, pathname, router]);
 
-  if (status === STATUS.AUTHENTICATED) {
+  if (status === STATUS.AUTHENTICATED || status === STATUS.CHECKING) {
+    const message = status === STATUS.CHECKING ? "Checking session..." : "Redirecting...";
     return (
-      <>
-        <div className="w-full h-full min-h-full flex justify-center items-center">
-          Redirecting to landing page...
-        </div>
-      </>
+      <div className="w-full h-full min-h-screen flex justify-center items-center text-zinc-400 animate-pulse">
+        {message}
+      </div>
     );
   }
 

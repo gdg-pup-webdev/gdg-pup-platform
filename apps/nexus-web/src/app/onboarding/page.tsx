@@ -9,7 +9,7 @@ import { CosmosParticles } from "@/components/shared";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { status, decodedToken } = useAuthContext();
+  const { status, decodedToken, memberProfile } = useAuthContext();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -19,10 +19,16 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (status === STATUS.UNAUTHENTICATED) {
       router.push("/signin");
+      return;
     }
-  }, [status, router]);
 
-  if (!mounted || !decodedToken) {
+    // Redirect to profile if already onboarded
+    if (status === STATUS.AUTHENTICATED && memberProfile && memberProfile.isPublic !== null) {
+      router.push("/sparkmates/me");
+    }
+  }, [status, memberProfile, router]);
+
+  if (!mounted || !decodedToken || (status === STATUS.AUTHENTICATED && !memberProfile)) {
     return (
       <div className="min-h-screen relative overflow-hidden bg-[#010b1d] flex flex-col items-center justify-center pt-24 text-zinc-300">
         Preparing onboarding...
@@ -31,7 +37,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <main className="relative min-h-screen w-full overflow-hidden bg-[#010b1d]">
+    <main className="relative my-20 px-0 min-h-screen w-full overflow-hidden bg-[#010b1d]">
       <CosmosParticles
         particleColors={["#ffffff", "#4285f4"]}
         particleCount={350}

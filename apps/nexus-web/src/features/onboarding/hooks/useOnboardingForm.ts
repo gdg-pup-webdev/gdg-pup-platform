@@ -3,10 +3,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
-import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { useAuthContext, STATUS } from "@/features/authentication/store/useAuthStore";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
-import { markOnboardingCompleted } from "../utils/onboardingStorage";
+import { LINKS } from "@/lib/constants/links";
 import { FormState, ProjectFormState } from "../types";
 
 const initialState: FormState = {
@@ -22,6 +22,7 @@ const initialState: FormState = {
   learningInterests: "",
   toolsAndTechnologies: "",
   otherLinks: "",
+  isPublic: null,
 };
 
 const createEmptyProject = (): ProjectFormState => ({
@@ -31,6 +32,10 @@ const createEmptyProject = (): ProjectFormState => ({
   description: "",
   mainImageFile: null,
   mainImageUrl: null,
+  secondaryImageFile: null,
+  secondaryImageUrl: null,
+  tertiaryImageFile: null,
+  tertiaryImageUrl: null,
 });
 
 const parseCsv = (value: string): string[] =>
@@ -44,10 +49,11 @@ const toDateInputValue = (value: string | null): string =>
 
 export function useOnboardingForm(gdgId: string) {
   const router = useRouter();
-  const { token } = useAuthContext();
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const { token, fetchMemberProfile } = useAuthContext();
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [isPrefilling, setIsPrefilling] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [serverAvatarUrl, setServerAvatarUrl] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(initialState);
@@ -64,7 +70,7 @@ export function useOnboardingForm(gdgId: string) {
           configs.nexusApiBaseUrl,
           contract.api.v1.gdgmembers.gdgId.GET,
           {
-            token,
+            token: token ?? undefined,
             params: { gdgId },
           },
         );
@@ -92,13 +98,14 @@ export function useOnboardingForm(gdgId: string) {
           learningInterests: member.learningInterests.join(", "),
           toolsAndTechnologies: member.toolsAndTechnologies.join(", "),
           otherLinks: member.otherLinks.join(", "),
+          isPublic: member.isPublic,
         }));
 
         const projectsResult = await callEndpoint(
           configs.nexusApiBaseUrl,
           contract.api.v1.member_projects.member.memberGdgId.GET,
           {
-            token,
+            token: token ?? undefined,
             params: { memberGdgId: gdgId },
             query: {
               pageNumber: 1,
@@ -117,6 +124,10 @@ export function useOnboardingForm(gdgId: string) {
               description: project.description,
               mainImageFile: null,
               mainImageUrl: project.mainImageUrl,
+              secondaryImageFile: null,
+              secondaryImageUrl: project.secondaryImageUrl,
+              tertiaryImageFile: null,
+              tertiaryImageUrl: project.tertiaryImageUrl,
             })),
           );
         }
@@ -138,7 +149,7 @@ export function useOnboardingForm(gdgId: string) {
     };
   }, [gdgId, token]);
 
-  const updateField = (field: keyof FormState, value: string) => {
+  const updateField = (field: keyof FormState, value: string | boolean | null) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -152,6 +163,14 @@ export function useOnboardingForm(gdgId: string) {
         item.mainImageFile = value as File | null;
       } else if (field === "mainImageUrl") {
         item.mainImageUrl = value as string | null;
+      } else if (field === "secondaryImageFile") {
+        item.secondaryImageFile = value as File | null;
+      } else if (field === "secondaryImageUrl") {
+        item.secondaryImageUrl = value as string | null;
+      } else if (field === "tertiaryImageFile") {
+        item.tertiaryImageFile = value as File | null;
+      } else if (field === "tertiaryImageUrl") {
+        item.tertiaryImageUrl = value as string | null;
       } else {
         (item as any)[field] = value;
       }
@@ -177,6 +196,11 @@ export function useOnboardingForm(gdgId: string) {
       return;
     }
 
+    if (form.isPublic === null) {
+      toast.error("Please select your profile visibility (Public or Private) before saving.");
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -185,7 +209,7 @@ export function useOnboardingForm(gdgId: string) {
           configs.nexusApiBaseUrl,
           contract.api.v1.gdgmembers.gdgId.profile_image.POST,
           {
-            token,
+            token: token ?? undefined,
             params: { gdgId },
             files: {
               newProfile: profileFile,
@@ -205,7 +229,7 @@ export function useOnboardingForm(gdgId: string) {
         configs.nexusApiBaseUrl,
         contract.api.v1.gdgmembers.gdgId.PATCH,
         {
-          token,
+          token: token ?? undefined,
           params: { gdgId },
           body: {
             data: {
@@ -221,7 +245,7 @@ export function useOnboardingForm(gdgId: string) {
               learningInterests: parseCsv(form.learningInterests),
               toolsAndTechnologies: parseCsv(form.toolsAndTechnologies),
               otherLinks: parseCsv(form.otherLinks),
-              isPublic: true,
+              isPublic: form.isPublic,
             },
           },
         },
@@ -246,13 +270,13 @@ export function useOnboardingForm(gdgId: string) {
             configs.nexusApiBaseUrl,
             contract.api.v1.member_projects.id.PATCH,
             {
-              token,
+              token: token ?? undefined,
               params: { id: project.id },
               body: { data: bodyData },
               files: {
                 mainImage: project.mainImageFile || undefined,
-                secondaryImage: undefined,
-                tertiaryImage: undefined,
+                secondaryImage: project.secondaryImageFile || undefined,
+                tertiaryImage: project.tertiaryImageFile || undefined,
               },
             },
           );
@@ -267,7 +291,7 @@ export function useOnboardingForm(gdgId: string) {
           configs.nexusApiBaseUrl,
           contract.api.v1.member_projects.POST,
           {
-            token,
+            token: token ?? undefined,
             body: {
               data: {
                 ...bodyData,
@@ -276,8 +300,8 @@ export function useOnboardingForm(gdgId: string) {
             },
             files: {
               mainImage: project.mainImageFile || undefined,
-              secondaryImage: undefined,
-              tertiaryImage: undefined,
+              secondaryImage: project.secondaryImageFile || undefined,
+              tertiaryImage: project.tertiaryImageFile || undefined,
             },
           },
         );
@@ -287,9 +311,7 @@ export function useOnboardingForm(gdgId: string) {
         }
       }
 
-      markOnboardingCompleted(gdgId);
-      toast.success("Profile updated successfully.");
-      router.push("/sparkmates/me");
+      setIsSuccess(true);
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : "Unable to save your profile.");
     } finally {
@@ -297,9 +319,27 @@ export function useOnboardingForm(gdgId: string) {
     }
   };
 
-  const handleSkip = () => {
-    markOnboardingCompleted(gdgId);
-    router.push("/");
+  const handleSkip = async () => {
+    // Setting isPublic to false when skipping to mark as onboarded (private)
+    try {
+      await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.gdgmembers.gdgId.PATCH,
+        {
+          token: token ?? undefined,
+          params: { gdgId },
+          body: {
+            data: {
+              isPublic: false,
+            },
+          },
+        },
+      );
+      await fetchMemberProfile();
+    } catch (error) {
+      console.error("Failed to mark onboarding as completed during skip", error);
+    }
+    router.push(LINKS.sparkmates_me);
   };
 
   return {
@@ -307,6 +347,7 @@ export function useOnboardingForm(gdgId: string) {
     setStep,
     isPrefilling,
     isSaving,
+    isSuccess,
     profileFile,
     setProfileFile,
     serverAvatarUrl,
@@ -318,5 +359,6 @@ export function useOnboardingForm(gdgId: string) {
     removeProject,
     handleSave,
     handleSkip,
+    fetchMemberProfile,
   };
 }
