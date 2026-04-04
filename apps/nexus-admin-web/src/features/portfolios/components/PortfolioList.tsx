@@ -15,6 +15,7 @@ import { AdminPaginationSection } from "@/components/admin/AdminPaginationSectio
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
 
 export const PortfolioList: React.FC = () => {
   const { getNumber, getString, setQueryParams } = useAdminQueryParams();

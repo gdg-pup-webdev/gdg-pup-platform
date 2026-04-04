@@ -17,10 +17,10 @@ export const memberProjectsRecord = cz.object({
   // Included details
   member: cz.object({
     gdgId: cz.string().uuid(),
-    name: cz.string(),
-    email: cz.string(),
-    imageUrl: cz.string().nullable(),
-  }).nullable().optional(),
+    name: cz.string().nullable(),
+    email: cz.string().nullable(),
+    imageUrl: cz.string().nullable().nullable(),
+  }).nullable() ,
 });
 
 /** Data Transfer Object for creating a new member project. */

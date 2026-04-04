@@ -24,7 +24,7 @@ interface ProjectFormModalProps {
 }
 
 export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting }: ProjectFormModalProps) {
-  const [formData, setFormData] = useState<CreateMemberProjectDTO>({
+  const [formData, setFormData] = useState<Omit<CreateMemberProjectDTO, "member">>({
     title: "",
     description: "",
     startDate: new Date().toISOString().split('T')[0],
