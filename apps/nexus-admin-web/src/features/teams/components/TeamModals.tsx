@@ -1,14 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Edit2, Check, User as UserIcon } from "lucide-react";
-import { Team, TeamInsert, TeamUpdate, TeamMember, UserProfile } from "../types";
-import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useTeam, useSearchUsers } from "../api/teams";
+import React, { useState, useEffect } from "react";
+import { X, Loader2, AlertTriangle, Users, Plus, Trash2, UserPlus, Edit2, Check, User as UserIcon } from "lucide-react";
+import { Team, TeamInsert, TeamUpdate, TeamMember } from "../types";
+import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useTeam } from "../api/teams";
 import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
-import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
+import {
+  AdminFormModal,
+  AdminInputField,
+  AdminTextAreaField,
+  AdminUserSearchField,
+  AdminUserSearchOption,
+} from "@/components/admin/form";
 
 
 // ==========================================
@@ -114,68 +120,43 @@ export function TeamDetailsModal({
   const team = teamResponse?.body?.data || initialTeam;
 
   const [isAddingMember, setIsAddingMember] = useState(openAddMemberOnOpen);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUserSearchOption[]>([]);
   const [position, setPosition] = useState("");
   const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
   const [editingPosition, setEditingPosition] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { data: usersResponse, isLoading: isSearching } = useSearchUsers(debouncedSearch);
   const addMemberMutation = useAddTeamMember();
   const removeMemberMutation = useRemoveTeamMember();
   const updateMemberMutation = useUpdateTeamMember();
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   if (!initialTeam) return null;
 
   const activeTeam = team || initialTeam;
+  const selectedMember = selectedUser[0] || null;
 
   const toggleAddMember = () => {
     setIsAddingMember((value) => {
       const nextValue = !value;
       if (!nextValue) {
-        setSelectedUser(null);
+        setSelectedUser([]);
         setPosition("");
-        setSearchQuery("");
       }
       return nextValue;
     });
   };
 
-  const searchResults = usersResponse?.body?.data?.filter((user ) => 
-    !team?.members?.some((m: TeamMember) => m.user_id === user.gdgId)
-  ) || [];
-
   const handleAddMember = async () => {
-    if (!selectedUser || !position || !team) return;
+    if (!selectedMember || !position || !team) return;
 
     try {
       await addMemberMutation.mutateAsync({
         teamId: team.id,
-        userId: selectedUser.gdgId,
+        userId: selectedMember.gdgId,
         position,
       });
       setIsAddingMember(false);
-      setSelectedUser(null);
+      setSelectedUser([]);
       setPosition("");
-      setSearchQuery("");
       toast.success("Member added successfully");
     } catch (error: any) {
       toast.error(error.message || "Failed to add member");
@@ -209,17 +190,6 @@ export function TeamDetailsModal({
     } catch (error: any) {
       toast.error(error.message || "Failed to update position");
     }
-  };
-
-  const handleSelectUser = (user : UserProfile ) => {
-    setSelectedUser(user);
-    setSearchQuery(`${user.displayName} (${user.email})`);
-    setShowDropdown(false);
-  };
-
-  const clearSelection = () => {
-    setSelectedUser(null);
-    setSearchQuery("");
   };
 
   return (
@@ -299,58 +269,16 @@ export function TeamDetailsModal({
 
             {isAddingMember && (
               <div className="mb-6 space-y-4 rounded-sm border border-teal-100 bg-teal-50/30 p-4 animate-in fade-in slide-in-from-top-2">
-                <div className="relative" ref={dropdownRef}>
-                  <div className="relative">
-                    <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search users by name, email..."
-                      className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
-                        selectedUser ? "border-teal-500 bg-teal-50/50 font-bold text-teal-900" : "border-gray-200 bg-white"
-                      }`}
-                      value={searchQuery}
-                      onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        if (!selectedUser) setShowDropdown(true);
-                      }}
-                      onFocus={() => !selectedUser && setShowDropdown(true)}
-                      readOnly={!!selectedUser}
-                    />
-                    {selectedUser ? (
-                      <button 
-                        onClick={clearSelection}
-                        className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
-                      >
-                        <X size={16} />
-                      </button>
-                    ) : isSearching ? (
-                      <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                        <Loader2 size={16} className="animate-spin text-gray-400" />
-                      </div>
-                    ) : null}
-                  </div>
-                  
-                  {showDropdown && searchQuery.length >= 2 && (
-                    <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl animate-in fade-in zoom-in-95">
-                      {searchResults.length > 0 ? (
-                        searchResults.map((user ) => (
-                          <button
-                            key={user.gdgId}
-                            onClick={() => handleSelectUser(user)}
-                            className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
-                          >
-                            <span className="text-sm font-bold text-gray-900">{user.displayName}</span>
-                            <span className="text-xs text-gray-500">{user.email}</span>
-                          </button>
-                        ))
-                      ) : !isSearching ? (
-                        <div className="p-4 text-center text-sm text-gray-500 italic">
-                          No matching users found.
-                        </div>
-                      ) : null}
-                    </div>
-                  )}
-                </div>
+                <AdminUserSearchField
+                  label="Select Member"
+                  placeholder="Search users by name or email..."
+                  selectedUsers={selectedUser}
+                  onChange={setSelectedUser}
+                  maxSelections={1}
+                  excludeUserIds={team?.members?.map((member: TeamMember) => member.user_id) || []}
+                  emptySelectionText="No member selected yet."
+                  helperText="Choose one member to add to this team."
+                />
 
                 <div className="flex gap-2">
                   <input
@@ -362,7 +290,7 @@ export function TeamDetailsModal({
                   />
                   <button
                     onClick={handleAddMember}
-                    disabled={!selectedUser || !position || addMemberMutation.isPending}
+                    disabled={!selectedMember || !position || addMemberMutation.isPending}
                     className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition-all shadow-sm"
                   >
                     {addMemberMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}

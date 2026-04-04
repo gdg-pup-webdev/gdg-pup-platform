@@ -52,7 +52,6 @@ const getRolesAndPermissionsOfUserUseCase = new GetRolesAndPermissionsOfUser(
   userRepositoryAdapter,
 );
 
-
 const getrolebyiduc = new GetRoleById(roleRepositoryAdapter);
 
 // C. Initialize Controller (Presentation/Interface Layer)
@@ -67,5 +66,6 @@ export const rbacController = new RbacModuleController(
   removePermissionFromRoleUseCase,
   removeRoleFromUserUseCase,
   updateRoleUseCase,
-  getRolesAndPermissionsOfUserUseCase,getrolebyiduc,
+  getRolesAndPermissionsOfUserUseCase,
+  getrolebyiduc,
 );

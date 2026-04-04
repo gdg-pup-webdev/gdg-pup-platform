@@ -47,9 +47,9 @@ export class RbacModuleController {
       permissions: [...result.props.permissions],
     };
   }
-  async getRolesAndPermissionsOfUser(userId: string) {
+  async getRolesAndPermissionsOfUser(gdgId: string) {
     const result =
-      await this.getRolesAndPermissionsOfUserUseCase.execute(userId);
+      await this.getRolesAndPermissionsOfUserUseCase.execute(gdgId);
 
     return result.map((role) => ({
       name: role.props.name,
@@ -59,11 +59,12 @@ export class RbacModuleController {
         resource: permission.resource,
         action: permission.action,
       })),
+      
     }));
   }
 
-  async assignRoleToUser(userId: string, roleName: string) {
-    const result = await this.assignRoleToUserUseCase.execute(userId, roleName);
+  async assignRoleToUser(gdgId: string, roleName: string) {
+    const result = await this.assignRoleToUserUseCase.execute(gdgId, roleName);
 
     return {
       id: result.props.gdgId,
@@ -140,9 +141,9 @@ export class RbacModuleController {
     };
   }
 
-  async removeRoleFromUser(userId: string, roleName: string) {
+  async removeRoleFromUser(gdgId: string, roleName: string) {
     const result = await this.removeRoleFromUserUseCase.execute(
-      userId,
+      gdgId,
       roleName,
     );
 
