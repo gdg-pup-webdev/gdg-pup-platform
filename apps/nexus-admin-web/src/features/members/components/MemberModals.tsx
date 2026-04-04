@@ -1,52 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Loader2, User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info, Code, BookOpen, Settings, Camera, Upload } from "lucide-react";
+import { User, Briefcase, GraduationCap, Globe, Github, Linkedin, ExternalLink, Edit2, CheckCircle, Info, Code, BookOpen, Settings } from "lucide-react";
 import { GdgMember, GdgMemberUpdate } from "../types";
 import Image from "next/image";
-
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import {
+  AdminAvatarUploadField,
+  AdminCheckboxField,
+  AdminFormModal,
+  AdminInputField,
+  AdminListField,
+  AdminTextAreaField,
+} from "@/components/admin/form";
 
 // ==========================================
 // Member Form Modal (Update Only)
@@ -82,14 +49,6 @@ export function MemberFormModal({ isOpen, onClose, onSubmit, initialData, isSubm
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Helper to manage tag inputs as comma-separated strings
-  const [tagInputs, setTagInputs] = useState({
-    other_links: "",
-    technical_skills: "",
-    learning_interests: "",
-    tools_and_technologies: "",
-  });
-
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -112,33 +71,13 @@ export function MemberFormModal({ isOpen, onClose, onSubmit, initialData, isSubm
       });
 
       // setPreviewUrl(initialData.profile_image || null);
-
-      setTagInputs({
-        other_links: (initialData.otherLinks || []).join(", "),
-        technical_skills: (initialData.technicalSkills || []).join(", "),
-        learning_interests: (initialData.learningInterests || []).join(", "),
-        tools_and_technologies: (initialData.toolsAndTechnologies || []).join(", "),
-      });
     }
     setProfileImage(null);
   }, [initialData, isOpen]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleTagChange = (field: keyof typeof tagInputs, value: string) => {
-    setTagInputs((prev: typeof tagInputs) => ({ ...prev, [field]: value }));
-    const arrayValue = value.split(",").map(v => v.trim()).filter(Boolean);
-    setFormData((prev: GdgMemberUpdate) => ({ ...prev, [field]: arrayValue }));
+  const handleAvatarChange = (file: File | null, nextPreviewUrl: string | null) => {
+    setProfileImage(file);
+    setPreviewUrl(nextPreviewUrl);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -147,201 +86,150 @@ export function MemberFormModal({ isOpen, onClose, onSubmit, initialData, isSubm
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Update Member">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {/* Profile Image Upload */}
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Profile Image</label>
-            <div className="flex items-center gap-6">
-              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
-                {previewUrl ? (
-                  <Image src={previewUrl} alt="Profile Preview" fill className="object-cover" />
-                ) : (
-                  <Camera size={32} />
-                )}
-              </div>
-              <div className="flex-1">
-                <p className="mb-3 text-xs text-gray-500 leading-relaxed">
-                  Upload a profile photo. Best as a square aspect ratio. Max size: 2MB.
-                </p>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                  <Upload size={16} />
-                  Choose Photo
-                  <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">First Name</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.firstName || ""}
-              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Middle Name</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.middleName || ""}
-              onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Last Name</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.lastName || ""}
-              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Nickname</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.displayName || ""}
-              onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-            />
-          </div> 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Membership Type</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.membershipType || ""}
-              onChange={(e) => setFormData({ ...formData, membershipType: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Department</label>
-            <input
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.department || ""}
-              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Year Level</label>
-              <input
-                type="number"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-                value={formData.yearLevel || ""}
-                onChange={(e) => setFormData({ ...formData, yearLevel: e.target.value ? parseInt(e.target.value) : null })}
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Program</label>
-              <input
-                type="text"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-                value={formData.program || ""}
-                onChange={(e) => setFormData({ ...formData, program: e.target.value })}
-              />
-            </div>
-          </div>
-          <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Bio</label>
-            <textarea
-              rows={3}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.bio || ""}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">GitHub URL</label>
-            <input
-              type="url"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={formData.githubUrl || ""}
-              onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-            />
-          </div> 
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Other Links (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. https://link1.com, https://link2.com"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.other_links}
-              onChange={(e) => handleTagChange("other_links", e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Technical Skills (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. React, Node.js, TypeScript"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.technical_skills}
-              onChange={(e) => handleTagChange("technical_skills", e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Learning Interests (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. AI, Rust, Web3"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.learning_interests}
-              onChange={(e) => handleTagChange("learning_interests", e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Tools & Technologies (comma-separated)</label>
-            <input
-              type="text"
-              placeholder="e.g. Docker, Git, VS Code"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-blue-500 transition-all"
-              value={tagInputs.tools_and_technologies}
-              onChange={(e) => handleTagChange("tools_and_technologies", e.target.value)}
-            />
-          </div>
-
-          <div className="flex items-center gap-2 pt-6">
-            <input
-              type="checkbox"
-              id="is_public"
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              checked={formData.isPublic}
-              onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-            />
-            <label htmlFor="is_public" className="text-sm font-medium text-gray-700 select-none">Make Member Public</label>
-          </div>
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Update Member"
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel="Save Changes"
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <AdminAvatarUploadField
+            label="Profile Image"
+            previewUrl={previewUrl}
+            onImageChange={handleAvatarChange}
+            helperText="Upload a profile photo. Best as a square aspect ratio."
+          />
         </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            Save Changes
-          </button>
+
+        <AdminInputField
+          label="First Name"
+          type="text"
+          value={formData.firstName || ""}
+          onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+        />
+        <AdminInputField
+          label="Middle Name"
+          type="text"
+          value={formData.middleName || ""}
+          onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+        />
+        <AdminInputField
+          label="Last Name"
+          type="text"
+          value={formData.lastName || ""}
+          onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+        />
+        <AdminInputField
+          label="Nickname"
+          type="text"
+          value={formData.displayName || ""}
+          onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+        />
+        <AdminInputField
+          label="Membership Type"
+          type="text"
+          value={formData.membershipType || ""}
+          onChange={(e) => setFormData({ ...formData, membershipType: e.target.value })}
+        />
+        <AdminInputField
+          label="Department"
+          type="text"
+          value={formData.department || ""}
+          onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+        />
+
+        <div className="grid grid-cols-2 gap-4 sm:col-span-2">
+          <AdminInputField
+            label="Year Level"
+            type="number"
+            value={formData.yearLevel || ""}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                yearLevel: e.target.value ? parseInt(e.target.value, 10) : null,
+              })
+            }
+          />
+          <AdminInputField
+            label="Program"
+            type="text"
+            value={formData.program || ""}
+            onChange={(e) => setFormData({ ...formData, program: e.target.value })}
+          />
         </div>
-      </form>
-    </Modal>
+
+        <div className="sm:col-span-2">
+          <AdminTextAreaField
+            label="Bio"
+            rows={3}
+            value={formData.bio || ""}
+            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+          />
+        </div>
+
+        <AdminInputField
+          label="GitHub URL"
+          type="url"
+          value={formData.githubUrl || ""}
+          onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+        />
+
+        <AdminInputField
+          label="LinkedIn URL"
+          type="url"
+          value={formData.linkedinUrl || ""}
+          onChange={(e) => setFormData({ ...formData, linkedinUrl: e.target.value })}
+        />
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Other Links"
+            items={formData.otherLinks || []}
+            onChange={(items) => setFormData({ ...formData, otherLinks: items })}
+            placeholder="Add a URL and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Technical Skills"
+            items={formData.technicalSkills || []}
+            onChange={(items) => setFormData({ ...formData, technicalSkills: items })}
+            placeholder="Add a skill and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Learning Interests"
+            items={formData.learningInterests || []}
+            onChange={(items) => setFormData({ ...formData, learningInterests: items })}
+            placeholder="Add an interest and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminListField
+            label="Tools & Technologies"
+            items={formData.toolsAndTechnologies || []}
+            onChange={(items) => setFormData({ ...formData, toolsAndTechnologies: items })}
+            placeholder="Add a tool and press Enter..."
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <AdminCheckboxField
+            id="is_public"
+            label="Make Member Public"
+            checked={formData.isPublic}
+            onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+          />
+        </div>
+      </div>
+    </AdminFormModal>
   );
 }
 
@@ -365,16 +253,16 @@ export function MemberDetailsModal({ isOpen, onClose, member, onEdit }: MemberDe
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Member Details">
       <div className="space-y-6">
-        {/* Action Buttons */}
-        <div className="flex justify-end gap-2 border-b border-gray-50 pb-4">
-          <button
-            onClick={() => onEdit(member)}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Edit2 size={14} />
-            Edit Member
-          </button>
-        </div>
+        <ModalActionRow
+          actions={[
+            {
+              key: "edit",
+              label: "Edit Member",
+              icon: Edit2,
+              onClick: () => onEdit(member),
+            },
+          ]}
+        />
 
         <div className="flex flex-col sm:flex-row gap-6">
           <div className="flex-1">

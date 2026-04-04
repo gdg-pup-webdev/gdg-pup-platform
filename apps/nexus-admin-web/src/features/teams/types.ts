@@ -37,3 +37,7 @@ export type TeamInsert = {
 };
 
 export type TeamUpdate = Partial<TeamInsert>;
+
+
+
+export type UserProfile = contract.api.v1.gdgmembers.GET.response[200]["data"][number];

@@ -5,17 +5,21 @@ import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
-type RoleUpdateDTO = z.infer<typeof contract.api.v1.roles.roleName.PATCH.request.body>;
+type RoleUpdateDTO = z.infer<typeof contract.api.v1.roles.roleId.PATCH.request.body>;
 
 export const useUpdateRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ roleName, payload }: { roleName: string; payload: RoleUpdateDTO }) => {
+    mutationFn: async ({ roleId, payload }: { roleId: string; payload: RoleUpdateDTO }) => {
+      console.log("hell oworld" , {
+          params: { roleId: roleId },
+          body: payload,
+        })
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles.roleName.PATCH,
+        contract.api.v1.roles.roleId.PATCH,
         {
-          params: { roleName },
+          params: { roleId: roleId },
           body: payload,
         }
       );
@@ -26,7 +30,7 @@ export const useUpdateRole = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["roles", "list"] });
-      queryClient.invalidateQueries({ queryKey: ["roles", "detail", variables.roleName] });
+      queryClient.invalidateQueries({ queryKey: ["roles", "detail", variables.roleId] });
     },
   });
 };

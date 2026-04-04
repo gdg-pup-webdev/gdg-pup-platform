@@ -2,11 +2,18 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Plus, Loader2, Search, AlertCircle, FileStack, Folder as FolderIcon, ChevronRight, Home, ArrowLeft, FolderPlus } from "lucide-react";
+import { Plus, FileStack, Folder as FolderIcon, ChevronRight, Home, ArrowLeft, FolderPlus } from "lucide-react";
 import { FileCard } from "./FileCard";
 import { FileFormModal, FileDetailsModal, DeleteConfirmModal, FolderFormModal } from "./FileModals";
 import { useGetFiles, useUploadFile, useUpdateFile, useDeleteFile, useGetFolders, useCreateFolder, useGetFolder, useDeleteFolder } from "../hooks";
 import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 
 // Type for both files and folders to avoid 'any'
 type FileOrFolder = (FileRecord | Folder) & { isFolder: boolean };
@@ -18,10 +25,20 @@ export function FileList() {
 
   // URL State
   const folderIdFromUrl = searchParams.get("folderId") || null;
-  const pageNumberFromUrl = parseInt(searchParams.get("pageNumber") || "1");
-  const pageSizeFromUrl = parseInt(searchParams.get("pageSize") || "10");
+  const pageNumberFromUrl = (() => {
+    const parsed = Number.parseInt(searchParams.get("pageNumber") || "1", 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+  })();
+  const pageSizeFromUrl = (() => {
+    const parsed = Number.parseInt(searchParams.get("pageSize") || "10", 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 10;
+  })();
+  const searchQuery = searchParams.get("q") || "";
+  const modalFromUrl = searchParams.get("modal") || "";
+  const selectedItemIdFromUrl = searchParams.get("itemId") || "";
+  const selectedItemTypeFromUrl = searchParams.get("itemType") || "";
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState(searchQuery);
   const [folderHistory, setFolderHistory] = useState<Folder[]>([]);
   
   // API Hooks
@@ -35,13 +52,6 @@ export function FileList() {
   const deleteFolderMutation = useDeleteFolder();
   const createFolderMutation = useCreateFolder();
   
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<FileRecord | Folder | null>(null);
-
   // Sync breadcrumbs when currentFolder changes (especially on direct link load)
   useEffect(() => {
     if (currentFolder) {
@@ -56,6 +66,10 @@ export function FileList() {
         setFolderHistory([]);
     }
   }, [currentFolder, folderIdFromUrl]);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
 
   const updateQueryParams = (params: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -76,6 +90,37 @@ export function FileList() {
 
   const rawFiles = filesResponse?.body?.data || [];
   const rawFolders = foldersResponse?.body?.data || [];
+
+  const selectedItem = useMemo(() => {
+    if (!selectedItemIdFromUrl) {
+      return null;
+    }
+
+    if (selectedItemTypeFromUrl === "folder") {
+      return rawFolders.find((folder) => folder.id === selectedItemIdFromUrl) || null;
+    }
+
+    if (selectedItemTypeFromUrl === "file") {
+      return rawFiles.find((file) => file.id === selectedItemIdFromUrl) || null;
+    }
+
+    return (
+      rawFolders.find((folder) => folder.id === selectedItemIdFromUrl) ||
+      rawFiles.find((file) => file.id === selectedItemIdFromUrl) ||
+      null
+    );
+  }, [rawFiles, rawFolders, selectedItemIdFromUrl, selectedItemTypeFromUrl]);
+
+  const selectedItemIsFolder =
+    selectedItemTypeFromUrl === "folder" ||
+    Boolean(selectedItem && "name" in selectedItem && !("fileName" in selectedItem));
+
+  const isFormModalOpen =
+    modalFromUrl === "upload" || (modalFromUrl === "editFile" && Boolean(selectedItem));
+  const isFolderModalOpen =
+    modalFromUrl === "newFolder" || (modalFromUrl === "editFolder" && Boolean(selectedItem));
+  const isDetailsModalOpen = modalFromUrl === "view" && Boolean(selectedItem);
+  const isDeleteModalOpen = modalFromUrl === "delete" && Boolean(selectedItem);
   
   const meta = filesResponse?.body?.meta;
   const totalPages = meta?.totalPages || 1;
@@ -108,34 +153,65 @@ export function FileList() {
     return combinedItems;
   }, [rawFiles, rawFolders, searchQuery]);
 
+  const closeModal = () => {
+    updateQueryParams({ modal: null, itemId: null, itemType: null });
+  };
+
+  const openModal = (nextModal: string, item?: FileRecord | Folder) => {
+    const itemType = item ? ((item as any).isFolder ? "folder" : "file") : null;
+    updateQueryParams({
+      modal: nextModal,
+      itemId: item?.id || null,
+      itemType,
+    });
+  };
+
+  const applySearch = () => {
+    updateQueryParams({ q: searchInput.trim() || null, pageNumber: "1" });
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    updateQueryParams({ q: null, pageNumber: "1" });
+  };
+
   // Handlers
   const handleUpload = () => {
-    setSelectedItem(null);
-    setIsFormModalOpen(true);
+    openModal("upload");
   };
 
   const handleCreateFolderClick = () => {
-    setSelectedItem(null);
-    setIsFolderModalOpen(true);
+    openModal("newFolder");
   };
 
   const handleEdit = (item: FileRecord | Folder) => {
-    setSelectedItem(item);
-    if (!(item as any).isFolder) {
-      setIsFormModalOpen(true);
-    } else {
-      setIsFolderModalOpen(true);
+    if ((item as any).isFolder) {
+      openModal("editFolder", item);
+      return;
     }
+
+    openModal("editFile", item);
   };
 
   const handleView = (item: FileRecord | Folder) => {
-    setSelectedItem(item);
-    setIsDetailsModalOpen(true);
+    openModal("view", item);
   };
 
   const handleDeleteClick = (item: FileRecord | Folder) => {
-    setSelectedItem(item);
-    setIsDeleteModalOpen(true);
+    openModal("delete", item);
+  };
+
+  const handleDeleteFromCard = async (item: FileRecord | Folder) => {
+    try {
+      if ((item as any).isFolder) {
+        await deleteFolderMutation.mutateAsync(item.id);
+      } else {
+        await deleteMutation.mutateAsync(item.id);
+      }
+      refetch();
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
   const handleFolderClick = (folder: Folder) => {
@@ -156,7 +232,7 @@ export function FileList() {
 
   const handleFormSubmit = async (data: any, file?: File) => {
     try {
-        if (selectedItem && !(selectedItem as any).isFolder) {
+        if (selectedItem && !selectedItemIsFolder) {
           await updateMutation.mutateAsync({ id: selectedItem.id, data: data as FileRecordUpdate });
         } else if (file) {
           const formData = { 
@@ -166,7 +242,7 @@ export function FileList() {
           
           await uploadMutation.mutateAsync({ data: formData, file });
         }
-        setIsFormModalOpen(false);
+        closeModal();
         refetch();
     } catch (err) {
         console.error("Form submission failed:", err);
@@ -175,14 +251,14 @@ export function FileList() {
 
   const handleFolderSubmit = async (data: FolderInsert | FolderUpdate) => {
     try {
-        if (selectedItem && (selectedItem as any).isFolder) {
+        if (selectedItem && selectedItemIsFolder) {
             // This is an update, which is not implemented.
             throw new Error("Update folder functionality is not implemented yet.");
         } else {
             // This is a create.
             await createFolderMutation.mutateAsync(data as FolderInsert);
         }
-        setIsFolderModalOpen(false);
+          closeModal();
         refetch();
     } catch (err) {
         console.error("Folder creation/update failed:", err);
@@ -192,12 +268,12 @@ export function FileList() {
   const handleDeleteConfirm = async () => {
     if (selectedItem) {
       try {
-        if ((selectedItem as any).isFolder) {
+        if (selectedItemIsFolder) {
           await deleteFolderMutation.mutateAsync(selectedItem.id);
         } else {
           await deleteMutation.mutateAsync(selectedItem.id);
         }
-        setIsDeleteModalOpen(false);
+        closeModal();
         refetch();
     } catch (err) {
         console.error("Delete failed:", err);
@@ -210,225 +286,182 @@ export function FileList() {
   const error = filesError || foldersError;
 
   if (isLoading) {
-    return (
-      <div className="flex h-96 flex-col items-center justify-center gap-4">
-        <Loader2 size={48} className="animate-spin text-teal-600" />
-        <p className="text-sm font-medium text-gray-500">Loading your files...</p>
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading your files..." className="h-96" iconSize={48} />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center shadow-sm">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-xl font-bold text-red-900">Failed to load files</h3>
-        <p className="mt-2 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred while fetching files."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-8 rounded-sm bg-red-600 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 hover:shadow-md"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load files"
+        message={(error as any)?.message || "An unexpected error occurred while fetching files."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Breadcrumbs & Navigation */}
-      <div className="flex flex-wrap items-center gap-2 rounded-sm bg-gray-50 p-3 text-sm text-gray-600 border border-gray-100">
-        <button 
-            onClick={handleBack}
-            disabled={!folderIdFromUrl}
-            className="flex items-center gap-1 rounded-sm bg-white px-2 py-1 text-xs font-bold border border-gray-200 disabled:opacity-30 hover:bg-gray-100"
-        >
-            <ArrowLeft size={14} />
-            Up
-        </button>
-        
-        <div className="h-4 w-px bg-gray-300 mx-1" />
+    <>
+      <AdminListScaffold
+        className="space-y-8"
+        leading={
+          <div className="flex flex-wrap items-center gap-2 rounded-sm border border-gray-100 bg-gray-50 p-3 text-sm text-gray-600">
+            <button 
+              onClick={handleBack}
+              disabled={!folderIdFromUrl}
+              className="flex items-center gap-1 rounded-sm border border-gray-200 bg-white px-2 py-1 text-xs font-bold disabled:opacity-30 hover:bg-gray-100"
+            >
+              <ArrowLeft size={14} />
+              Up
+            </button>
 
-        <button
-          onClick={() => handleBreadcrumbClick(null)}
-          className={`flex items-center gap-1.5 transition-colors hover:text-teal-600 ${
-            !folderIdFromUrl ? "font-bold text-teal-700" : ""
-          }`}
-        >
-          <Home size={14} />
-          Root
-        </button>
+            <div className="mx-1 h-4 w-px bg-gray-300" />
 
-        {folderHistory.map((folder, index) => (
-          <React.Fragment key={folder.id}>
-            <ChevronRight size={14} className="text-gray-400" />
             <button
-              onClick={() => handleBreadcrumbClick(folder)}
+              onClick={() => handleBreadcrumbClick(null)}
               className={`flex items-center gap-1.5 transition-colors hover:text-teal-600 ${
-                folder.id === folderIdFromUrl ? "font-bold text-teal-700" : ""
+                !folderIdFromUrl ? "font-bold text-teal-700" : ""
               }`}
             >
-              {folder.name}
+              <Home size={14} />
+              Root
             </button>
-          </React.Fragment>
-        ))}
-      </div>
 
-      {/* Header & Search */}
-      <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-        <div className="relative w-full max-md:max-w-none max-w-md">
-          <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search in this folder..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-sm border border-gray-100 bg-white py-3 pl-11 pr-4 text-sm shadow-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-          />
-        </div>
-        
-        <div className="flex w-full gap-2 md:w-auto">
-            <button 
-                onClick={handleCreateFolderClick}
-                className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-teal-600 text-teal-600 px-6 py-3 text-sm font-bold transition-all hover:bg-teal-50 md:w-auto"
-            >
-                <FolderPlus size={18} />
-                New Folder
-            </button>
-            <button 
-                onClick={handleUpload}
-                className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 px-8 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-lg md:w-auto"
-            >
-                <Plus size={18} />
-                Upload
-            </button>
-        </div>
-      </div>
-
-      {/* Files & Folders Grid */}
-      {items.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {items.map((item) => (
-            <FileCard 
-              key={item.id} 
-              file={item} 
-              onEdit={handleEdit}
-              onDelete={handleDeleteClick}
-              onView={handleView}
-              onOpen={item.isFolder ? (f) => handleFolderClick(f as Folder) : undefined}
-              isFolder={item.isFolder}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-100 bg-gray-50/50 py-24 text-center">
-          <FileStack size={64} className="mb-4 text-gray-200" />
-          <h3 className="text-lg font-bold text-gray-900">Folder is empty</h3>
-          <p className="mt-1 text-sm text-gray-500">No files or subfolders found in the current folder.</p>
-          <div className="mt-8 flex items-center justify-center gap-3">
-            <button 
-                onClick={handleCreateFolderClick}
-                className="rounded-sm border border-teal-600 text-teal-600 px-6 py-2.5 text-sm font-bold transition-all hover:bg-teal-50"
-            >
-                Create Folder
-            </button>
-            <button 
-                onClick={handleUpload}
-                className="rounded-sm bg-teal-600 px-8 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md"
-            >
-                Upload Now
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Pagination */}
-      <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-100 pt-8 md:flex-row">
-        <div className="flex items-center gap-3">
-          <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Items per page</label>
-          <select
-            value={pageSizeFromUrl}
-            onChange={(e) => updateQueryParams({ pageSize: e.target.value, pageNumber: "1" })}
-            className="rounded-sm border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium focus:border-teal-500 focus:outline-none"
-          >
-            {[10, 20, 50, 100].map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
+            {folderHistory.map((folder) => (
+              <React.Fragment key={folder.id}>
+                <ChevronRight size={14} className="text-gray-400" />
+                <button
+                  onClick={() => handleBreadcrumbClick(folder)}
+                  className={`flex items-center gap-1.5 transition-colors hover:text-teal-600 ${
+                    folder.id === folderIdFromUrl ? "font-bold text-teal-700" : ""
+                  }`}
+                >
+                  {folder.name}
+                </button>
+              </React.Fragment>
             ))}
-          </select>
-        </div>
-
-        {totalPages > 1 && (
-          <div className="flex items-center gap-2">
-            <button
-              disabled={pageNumberFromUrl === 1}
-              onClick={() => updateQueryParams({ pageNumber: Math.max(1, pageNumberFromUrl - 1).toString() })}
-              className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50 hover:bg-gray-50 transition-colors"
-            >
-              Previous
-            </button>
-            <div className="flex items-center gap-1">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 5) pageNum = i + 1;
-                else if (pageNumberFromUrl <= 3) pageNum = i + 1;
-                else if (pageNumberFromUrl >= totalPages - 2) pageNum = totalPages - 4 + i;
-                else pageNum = pageNumberFromUrl - 2 + i;
-
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => updateQueryParams({ pageNumber: pageNum.toString() })}
-                    className={`h-9 w-9 rounded-sm text-sm font-bold transition-all ${
-                        pageNumberFromUrl === pageNum
-                        ? "bg-teal-600 text-white shadow-md"
-                        : "bg-white text-gray-600 border border-gray-100 hover:bg-gray-50"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-            </div>
-            <button
-              disabled={pageNumberFromUrl === totalPages}
-              onClick={() => updateQueryParams({ pageNumber: (pageNumberFromUrl + 1).toString() })}
-              className="rounded-sm bg-white px-4 py-2 text-sm font-bold text-gray-600 border border-gray-100 disabled:opacity-50 hover:bg-gray-50 transition-colors"
-            >
-              Next
-            </button>
           </div>
-        )}
-
-        <div className="text-xs font-medium text-gray-500">
-          Showing <span className="font-bold text-gray-900">{items.length}</span> of{" "}
-          <span className="font-bold text-gray-900">{meta?.totalRecords || items.length}</span> items
-        </div>
-      </div>
+        }
+        actions={
+          <>
+            <AdminActionButton
+              onClick={handleCreateFolderClick}
+              variant="brandOutline"
+              className="flex-1 md:flex-none"
+            >
+              <FolderPlus size={18} />
+              New Folder
+            </AdminActionButton>
+            <AdminActionButton
+              onClick={handleUpload}
+              variant="brand"
+              className="flex-1 md:flex-none"
+            >
+              <Plus size={18} />
+              Upload
+            </AdminActionButton>
+          </>
+        }
+        search={
+          <AdminSearchSection
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
+            placeholder="Search in this folder..."
+            accent="teal"
+            searchContainerClassName="max-w-md"
+            inputClassName="border-gray-100 py-3 shadow-sm"
+            actions={
+              <>
+                <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                  Search
+                </AdminActionButton>
+                {searchQuery ? (
+                  <AdminActionButton variant="neutralOutline" size="sm" onClick={clearSearch}>
+                    Clear
+                  </AdminActionButton>
+                ) : null}
+              </>
+            }
+          />
+        }
+        content={
+          items.length > 0 ? (
+            <AdminCardGrid>
+              {items.map((item) => (
+                <FileCard 
+                  key={item.id} 
+                  file={item} 
+                  onEdit={handleEdit}
+                  onDelete={handleDeleteFromCard}
+                  onView={handleView}
+                  onOpen={item.isFolder ? (f) => handleFolderClick(f as Folder) : undefined}
+                  isFolder={item.isFolder}
+                />
+              ))}
+            </AdminCardGrid>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-100 bg-gray-50/50 py-24 text-center">
+              <FileStack size={64} className="mb-4 text-gray-200" />
+              <h3 className="text-lg font-bold text-gray-900">Folder is empty</h3>
+              <p className="mt-1 text-sm text-gray-500">No files or subfolders found in the current folder.</p>
+              <div className="mt-8 flex items-center justify-center gap-3">
+                <AdminActionButton
+                  onClick={handleCreateFolderClick}
+                  variant="tealOutline"
+                >
+                  Create Folder
+                </AdminActionButton>
+                <AdminActionButton
+                  onClick={handleUpload}
+                  variant="teal"
+                >
+                  Upload Now
+                </AdminActionButton>
+              </div>
+            </div>
+          )
+        }
+        pagination={
+          <div className="border-t border-gray-100 pt-8">
+            <AdminPaginationSection
+              currentPage={pageNumberFromUrl}
+              totalPages={totalPages}
+              pageSize={pageSizeFromUrl}
+              totalRecords={meta?.totalRecords || items.length}
+              onPageChange={(nextPage) => updateQueryParams({ pageNumber: nextPage.toString() })}
+              onPageSizeChange={(nextSize) => updateQueryParams({ pageSize: nextSize.toString(), pageNumber: "1" })}
+            />
+          </div>
+        }
+      />
 
       {/* Modals */}
       <FileFormModal 
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
         currentPath={currentFolder?.name || "Root"}
-        initialData={selectedItem && !(selectedItem as any).isFolder ? (selectedItem as FileRecord) : undefined}
+        initialData={selectedItem && !selectedItemIsFolder ? (selectedItem as FileRecord) : undefined}
         isSubmitting={uploadMutation.isPending || updateMutation.isPending}
       />
 
       <FolderFormModal
         isOpen={isFolderModalOpen}
-        onClose={() => setIsFolderModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFolderSubmit}
         currentParentId={folderIdFromUrl}
-        initialData={selectedItem && (selectedItem as any).isFolder ? (selectedItem as Folder) : undefined}
+        initialData={selectedItem && selectedItemIsFolder ? (selectedItem as Folder) : undefined}
         isSubmitting={createFolderMutation.isPending}
       />
 
       <FileDetailsModal 
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         item={selectedItem}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
@@ -437,12 +470,12 @@ export function FileList() {
 
       <DeleteConfirmModal 
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         fileName={(selectedItem as any)?.fileName || (selectedItem as any)?.name || ""}
         isDeleting={deleteMutation.isPending || deleteFolderMutation.isPending}
-        isFolder={(selectedItem as any)?.isFolder}
+        isFolder={selectedItemIsFolder}
       />
-    </div>
+    </>
   );
 }

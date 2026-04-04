@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Save, Trash2, Shield, AlertCircle, ShieldCheck } from "lucide-react";
+import { X, Save, Trash2, Shield, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { z } from "zod";
 import { contract } from "@packages/nexus-api-contracts";
+import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
 
 type Role = z.infer<typeof contract.api.v1.roles.GET.response[200]>;
 type RoleItem = Role["data"][number];
@@ -14,7 +14,7 @@ type RoleItem = Role["data"][number];
 interface RoleFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: { name: string; description: string }) => Promise<void>;
   initialData?: RoleItem | null;
   isSubmitting: boolean;
 }
@@ -45,47 +45,34 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={onClose} className="max-w-lg rounded-lg">
-      <div className="flex items-center justify-between border-b p-4">
-        <h2 className="text-xl font-bold text-gray-900">
-          {initialData ? "Edit Role" : "Create New Role"}
-        </h2>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-          <X size={20} />
-        </button>
-      </div>
-      <form onSubmit={handleSubmit} className="space-y-4 p-6">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Role Name</label>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Administrator"
-            required
-            disabled={!!initialData} // Usually role names are immutable or handled carefully
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Description</label>
-          <textarea
-            className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:outline-none"
-            rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Describe the purpose of this role..."
-            required
-          />
-        </div>
-        <div className="flex justify-end gap-3 pt-4">
-          <Button variant="outline" onClick={onClose} type="button">
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : initialData ? "Update Role" : "Create Role"}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Role" : "Create New Role"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={initialData ? "Update Role" : "Create Role"}
+      className="max-w-lg"
+    >
+      <AdminInputField
+        label="Role Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="e.g. Administrator"
+        required
+        disabled={!!initialData}
+        helperText={initialData ? "Role names are immutable after creation." : undefined}
+      />
+
+      <AdminTextAreaField
+        label="Description"
+        rows={3}
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder="Describe the purpose of this role..."
+        required
+      />
+    </AdminFormModal>
   );
 };
 
