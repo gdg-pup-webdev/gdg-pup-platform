@@ -21,6 +21,8 @@ export function Pagination({
     onPageChange,
     onPageSizeChange,
 }: PaginationProps) {
+    const pageSizeOptions = Array.from(new Set([...PAGE_SIZE_OPTIONS, pageSize])).sort((a, b) => a - b);
+
     // Build page numbers with ellipsis
     const getPageNumbers = (): (number | "...")[] => {
         const pages: (number | "...")[] = [];
@@ -48,7 +50,7 @@ export function Pagination({
     const effectiveTotalPages = Math.max(1, totalPages);
 
     return (
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             {/* Page size selector */}
             <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">Rows per page:</span>
@@ -57,7 +59,7 @@ export function Pagination({
                     onChange={(e) => onPageSizeChange(Number(e.target.value))}
                     className="rounded-sm border border-gray-200 bg-white px-2.5 py-1.5 text-sm font-medium text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-[#0B1F3B] focus:ring-1 focus:ring-[#0B1F3B]"
                 >
-                    {PAGE_SIZE_OPTIONS.map((size) => (
+                    {pageSizeOptions.map((size) => (
                         <option key={size} value={size}>
                             {size}
                         </option>
@@ -103,7 +105,7 @@ export function Pagination({
                             <button
                                 key={page}
                                 onClick={() => onPageChange(page as number)}
-                                className={`min-w-[36px] rounded-sm px-2.5 py-1.5 text-sm font-medium transition-colors ${currentPage === page
+                                className={`min-w-9 rounded-sm px-2.5 py-1.5 text-sm font-medium transition-colors ${currentPage === page
                                     ? "bg-[#0B1F3B] text-white shadow-sm"
                                     : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                     }`}

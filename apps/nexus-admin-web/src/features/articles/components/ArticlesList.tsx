@@ -1,21 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
-import { Loader2, AlertCircle, Calendar, Search, Plus, FileText } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Plus, FileText } from "lucide-react";
 import { useListArticles } from "../hooks/useListArticle";
 import { useDeleteArticle } from "../hooks/useDeleteArticle";
 import { useCreateArticle } from "../hooks/useCreateArticle";
 import { useUpdateArticle } from "../hooks/useUpdateArticle";
 import { Article, ArticleInsert, ArticleUpdate } from "../types";
-import { Pagination } from "@/components/admin/Pagination";
 import { ArticleFormModal, ArticleDetailsModal, DeleteConfirmModal } from "./ArticleModal";
 import { ArticleCard } from "./ArticleCard";
 import { toast } from "react-toastify";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const ArticlesList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 12);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedArticleId = getString("itemId", "");
   
   // API Hooks
   const { data: articlesResponse, isLoading, isError, error, refetch } = useListArticles(page, pageSize);
@@ -23,37 +34,77 @@ export const ArticlesList: React.FC = () => {
   const updateMutation = useUpdateArticle();
   const deleteMutation = useDeleteArticle();
 
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-
   const articles = articlesResponse?.data || [];
+  const selectedArticle = useMemo(
+    () => articles.find((article) => article.id === selectedArticleId) || null,
+    [articles, selectedArticleId],
+  );
+
+  const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedArticle));
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedArticle);
+  const isDeleteModalOpen = modal === "delete" && Boolean(selectedArticle);
+
   const totalPages = articlesResponse?.meta?.totalPages || 1;
   const totalRecords = articlesResponse?.meta?.totalRecords || 0;
 
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, article?: Article | null) => {
+    setQueryParams({
+      modal: nextModal,
+      itemId: article?.id || null,
+    });
+  };
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const clearSearch = () => {
+    setSearchInput("");
+    setQueryParams({ q: null, page: 1 });
+  };
+
   // Handlers
   const handleCreate = () => {
-    setSelectedArticle(null);
-    setIsFormModalOpen(true);
+    openModal("create");
   };
 
   const handleEdit = (article: Article) => {
-    setSelectedArticle(article);
-    setIsDetailsModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", article);
   };
 
   const handleView = (article: Article) => {
-    setSelectedArticle(article);
-    setIsDetailsModalOpen(true);
+    openModal("view", article);
   };
 
   const handleDeleteClick = (article: Article) => {
-    setSelectedArticle(article);
-    setIsDetailsModalOpen(false);
-    setIsDeleteModalOpen(true);
+    openModal("delete", article);
+  };
+
+  const handleDeleteFromCard = async (article: Article) => {
+    try {
+      await deleteMutation.mutateAsync(article.id);
+      toast.success("Article deleted successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Delete failed");
+    }
   };
 
   const handleFormSubmit = async (data: ArticleInsert | ArticleUpdate, thumbnail?: File) => {
@@ -65,7 +116,7 @@ export const ArticlesList: React.FC = () => {
         await createMutation.mutateAsync({ data: data as ArticleInsert, thumbnailImage: thumbnail });
         toast.success("Article created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Operation failed");
     }
@@ -76,7 +127,7 @@ export const ArticlesList: React.FC = () => {
       try {
         await deleteMutation.mutateAsync(selectedArticle.id);
         toast.success("Article deleted successfully");
-        setIsDeleteModalOpen(false);
+        closeModal();
       } catch (err: any) {
         toast.error(err.message || "Delete failed");
       }
@@ -90,112 +141,118 @@ export const ArticlesList: React.FC = () => {
   );
 
   if (isLoading && !searchQuery) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-teal-600" />
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading articles..." />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-lg font-bold text-red-900">Failed to load articles</h3>
-        <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load articles"
+        message={(error as any)?.message || "An unexpected error occurred."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search articles..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <button
+    <AdminListScaffold
+      actions={
+        <AdminActionButton
           onClick={handleCreate}
-          className="flex w-full items-center justify-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 md:w-auto"
+          variant="brand"
+          className="w-full md:w-auto"
         >
           <Plus size={18} />
           Create Article
-        </button>
-      </div>
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
-
-      {/* Grid of Cards */}
-      {filteredArticles.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredArticles.map((article: Article) => (
-            <ArticleCard
-              key={article.id}
-              article={article}
-              onClick={handleView}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <FileText size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery ? "No matching articles found" : "No articles found"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchQuery ? "Try adjusting your search terms." : "Get started by creating your first article."}
-          </p>
-          {searchQuery ? (
-            <button 
-              onClick={() => setSearchQuery("")}
-              className="mt-6 rounded-sm bg-gray-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-gray-800"
-            >
-              Clear Search
-            </button>
-          ) : (
-            <button 
-              onClick={handleCreate}
-              className="mt-6 rounded-sm bg-teal-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-teal-700"
-            >
-              Create Article
-            </button>
-          )}
-        </div>
-      )}
+        </AdminActionButton>
+      }
+      search={
+        <AdminSearchSection
+          value={searchInput}
+          onValueChange={setSearchInput}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              applySearch();
+            }
+          }}
+          placeholder="Search articles..."
+          accent="teal"
+          actions={
+            <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+              Search
+            </AdminActionButton>
+          }
+        />
+      }
+      content={
+        filteredArticles.length > 0 ? (
+          <AdminCardGrid>
+            {filteredArticles.map((article: Article) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDeleteFromCard}
+              />
+            ))}
+          </AdminCardGrid>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+            <FileText size={48} className="mb-4 text-gray-300" />
+            <h3 className="text-lg font-bold text-gray-900">
+              {searchQuery ? "No matching articles found" : "No articles found"}
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {searchQuery ? "Try adjusting your search terms." : "Get started by creating your first article."}
+            </p>
+            {searchQuery ? (
+              <AdminActionButton
+                onClick={clearSearch}
+                variant="dark"
+                size="sm"
+                className="mt-6"
+              >
+                Clear Search
+              </AdminActionButton>
+            ) : (
+              <AdminActionButton
+                onClick={handleCreate}
+                variant="teal"
+                size="sm"
+                className="mt-6"
+              >
+                Create Article
+              </AdminActionButton>
+            )}
+          </div>
+        )
+      }
+      pagination={
+        <AdminPaginationSection
+          currentPage={page}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalRecords={totalRecords}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
+      }
+    >
 
       {/* Modals */}
       <ArticleFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedArticle}
+        initialData={modal === "edit" ? selectedArticle : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       <ArticleDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         article={selectedArticle}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
@@ -203,11 +260,11 @@ export const ArticlesList: React.FC = () => {
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         itemName={selectedArticle?.title || ""}
         isDeleting={deleteMutation.isPending}
       />
-    </div>
+    </AdminListScaffold>
   );
 };

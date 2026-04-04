@@ -1,41 +1,81 @@
 "use client";
 
-import React, { useState } from "react";
-import { Loader2, AlertCircle, Search, Shield, Plus, X, User } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { X, User } from "lucide-react";
 import { useListMembers } from "@/features/members/hooks/useListMembers";
 import { useGetMemberRoles, useAssignRoleToUser, useRemoveRoleFromUser, useListRoles } from "../hooks";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Pagination } from "@/components/admin/Pagination";
 import { toast } from "react-toastify";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const MemberRoleAssignment: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchValue, setSearchValue] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMember, setSelectedMember] = useState<any | null>(null);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("memberRolesPage", 1);
+  const pageSize = getNumber("memberRolesPageSize", 10);
+  const searchQuery = getString("memberRolesSearch", "");
+  const selectedMemberId = getString("memberRolesItem", "");
+  const modal = getString("memberRolesModal", "");
+
+  const [searchValue, setSearchValue] = useState(searchQuery);
+  const [selectedMemberSnapshot, setSelectedMemberSnapshot] = useState<any | null>(null);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ memberRolesPage: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ memberRolesPageSize: nextPageSize, memberRolesPage: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ memberRolesModal: null, memberRolesItem: null });
+  };
 
   const { data: membersResponse, isLoading } = useListMembers(page, pageSize, searchQuery);
   const { data: rolesResponse } = useListRoles({ pageSize: 100 });
-  const { data: memberRoles } = useGetMemberRoles(selectedMember?.gdgId || "");
   const assignRole = useAssignRoleToUser();
   const removeRole = useRemoveRoleFromUser();
 
   const members = membersResponse?.data || [];
+  const selectedMember = useMemo(() => {
+    const memberFromList = members.find((member: any) => member.gdgId === selectedMemberId);
+    if (memberFromList) {
+      return memberFromList;
+    }
+
+    if (selectedMemberSnapshot?.gdgId === selectedMemberId) {
+      return selectedMemberSnapshot;
+    }
+
+    return selectedMemberSnapshot;
+  }, [members, selectedMemberId, selectedMemberSnapshot]);
+
+  const isRoleModalOpen = modal === "manage" && Boolean(selectedMember);
+
+  const { data: memberRoles } = useGetMemberRoles(selectedMember?.gdgId || "");
+
   const totalPages = membersResponse?.meta?.totalPages || 1;
   const totalRecords = membersResponse?.meta?.totalRecords || 0;
   const roles = rolesResponse?.data || [];
 
+  useEffect(() => {
+    setSearchValue(searchQuery);
+  }, [searchQuery]);
+
   const handleSearch = () => {
-    setSearchQuery(searchValue);
-    setPage(1);
+    setQueryParams({ memberRolesSearch: searchValue || null, memberRolesPage: 1 });
   };
 
   const handleOpenRoleModal = (member: any) => {
-    setSelectedMember(member);
-    setIsRoleModalOpen(true);
+    setSelectedMemberSnapshot(member);
+    setQueryParams({ memberRolesModal: "manage", memberRolesItem: member.gdgId });
   };
 
   const handleAssignRole = async (roleName: string) => {
@@ -56,51 +96,69 @@ export const MemberRoleAssignment: React.FC = () => {
     }
   };
 
-  if (isLoading) return <Loader2 className="animate-spin text-blue-600" size={40} />;
+  if (isLoading) return <ListLoadingState accent="blue" message="Loading members..." className="h-32" iconSize={32} />;
 
   return (
-    <div className="space-y-6">
-      <div className="flex gap-2 w-full max-w-sm">
-        <div className="relative flex-1">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search members..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+    <>
+      <AdminListScaffold
+        search={
+          <AdminSearchSection
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            onValueChange={setSearchValue}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                handleSearch();
+              }
+            }}
+            placeholder="Search members..."
+            accent="blue"
+            actions={
+              <AdminActionButton variant="brandOutline" onClick={handleSearch}>
+                Search
+              </AdminActionButton>
+            }
           />
-        </div>
-        <Button variant="outline" onClick={handleSearch}>Search</Button>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {members.map((member: any) => (
-          <div key={member.gdgId} className="flex items-center justify-between rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                <User size={20} />
+        }
+        content={
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {members.map((member: any) => (
+              <div key={member.gdgId} className="flex items-center justify-between rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <User size={20} />
+                  </div>
+                  <span className="font-medium text-gray-900">{member.displayName}</span>
+                </div>
+                <Button variant="outline" onClick={() => handleOpenRoleModal(member)}>Manage Roles</Button>
               </div>
-              <span className="font-medium text-gray-900">{member.displayName}</span>
-            </div>
-            <Button variant="outline" onClick={() => handleOpenRoleModal(member)}>Manage Roles</Button>
+            ))}
           </div>
-        ))}
-      </div>
-
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
       />
 
-      <Modal open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen} className="max-w-lg rounded-lg">
+      <Modal
+        open={isRoleModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeModal();
+          }
+        }}
+        className="max-w-lg rounded-lg"
+      >
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="text-xl font-bold">Manage Roles for {selectedMember?.displayName}</h2>
-          <button onClick={() => setIsRoleModalOpen(false)}><X size={20} /></button>
+          <button onClick={closeModal}><X size={20} /></button>
         </div>
         <div className="p-6 space-y-6">
           <div className="space-y-2">
@@ -126,6 +184,6 @@ export const MemberRoleAssignment: React.FC = () => {
           </div>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };

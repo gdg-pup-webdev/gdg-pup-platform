@@ -2,52 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Edit2, Check, User as UserIcon } from "lucide-react";
-import { Team, TeamInsert, TeamUpdate, TeamMember } from "../types";
-import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useUsers, useTeam, useSearchUsers } from "../api/teams";
+import { Team, TeamInsert, TeamUpdate, TeamMember, UserProfile } from "../types";
+import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useTeam, useSearchUsers } from "../api/teams";
 import { toast } from "react-toastify";
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
 
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ==========================================
 // Team Form Modal (Create / Update)
@@ -90,60 +52,41 @@ export function TeamFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Team" : "Create New Team"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Team Name</label>
-          <input
-            required
-            type="text"
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="e.g. Web Development Team"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description</label>
-          <textarea
-            required
-            rows={3}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="Briefly describe what this team does..."
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Responsibilities</label>
-          <textarea
-            rows={4}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="List the key responsibilities (one per line)..."
-            value={formData.responsibilities || ""}
-            onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
-          />
-        </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            {initialData ? "Save Changes" : "Create Team"}
-          </button>
-        </div>
-      </form>
-    </Modal>
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Update Team" : "Create New Team"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={initialData ? "Save Changes" : "Create Team"}
+    >
+      <AdminInputField
+        label="Team Name"
+        required
+        type="text"
+        placeholder="e.g. Web Development Team"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+      />
+
+      <AdminTextAreaField
+        label="Description"
+        required
+        rows={3}
+        placeholder="Briefly describe what this team does..."
+        value={formData.description}
+        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+      />
+
+      <AdminTextAreaField
+        label="Responsibilities"
+        rows={4}
+        placeholder="List the key responsibilities (one per line)..."
+        helperText="Tip: put one responsibility per line."
+        value={formData.responsibilities || ""}
+        onChange={(e) => setFormData({ ...formData, responsibilities: e.target.value })}
+      />
+    </AdminFormModal>
   );
 }
 
@@ -154,13 +97,23 @@ interface TeamDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   team: Team | null;
+  onEdit: (team: Team) => void;
+  onDelete: (team: Team) => void;
+  openAddMemberOnOpen?: boolean;
 }
 
-export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDetailsModalProps) {
+export function TeamDetailsModal({
+  isOpen,
+  onClose,
+  team: initialTeam,
+  onEdit,
+  onDelete,
+  openAddMemberOnOpen = false,
+}: TeamDetailsModalProps) {
   const { data: teamResponse, isLoading: isLoadingTeam } = useTeam(initialTeam?.id || "");
   const team = teamResponse?.body?.data || initialTeam;
 
-  const [isAddingMember, setIsAddingMember] = useState(false);
+  const [isAddingMember, setIsAddingMember] = useState(openAddMemberOnOpen);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
@@ -192,8 +145,22 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
 
   if (!initialTeam) return null;
 
-  const searchResults = usersResponse?.body?.data?.filter((user: any) => 
-    !team?.members?.some((m: TeamMember) => m.user_id === user.id)
+  const activeTeam = team || initialTeam;
+
+  const toggleAddMember = () => {
+    setIsAddingMember((value) => {
+      const nextValue = !value;
+      if (!nextValue) {
+        setSelectedUser(null);
+        setPosition("");
+        setSearchQuery("");
+      }
+      return nextValue;
+    });
+  };
+
+  const searchResults = usersResponse?.body?.data?.filter((user ) => 
+    !team?.members?.some((m: TeamMember) => m.user_id === user.gdgId)
   ) || [];
 
   const handleAddMember = async () => {
@@ -202,7 +169,7 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
     try {
       await addMemberMutation.mutateAsync({
         teamId: team.id,
-        userId: selectedUser.id,
+        userId: selectedUser.gdgId,
         position,
       });
       setIsAddingMember(false);
@@ -244,9 +211,9 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
     }
   };
 
-  const handleSelectUser = (user: any) => {
+  const handleSelectUser = (user : UserProfile ) => {
     setSelectedUser(user);
-    setSearchQuery(`${user.display_name} (${user.email})`);
+    setSearchQuery(`${user.displayName} (${user.email})`);
     setShowDropdown(false);
   };
 
@@ -263,6 +230,37 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
         </div>
       ) : (
         <div className="space-y-6">
+          <ModalActionRow
+            actions={[
+              {
+                key: "add-member",
+                label: isAddingMember ? "Cancel Add Member" : "Add Member",
+                icon: isAddingMember ? X : UserPlus,
+                tone: isAddingMember ? "neutral" : "primary",
+                onClick: toggleAddMember,
+              },
+              {
+                key: "edit",
+                label: "Edit Team",
+                icon: Edit2,
+                onClick: () => {
+                  onClose();
+                  onEdit(activeTeam);
+                },
+              },
+              {
+                key: "delete",
+                label: "Delete Team",
+                icon: Trash2,
+                tone: "danger",
+                onClick: () => {
+                  onClose();
+                  onDelete(activeTeam);
+                },
+              },
+            ]}
+          />
+
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded bg-teal-50 text-teal-600">
               <Users size={28} />
@@ -291,7 +289,7 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
             <div className="mb-4 flex items-center justify-between">
               <h4 className="text-sm font-bold text-gray-900">Members ({team?.members?.length || 0})</h4>
               <button
-                onClick={() => setIsAddingMember(!isAddingMember)}
+                onClick={toggleAddMember}
                 className="flex items-center gap-1.5 text-xs font-bold text-teal-600 hover:text-teal-700"
               >
                 {isAddingMember ? <X size={14} /> : <Plus size={14} />}
@@ -335,13 +333,13 @@ export function TeamDetailsModal({ isOpen, onClose, team: initialTeam }: TeamDet
                   {showDropdown && searchQuery.length >= 2 && (
                     <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl animate-in fade-in zoom-in-95">
                       {searchResults.length > 0 ? (
-                        searchResults.map((user: any) => (
+                        searchResults.map((user ) => (
                           <button
-                            key={user.id}
+                            key={user.gdgId}
                             onClick={() => handleSelectUser(user)}
                             className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
                           >
-                            <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
+                            <span className="text-sm font-bold text-gray-900">{user.displayName}</span>
                             <span className="text-xs text-gray-500">{user.email}</span>
                           </button>
                         ))
@@ -476,39 +474,21 @@ interface DeleteConfirmModalProps {
 
 export function DeleteConfirmModal({ isOpen, onClose, onConfirm, itemName, isDeleting }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delete Team">
-      <div className="space-y-5">
-        <div className="flex items-start gap-4 rounded-sm bg-red-50 p-4">
-          <div className="shrink-0 text-red-600">
-            <AlertTriangle size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
-            <p className="mt-1 text-sm text-red-700 leading-relaxed">
-              Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex items-center gap-2 rounded-sm bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 disabled:opacity-50"
-          >
-            {isDeleting && <Loader2 size={16} className="animate-spin" />}
-            Confirm Delete
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title="Delete Team"
+      confirmLabel="Confirm Delete"
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
+          <p className="mt-1">
+            Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
+          </p>
+        </>
+      }
+    />
   );
 }

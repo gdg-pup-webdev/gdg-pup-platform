@@ -7,53 +7,14 @@ import remarkGfm from "remark-gfm";
 import { Article, ArticleInsert, ArticleUpdate, UserType } from "../types";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { useSearchUsers } from "@/features/users/hooks/useSearchUsers";
-import { Pagination } from "@/components/admin/Pagination";
 import { useUploadFile } from "@/features/file-system/hooks/useUploadFile";
 import Image from "next/image";
 import { contract } from "@packages/nexus-api-contracts";
-
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import { AdminFormModal, AdminImageUploadField, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
 
 // ==========================================
 // Event Selection Modal
@@ -105,14 +66,14 @@ export function EventSearchModal({ isOpen, onClose, onSelect }: EventSearchModal
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin size={12} className="text-teal-600" />
-                      <span className="truncate max-w-[150px]">{event.venue || "TBA"}</span>
+                      <span className="max-w-37.5 truncate">{event.venue || "TBA"}</span>
                     </div>
                   </div>
                 </button>
               ))}
             </div>
 
-            <Pagination
+            <AdminPaginationSection
               currentPage={page}
               totalPages={totalPages}
               pageSize={pageSize}
@@ -167,7 +128,7 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
             <Loader2 size={32} className="animate-spin text-teal-600" />
           </div>
         ) : users.length > 0 ? (
-          <div className="divide-y divide-gray-100 rounded-sm border border-gray-100 bg-white shadow-sm max-h-[400px] overflow-y-auto">
+          <div className="max-h-100 divide-y divide-gray-100 overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-sm">
             {users.map((user) => (
               <button
                 key={user.gdgId}
@@ -177,7 +138,7 @@ export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalPr
                 }}
                 className="flex w-full items-center gap-3 p-4 text-left hover:bg-teal-50 transition-colors"
               >
-                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
                   {user.avatarUrl ? (
                     <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
                   ) : (
@@ -359,172 +320,144 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Article" : "Create Article"}>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Title</label>
-              <input
-                required
-                type="text"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              />
-            </div>
-            
-            <div className="sm:col-span-1">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event</label>
-              <div className="flex gap-2">
-                <div className="flex-1 rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600 truncate">
-                  {selectedEventTitle || (formData.event_id ? `ID: ${formData.event_id.slice(0,8)}...` : "None selected")}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsEventSearchOpen(true)}
-                  className="flex items-center justify-center rounded-sm bg-[#0B1F3B] px-3 text-white hover:bg-[#0B1F3B]/90"
-                >
-                  <Search size={16} />
-                </button>
-              </div>
-            </div>
+      <AdminFormModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={initialData ? "Update Article" : "Create Article"}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting || uploadFile.isPending}
+        submitLabel={initialData ? "Save Changes" : "Create Article"}
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <AdminInputField
+              label="Title"
+              required
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            />
+          </div>
 
-            <div className="sm:col-span-1">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Author</label>
-              <div className="flex gap-2">
-                <div className="flex-1 rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600 truncate">
-                  {selectedAuthorName || (formData.author_id ? `ID: ${formData.author_id.slice(0,8)}...` : "None selected")}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsUserSearchOpen(true)}
-                  className="flex items-center justify-center rounded-sm bg-[#0B1F3B] px-3 text-white hover:bg-[#0B1F3B]/90"
-                >
-                  <Search size={16} />
-                </button>
+          <div className="sm:col-span-1">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event</label>
+            <div className="flex gap-2">
+              <div className="flex-1 truncate rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600">
+                {selectedEventTitle || (formData.event_id ? `ID: ${formData.event_id.slice(0, 8)}...` : "None selected")}
               </div>
-            </div>
-
-            <div className="sm:col-span-1">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Publish Status</label>
               <button
                 type="button"
-                onClick={() => setFormData({ ...formData, is_published: !formData.is_published })}
-                className={`flex w-full items-center justify-center gap-2 rounded-sm border py-2.5 px-4 text-xs font-bold transition-all ${
-                  formData.is_published 
-                    ? "border-teal-500 bg-teal-50 text-teal-700" 
-                    : "border-gray-200 bg-gray-50 text-gray-500"
-                }`}
+                onClick={() => setIsEventSearchOpen(true)}
+                className="flex items-center justify-center rounded-sm bg-[#0B1F3B] px-3 text-white hover:bg-[#0B1F3B]/90"
               >
-                {formData.is_published ? (
-                  <>
-                    <Globe size={14} />
-                    Published
-                  </>
-                ) : (
-                  <>
-                    <X size={14} />
-                    Draft
-                  </>
-                )}
+                <Search size={16} />
               </button>
             </div>
+          </div>
 
-            <div className="sm:col-span-1">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Publish Date</label>
-              <input
-                required
-                type="datetime-local"
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.published_at ? new Date(formData.published_at).toISOString().slice(0, 16) : ""}
-                onChange={(e) => setFormData({ ...formData, published_at: new Date(e.target.value).toISOString() })}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Description</label>
-              <textarea
-                required
-                rows={2}
-                className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.description || ""}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-            </div>
-
-            <div className="sm:col-span-2 relative">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-                Content (Markdown)
-                {uploadFile.isPending && (
-                  <span className="ml-2 inline-flex items-center text-[10px] text-teal-600 normal-case font-medium">
-                    <Loader2 size={10} className="mr-1 animate-spin" />
-                    Uploading image...
-                  </span>
-                )}
-              </label>
-              <textarea
-                ref={contentRef}
-                required
-                rows={8}
-                className="w-full font-mono rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-                value={formData.content}
-                placeholder="# Use Markdown here..."
-                onPaste={handlePaste}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-              />
-              <p className="mt-1 text-[10px] text-gray-400">
-                Tip: You can paste images directly into the editor to upload them.
-              </p>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Thumbnail Image</label>
-              <div className="flex items-start gap-4">
-                <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-sm border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
-                  {previewUrl ? (
-                    <Image src={previewUrl} alt="Preview" fill className="object-cover" />
-                  ) : (
-                    <ImageIcon size={32} />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="mb-3 text-[10px] text-gray-500 leading-relaxed uppercase tracking-wider font-semibold">
-                    Upload a thumbnail image for this article. Recommended size: 800x450 (16:9).
-                  </p>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                    <Upload size={14} />
-                    Choose Image
-                    <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                  </label>
-                  {formData.image_url && !thumbnail && (
-                    <p className="mt-2 text-[10px] text-teal-600 font-bold uppercase tracking-widest">
-                      Current image will be kept unless you choose a new one.
-                    </p>
-                  )}
-                </div>
+          <div className="sm:col-span-1">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Author</label>
+            <div className="flex gap-2">
+              <div className="flex-1 truncate rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600">
+                {selectedAuthorName || (formData.author_id ? `ID: ${formData.author_id.slice(0, 8)}...` : "None selected")}
               </div>
+              <button
+                type="button"
+                onClick={() => setIsUserSearchOpen(true)}
+                className="flex items-center justify-center rounded-sm bg-[#0B1F3B] px-3 text-white hover:bg-[#0B1F3B]/90"
+              >
+                <Search size={16} />
+              </button>
             </div>
           </div>
-          
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
+
+          <div className="sm:col-span-1">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Publish Status</label>
             <button
               type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+              onClick={() => setFormData({ ...formData, is_published: !formData.is_published })}
+              className={`flex w-full items-center justify-center gap-2 rounded-sm border px-4 py-2.5 text-xs font-bold transition-all ${
+                formData.is_published
+                  ? "border-teal-500 bg-teal-50 text-teal-700"
+                  : "border-gray-200 bg-gray-50 text-gray-500"
+              }`}
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting || uploadFile.isPending}
-              className="flex items-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 disabled:opacity-50"
-            >
-              {(isSubmitting || uploadFile.isPending) && <Loader2 size={16} className="animate-spin" />}
-              {initialData ? "Save Changes" : "Create Article"}
+              {formData.is_published ? (
+                <>
+                  <Globe size={14} />
+                  Published
+                </>
+              ) : (
+                <>
+                  <X size={14} />
+                  Draft
+                </>
+              )}
             </button>
           </div>
-        </form>
-      </Modal>
+
+          <div className="sm:col-span-1">
+            <AdminInputField
+              label="Publish Date"
+              required
+              type="datetime-local"
+              value={formData.published_at ? new Date(formData.published_at).toISOString().slice(0, 16) : ""}
+              onChange={(e) => setFormData({ ...formData, published_at: new Date(e.target.value).toISOString() })}
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <AdminTextAreaField
+              label="Description"
+              required
+              rows={2}
+              value={formData.description || ""}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+          </div>
+
+          <div className="relative sm:col-span-2">
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
+              Content (Markdown)
+              {uploadFile.isPending ? (
+                <span className="ml-2 inline-flex items-center text-[10px] font-medium normal-case text-teal-600">
+                  <Loader2 size={10} className="mr-1 animate-spin" />
+                  Uploading image...
+                </span>
+              ) : null}
+            </label>
+            <textarea
+              ref={contentRef}
+              required
+              rows={8}
+              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 font-mono text-sm outline-none transition-all focus:border-teal-500"
+              value={formData.content}
+              placeholder="# Use Markdown here..."
+              onPaste={handlePaste}
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+            />
+            <p className="mt-1 text-[10px] text-gray-400">
+              Tip: You can paste images directly into the editor to upload them.
+            </p>
+          </div>
+
+          <div className="sm:col-span-2">
+            <AdminImageUploadField
+              label="Thumbnail Image"
+              previewUrl={previewUrl}
+              onImageChange={(file, nextPreviewUrl) => {
+                setThumbnail(file || undefined);
+                setPreviewUrl(nextPreviewUrl);
+              }}
+              helperText={
+                formData.image_url && !thumbnail
+                  ? "Current image will be kept unless you choose a new one."
+                  : "Upload a thumbnail image for this article. Recommended size: 800x450 (16:9)."
+              }
+            />
+          </div>
+        </div>
+      </AdminFormModal>
 
       <EventSearchModal
         isOpen={isEventSearchOpen}
@@ -565,22 +498,23 @@ export function ArticleDetailsModal({ isOpen, onClose, article, onEdit, onDelete
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Article Details">
       <div className="space-y-6">
-        <div className="flex justify-end gap-2 border-b border-gray-50 pb-4">
-          <button
-            onClick={() => onEdit(article)}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Edit2 size={14} />
-            Edit
-          </button>
-          <button
-            onClick={() => onDelete(article)}
-            className="flex items-center gap-1.5 rounded-sm bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-100 transition-colors"
-          >
-            <Trash2 size={14} />
-            Delete
-          </button>
-        </div>
+        <ModalActionRow
+          actions={[
+            {
+              key: "edit",
+              label: "Edit",
+              icon: Edit2,
+              onClick: () => onEdit(article),
+            },
+            {
+              key: "delete",
+              label: "Delete",
+              icon: Trash2,
+              tone: "danger",
+              onClick: () => onDelete(article),
+            },
+          ]}
+        />
 
         <div className="space-y-4">
           {article.image_url && (
@@ -662,39 +596,21 @@ interface DeleteConfirmModalProps {
 
 export function DeleteConfirmModal({ isOpen, onClose, onConfirm, itemName, isDeleting }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delete Article">
-      <div className="space-y-5">
-        <div className="flex items-start gap-4 rounded-sm bg-red-50 p-4">
-          <div className="shrink-0 text-red-600">
-            <AlertTriangle size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
-            <p className="mt-1 text-sm text-red-700 leading-relaxed">
-              Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex items-center gap-2 rounded-sm bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 disabled:opacity-50"
-          >
-            {isDeleting && <Loader2 size={16} className="animate-spin" />}
-            Confirm Delete
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title="Delete Article"
+      confirmLabel="Confirm Delete"
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
+          <p className="mt-1">
+            Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
+          </p>
+        </>
+      }
+    />
   );
 }
