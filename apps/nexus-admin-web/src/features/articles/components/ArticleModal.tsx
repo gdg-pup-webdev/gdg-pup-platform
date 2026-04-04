@@ -4,9 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { X, Loader2, AlertTriangle, Calendar, User, Info, Edit2, Trash2, Image as ImageIcon, Type, FileText, Search, MapPin, Upload, CheckCircle2, Globe } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Article, ArticleInsert, ArticleUpdate, UserType } from "../types";
+import { Article, ArticleInsert, ArticleUpdate } from "../types";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
-import { useSearchUsers } from "@/features/users/hooks/useSearchUsers";
 import { useUploadFile } from "@/features/file-system/hooks/useUploadFile";
 import Image from "next/image";
 import { contract } from "@packages/nexus-api-contracts";
@@ -14,7 +13,14 @@ import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
-import { AdminFormModal, AdminImageUploadField, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
+import {
+  AdminFormModal,
+  AdminImageUploadField,
+  AdminInputField,
+  AdminTextAreaField,
+  AdminUserSearchField,
+  AdminUserSearchOption,
+} from "@/components/admin/form";
 
 // ==========================================
 // Event Selection Modal
@@ -99,75 +105,37 @@ export function EventSearchModal({ isOpen, onClose, onSelect }: EventSearchModal
 interface UserSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (user: UserType) => void;
+  onSelect: (user: AdminUserSearchOption) => void;
 }
 
 export function UserSearchModal({ isOpen, onClose, onSelect }: UserSearchModalProps) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const { data: usersResponse, isLoading } = useSearchUsers(searchQuery);
+  const [selectedUser, setSelectedUser] = useState<AdminUserSearchOption[]>([]);
 
-  const users = usersResponse?.data || [];
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedUser([]);
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Select Author">
       <div className="space-y-4">
-        <div className="relative">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            autoFocus
-            type="text"
-            placeholder="Search by name or email..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none focus:border-teal-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-
-        {isLoading ? (
-          <div className="flex h-40 items-center justify-center">
-            <Loader2 size={32} className="animate-spin text-teal-600" />
-          </div>
-        ) : users.length > 0 ? (
-          <div className="max-h-100 divide-y divide-gray-100 overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-sm">
-            {users.map((user) => (
-              <button
-                key={user.gdgId}
-                onClick={() => {
-                  onSelect(user);
-                  onClose();
-                }}
-                className="flex w-full items-center gap-3 p-4 text-left hover:bg-teal-50 transition-colors"
-              >
-                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
-                  {user.avatarUrl ? (
-                    <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-gray-400">
-                      <User size={20} />
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-gray-900 truncate">{user.displayName}</p>
-                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                </div>
-                <span className="text-[10px] font-mono text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border">
-                  {user.gdgId.slice(0, 8)}...
-                </span>
-              </button>
-            ))}
-          </div>
-        ) : searchQuery.length >= 2 ? (
-          <div className="flex flex-col items-center justify-center p-12 text-center">
-            <User size={32} className="mb-3 text-gray-300" />
-            <p className="text-sm text-gray-500">No users found for "{searchQuery}".</p>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center p-12 text-center text-gray-400">
-            <Search size={32} className="mb-3 opacity-20" />
-            <p className="text-sm">Type at least 2 characters to search.</p>
-          </div>
-        )}
+        <AdminUserSearchField
+          label="Author"
+          selectedUsers={selectedUser}
+          onChange={(users) => {
+            setSelectedUser(users);
+            const nextSelected = users[0];
+            if (nextSelected) {
+              onSelect(nextSelected);
+              onClose();
+            }
+          }}
+          maxSelections={1}
+          placeholder="Search by name or email..."
+          helperText="Select one author for this article."
+          emptySelectionText="No author selected yet."
+        />
       </div>
     </Modal>
   );
@@ -471,10 +439,13 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
       <UserSearchModal
         isOpen={isUserSearchOpen}
         onClose={() => setIsUserSearchOpen(false)}
-        onSelect={(users) => { 
-          console.log(users); 
-          setFormData({ ...formData, author_id: users.gdgId });
-          setSelectedAuthorName(users.displayName || users.firstName + " " + users.lastName);
+        onSelect={(user) => {
+          setFormData({ ...formData, author_id: user.gdgId });
+          setSelectedAuthorName(
+            user.displayName ||
+              [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+              user.gdgId,
+          );
         }}
       />
     </>

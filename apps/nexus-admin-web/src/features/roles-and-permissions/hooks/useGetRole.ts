@@ -4,15 +4,15 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
-export const useGetRole = (roleName: string) => {
+export const useGetRoleById = (roleId: string) => {
   return useQuery({
-    queryKey: ["roles", "detail", roleName],
+    queryKey: ["roles", "detail", roleId],
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles.roleName.GET,
+        contract.api.v1.roles.roleId.GET,
         {
-          params: { roleName },
+          params: { roleId },
         }
       );
 
@@ -20,6 +20,6 @@ export const useGetRole = (roleName: string) => {
 
       throw new Error(extractErrorMessage(res.body));
     },
-    enabled: !!roleName,
+    enabled: !!roleId,
   });
 };

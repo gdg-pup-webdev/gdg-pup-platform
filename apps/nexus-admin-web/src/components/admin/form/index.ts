@@ -6,3 +6,5 @@ export { AdminAvatarUploadField } from "./AdminAvatarUploadField";
 export { AdminMarkdownField } from "./AdminMarkdownField";
 export { AdminListField } from "./AdminListField";
 export { AdminCheckboxField } from "./AdminCheckboxField";
+export { AdminUserSearchField } from "./AdminUserSearchField";
+export type { AdminUserSearchOption } from "./AdminUserSearchField";

@@ -1,15 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Plus, Trash2, Search, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar, Layout, FileText, Edit2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, AlertTriangle, Plus, Trash2, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar, Layout, FileText, Edit2 } from "lucide-react";
 import { MemberProject, CreateMemberProjectDTO, UpdateMemberProjectDTO } from "../types";
-import { useSearchUsers } from "@/features/teams/api/teams";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { UserType } from "@/features/articles";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { AdminFormModal, AdminInputField, AdminTextAreaField, AdminImageUploadField } from "@/components/admin/form";
+import {
+  AdminFormModal,
+  AdminInputField,
+  AdminTextAreaField,
+  AdminImageUploadField,
+  AdminUserSearchField,
+  AdminUserSearchOption,
+} from "@/components/admin/form";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
 
 // ==========================================
@@ -43,19 +48,7 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
     secondary?: string | null;
     tertiary?: string | null;
   }>({});
-  
-  // Member search state
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const { data: usersResponse, isLoading: isSearching } = useSearchUsers(debouncedSearch);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  const [selectedMember, setSelectedMember] = useState<AdminUserSearchOption[]>([]);
 
   useEffect(() => {
     if (initialData) {
@@ -71,6 +64,12 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
         secondary: initialData.secondaryImageUrl,
         tertiary: initialData.tertiaryImageUrl,
       });
+      setSelectedMember([
+        {
+          gdgId: initialData.memberGdgId,
+          displayName: initialData.memberGdgId,
+        },
+      ]);
     } else {
       setFormData({
         title: "",
@@ -80,10 +79,17 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
         memberGdgId: "",
       });
       setPreviews({});
+      setSelectedMember([]);
     }
     setFiles({});
-    setSearchQuery("");
   }, [initialData, isOpen]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      memberGdgId: selectedMember[0]?.gdgId || "",
+    }));
+  }, [selectedMember]);
 
   const handleFileChange = (type: 'main' | 'secondary' | 'tertiary') => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -97,12 +103,6 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
     }
   };
 
-  const handleSelectUser = (user  : UserType) => {
-    setFormData((prev) => ({ ...prev, memberGdgId: user.gdgId || "" }));
-    setSearchQuery(user.displayName || user.firstName + " " + user.lastName || "Unnamed User");
-    setShowDropdown(false);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.memberGdgId) {
@@ -111,8 +111,6 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
     }
     onSubmit(formData, files);
   };
-
-  const searchResults = usersResponse?.body?.data || [];
 
   return (
     <AdminFormModal 
@@ -136,48 +134,16 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
         </div>
 
         <div className="md:col-span-2">
-          <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Associated Member</label>
-          <div className="relative" ref={dropdownRef}>
-            <div className="relative">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search member by name..."
-                className="w-full rounded-sm border border-gray-200 py-2.5 pr-10 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                value={searchQuery || (initialData ? formData.memberGdgId : "")}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onFocus={() => setShowDropdown(true)}
-              />
-              {isSearching && (
-                <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                  <Loader2 size={16} className="animate-spin text-gray-400" />
-                </div>
-              )}
-            </div>
-            
-            {showDropdown && searchQuery.length >= 2 && (
-              <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
-                {searchResults.length > 0 ? (
-                  searchResults.map((user ) => (
-                    <button
-                      key={user.gdgId}
-                      type="button"
-                      onClick={() => handleSelectUser(user)}
-                      className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
-                    >
-                      <span className="text-sm font-bold text-gray-900">{user.displayName}</span>
-                      <span className="text-xs text-gray-500">{user.gdgId}</span>
-                    </button>
-                  ))
-                ) : !isSearching ? (
-                  <div className="p-4 text-center text-sm text-gray-500 italic">No matching users found.</div>
-                ) : null}
-              </div>
-            )}
-          </div>
+          <AdminUserSearchField
+            label="Associated Member"
+            required
+            placeholder="Search member by name..."
+            selectedUsers={selectedMember}
+            onChange={setSelectedMember}
+            maxSelections={1}
+            helperText="Select one member linked to this project."
+            emptySelectionText="No member selected yet."
+          />
           {formData.memberGdgId && (
             <div className="mt-2 flex items-center gap-2 text-[10px] font-bold text-teal-600">
               <UserPlus size={12} />

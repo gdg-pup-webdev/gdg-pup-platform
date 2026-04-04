@@ -2,12 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Menu, User, LogOut, ChevronDown, ExternalLink } from "lucide-react";
-import { useAuthStore } from "@/features/authentication/store/useAuthStore";
+import { Menu, User, LogOut, ChevronDown, ExternalLink } from "lucide-react"; 
 import { usePathname, useRouter } from "next/navigation";
 import { INTERNAL_LINKS, EXTERNAL_LINKS } from "@/lib/constants/links";
 import { ASSETS } from "@/lib/constants/assets";
 import { getAdminPageMetaByPathname } from "@/lib/constants/pages";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 interface AdminTopbarProps {
   onToggleSidebar: () => void;
@@ -17,7 +17,10 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const clearToken = useAuthStore((state) => state.clearToken);
+
+  const auth = useAuthContext();
+
+  const clearToken = auth.logout;
   const router = useRouter();
   const pathname = usePathname();
   const activePage = getAdminPageMetaByPathname(pathname);
@@ -110,6 +113,12 @@ export function AdminTopbar({ onToggleSidebar }: AdminTopbarProps) {
                 <User size={16} className="text-gray-400" />
                 Profile
               </Link>
+              <button 
+                onClick={() => auth.refreshToken()}
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              > 
+                Refresh auth
+              </button>
               <Link
                 href={EXTERNAL_LINKS.LIVE_WEBSITE}
                 onClick={() => setIsDropdownOpen(false)}

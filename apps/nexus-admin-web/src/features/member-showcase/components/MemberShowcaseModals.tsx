@@ -1,16 +1,32 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, ExternalLink, Calendar, Edit2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Users, Trash2, ExternalLink, Calendar, Edit2 } from "lucide-react";
 import { MemberShowcase, CreateMemberShowcaseDTO, UpdateMemberShowcaseDTO, ShowcasedMember } from "../types";
-import { useSearchUsers } from "@/features/teams/api/teams";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
-import { AdminFormModal, AdminImageUploadField, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
-import { UserProfile } from "@/features/teams";
+import {
+  AdminFormModal,
+  AdminImageUploadField,
+  AdminInputField,
+  AdminTextAreaField,
+  AdminUserSearchField,
+  AdminUserSearchOption,
+} from "@/components/admin/form";
+
+const showcasedMemberToSearchOption = (
+  member: ShowcasedMember,
+): AdminUserSearchOption => ({
+  gdgId: member.gdgId,
+  displayName: member.displayName || member.fullName,
+  firstName: member.firstName,
+  lastName: member.lastName,
+  avatarUrl: member.avatarUrl,
+  email: null,
+});
 
 // ==========================================
 // Showcase Form Modal (Create / Update)
@@ -34,19 +50,8 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
   const [thumbnail, setThumbnail] = useState<File | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
-  // Member search state
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedMembers, setSelectedMembers] = useState<ShowcasedMember[]>([]);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const { data: usersResponse, isLoading: isSearching } = useSearchUsers(debouncedSearch);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  const [selectedMembers, setSelectedMembers] =
+    useState<AdminUserSearchOption[]>([]);
 
   useEffect(() => {
     if (initialData) {
@@ -58,7 +63,7 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
         showcasedMembers: initialData.showcasedMembers.map(m => m.gdgId),
       });
       setPreviewUrl(initialData.thumbnailUrl);
-      setSelectedMembers(initialData.showcasedMembers);
+      setSelectedMembers(initialData.showcasedMembers.map(showcasedMemberToSearchOption));
     } else {
       setFormData({
         title: "",
@@ -71,42 +76,18 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
       setSelectedMembers([]);
     }
     setThumbnail(undefined);
-    setSearchQuery("");
   }, [initialData, isOpen]);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      showcasedMembers: selectedMembers.map((member) => member.gdgId),
+    }));
+  }, [selectedMembers]);
 
   const handleThumbnailChange = (file: File | null, nextPreviewUrl: string | null) => {
     setThumbnail(file || undefined);
     setPreviewUrl(nextPreviewUrl);
-  };
-
-  const handleSelectUser = (user  : UserProfile) => {
-    if (selectedMembers.some(m => m.gdgId === user.gdgId)) {
-      toast.warn("Member already added");
-      return;
-    }
-
-    const newMember: ShowcasedMember = {
-      gdgId: user.gdgId,
-      displayName: user.displayName,
-      firstName: user.firstName || user.displayName?.split(' ')[0] || "User",
-      lastName: user.lastName || "",
-      fullName: user.displayName || user.firstName || "User",
-      avatarUrl: user.avatarUrl,
-      program: user.program || null,
-      yearLevel: user.yearLevel || null,
-    };
-
-    const newSelected = [...selectedMembers, newMember];
-    setSelectedMembers(newSelected);
-    setFormData(prev => ({ ...prev, showcasedMembers: newSelected.map(m => m.gdgId) }));
-    setSearchQuery("");
-    setShowDropdown(false);
-  };
-
-  const removeMember = (gdgId: string) => {
-    const newSelected = selectedMembers.filter(m => m.gdgId !== gdgId);
-    setSelectedMembers(newSelected);
-    setFormData(prev => ({ ...prev, showcasedMembers: newSelected.map(m => m.gdgId) }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,10 +102,6 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
     }
     onSubmit(formData, thumbnail);
   };
-
-  const searchResults = usersResponse?.body?.data?.filter((user: any) => 
-    !selectedMembers.some(m => m.gdgId === user.gdg_id)
-  ) || [];
 
   return (
     <AdminFormModal
@@ -180,77 +157,15 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
         </div>
 
         <div className="md:col-span-2">
-          <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Showcased Members</label>
-          <div className="space-y-3">
-            <div className="relative" ref={dropdownRef}>
-              <div className="relative">
-                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search members to add..."
-                  className="w-full rounded-sm border border-gray-200 py-2.5 pr-10 pl-10 text-sm outline-none transition-all focus:border-teal-500"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setShowDropdown(true);
-                  }}
-                  onFocus={() => setShowDropdown(true)}
-                />
-                {isSearching ? (
-                  <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                    <Loader2 size={16} className="animate-spin text-gray-400" />
-                  </div>
-                ) : null}
-              </div>
-
-              {showDropdown && searchQuery.length >= 2 ? (
-                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
-                  {searchResults.length > 0 ? (
-                    searchResults.map((user: any) => (
-                      <button
-                        key={user.id}
-                        type="button"
-                        onClick={() => handleSelectUser(user)}
-                        className="flex w-full flex-col border-b border-gray-50 px-4 py-3 text-left transition-colors last:border-0 hover:bg-teal-50"
-                      >
-                        <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
-                        <span className="text-xs text-gray-500">{user.email} ({user.gdg_id})</span>
-                      </button>
-                    ))
-                  ) : !isSearching ? (
-                    <div className="p-4 text-center text-sm italic text-gray-500">No matching users found.</div>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {selectedMembers.map((member) => { 
-                return  <div key={member.gdgId} className="flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 py-1 pl-1.5 pr-2">
-                  <div className="relative h-5 w-5 overflow-hidden rounded-full bg-teal-200">
-                    {member.avatarUrl ? (
-                      <Image src={member.avatarUrl} alt={member.fullName} fill className="object-cover" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-[8px] font-bold text-teal-700">
-                        {member.firstName[0]}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-xs font-bold text-teal-900">{member.fullName}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeMember(member.gdgId)}
-                    className="text-teal-600 hover:text-teal-800"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              })}
-              {selectedMembers.length === 0 ? (
-                <p className="py-1 text-xs italic text-gray-400">No members selected yet.</p>
-              ) : null}
-            </div>
-          </div>
+          <AdminUserSearchField
+            label="Showcased Members"
+            required
+            placeholder="Search members to add..."
+            selectedUsers={selectedMembers}
+            onChange={setSelectedMembers}
+            emptySelectionText="No members selected yet."
+            helperText="Search and select one or more users to include in this showcase."
+          />
         </div>
 
         <div className="md:col-span-2">

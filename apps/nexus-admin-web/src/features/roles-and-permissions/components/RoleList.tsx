@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Shield, Plus, Edit2, Eye, Trash2 } from "lucide-react";
-import { useListRoles, useCreateRole, useUpdateRole, useDeleteRole } from "../hooks";
+import { useListRoles, useCreateRole, useUpdateRole, useDeleteRole, useGetRoleById } from "../hooks";
 import { RoleFormModal, RoleDetailsModal } from "./RoleModals";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -55,10 +55,13 @@ export const RoleList: React.FC = () => {
   const updateMutation = useUpdateRole();
 
   const roles = rolesResponse?.data || [];
-  const selectedRole = useMemo(
-    () => roles.find((role) => role.id === selectedRoleId) || null,
-    [roles, selectedRoleId],
-  );
+  const {data , isLoading: isRoleLoading} = useGetRoleById(selectedRoleId)
+  const selectedRole = data?.data || null;
+  console.log("selected role", selectedRole, selectedRoleId)
+  // useMemo(
+    // () => roles.find((role) => role.id === selectedRoleId) || null,
+    // [roles, selectedRoleId],
+  // );
 
   const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedRole));
   const isDetailsModalOpen = modal === "view" && Boolean(selectedRole);
@@ -96,11 +99,11 @@ export const RoleList: React.FC = () => {
     }
   };
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data : contract.api.v1.roles.POST.request.body  ) => {
     try {
       if (selectedRole) {
         await updateMutation.mutateAsync({ 
-          roleName: selectedRole.name, 
+          roleId: selectedRole.name, 
           payload: data 
         });
         toast.success("Role updated successfully");
@@ -236,7 +239,7 @@ export const RoleList: React.FC = () => {
       <RoleFormModal
         isOpen={isFormModalOpen}
         onClose={closeModal}
-        onSubmit={handleFormSubmit}
+        onSubmit={(data) => handleFormSubmit({data: data})}
         initialData={modal === "edit" ? selectedRole : undefined}
         isSubmitting={selectedRole ? updateMutation.isPending : createMutation.isPending}
       />
