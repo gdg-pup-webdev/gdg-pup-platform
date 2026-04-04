@@ -1,54 +1,21 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Link2, ExternalLink, Image as ImageIcon, Upload, Search, Calendar, Users, Tags, Info, MapPin, Clock } from "lucide-react";
+import { X, Loader2, AlertTriangle, Link2, ExternalLink, Search, Calendar, Users, Info, MapPin, Clock, Edit2, Trash2 } from "lucide-react";
 import { LearningResource, CreateLearningResourceDTO, UpdateLearningResourceDTO } from "../types";
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import Image from "next/image";
-
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import {
+  AdminFormModal,
+  AdminImageUploadField,
+  AdminInputField,
+  AdminListField,
+  AdminTextAreaField,
+} from "@/components/admin/form";
 
 // ==========================================
 // Resource Form Modal (Create / Update)
@@ -74,7 +41,6 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
   
   const [thumbnail, setThumbnail] = useState<File | undefined>(undefined);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [tagInput, setTagInput] = useState("");
   
   // Team search state
   const [teamSearchQuery, setTeamSearchQuery] = useState("");
@@ -140,30 +106,9 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
     setThumbnail(undefined);
   }, [initialData, isOpen]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setThumbnail(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleAddTag = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && tagInput.trim()) {
-      e.preventDefault();
-      if (!formData.tags.includes(tagInput.trim())) {
-        setFormData(prev => ({ ...prev, tags: [...prev.tags, tagInput.trim()] }));
-      }
-      setTagInput("");
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tagToRemove) }));
+  const handleThumbnailChange = (file: File | null, nextPreviewUrl: string | null) => {
+    setThumbnail(file || undefined);
+    setPreviewUrl(nextPreviewUrl);
   };
 
   const handleSelectTeam = (team: any) => {
@@ -187,232 +132,184 @@ export function ResourceFormModal({ isOpen, onClose, onSubmit, initialData, isSu
   const eventResults = eventsResponse?.data || [];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={initialData ? "Update Resource" : "Create New Resource"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Resource Title</label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="e.g. Intro to React"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            />
-          </div>
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Update Resource" : "Create New Resource"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={initialData ? "Save Changes" : "Create Resource"}
+    >
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="md:col-span-2">
+          <AdminInputField
+            label="Resource Title"
+            required
+            type="text"
+            placeholder="e.g. Intro to React"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          />
+        </div>
 
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Resource URL</label>
-            <input
-              required
-              type="url"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="https://..."
-              value={formData.url}
-              onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-            />
-          </div>
+        <div className="md:col-span-2">
+          <AdminInputField
+            label="Resource URL"
+            required
+            type="url"
+            placeholder="https://..."
+            value={formData.url}
+            onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+          />
+        </div>
 
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description</label>
-            <textarea
-              required
-              rows={3}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-              placeholder="Briefly describe this resource..."
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </div>
+        <div className="md:col-span-2">
+          <AdminTextAreaField
+            label="Description"
+            required
+            rows={3}
+            placeholder="Briefly describe this resource..."
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+        </div>
 
-          {/* Team Search */}
-          <div className="md:col-span-1">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Related Team (Optional)</label>
-            <div className="relative" ref={teamDropdownRef}>
-              <div className="relative">
-                <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search team..."
-                  className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
-                    formData.teamId ? "border-teal-500 bg-teal-50/30" : "border-gray-200 bg-white"
-                  }`}
-                  value={formData.teamId ? selectedTeamName : teamSearchQuery}
-                  onChange={(e) => {
-                    setTeamSearchQuery(e.target.value);
-                    if (!formData.teamId) setShowTeamDropdown(true);
-                  }}
-                  onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
-                  readOnly={!!formData.teamId}
-                />
-                {formData.teamId && (
-                  <button 
-                    type="button"
-                    onClick={() => { setFormData({...formData, teamId: null}); setSelectedTeamName(""); }}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
-              </div>
-              
-              {showTeamDropdown && teamSearchQuery.length >= 2 && (
-                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
-                  {teamResults.length > 0 ? (
-                    teamResults.map((team: any) => (
-                      <button
-                        key={team.id}
-                        type="button"
-                        onClick={() => handleSelectTeam(team)}
-                        className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
-                      >
-                        <span className="text-sm font-bold text-gray-900">{team.name}</span>
-                      </button>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-sm text-gray-500 italic">No teams found.</div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Event Search */}
-          <div className="md:col-span-1">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Related Event (Optional)</label>
-            <div className="relative" ref={eventDropdownRef}>
-              <div className="relative">
-                <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Select event..."
-                  className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
-                    formData.eventId ? "border-teal-500 bg-teal-50/30" : "border-gray-200 bg-white"
-                  }`}
-                  value={formData.eventId ? selectedEventTitle : ""}
-                  onClick={() => !formData.eventId && setShowEventDropdown(true)}
-                  readOnly
-                />
-                {formData.eventId && (
-                  <button 
-                    type="button"
-                    onClick={() => { setFormData({...formData, eventId: null}); setSelectedEventTitle(""); }}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
-              </div>
-              
-              {showEventDropdown && (
-                <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
-                  {eventResults.length > 0 ? (
-                    eventResults.map((event: any) => (
-                      <button
-                        key={event.id}
-                        type="button"
-                        onClick={() => handleSelectEvent(event)}
-                        className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
-                      >
-                        <span className="text-sm font-bold text-gray-900">{event.title}</span>
-                      </button>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-sm text-gray-500 italic">No events found.</div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Tags */}
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Tags</label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.tags.map(tag => (
-                <span key={tag} className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
-                  {tag}
-                  <button type="button" onClick={() => removeTag(tag)} className="hover:text-red-500">
-                    <X size={12} />
-                  </button>
-                </span>
-              ))}
-            </div>
+        <div className="md:col-span-1">
+          <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Related Team (Optional)</label>
+          <div className="relative" ref={teamDropdownRef}>
             <div className="relative">
-              <Tags className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
-                placeholder="Type tag and press Enter..."
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleAddTag}
+                placeholder="Search team..."
+                className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
+                  formData.teamId ? "border-teal-500 bg-teal-50/30" : "border-gray-200 bg-white"
+                }`}
+                value={formData.teamId ? selectedTeamName : teamSearchQuery}
+                onChange={(e) => {
+                  setTeamSearchQuery(e.target.value);
+                  if (!formData.teamId) setShowTeamDropdown(true);
+                }}
+                onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
+                readOnly={!!formData.teamId}
               />
-            </div>
-          </div>
-
-          {/* Thumbnail */}
-          <div className="md:col-span-2">
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Thumbnail</label>
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="relative h-24 w-40 shrink-0 overflow-hidden rounded-sm border border-dashed border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
-                  {previewUrl ? (
-                    <Image src={previewUrl} alt="Preview" fill className="object-cover" />
-                  ) : (
-                    <ImageIcon size={32} />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="mb-3 text-xs text-gray-500 leading-relaxed">
-                    Upload a thumbnail image for this resource. Recommended size: 800x450 (16:9).
-                  </p>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-colors">
-                    <Upload size={16} />
-                    Choose Image
-                    <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                  </label>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <ImageIcon className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Or paste a thumbnail URL manually..."
-                  className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-                  value={formData.thumbnailUrl || ""}
-                  onChange={(e) => {
-                    const val = e.target.value || null;
-                    setFormData({ ...formData, thumbnailUrl: val });
-                    if (!thumbnail) setPreviewUrl(val);
+              {formData.teamId ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({ ...formData, teamId: null });
+                    setSelectedTeamName("");
                   }}
-                />
-              </div>
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
+                >
+                  <X size={16} />
+                </button>
+              ) : null}
             </div>
+
+            {showTeamDropdown && teamSearchQuery.length >= 2 ? (
+              <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
+                {teamResults.length > 0 ? (
+                  teamResults.map((team: any) => (
+                    <button
+                      key={team.id}
+                      type="button"
+                      onClick={() => handleSelectTeam(team)}
+                      className="flex w-full flex-col border-b border-gray-50 px-4 py-3 text-left transition-colors last:border-0 hover:bg-teal-50"
+                    >
+                      <span className="text-sm font-bold text-gray-900">{team.name}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm italic text-gray-500">No teams found.</div>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            {initialData ? "Save Changes" : "Create Resource"}
-          </button>
+
+        <div className="md:col-span-1">
+          <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Related Event (Optional)</label>
+          <div className="relative" ref={eventDropdownRef}>
+            <div className="relative">
+              <Calendar className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Select event..."
+                className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
+                  formData.eventId ? "border-teal-500 bg-teal-50/30" : "border-gray-200 bg-white"
+                }`}
+                value={formData.eventId ? selectedEventTitle : ""}
+                onClick={() => !formData.eventId && setShowEventDropdown(true)}
+                readOnly
+              />
+              {formData.eventId ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({ ...formData, eventId: null });
+                    setSelectedEventTitle("");
+                  }}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
+                >
+                  <X size={16} />
+                </button>
+              ) : null}
+            </div>
+
+            {showEventDropdown ? (
+              <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
+                {eventResults.length > 0 ? (
+                  eventResults.map((event: any) => (
+                    <button
+                      key={event.id}
+                      type="button"
+                      onClick={() => handleSelectEvent(event)}
+                      className="flex w-full flex-col border-b border-gray-50 px-4 py-3 text-left transition-colors last:border-0 hover:bg-teal-50"
+                    >
+                      <span className="text-sm font-bold text-gray-900">{event.title}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-sm italic text-gray-500">No events found.</div>
+                )}
+              </div>
+            ) : null}
+          </div>
         </div>
-      </form>
-    </Modal>
+
+        <div className="md:col-span-2">
+          <AdminListField
+            label="Tags"
+            items={formData.tags}
+            onChange={(items) => setFormData((prev) => ({ ...prev, tags: items }))}
+            placeholder="Add a tag and press Enter..."
+            helperText="Used for filtering and quick discovery."
+          />
+        </div>
+
+        <div className="md:col-span-2 space-y-4">
+          <AdminImageUploadField
+            label="Thumbnail"
+            previewUrl={previewUrl}
+            onImageChange={handleThumbnailChange}
+            helperText="Upload a thumbnail image for this resource. Recommended size: 800x450 (16:9)."
+          />
+
+          <AdminInputField
+            label="Thumbnail URL (Optional)"
+            type="text"
+            placeholder="Or paste a thumbnail URL manually..."
+            value={formData.thumbnailUrl || ""}
+            onChange={(e) => {
+              const val = e.target.value || null;
+              setFormData({ ...formData, thumbnailUrl: val });
+              if (!thumbnail) setPreviewUrl(val);
+            }}
+          />
+        </div>
+      </div>
+    </AdminFormModal>
   );
 }
 
@@ -429,40 +326,22 @@ interface DeleteConfirmModalProps {
 
 export function DeleteConfirmModal({ isOpen, onClose, onConfirm, itemName, isDeleting }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delete Resource">
-      <div className="space-y-5">
-        <div className="flex items-start gap-4 rounded-sm bg-red-50 p-4">
-          <div className="shrink-0 text-red-600">
-            <AlertTriangle size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
-            <p className="mt-1 text-sm text-red-700 leading-relaxed">
-              Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex items-center gap-2 rounded-sm bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 disabled:opacity-50"
-          >
-            {isDeleting && <Loader2 size={16} className="animate-spin" />}
-            Confirm Delete
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title="Delete Resource"
+      confirmLabel="Confirm Delete"
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
+          <p className="mt-1">
+            Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
+          </p>
+        </>
+      }
+    />
   );
 }
 
@@ -473,14 +352,48 @@ interface ResourceViewModalProps {
   isOpen: boolean;
   onClose: () => void;
   resource: LearningResource | null;
+  onEdit: (resource: LearningResource) => void;
+  onDelete: (resource: LearningResource) => void;
 }
 
-export function ResourceViewModal({ isOpen, onClose, resource }: ResourceViewModalProps) {
+export function ResourceViewModal({ isOpen, onClose, resource, onEdit, onDelete }: ResourceViewModalProps) {
   if (!resource) return null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Resource Details">
       <div className="space-y-6">
+        <ModalActionRow
+          actions={[
+            {
+              key: "visit-link",
+              label: "Visit Link",
+              icon: ExternalLink,
+              onClick: () => {
+                window.open(resource.url, "_blank", "noopener,noreferrer");
+              },
+            },
+            {
+              key: "edit",
+              label: "Edit Resource",
+              icon: Edit2,
+              onClick: () => {
+                onClose();
+                onEdit(resource);
+              },
+            },
+            {
+              key: "delete",
+              label: "Delete",
+              icon: Trash2,
+              tone: "danger",
+              onClick: () => {
+                onClose();
+                onDelete(resource);
+              },
+            },
+          ]}
+        />
+
         <div className="relative h-64 w-full overflow-hidden rounded-sm bg-gray-100 border border-gray-100">
           {resource.thumbnailUrl ? (
             <Image src={resource.thumbnailUrl} alt={resource.title} fill className="object-cover" />

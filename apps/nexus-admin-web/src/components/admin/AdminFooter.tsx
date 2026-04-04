@@ -3,13 +3,22 @@
 import Link from "next/link";
 import { INTERNAL_LINKS } from "@/lib/constants/links";
 import { ASSETS } from "@/lib/constants/assets";
+import { ADMIN_PAGE_META } from "@/lib/constants/pages";
+
+const QUICK_LINK_KEYS = [
+  "dashboard",
+  "teams",
+  "events",
+  "files",
+  "members",
+] as const;
 
 export function AdminFooter() {
   const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-white/10 bg-[#0B1F3B] text-white">
-      <div className="mx-auto max-w-screen-2xl px-6 py-8 md:px-8">
+      <div className="w-full px-6 py-8 md:px-8">
         {/* Main row */}
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           {/* Left: Brand */}
@@ -26,6 +35,20 @@ export function AdminFooter() {
             </p>
           </div>
 
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm md:grid-cols-3">
+            {QUICK_LINK_KEYS.map((key) => {
+              const page = ADMIN_PAGE_META[key];
+              return (
+                <Link
+                  key={page.href}
+                  href={page.href}
+                  className="text-white/60 transition-colors hover:text-[#2FB7A8]"
+                >
+                  {page.sidebarLabel || page.title}
+                </Link>
+              );
+            })}
+          </div>
 
         </div>
 

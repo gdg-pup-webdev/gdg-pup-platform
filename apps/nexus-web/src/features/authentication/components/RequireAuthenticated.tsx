@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { LINKS } from "@/lib/constants/links";
 import { STATUS, useAuthContext } from "../store/useAuthStore";
 import { useEffect } from "react";
@@ -11,14 +11,27 @@ export const RequireAuthenticated = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
-  const { status } = useAuthContext();
+  const pathname = usePathname();
+  const { status, memberProfile } = useAuthContext();
 
   useEffect(() => {
     if (status === STATUS.UNAUTHENTICATED) {
       console.log("Redirecting to login... unauthenticated");
       router.push(LINKS.auth_signin);
+      return;
     }
-  }, [status]);
+
+    if (status === STATUS.AUTHENTICATED) {
+      // Wait for profile to load
+      if (!memberProfile) return;
+
+      // If they haven't completed onboarding, force them to do it unless they are already there
+      if (memberProfile.isPublic === null && pathname !== LINKS.onboarding) {
+        console.log("Redirecting to onboarding... profile incomplete");
+        router.push(LINKS.onboarding);
+      }
+    }
+  }, [status, memberProfile, pathname, router]);
 
   if (status === STATUS.UNAUTHENTICATED) {
     return (

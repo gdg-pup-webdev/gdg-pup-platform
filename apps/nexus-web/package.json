@@ -3,12 +3,16 @@
   "version": "0.1.1",
   "private": true,
   "scripts": {
+    "deps:build": "pnpm --filter @packages/typed-rest build && pnpm --filter @packages/nexus-api-contracts build && pnpm --filter @packages/spark-ui build",
+    "predev": "pnpm run deps:build",
     "dev": "next dev",
+    "prebuild": "pnpm run deps:build",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "g": "tsx scripts/generate-feature.ts",
-    "webp": "tsx scripts/convert-to-webp.ts"
+    "webp": "tsx scripts/convert-to-webp.ts",
+    "optimize:assets": "tsx scripts/optimize-public-assets.ts"
   },
   "dependencies": {
     "@configs/tailwind-config": "workspace:*",
@@ -44,6 +48,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "postcss-import": "^16.1.1",
+    "sharp": "^0.34.5",
+    "svgo": "^4.0.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",

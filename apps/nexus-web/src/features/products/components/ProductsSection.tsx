@@ -43,17 +43,17 @@ export function ProductsSection() {
       />
       <img
         className="w-140 h-auto absolute bottom-235 -right-25 opacity-25 translate-x-1/3 rotate-[-18.99deg] z-10"
-        src="/products/star-bubble.png"
+        src="/products/star-bubble.webp"
         alt=""
       />
       <img
         className="w-auto absolute bottom-0 right-0"
-        src="/products/gold-2.png"
+        src="/products/gold-2.webp"
         alt=""
       />
       <img
         className="w-140 h-auto absolute bottom-10 -left-105 translate-x-1/3 rotate-[158.50deg] opacity-40"
-        src="/products/cross-bubble.png"
+        src="/products/cross-bubble.webp"
         alt=""
       />
 

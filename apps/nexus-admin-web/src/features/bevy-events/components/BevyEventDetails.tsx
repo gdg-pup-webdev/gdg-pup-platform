@@ -3,44 +3,12 @@
 import React, { useEffect } from "react";
 import { X, Calendar, MapPin, Users, ExternalLink, Loader2, AlertCircle } from "lucide-react";
 import { useGetBevyEvent } from "../hooks/useGetBevyEvent";
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 
 interface BevyEventDetailsProps {
   isOpen: boolean;
   onClose: () => void;
   eventId: string | null;
-}
-
-function Modal({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export function BevyEventDetails({ isOpen, onClose, eventId }: BevyEventDetailsProps) {
@@ -95,7 +63,7 @@ export function BevyEventDetails({ isOpen, onClose, eventId }: BevyEventDetailsP
       <div className="space-y-6">
         {/* Banner Image */}
         {event.cover_image_url && (
-          <div className="relative -mx-6 -mt-6 mb-6 h-56 overflow-hidden rounded-t-sm bg-gradient-to-b from-gray-200 to-gray-100">
+          <div className="relative -mx-6 -mt-6 mb-6 h-56 overflow-hidden rounded-t-sm bg-linear-to-b from-gray-200 to-gray-100">
             <img
               src={event.cover_image_url}
               alt={event.title}

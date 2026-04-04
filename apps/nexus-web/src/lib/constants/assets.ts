@@ -61,12 +61,13 @@ export const ASSETS = {
         STARS4: "/home/home-stars4.webp",
         STARS5: "/home/home-stars5.webp",
         STARS6: "/home/home-stars6.webp",
+        CIRBY_STICKER51: "/home/home-cirby-sticker-5-1.webp",
         ELLIPSE203: "/home/home-ellipse203.webp",
         ELLIPSE204: "/home/home-ellipse204.webp",
-        ELLIPSE208: "/home/home-ellipse208.webp",
+        ELLIPSE205: "/home/home-ellipse208.webp",
+        ELLIPSE207: "/home/home-ellipse-207.webp",
+        ELLIPSE208: "/home/home-ellipse-208.webp",
         SPACE_DUST_BLUE1: "/home/home-space-dust-blue1.webp",
-        SPACE_DUST_BLUE12: "/home/home-space-dust-blue12.webp",
-        SPACE_DUST_BLUE2: "/home/home-space-dust-blue2.webp",
         SPACE_DUST_BLUE3: "/home/home-space-dust-blue3.webp",
         HORIZON: "/home/home-horizon.webp",
         SPIRAL: "/home/home-spiral.webp",
@@ -96,7 +97,7 @@ export const ASSETS = {
             /** Left decorative SVG element in benefits section */
             DECOR_LEFT: "/about/about-benefits-decor-left.svg",
             /** Right decorative SVG element in benefits section */
-            DECOR_RIGHT: "/about/about-benefits-decor-right.svg",
+            DECOR_RIGHT: "/about/about-benefits-decor-right.webp",
         },
         WHO: {
             MASCOT_1: "/about/about-who-mascot-1.webp",
@@ -287,7 +288,7 @@ export const ASSETS = {
         /** Cirby sticker mascot shown in the CTA card */
         CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
         /** Figma decorative floating assets */
-        DECOR_ASSET_1: "/partners/decor-asset-1.png",
+        DECOR_ASSET_1: "/partners/decor-asset-1.webp",
         DECOR_ASSET_2: "/partners/decor-asset-2.png",
         DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
         DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
@@ -321,8 +322,8 @@ export const ASSETS = {
         },
         ICONS: {
             LINK: "/member-showcase/member-showcase-link.svg",
-            SPOTLIGHT_PLACEHOLDER: "/member-showcase/member-showcase-spotlight-placeholder.svg",
-            SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.svg",
+            SPOTLIGHT_PLACEHOLDER: "/member-showcase/member-showcase-spotlight-placeholder.webp",
+            SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.webp",
         },
     },
     PROFILE: {

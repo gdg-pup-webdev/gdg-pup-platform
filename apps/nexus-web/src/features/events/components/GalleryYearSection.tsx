@@ -11,7 +11,7 @@ type GalleryYearSectionProps = {
   yearParam: string;
 };
 
-const FALLBACK_COVER = "/pages/events/event-cover.png";
+const FALLBACK_COVER = "/pages/events/event-cover.webp";
 
 function getHighlightsRouteId(event: Event): string {
   const candidate =
@@ -409,4 +409,3 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
     </div>
   );
 }
-
