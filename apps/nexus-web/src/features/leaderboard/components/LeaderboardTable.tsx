@@ -147,13 +147,9 @@ export function LeaderboardTable({
   onSeeMore,
   showFooter = false,
 }: LeaderboardTableProps) {
-  return (
-    <div className="flex w-[1286px] flex-col gap-[5px]">
-      <TableHeader />
-      {entries.map((entry) => (
-        <LeaderboardRow key={entry.rank} entry={entry} />
-      ))}
-      {(showFooter || onSeeMore) && <TableFooter onSeeMore={onSeeMore} />}
-    </div>
-  );
+  void entries;
+  void onSeeMore;
+  void showFooter;
+
+  return null;
 }

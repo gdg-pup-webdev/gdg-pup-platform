@@ -3,7 +3,10 @@
   "version": "0.1.1",
   "private": true,
   "scripts": {
+    "deps:build": "pnpm --filter @packages/typed-rest build && pnpm --filter @packages/nexus-api-contracts build && pnpm --filter @packages/spark-ui build",
+    "predev": "pnpm run deps:build",
     "dev": "next dev",
+    "prebuild": "pnpm run deps:build",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
