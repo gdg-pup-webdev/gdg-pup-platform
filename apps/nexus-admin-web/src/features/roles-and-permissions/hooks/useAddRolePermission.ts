@@ -25,7 +25,7 @@ export const useAddRolePermission = (roleId: string) => {
       throw new Error(extractErrorMessage(res.body));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles", "detail", roleId] });
+      queryClient.invalidateQueries({ queryKey: ["roles", "detail"] });
     },
   });
 };

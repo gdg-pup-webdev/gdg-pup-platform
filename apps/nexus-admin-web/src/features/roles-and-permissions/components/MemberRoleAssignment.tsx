@@ -13,6 +13,7 @@ import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
+import { UserProfile } from "@/features/teams";
 
 export const MemberRoleAssignment: React.FC = () => {
   const { getNumber, getString, setQueryParams } = useAdminQueryParams();
@@ -45,7 +46,7 @@ export const MemberRoleAssignment: React.FC = () => {
 
   const members = membersResponse?.data || [];
   const selectedMember = useMemo(() => {
-    const memberFromList = members.find((member: any) => member.gdgId === selectedMemberId);
+    const memberFromList = members.find((member ) => member.gdgId === selectedMemberId);
     if (memberFromList) {
       return memberFromList;
     }
@@ -73,7 +74,7 @@ export const MemberRoleAssignment: React.FC = () => {
     setQueryParams({ memberRolesSearch: searchValue || null, memberRolesPage: 1 });
   };
 
-  const handleOpenRoleModal = (member: any) => {
+  const handleOpenRoleModal = (member : UserProfile) => {
     setSelectedMemberSnapshot(member);
     setQueryParams({ memberRolesModal: "manage", memberRolesItem: member.gdgId });
   };
@@ -122,7 +123,7 @@ export const MemberRoleAssignment: React.FC = () => {
         }
         content={
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {members.map((member: any) => (
+            {members.map((member) => (
               <div key={member.gdgId} className="flex items-center justify-between rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
@@ -175,9 +176,9 @@ export const MemberRoleAssignment: React.FC = () => {
           <div className="space-y-2">
             <h3 className="font-semibold text-sm text-gray-500 uppercase">Available Roles</h3>
             <div className="grid grid-cols-2 gap-2">
-              {roles.map((role: any) => (
-                <Button key={role.id} variant="outline" onClick={() => handleAssignRole(role)}>
-                  {role}
+              {roles.map((role ) => (
+                <Button key={role.id} variant="outline" onClick={() => handleAssignRole(role.name)}>
+                  {role.name}
                 </Button>
               ))}
             </div>
