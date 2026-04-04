@@ -9,6 +9,7 @@ import { AssignRoleToUserUseCase } from "./useCase/AssignRoleToUserUseCase";
 import { AttachPermissionToRoleUseCase } from "./useCase/AttachPermissionToRoleUseCase";
 import { CreateRoleUseCase } from "./useCase/CreateRoleUseCase";
 import { DeleteRoleUseCase } from "./useCase/DeleteRoleUseCase";
+import { GetRoleById } from "./useCase/GetRoleById";
 import { GetRolesAndPermissionsOfUser } from "./useCase/GetRolesAndPermissionsOfUser";
 import { GetRoleUseCase } from "./useCase/GetRoleUseCase";
 import { ListRoleUseCase } from "./useCase/ListRolesUseCase";
@@ -51,6 +52,9 @@ const getRolesAndPermissionsOfUserUseCase = new GetRolesAndPermissionsOfUser(
   userRepositoryAdapter,
 );
 
+
+const getrolebyiduc = new GetRoleById(roleRepositoryAdapter);
+
 // C. Initialize Controller (Presentation/Interface Layer)
 // We inject all the configured use cases into the primary controller
 export const rbacController = new RbacModuleController(
@@ -63,5 +67,5 @@ export const rbacController = new RbacModuleController(
   removePermissionFromRoleUseCase,
   removeRoleFromUserUseCase,
   updateRoleUseCase,
-  getRolesAndPermissionsOfUserUseCase,
+  getRolesAndPermissionsOfUserUseCase,getrolebyiduc,
 );
