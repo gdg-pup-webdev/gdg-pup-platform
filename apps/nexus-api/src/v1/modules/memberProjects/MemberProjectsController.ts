@@ -21,6 +21,13 @@ export type MemberProjectDTO = {
   memberGdgId: string;
   createdAt: string;
   updatedAt: string;
+  member: {
+    gdgId: string;
+    name: string | null;
+    imageUrl: string | null;
+    email: string | null;
+  } | null;
+
 };
 
 export class MemberProjectsController {
@@ -49,6 +56,13 @@ export class MemberProjectsController {
       memberGdgId: props.memberGdgId,
       createdAt: props.createdAt.toISOString(),
       updatedAt: props.updatedAt.toISOString(),
+
+      member: props.member ? {
+        gdgId: props.member.gdgId,
+        name: props.member.name,
+        imageUrl: props.member.thumbnailImageUrl,
+        email: props.member.email,
+      } : null,
     };
   }
 

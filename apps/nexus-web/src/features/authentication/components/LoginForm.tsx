@@ -1,22 +1,25 @@
 "use client";
 
-import React, { useState } from "react"; 
+import React, { useState } from "react";
 import { Stack, Input } from "@packages/spark-ui";
-import { useAuthContext } from "../store/useAuthStore"; 
+import { useAuthContext } from "../store/useAuthStore";
 import Link from "next/link";
+import { Mail, Key, Eye, EyeOff } from "lucide-react";
 
+const gradientHoverUnderlineStyles = "relative inline-flex items-center after:absolute after:left-0 after:-bottom-[3px] after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-[#FB2C36] after:via-[#F0B100] after:to-[#2B7FFF] after:transition-transform after:duration-300 hover:after:scale-x-100 [@media(hover:none)]:after:scale-x-100";
 
-export const LoginForm = () => { 
-  const { status, login, error} = useAuthContext();
+export const LoginForm = () => {
+  const { status, login, error } = useAuthContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password); 
-    } catch (err) { 
+      await login(email, password);
+    } catch (err) {
     }
   };
 
@@ -26,7 +29,7 @@ export const LoginForm = () => {
   return (
     <Stack gap="lg" className="w-full">
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-sm text-red-700">
+        <div className="bg-red-50/10 border border-red-500/50 rounded-lg p-4 mb-4 text-[14px] text-red-200">
           {error.message}
         </div>
       )}
@@ -46,9 +49,7 @@ export const LoginForm = () => {
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={
-                <img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />
-              }
+              leftIcon={<Mail size={24} className="text-white shrink-0" />}
               placeholder="e.g., sparkylorenzo@gmail.com"
             />
           </StyledInputContainer>
@@ -65,23 +66,25 @@ export const LoginForm = () => {
           <StyledInputContainer>
             <Input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={
-                <img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />
+              leftIcon={<Key size={24} className="text-white shrink-0" />}
+              rightIcon={
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-[#a3a3a3] hover:text-white transition-colors shrink-0">
+                  {showPassword ? <Eye size={24} /> : <EyeOff size={24} />}
+                </button>
               }
               placeholder="Enter Your Password"
             />
           </StyledInputContainer>
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-1">
             <a
               href="/forgot-password"
-              opacity-80
-              className="text-white text-[16px] font-medium hover:underline"
+              className={`${gradientHoverUnderlineStyles} text-white/80 text-[16px] font-bold hover:text-white transition-colors`}
             >
               Forgot Password?
             </a>
@@ -103,7 +106,7 @@ export const LoginForm = () => {
         <span className="text-white/80 text-[16px] font-medium">
           Don't have an account yet?
         </span>
-        <Link href="/signup" className="text-white font-bold hover:underline">
+        <Link href="/signup" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>
           Sign Up
         </Link>
       </div>
@@ -111,16 +114,12 @@ export const LoginForm = () => {
   );
 };
 
-
-const ICON_URL =
-  "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
-
 // Moved outside to prevent re-renders and input defocusing
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
+  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
     {children}
   </div>
 );
 
 const inputBaseStyles =
-  "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
+  "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 !ring-offset-0 focus-within:!ring-0 focus-within:!ring-offset-0 focus-within:!shadow-none w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";

@@ -1,21 +1,68 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Loader2, AlertCircle, Zap, ChevronRight } from "lucide-react";
 import { useGetBevyEvents } from "../hooks/useGetBevyEvents";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
 import { BevyEventDetails } from "./BevyEventDetails";
-import { Pagination } from "@/components/admin/Pagination";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const BevyEventsList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 10);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedEventId = getString("itemId", "") || null;
+
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedEventId);
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, itemId: string) => {
+    setQueryParams({ modal: nextModal, itemId });
+  };
+
   const { data: bevyResponse, isLoading, isError, error, refetch } = useGetBevyEvents(page, pageSize);
   const createEventMutation = useCreateEventFromBevyEvent();
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const events = bevyResponse?.data || [];
+  const filteredEvents = events.filter((event: any) => {
+    const normalized = searchQuery.trim().toLowerCase();
+    if (!normalized) return true;
+
+    return (
+      event.title?.toLowerCase().includes(normalized) ||
+      event.location?.toLowerCase().includes(normalized) ||
+      event.event_type?.toLowerCase().includes(normalized)
+    );
+  });
   const totalPages = bevyResponse?.meta?.totalPages || 1;
   const totalRecords = bevyResponse?.meta?.totalRecords || 0;
 
@@ -33,12 +80,13 @@ export const BevyEventsList: React.FC = () => {
         <AlertCircle size={48} className="mb-4 text-red-500" />
         <h3 className="text-lg font-bold text-red-900">Failed to load Bevy events</h3>
         <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-        <button 
+        <AdminActionButton
           onClick={() => refetch()}
-          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
+          variant="danger"
+          className="mt-6"
         >
           Try Again
-        </button>
+        </AdminActionButton>
       </div>
     );
   }
@@ -53,33 +101,40 @@ export const BevyEventsList: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Pagination at Top */}
-      {events.length > 0 && (
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          pageSize={pageSize}
-          totalRecords={totalRecords}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
+    <AdminListScaffold
+      search={
+        <AdminSearchSection
+          value={searchInput}
+          onValueChange={setSearchInput}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              applySearch();
+            }
+          }}
+          placeholder="Search Bevy events..."
+          accent="teal"
+          actions={
+            <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+              Search
+            </AdminActionButton>
+          }
         />
-      )}
-
-      {events.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {events.map((event: any) => (
+      }
+      content={
+        filteredEvents.length > 0 ? (
+          <AdminCardGrid>
+            {filteredEvents.map((event: any) => (
             <div 
               key={event.id}
               className="group relative flex flex-col overflow-hidden rounded-sm border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
               onClick={() => {
-                setSelectedEventId(event.id);
-                setIsDetailsModalOpen(true);
+                openModal("view", event.id);
               }}
             >
               {/* Banner Image */}
               {event.cover_image_url ? (
-                <div className="relative h-32 bg-gradient-to-b from-gray-200 to-gray-100 overflow-hidden">
+                <div className="relative h-32 overflow-hidden bg-linear-to-b from-gray-200 to-gray-100">
                   <img
                     src={event.cover_image_url}
                     alt={event.title}
@@ -88,7 +143,7 @@ export const BevyEventsList: React.FC = () => {
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
                 </div>
               ) : (
-                <div className="flex h-32 items-center justify-center bg-gradient-to-br from-teal-50 to-teal-100">
+                <div className="flex h-32 items-center justify-center bg-linear-to-br from-teal-50 to-teal-100">
                   <Zap size={32} className="text-teal-400" />
                 </div>
               )}
@@ -117,34 +172,52 @@ export const BevyEventsList: React.FC = () => {
                 </p>
 
                 {/* Button */}
-                <button
+                <AdminActionButton
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCreateEvent(event.id);
                   }}
-                  disabled={createEventMutation.isPending}
-                  className="mt-3 w-full rounded-sm bg-teal-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-teal-700 disabled:bg-teal-300"
+                  isLoading={createEventMutation.isPending}
+                  loadingLabel="Creating"
+                  variant="teal"
+                  size="sm"
+                  fullWidth
+                  className="mt-3"
                 >
-                  {createEventMutation.isPending ? "Creating..." : "Create"}
-                </button>
+                  Create
+                </AdminActionButton>
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <Zap size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">No Bevy events found</h3>
-          <p className="mt-1 text-sm text-gray-500">Check again later for new events from Bevy.</p>
-        </div>
-      )}
+            ))}
+          </AdminCardGrid>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+            <Zap size={48} className="mb-4 text-gray-300" />
+            <h3 className="text-lg font-bold text-gray-900">No Bevy events found</h3>
+            <p className="mt-1 text-sm text-gray-500">Check again later for new events from Bevy.</p>
+          </div>
+        )
+      }
+      pagination={
+        events.length > 0 ? (
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        ) : null
+      }
+    >
 
       {/* Modal */}
       <BevyEventDetails
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         eventId={selectedEventId}
       />
-    </div>
+    </AdminListScaffold>
   );
 };

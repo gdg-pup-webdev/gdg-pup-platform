@@ -34,10 +34,7 @@ export class AuthMiddleware {
   requireAuth = (): RequestHandler => (req, res, next) => {
     const decodedToken = req.decodedToken;
 
-    console.log(
-      "Checking authentication for request. Decoded token:",
-      decodedToken,
-    );
+    // console.log("Checking authentication for request. Decoded token:", decodedToken);
 
     if (!decodedToken) {
       throw new UnauthorizedError(
@@ -45,14 +42,20 @@ export class AuthMiddleware {
       );
     }
 
-    console.log("passed");
+    // console.log("passed");
 
     next();
   };
 
+  /**
+   * @deprecated
+   */
   requireAdminRole = (): RequestHandler =>
     this.requireAnyOfTheseRoles(["admin"]);
 
+  /**
+   * @deprecated
+   */
   requireAnyOfTheseRoles =
     (allowedRoles: string[]): RequestHandler =>
     async (req, res, next) => {
@@ -161,6 +164,9 @@ export class AuthMiddleware {
       }
     };
 
+  /**
+   * @deprecated
+   */
   requirePermissions =
     (requiredPermissions: Record<string, string[]>): RequestHandler =>
     async (req, res, next) => {

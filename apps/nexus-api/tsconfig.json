@@ -55,7 +55,8 @@
   "exclude": [
     "node_modules",
     "dist",
-    "src/v1/modules/portfolioModule_deprecated",
-    "src/v1/routes/portfolios"
+    "src/v1/modules/__deprecated_modules__/portfolioModule_deprecated",
+    "src/v1/routes/portfolios",
+    "src/**/__deprecated_modules__/**"
   ]
 }

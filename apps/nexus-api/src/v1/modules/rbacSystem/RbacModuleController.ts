@@ -9,6 +9,7 @@ import { RemovePermissionFromRoleUseCase } from "./useCase/RemovePermissionFromR
 import { RemoveRoleFromUserUserCase } from "./useCase/RemoveRoleFromUserUserCase";
 import { UpdateRoleUseCase } from "./useCase/UpdateRoleUseCase";
 import { GetRolesAndPermissionsOfUser } from "./useCase/GetRolesAndPermissionsOfUser";
+import { GetRoleById } from "./useCase/GetRoleById";
 
 export class RbacModuleController {
   constructor(
@@ -22,11 +23,33 @@ export class RbacModuleController {
     private removeRoleFromUserUseCase: RemoveRoleFromUserUserCase,
     private updateRoleUseCase: UpdateRoleUseCase,
     private getRolesAndPermissionsOfUserUseCase: GetRolesAndPermissionsOfUser,
+    private getrolebyid : GetRoleById
   ) {}
+  
+  async getRoleById (roleId: string) {
+    const result = await this.getrolebyid.execute(roleId);
 
-  async getRolesAndPermissionsOfUser(userId: string) {
+     return {
+      id: result.props.id,
+      name: result.props.name,
+      description: result.props.description,
+      permissions: [...result.props.permissions],
+    };
+  }
+
+  async getRole(roleName: string) {
+    const result = await this.getRoleUseCase.execute(roleName);
+
+    return {
+      id: result.props.id,
+      name: result.props.name,
+      description: result.props.description,
+      permissions: [...result.props.permissions],
+    };
+  }
+  async getRolesAndPermissionsOfUser(gdgId: string) {
     const result =
-      await this.getRolesAndPermissionsOfUserUseCase.execute(userId);
+      await this.getRolesAndPermissionsOfUserUseCase.execute(gdgId);
 
     return result.map((role) => ({
       name: role.props.name,
@@ -36,11 +59,12 @@ export class RbacModuleController {
         resource: permission.resource,
         action: permission.action,
       })),
+      
     }));
   }
 
-  async assignRoleToUser(userId: string, roleName: string) {
-    const result = await this.assignRoleToUserUseCase.execute(userId, roleName);
+  async assignRoleToUser(gdgId: string, roleName: string) {
+    const result = await this.assignRoleToUserUseCase.execute(gdgId, roleName);
 
     return {
       id: result.props.gdgId,
@@ -83,16 +107,6 @@ export class RbacModuleController {
     return result; // Returns boolean true
   }
 
-  async getRole(roleName: string) {
-    const result = await this.getRoleUseCase.execute(roleName);
-
-    return {
-      id: result.props.id,
-      name: result.props.name,
-      description: result.props.description,
-      permissions: [...result.props.permissions],
-    };
-  }
 
   async listRoles(pageNumber: number, pageSize: number) {
     const result = await this.listRoleUseCase.execute(pageNumber, pageSize);
@@ -127,9 +141,9 @@ export class RbacModuleController {
     };
   }
 
-  async removeRoleFromUser(userId: string, roleName: string) {
+  async removeRoleFromUser(gdgId: string, roleName: string) {
     const result = await this.removeRoleFromUserUseCase.execute(
-      userId,
+      gdgId,
       roleName,
     );
 

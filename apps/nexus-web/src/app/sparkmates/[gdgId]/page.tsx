@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useSearchParams } from "next/navigation";
-import { SparkmatesPortfolio, type SparkmatesSource } from "@/features/sparkmates";
-import { ProfilePublicView } from "@/features/profile/components/ProfilePublicView";
+import { SparkmatesPortfolio, type SparkmatesSource } from "@/features/sparkmates"; 
+import { ProfilePublicView } from "@/features/sparkmates/components/SparkmatesPublicView/ProfilePublicView";
 
 function normalizeSource(raw: string | null): SparkmatesSource {
   if (raw === "nfc_card" || raw === "qr_code" || raw === "direct_link") {

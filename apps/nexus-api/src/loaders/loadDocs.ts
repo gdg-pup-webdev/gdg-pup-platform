@@ -2,8 +2,8 @@ import { Express } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
-import { generateOpenApiOptions } from "@packages/nexus-api-contracts"; 
-import converter from "openapi-to-postmanv2"; 
+import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
+import converter from "openapi-to-postmanv2";
 
 let scalarMiddleware: any = null;
 
@@ -47,7 +47,12 @@ export const loadDocs = (app: Express) => {
           "Public endpoints are marked without a lock icon in Swagger.",
         ].join(" "),
       },
-      servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
+      servers: [
+        { url: "http://localhost:8000", description: "Local Dev" },
+        { url: "https://api.dev.gdgpup.org", description: "Development" },
+        { url: "https://api.staging.gdgpup.org", description: "Staging" },
+        { url: "https://api.gdgpup.org", description: "Production" },
+      ],
       generateExample: true,
     });
     const swaggerSpecWithoutExamples = swaggerJsdoc(optionsWithoutExamples);

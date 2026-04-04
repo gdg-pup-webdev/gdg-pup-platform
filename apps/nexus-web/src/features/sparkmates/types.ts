@@ -1,7 +1,33 @@
+import { contract } from "@packages/nexus-api-contracts";
+
+
+export type UserProfile = contract.api.v1.gdgmembers.gdgId.GET.response[200]["data"]; 
+
+
+
+
 export type SparkmatesStatus = "issued" | "activated" | "suspended" | "revoked";
 
 export type SparkmatesSource = "nfc_card" | "qr_code" | "direct_link";
 
+/**
+ * @deprecated 
+ */
+export type SparkmatesProfile = UserProfile
+
+export type SuggestedSparkmate = {
+  gdgId: string;
+  name: string;
+  programYear: string;
+  bio: string;
+  avatarUrl: string | null;
+  skills: string[];
+  interests: string[];
+};
+
+/**
+ * @deprecated
+ */
 export type SparkmatesPortfolio = {
   id: string;
   user_id: string;
@@ -24,6 +50,9 @@ export type SparkmatesPortfolio = {
   is_public: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type SparkmateProfile = {
   gdg_id: string;
   owner_user_id: string;
@@ -32,23 +61,19 @@ export type SparkmateProfile = {
   portfolio: SparkmatesPortfolio | null;
 };
 
+/**
+ * @deprecated
+ */
 export type SparkmateApiSuccess<TData> = {
   status: "success";
   message: string;
   data: TData;
 };
 
+/**
+ * @deprecated
+ */
 export type SparkmateApiError = {
   status: "error";
   message: string;
-};
-
-export type SuggestedSparkmate = {
-  gdgId: string;
-  name: string;
-  programYear: string;
-  bio: string;
-  avatarUrl: string | null;
-  skills: string[];
-  interests: string[];
 };

@@ -18,8 +18,7 @@ import { RewardItem } from "./RewardItem";
 import { GuideItem } from "./GuideItem";
 import { HistoryItem } from "./HistoryItem";
 import { RewardItemType } from "../types";
-import { useAuthContext } from "@/features/authentication/store/useAuthStore";
-import { useMe } from "@/features/profile/hooks";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore"; 
 
 type mobileSections = "main" | "guide" | "redeem" | "history";
 
@@ -27,9 +26,7 @@ const GRADIENT_BORDER_BASE = "relative isolate before:content-[''] before:absolu
 const RAINBOW_GRADIENT_COLOR = "before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]";
 export const RAINBOW_BORDER = cn(GRADIENT_BORDER_BASE, RAINBOW_GRADIENT_COLOR);
 
-export function SparkyPointsSection() {
-  const {decodedToken } = useAuthContext();
-  const {data : user } = useMe();
+export function SparkyPointsSection() { 
   const { userPoints, userHistory, tasks, rewards } = useSparkyPoints();
   // TODO - pass user information
 

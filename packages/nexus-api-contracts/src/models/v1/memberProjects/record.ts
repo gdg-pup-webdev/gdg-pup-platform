@@ -13,6 +13,14 @@ export const memberProjectsRecord = cz.object({
   secondaryImageUrl: cz.string().nullable(),
   tertiaryImageUrl: cz.string().nullable(),
   memberGdgId: cz.string(),
+
+  // Included details
+  member: cz.object({
+    gdgId: cz.string().uuid(),
+    name: cz.string().nullable(),
+    email: cz.string().nullable(),
+    imageUrl: cz.string().nullable().nullable(),
+  }).nullable() ,
 });
 
 /** Data Transfer Object for creating a new member project. */

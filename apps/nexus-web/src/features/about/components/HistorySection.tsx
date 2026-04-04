@@ -270,7 +270,7 @@ const milestones = [
     title: "Year One: Everything at Once",
     excerpt: "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.",
     buttonColor: "yellow" as const,
-    image: "/about/history/year-one-everything.png",
+    image: "/about/history/year-one-everything.webp",
     href: "/articles/3e672b68-5890-4990-86a8-4622e019e7d3"
   },
   {
@@ -302,7 +302,7 @@ const milestones = [
     title: "The Living Community",
     excerpt: "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.",
     buttonColor: "yellow" as const,
-    image: "/about/history/the-living-community.jpg",
+    image: "/about/history/the-living-community.webp",
     href: "/articles/1713f93d-558b-4eab-9530-29d0770080f9"
   },
   {
@@ -310,7 +310,7 @@ const milestones = [
     title: "Your Chapter Hasn't Been Written Yet",
     excerpt: "Three years and counting proved something important: this community is built by the people who show up. That includes you.",
     buttonColor: "red" as const,
-    image: "/about/history/your-chapter.jpg",
+    image: "/about/history/your-chapter.webp",
     href: "/articles/f946e2dd-e0e2-41f2-9329-360b5dc44c2c"
   },
 ];
@@ -335,8 +335,7 @@ const MilestoneCard = ({
 }: {
   milestone: (typeof milestones)[number];
 }) => (
-  <div className="relative">
-    {/* Gradient border overlay */}
+  <div className="relative w-full">
     <div
       className={`absolute inset-0 rounded-3xl p-[1px] pointer-events-none z-10 ${borderGradientMap[milestone.buttonColor]}`}
       style={{
@@ -345,35 +344,34 @@ const MilestoneCard = ({
         maskComposite: "exclude",
       }}
     />
-    <Card className="border-0 flex flex-col justify-between">
-  {milestone.image && (
-    <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
-      <Image
-        src={milestone.image}
-        alt={milestone.title}
-        fill
-        className="object-cover"
-      />
-    </div>
-  )}
-  <CardHeader>
-    <CardTitle className="text-4xl font-bold text-center">{milestone.title}</CardTitle>
-  </CardHeader>
-  <CardContent className="flex-1">
-    <Text variant="body" className="text-gray-300 line-clamp-3 text-center text-xl">
-      {milestone.excerpt}
-    </Text>
-  </CardContent>
-  <CardFooter className="justify-center">
-    <Link href={milestone.href}>
-      <button
-        className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
-      >
-        Read More
-      </button>
-    </Link>
-  </CardFooter>
-</Card>
+    <Card className="border-0 flex flex-col justify-between w-full">
+      {milestone.image && (
+        <div className="relative w-full aspect-video rounded-[20px] overflow-hidden mb-2">
+          <Image
+            src={milestone.image}
+            alt={milestone.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
+      <CardHeader>
+        <CardTitle className="text-4xl md:text-2xl lg:text-4xl font-bold text-center">{milestone.title}</CardTitle>      </CardHeader>
+      <CardContent className="flex-1">
+      <Text variant="body" className="text-gray-300 line-clamp-3 text-center text-sm md:text-base lg:text-xl">          {milestone.excerpt}
+          {milestone.excerpt}
+        </Text>
+      </CardContent>
+      <CardFooter className="justify-center">
+        <Link href={milestone.href}>
+          <button
+            className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
+          >
+            Read More
+          </button>
+        </Link>
+      </CardFooter>
+    </Card>
   </div>
 );
 
@@ -479,7 +477,7 @@ const StatCard = ({
 // ─── Main component ───────────────────────────────────────────────────────────
 export function HistorySection() {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16 bg-[#0F0E0E]">
+    <div className="relative overflow-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16 bg-[#0F0E0E]">
       {/* Zoned blob background — pinned per region, history page only */}
       <HistoryBlobBackground />
 
@@ -498,11 +496,10 @@ export function HistorySection() {
 {/* Star */}
 <div className="absolute pointer-events-none hidden lg:block"
   style={{ top: "55%", left: "-15%", width: "50%", opacity: 0.20, transform: "rotate(20deg)" }}>
-  <Image src="/about/history/bg-star.png" alt="" width={300} height={300} className="w-full h-auto" />
+  <Image src="/about/history/bg-star.webp" alt="" width={300} height={300} className="w-full h-auto" />
 </div>
 
-      <Container maxWidth="7xl" padding="lg" className="relative z-10">
-        <Stack gap="2xl">
+    <Container maxWidth="7xl" padding="lg" className="relative z-10 w-full overflow-hidden">        <Stack gap="2xl">
           {/* Section 1 — Hero */}
           <FadeInSection className="mb-32">
             <Stack gap="lg" align="center">
@@ -532,70 +529,70 @@ export function HistorySection() {
             </Stack>
           </FadeInSection>
 
-          {/* Section 2 — History Cards */}
-          <FadeInSection delay={0.1} className="mb-32">
-            <Stack gap="xl" align="center">
-              {/* ── Mobile layout ────────────────────────────────────── */}
-             <div className="grid grid-cols-2 gap-4 w-full lg:hidden">
-                {milestones.map((milestone) => (
-                  <AnimatedCard key={milestone.slug}>
-                    <MilestoneCard milestone={milestone} />
-                  </AnimatedCard>
-                ))}
+         {/* Section 2 — History Cards */}
+      <FadeInSection delay={0.1} className="mb-32">
+        <div className="w-full">
+          {/* ── Mobile layout ────────────────────────────────────── */}
+          <div className="flex flex-col gap-4 w-full lg:hidden">
+            {milestones.map((milestone) => (
+              <div key={milestone.slug} className="w-full">
+                <MilestoneCard milestone={milestone} />
               </div>
-             {/* Desktop staircase layout */}
-              <div className="hidden lg:grid lg:grid-cols-4 gap-6 w-full items-start">
-                {/* Col 1 — The Spark → Your Chapter */}
-                <div className="flex flex-col">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[0]} />
-                  </AnimatedCard>
-                  <div className="lg:mt-[52rem]">
-                    <AnimatedCard>
-                      <MilestoneCard milestone={milestones[6]} />
-                    </AnimatedCard>
-                  </div>
-                </div>
+            ))}
+          </div>
 
-                {/* Col 2 — Year One → The Living Community */}
-                <div className="flex flex-col lg:pt-[10rem]">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[1]} />
-                  </AnimatedCard>
-                  <div className="lg:mt-[32rem]">
-                    <AnimatedCard>
-                      <MilestoneCard milestone={milestones[5]} />
-                    </AnimatedCard>
-                  </div>
-                </div>
-
-                {/* Col 3 — Year Two → The Impact */}
-                <div className="flex flex-col lg:pt-[20rem]">
-                  <AnimatedCard>
-                    <MilestoneCard milestone={milestones[2]} />
-                  </AnimatedCard>
-                  <div className="lg:mt-[12rem]">
-                    <AnimatedCard>
-                      <MilestoneCard milestone={milestones[4]} />
-                    </AnimatedCard>
-                  </div>
-                </div>
-
-                {/* Col 4 — Year Three: deepest */}
-              <div className="lg:pt-[37rem]">
+          {/* Desktop staircase layout */}
+          <div className="hidden lg:grid lg:grid-cols-4 gap-6 w-full items-start">
+            {/* Col 1 — The Spark → Your Chapter */}
+            <div className="flex flex-col">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[0]} />
+              </AnimatedCard>
+              <div className="lg:mt-[52rem]">
                 <AnimatedCard>
-                  <MilestoneCard milestone={milestones[3]} />
+                  <MilestoneCard milestone={milestones[6]} />
                 </AnimatedCard>
               </div>
             </div>
-          </Stack>
-        </FadeInSection>
+
+            {/* Col 2 — Year One → The Living Community */}
+            <div className="flex flex-col lg:pt-[10rem]">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[1]} />
+              </AnimatedCard>
+              <div className="lg:mt-[32rem]">
+                <AnimatedCard>
+                  <MilestoneCard milestone={milestones[5]} />
+                </AnimatedCard>
+              </div>
+            </div>
+
+            {/* Col 3 — Year Two → The Impact */}
+            <div className="flex flex-col lg:pt-[20rem]">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[2]} />
+              </AnimatedCard>
+              <div className="lg:mt-[12rem]">
+                <AnimatedCard>
+                  <MilestoneCard milestone={milestones[4]} />
+                </AnimatedCard>
+              </div>
+            </div>
+
+            {/* Col 4 — Year Three: deepest */}
+            <div className="lg:pt-[37rem]">
+              <AnimatedCard>
+                <MilestoneCard milestone={milestones[3]} />
+              </AnimatedCard>
+            </div>
+          </div>
+        </div>
+      </FadeInSection>
 
           {/* ── Section 3: Stats + CTA ───────────────────────────── */}
 <FadeInSection delay={0.2}>
   <Stack gap="xl" align="center">
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full">
-      {stats.map((stat) => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">      {stats.map((stat) => (
         <StatCard key={stat.label} stat={stat} />
       ))}
     </div>

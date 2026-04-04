@@ -12,6 +12,13 @@ export type MemberProjectProps = {
   memberGdgId: string;
   createdAt: Date;
   updatedAt: Date;
+
+  member: {
+    gdgId: string; 
+    name: string | null;
+    thumbnailImageUrl: string | null; 
+    email: string | null;
+  } | null;
 };
 
 export type MemberProjectUpdateProps = Partial<Omit<MemberProjectProps, "id" | "createdAt" | "updatedAt" | "memberGdgId">>;
@@ -23,13 +30,14 @@ export class MemberProject {
     return { ...this._props };
   }
 
-  public static create(props: Omit<MemberProjectProps, "id" | "createdAt" | "updatedAt">): MemberProject {
+  public static create(props: Omit<MemberProjectProps, "id" | "createdAt" | "updatedAt" | "member">): MemberProject {
     const now = new Date();
     return new MemberProject({
       ...props,
       id: crypto.randomUUID(),
       createdAt: now,
       updatedAt: now,
+      member: null,
     });
   }
 
