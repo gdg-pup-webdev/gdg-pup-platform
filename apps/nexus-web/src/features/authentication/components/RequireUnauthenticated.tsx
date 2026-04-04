@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { LINKS } from "@/lib/constants/links";
 import { STATUS, useAuthContext } from "../store/useAuthStore";
+import { isOnboardingCompleted } from "@/features/onboarding/utils/onboardingStorage";
 
 export const RequireUnauthenticated = ({
   children,
@@ -11,13 +12,25 @@ export const RequireUnauthenticated = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
-  const { status } = useAuthContext();
+  const pathname = usePathname();
+  const { status, decodedToken } = useAuthContext();
 
   useEffect(() => {
     if (status === STATUS.AUTHENTICATED) {
+      const gdgId = decodedToken?.memberInfo.gdgId;
+
+      if (
+        gdgId &&
+        !isOnboardingCompleted(gdgId) &&
+        pathname !== LINKS.onboarding
+      ) {
+        router.push(LINKS.onboarding);
+        return;
+      }
+
       router.push(LINKS.landing);
     }
-  }, [status]);
+  }, [status, decodedToken, pathname, router]);
 
   if (status === STATUS.AUTHENTICATED) {
     return (
@@ -28,8 +41,6 @@ export const RequireUnauthenticated = ({
       </>
     );
   }
-
-
 
   if (status === STATUS.LOGGINGOUT) {
     <>

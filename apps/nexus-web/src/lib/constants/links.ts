@@ -1,5 +1,6 @@
 export const LINKS = {
   landing: "/",
+  onboarding: "/onboarding",
   auth_signin: "/signin",
   auth_signup: "/signup",
   auth_forgot_password: "/forgot-password",
