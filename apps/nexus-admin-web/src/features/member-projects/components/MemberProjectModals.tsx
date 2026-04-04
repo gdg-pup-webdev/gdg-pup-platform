@@ -161,15 +161,15 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
             {showDropdown && searchQuery.length >= 2 && (
               <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
                 {searchResults.length > 0 ? (
-                  searchResults.map((user: any) => (
+                  searchResults.map((user ) => (
                     <button
-                      key={user.id}
+                      key={user.gdgId}
                       type="button"
                       onClick={() => handleSelectUser(user)}
                       className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
                     >
-                      <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
-                      <span className="text-xs text-gray-500">{user.gdg_id}</span>
+                      <span className="text-sm font-bold text-gray-900">{user.displayName}</span>
+                      <span className="text-xs text-gray-500">{user.gdgId}</span>
                     </button>
                   ))
                 ) : !isSearching ? (

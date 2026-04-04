@@ -10,6 +10,7 @@ import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
 import { AdminFormModal, AdminImageUploadField, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
+import { UserProfile } from "@/features/teams";
 
 // ==========================================
 // Showcase Form Modal (Create / Update)
@@ -78,21 +79,21 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
     setPreviewUrl(nextPreviewUrl);
   };
 
-  const handleSelectUser = (user: any) => {
-    if (selectedMembers.some(m => m.gdgId === user.gdg_id)) {
+  const handleSelectUser = (user  : UserProfile) => {
+    if (selectedMembers.some(m => m.gdgId === user.gdgId)) {
       toast.warn("Member already added");
       return;
     }
 
     const newMember: ShowcasedMember = {
-      gdgId: user.gdg_id,
-      displayName: user.display_name,
-      firstName: user.first_name || user.display_name?.split(' ')[0] || "User",
-      lastName: user.last_name || "",
-      fullName: user.display_name,
-      avatarUrl: user.avatar_url,
+      gdgId: user.gdgId,
+      displayName: user.displayName,
+      firstName: user.firstName || user.displayName?.split(' ')[0] || "User",
+      lastName: user.lastName || "",
+      fullName: user.displayName || user.firstName || "User",
+      avatarUrl: user.avatarUrl,
       program: user.program || null,
-      yearLevel: user.year_level || null,
+      yearLevel: user.yearLevel || null,
     };
 
     const newSelected = [...selectedMembers, newMember];
@@ -224,8 +225,8 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {selectedMembers.map((member) => (
-                <div key={member.gdgId} className="flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 py-1 pl-1.5 pr-2">
+              {selectedMembers.map((member) => { 
+                return  <div key={member.gdgId} className="flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 py-1 pl-1.5 pr-2">
                   <div className="relative h-5 w-5 overflow-hidden rounded-full bg-teal-200">
                     {member.avatarUrl ? (
                       <Image src={member.avatarUrl} alt={member.fullName} fill className="object-cover" />
@@ -244,7 +245,7 @@ export function ShowcaseFormModal({ isOpen, onClose, onSubmit, initialData, isSu
                     <X size={14} />
                   </button>
                 </div>
-              ))}
+              })}
               {selectedMembers.length === 0 ? (
                 <p className="py-1 text-xs italic text-gray-400">No members selected yet.</p>
               ) : null}

@@ -1136,28 +1136,10 @@ export type Database = {
             foreignKeyName: "team_member_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
           },
         ]
-      }
-      test: {
-        Row: {
-          description: string | null
-          id: string
-          title: string
-        }
-        Insert: {
-          description?: string | null
-          id?: string
-          title: string
-        }
-        Update: {
-          description?: string | null
-          id?: string
-          title?: string
-        }
-        Relationships: []
       }
       user: {
         Row: {

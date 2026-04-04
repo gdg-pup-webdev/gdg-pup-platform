@@ -1188,28 +1188,10 @@ export const publicTeamMemberRelationshipsSchema = z.tuple([
     foreignKeyName: z.literal("team_member_user_id_fkey"),
     columns: z.tuple([z.literal("user_id")]),
     isOneToOne: z.literal(false),
-    referencedRelation: z.literal("user"),
-    referencedColumns: z.tuple([z.literal("id")]),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
   }),
 ]);
-
-export const publicTestRowSchema = z.object({
-  description: z.string().nullable(),
-  id: z.string(),
-  title: z.string(),
-});
-
-export const publicTestInsertSchema = z.object({
-  description: z.string().optional().nullable(),
-  id: z.string().optional(),
-  title: z.string(),
-});
-
-export const publicTestUpdateSchema = z.object({
-  description: z.string().optional().nullable(),
-  id: z.string().optional(),
-  title: z.string().optional(),
-});
 
 export const publicUserRowSchema = z.object({
   avatar_url: z.string().nullable(),

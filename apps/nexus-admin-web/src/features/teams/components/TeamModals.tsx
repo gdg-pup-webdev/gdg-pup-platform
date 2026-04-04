@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { X, Loader2, AlertTriangle, Users, Plus, Trash2, Search, UserPlus, Edit2, Check, User as UserIcon } from "lucide-react";
-import { Team, TeamInsert, TeamUpdate, TeamMember } from "../types";
+import { Team, TeamInsert, TeamUpdate, TeamMember, UserProfile } from "../types";
 import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useTeam, useSearchUsers } from "../api/teams";
 import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
 import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
+
 
 // ==========================================
 // Team Form Modal (Create / Update)
@@ -158,8 +159,8 @@ export function TeamDetailsModal({
     });
   };
 
-  const searchResults = usersResponse?.body?.data?.filter((user: any) => 
-    !team?.members?.some((m: TeamMember) => m.user_id === user.id)
+  const searchResults = usersResponse?.body?.data?.filter((user ) => 
+    !team?.members?.some((m: TeamMember) => m.user_id === user.gdgId)
   ) || [];
 
   const handleAddMember = async () => {
@@ -168,7 +169,7 @@ export function TeamDetailsModal({
     try {
       await addMemberMutation.mutateAsync({
         teamId: team.id,
-        userId: selectedUser.id,
+        userId: selectedUser.gdgId,
         position,
       });
       setIsAddingMember(false);
@@ -210,9 +211,9 @@ export function TeamDetailsModal({
     }
   };
 
-  const handleSelectUser = (user: any) => {
+  const handleSelectUser = (user : UserProfile ) => {
     setSelectedUser(user);
-    setSearchQuery(`${user.display_name} (${user.email})`);
+    setSearchQuery(`${user.displayName} (${user.email})`);
     setShowDropdown(false);
   };
 
@@ -332,13 +333,13 @@ export function TeamDetailsModal({
                   {showDropdown && searchQuery.length >= 2 && (
                     <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl animate-in fade-in zoom-in-95">
                       {searchResults.length > 0 ? (
-                        searchResults.map((user: any) => (
+                        searchResults.map((user ) => (
                           <button
-                            key={user.id}
+                            key={user.gdgId}
                             onClick={() => handleSelectUser(user)}
                             className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
                           >
-                            <span className="text-sm font-bold text-gray-900">{user.display_name}</span>
+                            <span className="text-sm font-bold text-gray-900">{user.displayName}</span>
                             <span className="text-xs text-gray-500">{user.email}</span>
                           </button>
                         ))
