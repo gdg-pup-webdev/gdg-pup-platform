@@ -1,9 +1,12 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { UpdateLearningResourceDTO, LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
 
-export async function updateLearningResource(
+export function useUpdateLearningResourceRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function updateLearningResource(
   id: string,
   data: UpdateLearningResourceDTO,
   thumbnail?: File
@@ -36,4 +39,5 @@ export async function updateLearningResource(
       error instanceof Error ? error.message : String(error)
     );
   }
+}
 }

@@ -1,9 +1,12 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { UpdateMemberProjectDTO } from "../types";
 
-export async function updateMemberProject(
+export function useUpdateMemberProjectRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function updateMemberProject(
   id: string,
   data: UpdateMemberProjectDTO,
   files?: {
@@ -26,4 +29,5 @@ export async function updateMemberProject(
     return result.body;
   }
   throw new Error(`Failed to update member project with ID ${id}`);
+}
 }

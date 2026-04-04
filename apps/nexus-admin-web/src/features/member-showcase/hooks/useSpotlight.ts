@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSpotlight } from "../api/getSpotlight";
+import { useGetSpotlightRequest } from "./getSpotlight";
 
 export function useSpotlight() {
+  const getSpotlight = useGetSpotlightRequest();
+
+
+
+
   return useQuery({
     queryKey: ["member-showcase", "spotlight"],
     queryFn: getSpotlight,

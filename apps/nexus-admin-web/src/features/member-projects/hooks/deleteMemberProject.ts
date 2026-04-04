@@ -1,8 +1,11 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export async function deleteMemberProject(id: string) {
+export function useDeleteMemberProjectRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function deleteMemberProject(id: string) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.id.DELETE,
@@ -15,4 +18,5 @@ export async function deleteMemberProject(id: string) {
     return true;
   }
   throw new Error(`Failed to delete member project with ID ${id}`);
+}
 }

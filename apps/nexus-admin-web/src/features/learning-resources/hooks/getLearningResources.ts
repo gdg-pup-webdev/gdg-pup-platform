@@ -1,9 +1,12 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { LearningResourcesQueryParams, LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
 
-export async function getLearningResources(params: Partial<LearningResourcesQueryParams> = {}) {
+export function useGetLearningResourcesRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function getLearningResources(params: Partial<LearningResourcesQueryParams> = {}) {
   try {
     const result = await callEndpoint(
       configs.nexusApiBaseUrl,
@@ -37,4 +40,5 @@ export async function getLearningResources(params: Partial<LearningResourcesQuer
       error instanceof Error ? error.message : String(error)
     );
   }
+}
 }

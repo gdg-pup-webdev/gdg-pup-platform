@@ -10,7 +10,7 @@ import { Event, EventInsert, EventUpdate } from "../types";
 import { EventFormModal, EventDetailsModal, DeleteConfirmModal, BevyEventSearchModal } from "./EventModals";
 import { EventCard } from "./EventCard";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
-import { useSearchTeams } from "@/features/teams/api/teams";
+import { useSearchTeams } from "@/features/teams/hooks/useTeams";
 import { toast } from "react-toastify";
 import { useSyncAllEventToBevy } from "../hooks/useSyncAllEventToBevy";
 import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";

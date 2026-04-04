@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Plus, Users } from "lucide-react";
 import { TeamCard } from "./TeamCard";
 import { TeamFormModal, TeamDetailsModal } from "./TeamModals";
-import { useTeams, useCreateTeam, useUpdateTeam, useDeleteTeam } from "../api/teams";
+import { useTeams, useCreateTeam, useUpdateTeam, useDeleteTeam } from "../hooks/useTeams";
 import { Team, TeamInsert, TeamUpdate } from "../types";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";

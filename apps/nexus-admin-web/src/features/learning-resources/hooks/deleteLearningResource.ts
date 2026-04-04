@@ -1,9 +1,12 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
 
-export async function deleteLearningResource(id: string) {
+export function useDeleteLearningResourceRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function deleteLearningResource(id: string) {
   try {
     const result = await callEndpoint(
       configs.nexusApiBaseUrl,
@@ -30,4 +33,5 @@ export async function deleteLearningResource(id: string) {
       error instanceof Error ? error.message : String(error)
     );
   }
+}
 }

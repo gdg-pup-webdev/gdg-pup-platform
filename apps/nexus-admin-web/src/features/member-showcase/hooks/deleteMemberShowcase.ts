@@ -1,8 +1,11 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export async function deleteMemberShowcase(id: string) {
+export function useDeleteMemberShowcaseRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function deleteMemberShowcase(id: string) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_showcase.id.DELETE,
@@ -15,4 +18,5 @@ export async function deleteMemberShowcase(id: string) {
     return true;
   }
   throw new Error("Failed to delete member showcase");
+}
 }

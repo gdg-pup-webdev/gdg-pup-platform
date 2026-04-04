@@ -1,8 +1,11 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export async function searchMemberProjects(query: string, pageNumber = 1, pageSize = 10) {
+export function useSearchMemberProjectsRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function searchMemberProjects(query: string, pageNumber = 1, pageSize = 10) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.search.GET,
@@ -15,4 +18,5 @@ export async function searchMemberProjects(query: string, pageNumber = 1, pageSi
     return result.body;
   }
   throw new Error("Failed to search member projects");
+}
 }

@@ -1,3 +1,3 @@
 export * from "./components/TeamList";
 export * from "./types";
-export * from "./api/teams";
+export * from "./hooks/useTeams";

@@ -1,8 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateMemberShowcase } from "../api/updateMemberShowcase";
+import { useUpdateMemberShowcaseRequest } from "./updateMemberShowcase";
 import { UpdateMemberShowcaseDTO } from "../types";
 
 export function useUpdateMemberShowcase() {
+  const updateMemberShowcase = useUpdateMemberShowcaseRequest();
+
+
+
+
   const queryClient = useQueryClient();
 
   return useMutation({

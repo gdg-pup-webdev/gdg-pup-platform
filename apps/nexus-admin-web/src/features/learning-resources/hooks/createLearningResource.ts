@@ -1,9 +1,12 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { CreateLearningResourceDTO, LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
 
-export async function createLearningResource(
+export function useCreateLearningResourceRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function createLearningResource(
   data: CreateLearningResourceDTO,
   thumbnail?: File
 ) {
@@ -34,4 +37,5 @@ export async function createLearningResource(
       error instanceof Error ? error.message : String(error)
     );
   }
+}
 }

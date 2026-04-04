@@ -1,8 +1,11 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useFetchApi } from "@/hooks/useFetchApi";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export async function getSpotlight() {
+export function useGetSpotlightRequest() {
+  const callEndpoint = useFetchApi();
+
+  return async function getSpotlight() {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_showcase.spotlight.GET,
@@ -13,4 +16,5 @@ export async function getSpotlight() {
     return result.body;
   }
   return null;
+}
 }

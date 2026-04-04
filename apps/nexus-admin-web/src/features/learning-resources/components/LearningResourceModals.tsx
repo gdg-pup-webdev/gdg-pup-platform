@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X, Loader2, AlertTriangle, Link2, ExternalLink, Search, Calendar, Users, Info, MapPin, Clock, Edit2, Trash2 } from "lucide-react";
 import { LearningResource, CreateLearningResourceDTO, UpdateLearningResourceDTO } from "../types";
-import { useSearchTeams } from "@/features/teams/api/teams";
+import { useSearchTeams } from "@/features/teams/hooks/useTeams";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import Image from "next/image";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";

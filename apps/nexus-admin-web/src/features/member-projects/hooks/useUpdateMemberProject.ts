@@ -1,8 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateMemberProject } from "../api/updateMemberProject";
+import { useUpdateMemberProjectRequest } from "./updateMemberProject";
 import { UpdateMemberProjectDTO } from "../types";
 
 export function useUpdateMemberProject() {
+  const updateMemberProject = useUpdateMemberProjectRequest();
+
+
+
+
   const queryClient = useQueryClient();
 
   return useMutation({

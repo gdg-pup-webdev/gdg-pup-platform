@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteLearningResource } from "../api/deleteLearningResource";
+import { useDeleteLearningResourceRequest } from "./deleteLearningResource";
 
 export function useDeleteLearningResource() {
+  const deleteLearningResource = useDeleteLearningResourceRequest();
   const queryClient = useQueryClient();
 
   return useMutation({
