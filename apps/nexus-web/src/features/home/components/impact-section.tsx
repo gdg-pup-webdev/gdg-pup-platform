@@ -242,8 +242,9 @@ export function ImpactSection() {
                 alt="cirby sticker"
                 width={4096}
                 height={4096}
-                className="w-137 h-137"
-              ></Image>
+                className="w-137 h-137 pointer-events-none select-none"
+                draggable={false}
+              />
             </div>
           </div>
         </motion.div>
@@ -257,14 +258,16 @@ export function ImpactSection() {
               alt="ellipse 207"
               width={850}
               height={806}
-              className="col-start-1 row-start-1 object-cover"
+              className="col-start-1 row-start-1 object-cover pointer-events-none select-none"
+              draggable={false}
             />
             <Image
               src={ASSETS.HOME.ELLIPSE208}
               alt="ellipse 208"
               width={719}
               height={636}
-              className="col-start-1 row-start-1 object-cover mt-4.25"
+              className="col-start-1 row-start-1 object-cover mt-4.25 pointer-events-none select-none"
+              draggable={false}
             />
             <div className="absolute top-75 -left-40 rotate-25">
               <PlanetCard
