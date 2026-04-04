@@ -122,10 +122,7 @@ export function PartnershipSection() {
           {/* Section 1 — Hero */}
           <FadeInSection className="mb-32 flex flex-col items-center w-full">
             <Stack align="center" style={{ gap: "24px" }} className="w-full">
-              <h1 className="text-center font-bold text-[50px] sm:text-[48px] md:text-[60px] leading-[1.2] w-full tracking-normal">
-                <span className="text-white">Innovation Through</span><br />
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A]">Collaboration</span>
-              </h1>
+              <Text variant="heading-2" gradient="white-yellow" align="center">Innovation Through Collaboration</Text>
 
               <div className="bg-[rgba(255,255,255,0.05)] border border-solid border-white rounded-[28px] p-[20px] max-w-[1200px] w-full flex items-center justify-center">
                 <Text
