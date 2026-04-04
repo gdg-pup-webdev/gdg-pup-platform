@@ -3,8 +3,8 @@
 @import "@configs/tailwind-config/shared-styles.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0F0E0E;
+  --background: #0f0e0e;
+  --foreground: #0f0e0e;
 }
 
 @theme inline {
@@ -24,7 +24,6 @@
   /* ===== History page zoned blob drift ===== */
   /* --travel controls the max drift distance per blob (set as inline style) */
   @keyframes blobDriftV {
-
     0%,
     100% {
       transform: translateY(0px);
@@ -36,7 +35,6 @@
   }
 
   @keyframes blobDriftH {
-
     0%,
     100% {
       transform: translateX(0px);
@@ -48,18 +46,23 @@
   }
 
   @keyframes blobDriftD {
-
     0%,
     100% {
       transform: translate(0px, 0px);
     }
 
     33% {
-      transform: translate(var(--travel, 28px), calc(var(--travel, 28px) * 0.65));
+      transform: translate(
+        var(--travel, 28px),
+        calc(var(--travel, 28px) * 0.65)
+      );
     }
 
     66% {
-      transform: translate(calc(var(--travel, 28px) * -0.65), var(--travel, 28px));
+      transform: translate(
+        calc(var(--travel, 28px) * -0.65),
+        var(--travel, 28px)
+      );
     }
   }
 
@@ -143,7 +146,6 @@
 
   /* Platform glow ring beneath the card */
   @keyframes platformGlow {
-
     0%,
     100% {
       opacity: 0.6;
@@ -155,7 +157,6 @@
       transform: translateX(-50%) scaleX(1.06);
     }
   }
-
 
   @keyframes moveHorizontal {
     0% {
@@ -205,16 +206,22 @@
   position: relative;
   isolation: isolate;
   border-radius: 28px;
-  background: #FFFFFF14;
+  background: #ffffff14;
 }
 
 .id-info-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1px 1px 0 1px;
-  background: linear-gradient(90deg, #EA4335 0%, #F9AB00 33%, #34A853 66%, #4285F4 100%);
+  background: linear-gradient(
+    90deg,
+    #ea4335 0%,
+    #f9ab00 33%,
+    #34a853 66%,
+    #4285f4 100%
+  );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -229,7 +236,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0F0E0E;
+    --background: #0f0e0e;
     --foreground: #ededed;
   }
 }
@@ -247,12 +254,23 @@ body {
 }
 
 .rainbow-border::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1.5px; /* Border thickness */
-  background: linear-gradient(157deg, #FB2C36 0%, #F0B100 5%, #00C950 10%, #2B7FFF 15%, #FFF 50.48%, #2B7FFF 85%, #00C950 90%, #F0B100 95%, #FB2C36 100%);
+  background: linear-gradient(
+    157deg,
+    #fb2c36 0%,
+    #f0b100 5%,
+    #00c950 10%,
+    #2b7fff 15%,
+    #fff 50.48%,
+    #2b7fff 85%,
+    #00c950 90%,
+    #f0b100 95%,
+    #fb2c36 100%
+  );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);

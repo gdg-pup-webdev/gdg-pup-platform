@@ -32,8 +32,8 @@ const FadeInSection = ({
 export function AboutSection() {
   return (
     <div
-      className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16 text-[#ededed] dark [--background:#0F0E0E] [--foreground:#ededed]"
-      style={{ backgroundColor: "rgba(15, 14, 14, 1)" }}
+      className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16"
+      style={{ backgroundColor: "var(--background)" }}
     >
       {/* Decorative Ellipse - Top Left */}
       <div
