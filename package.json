@@ -21,10 +21,11 @@
     "lint": "turbo run lint --filter=!identity-api",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "test": "turbo run test --filter=!identity-api"
+    "test": "turbo run test --filter=!identity-api",
+    "gcs:test": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts",
+    "gcs:test:keep": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts --keep"
   },
-  "devDependencies"
-  : {
+  "devDependencies": {
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "prettier": "3.7.4",
@@ -37,6 +38,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.19.0",
     "@supabase/supabase-js": "^2.98.0",
     "clsx": "^2.1.1",
     "react": "19.2.3",

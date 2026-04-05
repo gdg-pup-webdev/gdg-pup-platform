@@ -56,6 +56,8 @@ next-env.d.ts
 .env.test.local
 .env.production.local
 .env.*
+scripts/gcp-service-account.json
+apps/nexus-api/gcp-service-account.json
 *.pem
 *.key
 *.tfvars
