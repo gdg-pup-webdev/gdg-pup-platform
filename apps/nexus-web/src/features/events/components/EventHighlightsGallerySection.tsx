@@ -3,8 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Text } from "@packages/spark-ui"; 
-import type { Event } from "../types";
+import { Container, Skeleton, Stack, Text } from "@packages/spark-ui"; 
 import { useEvent } from "../hooks/useEvents";
 
 type EventHighlightsGallerySectionProps = {
@@ -14,7 +13,8 @@ type EventHighlightsGallerySectionProps = {
 };
 
 const DESKTOP_TILES_PER_PAGE = 16;
-const MOBILE_SLIDE_WIDTH_PERCENT = 78;
+const MOBILE_INITIAL_VISIBLE = 4;
+const MOBILE_LOAD_MORE_STEP = 4;
 const PLACEHOLDER_TILE_URL = "/pages/events/event-cover.webp";
 const PLACEHOLDER_IMAGES = Array.from(
   { length: DESKTOP_TILES_PER_PAGE * 2 },
@@ -72,13 +72,39 @@ function buildPagerTokens(currentPage: number, totalPages: number): Array<number
   return tokens;
 }
 
+function GallerySkeletonGrid() {
+  return (
+    <div className="animate-pulse w-full">
+      {/* Mobile Stack: 4 items to match initial visible count */}
+      <div className="flex flex-col gap-5 md:hidden">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={`mobile-skeleton-${i}`}
+            className="aspect-video w-full rounded-[10px] bg-white/10 border border-white/5"
+          />
+        ))}
+      </div>
+
+      {/* Desktop Grid: 16 items (4x4) */}
+      <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {Array.from({ length: 16 }).map((_, i) => (
+          <div
+            key={`desktop-skeleton-${i}`}
+            className="aspect-video w-full rounded-[6px] bg-white/10 border border-white/5"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function EventHighlightsGallerySection({
   yearParam,
   eventId,
   title,
 }: EventHighlightsGallerySectionProps) { 
   const [currentPage, setCurrentPage] = useState(1);
-  const [mobileIndex, setMobileIndex] = useState(0);
+  const [mobileVisibleCount, setMobileVisibleCount] = useState(MOBILE_INITIAL_VISIBLE);
 
 
   const {data : eventDetail, error : errorMessage, isLoading} = useEvent(eventId);
@@ -103,10 +129,6 @@ export function EventHighlightsGallerySection({
     setCurrentPage((prev) => Math.min(prev, desktopTotalPages));
   }, [desktopTotalPages]);
 
-  useEffect(() => {
-    setMobileIndex((prev) => Math.min(prev, Math.max(galleryImages.length - 1, 0)));
-  }, [galleryImages.length]);
-
   const desktopImages = useMemo(() => {
     const from = (currentPage - 1) * DESKTOP_TILES_PER_PAGE;
     return galleryImages.slice(from, from + DESKTOP_TILES_PER_PAGE);
@@ -119,8 +141,6 @@ export function EventHighlightsGallerySection({
 
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < desktopTotalPages;
-  const canGoMobilePrev = mobileIndex > 0;
-  const canGoMobileNext = mobileIndex < galleryImages.length - 1;
 
   return (
     <div
@@ -270,16 +290,26 @@ export function EventHighlightsGallerySection({
           </Link>
 
           <Stack gap="lg" className="items-center !gap-5 md:!gap-6 pt-6 md:pt-8">
-            <Text
-              variant="heading-1"
-              align="center"
-              weight="bold"
-              className="text-[1.6rem] sm:text-[2rem] leading-tight md:text-[3.25rem] text-white"
-            >
-              {pageTitle}
-            </Text>
+            {isLoading ? (
+              <Skeleton className="h-9 w-3/4 sm:w-1/2 md:h-14 md:w-3/5 rounded-lg bg-white/10" />
+            ) : (
+              <Text
+                variant="heading-1"
+                align="center"
+                weight="bold"
+                className="text-[1.6rem] sm:text-[2rem] leading-tight md:text-[3.25rem] text-white"
+              >
+                {pageTitle}
+              </Text>
+            )}
 
-            {!isLoading ? (
+            {isLoading ? (
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-3 md:gap-5 w-full">
+                <Skeleton className="h-5 w-20 md:w-24 rounded-full bg-white/10" />
+                <Skeleton className="h-5 w-32 md:w-40 rounded-lg bg-white/10" />
+                <Skeleton className="h-5 w-24 md:w-28 rounded-lg bg-white/10" />
+              </div>
+            ) : (
               <div className="mt-2 md:mt-2 flex flex-nowrap items-center justify-center gap-2 md:gap-5 text-white/85 overflow-hidden">
                 <span className="rounded-full bg-[#F9AB00] text-black text-[8px] md:text-xs font-semibold px-2 py-0.5 uppercase tracking-wide whitespace-nowrap shrink-0">
                   {tag}
@@ -309,7 +339,7 @@ export function EventHighlightsGallerySection({
                   <span className="truncate">{venue}</span>
                 </span>
               </div>
-            ) : null}
+            )}
 
             <Text
               variant="body"
@@ -324,15 +354,7 @@ export function EventHighlightsGallerySection({
           </Stack>
 
           <Stack gap="lg" className="!gap-7 md:!gap-7 pb-3">
-            {isLoading ? (
-              <Text
-                variant="body"
-                align="center"
-                className="text-white/70 text-xs md:text-sm"
-              >
-                Loading event metadata...
-              </Text>
-            ) : errorMessage ? (
+            {errorMessage ? (
               <Text
                 variant="body"
                 align="center"
@@ -341,83 +363,43 @@ export function EventHighlightsGallerySection({
                 Event details unavailable. Showing placeholder gallery.
               </Text>
             ) : null}
+
+            {isLoading ? (
+              <div className="px-0 md:px-16">
+                <GallerySkeletonGrid />
+              </div>
+            ) : (
+              <>
             <div className="md:hidden mt-2">
-              <div className="overflow-hidden">
-                <div
-                  className="flex gap-3 transition-transform duration-500 ease-out"
-                  style={{
-                    transform: `translateX(calc((100% - ${MOBILE_SLIDE_WIDTH_PERCENT}%) / 2 - ${mobileIndex} * (${MOBILE_SLIDE_WIDTH_PERCENT}% + 0.75rem)))`,
-                  }}
-                >
-                  {galleryImages.map((src, index) => (
-                    <div
-                      key={`${src}-${index}`}
-                      className="relative shrink-0 overflow-hidden rounded-[10px] border border-white/15 bg-black/30 aspect-[16/9]"
-                      style={{ width: `${MOBILE_SLIDE_WIDTH_PERCENT}%` }}
-                      aria-hidden={index !== mobileIndex}
-                    >
-                      <Image
-                        src={src}
-                        alt={`${eventTitle} highlight ${index + 1}`}
-                        fill
-                        sizes="78vw"
-                        className="object-cover"
-                        priority={index === 0}
-                      />
-                    </div>
-                  ))}
-                </div>
+              <div className="flex flex-col gap-5">
+                {galleryImages.slice(0, mobileVisibleCount).map((src, index) => (
+                  <div
+                    key={`${src}-${index}`}
+                    className="relative w-full overflow-hidden rounded-[10px] border border-white/15 bg-black/30 aspect-video"
+                  >
+                    <Image
+                      src={src}
+                      alt={`${eventTitle} highlight ${index + 1}`}
+                      fill
+                      sizes="92vw"
+                      className="object-cover"
+                      priority={index < 2}
+                    />
+                  </div>
+                ))}
               </div>
 
-              {galleryImages.length > 1 ? (
-                <div className="mt-5 flex items-center justify-center gap-6 text-white">
+              {mobileVisibleCount < galleryImages.length && (
+                <div className="mt-8">
                   <button
                     type="button"
-                    aria-label="Previous slide"
-                    disabled={!canGoMobilePrev}
-                    onClick={() => setMobileIndex((index) => Math.max(0, index - 1))}
-                    className="h-9 w-9 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
+                    onClick={() => setMobileVisibleCount((prev) => prev + MOBILE_LOAD_MORE_STEP)}
+                    className="w-full py-3.5 border border-white/30 rounded-xl text-white text-sm font-medium hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer flex items-center justify-center font-outfit"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.3"
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    >
-                      <path d="M15 18l-6-6 6-6" />
-                    </svg>
-                  </button>
-                  <span className="text-base font-medium">
-                    {mobileIndex + 1} of {galleryImages.length}
-                  </span>
-                  <button
-                    type="button"
-                    aria-label="Next slide"
-                    disabled={!canGoMobileNext}
-                    onClick={() =>
-                      setMobileIndex((index) =>
-                        Math.min(galleryImages.length - 1, index + 1),
-                      )
-                    }
-                    className="h-9 w-9 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.3"
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    >
-                      <path d="M9 6l6 6-6 6" />
-                    </svg>
+                    Load more
                   </button>
                 </div>
-              ) : null}
+              )}
             </div>
 
             <div className="relative px-10 md:px-16 hidden md:block">
@@ -465,7 +447,7 @@ export function EventHighlightsGallerySection({
                   {desktopImages.map((src, index) => (
                     <div
                       key={`${src}-${index}`}
-                      className="relative overflow-hidden rounded-[6px] border border-white/10 bg-black/30 aspect-[16/9]"
+                      className="relative overflow-hidden rounded-[6px] border border-white/10 bg-black/30 aspect-video"
                     >
                       <Image
                         src={src}
@@ -479,8 +461,10 @@ export function EventHighlightsGallerySection({
                   ))}
                 </div>
               </div>
+            </>
+          )}
 
-            {desktopTotalPages > 1 ? (
+            {desktopTotalPages > 1 && !isLoading ? (
               <div className="hidden md:flex items-center justify-center gap-2 text-sm md:text-base text-white/80 select-none">
                 {pagerTokens.map((token, index) => {
                   if (token === "...") {

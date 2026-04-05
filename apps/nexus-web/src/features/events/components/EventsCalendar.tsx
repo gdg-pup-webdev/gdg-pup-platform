@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Card, Text } from "@packages/spark-ui";
+import { Card, Text, Skeleton } from "@packages/spark-ui";
 import { useEvents } from "../hooks/useEvents";
 import type { Event } from "../types";
 import { cn } from "@/lib/utils";
@@ -25,9 +25,7 @@ function toLocalDateKey(date: Date): string {
 
 function getEventRouteId(event: Event): string {
   const rawId =
-    event.id ||
-    event.bevyPreviewUrl ||
-    `${event.start_date}-${event.title}`;
+    event.id || event.bevyPreviewUrl || `${event.start_date}-${event.title}`;
 
   return String(rawId).trim();
 }
@@ -103,39 +101,69 @@ function buildMonthCells(year: number, monthIndex: number): CalendarCell[] {
 
 const EVENT_SEQUENCE_GRADIENTS = [
   {
-    default: "linear-gradient(90deg, rgba(1, 102, 48, 1) 0%, rgba(0, 201, 80, 1) 50%, rgba(1, 102, 48, 1) 100%)",
-    hover: "linear-gradient(0deg, rgba(92, 219, 109, 1) 0%, rgba(49, 117, 58, 1) 100%)",
+    default:
+      "linear-gradient(90deg, rgba(1, 102, 48, 1) 0%, rgba(0, 201, 80, 1) 50%, rgba(1, 102, 48, 1) 100%)",
+    hover:
+      "linear-gradient(0deg, rgba(92, 219, 109, 1) 0%, rgba(49, 117, 58, 1) 100%)",
     border: "rgba(0, 201, 80, 1)",
     mobileLabelColor: "rgba(1, 102, 48, 1)",
   },
   {
-    default: "linear-gradient(90deg, rgba(130, 24, 26, 1) 0%, rgba(234, 67, 53, 1) 50%, rgba(130, 24, 26, 1) 100%)",
-    hover: "linear-gradient(0deg, rgba(234, 67, 53, 1) 0%, rgba(132, 38, 30, 1) 100%)",
+    default:
+      "linear-gradient(90deg, rgba(130, 24, 26, 1) 0%, rgba(234, 67, 53, 1) 50%, rgba(130, 24, 26, 1) 100%)",
+    hover:
+      "linear-gradient(0deg, rgba(234, 67, 53, 1) 0%, rgba(132, 38, 30, 1) 100%)",
     border: "rgba(251, 44, 54, 1)",
     mobileLabelColor: "rgba(130, 24, 26, 1)",
   },
   {
-    default: "linear-gradient(90deg, rgba(142, 114, 0, 1) 0%, rgba(240, 177, 0, 1) 50%, rgba(142, 114, 0, 1) 100%)",
-    hover: "linear-gradient(0deg, rgba(255, 212, 39, 1) 0%, rgba(153, 127, 23, 1) 100%)",
+    default:
+      "linear-gradient(90deg, rgba(142, 114, 0, 1) 0%, rgba(240, 177, 0, 1) 50%, rgba(142, 114, 0, 1) 100%)",
+    hover:
+      "linear-gradient(0deg, rgba(255, 212, 39, 1) 0%, rgba(153, 127, 23, 1) 100%)",
     border: "rgba(240, 177, 0, 1)",
     mobileLabelColor: "rgba(142, 114, 0, 1)",
   },
   {
-    default: "linear-gradient(90deg, rgba(22, 36, 86, 1) 0%, rgba(43, 127, 255, 1) 50%, rgba(22, 36, 86, 1) 100%)",
-    hover: "linear-gradient(0deg, rgba(81, 162, 255, 1) 0%, rgba(21, 93, 252, 1) 100%)",
+    default:
+      "linear-gradient(90deg, rgba(22, 36, 86, 1) 0%, rgba(43, 127, 255, 1) 50%, rgba(22, 36, 86, 1) 100%)",
+    hover:
+      "linear-gradient(0deg, rgba(81, 162, 255, 1) 0%, rgba(21, 93, 252, 1) 100%)",
     border: "rgba(43, 127, 255, 1)",
     mobileLabelColor: "rgba(22, 36, 86, 1)",
   },
 ];
 
-export function EventsCalendar() {
-  const [selectedMobileEvent, setSelectedMobileEvent] = useState<Event | null>(null);
+function EventSkeleton() {
+  return (
+    <div className="absolute inset-0 z-10 overflow-hidden">
+      <div className="absolute inset-0 animate-pulse opacity-70 bg-muted" />
+      <div className="relative z-20 h-full md:p-2 flex flex-col">
+        <div className="mt-auto space-y-1 md:space-y-2">
+          <Skeleton className="h-1.5 md:h-3 w-4/5 bg-black/15 border-none" />
+          <Skeleton className="h-1.5 md:h-3 w-1/2 bg-black/10 border-none" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function EventsCalendar({ randomSeed }: { randomSeed?: number }) {
+  const [selectedMobileEvent, setSelectedMobileEvent] = useState<Event | null>(
+    null,
+  );
   const now = useMemo(() => new Date(), []);
   const year = now.getFullYear();
   const monthIndex = now.getMonth();
 
-  const monthStart = useMemo(() => new Date(year, monthIndex, 1, 0, 0, 0, 0), [year, monthIndex]);
-  const monthEnd = useMemo(() => new Date(year, monthIndex + 1, 0, 23, 59, 59, 999), [year, monthIndex]);
+  const monthStart = useMemo(
+    () => new Date(year, monthIndex, 1, 0, 0, 0, 0),
+    [year, monthIndex],
+  );
+  const monthEnd = useMemo(
+    () => new Date(year, monthIndex + 1, 0, 23, 59, 59, 999),
+    [year, monthIndex],
+  );
 
   const { data, isLoading, error } = useEvents({
     pageNumber: 1,
@@ -149,7 +177,10 @@ export function EventsCalendar() {
     [now],
   );
 
-  const cells = useMemo(() => buildMonthCells(year, monthIndex), [year, monthIndex]);
+  const cells = useMemo(
+    () => buildMonthCells(year, monthIndex),
+    [year, monthIndex],
+  );
 
   const eventsByDate = useMemo(() => {
     const map = new Map<string, Event[]>();
@@ -181,14 +212,57 @@ export function EventsCalendar() {
 
     const map = new Map<
       string,
-      { default: string; hover: string; border: string; mobileLabelColor: string }
+      {
+        default: string;
+        hover: string;
+        border: string;
+        mobileLabelColor: string;
+      }
     >();
     dateKeys.forEach((key, index) => {
-      map.set(key, EVENT_SEQUENCE_GRADIENTS[index % EVENT_SEQUENCE_GRADIENTS.length]);
+      map.set(
+        key,
+        EVENT_SEQUENCE_GRADIENTS[index % EVENT_SEQUENCE_GRADIENTS.length],
+      );
     });
 
     return map;
   }, [eventsByDate, year, monthIndex]);
+
+  const skeletonIndices = useMemo(() => {
+    if (!isLoading) return new Set<number>();
+
+    const currentMonthIndices = cells
+      .map((cell, idx) => (cell.isCurrentMonth ? idx : -1))
+      .filter((idx) => idx !== -1);
+
+    // Use the randomSeed from server if available, otherwise fallback to month-based seed
+    const seed = randomSeed ?? year * 100 + monthIndex;
+
+    // Deterministic pseudo-random selection based on the seed
+    const getPseudoRandom = (s: number) => {
+      const x = Math.sin(s) * 10000;
+      return x - Math.floor(x);
+    };
+
+    // Pick a random count between 4 and 9 inclusive
+    const countRand = getPseudoRandom(seed + 999);
+    const count = Math.min(
+      Math.floor(countRand * 6) + 4,
+      currentMonthIndices.length,
+    );
+
+    const selected = new Set<number>();
+    const available = [...currentMonthIndices];
+    for (let i = 0; i < count; i++) {
+      const rand = getPseudoRandom(seed + i);
+      const pickIdx = Math.floor(rand * available.length);
+      selected.add(available[pickIdx]);
+      available.splice(pickIdx, 1);
+    }
+
+    return selected;
+  }, [isLoading, cells, randomSeed, year, monthIndex]);
 
   useEffect(() => {
     if (!selectedMobileEvent) return;
@@ -211,15 +285,14 @@ export function EventsCalendar() {
   return (
     <>
       <div className="w-[calc(100%+1rem)] -mx-2 md:w-full md:mx-0 mt-5 md:mt-8">
-        <Text variant="heading-5" weight="semibold" gradient="white-green" className="mb-1 md:mb-3 text-[1.35rem] sm:text-[1.55rem] md:text-[2rem]">
+        <Text
+          variant="heading-5"
+          weight="semibold"
+          gradient="white-green"
+          className="mb-1 md:mb-3 text-[1.35rem] sm:text-[1.55rem] md:text-[2rem]"
+        >
           {monthLabel}
         </Text>
-
-        {isLoading && (
-          <Text variant="body-sm" className="text-white/70 mb-2">
-            Loading events...
-          </Text>
-        )}
 
         {error && !isLoading && (
           <div className="mb-2">
@@ -227,7 +300,9 @@ export function EventsCalendar() {
               Failed to load events for this month.
             </Text>
             <Text variant="caption" className="text-red-200/85">
-              {error instanceof Error ? error.message : "Unknown request error."}
+              {error instanceof Error
+                ? error.message
+                : "Unknown request error."}
             </Text>
           </div>
         )}
@@ -240,7 +315,9 @@ export function EventsCalendar() {
                 className="h-7 md:h-8 px-1 md:px-2 flex items-center border-r border-white/20 last:border-r-0"
                 style={{ backgroundColor: "rgba(64, 64, 64, 1)" }}
               >
-                <span className="text-[8px] md:text-[11px] text-white/80">{day}</span>
+                <span className="text-[8px] md:text-[11px] text-white/80">
+                  {day}
+                </span>
               </div>
             ))}
           </div>
@@ -249,9 +326,13 @@ export function EventsCalendar() {
             {cells.map((cell) => {
               const dayEvents = eventsByDate.get(cell.key) ?? [];
               const firstEvent = dayEvents[0];
-              const hasEvent = Boolean(firstEvent);
-              const extraCount = dayEvents.length > 1 ? dayEvents.length - 1 : 0;
-              const accentStyle = firstEvent ? eventColorByDate.get(cell.key) : undefined;
+              const isSkeleton = skeletonIndices.has(cells.indexOf(cell));
+              const hasEvent = Boolean(firstEvent) || isSkeleton;
+              const extraCount =
+                dayEvents.length > 1 ? dayEvents.length - 1 : 0;
+              const accentStyle = firstEvent
+                ? eventColorByDate.get(cell.key)
+                : undefined;
 
               return (
                 <div
@@ -259,9 +340,12 @@ export function EventsCalendar() {
                   className={cn(
                     "relative h-16 md:h-32 p-1 md:p-2 border-r border-b border-white/20 overflow-hidden",
                     hasEvent && "group cursor-pointer",
-                    cell.isCurrentMonth ? "bg-[rgba(23,23,23,1)]" : "bg-[rgba(38,38,38,1)]",
+                    cell.isCurrentMonth
+                      ? "bg-[rgba(23,23,23,1)]"
+                      : "bg-[rgba(38,38,38,1)]",
                   )}
                 >
+                  {isSkeleton && <EventSkeleton />}
                   {firstEvent && (
                     <Link
                       href={getEventRouteHref(firstEvent)}
@@ -301,7 +385,11 @@ export function EventsCalendar() {
                     <span
                       className={cn(
                         "text-[10px] md:text-sm",
-                        hasEvent ? "text-black font-semibold" : cell.isCurrentMonth ? "text-white" : "text-white/55",
+                        hasEvent
+                          ? "text-black font-semibold"
+                          : cell.isCurrentMonth
+                            ? "text-white"
+                            : "text-white/55",
                       )}
                     >
                       {String(cell.date.getDate()).padStart(2, "0")}
@@ -328,7 +416,13 @@ export function EventsCalendar() {
                           Event
                         </p>
                         <p className="hidden md:flex text-[8px] md:text-[10px] font-semibold text-black/75 truncate items-center gap-1 group-hover:hidden">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-2 w-2 md:h-2.5 md:w-2.5 shrink-0" aria-hidden="true">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="h-2 w-2 md:h-2.5 md:w-2.5 shrink-0"
+                            aria-hidden="true"
+                          >
                             <path d="M12 2a7 7 0 0 0-7 7c0 4.7 5.1 11.5 6.4 13.1a.8.8 0 0 0 1.2 0C13.9 20.5 19 13.7 19 9a7 7 0 0 0-7-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
                           </svg>
                           <span>{firstEvent.venue || "Location"}</span>
@@ -364,7 +458,10 @@ export function EventsCalendar() {
             }}
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="rounded-[11px] p-3 relative" style={{ backgroundColor: "rgba(1, 11, 29, 1)" }}>
+            <div
+              className="rounded-[11px] p-3 relative"
+              style={{ backgroundColor: "rgba(1, 11, 29, 1)" }}
+            >
               <button
                 type="button"
                 onClick={() => setSelectedMobileEvent(null)}
@@ -375,16 +472,21 @@ export function EventsCalendar() {
               </button>
 
               {(() => {
-                const { primary, secondary } = splitEventTitle(selectedMobileEvent.title);
+                const { primary, secondary } = splitEventTitle(
+                  selectedMobileEvent.title,
+                );
                 const themes =
-                  selectedMobileEvent.tags?.filter((tag) => Boolean(tag?.trim())) ||
-                  (selectedMobileEvent.category ? [selectedMobileEvent.category] : []);
-                const about =
-                  normalizeEventDescription(
+                  selectedMobileEvent.tags?.filter((tag) =>
+                    Boolean(tag?.trim()),
+                  ) ||
+                  (selectedMobileEvent.category
+                    ? [selectedMobileEvent.category]
+                    : []);
+                const about = normalizeEventDescription(
+                  selectedMobileEvent.short_description?.trim() ||
                     selectedMobileEvent.short_description?.trim() ||
-                      selectedMobileEvent.short_description?.trim() ||
-                      "Description will be available soon.",
-                  );
+                    "Description will be available soon.",
+                );
 
                 return (
                   <div>
@@ -436,44 +538,66 @@ export function EventsCalendar() {
                           "linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(65, 65, 65, 1) 50%, rgba(0, 0, 0, 1) 100%)",
                       }}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5 text-white" aria-hidden="true">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="h-3.5 w-3.5 text-white"
+                        aria-hidden="true"
+                      >
                         <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm12 8H5v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8Z" />
                       </svg>
                       <span className="text-white/85 text-[11px] leading-none">
-                        {formatDateBar(selectedMobileEvent.start_date || "", selectedMobileEvent.end_date || "")}
+                        {formatDateBar(
+                          selectedMobileEvent.start_date || "",
+                          selectedMobileEvent.end_date || "",
+                        )}
                       </span>
                     </div>
 
-                    <Text variant="body-sm" weight="semibold" className="text-white mb-1.5">
+                    <Text
+                      variant="body-sm"
+                      weight="semibold"
+                      className="text-white mb-1.5"
+                    >
                       Key Themes
                     </Text>
                     <div className="flex flex-wrap gap-1.5 mb-3">
-                      {(themes.length > 0 ? themes.slice(0, 4) : ["TBD"]).map((theme) => (
-                        <span
-                          key={theme}
-                          className="inline-flex rounded-full p-[1px]"
-                          style={{
-                            background:
-                              "linear-gradient(90deg, rgba(234,67,53,1) 0%, rgba(249,171,0,1) 33%, rgba(52,168,83,1) 66%, rgba(66,133,244,1) 100%)",
-                          }}
-                        >
+                      {(themes.length > 0 ? themes.slice(0, 4) : ["TBD"]).map(
+                        (theme) => (
                           <span
-                            className="inline-flex rounded-full text-white text-[11px] px-2.5 py-0.5"
+                            key={theme}
+                            className="inline-flex rounded-full p-[1px]"
                             style={{
-                              backgroundColor: "rgba(0, 0, 0, 0.82)",
-                              backgroundImage: "none",
+                              background:
+                                "linear-gradient(90deg, rgba(234,67,53,1) 0%, rgba(249,171,0,1) 33%, rgba(52,168,83,1) 66%, rgba(66,133,244,1) 100%)",
                             }}
                           >
-                            {theme}
+                            <span
+                              className="inline-flex rounded-full text-white text-[11px] px-2.5 py-0.5"
+                              style={{
+                                backgroundColor: "rgba(0, 0, 0, 0.82)",
+                                backgroundImage: "none",
+                              }}
+                            >
+                              {theme}
+                            </span>
                           </span>
-                        </span>
-                      ))}
+                        ),
+                      )}
                     </div>
 
-                    <Text variant="body-sm" weight="semibold" className="text-white mb-1">
+                    <Text
+                      variant="body-sm"
+                      weight="semibold"
+                      className="text-white mb-1"
+                    >
                       What is this event about?
                     </Text>
-                    <Text variant="caption" className="text-white/80 line-clamp-4 mb-4">
+                    <Text
+                      variant="caption"
+                      className="text-white/80 line-clamp-4 mb-4"
+                    >
                       {about}
                     </Text>
 
