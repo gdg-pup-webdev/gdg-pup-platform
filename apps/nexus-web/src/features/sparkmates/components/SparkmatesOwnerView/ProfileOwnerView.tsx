@@ -128,7 +128,8 @@ export function ProfileOwnerView({
             {userprofile && <NameAndProfileSection profile={userprofile} />}
 
             <div className="mt-8 space-y-8">
-              {userprofile && <CustomButtonsSection profile={userprofile} />}
+
+              {/* {userprofile && <CustomButtonsSection profile={userprofile} />} */}
               <Divider />
 
               {userprofile && <SkillsAndLinksSection profile={userprofile} />}
@@ -139,11 +140,11 @@ export function ProfileOwnerView({
 
               <Divider />
 
-              {userprofile && <ImpactSection profile={userprofile} />}
+              {/* {userprofile && <ImpactSection profile={userprofile} />} */}
 
-              <Divider />
+              {/* <Divider /> */}
 
-              {userprofile && <BadgesSection profile={userprofile} />}
+              {/* {userprofile && <BadgesSection profile={userprofile} />} */}
             </div>
           </FadeInSection>
 
