@@ -13,18 +13,19 @@ const ARTICLE_COLOR_MAP: Record<string, {
   blob: string;
   border: string;
   accent: string;
+  year: string;
 }> = {
-  "a5e895ea-1223-4958-af05-1319cc98ec0a": { blob: "#4DB368CC", border: "#00C950", accent: "#00C950" }, // The Spark — green
-  "3e672b68-5890-4990-86a8-4622e019e7d3": { blob: "#F9AB00B3", border: "#F0B100", accent: "#F0B100" }, // Year One — yellow
-  "55cf5ee1-1ab1-4a9d-b9d0-497d644baa53": { blob: "#EA4335BF", border: "#EA4335", accent: "#EA4335" }, // Year Two — red
-  "aa4ec512-a068-4866-ba5d-8bf9bb90325c": { blob: "#4285F4B3", border: "#2B7FFF", accent: "#2B7FFF" }, // Year Three — blue
-  "e5c96ec3-71c2-4e36-b065-0105aee46a08": { blob: "#4DB368CC", border: "#00C950", accent: "#00C950" }, // The Impact — green
-  "1713f93d-558b-4eab-9530-29d0770080f9": { blob: "#F9AB00B3", border: "#F0B100", accent: "#F0B100" }, // Living Community — yellow
-  "f946e2dd-e0e2-41f2-9329-360b5dc44c2c": { blob: "#EA4335BF", border: "#EA4335", accent: "#EA4335" }, // Your Chapter — red
+  "a5e895ea-1223-4958-af05-1319cc98ec0a": { blob: "#4DB368CC", border: "#00C950", accent: "#00C950", year: "2022" }, // The Spark — green
+  "3e672b68-5890-4990-86a8-4622e019e7d3": { blob: "#F9AB00B3", border: "#F0B100", accent: "#F0B100", year: "2022-2023" }, // Year One — yellow
+  "55cf5ee1-1ab1-4a9d-b9d0-497d644baa53": { blob: "#EA4335BF", border: "#EA4335", accent: "#EA4335", year: "2023-2024" }, // Year Two — red
+  "aa4ec512-a068-4866-ba5d-8bf9bb90325c": { blob: "#4285F4B3", border: "#2B7FFF", accent: "#2B7FFF", year: "2024-2025" }, // Year Three — blue
+  "e5c96ec3-71c2-4e36-b065-0105aee46a08": { blob: "#4DB368CC", border: "#00C950", accent: "#00C950", year: "2025" }, // The Impact — green
+  "1713f93d-558b-4eab-9530-29d0770080f9": { blob: "#F9AB00B3", border: "#F0B100", accent: "#F0B100", year: "2025-2026" }, // Living Community — yellow
+  "f946e2dd-e0e2-41f2-9329-360b5dc44c2c": { blob: "#EA4335BF", border: "#EA4335", accent: "#EA4335", year: "Now is the Moment" }, // Your Chapter — red
 };
 
 // Fallback color if article ID is not in the map
-const DEFAULT_COLOR = { blob: "#4DB368CC", border: "#00C950", accent: "#00C950" };
+const DEFAULT_COLOR = { blob: "#4DB368CC", border: "#00C950", accent: "#00C950", year: "Now is the Moment" };
 
 // ── Read time estimator — estimates reading time based on word count ──
 // Average reading speed: 200 words per minute
@@ -46,8 +47,6 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
   useEffect(() => {
     let mouseX = 0;
     let mouseY = 0;
-    let leftX = 0, leftY = 0;
-    let rightX = 0, rightY = 0;
     let rafId: number;
 
     const onMouseMove = (e: MouseEvent) => {
@@ -257,11 +256,9 @@ return (
               <span className="transition-transform group-hover:-translate-x-1">←</span> 
               Back to History
             </Link>
-            {publishedDate && (
-              <span className="text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/10">
-                {publishedDate} • {readTime} min read
-              </span>
-            )}
+            <span className="text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+              {colors.year} • {readTime} min read
+            </span>
           </div>
 
           {/* ── Article title ── */}
