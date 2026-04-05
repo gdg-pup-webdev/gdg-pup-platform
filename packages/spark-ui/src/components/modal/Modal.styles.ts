@@ -9,7 +9,13 @@ export const modalPanelVariants = cva(
     "rounded-t-2xl",
     "md:rounded-2xl",
     "overflow-hidden",
-    "p-4 md:p-6"
+    "p-4 md:p-6",
+    "[&::-webkit-scrollbar]:w-2",
+    "[&::-webkit-scrollbar-track]:bg-transparent",
+    "[&::-webkit-scrollbar-thumb]:bg-white/20",
+    "[&::-webkit-scrollbar-thumb]:rounded-full",
+    "hover:[&::-webkit-scrollbar-thumb]:bg-white/30",
+    "overscroll-contain"
   ],
   {
     variants: {
@@ -21,7 +27,7 @@ export const modalPanelVariants = cva(
         full: "w-full",
       },
       placement: {
-        adaptive: "mt-auto lg:mb-auto",
+        adaptive: "lg:mt-auto lg:mb-auto",
         bottom: "mt-auto",
         center: ""
       },

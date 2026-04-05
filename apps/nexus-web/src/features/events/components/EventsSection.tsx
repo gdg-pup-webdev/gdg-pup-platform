@@ -2,10 +2,10 @@ import { Container, Stack, Text } from "@packages/spark-ui";
 import { EventsCalendar } from "./EventsCalendar";
 import { EventsGallery } from "./EventsGallery";
 
-export function EventsSection() {
+export function EventsSection({ randomSeed }: { randomSeed?: number }) {
   return (
     <div
-      className="relative overflow-x-hidden pt-36 md:pt-60 pb-14 md:pb-48 px-4 md:px-8 lg:px-16"
+      className="relative overflow-x-clip pt-36 md:pt-60 pb-14 md:pb-48 px-4 md:px-8 lg:px-16"
       style={{ backgroundColor: "rgba(15, 14, 14, 1)" }}
     >
       {/* Mobile blobs */}
@@ -156,7 +156,7 @@ export function EventsSection() {
               the shared effort that builds our community. Every entry on this
               calendar is an invitation to add your story to ours.
             </Text>
-            <EventsCalendar />
+            <EventsCalendar randomSeed={randomSeed} />
           </Stack>
 
           {/* Events Gallery */}

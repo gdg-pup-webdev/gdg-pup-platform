@@ -1,4 +1,4 @@
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
@@ -6,28 +6,35 @@ import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
 import converter from "openapi-to-postmanv2";
 
 let scalarMiddleware: any = null;
+let swaggerSpecCache: any = null;
+
+const getSwaggerSpec = () => {
+  if (!swaggerSpecCache) {
+    const options = generateOpenApiOptions({
+      info: {
+        title: "Nexus API",
+        version: "2.1.0",
+        description: [
+          "Documentation for the GDG PUP Platform Nexus API.",
+          "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
+          "Public endpoints are marked without a lock icon in Swagger.",
+        ].join(" "),
+      },
+      servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
+      generateExample: true,
+    });
+    swaggerSpecCache = swaggerJsdoc(options);
+  }
+  return swaggerSpecCache;
+};
 
 export const loadDocs = (app: Express) => {
-  const options = generateOpenApiOptions({
-    info: {
-      title: "Nexus API",
-      version: "2.1.0",
-      description: [
-        "Documentation for the GDG PUP Platform Nexus API.",
-        "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
-        "Public endpoints are marked without a lock icon in Swagger.",
-      ].join(" "),
-    },
-    servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
-    generateExample: true,
-  });
-
   /**
    * EXPOSE THE OPENAPI DOCUMENT
    */
   app.use("/docs/openapispec.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
-    res.send(swaggerSpec);
+    res.send(getSwaggerSpec());
   });
 
   app.use("/docs/postman-import.json", (req, res) => {
@@ -112,8 +119,6 @@ export const loadDocs = (app: Express) => {
     );
   });
 
-  const swaggerSpec = swaggerJsdoc(options);
-
   /**
    * LOAD SWAGGER UI DOCUMENTATION
    */
@@ -125,16 +130,20 @@ export const loadDocs = (app: Express) => {
       "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
     ],
   };
-  app.use(
-    "/docs/swagger",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, assetOptions),
-  );
+
+  app.use("/docs/swagger", swaggerUi.serve, (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const html = swaggerUi.generateHTML(getSwaggerSpec(), assetOptions);
+      res.send(html);
+    } catch (err) {
+      next(err);
+    }
+  });
 
   /**
    * LOAD STOPLIGHT DOCUMENTATION
    */
-  app.get("/docs/stoplight", (req, res) => {
+  /* app.get("/docs/stoplight", (req, res) => {
     res.send(`
     <!doctype html>
     <html lang="en">
@@ -145,13 +154,13 @@ export const loadDocs = (app: Express) => {
         <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
         <style>
-          /* 1. Wrap text in the CodeMirror editor (Request Body) */
+          /* 1. Wrap text in the CodeMirror editor (Request Body) *\/
           .sl-code-editor .CodeMirror-line {
             white-space: pre-wrap !important;
             word-break: break-all !important;
           }
 
-          /* 2. Wrap text in the Prism highlighter (Response Body & Samples) */
+          /* 2. Wrap text in the Prism highlighter (Response Body & Samples) *\/
           pre[class*="language-"],
           code[class*="language-"],
           .sl-panel--request-body [class*="Prism"], 
@@ -161,13 +170,13 @@ export const loadDocs = (app: Express) => {
             word-break: break-word !important;
           }
 
-          /* 3. Remove horizontal scrollbars that force single-line viewing */
+          /* 3. Remove horizontal scrollbars that force single-line viewing *\/
           .sl-overflow-x-auto {
             overflow-x: hidden !important;
             white-space: pre-wrap !important;
           }
 
-          /* Optional: Set a dark or light background to the body to prevent white flashes */
+          /* Optional: Set a dark or light background to the body to prevent white flashes *\/
           body {
             background-color: #f9fafb;
           }
@@ -182,12 +191,12 @@ export const loadDocs = (app: Express) => {
       </body>
     </html>
   `);
-  });
+  }); */
 
   /**
    * LOAD RAPI-DOC DOCUMENTATION
    */
-  app.get("/docs/rapidoc", (req, res) => {
+  /* app.get("/docs/rapidoc", (req, res) => {
     res.send(`
  <!doctype html> <!-- Important: must specify -->
 <html>
@@ -202,19 +211,24 @@ export const loadDocs = (app: Express) => {
   </body>
 </html>
   `);
-  });
+  }); */
 
   /**
    * (DEFAULT) LOAD SCALAR DOCUMENTATION
    */
   app.use("/docs", async (req, res, next) => {
+    // Prevent scalar from intercepting the static files or sub-paths
+    if (req.path !== "/" && req.path !== "") {
+      return next();
+    }
+
     try {
       if (!scalarMiddleware) {
         // Dynamic import happens here, only when user visits /docs
         const { apiReference } = await import("@scalar/express-api-reference");
         scalarMiddleware = apiReference({
           theme: "default",
-          content: swaggerSpec,
+          content: getSwaggerSpec(),
           darkMode: true,
           hideTestRequestButton: false,
           pageTitle: "Nexus Api Documentation",
@@ -227,12 +241,12 @@ export const loadDocs = (app: Express) => {
     }
   });
 
-  console.log(
-    `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
-  console.log(
-    `postman-import.json is available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
+  // console.log(
+  //   `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
+  // );
+  // console.log(
+  //   `postman-import.json is available at http://localhost:${configs.port}/docs/rapidoc`,
+  // );
   console.log("\n");
   console.log(
     `Scalar API docs available at http://localhost:${configs.port}/docs`,
@@ -240,11 +254,11 @@ export const loadDocs = (app: Express) => {
   console.log(
     `Swagger docs available at http://localhost:${configs.port}/docs/swagger`,
   );
-  console.log(
+  /* console.log(
     `Stoplight docs available at http://localhost:${configs.port}/docs/stoplight`,
   );
   console.log(
     `Rapidoc docs available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
+  ); */
   console.log("\n");
 };
