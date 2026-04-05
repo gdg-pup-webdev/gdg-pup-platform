@@ -44,7 +44,7 @@ export const AuthParallaxBackground = () => {
           transform: 'rotate(42.496deg) translate(' + (mousePosition.x * 12) + 'px, ' + (mousePosition.y * 12) + 'px)'
         }}
       >
-         <Image src="/auth/auth-horizon.png" alt="Horizon Effect" className="object-cover" fill priority />
+         <Image src="/auth/auth-horizon.webp" alt="Horizon Effect" className="object-cover" fill priority />
       </div>
     </div>
   );

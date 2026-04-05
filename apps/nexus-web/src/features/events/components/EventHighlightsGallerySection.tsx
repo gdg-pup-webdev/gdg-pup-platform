@@ -15,7 +15,7 @@ type EventHighlightsGallerySectionProps = {
 
 const DESKTOP_TILES_PER_PAGE = 16;
 const MOBILE_SLIDE_WIDTH_PERCENT = 78;
-const PLACEHOLDER_TILE_URL = "/pages/events/event-cover.png";
+const PLACEHOLDER_TILE_URL = "/pages/events/event-cover.webp";
 const PLACEHOLDER_IMAGES = Array.from(
   { length: DESKTOP_TILES_PER_PAGE * 2 },
   () => PLACEHOLDER_TILE_URL,

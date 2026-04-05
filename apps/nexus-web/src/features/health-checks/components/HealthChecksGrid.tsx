@@ -8,15 +8,14 @@
 import React from 'react';
 import { Container, Grid, Stack, Button } from '@packages/spark-ui';
 import { HealthCheckCard } from './HealthCheckCard';
-import { useNexusHealthCheck, useIdentityHealthCheck } from '../hooks/useHealthChecks';
+import { useNexusHealthCheck  } from '../hooks/useHealthChecks';
 
 /**
  * Displays a grid of health check cards for all APIs
  */
 export function HealthChecksGrid() {
   // Get health check hooks for both APIs
-  const nexusHealth = useNexusHealthCheck();
-  const identityHealth = useIdentityHealthCheck();
+  const nexusHealth = useNexusHealthCheck(); 
 
   return (
     <Container maxWidth="3xl">
@@ -32,16 +31,7 @@ export function HealthChecksGrid() {
             onCheck={nexusHealth.refetch}
             isFetched={nexusHealth.isFetched}
           />
-
-          {/* Identity API Health Check */}
-          <HealthCheckCard
-            apiName="Identity API"
-            data={identityHealth.data}
-            isLoading={identityHealth.isLoading}
-            error={identityHealth.error}
-            onCheck={identityHealth.refetch}
-            isFetched={identityHealth.isFetched}
-          />
+ 
         </Grid>
 
         {/* Optional: Add a "Check All" button */}
@@ -50,10 +40,9 @@ export function HealthChecksGrid() {
             variant="default"
             size="sm"
             onClick={() => {
-              nexusHealth.refetch();
-              identityHealth.refetch();
+              nexusHealth.refetch(); 
             }}
-            disabled={nexusHealth.isLoading || identityHealth.isLoading}
+            disabled={nexusHealth.isLoading }
           >
             Check All APIs
           </Button>

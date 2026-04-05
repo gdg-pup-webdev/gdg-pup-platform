@@ -8,7 +8,7 @@ import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 export const SparkmatesLanding = () => {
   const {  status  } = useAuthContext();
-  const gdgId = "testing";
+  const gdgId = "me";
 
   const portfolioHref = gdgId ? `/sparkmates/${gdgId}` : "/signin";
 

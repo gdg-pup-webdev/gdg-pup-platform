@@ -3,15 +3,20 @@ import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { Team, TeamInsert, TeamUpdate } from "../types";
 import { getCookie } from "cookies-next";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 const API_URL = "http://localhost:8000";
 
 export const useTeams = (pageNumber = 1, pageSize = 10) => {
+  const {token } = useAuthContext();
   return useQuery({
     queryKey: ["teams", pageNumber, pageSize],
     queryFn: async () => {
       const res = await callEndpoint(API_URL, contract.api.v1.gdg_teams.GET, {
         query: { pageNumber, pageSize },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (res.status==200) return res; 
@@ -22,6 +27,7 @@ export const useTeams = (pageNumber = 1, pageSize = 10) => {
 };
 
 export const useTeam = (id: string) => {
+  const {token } = useAuthContext();
   return useQuery({
     queryKey: ["team", id],
     queryFn: async () => {
@@ -30,6 +36,9 @@ export const useTeam = (id: string) => {
         contract.api.v1.gdg_teams.gdgTeamId.GET,
         {
           params: { gdgTeamId: id },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
 
@@ -43,12 +52,16 @@ export const useTeam = (id: string) => {
 };
 
 export const useCreateTeam = () => {
+  const {token } = useAuthContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: TeamInsert) => {
       return await callEndpoint(API_URL, contract.api.v1.gdg_teams.POST, {
         body: {
           data,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
     },
@@ -59,6 +72,7 @@ export const useCreateTeam = () => {
 };
 
 export const useUpdateTeam = () => {
+  const {token } = useAuthContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: TeamUpdate }) => {
@@ -68,6 +82,10 @@ export const useUpdateTeam = () => {
         {
           params: { gdgTeamId: id },
           body: { data },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+
         },
       );
       if (res.status !== 200) throw new Error(res.body.message);
@@ -81,6 +99,7 @@ export const useUpdateTeam = () => {
 };
 
 export const useDeleteTeam = () => {
+  const {token } = useAuthContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
@@ -89,6 +108,9 @@ export const useDeleteTeam = () => {
         contract.api.v1.gdg_teams.gdgTeamId.DELETE,
         {
           params: { gdgTeamId: id },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
       if (res.status !== 200) throw new Error(res.body.message);
@@ -105,6 +127,8 @@ export const useDeleteTeam = () => {
 // ==========================================
 
 export const useAddTeamMember = () => {
+  const {token } = useAuthContext();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ teamId, userId, position }: { teamId: string; userId: string; position: string }) => {
@@ -119,6 +143,10 @@ export const useAddTeamMember = () => {
               position,
             },
           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+
         },
       );
       if (res.status !== 200) throw new Error(res.body.message);
@@ -132,6 +160,8 @@ export const useAddTeamMember = () => {
 };
 
 export const useUpdateTeamMember = () => {
+  const {token } = useAuthContext();
+
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ teamId, memberId, position }: { teamId: string; memberId: string; position: string }) => {
@@ -145,6 +175,10 @@ export const useUpdateTeamMember = () => {
               position,
             },
           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+
         },
       );
       if (res.status !== 200) throw new Error(res.body.message);
@@ -158,6 +192,7 @@ export const useUpdateTeamMember = () => {
 };
 
 export const useRemoveTeamMember = () => {
+  const {token } = useAuthContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ teamId, memberId }: { teamId: string; memberId: string }) => {
@@ -166,6 +201,9 @@ export const useRemoveTeamMember = () => {
         contract.api.v1.gdg_teams.gdgTeamId.members.memberId.DELETE,
         {
           params: { gdgTeamId: teamId, memberId },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
       if (res.status !== 200) throw new Error(res.body.message);
@@ -183,11 +221,18 @@ export const useRemoveTeamMember = () => {
 // ==========================================
 
 export const useUsers = (pageNumber = 1, pageSize = 20) => {
+  const {token } = useAuthContext();
   return useQuery({
     queryKey: ["users", pageNumber, pageSize],
     queryFn: async () => {
-      const res = await callEndpoint(API_URL, contract.api.v1.users.GET, {
-        query: { pageNumber, pageSize, sortBy: "name", sortDirection: "asc" },
+      const res = await callEndpoint(API_URL, contract.api.v1.gdgmembers.GET, {
+        query: { pageNumber, pageSize,
+          //  sortBy: "name",
+            // sortDirection: "asc"
+           },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (res.status !== 200) throw new Error(res.body.message);
       return res;
@@ -196,11 +241,16 @@ export const useUsers = (pageNumber = 1, pageSize = 20) => {
 };
 
 export const useSearchUsers = (query: string) => {
+  
+  const {token } = useAuthContext();
   return useQuery({
     queryKey: ["users", "search", query],
     queryFn: async () => {
-      const res = await callEndpoint(API_URL, contract.api.v1.users.search.GET, {
-        query: { q: query, limit: "10" },
+      const res = await callEndpoint(API_URL, contract.api.v1.gdgmembers.GET, {
+        query: { search: query, pageNumber: 1, pageSize: 10 },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       });
       if (res.status !== 200) throw new Error(res.body.message);
       return res;
@@ -210,11 +260,16 @@ export const useSearchUsers = (query: string) => {
 };
 
 export const useSearchTeams = (query: string) => {
+  
+  const {token } = useAuthContext();
   return useQuery({
     queryKey: ["teams", "search", query],
     queryFn: async () => {
       const res = await callEndpoint(API_URL, contract.api.v1.gdg_teams.search.GET, {
         query: { q: query, limit: "10" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       });
       if (res.status !== 200) throw new Error(res.body.message);
       return res;

@@ -40,7 +40,7 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
       />
       <img
         className="w-auto h-auto absolute bottom-0 right-0"
-        src="/products/RL-gold-2.png"
+        src="/products/RL-gold-2.webp"
         alt=""
       />
 
@@ -91,7 +91,7 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
             <div className="w-full mt-20 flex flex-col items-center">
               <div className="w-full flex justify-center">
                 <Image
-                  src="/products/ui-ux-logo.png"
+                  src="/products/ui-ux-logo.webp"
                   alt={`${teamName} team`}
                   width={900}
                   height={500}

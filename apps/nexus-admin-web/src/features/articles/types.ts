@@ -6,4 +6,4 @@ export type ArticleInsert = models.v1.articles.record.articleRecordInsertDTO;
 
 export type ArticleUpdate = models.v1.articles.record.articleRecordUpdateDTO;
 
-export type UserType = contract.api.v1.users.search.GET.response[200]["data"][0];
+export type UserType = contract.api.v1.gdgmembers.GET.response[200]["data"][0];

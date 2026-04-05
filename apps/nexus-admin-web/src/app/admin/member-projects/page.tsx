@@ -1,20 +1,54 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { MemberProjectList } from "@/features/member-projects/components/MemberProjectList";
-import { ProjectFormModal, DeleteConfirmModal, ProjectViewModal } from "@/features/member-projects/components/MemberProjectModals";
+import { ProjectFormModal, ProjectViewModal, DeleteConfirmModal } from "@/features/member-projects/components/MemberProjectModals";
 import { useCreateMemberProject } from "@/features/member-projects/hooks/useCreateMemberProject";
-import { useUpdateMemberProject } from "@/features/member-projects/hooks/useUpdateMemberProject";
 import { useDeleteMemberProject } from "@/features/member-projects/hooks/useDeleteMemberProject";
-import { MemberProject, CreateMemberProjectDTO, UpdateMemberProjectDTO } from "@/features/member-projects/types";
+import { useUpdateMemberProject } from "@/features/member-projects/hooks/useUpdateMemberProject";
+import { useMemberProject } from "@/features/member-projects/hooks/useMemberProject";
+import { CreateMemberProjectDTO, MemberProject, UpdateMemberProjectDTO } from "@/features/member-projects/types";
 import { toast } from "react-toastify";
+import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export default function MemberProjectsPage() {
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<MemberProject | undefined>(undefined);
+  const { getString, setQueryParams } = useAdminQueryParams();
+  const modal = getString("modal", "");
+  const selectedProjectId = getString("itemId", "");
+
+  const [selectedProjectSnapshot, setSelectedProjectSnapshot] = useState<MemberProject | undefined>(undefined);
+  const { data: selectedProjectResponse } = useMemberProject(selectedProjectId);
+
+  const selectedProject = useMemo(() => {
+    const hydrated = ((selectedProjectResponse as any)?.data || selectedProjectResponse) as MemberProject | undefined;
+
+    if (hydrated?.id) {
+      return hydrated;
+    }
+
+    if (selectedProjectSnapshot?.id === selectedProjectId) {
+      return selectedProjectSnapshot;
+    }
+
+    return selectedProjectSnapshot;
+  }, [selectedProjectId, selectedProjectResponse, selectedProjectSnapshot]);
+
+  const isFormModalOpen = modal === "create" || modal === "edit";
+  const isDeleteModalOpen = modal === "delete";
+  const isViewModalOpen = modal === "view";
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, project?: MemberProject) => {
+    setSelectedProjectSnapshot(project);
+    setQueryParams({
+      modal: nextModal,
+      itemId: project?.id || null,
+    });
+  };
 
   // Mutations
   const createMutation = useCreateMemberProject();
@@ -22,23 +56,31 @@ export default function MemberProjectsPage() {
   const deleteMutation = useDeleteMemberProject();
 
   const handleCreate = () => {
-    setSelectedProject(undefined);
-    setIsFormModalOpen(true);
+    setSelectedProjectSnapshot(undefined);
+    openModal("create");
   };
 
   const handleEdit = (project: MemberProject) => {
-    setSelectedProject(project);
-    setIsFormModalOpen(true);
+    openModal("edit", project);
   };
 
   const handleDelete = (project: MemberProject) => {
-    setSelectedProject(project);
-    setIsDeleteModalOpen(true);
+    openModal("delete", project);
   };
 
   const handleView = (project: MemberProject) => {
-    setSelectedProject(project);
-    setIsViewModalOpen(true);
+    openModal("view", project);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedProject) return;
+    try {
+      await deleteMutation.mutateAsync(selectedProject.id);
+      toast.success("Project deleted successfully");
+      closeModal();
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred while deleting the project");
+    }
   };
 
   const handleFormSubmit = async (
@@ -60,27 +102,15 @@ export default function MemberProjectsPage() {
         });
         toast.success("Project created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (error: any) {
       toast.error(error.message || "An error occurred while saving the project");
     }
   };
 
-  const handleDeleteConfirm = async () => {
-    if (selectedProject) {
-      try {
-        await deleteMutation.mutateAsync(selectedProject.id);
-        toast.success("Project deleted successfully");
-        setIsDeleteModalOpen(false);
-      } catch (error: any) {
-        toast.error(error.message || "An error occurred while deleting the project");
-      }
-    }
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <MemberProjectList 
+    <AdminPageScaffold pageKey="memberProjects">
+      <MemberProjectList
         onCreate={handleCreate}
         onEdit={handleEdit}
         onDelete={handleDelete}
@@ -90,25 +120,27 @@ export default function MemberProjectsPage() {
       {/* Modals */}
       <ProjectFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedProject}
+        initialData={modal === "edit" ? selectedProject : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteConfirm}
-        itemName={selectedProject?.title || ""}
+        onClose={closeModal}
+        onConfirm={handleConfirmDelete}
         isDeleting={deleteMutation.isPending}
+        itemName={selectedProject?.title || "this project"}
       />
 
       <ProjectViewModal
         isOpen={isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
+        onClose={closeModal}
         project={selectedProject || null}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
-    </div>
+    </AdminPageScaffold>
   );
 }

@@ -11,7 +11,7 @@ type GalleryItem = {
 };
 
 const CARD_GAP_PX = 16;
-const PREVIEW_IMAGE_PATH = "/pages/events/gallery-preview-year.svg";
+const PREVIEW_IMAGE_PATH = "/pages/events/gallery-preview-year.webp";
 const BORDER_GRADIENT =
   "linear-gradient(92.56deg, #EA4335 -7.33%, #F9AB00 33.65%, #34A853 72.08%, #4285F4 109.62%)";
 

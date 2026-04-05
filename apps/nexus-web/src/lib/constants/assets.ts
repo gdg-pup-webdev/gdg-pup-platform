@@ -96,7 +96,7 @@ export const ASSETS = {
             /** Left decorative SVG element in benefits section */
             DECOR_LEFT: "/about/about-benefits-decor-left.svg",
             /** Right decorative SVG element in benefits section */
-            DECOR_RIGHT: "/about/about-benefits-decor-right.svg",
+            DECOR_RIGHT: "/about/about-benefits-decor-right.webp",
         },
         WHO: {
             MASCOT_1: "/about/about-who-mascot-1.webp",
@@ -287,7 +287,7 @@ export const ASSETS = {
         /** Cirby sticker mascot shown in the CTA card */
         CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
         /** Figma decorative floating assets */
-        DECOR_ASSET_1: "/partners/decor-asset-1.png",
+        DECOR_ASSET_1: "/partners/decor-asset-1.webp",
         DECOR_ASSET_2: "/partners/decor-asset-2.png",
         DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
         DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
@@ -321,11 +321,15 @@ export const ASSETS = {
         },
         ICONS: {
             LINK: "/member-showcase/member-showcase-link.svg",
-            SPOTLIGHT_PLACEHOLDER: "/member-showcase/member-showcase-spotlight-placeholder.svg",
-            SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.svg",
+            SPOTLIGHT_PLACEHOLDER: "/member-showcase/member-showcase-spotlight-placeholder.webp",
+            SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.webp",
         },
     },
-    PROFILE: {},
+    PROFILE: {
+        AVATAR_RING: "/profile-avatar-ring.png",
+        DEFAULT_AVATAR: "/profile-default-avatar.png",
+        DEFAULT_BADGE: "/profile-badge-default.png",
+    },
     SPARKY_POINTS: {
         SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
         CIRBY_DISPLAY: "/sparky-points/sparkypoints-cirby-display.webp",

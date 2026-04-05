@@ -1,17 +1,14 @@
-import { callEndpoint } from '@packages/typed-rest/clientReact';
-import { contract } from '@packages/nexus-api-contracts';
-import { configs } from '@/configs/servers.config';
 
-export async function getCurrentUserGdgId(userId: string): Promise<string | null> {
-  const result = await callEndpoint(
-    configs.nexusApiBaseUrl,
-    contract.api.v1.users.userId.GET,
-    { params: { userId } }
-  );
+import { useAuthContext } from '@/features/authentication/store/useAuthStore';
 
-  if (result.status === 200) {
-    return result.body.data.gdg_id;
+export async function getCurrentUserGdgId( ): Promise<string | null> {
+
+  const { decodedToken } = useAuthContext();
+
+  if (!decodedToken) {
+    return null;
   }
 
-  throw new Error(result.body.message);
+  return decodedToken.memberInfo.gdgId
+ 
 }
