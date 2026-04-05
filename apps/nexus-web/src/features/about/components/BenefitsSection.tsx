@@ -216,7 +216,7 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
 
 export function BenefitsSection() {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16 bg-[#010B1D]">
+    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
 
       {/* Responsive ellipse styles */}
       <style>{`
