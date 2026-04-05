@@ -1,4 +1,4 @@
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
@@ -6,28 +6,35 @@ import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
 import converter from "openapi-to-postmanv2";
 
 let scalarMiddleware: any = null;
+let swaggerSpecCache: any = null;
+
+const getSwaggerSpec = () => {
+  if (!swaggerSpecCache) {
+    const options = generateOpenApiOptions({
+      info: {
+        title: "Nexus API",
+        version: "2.1.0",
+        description: [
+          "Documentation for the GDG PUP Platform Nexus API.",
+          "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
+          "Public endpoints are marked without a lock icon in Swagger.",
+        ].join(" "),
+      },
+      servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
+      generateExample: true,
+    });
+    swaggerSpecCache = swaggerJsdoc(options);
+  }
+  return swaggerSpecCache;
+};
 
 export const loadDocs = (app: Express) => {
-  const options = generateOpenApiOptions({
-    info: {
-      title: "Nexus API",
-      version: "2.1.0",
-      description: [
-        "Documentation for the GDG PUP Platform Nexus API.",
-        "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
-        "Public endpoints are marked without a lock icon in Swagger.",
-      ].join(" "),
-    },
-    servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
-    generateExample: true,
-  });
-
   /**
    * EXPOSE THE OPENAPI DOCUMENT
    */
   app.use("/docs/openapispec.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
-    res.send(swaggerSpec);
+    res.send(getSwaggerSpec());
   });
 
   app.use("/docs/postman-import.json", (req, res) => {
@@ -112,8 +119,6 @@ export const loadDocs = (app: Express) => {
     );
   });
 
-  const swaggerSpec = swaggerJsdoc(options);
-
   /**
    * LOAD SWAGGER UI DOCUMENTATION
    */
@@ -125,11 +130,15 @@ export const loadDocs = (app: Express) => {
       "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
     ],
   };
-  app.use(
-    "/docs/swagger",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, assetOptions),
-  );
+
+  app.use("/docs/swagger", swaggerUi.serve, (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const html = swaggerUi.generateHTML(getSwaggerSpec(), assetOptions);
+      res.send(html);
+    } catch (err) {
+      next(err);
+    }
+  });
 
   /**
    * LOAD STOPLIGHT DOCUMENTATION
@@ -208,13 +217,18 @@ export const loadDocs = (app: Express) => {
    * (DEFAULT) LOAD SCALAR DOCUMENTATION
    */
   app.use("/docs", async (req, res, next) => {
+    // Prevent scalar from intercepting the static files or sub-paths
+    if (req.path !== "/" && req.path !== "") {
+      return next();
+    }
+
     try {
       if (!scalarMiddleware) {
         // Dynamic import happens here, only when user visits /docs
         const { apiReference } = await import("@scalar/express-api-reference");
         scalarMiddleware = apiReference({
           theme: "default",
-          content: swaggerSpec,
+          content: getSwaggerSpec(),
           darkMode: true,
           hideTestRequestButton: false,
           pageTitle: "Nexus Api Documentation",
