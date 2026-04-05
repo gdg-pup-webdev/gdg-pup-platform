@@ -7,6 +7,7 @@
     "dev:nexus-api": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
     "dev:backend": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
     "dev:storybook": "turbo dev --filter=storybook...",
+    "benchmark:api": "pnpm --filter nexus-api run benchmark",
     "build": "turbo run build --filter=!storybook --filter=!identity-api",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=nexus-web...",
     "build:dev": "pnpm build && make dev-build",
