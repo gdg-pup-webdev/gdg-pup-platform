@@ -4,6 +4,7 @@ import { ProjectCard } from "../components/ProjectCard";
 import { addIcon } from "../icons/addIcon";
 import { editIcon } from "../icons/editIcon";
 import { UserProfile } from "@/features/sparkmates";
+import { cn } from "@/lib/utils";
 import { useMemberProjects } from "@/features/sparkmates/hooks/useMemberProjects";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
@@ -157,12 +158,13 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
         </Button>
       )}
 
-      <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="md" className="bg-[#091734] text-white border border-white/10">
+      <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="md" className="bg-transparent border-none p-0 !shadow-none isolate">
+        <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
         <div className="space-y-6">
           <div>
-            <Text variant="heading-6" weight="bold" className="text-white">Manage Projects</Text>
+            <Text variant="heading-6" weight="bold" gradient="white-yellow">Manage Projects</Text>
             <Text variant="body-sm" className="text-zinc-400 mt-1">
-              Add or update your showcased works with images, duration, and descriptions.
+              Add your best works and projects to showcase your skills in action.
             </Text>
           </div>
           
@@ -173,12 +175,13 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
             removeProject={handleRemoveProject}
           />
           
-          <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+          <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
             <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-            <Button variant="default" onClick={handleSave} disabled={isSaving}>
+            <Button variant="colored" subVariant="blue" onClick={handleSave} disabled={isSaving}>
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
+        </div>
         </div>
       </Modal>
     </section>
