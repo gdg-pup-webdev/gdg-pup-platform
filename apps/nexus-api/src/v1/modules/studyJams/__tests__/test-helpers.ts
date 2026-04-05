@@ -10,6 +10,8 @@ export const buildStudyJamProps = (
   description:
     overrides.description ?? "Hands-on TypeScript session for beginners.",
   createdAt: overrides.createdAt ?? new Date("2026-01-01T00:00:00.000Z"),
+  updatedAt: overrides.updatedAt ?? null,
+  recordingUrl: overrides.recordingUrl ?? null,
 });
 
 export const buildStudyJam = (

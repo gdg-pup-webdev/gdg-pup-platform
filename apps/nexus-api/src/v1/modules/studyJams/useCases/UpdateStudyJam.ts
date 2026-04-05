@@ -1,5 +1,6 @@
 import { IStudyJamRepository } from "../domain/IStudyJamRepository";
 import { StudyJam, StudyJamUpdateProps } from "../domain/StudyJam";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 export class UpdateStudyJam {
   constructor(private readonly repo: IStudyJamRepository) {}
@@ -8,7 +9,9 @@ export class UpdateStudyJam {
     const studyJam = await this.repo.findById(id);
 
     if (!studyJam) {
-      throw new Error(`Cannot update: Study Jam with ID ${id} not found.`);
+      throw new NotFoundError(
+        `Cannot update: Study Jam with ID ${id} not found.`,
+      );
     }
 
     studyJam.update(updates);

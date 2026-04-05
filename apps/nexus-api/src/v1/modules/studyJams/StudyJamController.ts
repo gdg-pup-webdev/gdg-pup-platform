@@ -13,12 +13,15 @@ export interface StudyJamDTO {
   summary: string;
   description: string;
   createdAt: Date;
+  updatedAt: Date | null;
+  recordingUrl: string | null;
 }
 
 export type StudyJamCreateInput = {
   title: string;
   summary: string;
   description: string;
+  recordingUrl?: string | null;
 };
 
 export type StudyJamUpdateInput = Partial<StudyJamCreateInput>;
@@ -40,6 +43,8 @@ export class StudyJamController {
       summary: studyJam.props.summary,
       description: studyJam.props.description,
       createdAt: studyJam.props.createdAt,
+      updatedAt: studyJam.props.updatedAt,
+      recordingUrl: studyJam.props.recordingUrl ?? null,
     };
   }
 

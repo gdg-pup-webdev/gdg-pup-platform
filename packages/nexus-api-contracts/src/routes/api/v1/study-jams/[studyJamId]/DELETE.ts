@@ -11,7 +11,7 @@ export const docs_summary = "Delete study jam";
 export const docs_description = [
   "Purpose: Delete study jam.",
   "Inputs: Path params: see schema.",
-  "Outputs: Empty response.",
+  "Outputs: Boolean success value.",
   "Errors: 400, 403, 404, 500.",
   "Auth: Requires Bearer token.",
 ].join("\n\n");
@@ -70,16 +70,5 @@ export const docs_example_response_500 = {
 export const docs_example_response = {
   status: "success",
   message: "Study jam deleted",
-  data: {
-    id: "studyjam-1",
-    title: "Study Jam: TypeScript",
-    team_id: "team-1",
-    description: "Hands-on TypeScript session",
-    summary: "Covers types, narrowing, and inference.",
-    image_url: "https://example.com/study-jam-thumb.png",
-    tags: ["typescript", "beginner"],
-    categories: ["workshop"],
-    recording_url: "https://example.com/recording",
-    created_at: "2026-01-01T00:00:00.000Z",
-  },
+  data: true,
 };

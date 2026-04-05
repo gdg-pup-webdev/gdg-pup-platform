@@ -1,5 +1,6 @@
 import { IStudyJamRepository } from "../domain/IStudyJamRepository";
 import { StudyJam } from "../domain/StudyJam";
+import { BadRequestError } from "@/v1/errors/HttpError";
 
 export type CreateStudyJamInput = {
   creatorId: string;
@@ -14,7 +15,7 @@ export class CreateStudyJam {
 
   async execute(input: CreateStudyJamInput): Promise<StudyJam> {
     if (!input.title || !input.description) {
-      throw new Error("Title and description are required.");
+      throw new BadRequestError("Title and description are required.");
     }
 
     const studyJam = StudyJam.create({

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { UpdateStudyJam } from "../useCases/UpdateStudyJam";
 import { MockStudyJamRepository } from "../infrastructure/MockStudyJamRepository";
 import { buildStudyJam } from "./test-helpers";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 describe("UpdateStudyJam", () => {
   let repo: MockStudyJamRepository;
@@ -27,6 +28,6 @@ describe("UpdateStudyJam", () => {
   it("throws when the study jam does not exist", async () => {
     await expect(
       useCase.execute("missing-id", { title: "Updated title" }),
-    ).rejects.toThrow("Cannot update: Study Jam with ID missing-id not found.");
+    ).rejects.toBeInstanceOf(NotFoundError);
   });
 });

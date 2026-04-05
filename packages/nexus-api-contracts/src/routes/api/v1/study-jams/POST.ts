@@ -18,7 +18,7 @@ export const response = {
 export const docs_summary = "Create study jams";
 export const docs_description = [
   "Purpose: Create study jams.",
-  "Inputs: Body: see schema.",
+  "Inputs: multipart/form-data with 'data' JSON payload string and optional 'image' file.",
   "Outputs: Single study jam.",
   "Errors: 400, 403, 404, 500.",
   "Auth: Requires Bearer token.",

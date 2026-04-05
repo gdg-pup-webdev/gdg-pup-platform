@@ -5,8 +5,8 @@ import { cz as z } from "@packages/typed-rest/shared";
 
 export const query = OpenApiSchemas.Request.Query.paginated().extend({
   search: z.string().optional(),
-  createdFrom: z.string().optional(),
-  createdTo: z.string().optional(),
+  createdFrom: z.string().datetime().optional(),
+  createdTo: z.string().datetime().optional(),
 });
 
 export const response = {

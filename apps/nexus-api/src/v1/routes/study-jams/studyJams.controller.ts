@@ -2,6 +2,7 @@ import { buildPaginationMeta } from "@/v1/utils/controller.utils";
 import { studyJamController } from "@/v1/modules/studyJams";
 import { StudyJamDTO } from "@/v1/modules/studyJams/StudyJamController";
 import { teamModuleController } from "@/v1/modules/teamsSystem";
+import { UnauthorizedError } from "@/v1/errors/HttpError";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
@@ -28,7 +29,7 @@ function toStudyJamRow(
   return {
     id: studyJam.id,
     created_at: studyJam.createdAt.toISOString(),
-    updated_at: extras.updated_at ?? studyJam.createdAt.toISOString(),
+    updated_at: extras.updated_at ?? studyJam.updatedAt?.toISOString() ?? null,
     uploader_id: extras.uploader_id ?? studyJam.creatorId,
     title: studyJam.title,
     team_id: extras.team_id ?? null,
@@ -36,7 +37,7 @@ function toStudyJamRow(
     image_url: extras.image_url ?? null,
     tags: extras.tags ?? [],
     categories: extras.categories ?? [],
-    recording_url: extras.recording_url ?? null,
+    recording_url: extras.recording_url ?? studyJam.recordingUrl,
     summary: studyJam.summary,
   };
 }
@@ -71,9 +72,13 @@ export class StudyJamsHttpController {
     contract.api.v1.study_jams.POST,
     async ({ input, output, ctx }) => {
       const creatorId =
-        ctx.req.decodedToken?.memberInfo.gdgId ??
-        ctx.req.user?.id ??
-        "anonymous";
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+
+      if (!creatorId) {
+        throw new UnauthorizedError(
+          "Authentication required. No authenticated user found in request context.",
+        );
+      }
 
       if (input.body.data.team_id) {
         await teamModuleController.getTeam(input.body.data.team_id);
@@ -84,6 +89,7 @@ export class StudyJamsHttpController {
           title: input.body.data.title,
           description: input.body.data.description,
           summary: input.body.data.summary,
+          recordingUrl: input.body.data.recording_url,
         },
         creatorId,
       );
@@ -92,13 +98,7 @@ export class StudyJamsHttpController {
         status: "success",
         message: "Study jam created successfully",
         data: toStudyJamRow(studyJam, {
-          updated_at: studyJam.createdAt.toISOString(),
           uploader_id: creatorId,
-          team_id: input.body.data.team_id ?? null,
-          image_url: input.body.data.image_url ?? null,
-          tags: input.body.data.tags ?? [],
-          categories: input.body.data.categories ?? [],
-          recording_url: input.body.data.recording_url ?? null,
         }),
       });
     },
@@ -130,20 +130,14 @@ export class StudyJamsHttpController {
           title: input.body.data.title,
           summary: input.body.data.summary,
           description: input.body.data.description,
+          recordingUrl: input.body.data.recording_url,
         },
       );
 
       return output(200, {
         status: "success",
         message: "Study jam updated successfully",
-        data: toStudyJamRow(studyJam, {
-          updated_at: studyJam.createdAt.toISOString(),
-          team_id: input.body.data.team_id ?? null,
-          image_url: input.body.data.image_url ?? null,
-          tags: input.body.data.tags ?? [],
-          categories: input.body.data.categories ?? [],
-          recording_url: input.body.data.recording_url ?? null,
-        }),
+        data: toStudyJamRow(studyJam),
       });
     },
   );

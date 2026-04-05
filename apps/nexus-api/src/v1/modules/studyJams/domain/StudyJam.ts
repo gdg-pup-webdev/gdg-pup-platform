@@ -5,6 +5,7 @@ export type StudyJamProps = {
   summary: string;
   description: string;
   createdAt: Date;
+  updatedAt: Date | null;
   recordingUrl?: string | null;
 };
 
@@ -16,13 +17,14 @@ export class StudyJam {
   private constructor(public readonly props: StudyJamProps) {}
 
   static create(
-    props: Omit<StudyJamProps, "id" | "createdAt"> &
+    props: Omit<StudyJamProps, "id" | "createdAt" | "updatedAt"> &
       Partial<Pick<StudyJamProps, "recordingUrl">>,
   ): StudyJam {
     return new StudyJam({
       ...props,
       id: crypto.randomUUID(),
       createdAt: new Date(),
+      updatedAt: null,
       recordingUrl: props.recordingUrl ?? null,
     });
   }
@@ -40,5 +42,6 @@ export class StudyJam {
     this.props.description = props.description ?? this.props.description;
     this.props.recordingUrl =
       props.recordingUrl ?? this.props.recordingUrl ?? null;
+    this.props.updatedAt = new Date();
   }
 }

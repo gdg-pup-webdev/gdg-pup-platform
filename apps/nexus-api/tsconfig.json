@@ -46,7 +46,7 @@
     "skipLibCheck": true,
 
     // Paths
-    "baseUrl": ".", // Deprecated
+    "baseUrl": ".", // Project preference: keep only while path aliases are still in use
     "paths": {
       "@/*": ["./src/*"]
     }

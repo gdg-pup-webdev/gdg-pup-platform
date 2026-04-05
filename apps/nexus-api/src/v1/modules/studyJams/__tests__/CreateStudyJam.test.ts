@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { CreateStudyJam } from "../useCases/CreateStudyJam";
 import { MockStudyJamRepository } from "../infrastructure/MockStudyJamRepository";
+import { BadRequestError } from "@/v1/errors/HttpError";
 
 describe("CreateStudyJam", () => {
   let repo: MockStudyJamRepository;
@@ -33,6 +34,6 @@ describe("CreateStudyJam", () => {
         summary: "Summary",
         description: "",
       }),
-    ).rejects.toThrow("Title and description are required.");
+    ).rejects.toBeInstanceOf(BadRequestError);
   });
 });
