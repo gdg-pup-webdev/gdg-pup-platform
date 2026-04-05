@@ -143,7 +143,7 @@ export const loadDocs = (app: Express) => {
   /**
    * LOAD STOPLIGHT DOCUMENTATION
    */
-  app.get("/docs/stoplight", (req, res) => {
+  /* app.get("/docs/stoplight", (req, res) => {
     res.send(`
     <!doctype html>
     <html lang="en">
@@ -154,13 +154,13 @@ export const loadDocs = (app: Express) => {
         <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
         <style>
-          /* 1. Wrap text in the CodeMirror editor (Request Body) */
+          /* 1. Wrap text in the CodeMirror editor (Request Body) *\/
           .sl-code-editor .CodeMirror-line {
             white-space: pre-wrap !important;
             word-break: break-all !important;
           }
 
-          /* 2. Wrap text in the Prism highlighter (Response Body & Samples) */
+          /* 2. Wrap text in the Prism highlighter (Response Body & Samples) *\/
           pre[class*="language-"],
           code[class*="language-"],
           .sl-panel--request-body [class*="Prism"], 
@@ -170,13 +170,13 @@ export const loadDocs = (app: Express) => {
             word-break: break-word !important;
           }
 
-          /* 3. Remove horizontal scrollbars that force single-line viewing */
+          /* 3. Remove horizontal scrollbars that force single-line viewing *\/
           .sl-overflow-x-auto {
             overflow-x: hidden !important;
             white-space: pre-wrap !important;
           }
 
-          /* Optional: Set a dark or light background to the body to prevent white flashes */
+          /* Optional: Set a dark or light background to the body to prevent white flashes *\/
           body {
             background-color: #f9fafb;
           }
@@ -191,12 +191,12 @@ export const loadDocs = (app: Express) => {
       </body>
     </html>
   `);
-  });
+  }); */
 
   /**
    * LOAD RAPI-DOC DOCUMENTATION
    */
-  app.get("/docs/rapidoc", (req, res) => {
+  /* app.get("/docs/rapidoc", (req, res) => {
     res.send(`
  <!doctype html> <!-- Important: must specify -->
 <html>
@@ -211,7 +211,7 @@ export const loadDocs = (app: Express) => {
   </body>
 </html>
   `);
-  });
+  }); */
 
   /**
    * (DEFAULT) LOAD SCALAR DOCUMENTATION
@@ -241,12 +241,12 @@ export const loadDocs = (app: Express) => {
     }
   });
 
-  console.log(
-    `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
-  console.log(
-    `postman-import.json is available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
+  // console.log(
+  //   `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
+  // );
+  // console.log(
+  //   `postman-import.json is available at http://localhost:${configs.port}/docs/rapidoc`,
+  // );
   console.log("\n");
   console.log(
     `Scalar API docs available at http://localhost:${configs.port}/docs`,
@@ -254,11 +254,11 @@ export const loadDocs = (app: Express) => {
   console.log(
     `Swagger docs available at http://localhost:${configs.port}/docs/swagger`,
   );
-  console.log(
+  /* console.log(
     `Stoplight docs available at http://localhost:${configs.port}/docs/stoplight`,
   );
   console.log(
     `Rapidoc docs available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
+  ); */
   console.log("\n");
 };
