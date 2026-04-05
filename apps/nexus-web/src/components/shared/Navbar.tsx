@@ -69,11 +69,9 @@ const NavbarAvatarWidget = () => {
         <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
       ) : status === STATUS.AUTHENTICATED ? (
         <div
-          className="relative flex justify-center items-center group transition-all duration-200 "
+          className="relative flex justify-center items-center group transition-all duration-200 cursor-pointer"
           ref={dropdownRef}
-          onClick={() => {
-            setOpenDropdown((a) => !a);
-          }}
+          onClick={() => setOpenDropdown(!openDropdown)}
         >
           {user?.memberInfo.avatarUrl ? (
             <Avatar
@@ -131,6 +129,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [activeMobileSection, setActiveMobileSection] = useState<string | null>(
+    null,
+  );
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -175,7 +176,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { href: "/events", label: "Events" },
-    { href: "/leaderboard", label: "Leaderboard" },
     { href: "/products", label: "Products" },
   ];
 
@@ -442,71 +442,152 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Stack gap="none">
                 {/* About Section */}
-                <Box className="px-5 py-3 border-b border-white/10">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "about" ? null : "about",
+                    )
+                  }
+                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
                   >
                     About
                   </Text>
-                </Box>
-                {dropdownLinks.about.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "about" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {activeMobileSection === "about" && (
+                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
+                    {dropdownLinks.about.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 {/* Community Section */}
-                <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "community" ? null : "community",
+                    )
+                  }
+                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
                   >
                     Community
                   </Text>
-                </Box>
-                {dropdownLinks.community.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "community" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {activeMobileSection === "community" && (
+                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
+                    {dropdownLinks.community.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 {/* Nav Links */}
-                <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "navigation" ? null : "navigation",
+                    )
+                  }
+                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
                   >
                     Navigation
                   </Text>
-                </Box>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "navigation" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {activeMobileSection === "navigation" && (
+                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 {/* Auth Section */}
                 {!hideAuth && (
-                  <Box className="px-5 py-5 mt-2 border-t border-white/10">
+                  <Box className="px-5 py-5">
                     <Stack gap="sm">
                       <Link
                         href="/sparkmates"
@@ -534,12 +615,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                         >
                           <Avatar
                             src={
-                              // user.user_metadata?.avatar_url ||
+                              decodedToken?.memberInfo.avatarUrl ||
                               ASSETS.AUTH.AVATAR_DEFAULT
                             }
-                            // alt={user.user_metadata?.full_name || user.email || "User"}
-                            // size="sm"
-                            // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
                           />
                           <Stack gap="none">
                             <Text

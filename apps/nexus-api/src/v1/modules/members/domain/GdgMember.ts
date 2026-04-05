@@ -44,7 +44,7 @@ export type GdgMemberProps = {
   learningInterests: string[];
   toolsAndTechnologies: string[];
 
-  isPublic: boolean;
+  isPublic: boolean | null;
 };
 
 export type GdgMemberInsertProps = GdgMemberProps;

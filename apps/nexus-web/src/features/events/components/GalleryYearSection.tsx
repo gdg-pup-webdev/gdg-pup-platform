@@ -1,10 +1,13 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Text } from "@packages/spark-ui"; 
+import { Container, Skeleton, Stack, Text } from "@packages/spark-ui";
 import type { Event } from "../types";
-import { normalizeEventDescription, splitBoldSegments } from "../utils/description";
+import {
+  normalizeEventDescription,
+  splitBoldSegments,
+} from "../utils/description";
 import { useEvents } from "../hooks/useEvents";
 
 type GalleryYearSectionProps = {
@@ -52,7 +55,10 @@ function formatDateLabel(startDate?: string, endDate?: string) {
 function renderDescriptionWithBold(text: string) {
   return splitBoldSegments(text).map((segment, index) =>
     segment.bold ? (
-      <strong key={`${segment.text}-${index}`} className="font-semibold text-white">
+      <strong
+        key={`${segment.text}-${index}`}
+        className="font-semibold text-white"
+      >
         {segment.text}
       </strong>
     ) : (
@@ -71,7 +77,11 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
     Record<string, boolean>
   >({});
 
-  const {data : events, error : errorMessage, isLoading} = useEvents({ year: parsedYear  });
+  const {
+    data: events,
+    error: errorMessage,
+    isLoading,
+  } = useEvents({ year: parsedYear });
 
   const visibleItems = useMemo(() => {
     if (!isYearValid) return [];
@@ -80,7 +90,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
   return (
     <div
-      className="relative overflow-hidden min-h-screen pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16"
+      className="relative overflow-clip min-h-screen pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16"
       style={{ backgroundColor: "rgba(15, 14, 14, 1)" }}
     >
       <div
@@ -225,7 +235,10 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
             <span>Back</span>
           </Link>
 
-          <Stack gap="lg" className="items-center !gap-3 md:!gap-6 pt-4 md:pt-8">
+          <Stack
+            gap="lg"
+            className="items-center !gap-3 md:!gap-6 pt-4 md:pt-8"
+          >
             <Text
               variant="heading-1"
               gradient="white-blue"
@@ -248,10 +261,36 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
           </Stack>
 
           {isLoading ? (
-            <div className="rounded-2xl border border-white/15 bg-black/30 p-6 md:p-8">
-              <Text variant="body" className="text-white/85">
-                Loading events for {yearTitle}...
-              </Text>
+            <div className="space-y-10 md:space-y-14">
+              {[1, 2].map((i) => (
+                <div key={i} className="animate-pulse">
+                  {/* One big rectangle skeleton */}
+                  <Skeleton className="h-[220px] md:h-[560px] w-full rounded-2xl bg-white/10 border border-white/10" />
+
+                  <div className="mt-5 md:mt-7 space-y-6">
+                    {/* Big text skeleton like a title */}
+                    <div className="flex justify-center md:justify-start">
+                      <Skeleton className="h-7 md:h-12 w-3/4 md:w-1/2 rounded-lg bg-white/10" />
+                    </div>
+                    {/* Event details */}
+                    <div className="flex flex-nowrap items-center justify-center gap-2 md:gap-5">
+                      <Skeleton className="h-4 w-12 md:w-16 rounded-full bg-white/10" />
+                      <Skeleton className="h-4 w-24 md:w-32 rounded-lg bg-white/10" />
+                      <Skeleton className="h-4 w-16 md:w-20 rounded-lg bg-white/10" />
+                    </div>
+
+                    {/* Three stack of smaller text skeletons (description) */}
+                    <div className="space-y-3">
+                      <Skeleton className="h-4 w-full rounded bg-white/10" />
+                      <Skeleton className="h-4 w-full rounded bg-white/10" />
+                      <Skeleton className="h-4 w-3/4 rounded bg-white/10" />
+                    </div>
+
+                    {/* Rectangle skeleton at the bottom (button) */}
+                    <Skeleton className="h-10 md:h-11 w-full rounded-md bg-white/10 border border-white/5 mt-6 md:mt-7" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : !isYearValid ? (
             <div className="rounded-2xl border border-white/15 bg-black/30 p-6 md:p-8">
@@ -266,7 +305,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               </Text>
             </div>
           ) : visibleItems.length === 0 ? (
-            <div className="py-10 md:py-14">
+            <div className="flex flex-col items-center py-10 md:py-14 gap-6">
               <Text
                 variant="heading-5"
                 align="center"
@@ -274,6 +313,12 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               >
                 No events for this year
               </Text>
+              <img
+                src="/sparky-points/sparkypoints-cirby-denied.webp"
+                alt="No events found"
+                className="w-68 md:w-96 opacity-85"
+                draggable={false}
+              />
             </div>
           ) : (
             <div className="space-y-10 md:space-y-14">
@@ -282,17 +327,18 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                   event.tags?.find((theme) => Boolean(theme?.trim())) ||
                   event.category ||
                   "General";
-                const description =
-                  normalizeEventDescription(
-                    event.description?.trim() ||
-                      event.short_description?.trim() ||
-                      "Description will be announced soon.",
-                  );
+                const description = normalizeEventDescription(
+                  event.description?.trim() ||
+                    event.short_description?.trim() ||
+                    "Description will be announced soon.",
+                );
                 const venue = event.venue?.trim() || "Location TBA";
                 const routeId = getHighlightsRouteId(event);
                 const canOpen = Boolean(routeId && event.title?.trim());
                 const descriptionKey = `${event.id || routeId}-${event.start_date}`;
-                const isExpanded = Boolean(expandedDescriptions[descriptionKey]);
+                const isExpanded = Boolean(
+                  expandedDescriptions[descriptionKey],
+                );
                 const isLongDescription = description.length > 420;
                 const descriptionPreview =
                   isLongDescription && !isExpanded
@@ -310,7 +356,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                         className="absolute inset-0 h-full w-full object-cover object-center"
                         draggable={false}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/10 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
                     </div>
 
                     <div className="mt-5 md:mt-7">
@@ -337,7 +383,12 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                           >
                             <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm12 8H5v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8Z" />
                           </svg>
-                          <span>{formatDateLabel(event.start_date || "", event.end_date || "")}</span>
+                          <span>
+                            {formatDateLabel(
+                              event.start_date || "",
+                              event.end_date || "",
+                            )}
+                          </span>
                         </span>
 
                         <span className="inline-flex items-center gap-1 text-[9px] md:text-sm whitespace-nowrap shrink-0 max-w-[120px] md:max-w-none">
@@ -356,7 +407,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
                       <Text
                         variant="body"
-                        className="text-white/85 mt-5 md:mt-6 leading-relaxed"
+                        className="text-white/85 mt-5 md:mt-6 text-justify"
                       >
                         {renderDescriptionWithBold(descriptionPreview)}
                       </Text>
@@ -374,7 +425,9 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                             className="text-white/70 hover:text-white transition-colors text-sm inline-flex items-center gap-1 cursor-pointer"
                           >
                             {isExpanded ? "See Less" : "See More"}
-                            <span aria-hidden="true">{isExpanded ? "\u02c4" : "\u02c5"}</span>
+                            <span aria-hidden="true">
+                              {isExpanded ? "\u02c4" : "\u02c5"}
+                            </span>
                           </button>
                         </div>
                       ) : null}
