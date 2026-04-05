@@ -283,7 +283,7 @@ export function SkillsAndLinksSection({
               {skills.map((tag, i) => (
                 <Badge key={i} className="flex items-center gap-1">
                   {tag}
-                  <button onClick={() => handleRemoveTag(skills, setSkills, i)} className="hover:text-red-400">×</button>
+                  <button onClick={() => handleRemoveTag(skills, setSkills, i)} className="hover:text-red-400 cursor-pointer pl-1">×</button>
                 </Badge>
               ))}
             </div>
@@ -305,7 +305,7 @@ export function SkillsAndLinksSection({
               {interests.map((tag, i) => (
                 <Badge key={i} className="flex items-center gap-1">
                   {tag}
-                  <button onClick={() => handleRemoveTag(interests, setInterests, i)} className="hover:text-red-400">×</button>
+                  <button onClick={() => handleRemoveTag(interests, setInterests, i)} className="hover:text-red-400 cursor-pointer pl-1">×</button>
                 </Badge>
               ))}
             </div>
@@ -327,7 +327,7 @@ export function SkillsAndLinksSection({
               {tools.map((tag, i) => (
                 <Badge key={i} className="flex items-center gap-1">
                   {tag}
-                  <button onClick={() => handleRemoveTag(tools, setTools, i)} className="hover:text-red-400">×</button>
+                  <button onClick={() => handleRemoveTag(tools, setTools, i)} className="hover:text-red-400 cursor-pointer pl-1">×</button>
                 </Badge>
               ))}
             </div>
