@@ -12,8 +12,8 @@ export function WhatDrivesUsSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="relative hidden lg:block z-30" ref={ref}>
-      <Container className="py-24">
+    <section className="relative z-30" ref={ref}>
+      <Container className="py-10 lg:py-24">
         <motion.div
           className="relative"
           initial={{ opacity: 0, y: 50 }}
@@ -27,30 +27,33 @@ export function WhatDrivesUsSection() {
             width={473}
             height={630}
             draggable={false}
-            className="pointer-events-none select-none absolute left-0 top-1/2 -translate-y-1/2 z-20"
+            className="pointer-events-none select-none absolute top-0 left-5 w-24 h-auto lg:w-[473px] lg:h-[630px] lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-20"
           />
 
           {/* Content on right */}
-          <Stack gap="xl" align="start" className="w-[60%] ml-auto">
+          <Stack
+            gap="xl"
+            align="start"
+            className="w-full lg:w-[60%] ml-auto pt-6 lg:pt-0"
+          >
             <Text
               as="h2"
               align="left"
               gradient="white-green"
-              variant="heading-2"
               weight="bold"
-              className="mb-0.5"
+              className="mb-0.5 text-4xl lg:text-[4rem] text-right lg:text-left w-full"
             >
               What drives us
             </Text>
-            <FrostedContentContainer contentClassName="p-12.5">
-              <Stack gap="xl" align="start">
+            <FrostedContentContainer contentClassName="p-[30px]">
+              <Stack gap="lg" align="start">
                 <Text
-                  as="h3"
+                  as="h5"
                   align="left"
                   variant="heading-5"
                   weight="bold"
                   gradient="white-yellow"
-                  // className="text-2xl"
+                  className="text-2xl"
                 >
                   We believe that:
                 </Text>
@@ -141,7 +144,7 @@ export function WhatDrivesUsSection() {
               variant="body"
               weight="normal"
               color="on-primary"
-              className="text-xl"
+              className="text-xl text-center lg:text-left pb-10 lg:pb-0"
             >
               GDG PUP is inclusive and open to all students — beginners,
               advanced developers, tech majors, and non-tech majors alike.

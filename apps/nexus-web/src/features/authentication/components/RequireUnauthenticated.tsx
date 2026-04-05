@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { LINKS } from "@/lib/constants/links";
 import { STATUS, useAuthContext } from "../store/useAuthStore";
@@ -11,31 +11,33 @@ export const RequireUnauthenticated = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
-  const { status } = useAuthContext();
+  const pathname = usePathname();
+  const { status, memberProfile } = useAuthContext();
 
   useEffect(() => {
     if (status === STATUS.AUTHENTICATED) {
-      router.push(LINKS.landing);
+      // Wait for profile to load before making redirection decisions
+      if (!memberProfile) return;
+
+      // If isPublic is null, it means they haven't finished onboarding
+      if (memberProfile.isPublic === null && pathname !== LINKS.onboarding) {
+        router.push(LINKS.onboarding);
+        return;
+      }
+
+      // Already onboarded, redirect away from auth pages to their profile
+      if (pathname !== LINKS.onboarding) {
+        router.push(LINKS.sparkmates_me);
+      }
     }
-  }, [status]);
+  }, [status, memberProfile, pathname, router]);
 
-  if (status === STATUS.AUTHENTICATED) {
+  if (status === STATUS.AUTHENTICATED || status === STATUS.CHECKING) {
+    const message = status === STATUS.CHECKING ? "Checking session..." : "Redirecting...";
     return (
-      <>
-        <div className="w-full h-full min-h-full flex justify-center items-center">
-          Redirecting to landing page...
-        </div>
-      </>
-    );
-  }
-
-  if (status === STATUS.CHECKING) {
-    return (
-      <>
-        <div className="w-full h-full min-h-full flex justify-center items-center">
-          Checking authentication...
-        </div>
-      </>
+      <div className="w-full h-full min-h-screen flex justify-center items-center text-zinc-400 animate-pulse">
+        {message}
+      </div>
     );
   }
 

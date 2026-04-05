@@ -1,43 +1,80 @@
 "use client";
 
-import React, { useState } from "react";
-import { Loader2, AlertCircle, Search, User } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { User } from "lucide-react";
 import { useListMembers } from "../hooks/useListMembers";
 import { useUpdateMember } from "../hooks/useUpdateMembers";
 import { GdgMember, GdgMemberUpdate } from "../types";
-import { Pagination } from "@/components/admin/Pagination";
 import { MemberDetailsModal, MemberFormModal } from "./MemberModals";
 import { MemberCard } from "./MemberCard";
 import { toast } from "react-toastify";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
 
 export const MemberList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
+
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 10);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedMemberId = getString("itemId", "");
   
   // API Hooks
   const { data: membersResponse, isLoading, isError, error, refetch } = useListMembers(page, pageSize);
   const updateMutation = useUpdateMember();
 
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<GdgMember | null>(null);
-
   const members = membersResponse?.data || [];
+  const selectedMember = useMemo(
+    () => members.find((member) => member.gdgId === selectedMemberId) || null,
+    [members, selectedMemberId],
+  );
+
+  const isFormModalOpen = modal === "edit" && Boolean(selectedMember);
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedMember);
+
   const totalPages = membersResponse?.meta?.totalPages || 1;
   const totalRecords = membersResponse?.meta?.totalRecords || 0;
 
+  const [searchInput, setSearchInput] = useState(searchQuery);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, member: GdgMember) => {
+    setQueryParams({ modal: nextModal, itemId: member.gdgId });
+  };
+
   // Handlers
   const handleEdit = (member: GdgMember) => {
-    setSelectedMember(member);
-    setIsDetailsModalOpen(false);
-    setIsFormModalOpen(true);
+    openModal("edit", member);
   };
 
   const handleView = (member: GdgMember) => {
-    setSelectedMember(member);
-    setIsDetailsModalOpen(true);
+    openModal("view", member);
   };
 
   const handleFormSubmit = async (data: GdgMemberUpdate, profileImage?: File | null) => {
@@ -50,7 +87,7 @@ export const MemberList: React.FC = () => {
         profileImage
       });
       toast.success("Member updated successfully");
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Update failed");
     }
@@ -67,82 +104,81 @@ export const MemberList: React.FC = () => {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-blue-600" />
-      </div>
-    );
+    return <ListLoadingState accent="blue" message="Loading members..." />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-lg font-bold text-red-900">Failed to load members</h3>
-        <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load members"
+        message={(error as any)?.message || "An unexpected error occurred."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
+    <>
+      <AdminListScaffold
+        search={
+          <AdminSearchSection
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
             placeholder="Search members..."
-            className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            accent="blue"
+            actions={
+              <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                Search
+              </AdminActionButton>
+            }
           />
-        </div>
-      </div>
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
+        }
+        content={
+          filteredMembers.length > 0 ? (
+            <AdminCardGrid>
+              {filteredMembers.map((member: GdgMember) => (
+                <MemberCard
+                  key={member.gdgId}
+                  member={member}
+                  onClick={handleView}
+                  onEdit={handleEdit}
+                />
+              ))}
+            </AdminCardGrid>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+              <User size={48} className="mb-4 text-gray-300" />
+              <h3 className="text-lg font-bold text-gray-900">
+                {searchQuery ? "No matching members found" : "No members found"}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {searchQuery ? "Try adjusting your search terms." : "No member members have been created yet."}
+              </p>
+            </div>
+          )
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
       />
-
-      {/* Grid of Cards */}
-      {filteredMembers.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredMembers.map((member: GdgMember) => (
-            <MemberCard
-              key={member.gdgId}
-              member={member}
-              onClick={handleView}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <User size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery ? "No matching members found" : "No members found"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchQuery ? "Try adjusting your search terms." : "No member members have been created yet."}
-          </p>
-        </div>
-      )}
 
       {/* Modals */}
       <MemberFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
         initialData={selectedMember}
         isSubmitting={updateMutation.isPending}
@@ -150,10 +186,10 @@ export const MemberList: React.FC = () => {
 
       <MemberDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         member={selectedMember}
         onEdit={handleEdit}
       />
-    </div>
+    </>
   );
 };

@@ -56,41 +56,6 @@ export type Database = {
         }
         Relationships: []
       }
-      article_comment: {
-        Row: {
-          article_id: string | null
-          body: string
-          created_at: string
-          id: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          article_id?: string | null
-          body: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          article_id?: string | null
-          body?: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "article_comment_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "article"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       dp_download_analytics: {
         Row: {
           created_at: string
@@ -239,102 +204,6 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "event"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_attendance_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      event_highlight: {
-        Row: {
-          author_id: string
-          content: string
-          created_at: string
-          description: string
-          event_id: string
-          id: string
-          image_url: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          author_id: string
-          content: string
-          created_at?: string
-          description: string
-          event_id: string
-          id?: string
-          image_url?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          author_id?: string
-          content?: string
-          created_at?: string
-          description?: string
-          event_id?: string
-          id?: string
-          image_url?: string | null
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "event_highlight_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_highlight_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "event"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      external_resource: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          resource_url: string
-          title: string
-          updated_at: string
-          uploader_id: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_url: string
-          title: string
-          updated_at?: string
-          uploader_id: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_url?: string
-          title?: string
-          updated_at?: string
-          uploader_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "resource_uploader_id_fkey"
-            columns: ["uploader_id"]
-            isOneToOne: false
-            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]
@@ -632,7 +501,15 @@ export type Database = {
           title?: string | null
           updatedAt?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "member_projects_memberGdgId_fkey"
+            columns: ["memberGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
       }
       member_showcase: {
         Row: {
@@ -744,54 +621,6 @@ export type Database = {
         }
         Relationships: []
       }
-      resource_tag: {
-        Row: {
-          id: string
-          tag_name: string
-        }
-        Insert: {
-          id?: string
-          tag_name: string
-        }
-        Update: {
-          id?: string
-          tag_name?: string
-        }
-        Relationships: []
-      }
-      resource_tag_junction: {
-        Row: {
-          id: string
-          resource_id: string
-          resource_tag_id: string
-        }
-        Insert: {
-          id?: string
-          resource_id: string
-          resource_tag_id: string
-        }
-        Update: {
-          id?: string
-          resource_id?: string
-          resource_tag_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "resource_tag_junction_resource_id_fkey"
-            columns: ["resource_id"]
-            isOneToOne: false
-            referencedRelation: "external_resource"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "resource_tag_junction_resource_tag_id_fkey"
-            columns: ["resource_tag_id"]
-            isOneToOne: false
-            referencedRelation: "resource_tag"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       reward: {
         Row: {
           created_at: string
@@ -820,15 +649,7 @@ export type Database = {
           user_id?: string
           value?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "reward_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       scraped_gdg_events: {
         Row: {
@@ -841,6 +662,7 @@ export type Database = {
           event_type: string | null
           event_type_slug: string | null
           gdg_id: number
+          image_square_url: string | null
           is_virtual_event: boolean | null
           last_scraped_at: string | null
           location: string | null
@@ -864,6 +686,7 @@ export type Database = {
           event_type?: string | null
           event_type_slug?: string | null
           gdg_id: number
+          image_square_url?: string | null
           is_virtual_event?: boolean | null
           last_scraped_at?: string | null
           location?: string | null
@@ -887,6 +710,7 @@ export type Database = {
           event_type?: string | null
           event_type_slug?: string | null
           gdg_id?: number
+          image_square_url?: string | null
           is_virtual_event?: boolean | null
           last_scraped_at?: string | null
           location?: string | null
@@ -1060,15 +884,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "task_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       team: {
         Row: {
@@ -1133,71 +949,6 @@ export type Database = {
             foreignKeyName: "team_member_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      test: {
-        Row: {
-          description: string | null
-          id: string
-          title: string
-        }
-        Insert: {
-          description?: string | null
-          id?: string
-          title: string
-        }
-        Update: {
-          description?: string | null
-          id?: string
-          title?: string
-        }
-        Relationships: []
-      }
-      user: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          display_name: string
-          email: string
-          first_name: string | null
-          gdg_id: string | null
-          id: string
-          last_name: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          display_name: string
-          email: string
-          first_name?: string | null
-          gdg_id?: string | null
-          id?: string
-          last_name?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          display_name?: string
-          email?: string
-          first_name?: string | null
-          gdg_id?: string | null
-          id?: string
-          last_name?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_gdg_id_fkey"
-            columns: ["gdg_id"]
-            isOneToOne: false
             referencedRelation: "gdg_members"
             referencedColumns: ["gdg_id"]
           },
@@ -1234,15 +985,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_achievement_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_certificate: {
         Row: {
@@ -1266,15 +1009,7 @@ export type Database = {
           title?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_certificate_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_credential: {
         Row: {
@@ -1333,87 +1068,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_portfolio: {
-        Row: {
-          avatar_image_url: string | null
-          bio: string | null
-          created_at: string
-          department: string | null
-          first_name: string | null
-          gdg_id: string | null
-          github_url: string | null
-          id: string
-          is_public: boolean
-          last_name: string | null
-          learning_interests: string[] | null
-          linkedin_url: string | null
-          membership_type: string | null
-          middle_name: string | null
-          nickname: string | null
-          other_links: string[] | null
-          portfolio_url: string | null
-          program: string | null
-          skills_summary: string | null
-          technical_skills: string[] | null
-          tools_and_technologies: string[] | null
-          updated_at: string
-          user_id: string
-          year_level: number | null
-        }
-        Insert: {
-          avatar_image_url?: string | null
-          bio?: string | null
-          created_at?: string
-          department?: string | null
-          first_name?: string | null
-          gdg_id?: string | null
-          github_url?: string | null
-          id?: string
-          is_public?: boolean
-          last_name?: string | null
-          learning_interests?: string[] | null
-          linkedin_url?: string | null
-          membership_type?: string | null
-          middle_name?: string | null
-          nickname?: string | null
-          other_links?: string[] | null
-          portfolio_url?: string | null
-          program?: string | null
-          skills_summary?: string | null
-          technical_skills?: string[] | null
-          tools_and_technologies?: string[] | null
-          updated_at?: string
-          user_id: string
-          year_level?: number | null
-        }
-        Update: {
-          avatar_image_url?: string | null
-          bio?: string | null
-          created_at?: string
-          department?: string | null
-          first_name?: string | null
-          gdg_id?: string | null
-          github_url?: string | null
-          id?: string
-          is_public?: boolean
-          last_name?: string | null
-          learning_interests?: string[] | null
-          linkedin_url?: string | null
-          membership_type?: string | null
-          middle_name?: string | null
-          nickname?: string | null
-          other_links?: string[] | null
-          portfolio_url?: string | null
-          program?: string | null
-          skills_summary?: string | null
-          technical_skills?: string[] | null
-          tools_and_technologies?: string[] | null
-          updated_at?: string
-          user_id?: string
-          year_level?: number | null
-        }
-        Relationships: []
-      }
       user_project: {
         Row: {
           created_at: string
@@ -1445,15 +1099,7 @@ export type Database = {
           title?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_project_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_role: {
         Row: {
@@ -1545,15 +1191,7 @@ export type Database = {
           id?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_settings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       wallet: {
         Row: {
@@ -1583,15 +1221,7 @@ export type Database = {
           user_id?: string
           webdev_points?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "wallet_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       wallet_transaction: {
         Row: {
@@ -1621,15 +1251,7 @@ export type Database = {
           source_type?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "wallet_transaction_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {

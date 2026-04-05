@@ -1,24 +1,23 @@
 import { supabase } from "@/v1/lib/supabase";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
-import { MemberProject } from "../domain/MemberProject";
+import { MemberProject, MemberProjectProps } from "../domain/MemberProject";
 import { Tables } from "@/v1/types/supabase.types";
 
 export class MemberProjectRepository implements IMemberProjectRepository {
   constructor() {}
 
   private toDb(project: MemberProject) {
+    const { member, ...props } = project.props;
     return {
-      ...project.props,
-      createdAt: project.props.createdAt.toISOString(),
-      updatedAt: project.props.updatedAt.toISOString(),
-      startDate: project.props.startDate.toISOString(),
-      endDate: project.props.endDate
-        ? project.props.endDate.toISOString()
-        : null,
+      ...props,
+      createdAt: props.createdAt.toISOString(),
+      updatedAt: props.updatedAt.toISOString(),
+      startDate: props.startDate.toISOString(),
+      endDate: props.endDate ? props.endDate.toISOString() : null,
     };
   }
 
-  private toProps(data: Tables<"member_projects">) {
+  private toProps(data: Tables<"member_projects"> & { member: Tables<"gdg_members"> | null }) : MemberProjectProps {
     return {
       ...data,
       title: data.title || "",
@@ -31,6 +30,13 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       updatedAt: new Date(data.updatedAt || ""),
       startDate: new Date(data.startDate || ""),
       endDate: data.endDate ? new Date(data.endDate) : null,
+      
+      member: data.member ? {
+        gdgId: data.member.gdg_id,
+        name: data.member.display_name,
+        thumbnailImageUrl: data.member.avatar_image_url,
+        email: data.member.email,
+      } : null,
     };
   }
 
@@ -38,7 +44,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     const { data, error } = await supabase
       .from("member_projects")
       .insert(this.toDb(project))
-      .select("*")
+      .select("*, member:gdg_members(*) ")
       .single();
 
     if (error) {
@@ -53,7 +59,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       .from("member_projects")
       .update(this.toDb(memberProject))
       .eq("id", memberProject.props.id)
-      .select("*")
+      .select("*, member:gdg_members(*) ")
       .single();
 
     if (error) {
@@ -77,7 +83,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
   async findById(id: string): Promise<MemberProject | null> {
     const { data, error } = await supabase
       .from("member_projects")
-      .select("*")
+      .select("*, member:gdg_members(*) ")
       .eq("id", id)
       .single();
 
@@ -91,7 +97,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
   ): Promise<{ list: MemberProject[]; count: number }> {
     const { data, count, error } = await supabase
       .from("member_projects")
-      .select("*", { count: "exact" })
+      .select("*, member:gdg_members(*) ", { count: "exact" })
       .range((page - 1) * limit, page * limit - 1);
 
     if (error) throw new Error(`Database error: ${error.message}`);
@@ -109,7 +115,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
   ): Promise<{ list: MemberProject[]; count: number }> {
     const { data, count, error } = await supabase
       .from("member_projects")
-      .select("*", { count: "exact" })
+      .select("*, member:gdg_members(*) ", { count: "exact" })
       .eq("memberGdgId", memberGdgId)
       .range((page - 1) * limit, page * limit - 1);
 
@@ -128,7 +134,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
   ): Promise<{ list: MemberProject[]; count: number }> {
     const { data, count, error } = await supabase
       .from("member_projects")
-      .select("*", { count: "exact" })
+      .select("*, member:gdg_members(*) ", { count: "exact" })
       .or(`title.ilike.%${queryText}%,description.ilike.%${queryText}%`)
       .range((page - 1) * limit, page * limit - 1);
 
@@ -149,7 +155,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     // Given the constraints, let's just do a normal fetch for now or use a different seed.
     const { data, count, error } = await supabase
       .from("member_projects")
-      .select("*", { count: "exact" })
+      .select("*, member:gdg_members(*) ", { count: "exact" })
       .range((page - 1) * limit, page * limit - 1);
 
     if (error) throw new Error(`Database error: ${error.message}`);

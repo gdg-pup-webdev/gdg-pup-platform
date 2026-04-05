@@ -6,15 +6,18 @@ import { extractErrorMessage } from "@/lib/utils";
 
 export const useLogin = () => {
   return useMutation({
-    mutationFn: async (
-      payload: Parameters<typeof callEndpoint<typeof contract.api.v1.authentication.login.POST>>[2]["body"]
-    ) => {
+    mutationFn: async (payload: { email: string; pass: string }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.authentication.login.POST,
         {
-          body: payload,
-        }
+          body: {
+            data: {
+              email: payload.email,
+              pass: payload.pass,
+            },
+          },
+        },
       );
 
       if (res.status === 200) return res.body;

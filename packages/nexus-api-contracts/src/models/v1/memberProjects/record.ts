@@ -13,6 +13,14 @@ export const memberProjectsRecord = cz.object({
   secondaryImageUrl: cz.string().nullable(),
   tertiaryImageUrl: cz.string().nullable(),
   memberGdgId: cz.string(),
+
+  // Included details
+  member: cz.object({
+    gdgId: cz.string(),
+    name: cz.string().nullable(),
+    email: cz.string().nullable(),
+    imageUrl: cz.string().nullable(),
+  }).nullable() ,
 });
 
 /** Data Transfer Object for creating a new member project. */
@@ -23,6 +31,7 @@ export const memberProjectsRecordInsertDTO = memberProjectsRecord.omit({
   mainImageUrl: true,
   secondaryImageUrl: true,
   tertiaryImageUrl: true,
+  member: true,
 });
 
 /** Data Transfer Object for updating an existing member project. */

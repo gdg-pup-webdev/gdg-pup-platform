@@ -20,13 +20,13 @@ function LeaderboardRow({ entry }: { entry: LeaderboardEntry }) {
         background: ROW_BACKGROUND,
         ...(isHighlighted
           ? {
-              borderTop: "2px solid #BB362A",
-              borderRight: "4px solid #BB362A",
-              borderBottom: "2px solid #BB362A",
-              borderLeft: "1px solid #BB362A",
-              boxShadow:
-                "1px 1px 10px 0px #196CEF, 0px 4px 46.1px 0px rgba(0,0,0,0.25), 0px 4px 4px 0px rgba(0,0,0,0.25)",
-            }
+            borderTop: "2px solid #BB362A",
+            borderRight: "4px solid #BB362A",
+            borderBottom: "2px solid #BB362A",
+            borderLeft: "1px solid #BB362A",
+            boxShadow:
+              "1px 1px 10px 0px #196CEF, 0px 4px 46.1px 0px rgba(0,0,0,0.25), 0px 4px 4px 0px rgba(0,0,0,0.25)",
+          }
           : {}),
       }}
     >

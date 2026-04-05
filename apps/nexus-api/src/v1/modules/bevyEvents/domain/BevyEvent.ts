@@ -7,6 +7,7 @@ export type BevyEventProps = {
   end_date: string;
   location?: string;
   cover_image_url?: string;
+  image_square_url?: string;
   status?: string;
   event_type?: string;
   created_at?: string;

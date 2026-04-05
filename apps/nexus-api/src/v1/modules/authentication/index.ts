@@ -96,7 +96,7 @@ const finalizeChangeEmailUC = new FinalizeChangeEmail(
   otpService,
 );
 const deleteUserUC = new DeleteUser(credentialRepo);
-const refreshTokenUC = new RefreshToken(jwtService);
+const refreshTokenUC = new RefreshToken(jwtService, rbacService, gdgMemberService);
 const resendOtpUC = new ResendOtp(referenceRepo, otpService);
 
 // Controller

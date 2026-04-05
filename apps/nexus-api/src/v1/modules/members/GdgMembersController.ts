@@ -9,6 +9,7 @@ import { GdgMember, GdgMemberUpdateProps } from "./domain/GdgMember";
 import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
 import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
 import { SearchMember } from "./useCases/SearchMember";
+import { ChangeProfilePicture } from "./useCases/ChangeProfilePicture";
 
 export class GdgMembersController {
   constructor(
@@ -20,12 +21,24 @@ export class GdgMembersController {
     private readonly updateMemberByGdgIdUseCase: UpdateMemberByGdgId,
     private readonly makeProfilePrivateUseCase: MakeProfilePrivate,
     private readonly makeProfilePublicUseCase: MakeProfilePublic,
-    private readonly searchUseCase: SearchMember
+    private readonly searchUseCase: SearchMember, 
+    private readonly changePfpUseCase : ChangeProfilePicture
   ) {}
 
   private flattenMemberData(data: GdgMember) {
     return data.props;
   }
+
+  async changeProfilePicture(gdgId: string, file: File) {
+    const result = await this.changePfpUseCase.execute(gdgId, {
+      buffer:await file.arrayBuffer(),
+      name: file.name,
+      type: file.type,
+    });
+    
+    return this.flattenMemberData(result);
+  }
+
 
   async search(query: string, limit: number) {
     const result = await this.searchUseCase.execute(query, limit);

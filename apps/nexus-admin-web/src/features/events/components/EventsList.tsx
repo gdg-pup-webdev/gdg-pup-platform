@@ -1,43 +1,84 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Loader2, AlertCircle, Calendar, Search, Plus, Users, X, Filter } from "lucide-react";
 import { useListEvents } from "../hooks/useListEvents";
 import { useDeleteEvent } from "../hooks/useDeleteEvent";
 import { useCreateEvent } from "../hooks/useCreateEvent";
 import { useUpdateEvent } from "../hooks/useUpdateEvent";
 import { Event, EventInsert, EventUpdate } from "../types";
-import { Pagination } from "@/components/admin/Pagination";
 import { EventFormModal, EventDetailsModal, DeleteConfirmModal, BevyEventSearchModal } from "./EventModals";
 import { EventCard } from "./EventCard";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
 import { useSyncAllEventToBevy } from "../hooks/useSyncAllEventToBevy";
+import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";
+import { ListLoadingState } from "@/components/admin/ListLoadingState";
+import { ListErrorState } from "@/components/admin/ListErrorState";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
+import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
+import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
+import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
 
 export const EventsList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  // Filter state (actual filters applied to the query)
-  const [filters, setFilters] = useState({
-    type: undefined as string | undefined,
-    teamId: undefined as string | undefined,
-    teamName: undefined as string | undefined,
-    year: undefined as number | undefined,
-  });
+  const { getNumber, getString, setQueryParams } = useAdminQueryParams();
 
-  // Local input state (values in the text fields before clicking Search)
-  const [localType, setLocalType] = useState("");
-  const [localTeamName, setLocalTeamName] = useState("");
-  const [localYear, setLocalYear] = useState("");
+  const page = getNumber("page", 1);
+  const pageSize = getNumber("pageSize", 12);
+  const searchQuery = getString("q", "");
+  const modal = getString("modal", "");
+  const selectedEventId = getString("itemId", "");
+
+  const filters = useMemo(
+    () => ({
+      type: getString("type", "") || undefined,
+      teamId: getString("teamId", "") || undefined,
+      teamName: getString("teamName", "") || undefined,
+      year: (() => {
+        const rawYear = getNumber("year", 0);
+        return rawYear > 0 ? rawYear : undefined;
+      })(),
+    }),
+    [getNumber, getString],
+  );
+
+  const [searchInput, setSearchInput] = useState(searchQuery);
+  const [localType, setLocalType] = useState(filters.type || "");
+  const [localTeamName, setLocalTeamName] = useState(filters.teamName || "");
+  const [localYear, setLocalYear] = useState(filters.year ? String(filters.year) : "");
+
+  const selectedTeamName = getString("teamLabel", "");
+
+  const setPage = (nextPage: number) => {
+    setQueryParams({ page: nextPage });
+  };
+
+  const setPageSize = (nextPageSize: number) => {
+    setQueryParams({ pageSize: nextPageSize, page: 1 });
+  };
+
+  const applySearch = () => {
+    setQueryParams({ q: searchInput.trim() || null, page: 1 });
+  };
+
+  const closeModal = () => {
+    setQueryParams({ modal: null, itemId: null });
+  };
+
+  const openModal = (nextModal: string, event?: Event | null) => {
+    setQueryParams({
+      modal: nextModal,
+      itemId: event?.id || null,
+    });
+  };
 
   // Team search state for filter
   const [teamSearch, setTeamSearch] = useState("");
   const [debouncedTeamSearch, setDebouncedTeamSearch] = useState("");
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
-  const [selectedTeamName, setSelectedTeamName] = useState("");
   const teamRef = useRef<HTMLDivElement>(null);
 
   const { data: teamsResponse, isLoading: isSearchingTeams } = useSearchTeams(debouncedTeamSearch);
@@ -46,6 +87,16 @@ export const EventsList: React.FC = () => {
     const timer = setTimeout(() => setDebouncedTeamSearch(teamSearch), 300);
     return () => clearTimeout(timer);
   }, [teamSearch]);
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setLocalType(filters.type || "");
+    setLocalTeamName(filters.teamName || "");
+    setLocalYear(filters.year ? String(filters.year) : "");
+  }, [filters.type, filters.teamName, filters.year]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -61,15 +112,20 @@ export const EventsList: React.FC = () => {
   const createFromBevyMutation = useCreateEventFromBevyEvent();
   const updateMutation = useUpdateEvent();
   const deleteMutation = useDeleteEvent();
-
-  // State for modals
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isBevySearchModalOpen, setIsBevySearchModalOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const syncOneMutation = useSyncOneEventToBevy();
+  const [syncingEventId, setSyncingEventId] = useState<string | null>(null);
 
   const events = eventsResponse?.data || [];
+  const selectedEvent = useMemo(
+    () => events.find((event) => event.id === selectedEventId) || null,
+    [events, selectedEventId],
+  );
+
+  const isFormModalOpen = modal === "create" || (modal === "edit" && Boolean(selectedEvent));
+  const isDetailsModalOpen = modal === "view" && Boolean(selectedEvent);
+  const isDeleteModalOpen = modal === "delete" && Boolean(selectedEvent);
+  const isBevySearchModalOpen = modal === "importBevy";
+
   const totalPages = eventsResponse?.meta?.totalPages || 1;
   const totalRecords = eventsResponse?.meta?.totalRecords || 0;
 
@@ -78,8 +134,7 @@ export const EventsList: React.FC = () => {
 
   // Handlers
   const handleCreate = () => {
-    setSelectedEvent(null);
-    setIsFormModalOpen(true);
+    openModal("create");
   };
 
   const handleSyncAllToBevy = () => {
@@ -93,34 +148,50 @@ export const EventsList: React.FC = () => {
   };
 
   const handleCreateFromBevy = () => {
-    setIsBevySearchModalOpen(true);
+    setQueryParams({ modal: "importBevy", itemId: null });
+  };
+
+  const handleSyncOneEvent = async (event: Event) => {
+    try {
+      setSyncingEventId(event.id);
+      await syncOneMutation.mutateAsync({ eventId: event.id });
+      toast.success("Event synced successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Sync failed");
+    } finally {
+      setSyncingEventId((current) => (current === event.id ? null : current));
+    }
   };
 
   const handleSelectBevyEvent = async (bevyEventId: string) => {
     try {
       await createFromBevyMutation.mutateAsync(bevyEventId);
       toast.success("Event imported from Bevy successfully");
-      setIsBevySearchModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Import failed");
     }
   };
 
   const handleEdit = (event: Event) => {
-    setSelectedEvent(event);
-    setIsDetailsModalOpen(false); // Close details if open
-    setIsFormModalOpen(true);
+    openModal("edit", event);
   };
 
   const handleView = (event: Event) => {
-    setSelectedEvent(event);
-    setIsDetailsModalOpen(true);
+    openModal("view", event);
   };
 
   const handleDeleteClick = (event: Event) => {
-    setSelectedEvent(event);
-    setIsDetailsModalOpen(false); // Close details if open
-    setIsDeleteModalOpen(true);
+    openModal("delete", event);
+  };
+
+  const handleDeleteFromCard = async (event: Event) => {
+    try {
+      await deleteMutation.mutateAsync(event.id);
+      toast.success("Event deleted successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Delete failed");
+    }
   };
 
   const handleFormSubmit = async (data: EventInsert | EventUpdate) => {
@@ -132,7 +203,7 @@ export const EventsList: React.FC = () => {
         await createMutation.mutateAsync(data as EventInsert);
         toast.success("Event created successfully");
       }
-      setIsFormModalOpen(false);
+      closeModal();
     } catch (err: any) {
       toast.error(err.message || "Operation failed");
     }
@@ -143,7 +214,7 @@ export const EventsList: React.FC = () => {
       try {
         await deleteMutation.mutateAsync(selectedEvent.id);
         toast.success("Event deleted successfully");
-        setIsDeleteModalOpen(false);
+        closeModal();
       } catch (err: any) {
         toast.error(err.message || "Delete failed");
       }
@@ -151,26 +222,23 @@ export const EventsList: React.FC = () => {
   };
 
   const clearTeamFilter = () => {
-    setFilters(prev => ({ ...prev, teamId: undefined }));
-    setSelectedTeamName("");
+    setQueryParams({ teamId: null, teamLabel: null, page: 1 });
     setTeamSearch("");
-    setPage(1);
   };
 
   const clearTypeFilter = () => {
     setLocalType("");
-    setFilters(prev => ({ ...prev, type: undefined }));
-    setPage(1);
+    setQueryParams({ type: null, page: 1 });
   };
 
   const handleApplyFilters = () => {
-    setFilters(prev => ({
-      ...prev,
-      type: localType.trim() || undefined,
-      teamName: localTeamName.trim() || undefined,
-      year: localYear.trim() ? parseInt(localYear) : undefined
-    }));
-    setPage(1);
+    const parsedYear = localYear.trim() ? Number.parseInt(localYear, 10) : null;
+    setQueryParams({
+      type: localType.trim() || null,
+      teamName: localTeamName.trim() || null,
+      year: parsedYear && Number.isFinite(parsedYear) ? parsedYear : null,
+      page: 1,
+    });
     // Explicitly refetch to handle cases where the filter value might be the same
     // but the user wants to refresh the list manually
     refetch();
@@ -184,77 +252,21 @@ export const EventsList: React.FC = () => {
   );
 
   if (isLoading && !searchQuery && !filters.teamId && !filters.type && !filters.teamName) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-teal-600" />
-      </div>
-    );
+    return <ListLoadingState accent="teal" message="Loading events..." />;
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-sm border border-red-100 bg-red-50 p-12 text-center">
-        <AlertCircle size={48} className="mb-4 text-red-500" />
-        <h3 className="text-lg font-bold text-red-900">Failed to load events</h3>
-        <p className="mt-1 text-sm text-red-700">{(error as any)?.message || "An unexpected error occurred."}</p>
-        <button 
-          onClick={() => refetch()}
-          className="mt-6 rounded-sm bg-red-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-red-700"
-        >
-          Try Again
-        </button>
-      </div>
+      <ListErrorState
+        title="Failed to load events"
+        message={(error as any)?.message || "An unexpected error occurred."}
+        onRetry={() => refetch()}
+      />
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col items-start justify-between gap-4 md:flex-col">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search events..."
-              className="w-full rounded-sm border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="flex w-full items-center gap-2 md:w-auto">
-            <button
-              onClick={handleSyncAllToBevy}
-              disabled={syncAllMutation.isPending}
-              className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-[#0B1F3B] transition-all hover:bg-gray-50 md:flex-none"
-            >
-              {syncAllMutation.isPending ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" />
-                  <span className="ml-1">Syncing...</span>
-                </>
-              ) : (
-                <span>Sync All to Bevy</span>
-              )}
-            </button>
-            <button
-              onClick={handleCreateFromBevy}
-              className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-[#0B1F3B] transition-all hover:bg-gray-50 md:flex-none"
-            >
-              Import from Bevy
-            </button>
-            <button
-              onClick={handleCreate}
-              className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-[#0B1F3B] px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-[#0B1F3B]/90 md:flex-none"
-            >
-              <Plus size={18} />
-              Create Event
-            </button>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3">
+  const filtersSection = (
+    <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 mr-2">
             <Filter size={12} />
             Filter by:
@@ -296,10 +308,12 @@ export const EventsList: React.FC = () => {
                       <button
                         key={team.id}
                         onClick={() => {
-                          setFilters(prev => ({ ...prev, teamId: team.id }));
-                          setSelectedTeamName(team.name);
+                          setQueryParams({
+                            teamId: team.id,
+                            teamLabel: team.name,
+                            page: 1,
+                          });
                           setShowTeamDropdown(false);
-                          setPage(1);
                         }}
                         className="w-full rounded px-3 py-2 text-left text-xs hover:bg-teal-50 hover:text-teal-700"
                       >
@@ -353,9 +367,11 @@ export const EventsList: React.FC = () => {
                 size={14} 
                 className="cursor-pointer hover:text-red-500" 
                 onClick={() => {
+                  setQueryParams({
+                    teamName: null,
+                    page: 1,
+                  });
                   setLocalTeamName("");
-                  setFilters(prev => ({ ...prev, teamName: undefined }));
-                  setPage(1);
                 }} 
               />
             )}
@@ -379,34 +395,44 @@ export const EventsList: React.FC = () => {
                 size={14} 
                 className="cursor-pointer hover:text-red-500" 
                 onClick={() => {
+                  setQueryParams({
+                    year: null,
+                    page: 1,
+                  });
                   setLocalYear("");
-                  setFilters(prev => ({ ...prev, year: undefined }));
-                  setPage(1);
                 }} 
               />
             )}
           </div>
 
-          <button
+          <AdminActionButton
             onClick={handleApplyFilters}
             disabled={isFetching}
-            className="flex items-center gap-1.5 rounded-sm bg-teal-600 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white transition-all hover:bg-teal-700 shadow-sm disabled:opacity-50"
+            variant="teal"
+            size="sm"
+            className="px-4 text-[10px] uppercase tracking-widest shadow-sm"
           >
             {isFetching ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
             {isFetching ? "Searching..." : "Search"}
-          </button>
+          </AdminActionButton>
 
           {(filters.teamId || filters.type || filters.teamName || filters.year || searchQuery || localType || localTeamName || localYear) && (
             <button
               onClick={() => {
-                setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
+                setQueryParams({
+                  type: null,
+                  teamId: null,
+                  teamName: null,
+                  year: null,
+                  teamLabel: null,
+                  q: null,
+                  page: 1,
+                });
+                setSearchInput("");
                 setLocalType("");
                 setLocalTeamName("");
                 setLocalYear("");
-                setSelectedTeamName("");
                 setTeamSearch("");
-                setSearchQuery("");
-                setPage(1);
               }}
               className="text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors ml-2"
             >
@@ -414,83 +440,158 @@ export const EventsList: React.FC = () => {
             </button>
           )}
         </div>
-      </div>
+  );
 
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        totalRecords={totalRecords}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
-
-      {/* Grid of Cards */}
-      {filteredEvents.length > 0 ? (
-        <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 transition-opacity duration-200 ${isFetching ? "opacity-50" : "opacity-100"}`}>
-          {filteredEvents.map((event: Event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onClick={handleView}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
-          <Calendar size={48} className="mb-4 text-gray-300" />
-          <h3 className="text-lg font-bold text-gray-900">
-            {searchQuery || filters.teamId || filters.type || filters.teamName ? "No matching events found" : "No events found"}
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            {searchQuery || filters.teamId || filters.type || filters.teamName ? "Try adjusting your filters." : "Get started by creating your first community event."}
-          </p>
-          {(searchQuery || filters.teamId || filters.type || filters.teamName || filters.year) ? (
-            <button 
-              onClick={() => {
-                setFilters({ type: undefined, teamId: undefined, teamName: undefined, year: undefined });
-                setLocalType("");
-                setLocalTeamName("");
-                setLocalYear("");
-                setSelectedTeamName("");
-                setSearchQuery("");
-              }}
-              className="mt-6 rounded-sm bg-gray-900 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-gray-800"
+  return (
+    <>
+      <AdminListScaffold
+        actions={
+          <>
+            <AdminActionButton
+              onClick={handleSyncAllToBevy}
+              disabled={syncAllMutation.isPending}
+              variant="brandOutline"
+              className="flex-1 md:flex-none"
             >
-              Clear Filters
-            </button>
-          ) : (
-            <button 
+              {syncAllMutation.isPending ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span className="ml-1">Syncing...</span>
+                </>
+              ) : (
+                <span>Sync All to Bevy</span>
+              )}
+            </AdminActionButton>
+            <AdminActionButton
+              onClick={handleCreateFromBevy}
+              variant="brandOutline"
+              className="flex-1 md:flex-none"
+            >
+              Import from Bevy
+            </AdminActionButton>
+            <AdminActionButton
               onClick={handleCreate}
-              className="mt-6 rounded-sm bg-teal-600 px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-teal-700"
+              variant="brand"
+              className="flex-1 md:flex-none"
             >
+              <Plus size={18} />
               Create Event
-            </button>
-          )}
-        </div>
-      )}
+            </AdminActionButton>
+          </>
+        }
+        search={
+          <AdminSearchSection
+            value={searchInput}
+            onValueChange={setSearchInput}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                applySearch();
+              }
+            }}
+            placeholder="Search events..."
+            accent="teal"
+            actions={
+              <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                Search
+              </AdminActionButton>
+            }
+          />
+        }
+        filters={filtersSection}
+        content={
+          filteredEvents.length > 0 ? (
+            <AdminCardGrid className={`transition-opacity duration-200 ${isFetching ? "opacity-50" : "opacity-100"}`}>
+              {filteredEvents.map((event: Event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onView={handleView}
+                  onEdit={handleEdit}
+                  onDelete={handleDeleteFromCard}
+                  onSync={handleSyncOneEvent}
+                />
+              ))}
+            </AdminCardGrid>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-sm border-2 border-dashed border-gray-200 bg-gray-50/50 p-20 text-center">
+              <Calendar size={48} className="mb-4 text-gray-300" />
+              <h3 className="text-lg font-bold text-gray-900">
+                {searchQuery || filters.teamId || filters.type || filters.teamName ? "No matching events found" : "No events found"}
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                {searchQuery || filters.teamId || filters.type || filters.teamName ? "Try adjusting your filters." : "Get started by creating your first community event."}
+              </p>
+              {(searchQuery || filters.teamId || filters.type || filters.teamName || filters.year) ? (
+                <AdminActionButton
+                  onClick={() => {
+                    setQueryParams({
+                      type: null,
+                      teamId: null,
+                      teamName: null,
+                      year: null,
+                      teamLabel: null,
+                      q: null,
+                      page: 1,
+                    });
+                    setSearchInput("");
+                    setLocalType("");
+                    setLocalTeamName("");
+                    setLocalYear("");
+                  }}
+                  variant="dark"
+                  size="sm"
+                  className="mt-6"
+                >
+                  Clear Filters
+                </AdminActionButton>
+              ) : (
+                <AdminActionButton
+                  onClick={handleCreate}
+                  variant="teal"
+                  size="sm"
+                  className="mt-6"
+                >
+                  Create Event
+                </AdminActionButton>
+              )}
+            </div>
+          )
+        }
+        pagination={
+          <AdminPaginationSection
+            currentPage={page}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            totalRecords={totalRecords}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
+        }
+      />
 
       {/* Modals */}
       <EventFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={closeModal}
         onSubmit={handleFormSubmit}
-        initialData={selectedEvent}
+        initialData={modal === "edit" ? selectedEvent : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
       />
 
       <EventDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
+        onClose={closeModal}
         event={selectedEvent}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
+        onSync={handleSyncOneEvent}
+        isSyncing={Boolean(selectedEvent && syncingEventId === selectedEvent.id && syncOneMutation.isPending)}
       />
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
+        onClose={closeModal}
         onConfirm={handleDeleteConfirm}
         itemName={selectedEvent?.title || ""}
         isDeleting={deleteMutation.isPending}
@@ -498,10 +599,10 @@ export const EventsList: React.FC = () => {
 
       <BevyEventSearchModal
         isOpen={isBevySearchModalOpen}
-        onClose={() => setIsBevySearchModalOpen(false)}
+        onClose={closeModal}
         onSelect={handleSelectBevyEvent}
         isSubmitting={createFromBevyMutation.isPending}
       />
-    </div>
+    </>
   );
 };

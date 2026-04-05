@@ -5,7 +5,7 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-1",
     gradient: "white-red",
     href: "/products/iot",
-    image: "/products/iot-logo.png",
+    image: "/products/iot-logo.webp",
   },
   {
     header: "Technology",
@@ -13,7 +13,7 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-3",
     gradient: "white-green",
     href: "/products/cybersecurity",
-    image: "/products/cybersecurity-logo.png",
+    image: "/products/cybersecurity-logo.webp",
   },
   {
     header: "Technology",
@@ -21,7 +21,7 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-2",
     gradient: "white-blue",
     href: "/products/data-ml",
-    image: "/products/data-ml-logo.png",
+    image: "/products/data-ml-logo.webp",
   },
   {
     header: "Technology",
@@ -29,7 +29,7 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-1",
     gradient: "white-yellow",
     href: "/products/ui-ux",
-    image: "/products/ui-ux-logo.png",
+    image: "/products/ui-ux-logo.webp",
   },
   {
     header: "Technology",
@@ -37,7 +37,7 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-3",
     gradient: "white-red",
     href: "/products/cloud-solutions",
-    image: "/products/cloud-solutions-logo.png",
+    image: "/products/cloud-solutions-logo.webp",
   },
   {
     header: "Technology",
@@ -45,7 +45,7 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-3",
     gradient: "white-green",
     href: "/products/project-management ",
-    image: "/products/project-management-logo.png",
+    image: "/products/project-management-logo.webp",
   },
   {
     header: "Technology",
@@ -53,7 +53,7 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-3",
     gradient: "white-blue",
     href: "/products/web-development",
-    image: "/products/web-development-logo.png",
+    image: "/products/web-development-logo.webp",
   },
   {
     header: "Executives",

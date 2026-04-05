@@ -11,9 +11,14 @@ export class RolesRouter {
 
     this.router.get("/", this.rolesHttpController.listRoles);
     this.router.post("/", this.rolesHttpController.createRole);
+
+
+
     this.router.delete("/:roleId", this.rolesHttpController.deleteRole);
     this.router.get("/:roleId", this.rolesHttpController.getOne);
+    this.router.patch("/:roleId", this.rolesHttpController.updateRole);
 
+    
     this.router.post(
       "/:roleId/permissions",
       this.rolesHttpController.addPermission,
@@ -22,5 +27,6 @@ export class RolesRouter {
       "/:roleId/permissions",
       this.rolesHttpController.deletePermission,
     );
+    
   }
 }

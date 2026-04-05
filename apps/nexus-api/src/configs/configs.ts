@@ -19,4 +19,7 @@ export const configs = {
       name: process.env.ZEPTOMAIL_FROM_NAME || "GDG PUP",
     },
   },
+  security: {
+    disabled: process.env.SECURITY_DISABLED === "true" || false,
+  }
 };

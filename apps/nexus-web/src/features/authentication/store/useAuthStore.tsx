@@ -7,6 +7,9 @@ import { useLogin } from "../hooks";
 import { jwtDecode } from "jwt-decode";
 import { TokenPayload } from "../types/tokenPayload";
 import { useRefreshToken } from "../hooks/useRefreshToken";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { contract } from "@packages/nexus-api-contracts";
+import { configs } from "@/lib/constants/configs";
 
 export const STATUS = {
   CHECKING: "checking",
@@ -26,6 +29,8 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   error: Error | null;
   refreshToken: () => Promise<void>;
+  memberProfile: any | null;
+  fetchMemberProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -51,6 +56,7 @@ export const AuthContextProvider = ({
     status: "checking",
     error: null,
   });
+  const [memberProfile, setMemberProfile] = useState<any | null>(null);
   const { token, setToken, clearToken, decodedToken, _hasHydrated } =
     useTokenStore();
 
@@ -88,8 +94,34 @@ export const AuthContextProvider = ({
       setState({ status: STATUS.AUTHENTICATED, error: null });
     } else {
       setState({ status: STATUS.UNAUTHENTICATED, error: null });
+      setMemberProfile(null);
     }
   }, [token, _hasHydrated]);
+
+  const fetchMemberProfile = async () => {
+    if (!token || !decodedToken?.memberInfo.gdgId) return;
+    try {
+      const res = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.gdgmembers.gdgId.GET,
+        {
+          token: token ?? undefined,
+          params: { gdgId: decodedToken.memberInfo.gdgId },
+        },
+      );
+      if (res.status === 200) {
+        setMemberProfile(res.body.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch member profile", error);
+    }
+  };
+
+  useEffect(() => {
+    if (state.status === STATUS.AUTHENTICATED && !memberProfile) {
+      fetchMemberProfile();
+    }
+  }, [state.status, token, decodedToken]);
 
   const login = async (email: string, password: string) => {
     setState({ status: STATUS.LOGGINGIN, error: null });
@@ -114,6 +146,8 @@ export const AuthContextProvider = ({
     try {
       clearToken();
       setState({ status: STATUS.UNAUTHENTICATED, error: null });
+
+      console.log("logged out");
     } catch (error) {
       setState({
         status: STATUS.UNAUTHENTICATED,
@@ -134,6 +168,8 @@ export const AuthContextProvider = ({
           login,
           logout,
           refreshToken,
+          memberProfile,
+          fetchMemberProfile,
         }}
       >
         {children}

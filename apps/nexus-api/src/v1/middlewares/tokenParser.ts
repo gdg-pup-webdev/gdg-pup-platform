@@ -13,8 +13,8 @@ export const tokenParserFromHeaders: RequestHandler = async (
       ? authHeader.split(" ")[1]
       : undefined;
 
-      console.log("header", authHeader, authHeader?.split(" "))
-    console.log("Extracted access token from header:", accessToken);
+    //   console.log("header", authHeader, authHeader?.split(" "))
+    // console.log("Extracted access token from header:", accessToken);
 
     if (accessToken) {
       req.token = accessToken;
@@ -23,17 +23,17 @@ export const tokenParserFromHeaders: RequestHandler = async (
         token: accessToken,
       });
 
-      console.log("Decoded token:", data);
+      // console.log("Decoded token:", data);
 
       if (data) {
         req.decodedToken = data;
-        console.log("Token is valid. User info attached to request.");
+        // console.log("Token is valid. User info attached to request.");
       }
     }
 
     return next();
   } catch (error) {
-    console.log("Error in token parser middleware:", error);
+    // console.log("Error in token parser middleware:", error);
 
     req.user = undefined;
     req.decodedToken = undefined;

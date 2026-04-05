@@ -1,4 +1,4 @@
-import { OpenApiGeneratorV3, OpenAPIRegistry, cz as z } from "#shared/cz.js";
+import { cz, OpenApiGeneratorV3, OpenAPIRegistry, cz as z } from "#shared/cz.js";
 
 export const generateOpenApiOptions = ({
   info = {
@@ -238,7 +238,7 @@ export const generateOpenApiOptions = ({
     // this block enables support for multiform data
     if (endpoint.files || endpoint.body) {
       let contentType = "application/json";
-      let requestSchema = endpoint.body;
+      let requestSchema = endpoint.body  ;
 
       if (endpoint.files) {
         contentType = "multipart/form-data";
