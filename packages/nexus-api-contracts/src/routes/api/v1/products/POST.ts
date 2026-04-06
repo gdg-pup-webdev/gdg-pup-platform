@@ -2,9 +2,11 @@ import {
   ProductObject,
   ProductInsertDTO,
 } from "#models/v1/products/products.js";
-import { OpenApiSchemas } from "@packages/typed-rest/shared";
+import { cz, OpenApiSchemas } from "@packages/typed-rest/shared";
 
-export const body = ProductInsertDTO;
+export const body = cz.object({
+  data: ProductInsertDTO,
+});
 
 export const response = {
   201: ProductObject,

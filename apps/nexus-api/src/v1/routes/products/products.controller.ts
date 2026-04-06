@@ -42,11 +42,11 @@ export class ProductHttpController {
     contract.api.v1.products.POST,
     async ({ input, output, ctx }) => {
       const data = await this.productModuleController.create(
-        input.body.name,
-        input.body.description,
-        input.body.category,
-        input.body.image,
-        input.body.link,
+        input.body.data.name,
+        input.body.data.description,
+        input.body.data.category,
+        input.body.data.image,
+        input.body.data.link,
       );
       return output(201, data);
     },
@@ -57,7 +57,7 @@ export class ProductHttpController {
     async ({ input, output, ctx }) => {
       const data = await this.productModuleController.update(
         input.params.id,
-        input.body,
+        input.body.data,
       );
       return output(200, data);
     },

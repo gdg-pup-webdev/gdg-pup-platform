@@ -112,11 +112,13 @@ POST /api/v1/products
 Content-Type: application/json
 
 {
-  "name": "GDG Platform",
-  "description": "The main platform for GDG communities",
-  "category": "Platform",
-  "image": "https://...",
-  "link": "https://..." // optional
+  "data": {
+    "name": "GDG Platform",
+    "description": "The main platform for GDG communities",
+    "category": "Platform",
+    "image": "https://...",
+    "link": "https://..." // optional
+  }
 }
 ```
 
@@ -135,11 +137,13 @@ PATCH /api/v1/products/:id
 Content-Type: application/json
 
 {
-  "name": "Updated Name",
-  "description": "Updated description",
-  "category": "Updated Category",
-  "image": "https://...",
-  "link": "https://..."
+  "data": {
+    "name": "Updated Name",
+    "description": "Updated description",
+    "category": "Updated Category",
+    "image": "https://...",
+    "link": "https://..."
+  }
 }
 ```
 

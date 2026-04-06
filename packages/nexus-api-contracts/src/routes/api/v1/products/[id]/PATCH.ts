@@ -8,7 +8,9 @@ export const params = cz.object({
   id: cz.string(),
 });
 
-export const body = ProductUpdateDTO;
+export const body = cz.object({
+  data: ProductUpdateDTO,
+});
 
 export const response = {
   200: ProductObject,
