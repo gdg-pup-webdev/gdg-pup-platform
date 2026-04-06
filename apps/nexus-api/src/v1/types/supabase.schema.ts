@@ -653,6 +653,39 @@ export const publicOneTimePinsUpdateSchema = z.object({
   reference: z.string().optional(),
 });
 
+export const publicProductsRowSchema = z.object({
+  category: z.string(),
+  created_at: z.string(),
+  description: z.string(),
+  id: z.string(),
+  image: z.string(),
+  link: z.string().nullable(),
+  name: z.string(),
+  updated_at: z.string(),
+});
+
+export const publicProductsInsertSchema = z.object({
+  category: z.string(),
+  created_at: z.string().optional(),
+  description: z.string(),
+  id: z.string().optional(),
+  image: z.string(),
+  link: z.string().optional().nullable(),
+  name: z.string(),
+  updated_at: z.string().optional(),
+});
+
+export const publicProductsUpdateSchema = z.object({
+  category: z.string().optional(),
+  created_at: z.string().optional(),
+  description: z.string().optional(),
+  id: z.string().optional(),
+  image: z.string().optional(),
+  link: z.string().optional().nullable(),
+  name: z.string().optional(),
+  updated_at: z.string().optional(),
+});
+
 export const publicRewardRowSchema = z.object({
   created_at: z.string(),
   description: z.string(),

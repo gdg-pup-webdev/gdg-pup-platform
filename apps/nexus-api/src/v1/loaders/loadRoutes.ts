@@ -1,8 +1,6 @@
- 
-
-import { Express, Router } from "express"; 
+import { Express, Router } from "express";
 import { HealthRouter } from "../routes/health/healthCheck.route";
-import { HealthHttpController } from "../routes/health/healthCheck.controller"; 
+import { HealthHttpController } from "../routes/health/healthCheck.controller";
 import { filesModuleController } from "@/v1/modules/filesModule";
 import { FilesHttpController } from "../routes/files/files.controller";
 import { FilesRouter } from "../routes/files/files.router";
@@ -16,9 +14,9 @@ import { TasksHttpController } from "../routes/tasks/tasks.controller";
 import { TasksRouter } from "../routes/tasks/tasks.router";
 import { RolesRouter } from "../routes/roles/roles.router";
 import { RolesHttpController } from "../routes/roles/roles.controller";
-import { rbacController } from "../modules/rbacSystem"; 
+import { rbacController } from "../modules/rbacSystem";
 import { GdgTeamsHttpController } from "../routes/gdg-teams/gdgTeams.controller";
-import { GdgTeamsRouter } from "../routes/gdg-teams/gdgTeams.router"; 
+import { GdgTeamsRouter } from "../routes/gdg-teams/gdgTeams.router";
 import { gdgMerchController } from "@/v1/modules/gdgMerch";
 import { GdgMerchHttpController } from "../routes/gdg-merch/gdgMerch.controller";
 import { GdgMerchRouter } from "../routes/gdg-merch/gdgMerch.router";
@@ -36,8 +34,8 @@ import { EventsRouter } from "../routes/events/events.router";
 import { ArticlesHttpController } from "../routes/articles/articles.controller";
 import { ArticlesRouter } from "../routes/articles/articles.router";
 import { AuthenticationHttpController } from "../routes/authentication/authentication.controller";
-import { authenticationController } from "../modules/authentication"; 
-import { gdgMembersController } from "../modules/members"; 
+import { authenticationController } from "../modules/authentication";
+import { gdgMembersController } from "../modules/members";
 import { AuthenticationRouter } from "../routes/authentication/authentication.router";
 import { GdgMembersHttpController } from "../routes/gdgmembers/gdgmembers.controller";
 import { GdgMembersRouter } from "../routes/gdgmembers/gdgmembers.router";
@@ -55,9 +53,11 @@ import {
   MemberProjectsRouter,
 } from "../routes/member-projects/MemberProjects";
 import { articlesController } from "../modules/articles";
+import { productController } from "../modules/products";
+import { ProductHttpController } from "../routes/products/products.controller";
+import { ProductRouter } from "../routes/products/products.router";
 
-export const loadRoutes = (app: Express) => { 
-
+export const loadRoutes = (app: Express) => {
   const gdgMembersHttpController = new GdgMembersHttpController(
     gdgMembersController,
   );
@@ -78,7 +78,7 @@ export const loadRoutes = (app: Express) => {
   const foldersHttpController = new FoldersHttpController(
     filesModuleController,
   );
-  const foldersRouter = new FoldersRouter(foldersHttpController); 
+  const foldersRouter = new FoldersRouter(foldersHttpController);
 
   const healthHttpController = new HealthHttpController();
   const healthRouter = new HealthRouter(healthHttpController);
@@ -94,12 +94,9 @@ export const loadRoutes = (app: Express) => {
   const rolesRouter = new RolesRouter(rolesHttpController);
   const tasksHttpController = new TasksHttpController(taskModuleController);
   const tasksRouter = new TasksRouter(tasksHttpController);
- 
 
   const gdgTeamsHttpController = new GdgTeamsHttpController();
   const gdgTeamsRouter = new GdgTeamsRouter(gdgTeamsHttpController);
-
- 
 
   const gdgMerchHttpController = new GdgMerchHttpController(gdgMerchController);
   const gdgMerchRouter = new GdgMerchRouter(gdgMerchHttpController);
@@ -139,6 +136,9 @@ export const loadRoutes = (app: Express) => {
   const studyJamsHttpController = new StudyJamsHttpController();
   const studyJamsRouter = new StudyJamsRouter(studyJamsHttpController);
 
+  const productHttpController = new ProductHttpController(productController);
+  const productRouter = new ProductRouter(productHttpController);
+
   app.use("/files", filesRouter.router);
   app.use("/folders", foldersRouter.router);
   // app.use("/auth-system", authRouter.router);
@@ -162,6 +162,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/nfc-cards", nfcCardsRouter.router);
   app.use("/member-showcase", memberShowcaseRouter.router);
   app.use("/member-projects", memberProjectsRouter.router);
+  app.use("/products", productRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });
