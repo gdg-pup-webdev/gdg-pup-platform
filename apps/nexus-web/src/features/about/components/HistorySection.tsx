@@ -20,7 +20,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ASSETS } from "@/lib/constants/assets";
 
 // ─── Zoned blob background (history page only) ───────────────────────────────
@@ -457,22 +457,65 @@ const StatCard = ({
   stat,
 }: {
   stat: (typeof stats)[number];
-}) => (
-  <div
-    className="p-[1.5px] rounded-2xl"
-    style={{ background: nexusStroke }}
-  >
-    <div className="flex flex-col items-center gap-4 rounded-2xl p-8 h-full bg-[#0F0E0E]">
-      {stat.icon}
-      <Text variant="heading-1" weight="bold" align="center" className="text-white">
-        {stat.value}
-      </Text>
-      <Text variant="body" weight="bold" align="center" className="text-gray-300">
-        {stat.label}
-      </Text>
+}) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [displayValue, setDisplayValue] = useState(0);
+
+  const match = stat.value.match(/^([\d.]+)(.*)$/);
+  const numericPart = match?.[1] ?? "0";
+  const parsedValue = Number.parseFloat(numericPart);
+  const targetValue = Number.isFinite(parsedValue) ? parsedValue : 0;
+  const decimalPlaces = (numericPart.split(".")[1] ?? "").length;
+  const suffix = match?.[2] ?? "";
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    let frameId = 0;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      frameId = requestAnimationFrame(() => setDisplayValue(targetValue));
+      return () => cancelAnimationFrame(frameId);
+    }
+
+    const duration = 1200;
+    const start = performance.now();
+
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const nextRawValue = targetValue * progress;
+      const nextValue = decimalPlaces > 0
+        ? Number(nextRawValue.toFixed(decimalPlaces))
+        : Math.round(nextRawValue);
+      setDisplayValue(nextValue);
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [decimalPlaces, isInView, targetValue]);
+
+  return (
+    <div
+      ref={ref}
+      className="p-[1.5px] rounded-2xl"
+      style={{ background: nexusStroke }}
+    >
+      <div className="flex flex-col items-center gap-4 rounded-2xl p-8 h-full bg-[#0F0E0E]">
+        {stat.icon}
+        <Text variant="heading-1" weight="bold" align="center" className="text-white">
+          {`${displayValue}${suffix}`}
+        </Text>
+        <Text variant="body" weight="bold" align="center" className="text-gray-300">
+          {stat.label}
+        </Text>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export function HistorySection() {

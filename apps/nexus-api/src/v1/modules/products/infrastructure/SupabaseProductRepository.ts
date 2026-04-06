@@ -1,5 +1,6 @@
 import { supabase } from "@/v1/lib/supabase";
 import { InternalServerError } from "@/v1/errors/HttpError";
+<<<<<<< HEAD
 import type { Database } from "@/v1/types/supabase.types";
 import { IProductRepository } from "../domain/IProductRepository";
 import { Product } from "../domain/Product";
@@ -9,6 +10,24 @@ type ProductInsert = Database["public"]["Tables"]["products"]["Insert"];
 
 export class SupabaseProductRepository implements IProductRepository {
   private readonly tableName = "products" as const;
+=======
+import { IProductRepository } from "../domain/IProductRepository";
+import { Product } from "../domain/Product";
+
+type ProductRow = {
+  id: string;
+  name: string | null;
+  description: string | null;
+  category: string | null;
+  image: string | null;
+  link: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+};
+
+export class SupabaseProductRepository implements IProductRepository {
+  private readonly tableName = "products";
+>>>>>>> origin/dev
 
   /**
    * Maps a raw Supabase DB row to a Product domain object.
@@ -29,7 +48,11 @@ export class SupabaseProductRepository implements IProductRepository {
   /**
    * Maps a Product domain object to a Supabase DB row.
    */
+<<<<<<< HEAD
   private mapToDb(product: Product): ProductInsert {
+=======
+  private mapToDb(product: Product) {
+>>>>>>> origin/dev
     const props = product.props;
     return {
       id: props.id,
@@ -44,7 +67,11 @@ export class SupabaseProductRepository implements IProductRepository {
   }
 
   async findById(id: string): Promise<Product | null> {
+<<<<<<< HEAD
     const { data, error } = await supabase
+=======
+    const { data, error } = await (supabase as any)
+>>>>>>> origin/dev
       .from(this.tableName)
       .select("*")
       .eq("id", id)
@@ -56,7 +83,11 @@ export class SupabaseProductRepository implements IProductRepository {
         error,
       );
     }
+<<<<<<< HEAD
     return data ? this.mapToDomain(data) : null;
+=======
+    return data ? this.mapToDomain(data as ProductRow) : null;
+>>>>>>> origin/dev
   }
 
   async list(
@@ -66,7 +97,11 @@ export class SupabaseProductRepository implements IProductRepository {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
+<<<<<<< HEAD
     const { data, count, error } = await supabase
+=======
+    const { data, count, error } = await (supabase as any)
+>>>>>>> origin/dev
       .from(this.tableName)
       .select("*", { count: "exact" })
       .range(from, to);
@@ -79,13 +114,23 @@ export class SupabaseProductRepository implements IProductRepository {
     }
 
     return {
+<<<<<<< HEAD
       products: (data ?? []).map((row) => this.mapToDomain(row)),
+=======
+      products: ((data ?? []) as ProductRow[]).map((row) =>
+        this.mapToDomain(row),
+      ),
+>>>>>>> origin/dev
       count: count ?? 0,
     };
   }
 
   async saveNew(product: Product): Promise<void> {
+<<<<<<< HEAD
     const { error } = await supabase
+=======
+    const { error } = await (supabase as any)
+>>>>>>> origin/dev
       .from(this.tableName)
       .insert(this.mapToDb(product));
 
@@ -96,7 +141,11 @@ export class SupabaseProductRepository implements IProductRepository {
 
   async persistUpdates(product: Product): Promise<void> {
     const row = this.mapToDb(product);
+<<<<<<< HEAD
     const { error } = await supabase
+=======
+    const { error } = await (supabase as any)
+>>>>>>> origin/dev
       .from(this.tableName)
       .update({
         name: row.name,
@@ -114,7 +163,14 @@ export class SupabaseProductRepository implements IProductRepository {
   }
 
   async delete(id: string): Promise<void> {
+<<<<<<< HEAD
     const { error } = await supabase.from(this.tableName).delete().eq("id", id);
+=======
+    const { error } = await (supabase as any)
+      .from(this.tableName)
+      .delete()
+      .eq("id", id);
+>>>>>>> origin/dev
 
     if (error) {
       throw new InternalServerError("Failed to delete product", error);
