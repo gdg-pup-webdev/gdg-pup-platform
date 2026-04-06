@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DeleteProduct } from "../DeleteProduct";
 import { Product } from "../../domain/Product";
 import { MockProductRepository } from "../../infrastructure/MockProductRepository";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 describe("DeleteProduct Use Case", () => {
   let repository: MockProductRepository;
@@ -33,8 +34,6 @@ describe("DeleteProduct Use Case", () => {
   });
 
   it("throws when trying to delete a non-existent product", async () => {
-    await expect(useCase.execute("missing-id")).rejects.toThrow(
-      "Product with ID missing-id not found",
-    );
+    await expect(useCase.execute("missing-id")).rejects.toThrow(NotFoundError);
   });
 });

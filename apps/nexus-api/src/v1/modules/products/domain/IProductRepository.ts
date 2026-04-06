@@ -1,4 +1,4 @@
-import { Product, ProductInsertProps, ProductUpdateProps } from "./Product";
+import { Product } from "./Product";
 
 export interface IProductRepository {
   saveNew(product: Product): Promise<void>;

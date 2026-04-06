@@ -1,4 +1,5 @@
 import { supabase } from "@/v1/lib/supabase";
+import { InternalServerError } from "@/v1/errors/HttpError";
 import { IProductRepository } from "../domain/IProductRepository";
 import { Product } from "../domain/Product";
 
@@ -56,7 +57,12 @@ export class SupabaseProductRepository implements IProductRepository {
       .eq("id", id)
       .maybeSingle();
 
-    if (error) throw new Error(`Database error: ${error.message}`);
+    if (error) {
+      throw new InternalServerError(
+        "Failed to fetch product from database",
+        error,
+      );
+    }
     return data ? this.mapToDomain(data as ProductRow) : null;
   }
 
@@ -72,7 +78,12 @@ export class SupabaseProductRepository implements IProductRepository {
       .select("*", { count: "exact" })
       .range(from, to);
 
-    if (error) throw new Error(`Database error: ${error.message}`);
+    if (error) {
+      throw new InternalServerError(
+        "Failed to list products from database",
+        error,
+      );
+    }
 
     return {
       products: ((data ?? []) as ProductRow[]).map((row) =>
@@ -87,7 +98,9 @@ export class SupabaseProductRepository implements IProductRepository {
       .from(this.tableName)
       .insert(this.mapToDb(product));
 
-    if (error) throw new Error(`Failed to create product: ${error.message}`);
+    if (error) {
+      throw new InternalServerError("Failed to create product", error);
+    }
   }
 
   async persistUpdates(product: Product): Promise<void> {
@@ -104,7 +117,9 @@ export class SupabaseProductRepository implements IProductRepository {
       })
       .eq("id", product.props.id);
 
-    if (error) throw new Error(`Failed to update product: ${error.message}`);
+    if (error) {
+      throw new InternalServerError("Failed to update product", error);
+    }
   }
 
   async delete(id: string): Promise<void> {
@@ -113,6 +128,8 @@ export class SupabaseProductRepository implements IProductRepository {
       .delete()
       .eq("id", id);
 
-    if (error) throw new Error(`Failed to delete product: ${error.message}`);
+    if (error) {
+      throw new InternalServerError("Failed to delete product", error);
+    }
   }
 }

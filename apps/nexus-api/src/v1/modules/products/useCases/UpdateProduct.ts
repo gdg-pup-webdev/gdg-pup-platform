@@ -1,5 +1,6 @@
 import { Product, ProductUpdateProps } from "../domain/Product";
 import { IProductRepository } from "../domain/IProductRepository";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 export class UpdateProduct {
   constructor(private readonly repository: IProductRepository) {}
@@ -7,7 +8,7 @@ export class UpdateProduct {
   async execute(id: string, updateProps: ProductUpdateProps): Promise<Product> {
     const product = await this.repository.findById(id);
     if (!product) {
-      throw new Error(`Product with ID ${id} not found`);
+      throw new NotFoundError(`Product with ID ${id} not found`);
     }
 
     product.update(updateProps);

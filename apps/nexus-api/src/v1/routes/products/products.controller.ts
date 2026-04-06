@@ -1,4 +1,5 @@
 import { ProductController } from "@/v1/modules/products";
+import { NotFoundError } from "@/v1/errors/HttpError";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
@@ -33,7 +34,8 @@ export class ProductHttpController {
     contract.api.v1.products.id.GET,
     async ({ input, output, ctx }) => {
       const data = await this.productModuleController.getOne(input.params.id);
-      if (!data) throw new Error("Product not found");
+      if (!data)
+        throw new NotFoundError(`Product with ID ${input.params.id} not found`);
       return output(200, data);
     },
   );

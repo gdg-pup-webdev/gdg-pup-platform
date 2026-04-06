@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UpdateProduct } from "../UpdateProduct";
 import { Product } from "../../domain/Product";
 import { MockProductRepository } from "../../infrastructure/MockProductRepository";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 describe("UpdateProduct Use Case", () => {
   let repository: MockProductRepository;
@@ -37,6 +38,6 @@ describe("UpdateProduct Use Case", () => {
   it("throws when the product does not exist", async () => {
     await expect(
       useCase.execute("non-existent-id", { name: "New" }),
-    ).rejects.toThrow("Product with ID non-existent-id not found");
+    ).rejects.toThrow(NotFoundError);
   });
 });
