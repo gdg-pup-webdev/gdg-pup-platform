@@ -47,7 +47,6 @@ export class AuthMiddleware {
     next();
   };
 
-
   /**
    * @deprecated
    */
@@ -169,11 +168,9 @@ export class AuthMiddleware {
    * @deprecated
    */
   requirePermissions =
-    (
-      requiredPermissions: Record<string, string[]>,
-    ): RequestHandler =>
+    (requiredPermissions: Record<string, string[]>): RequestHandler =>
     async (req, res, next) => {
-      const userId = req.user?.id;
+      const userId = req.decodedToken?.memberInfo.gdgId ?? req.user?.id;
       if (!userId) {
         throw new UnauthorizedError(
           "Authentication required. No authenticated user found in request context.",
@@ -189,16 +186,18 @@ export class AuthMiddleware {
 
       const missingPermissions = Object.entries(requiredPermissions).flatMap(
         ([resource, actions]) =>
-          actions.filter((action) => {
-            return !userPermissions.some(
-              (userPermission) =>
-                userPermission.action === action &&
-                userPermission.resource === resource,
-            );
-          }).map((action) => ({
-            resource: resource,
-            action,
-          })),
+          actions
+            .filter((action) => {
+              return !userPermissions.some(
+                (userPermission) =>
+                  userPermission.action === action &&
+                  userPermission.resource === resource,
+              );
+            })
+            .map((action) => ({
+              resource: resource,
+              action,
+            })),
       );
 
       if (missingPermissions.length > 0) {
