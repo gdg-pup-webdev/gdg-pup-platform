@@ -2,25 +2,16 @@
 
 import { ASSETS } from "@/lib/constants/assets";
 import Link from "next/link";
+import Image from "next/image";
+import { Article } from "../types";
+import { formatPublishedDate } from "../utils/formatPublishedDate";
 
 interface ArticleCardProps {
-  article: {
-    id: string;
-    title: string;
-    description: string;
-    image_url: string | null;
-    published_at: string | null;
-  };
+  article: Article;
 }
 
 export const ArticleCard = ({ article }: ArticleCardProps) => {
-  const publishedDate = article.published_at
-    ? new Date(article.published_at).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-    : "Unpublished";
+  const publishedDate = formatPublishedDate(article.published_at);
 
   return (
     <Link href={`/articles/${article.id}`} className="group block h-full">
@@ -28,10 +19,12 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.08] via-transparent to-transparent opacity-60" />
 
         <div className="relative aspect-video w-full overflow-hidden border-b border-white/10">
-          <img
+          <Image
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             src={article.image_url || ASSETS.PLACEHOLDERS.DEFAULT}
             alt={article.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         </div>
 
