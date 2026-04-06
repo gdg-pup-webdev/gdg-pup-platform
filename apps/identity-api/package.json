@@ -51,7 +51,7 @@
     "supabase": "^2.70.5",
     "supabase-to-zod": "^1.0.7",
     "supertest": "^7.1.4",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
