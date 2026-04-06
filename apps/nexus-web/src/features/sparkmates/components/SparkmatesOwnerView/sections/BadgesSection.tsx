@@ -3,26 +3,25 @@ import React from "react";
 import { viewIcon } from "../icons/viewIcon"; 
 import { UserProfile } from "@/features/sparkmates";
 import { ASSETS } from "@/lib/constants/assets";
+import { ComingSoonPlaceholder } from "../../ComingSoonPlaceholder";
 
 export const BadgesSection = ({ profile }: { profile: UserProfile }) => {
-  const badgeCards = [1, 2, 3];
-
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <Text variant="heading-6" gradient="white-blue" weight="bold">
           Badges
         </Text>
-        <Button
+        {/* <Button
           variant="default"
           size="sm"
           className="text-white"
           iconRight={viewIcon}
         >
           View All
-        </Button>
+        </Button> */}
       </div>
-      <Text variant="body-sm" className="text-[#C1C7CD]">
+      {/* <Text variant="body-sm" className="text-[#C1C7CD]">
         Unlock exclusive collectibles by attending events.
       </Text>
       <div className="grid grid-cols-3 gap-4">
@@ -41,7 +40,8 @@ export const BadgesSection = ({ profile }: { profile: UserProfile }) => {
             </Text>
           </div>
         ))}
-      </div>
+      </div> */}
+      <ComingSoonPlaceholder />
     </section>
   );
 };

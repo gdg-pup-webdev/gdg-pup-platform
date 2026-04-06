@@ -15,6 +15,7 @@ import { CosmosParticles } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
 import { SparkmatesSource, useSparkmateProfile, useSuggestedSparkmates } from "../.."; 
 import { PublicSkillsAndLinksSection } from "./components/PublicSkillsAndLinksSection";
+import { ComingSoonPlaceholder } from "../ComingSoonPlaceholder";
 
 const viewIcon = (
   <svg
@@ -616,7 +617,7 @@ export function ProfilePublicView({
                     View
                   </Button>
                 </div>
-                <Text variant="body-sm" className="text-[#C1C7CD]">
+                {/* <Text variant="body-sm" className="text-[#C1C7CD]">
                   Track your milestones and growth within GDG.
                 </Text>
                 <div className="grid grid-cols-3 gap-4">
@@ -642,7 +643,8 @@ export function ProfilePublicView({
                       </Text>
                     </div>
                   ))}
-                </div>
+                </div> */}
+                <ComingSoonPlaceholder /> 
               </section>
 
               <Divider />
@@ -661,7 +663,7 @@ export function ProfilePublicView({
                     View All
                   </Button>
                 </div>
-                <Text variant="body-sm" className="text-[#C1C7CD]">
+                {/* <Text variant="body-sm" className="text-[#C1C7CD]">
                   Unlock exclusive collectibles by attending events.
                 </Text>
                 <div className="grid grid-cols-3 gap-4">
@@ -684,7 +686,8 @@ export function ProfilePublicView({
                       </Text>
                     </div>
                   ))}
-                </div>
+                </div> */}
+                <ComingSoonPlaceholder />
               </section>
             </div>
           </FadeInSection>

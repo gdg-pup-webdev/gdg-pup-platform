@@ -140,11 +140,11 @@ export function ProfileOwnerView({
 
               <Divider />
 
-              {/* {userprofile && <ImpactSection profile={userprofile} />} */}
+              {userprofile && <ImpactSection profile={userprofile} />}
 
-              {/* <Divider /> */}
+              <Divider />
 
-              {/* {userprofile && <BadgesSection profile={userprofile} />} */}
+              {userprofile && <BadgesSection profile={userprofile} />}
             </div>
           </FadeInSection>
 
