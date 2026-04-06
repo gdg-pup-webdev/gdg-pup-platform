@@ -608,14 +608,14 @@ export function ProfilePublicView({
                   <Text variant="heading-6" gradient="white-blue" weight="bold">
                     GDG Impact
                   </Text>
-                  <Button
+                  {/* <Button
                     variant="default"
                     size="sm"
                     className="text-white"
                     iconRight={viewIcon}
                   >
                     View
-                  </Button>
+                  </Button> */}
                 </div>
                 {/* <Text variant="body-sm" className="text-[#C1C7CD]">
                   Track your milestones and growth within GDG.
@@ -654,14 +654,14 @@ export function ProfilePublicView({
                   <Text variant="heading-6" gradient="white-blue" weight="bold">
                     Badges
                   </Text>
-                  <Button
+                  {/* <Button
                     variant="default"
                     size="sm"
                     className="text-white"
                     iconRight={viewIcon}
                   >
                     View All
-                  </Button>
+                  </Button> */}
                 </div>
                 {/* <Text variant="body-sm" className="text-[#C1C7CD]">
                   Unlock exclusive collectibles by attending events.
