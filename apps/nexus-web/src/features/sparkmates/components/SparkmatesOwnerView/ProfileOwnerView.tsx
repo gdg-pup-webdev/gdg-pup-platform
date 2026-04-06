@@ -128,7 +128,8 @@ export function ProfileOwnerView({
             {userprofile && <NameAndProfileSection profile={userprofile} />}
 
             <div className="mt-8 space-y-8">
-              {userprofile && <CustomButtonsSection profile={userprofile} />}
+
+              {/* {userprofile && <CustomButtonsSection profile={userprofile} />} */}
               <Divider />
 
               {userprofile && <SkillsAndLinksSection profile={userprofile} />}

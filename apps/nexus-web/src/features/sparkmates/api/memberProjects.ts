@@ -1,0 +1,103 @@
+import { contract } from "@packages/nexus-api-contracts";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { configs } from "@/configs/servers.config";
+import { extractErrorMessage } from "@/lib/utils";
+import type { ProjectFormState } from "@/features/onboarding/types"; // using the same type as Onboarding
+
+export async function getMemberProjects(memberGdgId: string, token?: string) {
+  const result = await callEndpoint(
+    configs.nexusApiBaseUrl,
+    contract.api.v1.member_projects.member.memberGdgId.GET,
+    {
+      token: token ?? undefined,
+      params: { memberGdgId },
+      query: {
+        pageNumber: 1,
+        pageSize: 10,
+      },
+    },
+  );
+
+  if (result.status === 200 && result.body) {
+    return result.body.data;
+  }
+
+  throw new Error(extractErrorMessage(result.body) || "Failed to fetch projects");
+}
+
+export async function createMemberProject(memberGdgId: string, project: Omit<ProjectFormState, "id">, token?: string) {
+  const bodyData = {
+    title: project.title.trim(),
+    startDate: project.startDate,
+    endDate: project.endDate || null,
+    description: project.description.trim(),
+    memberGdgId,
+  };
+
+  const result = await callEndpoint(
+    configs.nexusApiBaseUrl,
+    contract.api.v1.member_projects.POST,
+    {
+      token: token ?? undefined,
+      body: { data: bodyData },
+      files: {
+        mainImage: project.mainImageFile || undefined,
+        secondaryImage: project.secondaryImageFile || undefined,
+        tertiaryImage: project.tertiaryImageFile || undefined,
+      },
+    },
+  );
+
+  if (result.status === 201 && result.body) {
+    return result.body.data;
+  }
+
+  throw new Error(extractErrorMessage(result.body) || "Failed to create project");
+}
+
+export async function updateMemberProject(projectId: string, project: Omit<ProjectFormState, "id">, token?: string) {
+  const bodyData = {
+    title: project.title.trim(),
+    startDate: project.startDate,
+    endDate: project.endDate || null,
+    description: project.description.trim(),
+  };
+
+  const result = await callEndpoint(
+    configs.nexusApiBaseUrl,
+    contract.api.v1.member_projects.id.PATCH,
+    {
+      token: token ?? undefined,
+      params: { id: projectId },
+      body: { data: bodyData },
+      files: {
+        mainImage: project.mainImageFile || undefined,
+        secondaryImage: project.secondaryImageFile || undefined,
+        tertiaryImage: project.tertiaryImageFile || undefined,
+      },
+    },
+  );
+
+  if (result.status === 200 && result.body) {
+    return result.body.data;
+  }
+
+  throw new Error(extractErrorMessage(result.body) || "Failed to update project");
+}
+
+export async function deleteMemberProject(projectId: string, token?: string) {
+  const result = await callEndpoint(
+    configs.nexusApiBaseUrl,
+    contract.api.v1.member_projects.id.DELETE,
+    {
+      token: token ?? undefined,
+      params: { id: projectId },
+    },
+  );
+
+  if (result.status === 200) {
+    return true;
+  }
+
+  throw new Error(extractErrorMessage(result.body) || "Failed to delete project");
+}

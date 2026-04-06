@@ -16,10 +16,10 @@ export const memberProjectsRecord = cz.object({
 
   // Included details
   member: cz.object({
-    gdgId: cz.string().uuid(),
+    gdgId: cz.string(),
     name: cz.string().nullable(),
     email: cz.string().nullable(),
-    imageUrl: cz.string().nullable().nullable(),
+    imageUrl: cz.string().nullable(),
   }).nullable() ,
 });
 
@@ -31,6 +31,7 @@ export const memberProjectsRecordInsertDTO = memberProjectsRecord.omit({
   mainImageUrl: true,
   secondaryImageUrl: true,
   tertiaryImageUrl: true,
+  member: true,
 });
 
 /** Data Transfer Object for updating an existing member project. */

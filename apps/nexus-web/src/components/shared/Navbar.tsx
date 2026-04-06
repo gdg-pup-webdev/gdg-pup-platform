@@ -15,11 +15,30 @@ import {
 
 // import { MemberInfo } from "../../../../nexus-api/src/v1/modules/authentication/domain/TokenPayload";
 
-
 interface NavbarProps {
   transparent?: boolean;
   hideAuth?: boolean;
 }
+
+const dropdownContainerClassesBase =
+  "absolute left-1/2 -translate-x-1/2 top-full pt-4 min-w-[12rem] transition-all duration-300 ease-out z-50";
+const dropdownContainerClassesRightAligned =
+  "absolute right-0 top-full pt-4 min-w-[12rem] transition-all duration-300 ease-out z-50";
+const dropdownContainerClassesOpen =
+  "opacity-100 visible translate-y-0 pointer-events-auto";
+const dropdownContainerClassesClosed =
+  "opacity-0 invisible translate-y-2 pointer-events-none";
+
+const dropdownInnerClasses = cn(
+  "flex flex-col gap-1 p-2 bg-black/80 backdrop-blur-xl",
+  "rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
+  "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]",
+);
+
+const dropdownItemClasses = cn(
+  "block w-full text-left text-white font-bold transition-all p-3 rounded-lg",
+  "hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text",
+);
 
 function useOutsideClick(callback: () => void) {
   const ref = useRef<HTMLDivElement>(null);
@@ -69,11 +88,9 @@ const NavbarAvatarWidget = () => {
         <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
       ) : status === STATUS.AUTHENTICATED ? (
         <div
-          className="relative flex justify-center items-center group transition-all duration-200 "
+          className="relative flex justify-center items-center h-full group transition-all duration-200 cursor-pointer"
           ref={dropdownRef}
-          onClick={() => {
-            setOpenDropdown((a) => !a);
-          }}
+          onClick={() => setOpenDropdown(!openDropdown)}
         >
           {user?.memberInfo.avatarUrl ? (
             <Avatar
@@ -92,19 +109,27 @@ const NavbarAvatarWidget = () => {
             src={user?.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
           /> */}
 
-          {openDropdown && (
-            <div className="absolute bg-black border-yellow-400 text-white border-2 rounded-2xl p-2 top-full right-0">
+          <div
+            className={cn(
+              dropdownContainerClassesRightAligned,
+              openDropdown
+                ? dropdownContainerClassesOpen
+                : dropdownContainerClassesClosed,
+            )}
+          >
+            <div className={dropdownInnerClasses}>
               {optionsLoggedIn.map((option) => (
                 <Link
                   key={option.href}
                   href={option.href}
-                  className="block w-full whitespace-nowrap p-2 rounded-lg hover:bg-gray-700 transition-all duration-100"
+                  className={dropdownItemClasses}
+                  onClick={() => setOpenDropdown(false)}
                 >
                   {option.label}
                 </Link>
               ))}
             </div>
-          )}
+          </div>
         </div>
       ) : (
         <Link
@@ -131,6 +156,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [activeMobileSection, setActiveMobileSection] = useState<string | null>(
+    null,
+  );
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -175,27 +203,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { href: "/events", label: "Events" },
-    { href: "/leaderboard", label: "Leaderboard" },
     { href: "/products", label: "Products" },
   ];
-
-  const dropdownContainerClassesBase =
-    "absolute left-1/2 -translate-x-1/2 top-full pt-4 min-w-[12rem] transition-all duration-300 ease-out z-50";
-  const dropdownContainerClassesOpen =
-    "opacity-100 visible translate-y-0 pointer-events-auto";
-  const dropdownContainerClassesClosed =
-    "opacity-0 invisible translate-y-2 pointer-events-none";
-
-  const dropdownInnerClasses = cn(
-    "flex flex-col gap-1 p-2 bg-black/80 backdrop-blur-xl",
-    "rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
-    "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]",
-  );
-
-  const dropdownItemClasses = cn(
-    "block w-full text-left text-white font-bold transition-all p-3 rounded-lg",
-    "hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text",
-  );
 
   return (
     <motion.div
@@ -374,8 +383,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Auth Section */}
               {!hideAuth && (
-                <Inline gap="md" align="center">
-                  <Link href="/id">
+                <Inline gap="md" align="center" className="h-full">
+                  <Link href="/id" className="flex items-center">
                     <Button variant="colored" subVariant="blue" size="md">
                       Get ID
                     </Button>
@@ -442,71 +451,154 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Stack gap="none">
                 {/* About Section */}
-                <Box className="px-5 py-3 border-b border-white/10">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "about" ? null : "about",
+                    )
+                  }
+                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
                   >
                     About
                   </Text>
-                </Box>
-                {dropdownLinks.about.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "about" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {activeMobileSection === "about" && (
+                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
+                    {dropdownLinks.about.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 {/* Community Section */}
-                <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "community" ? null : "community",
+                    )
+                  }
+                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
                   >
                     Community
                   </Text>
-                </Box>
-                {dropdownLinks.community.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "community" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {activeMobileSection === "community" && (
+                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
+                    {dropdownLinks.community.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 {/* Nav Links */}
-                <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "navigation"
+                        ? null
+                        : "navigation",
+                    )
+                  }
+                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
                   >
                     Navigation
                   </Text>
-                </Box>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "navigation" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {activeMobileSection === "navigation" && (
+                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 {/* Auth Section */}
                 {!hideAuth && (
-                  <Box className="px-5 py-5 mt-2 border-t border-white/10">
+                  <Box className="px-5 py-5">
                     <Stack gap="sm">
                       <Link
                         href="/sparkmates"
@@ -534,12 +626,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                         >
                           <Avatar
                             src={
-                              // user.user_metadata?.avatar_url ||
+                              decodedToken?.memberInfo.avatarUrl ||
                               ASSETS.AUTH.AVATAR_DEFAULT
                             }
-                            // alt={user.user_metadata?.full_name || user.email || "User"}
-                            // size="sm"
-                            // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
                           />
                           <Stack gap="none">
                             <Text
