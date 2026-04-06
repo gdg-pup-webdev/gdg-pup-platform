@@ -26,7 +26,7 @@
     "commander": "11.0.0",
     "express": "5.2.1",
     "fast-glob": "^3.3.3",
-    "minimatch": "^10.2.4",
+    "minimatch": "^10.2.5",
     "multer": "2.0.2",
     "ts-morph": "^27.0.2",
     "tsc-alias": "1.8.16",
