@@ -157,18 +157,18 @@ DELETE /api/v1/products/:id
 
 ## Database Schema
 
-The module expects a `products` table in Supabase with the following columns:
+The module expects a `public.products` table in Supabase matching the migration:
 
 ```sql
-CREATE TABLE products (
-  id UUID PRIMARY KEY,
-  name VARCHAR NOT NULL,
-  description VARCHAR NOT NULL,
-  category VARCHAR NOT NULL,
-  image VARCHAR NOT NULL,
-  link VARCHAR,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL
+CREATE TABLE public.products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  category TEXT NOT NULL,
+  image TEXT NOT NULL,
+  link TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 ```
 
