@@ -462,8 +462,11 @@ const StatCard = ({
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [displayValue, setDisplayValue] = useState(0);
 
-  const match = stat.value.match(/^(\d+)(.*)$/);
-  const targetValue = Number(match?.[1] ?? 0);
+  const match = stat.value.match(/^([\d.]+)(.*)$/);
+  const numericPart = match?.[1] ?? "0";
+  const parsedValue = Number.parseFloat(numericPart);
+  const targetValue = Number.isFinite(parsedValue) ? parsedValue : 0;
+  const decimalPlaces = (numericPart.split(".")[1] ?? "").length;
   const suffix = match?.[2] ?? "";
 
   useEffect(() => {
@@ -481,7 +484,11 @@ const StatCard = ({
 
     const animate = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
-      setDisplayValue(Math.round(targetValue * progress));
+      const nextRawValue = targetValue * progress;
+      const nextValue = decimalPlaces > 0
+        ? Number(nextRawValue.toFixed(decimalPlaces))
+        : Math.round(nextRawValue);
+      setDisplayValue(nextValue);
       if (progress < 1) {
         frameId = requestAnimationFrame(animate);
       }
@@ -489,7 +496,7 @@ const StatCard = ({
 
     frameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frameId);
-  }, [isInView, targetValue]);
+  }, [decimalPlaces, isInView, targetValue]);
 
   return (
     <div
