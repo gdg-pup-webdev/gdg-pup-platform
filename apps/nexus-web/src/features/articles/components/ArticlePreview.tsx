@@ -214,12 +214,12 @@ const publishedDate = article.published_at
 
 // ── Page wrapper — dark background matching history page ──
 return (
-    <div className="relative min-h-screen bg-[#0F0E0E] overflow-hidden px-4 pb-24 md:px-8">
+    <div className="relative min-h-screen bg-[#0F0E0E] overflow-hidden px-4 pb-14 md:px-8">
     {/* Gradient blob background */}
     <ArticleBlobBackground colors={colors} />
 
     {/* ── Main Article Container ── */}
-    <div className="relative z-10 max-w-5xl mx-auto mt-24">
+    <div className="relative z-10 max-w-5xl mx-auto mt-28 md:mt-40">
       
       {/*  THE GLASS CONTAINER 
           - bg-white/[0.03]: Adds that subtle "white opacity"
