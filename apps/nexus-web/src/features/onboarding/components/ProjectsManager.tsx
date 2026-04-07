@@ -40,36 +40,42 @@ export function ProjectsManager({ projects, updateProject, addProject, removePro
               </button>
             </div>
 
-            <Input
-              value={project.title}
-              onChange={(event) => updateProject(index, "title", event.target.value)}
-              placeholder="Project title"
+              <Input
+                value={project.title}
+                onChange={(event) => updateProject(index, "title", event.target.value)}
+                placeholder="Project title"
               containerClassName="bg-zinc-900/50! border-zinc-700/80! hover:border-zinc-600! focus-within:border-blue-500/50!"
-              className="text-white! py-3"
-            />
+                className="text-white! py-3"
+              />
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <input
-                type="date"
-                value={project.startDate}
-                onChange={(event) => updateProject(index, "startDate", event.target.value)}
-                className="w-full rounded-xl border border-zinc-700/80 bg-zinc-900/50 px-4 py-3 text-zinc-200 outline-none transition-all hover:border-zinc-600 focus:border-blue-500/50"
-              />
-              <input
-                type="date"
-                value={project.endDate}
-                onChange={(event) => updateProject(index, "endDate", event.target.value)}
-                className="w-full rounded-xl border border-zinc-700/80 bg-zinc-900/50 px-4 py-3 text-zinc-200 outline-none transition-all hover:border-zinc-600 focus:border-blue-500/50"
-              />
+            <div className="grid gap-3 sm:grid-cols-2 mt-3">
+              <StyledInputContainer>
+                <input
+                  type="date"
+                  value={project.startDate}
+                  onChange={(event) => updateProject(index, "startDate", event.target.value)}
+                  className={cn(inputBaseStyles, "min-h-[50px] !py-3 w-full bg-[#0a162a] outline-none group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]")}
+                />
+              </StyledInputContainer>
+              <StyledInputContainer>
+                <input
+                  type="date"
+                  value={project.endDate}
+                  onChange={(event) => updateProject(index, "endDate", event.target.value)}
+                  className={cn(inputBaseStyles, "min-h-[50px] !py-3 w-full bg-[#0a162a] outline-none group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]")}
+                />
+              </StyledInputContainer>
             </div>
 
-            <textarea
-              value={project.description}
-              onChange={(event) => updateProject(index, "description", event.target.value)}
-              placeholder="Project description"
-              rows={3}
+            <div className="mt-3">
+              <StyledInputContainer>
+                <textarea
+                  value={project.description}
+                  onChange={(event) => updateProject(index, "description", event.target.value)}
+                  placeholder="Project description"
+                  rows={3}
               className="w-full rounded-xl border border-zinc-700/80 bg-zinc-900/50 px-4 py-3 text-zinc-200 outline-none transition-all placeholder:text-zinc-500 hover:border-zinc-600 focus:border-blue-500/50"
-            />
+                />
 
             <div>
               <label className="text-xs text-zinc-400 block mb-2">Main Image (Optional)</label>
