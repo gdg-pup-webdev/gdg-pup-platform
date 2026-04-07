@@ -101,15 +101,15 @@ export function ProfileOwnerView({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-6 pb-24 pt-36 text-white"
+      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-3 sm:px-6 pb-24 pt-24 sm:pt-36 text-white"
     >
-      <div className="relative min-h-screen w-full overflow-hidden">
-        {/* RAINBOW ON THE BACKGROUND */}
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <div className="relative min-h-screen w-full">
+        {/* RAINBOW ON THE BACKGROUND — desktop only */}
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden hidden sm:block">
           <SparkmatesRainbowStreak />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
+        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
           <FadeInSection className="p-0" delay={0.02}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Text variant="heading-5" className="text-white">
@@ -127,7 +127,7 @@ export function ProfileOwnerView({
 
             {userprofile && <NameAndProfileSection profile={userprofile} />}
 
-            <div className="mt-8 space-y-8">
+            <div className="mt-6 space-y-6">
 
               {/* {userprofile && <CustomButtonsSection profile={userprofile} />} */}
               <Divider />
