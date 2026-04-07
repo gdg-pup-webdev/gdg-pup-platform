@@ -4,8 +4,7 @@
  * All public image/asset paths are declared here.
  * Import from this file instead of using magic strings in components.
  *
- * Paths follow the flat Object-Action naming convention introduced in
- * Phase 2 of the asset migration. All raster images are now .webp.
+ * Paths follow the flat Object-Action naming convention.
  */
 
 export const ASSETS = {

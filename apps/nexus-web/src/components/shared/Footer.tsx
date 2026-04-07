@@ -107,7 +107,8 @@ export const Footer: React.FC = () => {
                 alt="GDG Logo"
                 width={40}
                 height={40}
-                className="w-10 h-10 group-hover:scale-110 transition-transform duration-300"
+                quality={100}
+                className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.15)] group-hover:scale-110 transition-transform duration-300"
               />
               <Text variant="heading-6" weight="bold" className="text-white">
                 GDG PUP NEXUS
