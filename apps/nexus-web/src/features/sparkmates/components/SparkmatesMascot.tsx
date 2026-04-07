@@ -26,7 +26,7 @@ export const SparkmatesMascot = () => {
     >
       <div className="absolute inset-0 w-full h-full animate-sparkmates-float">
         <Image
-          src="/sparkmates/sparkmates-sparky.png"
+          src="/sparkmates/sparkmates-sparky.webp"
           alt="Sparky"
           className="object-contain drop-shadow-[0_0_40px_rgba(66,133,244,0.25)]"
           fill

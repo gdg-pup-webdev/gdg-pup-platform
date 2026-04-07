@@ -155,7 +155,7 @@ export function TeamDropdowns({
   return (
     <div className="w-full flex flex-col gap-3.25">
       <DropdownRow
-        iconSrc="/sparkmates/sparkmates-sparky.png"
+        iconSrc="/sparkmates/sparkmates-sparky.webp"
         iconAlt="Sparky"
         label="Member Level"
         isOpen={openRow === "member-level"}

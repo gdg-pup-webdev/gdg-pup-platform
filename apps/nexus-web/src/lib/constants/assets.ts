@@ -331,6 +331,10 @@ export const ASSETS = {
         DEFAULT_AVATAR: "/profile-default-avatar.png",
         DEFAULT_BADGE: "/profile-badge-default.png",
     },
+    SPARKMATES: {
+        HORIZON: "/sparkmates/sparkmates-horizon.webp",
+        SPARKY: "/sparkmates/sparkmates-sparky.webp",
+    },
     SPARKY_POINTS: {
         SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
         CIRBY_DISPLAY: "/sparky-points/sparkypoints-cirby-display.webp",
