@@ -6,6 +6,7 @@ import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared";
 import { ProviderCompose } from "@/providers/ProviderCompose";
 import { DebugNavigator } from "@/features/debugging/components/DebugNavigator";
+import { NormalAnalytics } from "@/features/analytics/components/NormalAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ProviderCompose>
+          <NormalAnalytics/>
           <Navbar />
           <main className="min-h-screen">{children}</main>
           <Footer />
