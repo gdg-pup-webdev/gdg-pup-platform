@@ -153,7 +153,7 @@ export function AccountSettingsSection() {
         open={isNfcModalOpen}
         onOpenChange={setIsNfcModalOpen}
         gdgId={gdgId}
-        currentIsPublic={profile.isPublic}
+        currentIsPublic={!!profile.isPublic}
       />
       <SettingsChangePasswordDialog
         open={isPasswordModalOpen}
