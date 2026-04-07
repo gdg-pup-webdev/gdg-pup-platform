@@ -223,11 +223,11 @@ export function AboutSection() {
           {/* Section 4: Mission */}
           <FadeInSection delay={0.1}>
             <Stack
-              gap="xl"
+              gap="lg"
               className="w-full md:flex md:flex-row md:items-center lg:grid-cols-3 lg:grid"
             >
               {/* Left: Image/Illustration */}
-              <Box className="flex justify-center lg:col-span-1 lg:justify-start">
+              <Box className="flex justify-center lg:col-span-1 lg:justify-end">
                 <Box className="relative w-40 h-40 md:w-80 md:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
                   <Image
                     src={ASSETS.ABOUT.WHO.MASCOT_1}
@@ -248,14 +248,21 @@ export function AboutSection() {
                 gap="lg"
                 className="lg:col-span-2 items-center md:items-start lg:items-start"
               >
-                <Text as="h2" variant="heading-2" gradient="white-blue">
+                <Text
+                  as="h2"
+                  variant="heading-2"
+                  gradient="white-blue"
+                  align="center"
+                  className="md:text-left"
+                >
                   Mission
                 </Text>
 
                 <Card>
                   <Text
                     variant="body"
-                    className="text-gray-300 text-base md:text-lg leading-relaxed"
+                    align="center"
+                    className="text-gray-300 text-base md:text-lg leading-relaxed md:text-left"
                   >
                     To build an inclusive and supportive student community that
                     empowers learners to transform technical knowledge into
@@ -274,9 +281,9 @@ export function AboutSection() {
               className="w-full md:flex md:flex-row md:items-start md:gap-2xl"
             >
               {/* Left: Content */}
-              <Stack gap="lg" className="md:w-1/2 items-center mr-10">
+              <Stack gap="2xl" className="md:w-1/2 items-center md:mr-10">
                 {/* mobile mascot above values */}
-                <Box className="mb-4 md:hidden">
+                <Box className="md:hidden">
                   <Image
                     src={ASSETS.ABOUT.WHO.MASCOT_2}
                     alt="Our Values - Sparky Flying"
@@ -288,7 +295,13 @@ export function AboutSection() {
                     }}
                   />
                 </Box>
-                <Text as="h2" variant="heading-2" gradient="white-blue">
+                <Text
+                  as="h2"
+                  variant="heading-2"
+                  gradient="white-blue"
+                  align="center"
+                  className="md:text-left"
+                >
                   Our Values
                 </Text>
 
@@ -303,12 +316,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Community-Driven Learning
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We believe learning is most powerful when it&apos;s
@@ -335,12 +355,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Learning by Doing
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We turn concepts into real solutions.{" "}
@@ -363,12 +390,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Inclusivity and Growth
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We build an inclusive community for all learners.{" "}
@@ -392,12 +426,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Innovation with Purpose
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We build and design for the people.{" "}

@@ -84,12 +84,19 @@ export const textVariants = cva([], {
       "white-blue":
         "bg-linear-to-b from-white from-[27.56%] to-[#4285F4] to-100% bg-clip-text text-transparent",
       red: "bg-linear-[360deg,#EA4335_0%,#84261E_100%] bg-clip-text text-transparent",
-      green: "bg-linear-[360deg,#5CDB6D_0%,#31753A_100%] bg-clip-text text-transparent",
-      yellow: "bg-linear-[360deg,#FFD427_0%,#997F17_100%] bg-clip-text text-transparent",
+      green:
+        "bg-linear-[360deg,#5CDB6D_0%,#31753A_100%] bg-clip-text text-transparent",
+      yellow:
+        "bg-linear-[360deg,#FFD427_0%,#997F17_100%] bg-clip-text text-transparent",
       blue: "bg-linear-[0deg,#57CAFF_0%,#347999_100%] bg-clip-text text-transparent",
-      "white-yellow": "bg-linear-to-b from-white from-[28.59%] to-[#F9AB00] to-[99%] bg-clip-text text-transparent",
-      "white-green": "bg-linear-to-b from-white from-[1.41%] to-[#34A853] to-100% bg-clip-text text-transparent",
-      "white-red": "bg-linear-to-b from-white from-[25%] to-[#F7847F] to-100% bg-clip-text text-transparent",
+      "white-yellow":
+        "bg-linear-to-b from-white from-[28.59%] to-[#F9AB00] to-[99%] bg-clip-text text-transparent",
+      "white-green":
+        "bg-linear-to-b from-white from-[1.41%] to-[#34A853] to-100% bg-clip-text text-transparent",
+      "white-red":
+        "bg-linear-to-b from-white from-[25%] to-[#F7847F] to-100% bg-clip-text text-transparent",
+      "vibrant-blue":
+        "bg-linear-[0deg,#51A2FF_0%,#155DFC_100%] bg-clip-text text-transparent",
     },
   },
   defaultVariants: {
