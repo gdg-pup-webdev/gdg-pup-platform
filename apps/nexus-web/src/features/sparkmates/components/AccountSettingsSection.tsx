@@ -49,8 +49,8 @@ export function AccountSettingsSection() {
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6 pt-10">
       {/* 1. Profile Header Card */}
-      <div className="relative rounded-3xl overflow-hidden bg-[#010B1D] px-6 sm:px-8 py-8 shadow-xl border border-white/5">
-        <ShineBorder shineColor={["#FB2C36", "#F0B100", "#2B7FFF"]} borderWidth={1.5} />
+      <div className="rounded-3xl p-[1px] bg-gradient-to-r from-[#FB2C36] via-[#F0B100] to-[#2B7FFF]">
+        <div className="relative rounded-[23px] overflow-hidden bg-[#010B1D] px-6 sm:px-8 py-8 shadow-xl">
         
         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
           <div className="shrink-0">
@@ -62,14 +62,14 @@ export function AccountSettingsSection() {
           </div>
           
           <div className="flex-1 text-center sm:text-left flex flex-col justify-center min-h-[100px] h-full">
-            <Text variant="heading-5" weight="bold" className="text-white">
+            <Text variant="heading-5" weight="bold" gradient="white-yellow">
               {fullName}
             </Text>
             <div className="mt-2 flex items-center justify-center sm:justify-start gap-2">
               <Text variant="body-sm" className="text-zinc-400">
                 GDG ID:
               </Text>
-              <Badge variant="id">{profile.gdgId}</Badge>
+              <Text variant="body-sm" weight="bold" gradient="yellow">{profile.gdgId}</Text>
             </div>
           </div>
           
@@ -91,16 +91,19 @@ export function AccountSettingsSection() {
             </Button>
           </div>
         </div>
+        </div>
       </div>
 
       {/* 2. Security & Privacy Card */}
-      <div className="relative rounded-3xl overflow-hidden bg-[#010B1D] px-6 sm:px-8 py-8 shadow-xl border border-white/5">
-        <ShineBorder shineColor={["#FB2C36", "#F0B100", "#2B7FFF"]} borderWidth={1.5} />
+      <div className="rounded-3xl p-[1px] bg-gradient-to-r from-[#FB2C36] via-[#F0B100] to-[#2B7FFF]">
+        <div className="relative rounded-[23px] overflow-hidden bg-[#010B1D] px-6 sm:px-8 py-8 shadow-xl">
         
         <div className="relative z-10 space-y-6">
-          <Text variant="heading-6" weight="bold" className="text-white pb-2 border-b border-white/10">
-            Security & Privacy
-          </Text>
+          <div className="pb-2 border-b border-white/10">
+            <Text variant="heading-6" weight="bold" gradient="white-blue">
+              Security & Privacy
+            </Text>
+          </div>
 
           {/* NFC Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -131,6 +134,7 @@ export function AccountSettingsSection() {
               Change
             </Button>
           </div>
+        </div>
         </div>
       </div>
 
