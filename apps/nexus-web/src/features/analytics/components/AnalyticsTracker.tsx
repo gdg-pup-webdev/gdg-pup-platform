@@ -3,7 +3,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, Suspense } from "react";
 import { useRecordNfcScan, useRecordProfileView } from "../hooks/useRecordAnalytics";
-import { STATUS, useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 /**
  * Configuration for analytics tracking.
@@ -45,14 +45,7 @@ const AnalyticsTrackerContent = ({ configs: trackingConfigs }: AnalyticsTrackerP
   const { mutate: recordNfcScan } = useRecordNfcScan();
   const { mutate: recordProfileView } = useRecordProfileView();
 
-  console.log("AnalyticsTracker: Pathname changed to", pathname);
-  console.log("AnalyticsTracker: Search params changed to", searchParams);
-  console.log("viewerGdgId:", viewerGdgId);
-
-
   useEffect(() => {
-    if (auth.status === STATUS.CHECKING) return;
-
     if (!pathname) return;
 
     // Create a unique key for the current view to avoid duplicate tracking
@@ -85,18 +78,17 @@ const AnalyticsTrackerContent = ({ configs: trackingConfigs }: AnalyticsTrackerP
       if (isMatch) {
         // Extract values based on mapping
         const extractedValues: Record<string, string | null> = {};
+        let isSelfView = false;
         
         Object.entries(config.params).forEach(([key, mapping]) => {
           const [source, name] = mapping.split(".");
           let value: string | null = null;
           
           if (source === "params") {
-            // Find index of name in configSegments (as :name)
             const paramIndex = configSegments.findIndex(s => s === `:${name}`);
             if (paramIndex !== -1) {
               value = segments[paramIndex];
             } else {
-              // Fallback: if param not in pattern, maybe it was meant to be the last segment
               value = segments[segments.length - 1];
             }
           } else if (source === "queries") {
@@ -106,23 +98,27 @@ const AnalyticsTrackerContent = ({ configs: trackingConfigs }: AnalyticsTrackerP
           // Resolve virtual "me" ID to the actual authenticated user ID
           if (value === "me") {
             value = viewerGdgId;
+            isSelfView = true;
+          }
+
+          // If the extracted ID matches the viewer ID, it's a self-action
+          if (value && viewerGdgId && value === viewerGdgId) {
+            isSelfView = true;
           }
 
           extractedValues[key] = value;
         });
 
+        // SAFETY: Prevent recording analytics when viewing your own profile or actions
+        if (isSelfView) {
+          lastTracked.current = currentViewKey;
+          continue; 
+        }
+
         if (config.trigger === "profile-view") {
           const profileGdgId = extractedValues.profileGdgId;
           
-          // Only record if we have a valid profile ID (not "me" if unauthenticated)
           if (profileGdgId && profileGdgId !== "me") {
-
-            console.log("Recording profile view with values:", {
-              profileGdgId,
-              source: extractedValues.source || "direct",
-              user_agent: window.navigator.userAgent,
-              viewerGdgId,
-            });
             recordProfileView({
               profileGdgId: profileGdgId,
               source: extractedValues.source || "direct",
@@ -146,7 +142,7 @@ const AnalyticsTrackerContent = ({ configs: trackingConfigs }: AnalyticsTrackerP
         break; // Only trigger one analytic per route change
       }
     }
-  }, [pathname, searchParams, trackingConfigs, recordNfcScan, recordProfileView, viewerGdgId, auth.status]);
+  }, [pathname, searchParams, trackingConfigs, recordNfcScan, recordProfileView, viewerGdgId]);
 
   return null;
 };
