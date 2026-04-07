@@ -73,7 +73,7 @@ const NavbarAvatarWidget = () => {
   const optionsLoggedIn = [
     {
       label: "View Profile",
-      href: "/sparkmates",
+      href: "/sparkmates/me",
     },
     {
       label: "Sign Out",
