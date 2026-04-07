@@ -39,7 +39,7 @@ export class SupabaseNfcScanRepository implements INfcScanRepository {
       NfcScan.hydrate({
         id: row.id,
         date: row.date,
-        nfcCardId: row.nfcCardId,
+        nfcCardId: row.nfcCardId ?? "",
         scanContext: row.scanContext,
         scannerId: row.scannerId,
       }),
