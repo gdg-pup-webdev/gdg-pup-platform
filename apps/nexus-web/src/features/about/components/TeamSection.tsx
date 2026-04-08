@@ -486,7 +486,7 @@ export function TeamSection() {
 
   return (
     <div
-      className="relative overflow-x-clip pt-36 md:pt-60 pb-20 md:pb-48 px-4 md:px-8 lg:px-16"
+      className="relative overflow-x-clip pt-36 md:pt-60 pb-20 md:pb-48 px-4 md:px-8 lg:px-16 bg-[#010B1D]"
     >
       <div
         className="absolute inset-x-0 top-0 h-[620px] pointer-events-none hidden md:block"
@@ -641,7 +641,7 @@ export function TeamSection() {
                   <DropdownTrigger asChild>
                     <button
                       type="button"
-                      className="w-[calc(100vw-2rem)] max-w-full rounded-[3px] p-px bg-[linear-gradient(90deg,rgba(52,168,83,1)_0%,rgba(66,133,244,1)_35%,rgba(234,67,53,1)_68%,rgba(249,171,0,1)_100%)]"
+                      className="group w-[calc(100vw-2rem)] max-w-full rounded-[3px] p-px bg-[linear-gradient(90deg,rgba(52,168,83,1)_0%,rgba(66,133,244,1)_35%,rgba(234,67,53,1)_68%,rgba(249,171,0,1)_100%)]"
                       aria-label="Choose team department"
                     >
                       <div className="w-full h-12 px-4 flex items-center justify-between bg-[rgba(15,14,14,0.96)] text-white">
@@ -649,7 +649,7 @@ export function TeamSection() {
                           {ALL_ITEMS.find(item => item.id === activeId)?.label ?? "Administrative"}
                         </span>
                         <span className="text-white leading-none flex items-center justify-center w-5 h-5">
-                          <svg viewBox="0 0 20 20" className="w-4 h-4" fill="none" aria-hidden>
+                          <svg viewBox="0 0 20 20" className="w-4 h-4 transition-transform duration-200 group-aria-expanded:rotate-180" fill="none" aria-hidden>
                             <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         </span>
@@ -726,6 +726,7 @@ export function TeamSection() {
                       variant="heading-4"
                       weight="bold"
                       gradient="white-yellow"
+                      align="center"
                       className="mb-6 border-b border-white/10 pb-3"
                     >
                       {label}
