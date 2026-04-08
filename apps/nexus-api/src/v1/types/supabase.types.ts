@@ -50,6 +50,7 @@ export type Database = {
         Row: {
           date: string
           id: string
+          profileGdgId: string | null
           source: string | null
           user_agent: string | null
           viewerGdgId: string | null
@@ -57,6 +58,7 @@ export type Database = {
         Insert: {
           date?: string
           id?: string
+          profileGdgId?: string | null
           source?: string | null
           user_agent?: string | null
           viewerGdgId?: string | null
@@ -64,11 +66,19 @@ export type Database = {
         Update: {
           date?: string
           id?: string
+          profileGdgId?: string | null
           source?: string | null
           user_agent?: string | null
           viewerGdgId?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "analytics_profile_views_profile_gdg_id_fkey"
+            columns: ["profileGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
           {
             foreignKeyName: "analytics_profile_views_viewerGdgId_fkey"
             columns: ["viewerGdgId"]
@@ -163,6 +173,7 @@ export type Database = {
           gdg_event_id: number | null
           id: string
           max_capacity: string | null
+          rsvp: number | null
           short_description: string | null
           speakers: string[] | null
           start_date: string | null
@@ -186,6 +197,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           max_capacity?: string | null
+          rsvp?: number | null
           short_description?: string | null
           speakers?: string[] | null
           start_date?: string | null
@@ -209,6 +221,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           max_capacity?: string | null
+          rsvp?: number | null
           short_description?: string | null
           speakers?: string[] | null
           start_date?: string | null
