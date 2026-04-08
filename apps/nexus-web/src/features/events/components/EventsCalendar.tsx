@@ -7,6 +7,7 @@ import { useEvents } from "../hooks/useEvents";
 import type { Event } from "../types";
 import { cn } from "@/lib/utils";
 import { normalizeEventDescription } from "../utils/description";
+import { DateSelector } from "./DateSelector";
 
 const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THUR", "FRI", "SAT"] as const;
 
@@ -148,13 +149,26 @@ function EventSkeleton() {
   );
 }
 
-export function EventsCalendar({ randomSeed }: { randomSeed?: number }) {
+export function EventsCalendar({
+  randomSeed,
+  currentDate: propDate,
+  onDateChange,
+}: {
+  randomSeed?: number;
+  currentDate?: Date;
+  onDateChange?: (date: Date) => void;
+}) {
+  const [internalDate, setInternalDate] = useState(new Date());
+
+  const date = propDate || internalDate;
+  const handleDateChange = onDateChange || setInternalDate;
+
   const [selectedMobileEvent, setSelectedMobileEvent] = useState<Event | null>(
     null,
   );
-  const now = useMemo(() => new Date(), []);
-  const year = now.getFullYear();
-  const monthIndex = now.getMonth();
+
+  const year = date.getFullYear();
+  const monthIndex = date.getMonth();
 
   const monthStart = useMemo(
     () => new Date(year, monthIndex, 1, 0, 0, 0, 0),
@@ -173,8 +187,8 @@ export function EventsCalendar({ randomSeed }: { randomSeed?: number }) {
   });
 
   const monthLabel = useMemo(
-    () => now.toLocaleString("en-US", { month: "long", year: "numeric" }),
-    [now],
+    () => date.toLocaleString("en-US", { month: "long", year: "numeric" }),
+    [date],
   );
 
   const cells = useMemo(
@@ -285,14 +299,9 @@ export function EventsCalendar({ randomSeed }: { randomSeed?: number }) {
   return (
     <>
       <div className="w-[calc(100%+1rem)] -mx-2 md:w-full md:mx-0 mt-5 md:mt-8">
-        <Text
-          variant="heading-5"
-          weight="semibold"
-          gradient="white-green"
-          className="mb-1 md:mb-3 text-[1.35rem] sm:text-[1.55rem] md:text-[2rem]"
-        >
-          {monthLabel}
-        </Text>
+        <div className="mb-4">
+          <DateSelector date={date} onDateChange={handleDateChange} />
+        </div>
 
         {error && !isLoading && (
           <div className="mb-2">
