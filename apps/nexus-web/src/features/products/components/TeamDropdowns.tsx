@@ -13,15 +13,12 @@ interface TeamDropdownsProps {
   supportGroupSecondaryDescription?: string;
 }
 
-const DEFAULT_MEMBER_LEVEL_TITLE = "IoT Cadet";
-const DEFAULT_MEMBER_LEVEL_DESCRIPTION =
-  "The IoT Cadets are members of the Technology Department who learn and contribute to turning creative ideas into real, functional prototypes. By combining electronics, coding, and mechanical design, cadets gain hands-on experience building smart systems and automated solutions that connect the digital and physical worlds. This is a space for cadets who love to tinker, experiment, and solve problems through practical engineering.";
+const DEFAULT_MEMBER_LEVEL_TITLE = "Member Level";
+const DEFAULT_MEMBER_LEVEL_DESCRIPTION = "";
 const DEFAULT_SUPPORT_GROUP_TITLE = "Compliance Analyst";
-const DEFAULT_SUPPORT_GROUP_DESCRIPTION =
-  "Maintains ethical standards and documentation integrity. Oversees governance, ensures compliance with policies, and promotes transparency across all projects.";
+const DEFAULT_SUPPORT_GROUP_DESCRIPTION = "";
 const DEFAULT_SUPPORT_GROUP_SECONDARY_TITLE = "Curriculum Analyst";
-const DEFAULT_SUPPORT_GROUP_SECONDARY_DESCRIPTION =
-  "Designs the team's learning roadmap, lessons, and progress tracking. Curates resources that build solid technical foundations and structured skill growth.";
+const DEFAULT_SUPPORT_GROUP_SECONDARY_DESCRIPTION = "";
 
 function DropdownRow({
   iconSrc,

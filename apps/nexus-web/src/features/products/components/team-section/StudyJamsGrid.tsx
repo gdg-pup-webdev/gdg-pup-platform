@@ -2,7 +2,6 @@ import { Stack, Text } from "@packages/spark-ui";
 import { StudyJamContainer } from "../StudyJamContainer";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 
-
 const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
   cybersecurity: "Cybersecurity",
@@ -15,15 +14,13 @@ const TEAM_SLUG_TO_TEAM_NAME_MAP = {
 };
 
 export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
-  const { data, error, isLoading } = useListEvents(1, 10, {
+  const { data } = useListEvents(1, 10, {
     type: "Study Jam",
     teamName:
       TEAM_SLUG_TO_TEAM_NAME_MAP[
         teamSlug as keyof typeof TEAM_SLUG_TO_TEAM_NAME_MAP
       ],
   });
-
-  console.log("study jams loaded", { data, error, isLoading });
 
   return (
     <Stack gap="xl" className="mt-16">
@@ -54,14 +51,14 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
               }
               description={
                 studyjam.description.slice(0, 200) +
-                (studyjam.description.length > 200 ? "..." : "")||
+                  (studyjam.description.length > 200 ? "..." : "") ||
                 "Join us for an engaging Study Jam where we dive deep into the latest trends and technologies in the industry. Whether you're a beginner or an expert, there's something for everyone to learn and explore."
               }
               category={
                 <>
                   {studyjam.tags &&
-                    studyjam.tags.map((tag, index) => (
-                      <span className="inline-flex items-center rounded-full bg-[#8B2F00]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                    studyjam.tags.map((tag, tagIndex) => (
+                      <span key={tagIndex} className="inline-flex items-center rounded-full bg-[#EA4335]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
                         {tag}
                       </span>
                     ))}
@@ -73,11 +70,14 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
                 </span> */}
                 </>
               }
-              date={new Date(studyjam.start_date).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
+              date={new Date(studyjam.start_date).toLocaleDateString(
+                undefined,
+                {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                },
+              )}
             />
           ))}
       </div>

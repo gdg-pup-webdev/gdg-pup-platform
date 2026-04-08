@@ -4,13 +4,45 @@ import { ASSETS } from "@/lib/constants/assets";
 import { AboutTheTeam } from "./AboutTheTeam";
 import { TeamLeadsGrid } from "./team-structure-section/TeamLeadsGrid";
 import { TeamStructureDropdowns } from "./team-structure-section/TeamStructureDropdowns";
+import { TEAM_CONTENT } from "../data/team-content";
 
 interface TeamStructureSectionProps {
   teamName: string;
   teamSlug: string;
 }
 
+const TEAM_IMAGES: Record<string, string> = {
+  iot: "/products/iot-logo.webp",
+  "ui-ux": "/products/ui-ux-logo.webp",
+  "web-development": "/products/web-development-logo.webp",
+  "data-ml": "/products/data-ml-logo.webp",
+  cybersecurity: "/products/cybersecurity-logo.webp",
+  "cloud-solutions": "/products/cloud-solutions-logo.webp",
+  "project-management": "/products/project-management-logo.webp",
+  executives: "/products/executives-logo.png",
+};
+
+const TEAM_GLOW_COLORS: Record<string, string> = {
+  "ui-ux": "#F9AB00",
+  "web-development": "#4285F4",
+  iot: "#EA4335",
+  cybersecurity: "#34A853",
+  "data-ml": "#4285F4",
+  "cloud-solutions": "#EA4335",
+  "project-management": "#34A853",
+  executives: "#F9AB00",
+};
+
+const TEAM_GLOW_SIZES: Record<string, string> = {
+  executives: "350px",
+};
+
 export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectionProps) {
+  const content = TEAM_CONTENT[teamSlug];
+  const imageSrc = TEAM_IMAGES[teamSlug] ?? "/products/ui-ux-logo.webp";
+  const glowColor = TEAM_GLOW_COLORS[teamSlug] ?? "#F9AB00";
+  const glowSize = TEAM_GLOW_SIZES[teamSlug] ?? "550px";
+
   return (
     <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
@@ -89,15 +121,27 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
 
             {/* Team image + spirals */}
             <div className="w-full mt-20 flex flex-col items-center">
-              <div className="w-full flex justify-center">
+              {/* Main image with per-team glow */}
+              <div className="relative w-full flex justify-center items-center">
+                <div
+                  className="absolute rounded-full blur-[218.50px] pointer-events-none z-11"
+                  style={{
+                    backgroundColor: glowColor,
+                    opacity: 0.75,
+                    width: glowSize,
+                    height: glowSize,
+                  }}
+                />
                 <Image
-                  src="/products/ui-ux-logo.webp"
+                  src={imageSrc}
                   alt={`${teamName} team`}
                   width={900}
                   height={500}
-                  className="w-full max-w-[400px] md:max-w-[500px] lg:max-w-[600px] rounded-2xl object-cover relative z-20"
+                  className="w-full max-w-[400px] md:max-w-[500px] lg:max-w-[600px] rounded-2xl object-cover relative z-12"
                 />
               </div>
+
+              {/* Gold glow behind image */}
               <div className="absolute left-1/2 -translate-x-1/2 top-10 w-[1200px] lg:w-[1900px] pointer-events-none z-10">
                 <Image
                   src="/products/gold-4.png"
@@ -107,6 +151,8 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
                   className="w-full h-auto mix-blend-screen opacity-67 blur-[50px]"
                 />
               </div>
+
+              {/* Spirals */}
               <div className="relative w-full max-w-3xl h-[100px] md:h-[140px] mt-[-10px] pointer-events-none">
                 <div className="absolute left-1/2 -translate-x-1/2 -top-25 w-[300px] md:w-[450px] lg:w-570 aspect-[1204/188] opacity-70">
                   <Image src={ASSETS.ID.SPIRAL_OUTER} alt="" fill className="object-contain" />
@@ -128,30 +174,27 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
               <AboutTheTeam
                 description={
                   <div className="text-lg md:text-3xl leading-snug md:leading-12 font-medium">
-                    <>
-                      The <span className="text-yellow-400">UI/UX Team</span>{" "}
-                      focuses on creating intuitive and engaging user interfaces
-                      and experiences for digital products. Members of this team
-                      will work on designing user-centric interfaces, conducting
-                      usability testing, and creating wireframes and prototypes.
-                      Throughout the term, they will gain experience in design
-                      tools and methodologies, ensuring that the software and
-                      applications developed are not only functional but also
-                      visually appealing and easy to use.
-                    </>
+                    {content ? (
+                      <>
+                        The{" "}
+                        <span className="text-yellow-400">{teamName} Team</span>{" "}
+                        {content.description.replace(/^The .+? Team /, "")}
+                      </>
+                    ) : (
+                      <>No description available for this team.</>
+                    )}
                   </div>
                 }
                 categories={
                   <>
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
-                      UI Design
-                    </span>
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
-                      UX Research
-                    </span>
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
-                      Prototyping
-                    </span>
+                    {(content?.categories ?? []).map((cat) => (
+                      <span
+                        key={cat}
+                        className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white"
+                      >
+                        {cat}
+                      </span>
+                    ))}
                   </>
                 }
               />
@@ -162,7 +205,7 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
           <TeamLeadsGrid teamSlug={teamSlug} />
 
           {/* ── Team Structure + Dropdowns ── */}
-          <TeamStructureDropdowns teamSlug={teamSlug} />
+          <TeamStructureDropdowns content={content} />
         </Stack>
       </Container>
     </div>
