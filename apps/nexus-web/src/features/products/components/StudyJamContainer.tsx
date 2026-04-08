@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { Skeleton } from "@packages/spark-ui";
 import {
   normalizeEventDescription,
   splitBoldSegments,
@@ -97,7 +98,7 @@ export function StudyJamContainer({
               className="w-full aspect-square rounded-[11px] object-cover bg-white/5"
             />
           ) : (
-            <div className="w-full aspect-square rounded-[11px] border border-dashed border-white/40 bg-white/5" />
+            <Skeleton className="w-full aspect-square rounded-[11px] bg-white/10 border border-white/5" />
           )}
         </div>
 
@@ -105,12 +106,12 @@ export function StudyJamContainer({
         <div className="flex w-full flex-col items-center gap-3.25 text-center">
           <div className="min-h-[3.5rem] text-white text-2xl leading-tight font-bold text-center line-clamp-2">
             {title ?? (
-              <div className="h-8 w-2/3 rounded-md border border-dashed border-white/40 bg-white/5" />
+              <Skeleton className="mx-auto h-8 w-2/3 rounded-md bg-white/10 border border-white/5" />
             )}
           </div>
           <div className="min-h-[1rem] text-xs italic text-white/90 text-center line-clamp-1">
             {subtitle ?? (
-              <div className="h-5 w-1/2 rounded-md border border-dashed border-white/30 bg-white/5" />
+              <Skeleton className="mx-auto h-5 w-1/2 rounded-md bg-white/10 border border-white/5" />
             )}
           </div>
         </div>
@@ -121,7 +122,11 @@ export function StudyJamContainer({
             {description ? (
               renderDescriptionContent(description)
             ) : (
-              <div className="h-5 w-full rounded-md border border-dashed border-white/30 bg-white/5" />
+              <div className="w-full space-y-2">
+                <Skeleton className="h-3 w-full rounded bg-white/10" />
+                <Skeleton className="h-3 w-5/6 rounded bg-white/10" />
+                <Skeleton className="h-3 w-2/3 rounded bg-white/10" />
+              </div>
             )}
           </div>
           <div className="mt-auto flex flex-col items-center gap-3.25">
@@ -132,13 +137,13 @@ export function StudyJamContainer({
                 </span>
               ) : (
                 (category ?? (
-                  <div className="h-6 w-28 rounded-full border border-dashed border-white/30 bg-white/5" />
+                  <Skeleton className="h-6 w-28 rounded-full bg-white/10 border border-white/5" />
                 ))
               )}
             </div>
             <div className="text-xs text-white/80">
               {date ?? (
-                <div className="h-4 w-20 rounded-md border border-dashed border-white/30 bg-white/5" />
+                <Skeleton className="h-4 w-20 rounded-md bg-white/10 border border-white/5" />
               )}
             </div>
           </div>

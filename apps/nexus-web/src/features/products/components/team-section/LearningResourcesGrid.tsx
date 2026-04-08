@@ -2,6 +2,10 @@ import { Stack, Text } from "@packages/spark-ui";
 import { StudyJamContainer } from "../StudyJamContainer";
 import { useGetLearningResources } from "@/features/learning-resources/hooks";
 import { normalizeEventDescription } from "@/features/events/utils/description";
+import {
+  StudyJamCardsLoading,
+  TEAM_SECTION_CARD_CLASSNAME,
+} from "./StudyJamCardsLoading";
 
 const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
@@ -30,7 +34,7 @@ function getDescriptionPreview(description?: string | null) {
 }
 
 export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
-  const { data } = useGetLearningResources({
+  const { data, isLoading } = useGetLearningResources({
     teamName:
       TEAM_SLUG_TO_TEAM_NAME_MAP[
         teamSlug as keyof typeof TEAM_SLUG_TO_TEAM_NAME_MAP
@@ -51,11 +55,14 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
       </Text>
 
       <div className="w-full flex flex-col md:flex-row flex-wrap gap-6 items-center md:items-stretch justify-center">
-        {data &&
+        {isLoading ? (
+          <StudyJamCardsLoading />
+        ) : (
+          data &&
           data.data.map((resource, index) => (
             <StudyJamContainer
               key={index}
-              className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-[340px]"
+              className={TEAM_SECTION_CARD_CLASSNAME}
               imageSrc={
                 resource.thumbnailUrl || "/products/iot_study_jam_image.jpg"
               }
@@ -82,7 +89,8 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
                 day: "numeric",
               })}
             />
-          ))}
+          ))
+        )}
       </div>
     </Stack>
   );
