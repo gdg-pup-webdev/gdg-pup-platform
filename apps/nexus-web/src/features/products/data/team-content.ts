@@ -1,6 +1,8 @@
 export interface TeamContent {
   /** About the Team card description (plain text). */
   description: string;
+  /** Optional bullet points appended after the description paragraph. */
+  descriptionBullets?: string[];
   /** Pill labels shown in the About the Team card. */
   categories: string[];
 
@@ -120,8 +122,13 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
 
   "project-management": {
     description:
-      "The Project Management Team drives the planning, coordination, and successful delivery of the organization's initiatives. Members learn to lead cross-functional teams, manage timelines and resources, and apply agile methodologies to keep projects on track. Throughout the term, they develop essential leadership, communication, and strategic thinking skills that are critical for turning ideas into impactful outcomes.",
-    categories: ["Agile", "Scrum", "Stakeholder Management"],
+      "The Project Management Team is not part of the Core Tech Teams but supports them in executing initiatives across the Technology Department.",
+    descriptionBullets: [
+      "Workflow Coordination: Translates plans from Core Team Leads into actionable timelines and workflows.",
+      "Resource & Progress Management: Oversees resources, monitors progress, and ensures tasks are completed on time.",
+      "Collaboration Support: Facilitates coordination among tech teams to deliver projects efficiently.",
+    ],
+    categories: ["Planning & Scheduling", "Team Coordination", "Resource Management"],
 
     memberLevelTitle: "PM Cadet",
     memberLevelDescription:

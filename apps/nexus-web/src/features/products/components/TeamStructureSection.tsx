@@ -208,6 +208,13 @@ export function TeamStructureSection({
                         The{" "}
                         <span className="text-yellow-400">{teamName} Team</span>{" "}
                         {content.description.replace(/^The .+? Team /, "")}
+                        {content.descriptionBullets && (
+                          <ul className="mt-4 list-disc list-inside space-y-1">
+                            {content.descriptionBullets.map((bullet) => (
+                              <li key={bullet}>{bullet}</li>
+                            ))}
+                          </ul>
+                        )}
                       </>
                     ) : (
                       <>No description available for this team.</>
