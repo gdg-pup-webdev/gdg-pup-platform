@@ -1,6 +1,7 @@
 import { Stack, Text } from "@packages/spark-ui";
 import { StudyJamContainer } from "../StudyJamContainer";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
+import { normalizeEventDescription } from "@/features/events/utils/description";
 
 const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
@@ -12,6 +13,21 @@ const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "ui-ux": "UI/UX",
   "web-development": "Web Development",
 };
+
+const FALLBACK_DESCRIPTION =
+  "Join us for an engaging Study Jam where we dive deep into the latest trends and technologies in the industry. Whether you're a beginner or an expert, there's something for everyone to learn and explore.";
+
+function getDescriptionPreview(description?: string | null) {
+  const normalizedDescription = normalizeEventDescription(description);
+
+  if (!normalizedDescription) {
+    return FALLBACK_DESCRIPTION;
+  }
+
+  return normalizedDescription.length > 200
+    ? `${normalizedDescription.slice(0, 200).trimEnd()}...`
+    : normalizedDescription;
+}
 
 export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
   const { data } = useListEvents(1, 10, {
@@ -49,16 +65,15 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
                   ? `Featuring ${studyjam.speakers.join(", ")}`
                   : "Study Jam"
               }
-              description={
-                studyjam.description.slice(0, 200) +
-                  (studyjam.description.length > 200 ? "..." : "") ||
-                "Join us for an engaging Study Jam where we dive deep into the latest trends and technologies in the industry. Whether you're a beginner or an expert, there's something for everyone to learn and explore."
-              }
+              description={getDescriptionPreview(studyjam.description)}
               category={
                 <>
                   {studyjam.tags &&
                     studyjam.tags.map((tag, tagIndex) => (
-                      <span key={tagIndex} className="inline-flex items-center rounded-full bg-[#EA4335]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                      <span
+                        key={tagIndex}
+                        className="inline-flex items-center rounded-full bg-[#EA4335]/90 px-3 py-1 text-[11px] font-medium leading-none text-white"
+                      >
                         {tag}
                       </span>
                     ))}
