@@ -37,8 +37,8 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
 
   "web-development": {
     description:
-      "The Web Development Team builds modern, performant, and accessible web applications for the organization. Members collaborate on full-stack projects using cutting-edge frameworks and tools, translating design mock-ups into pixel-perfect, responsive user interfaces while developing robust server-side logic. Throughout the term, members deepen their expertise in front-end and back-end technologies, version control workflows, and agile development practices.",
-    categories: ["Frontend", "Backend", "Full-Stack"],
+      "The Web Development Team focuses on building and maintaining high-quality, responsive, and functional web applications that align with organizational objectives. Members of this team will be involved in backend, frontend, or full-stack development, working with modern frameworks and tools to implement features and ensure seamless performance. Throughout the term, they will gain hands-on experience in coding, debugging, testing, and deploying web-based solutions that meet real-world needs.",
+    categories: ["Frontend Development", "Backend Development", "Full-Stack Integration"],
 
     memberLevelTitle: "Web Dev Cadet",
     memberLevelDescription:
