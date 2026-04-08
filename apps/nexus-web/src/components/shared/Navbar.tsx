@@ -63,23 +63,27 @@ function useOutsideClick(callback: () => void) {
   return ref;
 }
 
+const optionsLoggedIn = [
+  {
+    label: "View Profile",
+    href: "/sparkmates/me",
+  },
+  {
+    label: "Account Settings",
+    href: "/sparkmates/settings",
+  },
+  {
+    label: "Sign Out",
+    href: "/signout",
+  },
+];
+
 const NavbarAvatarWidget = () => {
   const { decodedToken: user, status } = useAuthContext();
 
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const dropdownRef = useOutsideClick(() => setOpenDropdown(false));
-
-  const optionsLoggedIn = [
-    {
-      label: "View Profile",
-      href: "/sparkmates/me",
-    },
-    {
-      label: "Sign Out",
-      href: "/signout",
-    },
-  ];
 
   //  href="/sparkmates"
   return (
@@ -621,30 +625,45 @@ export const Navbar: React.FC<NavbarProps> = ({
                           {" "}
                         </Box>
                       ) : status === STATUS.AUTHENTICATED ? (
-                        <Link
-                          href="/sparkmates"
-                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          <Avatar
-                            src={
-                              decodedToken?.memberInfo.avatarUrl ||
-                              ASSETS.AUTH.AVATAR_DEFAULT
-                            }
-                          />
-                          <Stack gap="none">
-                            <Text
-                              variant="body-sm"
-                              weight="semibold"
-                              className="text-white"
-                            >
-                              {decodedToken?.memberInfo.firstName || "User"}
-                            </Text>
-                            <Text variant="body-sm" className="text-gray-400">
-                              View Profile
-                            </Text>
-                          </Stack>
-                        </Link>
+                        <Box>
+                          <Link
+                            href="/sparkmates/me"
+                            className="flex items-center gap-3 p-3 rounded-t-lg bg-white/5 border-x border-t border-white/10 hover:bg-white/10 transition-colors"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <Avatar
+                              src={
+                                decodedToken?.memberInfo.avatarUrl ||
+                                ASSETS.AUTH.AVATAR_DEFAULT
+                              }
+                            />
+                            <Stack gap="none">
+                              <Text
+                                variant="body-sm"
+                                weight="semibold"
+                                className="text-white"
+                              >
+                                {decodedToken?.memberInfo.firstName || "User"}
+                              </Text>
+                              <Text variant="body-sm" className="text-gray-400">
+                                {decodedToken?.email || "Member Profile"}
+                              </Text>
+                            </Stack>
+                          </Link>
+                          
+                          <div className="bg-black/40 py-2 rounded-b-lg border border-white/10">
+                            {optionsLoggedIn.map((link) => (
+                              <Link
+                                key={link.href}
+                                href={link.href}
+                                className="block px-4 py-2.5 text-sm font-semibold text-gray-300 transition-all hover:bg-white/10 hover:text-white"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                              >
+                                {link.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </Box>
                       ) : (
                         <Link
                           href="/signin"
