@@ -29,7 +29,7 @@ export function ResourceLibraryGrid() {
         {RESOURCE_LIBRARY.map((item) => (
           <TiltCard key={item.href} className="relative block w-full">
             <Link href={item.href} className="block w-full">
-              <Card className="relative w-full aspect-[286/390] overflow-hidden rounded-[30px]">
+              <Card className="relative w-full aspect-[286/390] overflow-hidden rounded-[30px] @container">
                 <Image
                   src={item.image}
                   alt={item.body}
@@ -51,7 +51,10 @@ export function ResourceLibraryGrid() {
                         maskComposite: "exclude",
                       }}
                     />
-                    <CardTitle className="text-[10px] sm:text-xs md:text-lg font-medium tracking-wide">
+                    <CardTitle
+                      className="font-medium tracking-wide"
+                      style={{ fontSize: "clamp(8px, 4cqw, 1.125rem)" }}
+                    >
                       <Text gradient="white-blue">
                         {item.header.toUpperCase()}
                       </Text>
@@ -59,14 +62,18 @@ export function ResourceLibraryGrid() {
                   </div>
                 </CardHeader>
 
-                <CardContent className="absolute left-3 md:left-6 right-3 md:right-6 bottom-3 md:bottom-6 z-10 p-0">
+                <CardContent className="absolute left-3 right-3 bottom-3 z-10 p-0 overflow-hidden">
                   <Text
                     gradient={item.gradient}
-                    className={`font-bold line-clamp-2 leading-tight ${
-                      item.variant === "heading-1" ? "text-xl sm:text-2xl md:text-[3.5rem] lg:text-[4.5rem] tracking-tight" :
-                      item.variant === "heading-2" ? "text-lg sm:text-xl md:text-[3rem] lg:text-[3.75rem]" :
-                      "text-base sm:text-lg md:text-[2.5rem] lg:text-[3rem]"
-                    }`}
+                    className="font-bold line-clamp-2 leading-tight"
+                    style={{
+                      fontSize:
+                        item.variant === "heading-1"
+                          ? "clamp(1rem, 16cqw, 4.5rem)"
+                          : item.variant === "heading-2"
+                            ? "clamp(0.875rem, 13cqw, 3.75rem)"
+                            : "clamp(0.75rem, 11cqw, 3rem)",
+                    }}
                   >
                     {item.body}
                   </Text>

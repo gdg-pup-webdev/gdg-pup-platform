@@ -87,7 +87,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               {teamName}
             </Text>
 
-            <TeamHero teamName={teamName} />
+            <TeamHero teamName={teamName} teamSlug={teamSlug} />
 
             <div className="w-full max-w-10xl mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
