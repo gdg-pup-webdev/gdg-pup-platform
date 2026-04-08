@@ -103,8 +103,8 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
 
   "cloud-solutions": {
     description:
-      "The Cloud Solutions Team equips members with the skills to design, deploy, and manage scalable infrastructure on leading cloud platforms. Members work on real cloud projects involving serverless computing, containerization, CI/CD pipelines, and cloud-native architectures. Throughout the term, they gain practical exposure to platforms such as Google Cloud, preparing them for industry certifications and modern DevOps roles.",
-    categories: ["Cloud Infrastructure", "DevOps", "Serverless"],
+      "The Cloud Solutions Team is involved with the process of managing and provisioning cloud infrastructure, services, and applications. To optimize, operate, and sustain cloud infrastructure, members will be completely immersed in cloud environments, particularly through the Google Cloud Platform (GCP). They will be tasked with deploying scalable applications, automating infrastructure, and implementing best practices for cloud security and cost management.",
+    categories: ["Cloud Infrastructure", "Scalability & Deployment", "DevOps & Automation"],
 
     memberLevelTitle: "Cloud Cadet",
     memberLevelDescription:
