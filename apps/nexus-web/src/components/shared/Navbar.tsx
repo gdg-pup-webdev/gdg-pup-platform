@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { ASSETS } from "@/lib/constants/assets";
 import { cn } from "@/lib/utils";
 import { Box, Inline, Text, Button, Avatar, Stack } from "@packages/spark-ui";
@@ -443,11 +443,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         </Box>
 
         {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div
-            ref={dropdownRef}
-            className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] animate-in fade-in slide-in-from-top-2 duration-200 min-[75rem]:hidden"
-          >
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] min-[75rem]:hidden"
+            >
             <Box
               className={cn(
                 "py-3 w-full",
@@ -489,20 +494,30 @@ export const Navbar: React.FC<NavbarProps> = ({
                     />
                   </svg>
                 </button>
-                {activeMobileSection === "about" && (
-                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
-                    {dropdownLinks.about.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {activeMobileSection === "about" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-white/5 py-2">
+                        {dropdownLinks.about.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Community Section */}
                 <button
@@ -537,20 +552,30 @@ export const Navbar: React.FC<NavbarProps> = ({
                     />
                   </svg>
                 </button>
-                {activeMobileSection === "community" && (
-                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
-                    {dropdownLinks.community.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {activeMobileSection === "community" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-white/5 py-2">
+                        {dropdownLinks.community.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Nav Links */}
                 <button
@@ -587,20 +612,30 @@ export const Navbar: React.FC<NavbarProps> = ({
                     />
                   </svg>
                 </button>
-                {activeMobileSection === "navigation" && (
-                  <div className="bg-white/5 py-2 animate-in slide-in-from-top-1 duration-200">
-                    {navLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {activeMobileSection === "navigation" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-white/5 py-2">
+                        {navLinks.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Auth Section */}
                 {!hideAuth && (
@@ -678,8 +713,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </Stack>
             </Box>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Box>
     </motion.div>
   );
