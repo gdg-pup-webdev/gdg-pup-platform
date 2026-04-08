@@ -3,6 +3,7 @@
 import { Badge, Button, Input, ShineBorder, Text } from "@packages/spark-ui";
 import { CosmosParticles } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
+import Link from "next/link";
 import { useSparkmateProfile, useSuggestedSparkmates } from "../../hooks";
 import { SparkmatesSource } from "../../types";
 import { SkillsAndLinksSection } from "./sections/SkillsAndLinksSection"; 
@@ -115,14 +116,25 @@ export function ProfileOwnerView({
               <Text variant="heading-5" className="text-white">
                 My Portfolio
               </Text>
-              <Button
-                variant="default"
-                size="sm"
-                iconRight={viewIcon}
-                className="px-3 py-1 text-white"
-              >
-                Preview
-              </Button>
+              <div className="flex gap-2">
+                <Link href="/sparkmates/me/analytics">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="px-3 py-1 text-white border-white/20 hover:bg-white/10"
+                  >
+                    Analytics
+                  </Button>
+                </Link>
+                <Button
+                  variant="default"
+                  size="sm"
+                  iconRight={viewIcon}
+                  className="px-3 py-1 text-white"
+                >
+                  Preview
+                </Button>
+              </div>
             </div>
 
             {userprofile && <NameAndProfileSection profile={userprofile} />}
