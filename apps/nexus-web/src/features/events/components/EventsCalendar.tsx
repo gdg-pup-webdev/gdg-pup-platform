@@ -300,7 +300,11 @@ export function EventsCalendar({
     <>
       <div className="w-[calc(100%+1rem)] -mx-2 md:w-full md:mx-0 mt-5 md:mt-8">
         <div className="mb-4">
-          <DateSelector date={date} onDateChange={handleDateChange} />
+          <DateSelector
+            date={date}
+            onDateChange={handleDateChange}
+            className="w-full"
+          />
         </div>
 
         {error && !isLoading && (
