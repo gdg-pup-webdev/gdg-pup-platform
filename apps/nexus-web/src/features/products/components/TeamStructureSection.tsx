@@ -206,7 +206,9 @@ export function TeamStructureSection({
                     {content ? (
                       <>
                         The{" "}
-                        <span className="text-yellow-400">{teamName} Team</span>{" "}
+                        <span className={content.nameColor}>
+                          {content.displayName ?? `${teamName} Team`}
+                        </span>{" "}
                         {content.description.replace(/^The .+? Team /, "")}
                         {content.descriptionBullets && (
                           <ul className="mt-4 list-disc list-inside space-y-1">

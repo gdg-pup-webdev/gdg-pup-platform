@@ -3,6 +3,10 @@ export interface TeamContent {
   description: string;
   /** Optional bullet points appended after the description paragraph. */
   descriptionBullets?: string[];
+  /** Tailwind text-color class for the highlighted team name in the description. */
+  nameColor: string;
+  /** Optional full display name for the team name highlight (e.g. "Internet of Things (IoT) Team"). Defaults to "{teamName} Team". */
+  displayName?: string;
   /** Pill labels shown in the About the Team card. */
   categories: string[];
 
@@ -21,6 +25,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
   "ui-ux": {
     description:
       "The UI/UX Team focuses on creating intuitive and engaging user interfaces and experiences for digital products. Members of this team will work on designing user-centric interfaces, conducting usability testing, and creating wireframes and prototypes. Throughout the term, they will gain experience in design tools and methodologies, ensuring that the software and applications developed are not only functional but also visually appealing and easy to use.",
+    nameColor: "text-yellow-400",
     categories: ["UI Design", "UX Research", "Prototyping"],
 
     memberLevelTitle: "Design Apprentice",
@@ -38,6 +43,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
   "web-development": {
     description:
       "The Web Development Team focuses on building and maintaining high-quality, responsive, and functional web applications that align with organizational objectives. Members of this team will be involved in backend, frontend, or full-stack development, working with modern frameworks and tools to implement features and ensure seamless performance. Throughout the term, they will gain hands-on experience in coding, debugging, testing, and deploying web-based solutions that meet real-world needs.",
+    nameColor: "text-sky-400",
     categories: ["Frontend Development", "Backend Development", "Full-Stack Integration"],
 
     memberLevelTitle: "Web Dev Cadet",
@@ -55,6 +61,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
   cybersecurity: {
     description:
       "The Cybersecurity Team is involved in the practice of protecting systems, networks, and data from digital threats. Members will dive into topics such as ethical hacking, threat detection, and implementing security protocols to safeguard applications and infrastructure. They will work on projects related to security analysis, incident response, and developing strategies to mitigate cyber risks.",
+    nameColor: "text-green-400",
     categories: ["Threat Detection", "Encryption & Data Protection", "Risk Assessment"],
 
     memberLevelTitle: "Security Cadet",
@@ -72,6 +79,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
   "data-ml": {
     description:
       "The Data and Machine Learning Team focuses on the collection, processing, and analysis of data to extract insights and develop intelligent systems. Members of this team will work on data-driven projects, applying machine learning algorithms to solve real-world problems. They will engage in tasks such as data cleaning, model training, and evaluating the performance of machine learning models, gaining hands-on experience with tools and frameworks commonly used in the industry.",
+    nameColor: "text-sky-400",
     categories: ["Data Analysis", "Model Training", "Artificial Intelligence"],
 
     memberLevelTitle: "Data Cadet",
@@ -89,6 +97,8 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
   iot: {
     description:
       "The Internet of Things (IoT) Team dedicates the design, development, and implementation of interconnected systems that bridge the digital and physical worlds. Members of this team will engage in every stage of IoT solution development—from conceptualizing device integrations and designing smart system architectures to coding, testing, and deploying functional prototypes. They will explore topics such as sensor technologies, data communication, automation, and real-time monitoring to create innovative and efficient IoT applications that enhance everyday experiences.",
+    nameColor: "text-red-500",
+    displayName: "Internet of Things (IoT) Team",
     categories: ["Embedded Systems", "Sensor & Device Integration", "Network Communication"],
 
     memberLevelTitle: "IoT Cadet",
@@ -106,6 +116,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
   "cloud-solutions": {
     description:
       "The Cloud Solutions Team is involved with the process of managing and provisioning cloud infrastructure, services, and applications. To optimize, operate, and sustain cloud infrastructure, members will be completely immersed in cloud environments, particularly through the Google Cloud Platform (GCP). They will be tasked with deploying scalable applications, automating infrastructure, and implementing best practices for cloud security and cost management.",
+    nameColor: "text-red-500",
     categories: ["Cloud Infrastructure", "Scalability & Deployment", "DevOps & Automation"],
 
     memberLevelTitle: "Cloud Cadet",
@@ -128,6 +139,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
       "Resource & Progress Management: Oversees resources, monitors progress, and ensures tasks are completed on time.",
       "Collaboration Support: Facilitates coordination among tech teams to deliver projects efficiently.",
     ],
+    nameColor: "text-green-400",
     categories: ["Planning & Scheduling", "Team Coordination", "Resource Management"],
 
     memberLevelTitle: "PM Cadet",
@@ -145,6 +157,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
   executives: {
     description:
       "The Executives drive the strategic direction and day-to-day operations of the organization. This team oversees all departments, ensures alignment with the chapter's mission and vision, and represents GDG PUP in external engagements. Executive members develop high-level leadership, communication, and decision-making skills while building a culture of excellence, inclusivity, and innovation across every team.",
+    nameColor: "text-yellow-400",
     categories: ["Leadership", "Strategy", "Operations"],
 
     memberLevelTitle: "Executive Officer",

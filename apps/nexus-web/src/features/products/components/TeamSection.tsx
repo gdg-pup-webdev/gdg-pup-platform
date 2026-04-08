@@ -4,16 +4,17 @@ import Link from "next/link";
 import { Container, Stack, Text, Button } from "@packages/spark-ui";
 import { AboutTheTeam } from "./AboutTheTeam";
 import { TeamHero } from "./team-section/TeamHero";
-import { StudyJamsGrid } from "./team-section/StudyJamsGrid"; 
+import { StudyJamsGrid } from "./team-section/StudyJamsGrid";
 import { LearningResourcesGrid } from "./team-section/LearningResourcesGrid";
+import { TEAM_CONTENT } from "../data/team-content";
+
 interface TeamSectionProps {
   teamName: string;
   teamSlug: string;
 }
- 
 
 export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
- 
+  const content = TEAM_CONTENT[teamSlug];
 
   return (
     <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
@@ -65,8 +66,8 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         }}
       />
 
-      <Container>
-        <Stack gap="2xl" className="relative z-10 mt-30">
+      <Container maxWidth="full">
+        <Stack gap="2xl" className="relative z-10">
           {/* ── About the Team ── */}
           <Stack gap="lg" className="items-center">
             <Text
@@ -89,33 +90,40 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
 
             <TeamHero teamName={teamName} teamSlug={teamSlug} />
 
-            <div className="w-full max-w-10xl mx-auto my-6 z-10 mt-30">
+            <div className="w-full max-w-[1600px] mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
                 description={
-                  <>
-                    The{" "}
-                    <span className="text-[#EA4335]">
-                      Internet of Things (IoT) Team
-                    </span>{" "}
-                    dedicates the design, development, and implementation of
-                    interconnected systems that bridge the digital and physical
-                    worlds. Members of this team will engage in every stage of
-                    IoT solution development, from conceptualizing device
-                    integrations and designing smart system architectures to
-                    coding, testing, and deploying functional prototypes.
-                  </>
+                  <div className="text-lg md:text-3xl leading-snug md:leading-12 font-light">
+                    {content ? (
+                      <>
+                        The{" "}
+                        <span className={content.nameColor}>
+                          {content.displayName ?? `${teamName} Team`}
+                        </span>{" "}
+                        {content.description.replace(/^The .+? Team /, "")}
+                        {content.descriptionBullets && (
+                          <ul className="mt-4 list-disc list-inside space-y-1">
+                            {content.descriptionBullets.map((bullet) => (
+                              <li key={bullet}>{bullet}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </>
+                    ) : (
+                      <>No description available for this team.</>
+                    )}
+                  </div>
                 }
                 categories={
                   <>
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
-                      Embedded Systems
-                    </span>
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
-                      Sensor &amp; Device Integration
-                    </span>
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white">
-                      Network Communication
-                    </span>
+                    {(content?.categories ?? []).map((cat) => (
+                      <span
+                        key={cat}
+                        className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white"
+                      >
+                        {cat}
+                      </span>
+                    ))}
                   </>
                 }
               />
