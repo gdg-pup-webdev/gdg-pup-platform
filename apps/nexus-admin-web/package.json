@@ -2,8 +2,7 @@
   "name": "nexus-admin-web",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "deps:build": "pnpm --filter @packages/typed-rest build && pnpm --filter @packages/nexus-api-contracts build && pnpm --filter @packages/spark-ui build", 
+  "scripts": { 
     "dev": "next dev --port 3100", 
     "build": "next build",
     "start": "next start",
