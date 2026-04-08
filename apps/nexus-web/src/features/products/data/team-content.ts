@@ -86,8 +86,8 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
 
   iot: {
     description:
-      "The IoT Team bridges the digital and physical worlds by building smart, connected solutions. Members design and prototype hardware-software systems — from sensor networks to automated devices — that solve real-world problems. Throughout the term, they gain hands-on experience in embedded systems, microcontroller programming, wireless communication protocols, and the software that ties it all together.",
-    categories: ["Embedded Systems", "Prototyping", "Automation"],
+      "The Internet of Things (IoT) Team dedicates the design, development, and implementation of interconnected systems that bridge the digital and physical worlds. Members of this team will engage in every stage of IoT solution development—from conceptualizing device integrations and designing smart system architectures to coding, testing, and deploying functional prototypes. They will explore topics such as sensor technologies, data communication, automation, and real-time monitoring to create innovative and efficient IoT applications that enhance everyday experiences.",
+    categories: ["Embedded Systems", "Sensor & Device Integration", "Network Communication"],
 
     memberLevelTitle: "IoT Cadet",
     memberLevelDescription:
