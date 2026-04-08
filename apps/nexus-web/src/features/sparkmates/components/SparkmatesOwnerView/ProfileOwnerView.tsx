@@ -3,6 +3,7 @@
 import { Badge, Button, Input, ShineBorder, Text } from "@packages/spark-ui";
 import { CosmosParticles } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
+import Link from "next/link";
 import { useSparkmateProfile, useSuggestedSparkmates } from "../../hooks";
 import { SparkmatesSource } from "../../types";
 import { SkillsAndLinksSection } from "./sections/SkillsAndLinksSection"; 
@@ -101,33 +102,44 @@ export function ProfileOwnerView({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-6 pb-24 pt-36 text-white"
+      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-3 sm:px-6 pb-24 pt-24 sm:pt-36 text-white"
     >
-      <div className="relative min-h-screen w-full overflow-hidden">
-        {/* RAINBOW ON THE BACKGROUND */}
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <div className="relative min-h-screen w-full">
+        {/* RAINBOW ON THE BACKGROUND — desktop only */}
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden hidden sm:block">
           <SparkmatesRainbowStreak />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
+        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
           <FadeInSection className="p-0" delay={0.02}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Text variant="heading-5" className="text-white">
                 My Portfolio
               </Text>
-              <Button
-                variant="default"
-                size="sm"
-                iconRight={viewIcon}
-                className="px-3 py-1 text-white"
-              >
-                Preview
-              </Button>
+              <div className="flex gap-2">
+                <Link href="/sparkmates/me/analytics">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="px-3 py-1 text-white border-white/20 hover:bg-white/10"
+                  >
+                    Analytics
+                  </Button>
+                </Link>
+                <Button
+                  variant="default"
+                  size="sm"
+                  iconRight={viewIcon}
+                  className="px-3 py-1 text-white"
+                >
+                  Preview
+                </Button>
+              </div>
             </div>
 
             {userprofile && <NameAndProfileSection profile={userprofile} />}
 
-            <div className="mt-8 space-y-8">
+            <div className="mt-6 space-y-6">
 
               {/* {userprofile && <CustomButtonsSection profile={userprofile} />} */}
               <Divider />

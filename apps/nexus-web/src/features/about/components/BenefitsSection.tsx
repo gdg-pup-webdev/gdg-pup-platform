@@ -42,7 +42,6 @@ const FadeInSection = ({
   );
 };
 
-{/* Card Colors */ }
 const CARD_COLORS: Record<string, string> = {
   blue: "#4285F4",
   green: "#34A853",
@@ -129,7 +128,6 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
     return () => cancelAnimationFrame(rafRef.current);
   }, [hovered]);
 
-  {/* Constants for snake animation pattern*/ }
   const { w, h } = dims;
   const perimeter = w > 0 ? 2 * (w + h) - 8 * R + 2 * Math.PI * R : 0;
   const snakes = [0, 0.25, 0.5, 0.75].map(frac => frac * perimeter);
@@ -176,30 +174,56 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
           ))}
         </svg>
       )}
-
-      <Card
-        style={{
-          border: `1px solid ${c}`,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          transition: "box-shadow 0.25s ease",
-          boxShadow: hovered ? `0 0 24px 2px ${c}44` : "none",
-        }}
+        <Card
+          style={{
+            border: `1px solid ${c}`,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            transition: "box-shadow 0.25s ease",
+            boxShadow: hovered ? `0 0 24px 2px ${c}44` : "none",
+          }}
       >
-        <CardHeader>
-          <Text variant="heading-6" weight="semibold" align="left" className="text-white">
+        <CardHeader
+          style={{
+            textAlign: "center",
+            paddingTop: "20px",
+            paddingBottom: "5px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <Text
+            variant="heading-6"
+            weight="semibold"
+            align="center"
+            className="text-white"
+          >
             {benefit.title}
           </Text>
         </CardHeader>
-        <CardContent>
-          <Text variant="body-sm" align="left" className="text-gray-300">
+
+        <CardContent
+          style={{
+            paddingTop: "5px",
+            paddingBottom: "5px",
+            paddingLeft: "16px",
+            paddingRight: "16px",
+          }}
+        >
+          <Text variant="body-sm" align="center" className="text-gray-300 text-center">
             {benefit.body}
           </Text>
         </CardContent>
+
         <div
-          className="relative w-full rounded-[12px] overflow-hidden mt-4"
-          style={{ height: "clamp(130px, 20vw, 170px)", flexShrink: 0 }}
+          className="relative w-full rounded-[12px] overflow-hidden"
+          style={{
+            height: "clamp(130px, 20vw, 170px)",
+            flexShrink: 0,
+            margin: "auto 16px 16px 16px",
+            width: "calc(100% - 32px)",
+          }}
         >
           <motion.div
             className="absolute inset-0"
@@ -216,122 +240,106 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
 
 export function BenefitsSection() {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16 bg-[#010B1D]">
 
-      {/* Responsive ellipse styles */}
       <style>{`
+        /* ── Ellipses ── */
         .ellipse-blue {
-          width: 700px;
-          height: 800px;
+          width: 620px;
+          height: 680px;
           top: -40px;
-          left: -200px;
+          left: -220px;
+          opacity: 0.6;
         }
         .ellipse-yellow {
-          width: 700px;
-          height: 800px;
-          top: 250px;
-          right: -250px;
+          width: 620px;
+          height: 680px;
+          top: 400px;
+          right: -240px;
+          opacity: 0.6;
         }
         .ellipse-red {
-          width: 700px;
-          height: 800px;
-          bottom: 100px;
-          left: -200px;
+          width: 680px;
+          height: 620px;
+          bottom: 280px;
+          left: -260px;
+          opacity: 0.6;
         }
         .ellipse-green {
-          width: 600px;
-          height: 700px;
-          bottom: -80px;
-          right: -250px;
+          width: 640px;
+          height: 680px;
+          bottom: 60px;
+          right: -270px;
+          opacity: 0.6;
         }
         @media (max-width: 767px) {
-          .ellipse-blue {
-            width: 400px;
-            height: 400px;
-            left: -150px;
-          }
-          .ellipse-yellow {
-            width: 350px;
-            height: 400px;
-            top: 250px;
-            right: -150px;
-          }
-          .ellipse-red {
-            width: 350px;
-            height: 400px;
-            bottom: 150px;
-            left: -150px;
-          }
-          .ellipse-green {
-            width: 350px;
-            height: 350px;
-            bottom: -50px;
-            right: -150px;
-          }
+          .ellipse-blue   { width: 550px; height: 600px; left: -250px; top: 40px; }
+          .ellipse-yellow { width: 550px; height: 600px; top: 900px;   right: -300px; }
+          .ellipse-red    { width: 520px; height: 550px; bottom: 700px; left: -300px; }
+          .ellipse-green  { width: 500px; height: 520px; bottom: 180px; right: -200px; }
         }
       `}</style>
 
-      {/* Decorative Ellipse - Top Left - Blue */}
+      {/* ── Ellipse: Top Left — Blue ── */}
       <div
         className="ellipse-blue absolute rounded-full pointer-events-none"
         style={{
-          background: "#4285F433",
-          filter: "blur(clamp(55px, 9vw, 90px))",
-          WebkitFilter: "blur(clamp(55px, 9vw, 90px))",
+          background: "radial-gradient(ellipse at center, #4285F488 0%, #4285F444 40%, transparent 72%)",
+          filter: "blur(32px)",
+          WebkitFilter: "blur(32px)",
           zIndex: 0,
         }}
       />
 
-      {/* Decorative Ellipse - Top Center - Light Blue */}
+      {/* ── Ellipse: Top Center — Light Blue arc ── */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
-          width: "clamp(350px, 50vw, 800px)",
-          height: "clamp(120px, 20vw, 220px)",
-          top: "clamp(-110px, -8vw, -80px)",
+          width: "clamp(300px, 45vw, 680px)",
+          height: "clamp(90px, 12vw, 160px)",
+          top: "clamp(-80px, -6vw, -60px)",
           left: "50%",
           transform: "translateX(-50%)",
-          background: "radial-gradient(ellipse, #7EC8F8CC 0%, #4AABF088 45%, transparent 40%)",
-          filter: "blur(clamp(40px, 9vw, 70px))",
-          WebkitFilter: "blur(clamp(40px, 7vw, 70px))",
+          background: "radial-gradient(ellipse at 50% 100%, #7EC8F8CC 0%, #4AABF066 50%, transparent 72%)",
+          filter: "blur(40px)",
+          WebkitFilter: "blur(40px)",
           zIndex: 0,
         }}
       />
 
-      {/* Decorative Ellipse - Top Right - Yellow */}
+      {/* ── Ellipse: Mid Right — Yellow ── */}
       <div
         className="ellipse-yellow absolute rounded-full pointer-events-none"
         style={{
-          background: "#FBBC0533",
-          filter: "blur(clamp(50px, 8vw, 80px))",
-          WebkitFilter: "blur(clamp(50px, 8vw, 80px))",
+          background: "radial-gradient(ellipse at center, #FBBC0588 0%, #FBBC0544 40%, transparent 72%)",
+          filter: "blur(32px)",
+          WebkitFilter: "blur(32px)",
           zIndex: 0,
         }}
       />
 
-      {/* Decorative Ellipse - Bottom Left - Red */}
+      {/* ── Ellipse: Bottom Left — Red ── */}
       <div
         className="ellipse-red absolute rounded-full pointer-events-none"
         style={{
-          background: "#EA433533",
-          filter: "blur(clamp(50px, 8vw, 80px))",
-          WebkitFilter: "blur(clamp(50px, 8vw, 80px))",
+          background: "radial-gradient(ellipse at center, #EA433588 0%, #EA433544 40%, transparent 72%)",
+          filter: "blur(32px)",
+          WebkitFilter: "blur(32px)",
           zIndex: 0,
         }}
       />
 
-      {/* Decorative Ellipse - Bottom Right - Green */}
+      {/* ── Ellipse: Bottom Right — Green ── */}
       <div
         className="ellipse-green absolute rounded-full pointer-events-none"
         style={{
-          background: "#34A85333",
-          filter: "blur(clamp(50px, 8vw, 80px))",
-          WebkitFilter: "blur(clamp(50px, 8vw, 80px))",
+          background: "radial-gradient(ellipse at center, #34A85388 0%, #34A85344 40%, transparent 72%)",
+          filter: "blur(32px)",
+          WebkitFilter: "blur(32px)",
           zIndex: 0,
         }}
       />
 
-      {/* Decorative Asset - Top Left (Asset1.4) */}
       <motion.div
         className="absolute pointer-events-none"
         initial={{ opacity: 0 }}
@@ -339,23 +347,23 @@ export function BenefitsSection() {
         transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
         style={{
           left: 0,
-          top: 0,
-          width: "clamp(150px, 32vw, 280px)",
-          height: "clamp(150px, 32vw, 280px)",
+          top: 100,
+          width: "clamp(140px, 20vw, 200px)",
+          height: "clamp(140px, 20vw, 200px)",
           zIndex: 1,
         }}
       >
         <Image
           src={ASSETS.ABOUT.BENEFITS.DECOR_RIGHT}
-          alt="Decorative top-left asset"
-          width={280}
-          height={280}
+          alt=""
+          width={160}
+          height={160}
           className="w-full h-auto object-contain"
           priority
         />
       </motion.div>
 
-      {/* Decorative Asset - Bottom Right (Asset1.3) */}
+
       <motion.div
         className="absolute pointer-events-none"
         initial={{ opacity: 0 }}
@@ -363,30 +371,31 @@ export function BenefitsSection() {
         transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
         style={{
           right: 0,
-          bottom: "clamp(40px, 8vw, 80px)",
-          width: "clamp(130px, 28vw, 250px)",
-          height: "clamp(130px, 28vw, 250px)",
+          bottom: 450,
+          width: "clamp(120px, 16vw, 160px)",
+          height: "clamp(120px, 16vw, 160px)",
           zIndex: 1,
         }}
       >
         <Image
           src={ASSETS.ABOUT.BENEFITS.DECOR_LEFT}
-          alt="Decorative bottom-right asset"
-          width={250}
-          height={250}
+          alt=""
+          width={180}
+          height={180}
           className="w-full h-auto object-contain"
           priority
         />
       </motion.div>
 
       <Container maxWidth="7xl" padding="lg" className="relative">
-        <Stack gap="2xl">
-          {/* Section 1 — Hero */}
-          <FadeInSection className="mb-32">
+        <Stack gap="xl">
+
+          {/* ── Section 1: Hero ── */}
+          <FadeInSection className="mb-16">
             <Stack gap="lg" align="center">
               <Text
                 as="h1"
-                variant="heading-2"
+                variant="heading-3"
                 weight="bold"
                 align="center"
                 gradient="white-blue"
@@ -394,9 +403,24 @@ export function BenefitsSection() {
                 GDG on TOP
               </Text>
 
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-                <CardContent className="p-8">
-                  <Text variant="body" align="center" className="text-white">
+              <Card
+                className="border-white/15"
+                style={{
+                  background: "rgba(255, 255, 255, 0.06)",
+                  border: "0.5px solid rgba(255, 255, 255, 0.7)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                }}
+              >
+                <CardContent
+                  style={{
+                    paddingTop: "32px",
+                    paddingBottom: "32px",
+                    paddingLeft: "32px",
+                    paddingRight: "32px",
+                  }}
+                >
+                  <Text variant="body-lg" align="center" className="text-white leading-relaxed">
                     Being part of GDG PUP means more than joining an
                     organization—it&apos;s about gaining access to opportunities
                     that help you grow as a developer, a leader, and a professional.
@@ -409,8 +433,8 @@ export function BenefitsSection() {
             </Stack>
           </FadeInSection>
 
-          {/* Section 2 — Benefits Grid */}
-          <FadeInSection delay={0.1} className="mb-32">
+          {/* ── Section 2: Benefits Grid ── */}
+          <FadeInSection delay={0.1} className="mb-20">
             <Stack gap="xl" align="center">
               <Text
                 variant="heading-4"
@@ -421,8 +445,7 @@ export function BenefitsSection() {
                 WHAT BEING AN OFFICIAL GOOGLER INCLUDES
               </Text>
 
-              {/* 1 col on mobile, 2 on tablet, 3 on desktop */}
-              <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl items-stretch">
+              <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl" style={{ alignItems: "stretch", gridAutoRows: "1fr" }}>
                 {benefits.map((benefit) => (
                   <BenefitCard key={benefit.title} benefit={benefit} />
                 ))}
@@ -430,7 +453,7 @@ export function BenefitsSection() {
             </Stack>
           </FadeInSection>
 
-          {/* Section 3 — CTA */}
+          {/* ── Section 3: CTA ── */}
           <FadeInSection delay={0.2}>
             <Stack gap="lg" align="center">
               <Text
@@ -457,6 +480,7 @@ export function BenefitsSection() {
               </Box>
             </Stack>
           </FadeInSection>
+
         </Stack>
       </Container>
     </div>

@@ -14,6 +14,70 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_nfc_card_scans: {
+        Row: {
+          date: string
+          id: string
+          nfcCardId: string | null
+          scanContext: string | null
+          scannerId: string | null
+        }
+        Insert: {
+          date?: string
+          id?: string
+          nfcCardId?: string | null
+          scanContext?: string | null
+          scannerId?: string | null
+        }
+        Update: {
+          date?: string
+          id?: string
+          nfcCardId?: string | null
+          scanContext?: string | null
+          scannerId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_nfc_card_scans_nfcCardId_fkey"
+            columns: ["nfcCardId"]
+            isOneToOne: false
+            referencedRelation: "nfc_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_profile_views: {
+        Row: {
+          date: string
+          id: string
+          source: string | null
+          user_agent: string | null
+          viewerGdgId: string | null
+        }
+        Insert: {
+          date?: string
+          id?: string
+          source?: string | null
+          user_agent?: string | null
+          viewerGdgId?: string | null
+        }
+        Update: {
+          date?: string
+          id?: string
+          source?: string | null
+          user_agent?: string | null
+          viewerGdgId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_profile_views_viewerGdgId_fkey"
+            columns: ["viewerGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
+      }
       article: {
         Row: {
           author_id: string | null

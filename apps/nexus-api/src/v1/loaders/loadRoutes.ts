@@ -56,8 +56,16 @@ import { articlesController } from "../modules/articles";
 import { productController } from "../modules/products";
 import { ProductHttpController } from "../routes/products/products.controller";
 import { ProductRouter } from "../routes/products/products.router";
+import { AnalyticsHttpController } from "../routes/analytics/analytics.controller";
+import { AnalyticsRouter } from "../routes/analytics/analytics.router";
+import { analyticsController } from "../modules/analytics";
 
 export const loadRoutes = (app: Express) => {
+  const analyticsHttpController = new AnalyticsHttpController(
+    analyticsController,
+  );
+  const analyticsRouter = new AnalyticsRouter(analyticsHttpController);
+
   const gdgMembersHttpController = new GdgMembersHttpController(
     gdgMembersController,
   );
@@ -163,6 +171,7 @@ export const loadRoutes = (app: Express) => {
   app.use("/member-showcase", memberShowcaseRouter.router);
   app.use("/member-projects", memberProjectsRouter.router);
   app.use("/products", productRouter.router);
+  app.use("/analytics", analyticsRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

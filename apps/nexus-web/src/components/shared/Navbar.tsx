@@ -73,7 +73,7 @@ const NavbarAvatarWidget = () => {
   const optionsLoggedIn = [
     {
       label: "View Profile",
-      href: "/sparkmates",
+      href: "/sparkmates/me",
     },
     {
       label: "Sign Out",
@@ -240,7 +240,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   alt="GDG Logo"
                   width={40}
                   height={40}
-                  className="w-8 h-8 lg:w-10 lg:h-10"
+                  priority
+                  quality={100}
+                  className="w-8 h-8 lg:w-10 lg:h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]"
                 />
                 <h1 className="text-white tracking-tight text-[1.25rem] md:text-[1.5rem] leading-[1.4] font-bold text-nowrap">
                   GDG PUP NEXUS

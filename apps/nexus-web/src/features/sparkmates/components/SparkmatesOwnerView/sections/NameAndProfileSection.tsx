@@ -1,19 +1,14 @@
 import { GradientProfilePicture } from "../components/GradientProfilePicture";
-import { SocialLogo } from "../components/SocialLogo"; 
-import { editIcon } from "../icons/editIcon"; 
+import { SocialLogo } from "../components/SocialLogo";
+import { editIcon } from "../icons/editIcon";
 import { ASSETS } from "@/lib/constants/assets";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
-import { Badge, Button, Input, ShineBorder, Text, Modal, Textarea } from "@packages/spark-ui";
+import { Badge, Button, Input, Text, Modal, Textarea } from "@packages/spark-ui";
 import { useRouter } from "next/navigation";
-import { SparkmatesProfile, UserProfile, useUpdateSparkmateProfile } from "@/features/sparkmates";
+import { UserProfile, useUpdateSparkmateProfile } from "@/features/sparkmates";
 import { useState, useEffect } from "react";
-
-const SPARK_BADGE = {
-  variantYellow: "yellow",
-  variantRed: "red",
-  variantId: "id",
-} as const;
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
@@ -61,30 +56,13 @@ export const NameAndProfileSection = ({
   };
 
   const socialLinks = [
-    {
-      key: "linkedin",
-      url: profile?.linkedinUrl || null,
-      label: "LinkedIn",
-    },
-    {
-      key: "github",
-      url: profile?.githubUrl || null,
-      label: "GitHub",
-    },
-    {
-      key: "website",
-      url: profile?.portfolioWebsiteUrl || null,
-      label: "Website",
-    },
+    { key: "linkedin", url: profile?.linkedinUrl || null, label: "LinkedIn" },
+    { key: "github",   url: profile?.githubUrl || null,   label: "GitHub"   },
+    { key: "website",  url: profile?.portfolioWebsiteUrl || null, label: "Website" },
   ] as const;
 
-  const handleAddSocialLink = () => {
-    setIsLinksModalOpen(true);
-  };
-
-  const handleEditProfileDetails = () => {
-    setIsEditModalOpen(true);
-  };
+  const handleAddSocialLink = () => setIsLinksModalOpen(true);
+  const handleEditProfileDetails = () => setIsEditModalOpen(true);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -93,93 +71,183 @@ export const NameAndProfileSection = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfile(formData, {
-        onSuccess: () => {
-          setIsEditModalOpen(false);
-        },
-      }
-    );
+    updateProfile(formData, { onSuccess: () => setIsEditModalOpen(false) });
   };
 
   const handleSaveLinks = () => {
-    updateProfile({ otherLinks: links }, {
-      onSuccess: () => {
-        setIsLinksModalOpen(false);
-      },
-    });
+    updateProfile({ otherLinks: links }, { onSuccess: () => setIsLinksModalOpen(false) });
   };
 
+  const fullName =
+    [profile?.firstName, profile?.middleName, profile?.lastName, profile?.suffix]
+      .filter(Boolean)
+      .join(" ") || "Your Name";
+
+  /* ─────────────────────────────────────────────────────────────────
+   * Social buttons — shared between both layouts
+   * ───────────────────────────────────────────────────────────────── */
+  const SocialButtons = ({ className }: { className?: string }) => (
+    <div className={cn("flex flex-wrap gap-2", className)}>
+      {socialLinks.map((social) => (
+        <Button
+          key={social.key}
+          variant="ghost"
+          size="sm"
+          title={social.label}
+          disabled={!social.url}
+          className="h-9 w-9 rounded-full border border-white/25 bg-[#091734] p-0 text-[11px] text-white disabled:opacity-40"
+          onClick={() => { if (!social.url) return; router.push(social.url); }}
+        >
+          <SocialLogo type={social.key} />
+        </Button>
+      ))}
+      <Button
+        variant="ghost"
+        size="sm"
+        title="Add Socials"
+        className="h-9 w-9 rounded-full border border-white/25 bg-[#091734] p-0 text-white"
+        onClick={handleAddSocialLink}
+      >
+        +
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="mt-6 p-0">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex min-w-0 items-start gap-4">
+    <div className="mt-4 p-0 relative">
+
+      {/* ══════════════════════════════════════════════════════════════
+       *  MOBILE LAYOUT  (hidden on sm and above)
+       * ════════════════════════════════════════════════════════════ */}
+      <div className="sm:hidden relative">
+
+        {/* Horizon — absolute, full-viewport-width, sits BEHIND the avatar (z-0) */}
+        {/* left/right: -12px breaks out of the parent's px-3 (12px) padding */}
+        <div
+          className="absolute z-0 pointer-events-none overflow-hidden"
+          style={{ left: "-12px", right: "-12px", top: 0, height: "220px" }}
+        >
+          <Image
+            src={ASSETS.SPARKMATES.HORIZON}
+            alt=""
+            aria-hidden
+            fill
+            className="object-cover"
+            style={{ objectPosition: "50% 65%" }}
+            priority
+          />
+          {/* Top gradient — blends page bg into the image */}
+          <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-[#010B1D] to-transparent" />
+          {/* Bottom gradient — softens bottom edge */}
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#010B1D] to-transparent" />
+        </div>
+
+        {/* Edit button — absolute, top right */}
+        <button
+          onClick={handleEditProfileDetails}
+          aria-label="Edit Profile"
+          title="Edit Profile"
+          className="absolute top-3 right-0 z-20 h-8 w-8 flex items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+        >
+          {editIcon}
+        </button>
+
+        {/* Avatar — normal flow, z-10 above horizon */}
+        {/* pt-10 (40px) + h-32/2 (64px) = avatar center at ~104px from top */}
+        {/* Horizon glow at objectPosition 65% of 220px ≈ 143px — arc visible behind avatar */}
+        <div className="relative z-10 flex justify-center pt-10">
           <GradientProfilePicture
+            size="sm"
             src={profile?.avatarUrl || ASSETS.PROFILE.DEFAULT_AVATAR}
             alt={profile?.displayName || "User Avatar"}
             fallback={profile?.displayName?.charAt(0) || "U"}
           />
+        </div>
 
-          <div className="min-w-0">
-            <Text variant="heading-6" weight="bold" className="text-white flex flex-wrap items-baseline gap-2">
-              <span>
-                {[
-                  profile?.firstName,
-                  profile?.middleName,
-                  profile?.lastName,
-                  profile?.suffix,
-                ].filter(Boolean).join(" ") || "User Name"}
-              </span>
+        {/* Text — follows avatar in normal flow, tight gap */}
+        <div className="relative z-10 flex flex-col items-center text-center px-4 mt-3 pb-2">
+          {/* Name */}
+          <Text variant="heading-6" weight="bold" className="text-white leading-tight">
+            {fullName}
+          </Text>
+
+          {/* Display name alias */}
+          {profile?.displayName && (
+            <Text variant="body-sm" className="text-zinc-400 mt-0.5">
+              ({profile.displayName})
+            </Text>
+          )}
+
+          {/* Program */}
+          <Text variant="body-sm" className="text-[#C1C7CD] mt-1">
+            {profile?.program || "Program & Year not set"}
+          </Text>
+
+          {/* Badges */}
+          <div className="mt-2.5 flex flex-wrap justify-center gap-2">
+            {profile.department && <Badge variant={"yellow"}>{profile.department}</Badge>}
+            <Badge variant={"id"}>{profile.gdgId}</Badge>
+          </div>
+
+          {/* Bio */}
+          <Text variant="body-sm" className="mt-3 text-[#E5E5E5] max-w-xs leading-relaxed">
+            {profile?.bio || "Share your story to let sparkmates know what you are building."}
+          </Text>
+
+          {/* Social links */}
+          <SocialButtons className="mt-4 justify-center" />
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════
+       *  DESKTOP LAYOUT  (hidden below sm)
+       * ════════════════════════════════════════════════════════════ */}
+      <div className="hidden sm:flex sm:flex-row sm:items-start sm:gap-4 sm:justify-between mt-6">
+        {/* Left: avatar + details row */}
+        <div className="flex items-start gap-4 min-w-0">
+          {/* Avatar */}
+          <div className="shrink-0">
+            <GradientProfilePicture
+              src={profile?.avatarUrl || ASSETS.PROFILE.DEFAULT_AVATAR}
+              alt={profile?.displayName || "User Avatar"}
+              fallback={profile?.displayName?.charAt(0) || "U"}
+            />
+          </div>
+
+          {/* Text details */}
+          <div className="min-w-0 pt-2">
+            <Text
+              variant="heading-6"
+              weight="bold"
+              className="text-white flex flex-wrap items-baseline gap-2 leading-tight"
+            >
+              <span>{fullName}</span>
               {profile?.displayName && (
-                <span className="text-zinc-400 font-medium text-lg">
+                <span className="text-zinc-400 font-medium text-base">
                   ({profile.displayName})
                 </span>
               )}
             </Text>
-            <Text variant="body-sm" className="text-[#C1C7CD]">
-              {profile?.program || "Program and Year not set"}
+
+            <Text variant="body-sm" className="text-[#C1C7CD] mt-1">
+              {profile?.program || "Program & Year not set"}
             </Text>
+
             <div className="mt-2 flex flex-wrap gap-2">
-              {profile.department && (
-                <Badge variant={"yellow"}>{profile.department}</Badge>
-              )}
+              {profile.department && <Badge variant={"yellow"}>{profile.department}</Badge>}
               <Badge variant={"id"}>{profile.gdgId}</Badge>
             </div>
-            <Text variant="body-sm" className="mt-2 max-w-130 text-[#E5E5E5]">
-              {profile?.bio ||
-                "Share your story to let sparkmates know what you are building."}
-            </Text>
-            <div className="mt-3 flex gap-2">
-              {socialLinks.map((social) => (
-                <Button
-                  key={social.key}
-                  variant="ghost"
-                  size="sm"
-                  title={social.label}
-                  disabled={!social.url}
-                  className="h-8 w-8 rounded-full border border-white/25 bg-[#091734] p-0 text-[11px] text-white disabled:opacity-40"
-                  onClick={() => {
-                    if (!social.url) return;
-                    router.push(social.url);
-                  }}
-                >
-                  <SocialLogo type={social.key} />
-                </Button>
-              ))}
 
-              <Button
-                variant="ghost"
-                size="sm"
-                title="Add Socials"
-                className="h-8 w-8 rounded-full border border-white/25 bg-[#091734] p-0 text-white"
-                onClick={handleAddSocialLink}
-              >
-                +
-              </Button>
-            </div>
+            <Text variant="body-sm" className="mt-2 max-w-sm text-[#E5E5E5] leading-relaxed">
+              {profile?.bio || "Share your story to let sparkmates know what you are building."}
+            </Text>
+
+            <SocialButtons className="mt-3" />
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Right: edit button */}
+        <div className="shrink-0 flex items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
@@ -193,169 +261,139 @@ export const NameAndProfileSection = ({
         </div>
       </div>
 
-      <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="sm" className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-md">
+      {/* ══════════════════════════════════════════════════════════════
+       *  MODALS  (shared — logic untouched)
+       * ════════════════════════════════════════════════════════════ */}
+
+      {/* Edit Profile Modal */}
+      <Modal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        scrollBehavior="inside"
+        size="sm"
+        className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-md"
+      >
         <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 sm:px-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Text variant="heading-6" weight="bold" gradient="white-yellow">Edit Profile</Text>
-            <Text variant="body-sm" className="text-zinc-400 mt-1">
-              Update your personal details and links to let people know who you are.
-            </Text>
-          </div>
-          
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">Display Name</Text>
-            <StyledInputContainer>
-              <Input 
-                name="displayName" 
-                value={formData.displayName} 
-                onChange={handleInputChange} 
-                placeholder="Display Name"
-                containerClassName={inputBaseStyles}
-                className="text-white! py-2 sm:py-2.5"
-              />
-            </StyledInputContainer>
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Text variant="heading-6" weight="bold" gradient="white-yellow">Edit Profile</Text>
+              <Text variant="body-sm" className="text-zinc-400 mt-1">
+                Update your personal details and links to let people know who you are.
+              </Text>
+            </div>
 
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">Program</Text>
-            <StyledInputContainer>
-              <Input 
-                name="program" 
-                value={formData.program} 
-                onChange={handleInputChange} 
-                placeholder="e.g. BSIT 3-1"
-                containerClassName={inputBaseStyles}
-                className="text-white! py-2 sm:py-2.5"
-              />
-            </StyledInputContainer>
-          </div>
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">Display Name</Text>
+              <StyledInputContainer>
+                <Input name="displayName" value={formData.displayName} onChange={handleInputChange} placeholder="Display Name" containerClassName={inputBaseStyles} className="text-white! py-2 sm:py-2.5" />
+              </StyledInputContainer>
+            </div>
 
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">Department</Text>
-            <StyledInputContainer>
-              <Input 
-                name="department" 
-                value={formData.department} 
-                onChange={handleInputChange} 
-                placeholder="Department"
-                containerClassName={inputBaseStyles}
-                className="text-white! py-2 sm:py-2.5"
-              />
-            </StyledInputContainer>
-          </div>
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">Program</Text>
+              <StyledInputContainer>
+                <Input name="program" value={formData.program} onChange={handleInputChange} placeholder="e.g. BSIT 3-1" containerClassName={inputBaseStyles} className="text-white! py-2 sm:py-2.5" />
+              </StyledInputContainer>
+            </div>
 
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">Bio</Text>
-            <StyledInputContainer>
-              <Textarea 
-                name="bio" 
-                value={formData.bio} 
-                onChange={handleInputChange} 
-                placeholder="Tell us about yourself"
-                className={cn(inputBaseStyles, "min-h-[100px] !h-auto py-2 sm:py-2.5 text-white!")}
-              />
-            </StyledInputContainer>
-          </div>
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">Department</Text>
+              <StyledInputContainer>
+                <Input name="department" value={formData.department} onChange={handleInputChange} placeholder="Department" containerClassName={inputBaseStyles} className="text-white! py-2 sm:py-2.5" />
+              </StyledInputContainer>
+            </div>
 
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">GitHub URL</Text>
-            <StyledInputContainer>
-              <Input 
-                name="githubUrl" 
-                value={formData.githubUrl} 
-                onChange={handleInputChange} 
-                placeholder="https://github.com/..."
-                containerClassName={inputBaseStyles}
-                className="text-white! py-2 sm:py-2.5"
-              />
-            </StyledInputContainer>
-          </div>
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">Bio</Text>
+              <StyledInputContainer>
+                <Textarea name="bio" value={formData.bio} onChange={handleInputChange} placeholder="Tell us about yourself" className={cn(inputBaseStyles, "min-h-[100px] !h-auto py-2 sm:py-2.5 text-white!")} />
+              </StyledInputContainer>
+            </div>
 
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">LinkedIn URL</Text>
-            <StyledInputContainer>
-              <Input 
-                name="linkedinUrl" 
-                value={formData.linkedinUrl} 
-                onChange={handleInputChange} 
-                placeholder="https://linkedin.com/in/..."
-                containerClassName={inputBaseStyles}
-                className="text-white! py-2 sm:py-2.5"
-              />
-            </StyledInputContainer>
-          </div>
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">GitHub URL</Text>
+              <StyledInputContainer>
+                <Input name="githubUrl" value={formData.githubUrl} onChange={handleInputChange} placeholder="https://github.com/..." containerClassName={inputBaseStyles} className="text-white! py-2 sm:py-2.5" />
+              </StyledInputContainer>
+            </div>
 
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">Portfolio Website URL</Text>
-            <StyledInputContainer>
-              <Input 
-                name="portfolioWebsiteUrl" 
-                value={formData.portfolioWebsiteUrl} 
-                onChange={handleInputChange} 
-                placeholder="https://..."
-                containerClassName={inputBaseStyles}
-                className="text-white! py-2 sm:py-2.5"
-              />
-            </StyledInputContainer>
-          </div>
-          <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
-            <Button variant="ghost" type="button" className="h-auto py-2 sm:py-2 px-5" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-            <Button variant="colored" subVariant="blue" type="submit" className="h-auto py-2 sm:py-2 px-5" disabled={isPending}>
-              {isPending ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
-        </form>
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">LinkedIn URL</Text>
+              <StyledInputContainer>
+                <Input name="linkedinUrl" value={formData.linkedinUrl} onChange={handleInputChange} placeholder="https://linkedin.com/in/..." containerClassName={inputBaseStyles} className="text-white! py-2 sm:py-2.5" />
+              </StyledInputContainer>
+            </div>
+
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">Portfolio Website URL</Text>
+              <StyledInputContainer>
+                <Input name="portfolioWebsiteUrl" value={formData.portfolioWebsiteUrl} onChange={handleInputChange} placeholder="https://..." containerClassName={inputBaseStyles} className="text-white! py-2 sm:py-2.5" />
+              </StyledInputContainer>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
+              <Button variant="ghost" type="button" className="h-auto py-2 sm:py-2 px-5" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+              <Button variant="colored" subVariant="blue" type="submit" className="h-auto py-2 sm:py-2 px-5" disabled={isPending}>
+                {isPending ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </form>
         </div>
       </Modal>
 
-      {/* Separate Links Modal */}
-      <Modal open={isLinksModalOpen} onOpenChange={setIsLinksModalOpen} scrollBehavior="inside" size="sm" className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-sm">
+      {/* Manage Links Modal */}
+      <Modal
+        open={isLinksModalOpen}
+        onOpenChange={setIsLinksModalOpen}
+        scrollBehavior="inside"
+        size="sm"
+        className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-sm"
+      >
         <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
-        <div className="space-y-4">
-          <div>
-            <Text variant="heading-6" weight="bold" gradient="white-yellow">Manage Links</Text>
-            <Text variant="body-sm" className="text-zinc-400 mt-1">
-              Add prominent links to other platforms that will appear on your profile.
-            </Text>
-          </div>
+          <div className="space-y-4">
+            <div>
+              <Text variant="heading-6" weight="bold" gradient="white-yellow">Manage Links</Text>
+              <Text variant="body-sm" className="text-zinc-400 mt-1">
+                Add prominent links to other platforms that will appear on your profile.
+              </Text>
+            </div>
 
-          <div className="space-y-1.5 flex flex-col">
-            <Text variant="body-sm" className="text-zinc-300 font-medium">Link URL</Text>
-            <div className="flex gap-2">
-              <StyledInputContainer>
-                <Input 
-                  value={newLink} 
-                  onChange={(e) => setNewLink(e.target.value)} 
-                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddLink())}
-                  placeholder="https://your-link.com"
-                  containerClassName={inputBaseStyles}
-                  className="text-white! py-2 sm:py-2.5"
-                />
-              </StyledInputContainer>
-              <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-4" onClick={handleAddLink}>Add</Button>
+            <div className="space-y-1.5 flex flex-col">
+              <Text variant="body-sm" className="text-zinc-300 font-medium">Link URL</Text>
+              <div className="flex gap-2">
+                <StyledInputContainer>
+                  <Input
+                    value={newLink}
+                    onChange={(e) => setNewLink(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddLink())}
+                    placeholder="https://your-link.com"
+                    containerClassName={inputBaseStyles}
+                    className="text-white! py-2 sm:py-2.5"
+                  />
+                </StyledInputContainer>
+                <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-4" onClick={handleAddLink}>Add</Button>
+              </div>
+            </div>
+
+            {links.length > 0 && (
+              <div className="space-y-2">
+                <Text variant="body-sm" className="text-zinc-300 font-medium">Added Links</Text>
+                {links.map((link, index) => (
+                  <div key={index} className="flex items-center justify-between gap-2 p-3 rounded-xl border border-white/5 bg-white/5 hover:border-white/10 transition-colors">
+                    <Text variant="body-sm" className="truncate flex-1 text-zinc-200">{link}</Text>
+                    <Button variant="ghost" size="sm" onClick={() => handleRemoveLink(index)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">Remove</Button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
+              <Button variant="ghost" className="h-auto py-2 sm:py-2 px-5" onClick={() => setIsLinksModalOpen(false)}>Cancel</Button>
+              <Button variant="colored" subVariant="blue" className="h-auto py-2 sm:py-2 px-5" onClick={handleSaveLinks} disabled={isPending}>
+                {isPending ? "Saving..." : "Save Links"}
+              </Button>
             </div>
           </div>
-
-          {links.length > 0 && (
-            <div className="space-y-2">
-              <Text variant="body-sm" className="text-zinc-300 font-medium">Added Links</Text>
-              {links.map((link, index) => (
-                <div key={index} className="flex items-center justify-between gap-2 p-3 rounded-xl border border-white/5 bg-white/5 hover:border-white/10 transition-colors">
-                  <Text variant="body-sm" className="truncate flex-1 text-zinc-200">{link}</Text>
-                  <Button variant="ghost" size="sm" onClick={() => handleRemoveLink(index)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">Remove</Button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
-            <Button variant="ghost" className="h-auto py-2 sm:py-2 px-5" onClick={() => setIsLinksModalOpen(false)}>Cancel</Button>
-            <Button variant="colored" subVariant="blue" className="h-auto py-2 sm:py-2 px-5" onClick={handleSaveLinks} disabled={isPending}>
-              {isPending ? "Saving..." : "Save Links"}
-            </Button>
-          </div>
-        </div>
         </div>
       </Modal>
     </div>

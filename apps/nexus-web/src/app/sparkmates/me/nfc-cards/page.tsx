@@ -15,7 +15,7 @@ const NfcCards = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 w-full min-h-screen items-center justify-center">
+      <div className="flex flex-col gap-4 w-full min-h-screen items-center justify-center text-white">
         <div>NfcCards</div>
         {isLoading && <div>Loading...</div>}
         {error && <div>Error: {error.message}</div>}
