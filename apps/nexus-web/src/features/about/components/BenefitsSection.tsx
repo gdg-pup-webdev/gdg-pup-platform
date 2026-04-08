@@ -395,7 +395,7 @@ export function BenefitsSection() {
             <Stack gap="lg" align="center">
               <Text
                 as="h1"
-                variant="heading-2"
+                variant="heading-3"
                 weight="bold"
                 align="center"
                 gradient="white-blue"
