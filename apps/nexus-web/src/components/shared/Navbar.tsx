@@ -211,15 +211,30 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 transition-all duration-700 ease-out",
-      )}
-    >
-      <Box
+    <>
+      {/* Overlay Backdrop */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[49] bg-black/40 backdrop-blur-sm min-[75rem]:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 transition-all duration-700 ease-out",
+        )}
+      >
+        <Box
         as="nav"
         className={cn(
           "mx-auto h-22 max-w-7xl md:rounded-[1.875rem]",
@@ -453,7 +468,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               transition={{ duration: 0.2 }}
               className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] min-[75rem]:hidden"
             >
-            <Box
+              <Box
               className={cn(
                 "py-3 w-full",
                 "bg-black/95 backdrop-blur-2xl rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
@@ -718,5 +733,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         </AnimatePresence>
       </Box>
     </motion.div>
+    </>
   );
 };
