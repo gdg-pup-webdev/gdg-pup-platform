@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Button, GdgIdCard } from "@packages/spark-ui";
 import { IdHeroBeams } from "./IdHeroBeams";
+import { IdHeroRainbowStreak } from "./IdHeroRainbowStreak";
 import { ASSETS } from "@/lib/constants/assets";
 
 /**
@@ -49,8 +50,13 @@ export function IdHeroStage() {
       transition={{ duration: 0.9, ease: "easeOut" }}
       style={STAGE_STYLE}
     >
-      {/* Spotlight beams + animated gradients (z 35) */}
-      <IdHeroBeams />
+      {/* Spotlight beams + animated gradients (z 35) — Hidden on mobile */}
+      <div className="hidden sm:block">
+        <IdHeroBeams />
+      </div>
+
+      {/* Horizontal rainbow platform streak (z 32) */}
+      <IdHeroRainbowStreak />
 
       {/* Spiral outer — z 10 */}
       <motion.div
@@ -64,7 +70,7 @@ export function IdHeroStage() {
           className="relative"
           style={{
             width: "clamp(520px, 90vw, 1204px)",
-            aspectRatio: "1204 / 188",
+            aspectRatio: "var(--spiral-outer-ratio",
           }}
         >
           <Image
@@ -89,7 +95,7 @@ export function IdHeroStage() {
           className="relative"
           style={{
             width: "clamp(480px, 80vw, 1018px)",
-            aspectRatio: "1018 / 125",
+            aspectRatio: "var(--spiral-center-ratio",
           }}
         >
           <Image
@@ -114,7 +120,7 @@ export function IdHeroStage() {
           className="relative"
           style={{
             width: "clamp(840px, 60vw, 697px)",
-            aspectRatio: "697 / 66",
+            aspectRatio: "var(--spiral-inner-ratio",
           }}
         >
           <Image
@@ -129,7 +135,7 @@ export function IdHeroStage() {
 
       {/* Decorative left — z 40, hidden on mobile */}
       <motion.div
-        className="absolute pointer-events-none select-none"
+        className="absolute pointer-events-none select-none hidden sm:block"
         style={{
           left: "clamp(0px, 1vw, 16px)",
           top: "45%",
@@ -162,7 +168,7 @@ export function IdHeroStage() {
 
       {/* Decorative right — z 40, hidden on mobile */}
       <motion.div
-        className="absolute pointer-events-none select-none"
+        className="absolute pointer-events-none select-none hidden sm:block"
         style={{
           right: "clamp(0px, 1vw, 16px)",
           top: "45%",
@@ -195,7 +201,7 @@ export function IdHeroStage() {
 
       {/* GDG ID card + CTA button — z 50 (topmost) */}
       <motion.div
-        className="relative flex flex-col items-center gap-0 sm:gap-6"
+        className="relative flex flex-col items-center gap-0 sm:gap-6 mb-12"
         style={{ zIndex: 50 }}
         initial={{ opacity: 0, scale: 0.82, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
