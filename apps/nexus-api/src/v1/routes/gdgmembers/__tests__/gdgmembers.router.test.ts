@@ -3,6 +3,7 @@ import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GdgMembersHttpController } from "../gdgmembers.controller";
 import { GdgMembersRouter } from "../gdgmembers.router";
+import { GdgMembersController } from "@/v1/modules/members";
 
 describe("GdgMembersRouter similar-users route", () => {
   const getSimilarUsers = vi.fn();
@@ -35,12 +36,12 @@ describe("GdgMembersRouter similar-users route", () => {
   });
 
   const createApp = () => {
-    const moduleController = {
+    const moduleController: Pick<GdgMembersController, "getSimilarUsers"> = {
       getSimilarUsers,
-    } as unknown as GdgMembersHttpController["moduleController"];
+    };
 
     const controller = new GdgMembersHttpController(
-      moduleController,
+      moduleController as unknown as GdgMembersController,
       {} as never,
     );
 
@@ -66,7 +67,15 @@ describe("GdgMembersRouter similar-users route", () => {
     expect(response.body).toEqual({
       status: "success",
       message: "Similar GDG members fetched successfully",
-      data: [similarUserPayload],
+      data: [
+        {
+          gdgId: "GDG-2",
+          displayName: "Second User",
+          avatarUrl: null,
+          program: null,
+          department: null,
+        },
+      ],
       meta: {
         currentPage: 2,
         pageSize: 1,
@@ -103,12 +112,37 @@ describe("GdgMembersRouter similar-users route", () => {
 
     const app = createApp();
 
-    await request(app)
-      .get(
-        "/gdgmembers/GDG-1/similar-users?pageNumber=1&pageSize=10&strategy=exploratory",
-      )
+    const response = await request(app)
+      .get("/gdgmembers/GDG-1/suggested-users?pageNumber=1&pageSize=10")
       .expect(200);
 
     expect(getSimilarUsers).toHaveBeenCalledWith("GDG-1", 1, 10, "exploratory");
+    expect(response.body.message).toBe(
+      "Suggested GDG members fetched successfully",
+    );
+    expect(response.body.data).toEqual([
+      {
+        gdgId: "GDG-2",
+        displayName: "Second User",
+        avatarUrl: null,
+        program: null,
+        department: null,
+      },
+    ]);
+  });
+
+  it("always uses relevant strategy on similar-users endpoint", async () => {
+    getSimilarUsers.mockResolvedValue({
+      list: [similarUserPayload],
+      count: 1,
+    });
+
+    const app = createApp();
+
+    await request(app)
+      .get("/gdgmembers/GDG-1/similar-users?pageNumber=1&pageSize=10")
+      .expect(200);
+
+    expect(getSimilarUsers).toHaveBeenCalledWith("GDG-1", 1, 10, "relevant");
   });
 });

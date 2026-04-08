@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { GdgMember } from "../../domain/GdgMember";
 import { IGdgMemberRepository } from "../../domain/IGdgMemberRepository";
 import { GetSimilarUsers } from "../GetSimilarUsers";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 class MockGdgMemberRepository implements IGdgMemberRepository {
   members: GdgMember[] = [];
@@ -22,6 +23,10 @@ class MockGdgMemberRepository implements IGdgMemberRepository {
     return this.members.filter(
       (member) => member.props.gdgId !== gdgId && member.props.isPublic,
     );
+  }
+
+  async findMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]> {
+    return this.members.filter((member) => member.props.gdgId !== gdgId);
   }
 
   async saveNew(member: GdgMember): Promise<GdgMember> {
@@ -137,9 +142,10 @@ describe("GetSimilarUsers", () => {
       gdgId: "hidden",
       email: "hidden@example.com",
       displayName: "Hidden Match",
-      program: "BSCS",
-      yearLevel: 3,
-      technicalSkills: ["TypeScript"],
+      program: null,
+      yearLevel: null,
+      department: "Cloud Solutions",
+      technicalSkills: [],
       isPublic: false,
     });
 
@@ -165,10 +171,12 @@ describe("GetSimilarUsers", () => {
     ]);
   });
 
-  it("returns an empty list when the source member is missing", async () => {
-    const result = await useCase.execute("missing", 1, 10);
-
-    expect(result).toEqual({ list: [], count: 0 });
+  it("throws when the source member is missing", async () => {
+    const promise = useCase.execute("missing", 1, 10);
+    await expect(promise).rejects.toBeInstanceOf(NotFoundError);
+    await expect(promise).rejects.toMatchObject({
+      detail: "Member not found for gdgId: missing",
+    });
   });
 
   it("validates pagination arguments", async () => {
@@ -180,114 +188,196 @@ describe("GetSimilarUsers", () => {
     );
   });
 
-  it("exploratory strategy mixes relevant with random users (20% random)", async () => {
+  it("exploratory strategy prioritizes non-similar candidates", async () => {
     const source = createMember({
       gdgId: "source",
       displayName: "Source Member",
       program: "BSCS",
       yearLevel: 3,
+      department: "Web Development",
       technicalSkills: ["TypeScript"],
     });
 
-    const relevant = createMember({
-      gdgId: "relevant",
+    const similarA = createMember({
+      gdgId: "similar-a",
       program: "BSCS",
       yearLevel: 3,
+      department: "Web Development",
       technicalSkills: ["TypeScript"],
     });
 
-    const irrelevant1 = createMember({
-      gdgId: "irrelevant1",
-      program: "BSIT",
+    const similarB = createMember({
+      gdgId: "similar-b",
+      program: "BSCS",
       yearLevel: 1,
+      department: "Web Development",
       technicalSkills: ["Python"],
     });
 
-    const irrelevant2 = createMember({
-      gdgId: "irrelevant2",
-      program: "BSAE",
+    const nonSimilarA = createMember({
+      gdgId: "non-similar-a",
+      program: null,
       yearLevel: 2,
-      technicalSkills: ["Java"],
+      department: "Cloud Solutions",
+      technicalSkills: ["Kubernetes"],
+      learningInterests: ["IoT"],
+      toolsAndTechnologies: ["Terraform"],
     });
 
-    const irrelevant3 = createMember({
-      gdgId: "irrelevant3",
-      program: "BSIT",
-      yearLevel: 4,
-      technicalSkills: ["Go"],
-    });
-
-    const irrelevant4 = createMember({
-      gdgId: "irrelevant4",
+    const nonSimilarB = createMember({
+      gdgId: "non-similar-b",
       program: "BSAE",
-      yearLevel: 3,
-      technicalSkills: ["C++"],
-    });
-
-    const irrelevant5 = createMember({
-      gdgId: "irrelevant5",
-      program: "BSCS",
-      yearLevel: 1,
-      technicalSkills: ["Python"],
+      yearLevel: 4,
+      department: "Cybersecurity",
+      technicalSkills: ["Rust"],
+      learningInterests: ["Blue Team"],
+      toolsAndTechnologies: ["Wireshark"],
     });
 
     await repository.saveNew(source);
-    await repository.saveNew(relevant);
-    await repository.saveNew(irrelevant1);
-    await repository.saveNew(irrelevant2);
-    await repository.saveNew(irrelevant3);
-    await repository.saveNew(irrelevant4);
-    await repository.saveNew(irrelevant5);
+    await repository.saveNew(similarA);
+    await repository.saveNew(similarB);
+    await repository.saveNew(nonSimilarA);
+    await repository.saveNew(nonSimilarB);
 
-    // Test relevant strategy (default)
     const relevantResult = await useCase.execute("source", 1, 10, "relevant");
-    expect(relevantResult.count).toBe(6); // 6 public members excluding source
-    expect(relevantResult.list[0].props.gdgId).toBe("relevant");
-
-    // Test exploratory strategy - should mix in some random users
     const exploratoryResult = await useCase.execute(
       "source",
       1,
       10,
       "exploratory",
     );
-    expect(exploratoryResult.count).toBe(6);
 
-    // With 20% random and 6 members, we'd replace ~1 member with a random one
-    // So the relevant member might not be at position 0
     const exploratoryIds = exploratoryResult.list.map((m) => m.props.gdgId);
-    expect(exploratoryIds).toContain("relevant"); // But relevant should still be there
-    expect(exploratoryIds.length).toBe(6);
+    const relevantIds = relevantResult.list.map((m) => m.props.gdgId);
+
+    expect(relevantResult.count).toBe(2);
+    expect(relevantIds).toEqual(["similar-a", "similar-b"]);
+
+    expect(exploratoryResult.count).toBe(4);
+    expect(exploratoryIds[0]).toBe("non-similar-a");
+    expect(exploratoryIds[1]).toBe("non-similar-b");
+    expect(exploratoryIds).toContain("similar-a");
+    expect(exploratoryIds).toContain("similar-b");
   });
 
-  it("exploratory strategy with small result set includes at least one random member", async () => {
-    const source = createMember({
-      gdgId: "source",
-      program: "BSCS",
-      yearLevel: 3,
-    });
-
-    const relevant = createMember({
-      gdgId: "relevant",
-      program: "BSCS",
-      yearLevel: 3,
-    });
-
-    const other1 = createMember({ gdgId: "other1" });
-    const other2 = createMember({ gdgId: "other2" });
+  it("exploratory strategy returns page unchanged when no outside candidates exist", async () => {
+    const source = createMember({ gdgId: "source" });
+    const other = createMember({ gdgId: "other" });
 
     await repository.saveNew(source);
-    await repository.saveNew(relevant);
-    await repository.saveNew(other1);
-    await repository.saveNew(other2);
+    await repository.saveNew(other);
 
-    // Get exploratory with page size = 3
-    const result = await useCase.execute("source", 1, 3, "exploratory");
+    const result = await useCase.execute("source", 1, 1, "exploratory");
 
-    // At least 1 of the 3 should be random (20% of 3 = 0.6, rounds to 1)
-    const ids = result.list.map((m) => m.props.gdgId);
-    expect(ids.length).toBe(3);
-    // Check that we have a mix
-    expect([ids].flat().length).toBe(3);
+    expect(result.count).toBe(1);
+    expect(result.list.map((m) => m.props.gdgId)).toEqual(["other"]);
+  });
+
+  it("relevant strategy excludes cross-domain candidates without shared anchors", async () => {
+    const source = createMember({
+      gdgId: "source",
+      program: "BS in Information Technology",
+      department: "Web Development",
+      technicalSkills: ["TypeScript", "React"],
+    });
+
+    const sameDomain = createMember({
+      gdgId: "same-domain",
+      program: "BSIT",
+      department: "Web Development",
+      technicalSkills: ["React"],
+    });
+
+    const broadOnly = createMember({
+      gdgId: "broad-only",
+      program: null,
+      department: "Cloud Solutions",
+      technicalSkills: [""],
+      learningInterests: [""],
+      toolsAndTechnologies: [""],
+    });
+
+    await repository.saveNew(source);
+    await repository.saveNew(sameDomain);
+    await repository.saveNew(broadOnly);
+
+    const relevantResult = await useCase.execute("source", 1, 10, "relevant");
+    const exploratoryResult = await useCase.execute(
+      "source",
+      1,
+      10,
+      "exploratory",
+    );
+
+    expect(relevantResult.list.map((m) => m.props.gdgId)).toEqual([
+      "same-domain",
+    ]);
+    expect(relevantResult.count).toBe(1);
+
+    expect(exploratoryResult.list.map((m) => m.props.gdgId)).toContain(
+      "broad-only",
+    );
+    expect(exploratoryResult.count).toBe(2);
+  });
+
+  it("exploratory strategy uses broader pool than relevant strategy", async () => {
+    const source = createMember({
+      gdgId: "source",
+      isPublic: true,
+      department: "Web Development",
+      technicalSkills: ["TypeScript"],
+    });
+    const publicSimilar = createMember({
+      gdgId: "public-similar",
+      isPublic: true,
+      department: "Web Development",
+      technicalSkills: ["TypeScript"],
+    });
+    const privateCandidate = createMember({
+      gdgId: "private-candidate",
+      isPublic: false,
+      department: "Cloud Solutions",
+    });
+
+    await repository.saveNew(source);
+    await repository.saveNew(publicSimilar);
+    await repository.saveNew(privateCandidate);
+
+    const relevant = await useCase.execute("source", 1, 10, "relevant");
+    const exploratory = await useCase.execute("source", 1, 10, "exploratory");
+
+    expect(relevant.count).toBe(1);
+    expect(relevant.list.map((m) => m.props.gdgId)).toEqual(["public-similar"]);
+
+    expect(exploratory.count).toBe(2);
+    expect(exploratory.list.map((m) => m.props.gdgId)).toContain(
+      "private-candidate",
+    );
+  });
+
+  it("relevant strategy can include private candidates when they are truly relevant", async () => {
+    const source = createMember({
+      gdgId: "source",
+      department: "Web Development",
+      technicalSkills: ["TypeScript"],
+      isPublic: true,
+    });
+    const privateRelevant = createMember({
+      gdgId: "private-relevant",
+      department: "Web Development",
+      technicalSkills: ["TypeScript"],
+      isPublic: false,
+    });
+
+    await repository.saveNew(source);
+    await repository.saveNew(privateRelevant);
+
+    const relevant = await useCase.execute("source", 1, 10, "relevant");
+
+    expect(relevant.count).toBe(1);
+    expect(relevant.list.map((m) => m.props.gdgId)).toEqual([
+      "private-relevant",
+    ]);
   });
 });

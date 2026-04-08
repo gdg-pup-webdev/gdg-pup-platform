@@ -14,6 +14,7 @@ export interface IGdgMemberRepository {
     pageSize: number,
     filters?: GdgMemberFilters,
   ): Promise<{ list: GdgMember[]; count: number }>;
+  findMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]>;
   findPublicMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]>;
   saveNew(member: GdgMember): Promise<GdgMember>;
   persistUpdates(member: GdgMember): Promise<GdgMember>;

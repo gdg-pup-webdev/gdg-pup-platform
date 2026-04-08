@@ -150,6 +150,19 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     return (data || []).map((row) => this.mapToDomain(row));
   }
 
+  async findMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .neq("gdg_id", gdgId)
+      .order("display_name", { ascending: true, nullsFirst: false })
+      .order("first_name", { ascending: true, nullsFirst: false });
+
+    if (error) throw new Error(`Database error: ${error.message}`);
+
+    return (data || []).map((row) => this.mapToDomain(row));
+  }
+
   async saveNew(member: GdgMember): Promise<GdgMember> {
     const p = member.props;
     const { data, error } = await supabase
