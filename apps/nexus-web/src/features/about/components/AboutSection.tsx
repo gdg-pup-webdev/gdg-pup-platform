@@ -234,7 +234,7 @@ export function AboutSection() {
                     alt="Mission - Cirby"
                     width={400}
                     height={400}
-                    className="w-full h-auto object-contain"
+                    className="w-full h-auto object-contain pointer-events-none"
                     style={{
                       filter:
                         "drop-shadow(0 10px 30px rgba(66, 133, 244, 0.3))",
@@ -289,7 +289,7 @@ export function AboutSection() {
                     alt="Our Values - Sparky Flying"
                     width={200}
                     height={200}
-                    className="w-full h-auto object-contain max-w-52 mx-auto"
+                    className="w-full h-auto object-contain max-w-52 mx-auto pointer-events-none"
                     style={{
                       filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
                     }}
@@ -462,7 +462,7 @@ export function AboutSection() {
                     alt="Our Values - Sparky Flying"
                     width={400}
                     height={400}
-                    className="w-full h-auto object-contain hidden sm:block"
+                    className="w-full h-auto object-contain hidden sm:block pointer-events-none"
                     style={{
                       filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
                     }}
