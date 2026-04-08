@@ -183,7 +183,7 @@ describe("GetSimilarUsers", () => {
   it("exploratory strategy mixes relevant with random users (20% random)", async () => {
     const source = createMember({
       gdgId: "source",
-      DisplayName: "Source Member",
+      displayName: "Source Member",
       program: "BSCS",
       yearLevel: 3,
       technicalSkills: ["TypeScript"],
