@@ -50,6 +50,7 @@ export type Database = {
         Row: {
           date: string
           id: string
+          profileGdgId: string | null
           source: string | null
           user_agent: string | null
           viewerGdgId: string | null
@@ -57,6 +58,7 @@ export type Database = {
         Insert: {
           date?: string
           id?: string
+          profileGdgId?: string | null
           source?: string | null
           user_agent?: string | null
           viewerGdgId?: string | null
@@ -64,11 +66,19 @@ export type Database = {
         Update: {
           date?: string
           id?: string
+          profileGdgId?: string | null
           source?: string | null
           user_agent?: string | null
           viewerGdgId?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "analytics_profile_views_profile_gdg_id_fkey"
+            columns: ["profileGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
           {
             foreignKeyName: "analytics_profile_views_viewerGdgId_fkey"
             columns: ["viewerGdgId"]

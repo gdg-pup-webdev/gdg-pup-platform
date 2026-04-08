@@ -6,10 +6,15 @@ export interface GdgMemberFilters {
   department?: string;
 }
 
-export interface IGdgMemberRepository { 
+export interface IGdgMemberRepository {
   findByGdgId(gdgId: string): Promise<GdgMember | null>;
   findByEmail(email: string): Promise<GdgMember | null>;
-  findAll(pageNumber: number, pageSize: number, filters?: GdgMemberFilters): Promise<{ list: GdgMember[]; count: number }>;
+  findAll(
+    pageNumber: number,
+    pageSize: number,
+    filters?: GdgMemberFilters,
+  ): Promise<{ list: GdgMember[]; count: number }>;
+  findPublicMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]>;
   saveNew(member: GdgMember): Promise<GdgMember>;
   persistUpdates(member: GdgMember): Promise<GdgMember>;
   deleteByGdgId(gdgId: string): Promise<void>;

@@ -12,6 +12,7 @@ import { SearchMember } from "./useCases/SearchMember";
 import { ChangeProfilePicture } from "./useCases/ChangeProfilePicture";
 import { StorageAdapter } from "./infrastructure/StorageAdapter";
 import { filesModuleController } from "../filesModule";
+import { GetSimilarUsers } from "./useCases/GetSimilarUsers";
 
 const repo = new SupabaseGdgMemberRepository();
 const storage = new StorageAdapter(filesModuleController);
@@ -28,6 +29,7 @@ const makeProfilePrivate = new MakeProfilePrivate(repo);
 const makeProfilePublic = new MakeProfilePublic(repo);
 
 const searchUC = new SearchMember(repo);
+const similarUsersUseCase = new GetSimilarUsers(repo);
 
 const changepfpuc = new ChangeProfilePicture(storage, repo);
 
@@ -42,6 +44,7 @@ export const gdgMembersController = new GdgMembersController(
   makeProfilePublic,
   searchUC,
   changepfpuc,
+  similarUsersUseCase,
 );
 
 export { GdgMembersController };
