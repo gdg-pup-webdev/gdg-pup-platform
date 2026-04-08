@@ -69,8 +69,8 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
 
   "data-ml": {
     description:
-      "The Data & ML Team explores the power of data to drive intelligent decision-making. Members work with real-world datasets, build machine learning models, and develop data pipelines that turn raw information into actionable insights. Throughout the term, they gain hands-on experience in data analysis, feature engineering, model training, and evaluation — equipping them with the skills to tackle complex problems across diverse domains.",
-    categories: ["Data Analysis", "Machine Learning", "Deep Learning"],
+      "The Data and Machine Learning Team focuses on the collection, processing, and analysis of data to extract insights and develop intelligent systems. Members of this team will work on data-driven projects, applying machine learning algorithms to solve real-world problems. They will engage in tasks such as data cleaning, model training, and evaluating the performance of machine learning models, gaining hands-on experience with tools and frameworks commonly used in the industry.",
+    categories: ["Data Analysis", "Model Training", "Artificial Intelligence"],
 
     memberLevelTitle: "Data Cadet",
     memberLevelDescription:
