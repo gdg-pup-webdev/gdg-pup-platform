@@ -52,8 +52,8 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
 
   cybersecurity: {
     description:
-      "The Cybersecurity Team is dedicated to understanding, identifying, and mitigating digital threats. Members explore the fundamentals of network security, ethical hacking, cryptography, and defensive strategies, putting knowledge into practice through capture-the-flag challenges and simulated environments. Throughout the term, members develop the mindset and technical skills needed to protect systems and data in an increasingly connected world.",
-    categories: ["Ethical Hacking", "Network Security", "Cryptography"],
+      "The Cybersecurity Team is involved in the practice of protecting systems, networks, and data from digital threats. Members will dive into topics such as ethical hacking, threat detection, and implementing security protocols to safeguard applications and infrastructure. They will work on projects related to security analysis, incident response, and developing strategies to mitigate cyber risks.",
+    categories: ["Threat Detection", "Encryption & Data Protection", "Risk Assessment"],
 
     memberLevelTitle: "Security Cadet",
     memberLevelDescription:

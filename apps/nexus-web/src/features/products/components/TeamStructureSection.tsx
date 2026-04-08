@@ -37,7 +37,10 @@ const TEAM_GLOW_SIZES: Record<string, string> = {
   executives: "350px",
 };
 
-export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectionProps) {
+export function TeamStructureSection({
+  teamName,
+  teamSlug,
+}: TeamStructureSectionProps) {
   const content = TEAM_CONTENT[teamSlug];
   const imageSrc = TEAM_IMAGES[teamSlug] ?? "/products/ui-ux-logo.webp";
   const glowColor = TEAM_GLOW_COLORS[teamSlug] ?? "#F9AB00";
@@ -61,7 +64,8 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
-          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 70%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         }}
       />
@@ -106,7 +110,12 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
         <Stack gap="2xl" className="relative z-10">
           {/* ── About the Team ── */}
           <Stack gap="lg" className="items-center">
-            <Text variant="heading-1" gradient="white-blue" align="center" weight="bold">
+            <Text
+              variant="heading-1"
+              gradient="white-blue"
+              align="center"
+              weight="bold"
+            >
               ABOUT THE TEAM
             </Text>
             <Text
@@ -155,16 +164,36 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
               {/* Spirals */}
               <div className="relative w-full max-w-3xl h-[100px] md:h-[140px] mt-[-10px] pointer-events-none">
                 <div className="absolute left-1/2 -translate-x-1/2 -top-25 w-[300px] md:w-[450px] lg:w-570 aspect-[1204/188] opacity-70">
-                  <Image src={ASSETS.ID.SPIRAL_OUTER} alt="" fill className="object-contain" />
+                  <Image
+                    src={ASSETS.ID.SPIRAL_OUTER}
+                    alt=""
+                    fill
+                    className="object-contain"
+                  />
                 </div>
                 <div className="absolute left-1/2 -translate-x-1/2 -top-30 w-[240px] md:w-[360px] lg:w-480 aspect-[1204/188] opacity-70">
-                  <Image src={ASSETS.ID.SPIRAL_OUTER} alt="" fill className="object-contain" />
+                  <Image
+                    src={ASSETS.ID.SPIRAL_OUTER}
+                    alt=""
+                    fill
+                    className="object-contain"
+                  />
                 </div>
                 <div className="absolute left-1/2 -translate-x-1/2 -top-24 w-[200px] md:w-[300px] lg:w-410 aspect-[1018/125] opacity-80">
-                  <Image src={ASSETS.ID.SPIRAL_CENTER} alt="" fill className="object-contain" />
+                  <Image
+                    src={ASSETS.ID.SPIRAL_CENTER}
+                    alt=""
+                    fill
+                    className="object-contain"
+                  />
                 </div>
                 <div className="absolute left-1/2 -translate-x-1/2 -top-25 w-[220px] md:w-[330px] lg:w-450 aspect-[697/66] opacity-100">
-                  <Image src={ASSETS.ID.SPIRAL_INNER} alt="" fill className="object-contain" />
+                  <Image
+                    src={ASSETS.ID.SPIRAL_INNER}
+                    alt=""
+                    fill
+                    className="object-contain"
+                  />
                 </div>
               </div>
             </div>
@@ -173,7 +202,7 @@ export function TeamStructureSection({ teamName, teamSlug }: TeamStructureSectio
             <div className="w-full max-w-[1600px] mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
                 description={
-                  <div className="text-lg md:text-3xl leading-snug md:leading-12 font-medium">
+                  <div className="text-lg md:text-3xl leading-snug md:leading-12 font-light">
                     {content ? (
                       <>
                         The{" "}
