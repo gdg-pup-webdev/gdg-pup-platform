@@ -3,6 +3,7 @@ import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { EventsHttpController } from "../events.controller";
 import { EventsRouter } from "../events.router";
+import { BadRequestError } from "@/v1/errors/HttpError";
 
 describe("EventsRouter sync routes", () => {
   const syncEventToBevy = vi.fn();
@@ -65,15 +66,15 @@ describe("EventsRouter sync routes", () => {
     expect(response.body.data.rsvp).toBe(39);
   });
 
-  it("POST /events/:eventId/syncToBevy returns a 500 for unlinked events", async () => {
+  it("POST /events/:eventId/syncToBevy returns a 400 for unlinked events", async () => {
     syncEventToBevy.mockRejectedValue(
-      new Error("Event is not linked to a bevy event"),
+      new BadRequestError("Event is not linked to a bevy event"),
     );
 
     const app = createApp();
     const eventId = crypto.randomUUID();
 
-    await request(app).post(`/events/${eventId}/syncToBevy`).expect(500);
+    await request(app).post(`/events/${eventId}/syncToBevy`).expect(400);
 
     expect(syncEventToBevy).toHaveBeenCalledWith(eventId);
   });

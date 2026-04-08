@@ -27,17 +27,17 @@ export class EventSystemController {
     private readonly listEventsByYearUseCase: ListEventsByYear,
     private readonly getEventsByTypeUseCase: GetEventsByType,
     private readonly getEventsByTeamUseCase: GetEventsByTeam,
-    private readonly importallandsyncuc: ImportAndSyncAllToBevy,
-    private readonly synceventtobevy: SyncEventToBevy,
+    private readonly importAndSyncAllToBevyUseCase: ImportAndSyncAllToBevy,
+    private readonly syncEventToBevyUseCase: SyncEventToBevy,
   ) {}
 
   async syncEventToBevy(eventId: string) {
-    const res = await this.synceventtobevy.execute(eventId);
+    const res = await this.syncEventToBevyUseCase.execute(eventId);
     return this.flattenEvent(res);
   }
 
   async importAndSyncAllToBevy() {
-    return this.importallandsyncuc.execute();
+    return this.importAndSyncAllToBevyUseCase.execute();
   }
 
   private flattenEvent(event: Event) {
