@@ -1,6 +1,6 @@
 import { GdgMember } from "../domain/GdgMember";
 import { IGdgMemberRepository } from "../domain/IGdgMemberRepository";
-import { NotFoundError } from "@/v1/errors/HttpError";
+import { BadRequestError, NotFoundError } from "@/v1/errors/HttpError";
 
 const SIMILARITY_WEIGHTS = {
   program: 22,
@@ -28,8 +28,10 @@ export class GetSimilarUsers {
     pageSize: number,
     strategy: SimilarUsersStrategy = "relevant",
   ): Promise<{ list: GdgMember[]; count: number }> {
-    if (pageNumber < 1) throw new Error("Page number must be greater than 0");
-    if (pageSize < 1) throw new Error("Page size must be greater than 0");
+    if (pageNumber < 1)
+      throw new BadRequestError("Page number must be greater than 0");
+    if (pageSize < 1)
+      throw new BadRequestError("Page size must be greater than 0");
 
     const sourceMember = await this.repo.findByGdgId(gdgMemberId);
     if (!sourceMember) {

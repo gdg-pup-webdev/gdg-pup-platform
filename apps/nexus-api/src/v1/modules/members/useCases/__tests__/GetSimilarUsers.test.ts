@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { GdgMember } from "../../domain/GdgMember";
 import { IGdgMemberRepository } from "../../domain/IGdgMemberRepository";
 import { GetSimilarUsers } from "../GetSimilarUsers";
-import { NotFoundError } from "@/v1/errors/HttpError";
+import { BadRequestError, NotFoundError } from "@/v1/errors/HttpError";
 
 class MockGdgMemberRepository implements IGdgMemberRepository {
   members: GdgMember[] = [];
@@ -219,12 +219,18 @@ describe("GetSimilarUsers", () => {
   });
 
   it("validates pagination arguments", async () => {
-    await expect(useCase.execute("missing", 0, 10)).rejects.toThrowError(
-      "Page number must be greater than 0",
+    await expect(useCase.execute("missing", 0, 10)).rejects.toBeInstanceOf(
+      BadRequestError,
     );
-    await expect(useCase.execute("missing", 1, 0)).rejects.toThrowError(
-      "Page size must be greater than 0",
+    await expect(useCase.execute("missing", 0, 10)).rejects.toMatchObject({
+      detail: "Page number must be greater than 0",
+    });
+    await expect(useCase.execute("missing", 1, 0)).rejects.toBeInstanceOf(
+      BadRequestError,
     );
+    await expect(useCase.execute("missing", 1, 0)).rejects.toMatchObject({
+      detail: "Page size must be greater than 0",
+    });
   });
 
   it("exploratory strategy keeps deterministic 80/20 mix", async () => {
