@@ -126,7 +126,7 @@ export function MemberShowcaseAchievements() {
             Member Achievements
           </Text>
           <Text variant="heading-6" color="on-primary" align="center">
-            Lorem Ipsum
+            Check out the latest achievements of our members!
           </Text>
         </Stack>
 
@@ -181,7 +181,7 @@ export function MemberShowcaseAchievements() {
                           className="object-cover pointer-events-none"
                         />
                       </div>
-                      <CardHeader className="mt-3 text-lg font-bold md:mt-3.5 md:text-xl">
+                      <CardHeader className="mt-3 text-lg font-bold md:mt-3.5 md:text-xl capitalize">
                         {card.title}
                       </CardHeader>
                       <CardFooter className="mt-4 flex justify-end md:mt-5">
