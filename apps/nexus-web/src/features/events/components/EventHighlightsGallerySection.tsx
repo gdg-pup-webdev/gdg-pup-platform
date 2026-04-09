@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
+
 import { Container, Skeleton, Stack, Text } from "@packages/spark-ui"; 
 import { useEvent } from "../hooks/useEvents";
 
@@ -12,14 +13,16 @@ type EventHighlightsGallerySectionProps = {
   title?: string;
 };
 
-const DESKTOP_TILES_PER_PAGE = 16;
-const MOBILE_INITIAL_VISIBLE = 4;
-const MOBILE_LOAD_MORE_STEP = 4;
+
+
+
 const PLACEHOLDER_TILE_URL = "/pages/events/event-cover.webp";
 const PLACEHOLDER_IMAGES = Array.from(
-  { length: DESKTOP_TILES_PER_PAGE * 2 },
+  { length: 12 },
   () => PLACEHOLDER_TILE_URL,
 );
+
+
 
 function formatDateLabel(startDate?: string, endDate?: string) {
   if (!startDate) return "Date TBA";
@@ -49,35 +52,16 @@ function formatDateLabel(startDate?: string, endDate?: string) {
   return `${dayLabel}${endTime ? ` ${startTime} - ${endTime}` : ` ${startTime}`}`;
 }
 
-function buildPagerTokens(currentPage: number, totalPages: number): Array<number | "..."> {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
-  }
 
-  const pages = new Set<number>([1, totalPages, currentPage, currentPage - 1, currentPage + 1]);
-  const normalized = [...pages]
-    .filter((page) => page >= 1 && page <= totalPages)
-    .sort((a, b) => a - b);
-
-  const tokens: Array<number | "..."> = [];
-  for (let i = 0; i < normalized.length; i += 1) {
-    const page = normalized[i];
-    const prev = normalized[i - 1];
-    if (prev && page - prev > 1) {
-      tokens.push("...");
-    }
-    tokens.push(page);
-  }
-
-  return tokens;
-}
 
 function GallerySkeletonGrid() {
   return (
     <div className="animate-pulse w-full">
-      {/* Mobile Stack: 4 items to match initial visible count */}
+      {/* Mobile Stack: Match INITIAL_VISIBLE_COUNT */}
       <div className="flex flex-col gap-5 md:hidden">
         {Array.from({ length: 4 }).map((_, i) => (
+
+
           <div
             key={`mobile-skeleton-${i}`}
             className="aspect-video w-full rounded-[10px] bg-white/10 border border-white/5"
@@ -85,9 +69,10 @@ function GallerySkeletonGrid() {
         ))}
       </div>
 
-      {/* Desktop Grid: 16 items (4x4) */}
+      {/* Desktop Grid: Match INITIAL_VISIBLE_COUNT */}
       <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {Array.from({ length: 16 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, i) => (
+
           <div
             key={`desktop-skeleton-${i}`}
             className="aspect-video w-full rounded-[6px] bg-white/10 border border-white/5"
@@ -103,8 +88,14 @@ export function EventHighlightsGallerySection({
   eventId,
   title,
 }: EventHighlightsGallerySectionProps) { 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [mobileVisibleCount, setMobileVisibleCount] = useState(MOBILE_INITIAL_VISIBLE);
+  const INITIAL_COUNT = 4;
+  const STEP = 10;
+  
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
+
+  console.log(`[EventHighlightsGallerySection] Rendered with visibleCount: ${visibleCount}`);
+
+
 
 
   const {data : eventDetail, error : errorMessage, isLoading} = useEvent(eventId);
@@ -120,27 +111,7 @@ export function EventHighlightsGallerySection({
   const venue = eventDetail?.venue?.trim() || "Location TBA";
 
   const galleryImages = PLACEHOLDER_IMAGES;
-  const desktopTotalPages = Math.max(
-    1,
-    Math.ceil(galleryImages.length / DESKTOP_TILES_PER_PAGE),
-  );
 
-  useEffect(() => {
-    setCurrentPage((prev) => Math.min(prev, desktopTotalPages));
-  }, [desktopTotalPages]);
-
-  const desktopImages = useMemo(() => {
-    const from = (currentPage - 1) * DESKTOP_TILES_PER_PAGE;
-    return galleryImages.slice(from, from + DESKTOP_TILES_PER_PAGE);
-  }, [currentPage, galleryImages]);
-
-  const pagerTokens = useMemo(
-    () => buildPagerTokens(currentPage, desktopTotalPages),
-    [currentPage, desktopTotalPages],
-  );
-
-  const canGoPrev = currentPage > 1;
-  const canGoNext = currentPage < desktopTotalPages;
 
   return (
     <div
@@ -370,128 +341,60 @@ export function EventHighlightsGallerySection({
               </div>
             ) : (
               <>
-            <div className="md:hidden mt-2">
-              <div className="flex flex-col gap-5">
-                {galleryImages.slice(0, mobileVisibleCount).map((src, index) => (
-                  <div
-                    key={`${src}-${index}`}
-                    className="relative w-full overflow-hidden rounded-[10px] border border-white/15 bg-black/30 aspect-video"
-                  >
-                    <Image
-                      src={src}
-                      alt={`${eventTitle} highlight ${index + 1}`}
-                      fill
-                      sizes="92vw"
-                      className="object-cover"
-                      priority={index < 2}
-                    />
+                <div className="md:hidden mt-2">
+                  <div className="flex flex-col gap-5">
+                    {galleryImages.slice(0, visibleCount).map((src, index) => (
+                      <div
+                        key={`${src}-${index}`}
+                        className="relative w-full overflow-hidden rounded-[10px] border border-white/15 bg-black/30 aspect-video"
+                      >
+                        <Image
+                          src={src}
+                          alt={`${eventTitle} highlight ${index + 1}`}
+                          fill
+                          sizes="92vw"
+                          className="object-cover"
+                          priority={index < 2}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-
-              {mobileVisibleCount < galleryImages.length && (
-                <div className="mt-8">
-                  <button
-                    type="button"
-                    onClick={() => setMobileVisibleCount((prev) => prev + MOBILE_LOAD_MORE_STEP)}
-                    className="w-full py-3.5 border border-white/30 rounded-xl text-white text-sm font-medium hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer flex items-center justify-center font-outfit"
-                  >
-                    Load more
-                  </button>
                 </div>
-              )}
-            </div>
 
-            <div className="relative px-10 md:px-16 hidden md:block">
-                <button
-                  type="button"
-                  aria-label="Previous page"
-                  disabled={!canGoPrev}
-                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.3"
-                    className="h-4 w-4 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  >
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
-                </button>
-
-                <button
-                  type="button"
-                  aria-label="Next page"
-                  disabled={!canGoNext}
-                  onClick={() => setCurrentPage((page) => Math.min(desktopTotalPages, page + 1))}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white/90 hover:text-white hover:border-white transition-colors cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.3"
-                    className="h-4 w-4 md:h-5 md:w-5"
-                    aria-hidden="true"
-                  >
-                    <path d="M9 6l6 6-6 6" />
-                  </svg>
-                </button>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-                  {desktopImages.map((src, index) => (
+                <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
+                  {galleryImages.slice(0, visibleCount).map((src, index) => (
                     <div
                       key={`${src}-${index}`}
                       className="relative overflow-hidden rounded-[6px] border border-white/10 bg-black/30 aspect-video"
                     >
                       <Image
                         src={src}
-                        alt={`${eventTitle} highlight ${(currentPage - 1) * DESKTOP_TILES_PER_PAGE + index + 1}`}
+                        alt={`${eventTitle} highlight ${index + 1}`}
                         fill
                         sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
                         className="object-cover"
-                        priority={currentPage === 1 && index < 2}
+                        priority={index < 4}
                       />
                     </div>
                   ))}
                 </div>
-              </div>
-            </>
-          )}
 
-            {desktopTotalPages > 1 && !isLoading ? (
-              <div className="hidden md:flex items-center justify-center gap-2 text-sm md:text-base text-white/80 select-none">
-                {pagerTokens.map((token, index) => {
-                  if (token === "...") {
-                    return (
-                      <span key={`ellipsis-${index}`} className="px-1.5 text-white/55">
-                        ...
-                      </span>
-                    );
-                  }
-
-                  return (
+                {visibleCount < galleryImages.length && (
+                  <div className="mt-8 md:mt-12 flex justify-center">
                     <button
                       type="button"
-                      key={`page-${token}`}
-                      onClick={() => setCurrentPage(token)}
-                      className={`min-w-6 h-6 rounded-full text-xs md:text-sm transition-colors ${
-                        currentPage === token
-                          ? "bg-white/15 text-white"
-                          : "text-white/75 hover:text-white"
-                      }`}
+                      onClick={() => setVisibleCount((prev) => prev + STEP)}
+
+                      className="w-full md:w-fit md:min-w-[240px] px-8 py-3.5 border border-white rounded-[12px] text-white text-sm md:text-base font-medium bg-transparent hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer flex items-center justify-center font-outfit"
                     >
-                      {token}
+                      Load more
                     </button>
-                  );
-                })}
-              </div>
-            ) : null}
+                  </div>
+                )}
+              </>
+            )}
+
+
           </Stack>
         </Stack>
       </Container>
