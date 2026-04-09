@@ -67,12 +67,11 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         }}
       />
 
-      <Container maxWidth="full">
+      <Container>
         <Stack gap="2xl" className="relative z-10">
           {/* ── Breadcrumbs ── */}
           <Breadcrumbs
             items={[
-              { label: "Home", href: "/" },
               { label: "Products", href: "/products" },
               { label: teamName },
             ]}
@@ -85,6 +84,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               gradient="white-blue"
               align="center"
               weight="bold"
+              className="text-3xl sm:text-4xl md:text-5xl"
             >
               ABOUT THE TEAM
             </Text>
@@ -93,14 +93,14 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               gradient="white-yellow"
               align="center"
               weight="bold"
-              className="mt-10"
+              className="mt-6 text-4xl sm:text-5xl md:text-6xl"
             >
               {teamName}
             </Text>
 
             <TeamHero teamName={teamName} teamSlug={teamSlug} />
 
-            <div className="w-full max-w-[1600px] mx-auto my-6 z-10 mt-30">
+            <div className="w-full max-w-7xl mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
                 description={
                   <div className="w-full text-justify font-['Google_Sans',sans-serif] text-lg font-normal leading-8 text-neutral-50 md:text-2xl md:leading-9">

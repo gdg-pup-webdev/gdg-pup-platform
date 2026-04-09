@@ -78,7 +78,7 @@ export function TeamStructureSection({
   const hideSupportGroup = teamSlug === "project-management";
 
   return (
-    <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
         src="/products/RL-SPACE_BG_3_3.png"
@@ -137,12 +137,11 @@ export function TeamStructureSection({
         }}
       />
 
-      <Container maxWidth="full">
+      <Container>
         <Stack gap="2xl" className="relative z-10">
           {/* ── Breadcrumbs ── */}
           <Breadcrumbs
             items={[
-              { label: "Home", href: "/" },
               { label: "Products", href: "/products" },
               { label: teamName, href: `/products/${teamSlug}` },
               { label: "Team Structure" },
@@ -156,6 +155,7 @@ export function TeamStructureSection({
               gradient="white-blue"
               align="center"
               weight="bold"
+              className="text-3xl sm:text-4xl md:text-5xl"
             >
               ABOUT THE TEAM
             </Text>
@@ -164,7 +164,7 @@ export function TeamStructureSection({
               gradient="white-yellow"
               align="center"
               weight="bold"
-              className="mt-10"
+              className="mt-6 text-4xl sm:text-5xl md:text-6xl"
             >
               {teamName}
             </Text>
@@ -193,7 +193,7 @@ export function TeamStructureSection({
                   alt={`${teamName} team`}
                   width={900}
                   height={500}
-                  className="w-full max-w-[400px] md:max-w-[500px] lg:max-w-[600px] rounded-2xl object-cover relative z-12"
+                  className="w-full max-w-[250px] md:max-w-[350px] lg:max-w-[400px] rounded-2xl object-cover relative z-12"
                 />
               </div>
 
@@ -246,7 +246,7 @@ export function TeamStructureSection({
             </div>
 
             {/* About the Team card */}
-            <div className="w-full max-w-[1600px] mx-auto my-6 z-10 mt-30">
+            <div className="w-full max-w-7xl mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
                 description={
                   <div className="w-full text-justify font-['Google_Sans',sans-serif] text-lg font-normal leading-8 text-neutral-50 md:text-2xl md:leading-9">

@@ -76,7 +76,7 @@ export function TeamHero({ teamName, teamSlug }: TeamHeroProps) {
           alt={`${teamName} team`}
           width={900}
           height={500}
-          className="w-full max-w-[300px] md:max-w-[500px] lg:max-w-[600px] rounded-2xl object-cover relative z-12"
+          className="w-full max-w-[250px] md:max-w-[350px] lg:max-w-[400px] rounded-2xl object-cover relative z-12"
         />
       </div>
 
