@@ -19,6 +19,11 @@ export class GetSimilarUsers {
   private readonly exploratoryPoolSize = 15;
   private readonly candidateFetchLimit = 120;
   private readonly exploratoryFallbackFetchLimit = 180;
+  private readonly stableCollator = new Intl.Collator("en", {
+    usage: "sort",
+    sensitivity: "base",
+    numeric: true,
+  });
 
   constructor(private readonly repo: IGdgMemberRepository) {}
 
@@ -159,7 +164,8 @@ export class GetSimilarUsers {
       }))
       .sort((left, right) => {
         if (right.score !== left.score) return right.score - left.score;
-        return this.sortKey(left.member).localeCompare(
+        return this.stableCollator.compare(
+          this.sortKey(left.member),
           this.sortKey(right.member),
         );
       });
@@ -178,7 +184,8 @@ export class GetSimilarUsers {
         const leftSeed = this.seededOrderKey(source.props.gdgId, left.member);
         const rightSeed = this.seededOrderKey(source.props.gdgId, right.member);
         if (leftSeed !== rightSeed) return leftSeed - rightSeed;
-        return this.sortKey(left.member).localeCompare(
+        return this.stableCollator.compare(
+          this.sortKey(left.member),
           this.sortKey(right.member),
         );
       });

@@ -4,7 +4,7 @@ import {
   IGdgMemberRepository,
   GdgMemberFilters,
 } from "../domain/IGdgMemberRepository";
-import { Tables } from "@/v1/types/supabase.types";
+import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 
 type SimilarityMemberRow = Pick<
@@ -58,7 +58,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     });
   }
 
-  private mapToDb(member: GdgMember): Tables<"gdg_members"> {
+  private mapToInsertDb(member: GdgMember): TablesInsert<"gdg_members"> {
     const p = member.props;
     return {
       gdg_id: p.gdgId,
@@ -81,12 +81,39 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technical_skills: p.technicalSkills.join(","),
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
-      is_public: p.isPublic ?? true,
+      // Preserve explicit true/false and allow DB default when value is null.
+      is_public: p.isPublic ?? undefined,
 
-      created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      nickname: null,
-      skills_summary: null,
+    };
+  }
+
+  private mapToUpdateDb(member: GdgMember): TablesUpdate<"gdg_members"> {
+    const p = member.props;
+
+    return {
+      email: p.email,
+      membership_type: p.membershipType,
+      avatar_image_url: p.avatarUrl,
+      program: p.program,
+      year_level: p.yearLevel,
+      department: p.department,
+      display_name: p.displayName,
+      first_name: p.firstName,
+      middle_name: p.middleName,
+      last_name: p.lastName,
+      suffix: p.suffix,
+      bio: p.bio,
+      github_url: p.githubUrl,
+      linkedin_url: p.linkedinUrl,
+      portfolio_url: p.portfolioWebsiteUrl,
+      other_links: p.otherLinks.join(","),
+      technical_skills: p.technicalSkills.join(","),
+      learning_interests: p.learningInterests.join(","),
+      tools_and_technologies: p.toolsAndTechnologies.join(","),
+      // Null means "no visibility change" on update.
+      is_public: p.isPublic ?? undefined,
+      updated_at: new Date().toISOString(),
     };
   }
 
@@ -295,7 +322,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     const p = member.props;
     const { data, error } = await supabase
       .from(this.tableName)
-      .insert(this.mapToDb(member))
+      .insert(this.mapToInsertDb(member))
       .select()
       .single();
 
@@ -307,7 +334,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     const p = member.props;
     const { data, error } = await supabase
       .from(this.tableName)
-      .update(this.mapToDb(member))
+      .update(this.mapToUpdateDb(member))
       .eq("gdg_id", p.gdgId)
       .select()
       .single();
