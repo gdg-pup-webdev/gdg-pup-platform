@@ -30,6 +30,7 @@ const createEventFixture = (
     teamId: "33333333-3333-3333-3333-333333333333",
     teamName: "GDG PUP",
     ...overrides,
+    rsvp: overrides.rsvp ?? null,
   });
 
 describe("EventSystemController", () => {
