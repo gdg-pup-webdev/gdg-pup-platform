@@ -4,10 +4,13 @@ import { createClient } from "@supabase/supabase-js";
 config({ path: ".env" });
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseKey =
+  process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error("Missing SUPABASE_URL or SUPABASE_SECRET_KEY in apps/nexus-api/.env");
+  console.error(
+    "Missing SUPABASE_URL and one of SUPABASE_SECRET_KEY/SUPABASE_SERVICE_ROLE_KEY in apps/nexus-api/.env",
+  );
   process.exit(1);
 }
 
@@ -35,7 +38,12 @@ async function run(): Promise<void> {
     .select("gdg_id", { count: "exact", head: true })
     .is("is_public", null);
 
-  const errors = [totalRes.error, publicRes.error, privateRes.error, nullRes.error].filter(Boolean);
+  const errors = [
+    totalRes.error,
+    publicRes.error,
+    privateRes.error,
+    nullRes.error,
+  ].filter(Boolean);
   if (errors.length > 0) {
     for (const error of errors) {
       console.error("Supabase query error:", error?.message);
@@ -65,9 +73,15 @@ async function run(): Promise<void> {
   console.log("GDG Member Visibility Summary");
   console.log("-----------------------------");
   console.log(`Total members:           ${total}`);
-  console.log(`Public (is_public=true): ${publicCount} (${pct(publicCount, total)})`);
-  console.log(`Private (false):         ${privateCount} (${pct(privateCount, total)})`);
-  console.log(`Null visibility:         ${nullCount} (${pct(nullCount, total)})`);
+  console.log(
+    `Public (is_public=true): ${publicCount} (${pct(publicCount, total)})`,
+  );
+  console.log(
+    `Private (false):         ${privateCount} (${pct(privateCount, total)})`,
+  );
+  console.log(
+    `Null visibility:         ${nullCount} (${pct(nullCount, total)})`,
+  );
   console.log("");
   console.log(`Max suggested pool now:  ${maxSuggestedPool} (cap: 15)`);
   console.log("");

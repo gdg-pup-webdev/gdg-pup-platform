@@ -170,7 +170,7 @@ export class GetSimilarUsers {
     return candidates
       .map((member) => ({
         member,
-        score: this.calculateSimilarityScore(source, member),
+        score: 0,
       }))
       .sort((left, right) => {
         const leftSeed = this.seededOrderKey(source.props.gdgId, left.member);
@@ -474,10 +474,15 @@ export class GetSimilarUsers {
       sourceProps.department,
       candidateProps.department,
     );
+    const nearbyYearLevel =
+      sourceProps.yearLevel !== null &&
+      candidateProps.yearLevel !== null &&
+      Math.abs(sourceProps.yearLevel - candidateProps.yearLevel) <= 1;
 
     return (
       sameProgram ||
       sameDepartment ||
+      nearbyYearLevel ||
       this.hasCollectionOverlap(
         sourceProps.technicalSkills,
         candidateProps.technicalSkills,

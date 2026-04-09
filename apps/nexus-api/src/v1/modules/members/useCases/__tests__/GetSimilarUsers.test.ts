@@ -256,7 +256,7 @@ describe("GetSimilarUsers", () => {
     const nonSimilarA = createMember({
       gdgId: "non-similar-a",
       program: null,
-      yearLevel: 2,
+      yearLevel: 6,
       department: "Cloud Solutions",
       technicalSkills: ["Kubernetes"],
       learningInterests: ["IoT"],
@@ -266,7 +266,7 @@ describe("GetSimilarUsers", () => {
     const nonSimilarB = createMember({
       gdgId: "non-similar-b",
       program: "BSAE",
-      yearLevel: 4,
+      yearLevel: 7,
       department: "Cybersecurity",
       technicalSkills: ["Rust"],
       learningInterests: ["Blue Team"],
