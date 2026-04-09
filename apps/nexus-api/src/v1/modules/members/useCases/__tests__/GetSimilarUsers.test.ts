@@ -19,10 +19,15 @@ class MockGdgMemberRepository implements IGdgMemberRepository {
     return { list: [], count: 0 };
   }
 
-  async findPublicMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]> {
-    return this.members.filter(
+  async findPublicMembersExcludingGdgId(
+    gdgId: string,
+    limit?: number,
+  ): Promise<GdgMember[]> {
+    const rows = this.members.filter(
       (member) => member.props.gdgId !== gdgId && member.props.isPublic,
     );
+
+    return typeof limit === "number" ? rows.slice(0, limit) : rows;
   }
 
   async findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
@@ -31,9 +36,10 @@ class MockGdgMemberRepository implements IGdgMemberRepository {
       program: string | null;
       department: string | null;
     },
+    limit?: number,
   ): Promise<GdgMember[]> {
     const { program, department } = filters;
-    return this.members.filter((member) => {
+    const rows = this.members.filter((member) => {
       if (member.props.gdgId === gdgId || !member.props.isPublic) return false;
       const sameProgram = Boolean(program && member.props.program === program);
       const sameDepartment = Boolean(
@@ -41,42 +47,25 @@ class MockGdgMemberRepository implements IGdgMemberRepository {
       );
       return sameProgram || sameDepartment;
     });
+
+    return typeof limit === "number" ? rows.slice(0, limit) : rows;
   }
 
   async findPublicMembersWithSameYearLevelExcludingGdgId(
     gdgId: string,
     yearLevel: number | null,
+    limit?: number,
   ): Promise<GdgMember[]> {
     if (yearLevel === null) return [];
 
-    return this.members.filter(
+    const rows = this.members.filter(
       (member) =>
         member.props.gdgId !== gdgId &&
         member.props.isPublic &&
         member.props.yearLevel === yearLevel,
     );
-  }
 
-  async findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
-    gdgId: string,
-    filters: {
-      program: string | null;
-      department: string | null;
-    },
-  ): Promise<GdgMember[]> {
-    const { program, department } = filters;
-
-    return this.members.filter((member) => {
-      if (member.props.gdgId === gdgId || !member.props.isPublic) return false;
-      const differentProgram = program
-        ? member.props.program !== program
-        : true;
-      const differentDepartment = department
-        ? member.props.department !== department
-        : true;
-
-      return differentProgram && differentDepartment;
-    });
+    return typeof limit === "number" ? rows.slice(0, limit) : rows;
   }
 
   async saveNew(member: GdgMember): Promise<GdgMember> {

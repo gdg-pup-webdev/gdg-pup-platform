@@ -17,6 +17,8 @@ export type SimilarUsersStrategy = "relevant" | "exploratory";
 export class GetSimilarUsers {
   private readonly relatedShare = 0.8;
   private readonly exploratoryPoolSize = 15;
+  private readonly candidateFetchLimit = 120;
+  private readonly exploratoryFallbackFetchLimit = 180;
 
   constructor(private readonly repo: IGdgMemberRepository) {}
 
@@ -91,28 +93,36 @@ export class GetSimilarUsers {
   ): Promise<GdgMember[]> {
     const sourceProps = sourceMember.props;
 
-    const [sameProgramOrDepartment, sameYearLevel] = await Promise.all([
-      this.repo.findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
-        gdgMemberId,
-        {
-          program: sourceProps.program,
-          department: sourceProps.department,
-        },
-      ),
-      this.repo.findPublicMembersWithSameYearLevelExcludingGdgId(
-        gdgMemberId,
-        sourceProps.yearLevel,
-      ),
-    ]);
+    const [sameProgramOrDepartment, sameYearLevel, publicFallback] =
+      await Promise.all([
+        this.repo.findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
+          gdgMemberId,
+          {
+            program: sourceProps.program,
+            department: sourceProps.department,
+          },
+          this.candidateFetchLimit,
+        ),
+        this.repo.findPublicMembersWithSameYearLevelExcludingGdgId(
+          gdgMemberId,
+          sourceProps.yearLevel,
+          this.candidateFetchLimit,
+        ),
+        this.repo.findPublicMembersExcludingGdgId(
+          gdgMemberId,
+          this.candidateFetchLimit,
+        ),
+      ]);
 
     const merged = this.dedupeByGdgId([
       ...sameProgramOrDepartment,
       ...sameYearLevel,
+      ...publicFallback,
     ]);
 
-    if (merged.length > 0) return merged;
-
-    return this.repo.findPublicMembersExcludingGdgId(gdgMemberId);
+    return merged.filter((candidate) =>
+      this.hasCoreRelevance(sourceMember, candidate),
+    );
   }
 
   private async getNonRelevantCandidates(
@@ -124,17 +134,16 @@ export class GetSimilarUsers {
       rankedRelevantMembers.map((entry) => entry.member.props.gdgId),
     );
 
-    const sourceProps = sourceMember.props;
-    const nonRelevant =
-      await this.repo.findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
-        gdgMemberId,
-        {
-          program: sourceProps.program,
-          department: sourceProps.department,
-        },
-      );
+    const publicCandidates = await this.repo.findPublicMembersExcludingGdgId(
+      gdgMemberId,
+      this.exploratoryFallbackFetchLimit,
+    );
 
-    return nonRelevant.filter((member) => !relevantIds.has(member.props.gdgId));
+    return publicCandidates.filter(
+      (member) =>
+        !relevantIds.has(member.props.gdgId) &&
+        !this.hasCoreRelevance(sourceMember, member),
+    );
   }
 
   private rankBySimilarity(
@@ -288,8 +297,10 @@ export class GetSimilarUsers {
       ),
     ]);
 
-    const publicPool =
-      await this.repo.findPublicMembersExcludingGdgId(gdgMemberId);
+    const publicPool = await this.repo.findPublicMembersExcludingGdgId(
+      gdgMemberId,
+      this.exploratoryFallbackFetchLimit,
+    );
     const fallbackCandidates = publicPool.filter(
       (member) => !usedIds.has(member.props.gdgId),
     );
@@ -449,6 +460,62 @@ export class GetSimilarUsers {
     const union = new Set([...normalizedSource, ...normalizedCandidate]);
 
     return Math.round((overlap.length / union.size) * weight);
+  }
+
+  private hasCoreRelevance(source: GdgMember, candidate: GdgMember): boolean {
+    const sourceProps = source.props;
+    const candidateProps = candidate.props;
+
+    const sameProgram = this.isEquivalentAcademicText(
+      sourceProps.program,
+      candidateProps.program,
+    );
+    const sameDepartment = this.isEquivalentAcademicText(
+      sourceProps.department,
+      candidateProps.department,
+    );
+
+    return (
+      sameProgram ||
+      sameDepartment ||
+      this.hasCollectionOverlap(
+        sourceProps.technicalSkills,
+        candidateProps.technicalSkills,
+      ) ||
+      this.hasCollectionOverlap(
+        sourceProps.learningInterests,
+        candidateProps.learningInterests,
+      ) ||
+      this.hasCollectionOverlap(
+        sourceProps.toolsAndTechnologies,
+        candidateProps.toolsAndTechnologies,
+      )
+    );
+  }
+
+  private isEquivalentAcademicText(
+    source: string | null,
+    candidate: string | null,
+  ): boolean {
+    if (!source || !candidate) return false;
+
+    const normalizedSource = this.canonicalizeAcademicText(
+      this.normalize(source),
+    );
+    const normalizedCandidate = this.canonicalizeAcademicText(
+      this.normalize(candidate),
+    );
+
+    return normalizedSource === normalizedCandidate;
+  }
+
+  private hasCollectionOverlap(source: string[], candidate: string[]): boolean {
+    const normalizedSource = this.normalizeCollection(source);
+    const normalizedCandidate = this.normalizeCollection(candidate);
+
+    return normalizedSource.some((value) =>
+      normalizedCandidate.includes(value),
+    );
   }
 
   private normalizeCollection(values: string[]): string[] {

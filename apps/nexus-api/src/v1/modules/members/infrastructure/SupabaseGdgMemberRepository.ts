@@ -81,7 +81,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technical_skills: p.technicalSkills.join(","),
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
-      is_public: p.isPublic,
+      is_public: p.isPublic ?? true,
 
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -184,14 +184,24 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     };
   }
 
-  async findPublicMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]> {
-    const { data, error } = await supabase
+  async findPublicMembersExcludingGdgId(
+    gdgId: string,
+    limit?: number,
+  ): Promise<GdgMember[]> {
+    let query = supabase
       .from(this.tableName)
       .select(this.similarityProjection)
       .eq("is_public", true)
       .neq("gdg_id", gdgId)
       .order("display_name", { ascending: true, nullsFirst: false })
-      .order("first_name", { ascending: true, nullsFirst: false });
+      .order("first_name", { ascending: true, nullsFirst: false })
+      .order("gdg_id", { ascending: true, nullsFirst: false });
+
+    if (typeof limit === "number") {
+      query = query.limit(limit);
+    }
+
+    const { data, error } = await query;
 
     if (error) throw new Error(`Database error: ${error.message}`);
 
@@ -206,6 +216,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       program: string | null;
       department: string | null;
     },
+    limit = 100,
   ): Promise<GdgMember[]> {
     const { program, department } = filters;
     const merged = new Map<string, GdgMember>();
@@ -220,6 +231,8 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
             .eq("program", program)
             .order("display_name", { ascending: true, nullsFirst: false })
             .order("first_name", { ascending: true, nullsFirst: false })
+            .order("gdg_id", { ascending: true, nullsFirst: false })
+            .limit(limit)
         : Promise.resolve({ data: [] as SimilarityMemberRow[], error: null }),
       department
         ? supabase
@@ -230,6 +243,8 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
             .eq("department", department)
             .order("display_name", { ascending: true, nullsFirst: false })
             .order("first_name", { ascending: true, nullsFirst: false })
+            .order("gdg_id", { ascending: true, nullsFirst: false })
+            .limit(limit)
         : Promise.resolve({ data: [] as SimilarityMemberRow[], error: null }),
     ]);
 
@@ -254,6 +269,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   async findPublicMembersWithSameYearLevelExcludingGdgId(
     gdgId: string,
     yearLevel: number | null,
+    limit = 100,
   ): Promise<GdgMember[]> {
     if (yearLevel === null) return [];
 
@@ -264,41 +280,9 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       .neq("gdg_id", gdgId)
       .eq("year_level", yearLevel)
       .order("display_name", { ascending: true, nullsFirst: false })
-      .order("first_name", { ascending: true, nullsFirst: false });
-
-    if (error) throw new Error(`Database error: ${error.message}`);
-
-    return (data || []).map((row) =>
-      this.mapSimilarityToDomain(row as SimilarityMemberRow),
-    );
-  }
-
-  async findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
-    gdgId: string,
-    filters: {
-      program: string | null;
-      department: string | null;
-    },
-  ): Promise<GdgMember[]> {
-    const { program, department } = filters;
-
-    let query = supabase
-      .from(this.tableName)
-      .select(this.similarityProjection)
-      .eq("is_public", true)
-      .neq("gdg_id", gdgId);
-
-    if (program) {
-      query = query.neq("program", program);
-    }
-
-    if (department) {
-      query = query.neq("department", department);
-    }
-
-    const { data, error } = await query
-      .order("display_name", { ascending: true, nullsFirst: false })
-      .order("first_name", { ascending: true, nullsFirst: false });
+      .order("first_name", { ascending: true, nullsFirst: false })
+      .order("gdg_id", { ascending: true, nullsFirst: false })
+      .limit(limit);
 
     if (error) throw new Error(`Database error: ${error.message}`);
 

@@ -14,24 +14,22 @@ export interface IGdgMemberRepository {
     pageSize: number,
     filters?: GdgMemberFilters,
   ): Promise<{ list: GdgMember[]; count: number }>;
-  findPublicMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]>;
+  findPublicMembersExcludingGdgId(
+    gdgId: string,
+    limit?: number,
+  ): Promise<GdgMember[]>;
   findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
     gdgId: string,
     filters: {
       program: string | null;
       department: string | null;
     },
+    limit?: number,
   ): Promise<GdgMember[]>;
   findPublicMembersWithSameYearLevelExcludingGdgId(
     gdgId: string,
     yearLevel: number | null,
-  ): Promise<GdgMember[]>;
-  findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
-    gdgId: string,
-    filters: {
-      program: string | null;
-      department: string | null;
-    },
+    limit?: number,
   ): Promise<GdgMember[]>;
   saveNew(member: GdgMember): Promise<GdgMember>;
   persistUpdates(member: GdgMember): Promise<GdgMember>;

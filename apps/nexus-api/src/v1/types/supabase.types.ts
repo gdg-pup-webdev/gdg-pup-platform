@@ -381,7 +381,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
-          is_public: boolean | null
+          is_public: boolean
           last_name: string | null
           learning_interests: string | null
           linkedin_url: string | null
@@ -408,7 +408,7 @@ export type Database = {
           first_name?: string | null
           gdg_id: string
           github_url?: string | null
-          is_public?: boolean | null
+          is_public?: boolean
           last_name?: string | null
           learning_interests?: string | null
           linkedin_url?: string | null
@@ -435,7 +435,7 @@ export type Database = {
           first_name?: string | null
           gdg_id?: string
           github_url?: string | null
-          is_public?: boolean | null
+          is_public?: boolean
           last_name?: string | null
           learning_interests?: string | null
           linkedin_url?: string | null
@@ -1468,7 +1468,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
-          is_public: boolean | null
+          is_public: boolean
           last_name: string | null
           learning_interests: string | null
           linkedin_url: string | null
