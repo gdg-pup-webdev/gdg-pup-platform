@@ -26,6 +26,7 @@ export class EventRepository implements IEventRepository {
   }
 
   private mapToDomain(row: any): Event {
+    const eventRow = row as any;
     /**
      * Helper to clean array fields from corrupted data.
      * Handles:
@@ -129,6 +130,7 @@ export class EventRepository implements IEventRepository {
       end_date: props.end_date.toISOString(),
       attendance_points: props.attendance_points,
       attendees_count: props.attendees_count,
+      rsvp: props.rsvp,
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString(),
       gdg_event_id,

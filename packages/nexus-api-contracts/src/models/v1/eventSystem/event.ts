@@ -16,6 +16,7 @@ export const eventRecord = cz.object({
 
   attendance_points: cz.number(),
   attendees_count: cz.number(),
+  rsvp: cz.number().nullable().optional(),
   bevy_event_id: cz.string().nullable().optional(),
   image_url: cz.string().nullable().optional(),
   bevyPreviewUrl: cz.string().nullable().optional(),

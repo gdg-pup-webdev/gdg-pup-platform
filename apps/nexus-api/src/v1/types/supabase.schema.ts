@@ -69,6 +69,7 @@ export const publicAnalyticsNfcCardScansRelationshipsSchema = z.tuple([
 export const publicAnalyticsProfileViewsRowSchema = z.object({
   date: z.string(),
   id: z.string(),
+  profileGdgId: z.string().nullable(),
   source: z.string().nullable(),
   user_agent: z.string().nullable(),
   viewerGdgId: z.string().nullable(),
@@ -77,6 +78,7 @@ export const publicAnalyticsProfileViewsRowSchema = z.object({
 export const publicAnalyticsProfileViewsInsertSchema = z.object({
   date: z.string().optional(),
   id: z.string().optional(),
+  profileGdgId: z.string().optional().nullable(),
   source: z.string().optional().nullable(),
   user_agent: z.string().optional().nullable(),
   viewerGdgId: z.string().optional().nullable(),
@@ -85,12 +87,20 @@ export const publicAnalyticsProfileViewsInsertSchema = z.object({
 export const publicAnalyticsProfileViewsUpdateSchema = z.object({
   date: z.string().optional(),
   id: z.string().optional(),
+  profileGdgId: z.string().optional().nullable(),
   source: z.string().optional().nullable(),
   user_agent: z.string().optional().nullable(),
   viewerGdgId: z.string().optional().nullable(),
 });
 
 export const publicAnalyticsProfileViewsRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("analytics_profile_views_profile_gdg_id_fkey"),
+    columns: z.tuple([z.literal("profileGdgId")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("gdg_members"),
+    referencedColumns: z.tuple([z.literal("gdg_id")]),
+  }),
   z.object({
     foreignKeyName: z.literal("analytics_profile_views_viewerGdgId_fkey"),
     columns: z.tuple([z.literal("viewerGdgId")]),
@@ -184,6 +194,7 @@ export const publicEventRowSchema = z.object({
   gdg_event_id: z.number().nullable(),
   id: z.string(),
   max_capacity: z.string().nullable(),
+  rsvp: z.number().nullable(),
   short_description: z.string().nullable(),
   speakers: z.array(z.string()).nullable(),
   start_date: z.string().nullable(),
@@ -208,6 +219,7 @@ export const publicEventInsertSchema = z.object({
   gdg_event_id: z.number().optional().nullable(),
   id: z.string().optional(),
   max_capacity: z.string().optional().nullable(),
+  rsvp: z.number().optional().nullable(),
   short_description: z.string().optional().nullable(),
   speakers: z.array(z.string()).optional().nullable(),
   start_date: z.string().optional().nullable(),
@@ -232,6 +244,7 @@ export const publicEventUpdateSchema = z.object({
   gdg_event_id: z.number().optional().nullable(),
   id: z.string().optional(),
   max_capacity: z.string().optional().nullable(),
+  rsvp: z.number().optional().nullable(),
   short_description: z.string().optional().nullable(),
   speakers: z.array(z.string()).optional().nullable(),
   start_date: z.string().optional().nullable(),

@@ -38,6 +38,7 @@ CREATE TABLE public.event (
   venue text,
   attendance_points bigint NOT NULL DEFAULT '0'::bigint,
   attendees_count bigint NOT NULL DEFAULT '0'::bigint,
+  rsvp bigint,
   gdg_event_id bigint UNIQUE,
   thumbnail_url text,
   bevy_preview_url text,

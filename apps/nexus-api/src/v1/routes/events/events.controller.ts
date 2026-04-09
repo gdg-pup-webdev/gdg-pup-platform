@@ -6,7 +6,7 @@ import { RequestHandler } from "express";
 export class EventsHttpController {
   constructor(private eventController: typeof eventSystemController) {}
 
-  syncOneEventToBevy : RequestHandler = createExpressController(
+  syncOneEventToBevy: RequestHandler = createExpressController(
     contract.api.v1.events.eventId.syncToBevy.POST,
     async ({ input, output }) => {
       const result = await this.eventController.syncEventToBevy(
@@ -15,7 +15,7 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: "Event synced successfully",
-        data: result
+        data: result,
       });
     },
   );

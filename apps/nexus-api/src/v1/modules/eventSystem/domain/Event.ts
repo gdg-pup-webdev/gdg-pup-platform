@@ -17,6 +17,7 @@ export type EventProps = {
 
   attendance_points: number;
   attendees_count: number;
+  rsvp: number | null;
   bevy_event_id: string | null;
   image_url: string | null;
   bevyPreviewUrl: string | null;
@@ -35,8 +36,10 @@ export type EventProps = {
 
 export type EventPrototypeProps = Omit<
   EventProps,
-  "id" | "createdAt" | "updatedAt" | "attendees_count"
->;
+  "id" | "createdAt" | "updatedAt" | "attendees_count" | "rsvp"
+> & {
+  rsvp?: number | null;
+};
 
 export type EventUpdateProps = Partial<EventPrototypeProps>;
 
@@ -58,6 +61,7 @@ export class Event {
       createdAt: new Date(),
       updatedAt: new Date(),
       attendees_count: 0,
+      rsvp: props.rsvp ?? null,
       bevy_event_id: props.bevy_event_id ?? null,
       image_url: props.image_url ?? null,
       type: props.type ?? null,
@@ -87,6 +91,7 @@ export class Event {
       // additional values
       attendance_points: 10, // Default points
       creatorId: null,
+      rsvp: bevyEvent.props.total_attendees ?? null,
       // New props
       type: null,
       teamId: null,
@@ -143,6 +148,7 @@ export class Event {
 
       bevy_attendees_count:
         bevyEvent.props.total_attendees || this.props.bevy_attendees_count || 0,
+      rsvp: bevyEvent.props.total_attendees ?? this.props.rsvp ?? null,
     });
   }
 }
