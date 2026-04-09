@@ -30,6 +30,7 @@ export type EventProps = {
   speakers: string[];
   type: string | null;
   teamId: string | null;
+  teamName?: string | null;
 };
 
 export type EventPrototypeProps = Omit<
@@ -89,6 +90,7 @@ export class Event {
       // New props
       type: null,
       teamId: null,
+      teamName: null,
       speakers: [],
     });
   }

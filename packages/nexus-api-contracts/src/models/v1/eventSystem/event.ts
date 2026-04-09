@@ -23,11 +23,12 @@ export const eventRecord = cz.object({
   short_description: cz.string().nullable().optional(),
   max_capacity: cz.number(),
   tags: cz.array(cz.string()),
-  
+
   // New props
   speakers: cz.array(cz.string()),
   type: cz.string().nullable().optional(),
   teamId: cz.string().uuid().nullable().optional(),
+  teamName: cz.string().nullable().optional(),
 });
 
 export const eventRecordInsertDTO = eventRecord.omit({
