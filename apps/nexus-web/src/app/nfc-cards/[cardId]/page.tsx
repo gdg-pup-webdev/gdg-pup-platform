@@ -21,7 +21,7 @@ const NfcPage = () => {
     if (cardData.destinationUrl) {
       return router.push(cardData.destinationUrl);
     } else {
-      return router.push(`/sparkmates/${cardData.ownerGdgId}`);
+      return router.push(`/sparkmates/${cardData.ownerGdgId}?source=nfc-card`);
     }
   }, [cardData, error]);
 

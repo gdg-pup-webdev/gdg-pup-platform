@@ -14,7 +14,6 @@ export default function MemberShowcasePage() {
     <MemberShowcaseBackground>
       <Container>
         <Stack
-          gap="2xl"
           className="relative z-10 flex flex-col gap-10 md:gap-12 lg:gap-8"
         >
           <MemberShowcaseHero />

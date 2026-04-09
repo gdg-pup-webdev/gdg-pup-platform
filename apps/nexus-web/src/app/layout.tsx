@@ -5,6 +5,7 @@ import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared";
 import { ProviderCompose } from "@/providers/ProviderCompose";
 import { DebugNavigator } from "@/features/debugging/components/DebugNavigator";
+import { NormalAnalytics } from "@/features/analytics/components/NormalAnalytics";
 
 export const metadata: Metadata = {
   title: "GDG PUP Nexus",
@@ -32,6 +33,7 @@ export default function RootLayout({
         className="antialiased"
       >
         <ProviderCompose>
+          <NormalAnalytics/>
           <Navbar />
           <main className="min-h-screen">{children}</main>
           <Footer />

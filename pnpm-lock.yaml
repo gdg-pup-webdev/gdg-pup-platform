@@ -477,6 +477,9 @@ importers:
       cookies-next:
         specifier: ^6.1.1
         version: 6.1.1(next@16.1.1(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       jwt-decode:
         specifier: ^4.0.0
         version: 4.0.0
