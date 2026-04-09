@@ -1,28 +1,31 @@
 import { IBevyEventService } from "../domain/IBevyEventService";
 import { IEventRepository } from "../domain/IEventRepository";
+import { BadRequestError, NotFoundError } from "@/v1/errors/HttpError";
 
 export class SyncEventToBevy {
   constructor(
-    private readonly eventrepo: IEventRepository,
-    private readonly bevyservice: IBevyEventService,
+    private readonly eventRepository: IEventRepository,
+    private readonly bevyEventService: IBevyEventService,
   ) {}
 
   async execute(eventId: string) {
-    const event = await this.eventrepo.findById(eventId);
-    if (!event) throw new Error("Event not found");
+    const event = await this.eventRepository.findById(eventId);
 
-    if (!event.props.bevy_event_id)
-      throw new Error("Event is not linked to a bevy event");
+    if (!event.props.bevy_event_id) {
+      throw new BadRequestError("Event is not linked to a bevy event");
+    }
 
-    const bevyEvent = await this.bevyservice.getById(event.props.bevy_event_id);
-    if (!bevyEvent) throw new Error("Bevy event not found");
+    const bevyEvent = await this.bevyEventService.getById(
+      event.props.bevy_event_id,
+    );
+    if (!bevyEvent) {
+      throw new NotFoundError("Bevy event not found");
+    }
 
     // Update the event with the latest data from Bevy
     event.syncToBevyEvent(bevyEvent);
 
-    console.log("Syncing event to Bevy:", event.props, "->", bevyEvent.props);
-
-    await this.eventrepo.persistUpdates(event);
+    await this.eventRepository.persistUpdates(event);
 
     return event;
   }

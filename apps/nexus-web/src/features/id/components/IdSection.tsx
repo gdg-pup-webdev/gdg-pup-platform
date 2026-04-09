@@ -8,7 +8,7 @@ import { IdHowItWorks } from "./IdHowItWorks";
 
 export function IdSection() {
   return (
-    <div className="relative overflow-x-hidden min-h-screen pt-24 md:pt-44 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden min-h-screen pt-24 md:pt-44 lg:pt-60 pb-48 md:px-8 lg:px-16">
       <IdBlobs />
 
       <Container>
