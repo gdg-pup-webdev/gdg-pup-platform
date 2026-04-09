@@ -45,7 +45,7 @@ export function MemberShowcaseSpotlight() {
             gradient="white-blue"
             weight="bold"
             align="center"
-            className="text-2xl font-bold w-auto mb-5 md:mb-0"
+            className="text-2xl font-bold w-auto mb-10 md:mb-0"
           >
             Spotlight of the Day
           </Text>
