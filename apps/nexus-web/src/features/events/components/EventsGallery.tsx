@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Button } from "@packages/spark-ui";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
+import { CarouselArrowIcon } from "@/features/community-showcase/components/CarouselArrowIcon";
 
 type GalleryItem = {
   year: number;
@@ -22,7 +24,6 @@ function getCardsPerView(width: number): number {
 }
 
 // Remove unused getCircularWindow
-
 
 export function EventsGallery() {
   const [cardsPerView, setCardsPerView] = useState(3);
@@ -71,16 +72,17 @@ export function EventsGallery() {
   return (
     <div className="w-full mt-4 md:mt-8">
       <div className="relative w-full">
-        <button
-          type="button"
+        <Button
+          variant="colored"
+          subVariant="blue"
           onClick={handlePrevious}
           aria-label="Previous gallery years"
-          className={`absolute left-[-6px] md:left-[-22px] top-1/2 -translate-y-1/2 z-20 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white text-xl md:text-3xl leading-none flex items-center justify-center transition-all duration-300 bg-black/20 md:bg-transparent cursor-pointer hover:bg-black/40 ${!canGoPrev ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          className={`absolute left-[-16px] md:left-[-32px] top-1/2 -translate-y-1/2 z-20 h-10 w-10 md:h-15 md:w-15 shrink-0 rounded-full transition-all duration-300 ${!canGoPrev ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         >
-          {"<"}
-        </button>
+          <CarouselArrowIcon direction="left" />
+        </Button>
 
-        <div className="mx-10 md:mx-10 overflow-hidden relative">
+        <div className="mx-10 md:mx-15 overflow-hidden relative">
           <div
             className="grid invisible pointer-events-none"
             style={{
@@ -174,14 +176,15 @@ export function EventsGallery() {
           </AnimatePresence>
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="colored"
+          subVariant="blue"
           onClick={handleNext}
           aria-label="Next gallery years"
-          className={`absolute right-[-6px] md:right-[-22px] top-1/2 -translate-y-1/2 z-20 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white text-xl md:text-3xl leading-none flex items-center justify-center transition-all duration-300 bg-black/20 md:bg-transparent cursor-pointer hover:bg-black/40 ${!canGoNext ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+          className={`absolute right-[-16px] md:right-[-32px] top-1/2 -translate-y-1/2 z-20 h-10 w-10 md:h-15 md:w-15 shrink-0 rounded-full transition-all duration-300 ${!canGoNext ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         >
-          {">"}
-        </button>
+          <CarouselArrowIcon direction="right" />
+        </Button>
       </div>
     </div>
   );

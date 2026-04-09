@@ -7,6 +7,7 @@ import { ASSETS } from "@/lib/constants/assets";
 import { ITEM_VARIANTS } from "./memberShowcaseMotion";
 import { useSpotlight } from "../hooks/useSpotlight";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
 function SpotlightSkeleton() {
   return (
@@ -38,13 +39,13 @@ export function MemberShowcaseSpotlight() {
   return (
     <div>
       <Stack>
-        <div>
+        <div className="flex justify-center w-full">
           <Text
             variant="heading-4"
             gradient="white-blue"
             weight="bold"
             align="center"
-            className="text-xl font-bold w-auto pl-16"
+            className="text-2xl font-bold w-auto mb-10 md:mb-0"
           >
             Spotlight of the Day
           </Text>
@@ -54,19 +55,19 @@ export function MemberShowcaseSpotlight() {
           <SpotlightSkeleton />
         ) : (
           <motion.div
-            className="flex flex-col items-center gap-8 px-0 md:gap-10 md:px-6 lg:flex-row lg:gap-12 lg:px-24"
+            className="flex flex-col items-center lg:items-start gap-8 px-0 md:gap-6 md:px-6 lg:flex-row lg:gap-8 "
             initial={prefersReduced ? undefined : "hidden"}
             animate={prefersReduced ? undefined : "visible"}
           >
             <motion.div
               className="relative w-full shrink-0 lg:w-120"
               variants={prefersReduced ? undefined : ITEM_VARIANTS}
-              whileHover={prefersReduced ? undefined : { rotate: -2, y: -4 }}
-              transition={
-                prefersReduced
-                  ? undefined
-                  : { type: "spring", stiffness: 220, damping: 18 }
-              }
+              // whileHover={prefersReduced ? undefined : { rotate: -2, y: -4 }}
+              // transition={
+              //   prefersReduced
+              //     ? undefined
+              //     : { type: "spring", stiffness: 220, damping: 18 }
+              // }
             >
               <div className="relative w-full overflow-hidden rounded-2xl" style={{ aspectRatio: "640/390" }}>
                 <Image
@@ -75,21 +76,26 @@ export function MemberShowcaseSpotlight() {
                   fill
                   className="object-cover pointer-events-none"
                 />
+
+                {/* Bottom Right Label: Avatars & Text */}
+                <div className="absolute bottom-4 right-4 z-20 flex items-center gap-2 rounded-full bg-black/40 backdrop-blur-md pl-1.5 pr-4 py-1.5 border border-white/10 select-none shadow-xl">
+                  <div className="flex -space-x-2">
+                    <img src={ASSETS.MEMBER_SHOWCASE.ICONS.SPARKY_LEADERBOARD} alt="Avatar" className="w-5 h-5 md:w-6 md:h-6 rounded-full border border-[#1d2231] bg-[#1d2231] object-cover" />
+                  </div>
+                  <span className="text-[9px] md:text-[11px] font-medium text-white shadow-sm">We are proud of you!</span>
+                </div>
               </div>
+              
               <motion.div
-                whileHover={prefersReduced ? undefined : { rotate: 4, y: -6 }}
-                transition={
-                  prefersReduced
-                    ? undefined
-                    : { type: "spring", stiffness: 240, damping: 18 }
-                }
+                className="absolute z-10 -top-7 md:-top-11 lg:-top-13 left-2 md:left-4 lg:left-6"
+                style={{ transform: "translate(-30%, -40%)" }}
               >
                 <Image
                   src={ASSETS.MEMBER_SHOWCASE.ICONS.SPARKY_LEADERBOARD}
                   alt="Sparky leaderboard"
                   width={178}
                   height={241}
-                  className="pointer-events-none absolute z-10 w-20 h-auto -top-18.25 left-10 md:w-34 md:-top-31 lg:-top-40 lg:left-35 lg:w-44 lg:h-auto"
+                  className="pointer-events-none w-20 h-auto md:w-32 lg:w-40"
                 />
               </motion.div>
             </motion.div>
@@ -98,9 +104,9 @@ export function MemberShowcaseSpotlight() {
               className="flex-1"
               variants={prefersReduced ? undefined : ITEM_VARIANTS}
             >
-              <Stack gap="md" className="text-center lg:text-left">
+              <Stack gap="sm" className="text-center lg:text-left">
                 <Inline justify="between">
-                  <Text variant="heading-6" gradient="white-yellow" weight="bold">
+                  <Text variant="heading-6" gradient="white-yellow" weight="bold" className="capitalize">
                     {data ? data.data.title : ""}
                   </Text>
                   <Button
@@ -118,7 +124,7 @@ export function MemberShowcaseSpotlight() {
                   </Button>
                 </Inline>
                 <Text variant="body" color="secondary">
-                  {data ? data.data.createdAt : ""}
+                  {data && data.data.createdAt ? formatDate(new Date(data.data.createdAt)) : ""}
                 </Text>
                 <Text variant="body" color="on-primary">
                   {data ? data.data.description : ""}

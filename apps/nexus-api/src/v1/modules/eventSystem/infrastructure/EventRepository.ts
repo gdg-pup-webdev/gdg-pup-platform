@@ -87,6 +87,8 @@ export class EventRepository implements IEventRepository {
       end_date: new Date(row.end_date || ""),
       attendance_points: Number(row.attendance_points),
       attendees_count: Number(row.attendees_count),
+      rsvp:
+        row.rsvp !== null && row.rsvp !== undefined ? Number(row.rsvp) : null,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
       bevy_event_id: row.gdg_event_id?.toString() ?? null,
@@ -133,6 +135,7 @@ export class EventRepository implements IEventRepository {
       end_date: props.end_date.toISOString(),
       attendance_points: props.attendance_points,
       attendees_count: props.attendees_count,
+      rsvp: props.rsvp,
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString(),
       gdg_event_id,
