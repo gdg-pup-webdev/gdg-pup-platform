@@ -5,6 +5,10 @@
 :root {
   --background: #0f0e0e;
   --foreground: #0f0e0e;
+  /* for idHeroStage.tsx when in mobile view */
+  --spiral-outer-ratio: 602 / 388;
+  --spiral-center-ratio: 209 / 35;
+  --spiral-inner-ratio: 148 / 16;
 }
 
 @theme inline {
@@ -238,6 +242,14 @@
   :root {
     --background: #0f0e0e;
     --foreground: #ededed;
+  }
+}
+@media (min-width: 640px) {
+  /* for idHeroStage.tsx medium to larger screen sizes */
+  :root {
+    --spiral-outer-ratio: 1204 / 188;
+    --spiral-center-ratio: 1018 / 125;
+    --spiral-inner-ratio: 697 / 66;
   }
 }
 

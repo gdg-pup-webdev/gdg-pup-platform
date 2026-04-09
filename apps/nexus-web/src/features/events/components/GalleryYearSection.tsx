@@ -76,12 +76,15 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
   const [expandedDescriptions, setExpandedDescriptions] = useState<
     Record<string, boolean>
   >({});
+  const INITIAL_COUNT = 4;
+  const STEP = 10;
+  const [pageSize, setPageSize] = useState(INITIAL_COUNT);
 
   const {
     data: events,
     error: errorMessage,
     isLoading,
-  } = useEvents({ year: parsedYear });
+  } = useEvents({ year: parsedYear, pageSize });
 
   const visibleItems = useMemo(() => {
     if (!isYearValid) return [];
@@ -260,9 +263,9 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
             </Text>
           </Stack>
 
-          {isLoading ? (
+          {isLoading && !events ? (
             <div className="space-y-10 md:space-y-14">
-              {[1, 2].map((i) => (
+              {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="animate-pulse">
                   {/* One big rectangle skeleton */}
                   <Skeleton className="h-[220px] md:h-[560px] w-full rounded-2xl bg-white/10 border border-white/10" />
@@ -299,12 +302,24 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               </Text>
             </div>
           ) : errorMessage ? (
-            <div className="rounded-2xl border border-red-500/40 bg-black/30 p-6 md:p-8">
-              <Text variant="body" className="text-red-200">
-                {errorMessage.message}
+            <div className="flex flex-col items-center py-10 md:py-14 gap-8">
+              <Text
+                variant="body"
+                className="text-white/60 text-sm italic font-medium max-w-xs text-center border-t border-white/5 pt-4"
+              >
+                {errorMessage.message ||
+                  "An unexpected error occurred while loading contents."}
               </Text>
+              <div className="relative group overflow-hidden rounded-3xl">
+                <img
+                  src="/sparky-points/sparkypoints-cirby-denied.webp"
+                  alt="Failed to fetch"
+                  className="w-68 md:w-96 opacity-90 drop-shadow-2xl brightness-90 saturate-125 transition-transform duration-500 group-hover:scale-105"
+                  draggable={false}
+                />
+              </div>
             </div>
-          ) : visibleItems.length === 0 ? (
+          ) : (visibleItems.length === 0 && !isLoading) ? (
             <div className="flex flex-col items-center py-10 md:py-14 gap-6">
               <Text
                 variant="heading-5"
@@ -334,7 +349,6 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                 );
                 const venue = event.venue?.trim() || "Location TBA";
                 const routeId = getHighlightsRouteId(event);
-                const canOpen = Boolean(routeId && event.title?.trim());
                 const descriptionKey = `${event.id || routeId}-${event.start_date}`;
                 const isExpanded = Boolean(
                   expandedDescriptions[descriptionKey],
@@ -431,30 +445,23 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                           </button>
                         </div>
                       ) : null}
-
-                      {canOpen ? (
-                        <Link
-                          href={`/events/gallery/${encodeURIComponent(yearTitle)}/${encodeURIComponent(
-                            routeId,
-                          )}?title=${encodeURIComponent(event.title)}`}
-                          className="mt-6 md:mt-7 h-10 md:h-11 w-full rounded-md border border-[#4285F4] bg-[linear-gradient(90deg,rgba(20,57,132,0.9)_0%,rgba(59,141,255,0.96)_50%,rgba(20,57,132,0.9)_100%)] hover:bg-[linear-gradient(90deg,rgba(11,34,90,0.98)_0%,rgba(72,153,255,0.96)_50%,rgba(11,34,90,0.98)_100%)] text-white text-sm md:text-base font-medium inline-flex items-center justify-center gap-1 transition-[background-image,border-color,box-shadow] duration-300 ease-out hover:border-[#5B95FF] hover:shadow-[0_0_18px_rgba(66,133,244,0.32)]"
-                        >
-                          View More Event Highlights
-                          <span aria-hidden="true">&rarr;</span>
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="mt-6 md:mt-7 h-10 md:h-11 w-full rounded-md border border-white/15 bg-white/5 text-white/50 text-sm md:text-base font-medium"
-                        >
-                          No Event Highlights Available
-                        </button>
-                      )}
                     </div>
                   </article>
                 );
               })}
+
+              {events?.meta &&
+                events.data.length < events.meta.totalRecords && (
+                  <div className="mt-8 md:mt-12 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setPageSize((prev) => prev + STEP)}
+                      className="w-full md:w-fit md:min-w-[240px] px-8 py-3.5 border border-white rounded-[12px] text-white text-sm md:text-base font-medium bg-transparent hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer flex items-center justify-center font-outfit"
+                    >
+                      {isLoading ? "Loading..." : "Load more"}
+                    </button>
+                  </div>
+                )}
             </div>
           )}
         </Stack>

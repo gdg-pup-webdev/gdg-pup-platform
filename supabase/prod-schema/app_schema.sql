@@ -246,6 +246,7 @@ CREATE TABLE IF NOT EXISTS "public"."event" (
     "venue" "text",
     "attendance_points" bigint DEFAULT '0'::bigint NOT NULL,
     "attendees_count" bigint DEFAULT '0'::bigint NOT NULL,
+    "rsvp" bigint,
     "gdg_event_id" bigint,
     "thumbnail_url" "text",
     "bevy_preview_url" "text",
