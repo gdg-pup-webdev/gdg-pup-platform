@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -36,6 +37,7 @@ export function DateSelector({
 }: DateSelectorProps) {
   const currentYear = date.getFullYear();
   const currentMonth = date.getMonth();
+  const [isOpen, setIsOpen] = useState(false);
 
   const years = Array.from(
     { length: 5 },
@@ -58,48 +60,28 @@ export function DateSelector({
 
   return (
     <div className={className}>
-      <div className="w-full *:w-1/4">
-        <Dropdown>
+      <div className="flex items-center justify-between gap-3">
+        <Dropdown onOpenChange={setIsOpen}>
           <DropdownTrigger asChild>
             <Button
               variant="ghost"
-              className="bg-[#1a1a1a] border border-white/10 hover:bg-[#262626] w-full h-12 flex justify-between items-center px-4 rounded-xl group transition-all duration-200"
+              className="bg-[#1a1a1a] border border-white/10 hover:bg-[#262626] h-10 md:h-12 flex items-center gap-2 px-4 md:px-5 rounded-xl group transition-all duration-200 shadow-sm"
             >
-              <span className="text-white/90 text-lg font-bold tracking-tight">
+              <span className="text-white/90 text-sm md:text-base font-bold tracking-tight">
                 {MONTHS[currentMonth]} {currentYear}
               </span>
-              <div className="flex items-center gap-3 ml-4">
-                <button
-                  type="button"
-                  onClick={handlePrevMonth}
-                  className="p-1.5 hover:bg-white/10 rounded-md transition-colors group/btn flex items-center justify-center"
-                  aria-label="Previous month"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-5 w-5 text-white/50 group-hover/btn:text-white transition-colors"
-                  >
-                    <path d="m12 8-6 8h12z" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextMonth}
-                  className="p-1.5 hover:bg-white/10 rounded-md transition-colors group/btn flex items-center justify-center"
-                  aria-label="Next month"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-5 w-5 text-white/50 group-hover/btn:text-white transition-colors"
-                  >
-                    <path d="m12 16 6-8H6z" />
-                  </svg>
-                </button>
-              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`h-4 w-4 transition-all duration-200 ${isOpen ? "text-white rotate-180" : "text-white/50 group-hover:text-white"}`}
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
             </Button>
           </DropdownTrigger>
           <DropdownContent className="bg-[#1a1a1a] border border-white/10 min-w-[320px] p-4 rounded-2xl shadow-2xl shadow-black/50">
@@ -170,6 +152,48 @@ export function DateSelector({
             </div>
           </DropdownContent>
         </Dropdown>
+
+        {/* Navigation Arrows */}
+        <div className="flex items-center bg-[#1a1a1a] border border-white/10 rounded-xl h-10 md:h-12 overflow-hidden shadow-sm">
+          <button
+            type="button"
+            onClick={handlePrevMonth}
+            className="px-3 md:px-4 h-full hover:bg-white/10 transition-colors flex items-center justify-center border-r border-white/10 group"
+            aria-label="Previous month"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 text-white/50 group-hover:text-white transition-colors"
+            >
+              <path d="m18 15-6-6-6 6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={handleNextMonth}
+            className="px-3 md:px-4 h-full hover:bg-white/10 transition-colors flex items-center justify-center group"
+            aria-label="Next month"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 text-white/50 group-hover:text-white transition-colors"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
