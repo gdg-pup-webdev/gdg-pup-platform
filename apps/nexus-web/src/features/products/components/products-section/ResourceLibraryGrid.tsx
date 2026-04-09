@@ -21,7 +21,7 @@ export function ResourceLibraryGrid() {
         gradient="white-green"
         align="center"
         weight="bold"
-        className="text-[2rem] leading-none sm:text-[2.75rem] md:text-[4.5rem]"
+        className="text-3xl leading-none sm:text-4xl md:text-5xl"
       >
         Resource Library
       </Text>
@@ -70,10 +70,10 @@ export function ResourceLibraryGrid() {
                     style={{
                       fontSize:
                         item.variant === "heading-1"
-                          ? "clamp(0.95rem, 13cqw, 3.5rem)"
+                          ? "clamp(0.95rem, 13cqw, 2.5rem)"
                           : item.variant === "heading-2"
-                            ? "clamp(0.85rem, 11cqw, 3rem)"
-                            : "clamp(0.8rem, 9.5cqw, 2.5rem)",
+                            ? "clamp(0.85rem, 11cqw, 2rem)"
+                            : "clamp(0.8rem, 9.5cqw, 1.75rem)",
                     }}
                   >
                     {item.body}

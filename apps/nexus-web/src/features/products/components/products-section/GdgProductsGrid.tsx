@@ -9,16 +9,19 @@ export function GdgProductsGrid() {
         gradient="white-green"
         align="center"
         weight="bold"
-        className="text-[2rem] leading-none sm:text-[2.75rem] md:text-[4.5rem]"
+        className="text-3xl leading-none sm:text-4xl md:text-5xl"
       >
         GDG Products
       </Text>
 
-      <div className="grid grid-cols-1 gap-5 mt-8 sm:gap-8 md:grid-cols-2 md:mt-10 xl:grid-cols-3 lg:gap-15">
+      <div 
+        className="grid grid-cols-1 mt-8 md:grid-cols-2 lg:grid-cols-3 md:mt-10" 
+        style={{ gap: 'clamp(1.5rem, 3vw, 2.5rem)' }}
+      >
         {GDG_PRODUCTS.map((product, i) => (
           <Card
             key={i}
-            className="relative h-80 lg:h-120 overflow-hidden rounded-[30px] bg-transparent"
+            className="relative h-72 overflow-hidden rounded-[30px] bg-transparent"
           >
             {/* Gradient border */}
             <div
@@ -50,7 +53,7 @@ export function GdgProductsGrid() {
                     "linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)",
                 }}
               />
-              <CardTitle className="relative z-10 text-white text-xl sm:text-2xl lg:text-4xl font-semibold leading-tight lg:leading-10">
+              <CardTitle className="relative z-10 text-white text-xl sm:text-2xl lg:text-3xl font-semibold leading-tight lg:leading-10">
                 {product.title}
               </CardTitle>
             </div>

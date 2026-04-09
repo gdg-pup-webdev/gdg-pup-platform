@@ -58,7 +58,7 @@ export function ProductsSection() {
         alt=""
       />
 
-      <Container className="max-w-[1700px]">
+      <Container className="max-w-7xl">
         <Stack gap="2xl" className="relative z-10">
           <ProductsBreadcrumbs />
 
@@ -67,7 +67,7 @@ export function ProductsSection() {
             gradient="white-blue"
             align="center"
             weight="bold"
-            className="text-[2.5rem] leading-none sm:text-[3.25rem] md:text-[4.5rem]"
+            className="text-[2.5rem] leading-none sm:text-[3.25rem] md:text-5xl lg:text-6xl"
           >
             PRODUCTS
           </Text>
