@@ -21,11 +21,12 @@ export function ResourceLibraryGrid() {
         gradient="white-green"
         align="center"
         weight="bold"
+        className="text-[2rem] leading-none sm:text-[2.75rem] md:text-[4.5rem]"
       >
         Resource Library
       </Text>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-10 mt-10 lg:mt-25">
+      <div className="grid grid-cols-2 gap-4 mt-8 sm:gap-5 md:grid-cols-3 md:gap-6 md:mt-10 lg:grid-cols-4 lg:gap-10 lg:mt-25">
         {RESOURCE_LIBRARY.map((item) => (
           <TiltCard key={item.href} className="relative block w-full">
             <Link href={item.href} className="block w-full">
@@ -69,10 +70,10 @@ export function ResourceLibraryGrid() {
                     style={{
                       fontSize:
                         item.variant === "heading-1"
-                          ? "clamp(1rem, 16cqw, 4.5rem)"
+                          ? "clamp(0.95rem, 13cqw, 3.5rem)"
                           : item.variant === "heading-2"
-                            ? "clamp(0.875rem, 13cqw, 3.75rem)"
-                            : "clamp(0.75rem, 11cqw, 3rem)",
+                            ? "clamp(0.85rem, 11cqw, 3rem)"
+                            : "clamp(0.8rem, 9.5cqw, 2.5rem)",
                     }}
                   >
                     {item.body}

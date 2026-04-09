@@ -1,3 +1,8 @@
+export interface TeamContentEntry {
+  title: string;
+  description: string;
+}
+
 export interface TeamContent {
   /** About the Team card description (plain text). */
   description: string;
@@ -11,14 +16,32 @@ export interface TeamContent {
   categories: string[];
 
   // Member Level dropdown
-  memberLevelTitle: string;
-  memberLevelDescription: string;
+  /** Preferred flexible shape for one or more member-level entries. */
+  memberLevels?: TeamContentEntry[];
+  memberLevelTitle?: string;
+  memberLevelDescription?: string;
+  memberLevelSecondaryTitle?: string;
+  memberLevelSecondaryDescription?: string;
+  memberLevelTertiaryTitle?: string;
+  memberLevelTertiaryDescription?: string;
+  memberLevelQuaternaryTitle?: string;
+  memberLevelQuaternaryDescription?: string;
+  memberLevelQuinaryTitle?: string;
+  memberLevelQuinaryDescription?: string;
+  memberLevelSenaryTitle?: string;
+  memberLevelSenaryDescription?: string;
 
   // Support Group dropdown
-  supportGroupTitle: string;
-  supportGroupDescription: string;
-  supportGroupSecondaryTitle: string;
-  supportGroupSecondaryDescription: string;
+  /** Preferred flexible shape for one or more support-group entries. */
+  supportGroups?: TeamContentEntry[];
+  supportGroupTitle?: string;
+  supportGroupDescription?: string;
+  supportGroupSecondaryTitle?: string;
+  supportGroupSecondaryDescription?: string;
+  supportGroupTertiaryTitle?: string;
+  supportGroupTertiaryDescription?: string;
+  supportGroupQuaternaryTitle?: string;
+  supportGroupQuaternaryDescription?: string;
 }
 
 export const TEAM_CONTENT: Record<string, TeamContent> = {
@@ -28,16 +51,24 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
     nameColor: "text-yellow-400",
     categories: ["UI Design", "UX Research", "Prototyping"],
 
-    memberLevelTitle: "Design Apprentice",
+    memberLevelTitle: "Senior UI/UX Designer",
     memberLevelDescription:
-      "Design Apprentices are members of the UI/UX Team who learn and contribute to crafting beautiful, user-centred digital experiences. They gain hands-on exposure to industry-standard tools such as Figma, conduct usability tests, and iterate on wireframes and prototypes. This is a space for members who are passionate about the intersection of aesthetics, psychology, and technology.",
-
-    supportGroupTitle: "Compliance Analyst",
+      "A leadership role that demonstrates skills not just in UI/UX expertise, but also in team management. It involves having direct access to early stages of project planning and contributing to key decisions within the team. Also, responsible for providing decisive feedback and design critique to Junior Designers and Cadets to ensure deliverables meet professional standards and brand guidelines during peer-to-peer revalidation within the team.",
+    memberLevelSecondaryTitle: "Junior UI/UX Designer",
+    memberLevelSecondaryDescription:
+      "An intermediate role that can lead to mini design tasks and mentor cadet designers. Possesses solid UI/UX knowledge and proficiency in design tools. Leads mini-design tasks and mentors the UI/UX Cadets.",
+    memberLevelTertiaryTitle: "UI/UX Cadet",
+    memberLevelTertiaryDescription:
+      "The UI/UX Cadets are members of the Technology Department who learn and contribute to creating user-friendly and visually appealing designs. Cadets gain hands-on experience in making wireframes, digital assets, and planning designs, collaborating with the Software Development cadets to support software projects.",
+    supportGroupTitle: "Program Analyst",
     supportGroupDescription:
-      "Maintains design ethics and documentation integrity across all UI/UX projects. Oversees governance of design systems, ensures adherence to accessibility standards, and promotes transparency in the team's design decisions.",
-    supportGroupSecondaryTitle: "Curriculum Analyst",
+      "Leads workshop facilitation through hosting, interactive activities, and engaging discussions, while also handling media and design by creating visuals for presentations, announcements, and overall workshop experiences.",
+    supportGroupSecondaryTitle: "Compliance Analyst",
     supportGroupSecondaryDescription:
-      "Designs the team's learning roadmap, workshops, and skill-building sessions. Curates resources on design principles, tools, and trends to ensure members grow into well-rounded designers.",
+      "Manages attendance, documentation, and platform resources, while also overseeing operational needs such as tracking systems, and creating and handling pre- and post-surveys to ensure smooth program delivery.",
+    supportGroupTertiaryTitle: "Curriculum Analyst",
+    supportGroupTertiaryDescription:
+      "Oversees research, content creation, and resource gathering, ensuring learning materials are clear, accurate, and accessible, while also preparing contingency plans, evaluating content, and compiling feedback to drive continuous improvement.",
   },
 
   "web-development": {
@@ -46,16 +77,21 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
     nameColor: "text-sky-400",
     categories: ["Frontend Development", "Backend Development", "Full-Stack Integration"],
 
-    memberLevelTitle: "Web Dev Cadet",
+    memberLevelTitle: "Web Development Cadet",
     memberLevelDescription:
-      "Web Dev Cadets are members of the Web Development Team who learn and contribute to building full-stack web projects. They gain practical experience with frameworks such as React and Next.js, RESTful API design, and database integration. This is a space for members who love turning ideas into functional, beautiful, and accessible web experiences.",
-
-    supportGroupTitle: "Compliance Analyst",
+      "The Web Development Cadets are members of the Technology Department who learn and contribute to building high-quality software solutions. Cadets gain hands-on experience in backend, frontend, or full-stack development for web and mobile platforms while collaborating with other cadets on real projects.",
+    supportGroupTitle: "Program Analyst",
     supportGroupDescription:
-      "Maintains code quality standards and documentation integrity across all web projects. Oversees governance of coding conventions, ensures adherence to security best practices, and promotes transparency in technical decisions.",
-    supportGroupSecondaryTitle: "Curriculum Analyst",
+      "Organizes workshops, study jams, and hackathons to enhance both technical and soft skills. Ensures an active, engaging, and growth-oriented team environment.",
+    supportGroupSecondaryTitle: "Compliance Analyst",
     supportGroupSecondaryDescription:
-      "Designs the team's learning roadmap, coding challenges, and mentorship sessions. Curates resources on web technologies, best practices, and career pathways to support the growth of every team member.",
+      "Maintains ethical standards and documentation integrity. Oversees governance, ensures compliance with policies, and promotes transparency across all projects.",
+    supportGroupTertiaryTitle: "Curriculum Analyst",
+    supportGroupTertiaryDescription:
+      "Designs the team’s learning roadmap, lessons, and progress tracking. Curates resources that build solid technical foundations and structured skill growth.",
+    supportGroupQuaternaryTitle: "Backend/Frontend Head",
+    supportGroupQuaternaryDescription:
+      "Leads the web development team in creating and maintaining websites. Guides members in coding, project workflows, and problem-solving while mentoring them to improve their skills and deliver quality, secure outputs.",
   },
 
   cybersecurity: {
@@ -64,16 +100,15 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
     nameColor: "text-green-400",
     categories: ["Threat Detection", "Encryption & Data Protection", "Risk Assessment"],
 
-    memberLevelTitle: "Security Cadet",
+    memberLevelTitle: "Cybersecurity Cadet",
     memberLevelDescription:
-      "Security Cadets are members of the Cybersecurity Team who learn and contribute to defending digital systems. They tackle CTF challenges, explore vulnerability assessment tools, and study attack-and-defense methodologies in a safe, controlled environment. This is a space for curious minds who want to understand how systems can be secured—and how attackers think.",
-
+      "The Cybersecurity Cadets are members of the Technology Department who learn and contribute to protecting digital assets and infrastructure. Cadets gain hands-on experience in security practices and may collaborate with Software Development, Game Development, and Cloud Engineering cadets to support organizational projects.",
     supportGroupTitle: "Compliance Analyst",
     supportGroupDescription:
-      "Maintains ethical standards and documentation integrity across all cybersecurity activities. Oversees governance of responsible disclosure practices, ensures compliance with legal and organizational policies, and promotes a culture of accountability.",
+      "Ensures active participation in sessions and workshops by tracking attendance, following up with non-participating members, and regularly requesting updates to foster engagement. They manage and oversee the distribution of class materials, set up assignments, organize resources, and enforce guidelines to ensure alignment with project goals.",
     supportGroupSecondaryTitle: "Curriculum Analyst",
     supportGroupSecondaryDescription:
-      "Designs the team's learning roadmap, lab exercises, and skill-building sessions. Curates resources on cybersecurity frameworks, tools, and industry certifications to guide members toward professional readiness.",
+      "Develops educational content, including roadmaps and training materials, to provide structured and effective skill-building for team members. They outline key session topics, assess content depth, and may also serve as session speakers. After each session, they provide comprehensive notes, distribute educational content to team members, and work closely with the Program Analyst on presentation materials.",
   },
 
   "data-ml": {
@@ -82,17 +117,32 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
     nameColor: "text-sky-400",
     categories: ["Data Analysis", "Model Training", "Artificial Intelligence"],
 
-    memberLevelTitle: "Data Cadet",
+    memberLevelTitle: "Data & ML Cadet",
     memberLevelDescription:
-      "Data Cadets are members of the Data & ML Team who learn and contribute to exploring the world of data and artificial intelligence. They work with structured and unstructured datasets, experiment with popular ML frameworks such as scikit-learn and TensorFlow, and present findings through data visualizations. This is a space for members passionate about uncovering patterns and building intelligent systems.",
+      "The Data & ML Cadets are members of the Technology Department who learn and contribute to building data-driven solutions that support organizational goals. Cadets gain hands-on experience and collaborate in the fields of data science, artificial intelligence, and machine learning, developing skills through practical projects and teamwork.",
+    memberLevelSecondaryTitle: "Data & ML Lead",
+    
+    memberLevelTertiaryTitle: "Data Engineering Team",
+    memberLevelTertiaryDescription: "Members will focus on building robust data pipelines, including web scraping, data collection, and the development of ETL (Extract, Transform, Load) and ELT (Extract, Load, Transform) pipelines using tools such as SQL and workflow orchestrators like Apache Airflow to ensure data is reliable and ready for analysis and model training.",
+    memberLevelQuaternaryTitle: "Data Analytics Team",
+    memberLevelQuaternaryDescription: "Members will focus on data storytelling, modeling (star/snowflake schemas), and craft interactive dashboards using SQL, Python (pandas, seaborn), and visualization platforms like Power BI and Tableau to support informed decision-making.",
+    memberLevelQuinaryTitle: "Data Science Team",
+    memberLevelQuinaryDescription: "Members will apply statistical models and advanced analytics to extract insights from complex data. They design experiments, perform regression and feature engineering, and build prescriptive models using Python (scikit-learn) in Jupyter or Colab environments to produce actionable recommendations.",
+    memberLevelSenaryTitle: "Machine Learning Team",
+    memberLevelSenaryDescription: "Members will design, train, and deploy machine learning models for intelligent automation, prediction, and classification. They explore advanced areas such as natural language processing and image recognition, and practice MLOps and model deployment using TensorFlow, PyTorch, FastAPI/Flask, and containerization tools like Docker.",
 
-    supportGroupTitle: "Compliance Analyst",
+    supportGroupTitle: "Program Analyst",
     supportGroupDescription:
-      "Maintains data ethics and documentation integrity across all Data & ML projects. Oversees governance of data handling practices, ensures compliance with privacy regulations, and promotes transparency in model decisions and research outputs.",
-    supportGroupSecondaryTitle: "Curriculum Analyst",
+      "Organizes workshops, study jams, and hackathons to enhance both technical and soft skills. Ensures an active, engaging, and growth-oriented team environment.",
+    supportGroupSecondaryTitle: "Compliance Analyst",
     supportGroupSecondaryDescription:
-      "Designs the team's learning roadmap, tutorials, and workshops. Curates resources on statistics, ML algorithms, and data engineering to build a strong foundation for every team member.",
-  },
+      "Maintains ethical standards and documentation integrity. Oversees governance, ensures compliance with policies, and promotes transparency across all projects.",
+    supportGroupTertiaryTitle: "Curriculum Analyst",
+    supportGroupTertiaryDescription:
+      "Designs the team’s learning roadmap, lessons, and progress tracking. Curates resources that build solid technical foundations and structured skill growth.",
+    supportGroupQuaternaryTitle: "Product Analyst",
+    supportGroupQuaternaryDescription: "Transforms ideas into impactful projects—developing dashboards, ML tools, and data applications that align with organizational goals and showcase team innovation.",
+    },
 
   iot: {
     description:
@@ -103,14 +153,13 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
 
     memberLevelTitle: "IoT Cadet",
     memberLevelDescription:
-      "IoT Cadets are members of the Technology Department who learn and contribute to turning creative ideas into real, functional prototypes. By combining electronics, coding, and mechanical design, cadets gain hands-on experience building smart systems and automated solutions that connect the digital and physical worlds. This is a space for cadets who love to tinker, experiment, and solve problems through practical engineering.",
-
+      "The IoT Cadets are members of the Technology Department who learn and contribute to turning creative ideas into real, functional prototypes. By combining electronics, coding, and mechanical design, cadets gain hands-on experience building smart systems and automated solutions that connect the digital and physical worlds. This is a space for cadets who love to tinker, experiment, and solve problems through practical engineering.",
     supportGroupTitle: "Compliance Analyst",
     supportGroupDescription:
       "Maintains ethical standards and documentation integrity. Oversees governance, ensures compliance with policies, and promotes transparency across all projects.",
     supportGroupSecondaryTitle: "Curriculum Analyst",
     supportGroupSecondaryDescription:
-      "Designs the team's learning roadmap, lessons, and progress tracking. Curates resources that build solid technical foundations and structured skill growth.",
+      "Designs the team’s learning roadmap, lessons, and progress tracking. Curates resources that build solid technical foundations and structured skill growth.",
   },
 
   "cloud-solutions": {
@@ -119,16 +168,19 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
     nameColor: "text-red-500",
     categories: ["Cloud Infrastructure", "Scalability & Deployment", "DevOps & Automation"],
 
-    memberLevelTitle: "Cloud Cadet",
+    memberLevelTitle: "Cloud Solutions Cadet",
     memberLevelDescription:
-      "Cloud Cadets are members of the Cloud Solutions Team who learn and contribute to deploying and managing cloud-based systems. They explore services across compute, storage, networking, and security on platforms like Google Cloud while applying DevOps practices such as CI/CD and infrastructure-as-code. This is a space for members who want to build the backbone of modern software at scale.",
+      "The Cloud Solutions Cadets are members of the Technology Department who focus on learning and contributing to the development and management of scalable cloud solutions using the Google Cloud Platform.",  
 
-    supportGroupTitle: "Compliance Analyst",
+    supportGroupTitle: "Program Analyst",
     supportGroupDescription:
-      "Maintains cloud governance standards and documentation integrity across all projects. Oversees adherence to security policies, cost management best practices, and regulatory compliance, ensuring every deployment meets organizational and industry standards.",
-    supportGroupSecondaryTitle: "Curriculum Analyst",
+      "Responsible for planning and conceptualizing workshops and programs that engage participants and meet departmental goals. They work closely with Curriculum Analysts to create PowerPoint presentations based on provided materials or speaker content, ensuring consistency by using a designated template. The Program Analyst also issues certificates upon program completion, coordinates the smooth delivery of content, and maintains communication throughout the workshops.",
+    supportGroupSecondaryTitle: "Compliance Analyst",
     supportGroupSecondaryDescription:
-      "Designs the team's learning roadmap, labs, and certification preparation materials. Curates resources on cloud architecture, cost optimization, and platform-specific tooling to guide members toward cloud expertise.",
+      "Ensures active participation in sessions and workshops by tracking attendance, following up with non-participating members, and regularly requesting updates to foster engagement. They manage and oversee the distribution of class materials, set up assignments, organize resources, and enforce guidelines to ensure alignment with project goals and compliance with tasks established by the Project Analyst.",
+    supportGroupTertiaryTitle: "Curriculum Analyst",
+    supportGroupTertiaryDescription: "Researches study jam materials to provide structured and effective skill-building for the cadets. They outline key session topics, assess content depth, and may also serve as session speakers. They work closely with the Program Analyst on creating the presentation materials.",
+  
   },
 
   "project-management": {
@@ -142,16 +194,18 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
     nameColor: "text-green-400",
     categories: ["Planning & Scheduling", "Team Coordination", "Resource Management"],
 
-    memberLevelTitle: "PM Cadet",
+    memberLevelTitle: "Project Management Lead",
     memberLevelDescription:
-      "PM Cadets are members of the Project Management Team who learn and contribute to coordinating projects from inception to delivery. They practice sprint planning, backlog grooming, stakeholder communication, and retrospective facilitation — gaining the organizational and leadership skills needed to guide teams effectively. This is a space for members who thrive on structure, collaboration, and driving results.",
-
-    supportGroupTitle: "Compliance Analyst",
-    supportGroupDescription:
-      "Maintains process standards and documentation integrity across all project management activities. Oversees governance of workflows, ensures adherence to organizational policies, and promotes accountability and transparency in every project.",
-    supportGroupSecondaryTitle: "Curriculum Analyst",
-    supportGroupSecondaryDescription:
-      "Designs the team's learning roadmap, training sessions, and skill-building workshops. Curates resources on project management methodologies, tools, and professional development paths to prepare members for leadership roles.",
+      "Leads the Project Management Team by aligning workflows with departmental goals and ensuring resources and timelines are managed effectively. The Lead supports the Core Tech Teams by ensuring the smooth execution of events and initiatives. Key responsibilities include translating plans from Core Team Leads into actionable timelines and workflows, overseeing resources, and monitoring progress to make sure tasks are completed on time.",  
+    memberLevelSecondaryTitle: "Project Management Co-Leads",
+    memberLevelSecondaryDescription:
+      "The Co-Leads support the Lead in project execution across the Technology Department. They help in creating actionable timelines, tracking workflows, and monitoring resource allocation to ensure deadlines are met. In addition, they also collaborate with the Lead in coordinating between Project Management Associates and Tech Team Leads to improve efficiency, resolve blockers, and ensure projects are delivered successfully.",
+    memberLevelTertiaryTitle: "Project Management Secretary",
+    memberLevelTertiaryDescription:
+      "Responsible for ensuring the consolidation of reports, templates, and project records. The role also requires taking accurate minutes during meetings and recording key decisions, ensuring clarity, accountability, and consistency.",
+    memberLevelQuaternaryTitle: "Project Management Associates",
+    memberLevelQuaternaryDescription:
+      "They assist in the planning, execution, and monitoring of the events organized by the Technology Department together with relevant documents, ensuring proper tracking of set deadlines, and updating the progress trackers. Associates are also involved in contributing to relevant reports, evaluations, and post-event documents to support continuous improvement and maintain clear, organized records of activities and outcomes.",
   },
 
   executives: {

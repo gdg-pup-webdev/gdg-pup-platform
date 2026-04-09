@@ -9,12 +9,13 @@ export function GdgProductsGrid() {
         gradient="white-green"
         align="center"
         weight="bold"
+        className="text-[2rem] leading-none sm:text-[2.75rem] md:text-[4.5rem]"
       >
         GDG Products
       </Text>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-15 mt-10">
-        {GDG_PRODUCTS.map((name, i) => (
+      <div className="grid grid-cols-1 gap-5 mt-8 sm:gap-8 md:grid-cols-2 md:mt-10 xl:grid-cols-3 lg:gap-15">
+        {GDG_PRODUCTS.map((product, i) => (
           <Card
             key={i}
             className="relative h-80 lg:h-120 overflow-hidden rounded-[30px] bg-transparent"
@@ -49,8 +50,8 @@ export function GdgProductsGrid() {
                     "linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)",
                 }}
               />
-              <CardTitle className="relative z-10 text-white text-2xl lg:text-4xl font-semibold leading-tight lg:leading-10">
-                {name}
+              <CardTitle className="relative z-10 text-white text-xl sm:text-2xl lg:text-4xl font-semibold leading-tight lg:leading-10">
+                {product.title}
               </CardTitle>
             </div>
           </Card>

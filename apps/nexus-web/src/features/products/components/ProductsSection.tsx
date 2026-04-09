@@ -1,12 +1,13 @@
 "use client";
 
 import { Container, Stack, Text } from "@packages/spark-ui";
+import { ProductsBreadcrumbs } from "./products-section/ProductsBreadcrumbs";
 import { ResourceLibraryGrid } from "./products-section/ResourceLibraryGrid";
 import { GdgProductsGrid } from "./products-section/GdgProductsGrid";
 
 export function ProductsSection() {
   return (
-    <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
         src="/products/SPACE_BG_3_3.png"
@@ -59,7 +60,15 @@ export function ProductsSection() {
 
       <Container className="max-w-[1700px]">
         <Stack gap="2xl" className="relative z-10">
-          <Text variant="heading-1" gradient="white-blue" align="center" weight="bold">
+          <ProductsBreadcrumbs />
+
+          <Text
+            variant="heading-1"
+            gradient="white-blue"
+            align="center"
+            weight="bold"
+            className="text-[2.5rem] leading-none sm:text-[3.25rem] md:text-[4.5rem]"
+          >
             PRODUCTS
           </Text>
 

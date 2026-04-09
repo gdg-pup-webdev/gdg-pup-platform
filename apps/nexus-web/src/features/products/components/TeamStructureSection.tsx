@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { Container, Stack, Text } from "@packages/spark-ui";
+import type { TextVariants } from "@packages/spark-ui";
 import { ASSETS } from "@/lib/constants/assets";
 import { AboutTheTeam } from "./AboutTheTeam";
+import { Breadcrumbs } from "./Breadcrumbs";
 import { TeamLeadsGrid } from "./team-structure-section/TeamLeadsGrid";
 import { TeamStructureDropdowns } from "./team-structure-section/TeamStructureDropdowns";
 import { TEAM_CONTENT } from "../data/team-content";
@@ -10,6 +12,8 @@ interface TeamStructureSectionProps {
   teamName: string;
   teamSlug: string;
 }
+
+type TeamTitleGradient = NonNullable<TextVariants["gradient"]>;
 
 const TEAM_IMAGES: Record<string, string> = {
   iot: "/products/iot-logo.webp",
@@ -33,8 +37,29 @@ const TEAM_GLOW_COLORS: Record<string, string> = {
   executives: "#F9AB00",
 };
 
-const TEAM_GLOW_SIZES: Record<string, string> = {
-  executives: "350px",
+type GlowSize = {
+  base: string;
+  md: string;
+  lg: string;
+};
+
+const TEAM_GLOW_SIZES: Record<string, GlowSize> = {
+  executives: {
+    base: "420px",
+    md: "280px",
+    lg: "350px",
+  },
+};
+
+const TEAM_TITLE_GRADIENTS: Record<string, TeamTitleGradient> = {
+  "ui-ux": "white-yellow",
+  "web-development": "white-blue",
+  iot: "white-red",
+  cybersecurity: "white-green",
+  "data-ml": "white-blue",
+  "cloud-solutions": "white-red",
+  "project-management": "white-green",
+  executives: "white-yellow",
 };
 
 export function TeamStructureSection({
@@ -44,10 +69,16 @@ export function TeamStructureSection({
   const content = TEAM_CONTENT[teamSlug];
   const imageSrc = TEAM_IMAGES[teamSlug] ?? "/products/ui-ux-logo.webp";
   const glowColor = TEAM_GLOW_COLORS[teamSlug] ?? "#F9AB00";
-  const glowSize = TEAM_GLOW_SIZES[teamSlug] ?? "550px";
+  const glowSize = TEAM_GLOW_SIZES[teamSlug] ?? {
+    base: "350px",
+    md: "500px",
+    lg: "550px",
+  };
+  const titleGradient = TEAM_TITLE_GRADIENTS[teamSlug] ?? "white-yellow";
+  const hideSupportGroup = teamSlug === "project-management";
 
   return (
-    <div className="relative overflow-x-hidden overflow-y-hidden pt-40 lg:pt-60 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
         src="/products/RL-SPACE_BG_3_3.png"
@@ -108,6 +139,16 @@ export function TeamStructureSection({
 
       <Container maxWidth="full">
         <Stack gap="2xl" className="relative z-10">
+          {/* ── Breadcrumbs ── */}
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Products", href: "/products" },
+              { label: teamName, href: `/products/${teamSlug}` },
+              { label: "Team Structure" },
+            ]}
+          />
+
           {/* ── About the Team ── */}
           <Stack gap="lg" className="items-center">
             <Text
@@ -129,16 +170,22 @@ export function TeamStructureSection({
             </Text>
 
             {/* Team image + spirals */}
-            <div className="w-full mt-20 flex flex-col items-center">
-              {/* Main image with per-team glow */}
+            <div className="relative w-full mt-20 flex flex-col items-center">
+              {/* Amber Glow */}
               <div className="relative w-full flex justify-center items-center">
                 <div
-                  className="absolute rounded-full blur-[218.50px] pointer-events-none z-11"
+                  className="
+    absolute rounded-full pointer-events-none z-[11]
+    w-[var(--glow-size)] h-[var(--glow-size)]
+    md:w-[var(--glow-size-md)] md:h-[var(--glow-size-md)]
+    lg:w-[var(--glow-size-lg)] lg:h-[var(--glow-size-lg)]
+    blur-[218.5px]
+  "
                   style={{
                     backgroundColor: glowColor,
-                    opacity: 0.75,
-                    width: glowSize,
-                    height: glowSize,
+                    ["--glow-size" as string]: glowSize.base,
+                    ["--glow-size-md" as string]: glowSize.md,
+                    ["--glow-size-lg" as string]: glowSize.lg,
                   }}
                 />
                 <Image
@@ -151,19 +198,19 @@ export function TeamStructureSection({
               </div>
 
               {/* Gold glow behind image */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-10 w-[1200px] lg:w-[1900px] pointer-events-none z-10">
+              <div className="absolute left-1/2 -translate-x-1/2 -top-40 lg:-top-50 md:top-2 w-[1000px] md:w-[1000px] lg:w-[1900px] pointer-events-none z-10">
                 <Image
                   src="/products/gold-4.png"
                   alt=""
                   width={1200}
                   height={600}
-                  className="w-full h-auto mix-blend-screen opacity-67 blur-[50px]"
+                  className="w-full h-auto mix-blend-screen opacity-50 lg:opacity-30 blur-[50px]"
                 />
               </div>
 
               {/* Spirals */}
-              <div className="relative w-full max-w-3xl h-[100px] md:h-[140px] mt-[-10px] pointer-events-none">
-                <div className="absolute left-1/2 -translate-x-1/2 -top-25 w-[300px] md:w-[450px] lg:w-570 aspect-[1204/188] opacity-70">
+              <div className="relative z-0 w-full max-w-3xl h-[110px] md:h-[140px] mt-[-6px] md:mt-[-10px] pointer-events-none">
+                <div className="absolute left-1/2 -translate-x-1/2 -top-19 md:-top-20 w-[1360px] lg:w-570 aspect-[1204/188] opacity-70">
                   <Image
                     src={ASSETS.ID.SPIRAL_OUTER}
                     alt=""
@@ -171,7 +218,7 @@ export function TeamStructureSection({
                     className="object-contain"
                   />
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 -top-30 w-[240px] md:w-[360px] lg:w-480 aspect-[1204/188] opacity-70">
+                <div className="absolute left-1/2 -translate-x-1/2 -top-18 md:-top-20 w-[1020px] md:w-[1170px] lg:w-480 aspect-[1204/188] opacity-70">
                   <Image
                     src={ASSETS.ID.SPIRAL_OUTER}
                     alt=""
@@ -179,7 +226,7 @@ export function TeamStructureSection({
                     className="object-contain"
                   />
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 -top-24 w-[200px] md:w-[300px] lg:w-410 aspect-[1018/125] opacity-80">
+                <div className="absolute left-1/2 -translate-x-1/2 -top-14 md:-top-14 w-[880px] md:w-[1070px] lg:w-410 aspect-[1018/125] opacity-80">
                   <Image
                     src={ASSETS.ID.SPIRAL_CENTER}
                     alt=""
@@ -187,7 +234,7 @@ export function TeamStructureSection({
                     className="object-contain"
                   />
                 </div>
-                <div className="absolute left-1/2 -translate-x-1/2 -top-25 w-[220px] md:w-[330px] lg:w-450 aspect-[697/66] opacity-100">
+                <div className="absolute left-1/2 -translate-x-1/2 -top-13 md:-top-14 w-[670px] md:w-[1070px] lg:w-450 aspect-[697/66] opacity-100">
                   <Image
                     src={ASSETS.ID.SPIRAL_INNER}
                     alt=""
@@ -202,11 +249,11 @@ export function TeamStructureSection({
             <div className="w-full max-w-[1600px] mx-auto my-6 z-10 mt-30">
               <AboutTheTeam
                 description={
-                  <div className="text-lg md:text-3xl leading-snug md:leading-12 font-light">
+                  <div className="w-full text-justify font-['Google_Sans',sans-serif] text-lg font-normal leading-8 text-neutral-50 md:text-2xl md:leading-9">
                     {content ? (
                       <>
                         The{" "}
-                        <span className={content.nameColor}>
+                        <span className={`${content.nameColor} font-medium`}>
                           {content.displayName ?? `${teamName} Team`}
                         </span>{" "}
                         {content.description.replace(/^The .+? Team /, "")}
@@ -226,12 +273,14 @@ export function TeamStructureSection({
                 categories={
                   <>
                     {(content?.categories ?? []).map((cat) => (
-                      <span
+                      <div
                         key={cat}
-                        className="inline-flex items-center rounded-full border border-white/15 bg-[#1B2745]/65 px-3 py-1 text-sm font-normal leading-5 text-white"
+                        className="inline-flex h-8 items-center justify-start gap-1.5 rounded-3xl border border-white/10 bg-blue-950/30 px-3 py-1.5 sm:h-9 sm:gap-2 sm:px-4 sm:py-2 md:h-10 md:px-4 md:py-2 lg:h-11 lg:gap-2.5 lg:px-5 lg:py-2.5"
                       >
-                        {cat}
-                      </span>
+                        <div className="justify-start whitespace-nowrap font-['Google_Sans',sans-serif] text-xs leading-4 font-normal text-white sm:text-sm sm:leading-5 md:text-lg md:leading-7 lg:text-2xl lg:leading-9">
+                          {cat}
+                        </div>
+                      </div>
                     ))}
                   </>
                 }
@@ -243,7 +292,11 @@ export function TeamStructureSection({
           <TeamLeadsGrid teamSlug={teamSlug} />
 
           {/* ── Team Structure + Dropdowns ── */}
-          <TeamStructureDropdowns content={content} />
+          <TeamStructureDropdowns
+            content={content}
+            hideSupportGroup={hideSupportGroup}
+            titleGradient={titleGradient}
+          />
         </Stack>
       </Container>
     </div>
