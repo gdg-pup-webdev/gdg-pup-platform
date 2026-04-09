@@ -46,8 +46,8 @@ describe("EventSystemController", () => {
   const listEventsByYearUseCase = { execute: vi.fn() };
   const getEventsByTypeUseCase = { execute: vi.fn() };
   const getEventsByTeamUseCase = { execute: vi.fn() };
-  const importallandsyncuc = { execute: vi.fn() };
-  const synceventtobevy = { execute: vi.fn() };
+  const importAndSyncAllToBevyUseCase = { execute: vi.fn() };
+  const syncEventToBevyUseCase = { execute: vi.fn() };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -64,8 +64,8 @@ describe("EventSystemController", () => {
       listEventsByYearUseCase as any,
       getEventsByTypeUseCase as any,
       getEventsByTeamUseCase as any,
-      importallandsyncuc as any,
-      synceventtobevy as any,
+      importAndSyncAllToBevyUseCase as any,
+      syncEventToBevyUseCase as any,
     );
   });
 

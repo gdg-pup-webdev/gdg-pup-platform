@@ -7,12 +7,16 @@ import { handlePostgresError } from "@/v1/lib/supabase.utils";
 type EventRow = Tables<"event">;
 type EventInsertDTO = TablesInsert<"event">;
 type EventUpdateDTO = TablesUpdate<"event">;
+type TeamRelation = { name?: string | null } | null;
+type EventRowWithTeam = EventRow & {
+  team?: TeamRelation | TeamRelation[];
+};
 
 export class EventRepository implements IEventRepository {
   private readonly tableName = "event";
   private readonly selectWithTeam = "*, team(name)";
 
-  private extractTeamName(row: any): string | null {
+  private extractTeamName(row: EventRowWithTeam): string | null {
     const team = row?.team;
 
     if (!team) return null;
@@ -25,7 +29,7 @@ export class EventRepository implements IEventRepository {
     return typeof team.name === "string" ? team.name : null;
   }
 
-  private mapToDomain(row: any): Event {
+  private mapToDomain(row: EventRowWithTeam): Event {
     /**
      * Helper to clean array fields from corrupted data.
      * Handles:
@@ -223,7 +227,7 @@ export class EventRepository implements IEventRepository {
       .from(this.tableName)
       .select(this.selectWithTeam, { count: "exact" })
       .gte("start_date", new Date(year, 0, 1).toISOString())
-      .lte("start_date", new Date(year, 11, 31).toISOString())
+      .lt("start_date", new Date(year + 1, 0, 1).toISOString())
       .order("start_date", { ascending: true })
       .range(from, to);
 
