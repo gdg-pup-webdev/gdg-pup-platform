@@ -14,8 +14,25 @@ export interface IGdgMemberRepository {
     pageSize: number,
     filters?: GdgMemberFilters,
   ): Promise<{ list: GdgMember[]; count: number }>;
-  findMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]>;
   findPublicMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]>;
+  findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+    },
+  ): Promise<GdgMember[]>;
+  findPublicMembersWithSameYearLevelExcludingGdgId(
+    gdgId: string,
+    yearLevel: number | null,
+  ): Promise<GdgMember[]>;
+  findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+    },
+  ): Promise<GdgMember[]>;
   saveNew(member: GdgMember): Promise<GdgMember>;
   persistUpdates(member: GdgMember): Promise<GdgMember>;
   deleteByGdgId(gdgId: string): Promise<void>;

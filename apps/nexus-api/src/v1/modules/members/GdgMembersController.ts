@@ -27,7 +27,7 @@ export class GdgMembersController {
     private readonly makeProfilePublicUseCase: MakeProfilePublic,
     private readonly searchUseCase: SearchMember,
     private readonly changePfpUseCase: ChangeProfilePicture,
-    private readonly getSimilarUsersUseCase: GetSimilarUsers,
+    private readonly getSuggestedUsersUseCase: GetSimilarUsers,
   ) {}
 
   private flattenMemberData(data: GdgMember) {
@@ -49,13 +49,13 @@ export class GdgMembersController {
     return result.map((m) => m.props);
   }
 
-  async getSimilarUsers(
+  async getSuggestedUsers(
     gdgId: string,
     pageNumber: number,
     pageSize: number,
-    strategy: SimilarUsersStrategy = "relevant",
+    strategy: SimilarUsersStrategy = "exploratory",
   ) {
-    const result = await this.getSimilarUsersUseCase.execute(
+    const result = await this.getSuggestedUsersUseCase.execute(
       gdgId,
       pageNumber,
       pageSize,

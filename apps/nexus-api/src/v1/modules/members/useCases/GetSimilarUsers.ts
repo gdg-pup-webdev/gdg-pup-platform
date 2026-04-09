@@ -15,7 +15,8 @@ const SIMILARITY_WEIGHTS = {
 export type SimilarUsersStrategy = "relevant" | "exploratory";
 
 export class GetSimilarUsers {
-  private readonly exploratoryRatio = 0.9;
+  private readonly relatedShare = 0.8;
+  private readonly exploratoryPoolSize = 15;
 
   constructor(private readonly repo: IGdgMemberRepository) {}
 
@@ -33,88 +34,294 @@ export class GetSimilarUsers {
       throw new NotFoundError(`Member not found for gdgId: ${gdgMemberId}`);
     }
 
-    const candidates = await this.repo.findMembersExcludingGdgId(gdgMemberId);
-
-    const scoredCandidates = candidates.map((member) => ({
-      member,
-      score: this.calculateSimilarityScore(sourceMember, member),
-      hasCoreRelevance: this.hasCoreRelevance(sourceMember, member),
-    }));
-
-    const rankedMembers = scoredCandidates
-      .filter((entry) =>
-        strategy === "relevant" ? entry.hasCoreRelevance : true,
-      )
-      .sort((left, right) => {
-        if (right.score !== left.score) return right.score - left.score;
-
-        const leftName = this.sortKey(left.member);
-        const rightName = this.sortKey(right.member);
-
-        return leftName.localeCompare(rightName);
-      });
+    const relevantCandidates = await this.getRelevantCandidates(
+      gdgMemberId,
+      sourceMember,
+    );
+    const rankedRelevantMembers = this.rankBySimilarity(
+      sourceMember,
+      relevantCandidates,
+    );
 
     const from = (pageNumber - 1) * pageSize;
-    const processedPageMembers =
-      strategy === "exploratory"
-        ? this.buildExploratoryPage(scoredCandidates, from, pageSize)
-        : rankedMembers.slice(from, from + pageSize);
-    const list = processedPageMembers.map((entry) => entry.member);
+
+    if (strategy === "relevant") {
+      return {
+        list: rankedRelevantMembers
+          .slice(from, from + pageSize)
+          .map((entry) => entry.member),
+        count: rankedRelevantMembers.length,
+      };
+    }
+
+    const nonRelevantCandidates = await this.getNonRelevantCandidates(
+      gdgMemberId,
+      sourceMember,
+      rankedRelevantMembers,
+    );
+    const rankedStrictNonRelevantMembers = this.rankForExploration(
+      sourceMember,
+      nonRelevantCandidates,
+    );
+
+    const expandedNonRelevantMembers = await this.expandExploratoryCandidates(
+      gdgMemberId,
+      sourceMember,
+      rankedRelevantMembers,
+      rankedStrictNonRelevantMembers,
+    );
+
+    const exploratorySequence = this.buildExploratorySequence(
+      rankedRelevantMembers,
+      expandedNonRelevantMembers,
+    );
+    const list = exploratorySequence
+      .slice(from, from + pageSize)
+      .map((entry) => entry.member);
 
     return {
       list,
-      count:
-        strategy === "exploratory"
-          ? scoredCandidates.length
-          : rankedMembers.length,
+      count: exploratorySequence.length,
     };
   }
 
-  private buildExploratoryPage(
-    scoredCandidates: Array<{
-      member: GdgMember;
-      score: number;
-      hasCoreRelevance: boolean;
-    }>,
-    from: number,
-    pageSize: number,
-  ): Array<{ member: GdgMember; score: number }> {
-    if (scoredCandidates.length === 0) return [];
+  private async getRelevantCandidates(
+    gdgMemberId: string,
+    sourceMember: GdgMember,
+  ): Promise<GdgMember[]> {
+    const sourceProps = sourceMember.props;
 
-    const sortedBySimilarityDesc = [...scoredCandidates].sort((left, right) => {
-      if (right.score !== left.score) return right.score - left.score;
-      return this.sortKey(left.member).localeCompare(
-        this.sortKey(right.member),
+    const [sameProgramOrDepartment, sameYearLevel] = await Promise.all([
+      this.repo.findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
+        gdgMemberId,
+        {
+          program: sourceProps.program,
+          department: sourceProps.department,
+        },
+      ),
+      this.repo.findPublicMembersWithSameYearLevelExcludingGdgId(
+        gdgMemberId,
+        sourceProps.yearLevel,
+      ),
+    ]);
+
+    const merged = this.dedupeByGdgId([
+      ...sameProgramOrDepartment,
+      ...sameYearLevel,
+    ]);
+
+    if (merged.length > 0) return merged;
+
+    return this.repo.findPublicMembersExcludingGdgId(gdgMemberId);
+  }
+
+  private async getNonRelevantCandidates(
+    gdgMemberId: string,
+    sourceMember: GdgMember,
+    rankedRelevantMembers: Array<{ member: GdgMember; score: number }>,
+  ): Promise<GdgMember[]> {
+    const relevantIds = new Set(
+      rankedRelevantMembers.map((entry) => entry.member.props.gdgId),
+    );
+
+    const sourceProps = sourceMember.props;
+    const nonRelevant =
+      await this.repo.findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
+        gdgMemberId,
+        {
+          program: sourceProps.program,
+          department: sourceProps.department,
+        },
       );
-    });
 
-    const nonSimilar = sortedBySimilarityDesc
-      .filter((entry) => !entry.hasCoreRelevance)
+    return nonRelevant.filter((member) => !relevantIds.has(member.props.gdgId));
+  }
+
+  private rankBySimilarity(
+    source: GdgMember,
+    candidates: GdgMember[],
+  ): Array<{ member: GdgMember; score: number }> {
+    return candidates
+      .map((member) => ({
+        member,
+        score: this.calculateSimilarityScore(source, member),
+      }))
       .sort((left, right) => {
-        if (left.score !== right.score) return left.score - right.score;
+        if (right.score !== left.score) return right.score - left.score;
         return this.sortKey(left.member).localeCompare(
           this.sortKey(right.member),
         );
       });
+  }
 
-    const similar = sortedBySimilarityDesc.filter(
-      (entry) => entry.hasCoreRelevance,
+  private rankForExploration(
+    source: GdgMember,
+    candidates: GdgMember[],
+  ): Array<{ member: GdgMember; score: number }> {
+    return candidates
+      .map((member) => ({
+        member,
+        score: this.calculateSimilarityScore(source, member),
+      }))
+      .sort((left, right) => {
+        const leftSeed = this.seededOrderKey(source.props.gdgId, left.member);
+        const rightSeed = this.seededOrderKey(source.props.gdgId, right.member);
+        if (leftSeed !== rightSeed) return leftSeed - rightSeed;
+        return this.sortKey(left.member).localeCompare(
+          this.sortKey(right.member),
+        );
+      });
+  }
+
+  private buildExploratorySequence(
+    rankedRelevantMembers: Array<{ member: GdgMember; score: number }>,
+    rankedNonRelevantMembers: Array<{ member: GdgMember; score: number }>,
+  ): Array<{ member: GdgMember; score: number }> {
+    const maxPoolSize = Math.min(
+      this.exploratoryPoolSize,
+      rankedRelevantMembers.length + rankedNonRelevantMembers.length,
     );
-    const targetNonSimilarCount = Math.min(
-      nonSimilar.length,
-      Math.ceil(pageSize * this.exploratoryRatio),
+
+    if (maxPoolSize === 0) return [];
+    if (rankedRelevantMembers.length === 0)
+      return rankedNonRelevantMembers.slice(0, maxPoolSize);
+    if (rankedNonRelevantMembers.length === 0)
+      return rankedRelevantMembers.slice(0, maxPoolSize);
+
+    let targetRelevantCount = Math.min(
+      rankedRelevantMembers.length,
+      Math.ceil(maxPoolSize * this.relatedShare),
+    );
+    let targetNonRelevantCount = Math.min(
+      rankedNonRelevantMembers.length,
+      maxPoolSize - targetRelevantCount,
     );
 
-    const combined = [
-      ...nonSimilar.slice(0, targetNonSimilarCount),
-      ...similar,
-      ...nonSimilar.slice(targetNonSimilarCount),
-    ];
+    let selectedCount = targetRelevantCount + targetNonRelevantCount;
+    if (selectedCount < maxPoolSize) {
+      const availableRelevant =
+        rankedRelevantMembers.length - targetRelevantCount;
+      const additionalRelevant = Math.min(
+        availableRelevant,
+        maxPoolSize - selectedCount,
+      );
+      targetRelevantCount += additionalRelevant;
+      selectedCount += additionalRelevant;
+    }
 
-    return combined.slice(from, from + pageSize).map((entry) => ({
-      member: entry.member,
-      score: entry.score,
-    }));
+    if (selectedCount < maxPoolSize) {
+      const availableNonRelevant =
+        rankedNonRelevantMembers.length - targetNonRelevantCount;
+      const additionalNonRelevant = Math.min(
+        availableNonRelevant,
+        maxPoolSize - selectedCount,
+      );
+      targetNonRelevantCount += additionalNonRelevant;
+    }
+
+    const selectedRelevant = rankedRelevantMembers.slice(
+      0,
+      targetRelevantCount,
+    );
+    const selectedNonRelevant = rankedNonRelevantMembers.slice(
+      0,
+      targetNonRelevantCount,
+    );
+
+    const relatedBatchSize = Math.max(
+      1,
+      Math.round(this.relatedShare / (1 - this.relatedShare)),
+    );
+
+    const combined: Array<{ member: GdgMember; score: number }> = [];
+    let relatedIndex = 0;
+    let nonRelevantIndex = 0;
+
+    while (
+      relatedIndex < selectedRelevant.length ||
+      nonRelevantIndex < selectedNonRelevant.length
+    ) {
+      for (
+        let step = 0;
+        step < relatedBatchSize && relatedIndex < selectedRelevant.length;
+        step += 1
+      ) {
+        combined.push(selectedRelevant[relatedIndex]);
+        relatedIndex += 1;
+      }
+
+      if (nonRelevantIndex < selectedNonRelevant.length) {
+        combined.push(selectedNonRelevant[nonRelevantIndex]);
+        nonRelevantIndex += 1;
+      }
+
+      if (relatedIndex >= selectedRelevant.length) {
+        combined.push(...selectedNonRelevant.slice(nonRelevantIndex));
+        break;
+      }
+
+      if (nonRelevantIndex >= selectedNonRelevant.length) {
+        combined.push(...selectedRelevant.slice(relatedIndex));
+        break;
+      }
+    }
+
+    return combined;
+  }
+
+  private async expandExploratoryCandidates(
+    gdgMemberId: string,
+    sourceMember: GdgMember,
+    rankedRelevantMembers: Array<{ member: GdgMember; score: number }>,
+    rankedStrictNonRelevantMembers: Array<{ member: GdgMember; score: number }>,
+  ): Promise<Array<{ member: GdgMember; score: number }>> {
+    const totalStrictCandidates =
+      rankedRelevantMembers.length + rankedStrictNonRelevantMembers.length;
+    if (totalStrictCandidates >= this.exploratoryPoolSize) {
+      return rankedStrictNonRelevantMembers;
+    }
+
+    const usedIds = new Set<string>([
+      ...rankedRelevantMembers.map((entry) => entry.member.props.gdgId),
+      ...rankedStrictNonRelevantMembers.map(
+        (entry) => entry.member.props.gdgId,
+      ),
+    ]);
+
+    const publicPool =
+      await this.repo.findPublicMembersExcludingGdgId(gdgMemberId);
+    const fallbackCandidates = publicPool.filter(
+      (member) => !usedIds.has(member.props.gdgId),
+    );
+
+    if (fallbackCandidates.length === 0) return rankedStrictNonRelevantMembers;
+
+    const rankedFallback = this.rankForExploration(
+      sourceMember,
+      fallbackCandidates,
+    );
+    return [...rankedStrictNonRelevantMembers, ...rankedFallback];
+  }
+
+  private dedupeByGdgId(candidates: GdgMember[]): GdgMember[] {
+    const map = new Map<string, GdgMember>();
+
+    for (const candidate of candidates) {
+      map.set(candidate.props.gdgId, candidate);
+    }
+
+    return [...map.values()];
+  }
+
+  private seededOrderKey(sourceGdgId: string, member: GdgMember): number {
+    const key = `${sourceGdgId}:${member.props.gdgId}`;
+    let hash = 0;
+
+    for (let index = 0; index < key.length; index += 1) {
+      hash = (hash * 31 + key.charCodeAt(index)) >>> 0;
+    }
+
+    return hash;
   }
 
   private calculateSimilarityScore(
@@ -242,62 +449,6 @@ export class GetSimilarUsers {
     const union = new Set([...normalizedSource, ...normalizedCandidate]);
 
     return Math.round((overlap.length / union.size) * weight);
-  }
-
-  private hasCoreRelevance(source: GdgMember, candidate: GdgMember): boolean {
-    const sourceProps = source.props;
-    const candidateProps = candidate.props;
-
-    const sameProgram = this.isEquivalentAcademicText(
-      sourceProps.program,
-      candidateProps.program,
-    );
-    const sameDepartment = this.isEquivalentAcademicText(
-      sourceProps.department,
-      candidateProps.department,
-    );
-
-    return (
-      sameProgram ||
-      sameDepartment ||
-      this.hasCollectionOverlap(
-        sourceProps.technicalSkills,
-        candidateProps.technicalSkills,
-      ) ||
-      this.hasCollectionOverlap(
-        sourceProps.learningInterests,
-        candidateProps.learningInterests,
-      ) ||
-      this.hasCollectionOverlap(
-        sourceProps.toolsAndTechnologies,
-        candidateProps.toolsAndTechnologies,
-      )
-    );
-  }
-
-  private isEquivalentAcademicText(
-    source: string | null,
-    candidate: string | null,
-  ): boolean {
-    if (!source || !candidate) return false;
-
-    const normalizedSource = this.canonicalizeAcademicText(
-      this.normalize(source),
-    );
-    const normalizedCandidate = this.canonicalizeAcademicText(
-      this.normalize(candidate),
-    );
-
-    return normalizedSource === normalizedCandidate;
-  }
-
-  private hasCollectionOverlap(source: string[], candidate: string[]): boolean {
-    const normalizedSource = this.normalizeCollection(source);
-    const normalizedCandidate = this.normalizeCollection(candidate);
-
-    return normalizedSource.some((value) =>
-      normalizedCandidate.includes(value),
-    );
   }
 
   private normalizeCollection(values: string[]): string[] {

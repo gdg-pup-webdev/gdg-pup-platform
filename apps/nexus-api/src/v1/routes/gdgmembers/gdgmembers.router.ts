@@ -24,7 +24,6 @@ export class GdgMembersRouter {
       "/:gdgId/profile-image",
       this.controller.changeProfileImage,
     );
-    this.router.get("/:gdgId/similar-users", this.controller.getIdSimilarUsers);
     this.router.get(
       "/:gdgId/suggested-users",
       this.controller.getIdSuggestedUsers,

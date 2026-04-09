@@ -7,8 +7,30 @@ import {
 import { Tables } from "@/v1/types/supabase.types";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 
+type SimilarityMemberRow = Pick<
+  Tables<"gdg_members">,
+  | "gdg_id"
+  | "email"
+  | "membership_type"
+  | "avatar_image_url"
+  | "program"
+  | "year_level"
+  | "department"
+  | "display_name"
+  | "first_name"
+  | "middle_name"
+  | "last_name"
+  | "suffix"
+  | "technical_skills"
+  | "learning_interests"
+  | "tools_and_technologies"
+  | "is_public"
+>;
+
 export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   private readonly tableName = "gdg_members";
+  private readonly similarityProjection =
+    "gdg_id,email,membership_type,avatar_image_url,program,year_level,department,display_name,first_name,middle_name,last_name,suffix,technical_skills,learning_interests,tools_and_technologies,is_public";
 
   private mapToDomain(row: Tables<"gdg_members">): GdgMember {
     return GdgMember.hydrate({
@@ -66,6 +88,32 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       nickname: null,
       skills_summary: null,
     };
+  }
+
+  private mapSimilarityToDomain(row: SimilarityMemberRow): GdgMember {
+    return GdgMember.hydrate({
+      gdgId: row.gdg_id || "",
+      email: row.email || "",
+      membershipType: row.membership_type || null,
+      avatarUrl: row.avatar_image_url || null,
+      program: row.program || null,
+      yearLevel: row.year_level || null,
+      department: row.department || null,
+      displayName: row.display_name || null,
+      firstName: row.first_name || "",
+      middleName: row.middle_name || null,
+      lastName: row.last_name || "",
+      suffix: row.suffix || null,
+      bio: null,
+      githubUrl: null,
+      linkedinUrl: null,
+      portfolioWebsiteUrl: null,
+      otherLinks: [],
+      technicalSkills: row.technical_skills?.split(",") || [],
+      learningInterests: row.learning_interests?.split(",") || [],
+      toolsAndTechnologies: row.tools_and_technologies?.split(",") || [],
+      isPublic: row.is_public,
+    });
   }
 
   async search(query: string, limit: number): Promise<GdgMember[]> {
@@ -139,7 +187,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   async findPublicMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select("*")
+      .select(this.similarityProjection)
       .eq("is_public", true)
       .neq("gdg_id", gdgId)
       .order("display_name", { ascending: true, nullsFirst: false })
@@ -147,20 +195,116 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
 
     if (error) throw new Error(`Database error: ${error.message}`);
 
-    return (data || []).map((row) => this.mapToDomain(row));
+    return (data || []).map((row) =>
+      this.mapSimilarityToDomain(row as SimilarityMemberRow),
+    );
   }
 
-  async findMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]> {
+  async findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+    },
+  ): Promise<GdgMember[]> {
+    const { program, department } = filters;
+    const merged = new Map<string, GdgMember>();
+
+    const [sameProgramResult, sameDepartmentResult] = await Promise.all([
+      program
+        ? supabase
+            .from(this.tableName)
+            .select(this.similarityProjection)
+            .eq("is_public", true)
+            .neq("gdg_id", gdgId)
+            .eq("program", program)
+            .order("display_name", { ascending: true, nullsFirst: false })
+            .order("first_name", { ascending: true, nullsFirst: false })
+        : Promise.resolve({ data: [] as SimilarityMemberRow[], error: null }),
+      department
+        ? supabase
+            .from(this.tableName)
+            .select(this.similarityProjection)
+            .eq("is_public", true)
+            .neq("gdg_id", gdgId)
+            .eq("department", department)
+            .order("display_name", { ascending: true, nullsFirst: false })
+            .order("first_name", { ascending: true, nullsFirst: false })
+        : Promise.resolve({ data: [] as SimilarityMemberRow[], error: null }),
+    ]);
+
+    if (sameProgramResult.error)
+      throw new Error(`Database error: ${sameProgramResult.error.message}`);
+    if (sameDepartmentResult.error)
+      throw new Error(`Database error: ${sameDepartmentResult.error.message}`);
+
+    for (const row of sameProgramResult.data || []) {
+      if (!row.gdg_id) continue;
+      merged.set(row.gdg_id, this.mapSimilarityToDomain(row));
+    }
+
+    for (const row of sameDepartmentResult.data || []) {
+      if (!row.gdg_id) continue;
+      merged.set(row.gdg_id, this.mapSimilarityToDomain(row));
+    }
+
+    return [...merged.values()];
+  }
+
+  async findPublicMembersWithSameYearLevelExcludingGdgId(
+    gdgId: string,
+    yearLevel: number | null,
+  ): Promise<GdgMember[]> {
+    if (yearLevel === null) return [];
+
     const { data, error } = await supabase
       .from(this.tableName)
-      .select("*")
+      .select(this.similarityProjection)
+      .eq("is_public", true)
       .neq("gdg_id", gdgId)
+      .eq("year_level", yearLevel)
       .order("display_name", { ascending: true, nullsFirst: false })
       .order("first_name", { ascending: true, nullsFirst: false });
 
     if (error) throw new Error(`Database error: ${error.message}`);
 
-    return (data || []).map((row) => this.mapToDomain(row));
+    return (data || []).map((row) =>
+      this.mapSimilarityToDomain(row as SimilarityMemberRow),
+    );
+  }
+
+  async findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+    },
+  ): Promise<GdgMember[]> {
+    const { program, department } = filters;
+
+    let query = supabase
+      .from(this.tableName)
+      .select(this.similarityProjection)
+      .eq("is_public", true)
+      .neq("gdg_id", gdgId);
+
+    if (program) {
+      query = query.neq("program", program);
+    }
+
+    if (department) {
+      query = query.neq("department", department);
+    }
+
+    const { data, error } = await query
+      .order("display_name", { ascending: true, nullsFirst: false })
+      .order("first_name", { ascending: true, nullsFirst: false });
+
+    if (error) throw new Error(`Database error: ${error.message}`);
+
+    return (data || []).map((row) =>
+      this.mapSimilarityToDomain(row as SimilarityMemberRow),
+    );
   }
 
   async saveNew(member: GdgMember): Promise<GdgMember> {

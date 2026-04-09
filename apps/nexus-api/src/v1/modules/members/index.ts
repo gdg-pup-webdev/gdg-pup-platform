@@ -29,7 +29,7 @@ const makeProfilePrivate = new MakeProfilePrivate(repo);
 const makeProfilePublic = new MakeProfilePublic(repo);
 
 const searchUC = new SearchMember(repo);
-const similarUsersUseCase = new GetSimilarUsers(repo);
+const suggestedUsersUseCase = new GetSimilarUsers(repo);
 
 const changepfpuc = new ChangeProfilePicture(storage, repo);
 
@@ -44,7 +44,7 @@ export const gdgMembersController = new GdgMembersController(
   makeProfilePublic,
   searchUC,
   changepfpuc,
-  similarUsersUseCase,
+  suggestedUsersUseCase,
 );
 
 export { GdgMembersController };

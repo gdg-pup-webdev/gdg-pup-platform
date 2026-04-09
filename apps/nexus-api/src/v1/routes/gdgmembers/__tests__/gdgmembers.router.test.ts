@@ -5,8 +5,65 @@ import { GdgMembersHttpController } from "../gdgmembers.controller";
 import { GdgMembersRouter } from "../gdgmembers.router";
 import { GdgMembersController } from "@/v1/modules/members";
 
-describe("GdgMembersRouter similar-users route", () => {
-  const getSimilarUsers = vi.fn();
+vi.mock("@packages/nexus-api-contracts", () => ({
+  contract: {
+    api: {
+      v1: {
+        gdgmembers: {
+          GET: {},
+          POST: {},
+          gdgId: {
+            GET: {},
+            PATCH: {},
+            DELETE: {},
+            profile_image: { POST: {} },
+            suggested_users: { GET: {} },
+            make_private: { POST: {} },
+            make_public: { POST: {} },
+            roles: {
+              GET: {},
+              POST: {},
+              roleName: { DELETE: {} },
+            },
+          },
+        },
+      },
+    },
+  },
+}));
+
+vi.mock("@packages/typed-rest/serverExpress", () => ({
+  createExpressController:
+    (_contract: unknown, handler: any) =>
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      try {
+        const response = await handler({
+          input: {
+            params: req.params,
+            query: {
+              ...req.query,
+              pageNumber: Number(req.query.pageNumber),
+              pageSize: Number(req.query.pageSize),
+            },
+            body: req.body,
+            files: (req as express.Request & { files?: unknown }).files,
+          },
+          output: (status: number, body: unknown) => ({ status, body }),
+        });
+
+        res.status(response.status).json(response.body);
+      } catch (error) {
+        next(error);
+      }
+    },
+}));
+
+describe("GdgMembersRouter suggested-users route", () => {
+  const getSuggestedUsers = vi.fn();
   const similarUserPayload = {
     gdgId: "GDG-2",
     displayName: "Second User",
@@ -32,12 +89,12 @@ describe("GdgMembersRouter similar-users route", () => {
   };
 
   beforeEach(() => {
-    getSimilarUsers.mockReset();
+    getSuggestedUsers.mockReset();
   });
 
   const createApp = () => {
-    const moduleController: Pick<GdgMembersController, "getSimilarUsers"> = {
-      getSimilarUsers,
+    const moduleController: Pick<GdgMembersController, "getSuggestedUsers"> = {
+      getSuggestedUsers,
     };
 
     const controller = new GdgMembersHttpController(
@@ -51,8 +108,8 @@ describe("GdgMembersRouter similar-users route", () => {
     return app;
   };
 
-  it("returns paginated similar users for a member", async () => {
-    getSimilarUsers.mockResolvedValue({
+  it("returns paginated suggested users for a member", async () => {
+    getSuggestedUsers.mockResolvedValue({
       list: [similarUserPayload],
       count: 3,
     });
@@ -60,13 +117,18 @@ describe("GdgMembersRouter similar-users route", () => {
     const app = createApp();
 
     const response = await request(app)
-      .get("/gdgmembers/GDG-1/similar-users?pageNumber=2&pageSize=1")
+      .get("/gdgmembers/GDG-1/suggested-users?pageNumber=2&pageSize=1")
       .expect(200);
 
-    expect(getSimilarUsers).toHaveBeenCalledWith("GDG-1", 2, 1, "relevant");
+    expect(getSuggestedUsers).toHaveBeenCalledWith(
+      "GDG-1",
+      2,
+      1,
+      "exploratory",
+    );
     expect(response.body).toEqual({
       status: "success",
-      message: "Similar GDG members fetched successfully",
+      message: "Suggested GDG members fetched successfully",
       data: [
         {
           gdgId: "GDG-2",
@@ -85,16 +147,21 @@ describe("GdgMembersRouter similar-users route", () => {
     });
   });
 
-  it("returns an empty page when the module reports no similar users", async () => {
-    getSimilarUsers.mockResolvedValue({ list: [], count: 0 });
+  it("returns an empty page when the module reports no suggested users", async () => {
+    getSuggestedUsers.mockResolvedValue({ list: [], count: 0 });
 
     const app = createApp();
 
     const response = await request(app)
-      .get("/gdgmembers/GDG-1/similar-users?pageNumber=1&pageSize=10")
+      .get("/gdgmembers/GDG-1/suggested-users?pageNumber=1&pageSize=10")
       .expect(200);
 
-    expect(getSimilarUsers).toHaveBeenCalledWith("GDG-1", 1, 10, "relevant");
+    expect(getSuggestedUsers).toHaveBeenCalledWith(
+      "GDG-1",
+      1,
+      10,
+      "exploratory",
+    );
     expect(response.body.meta).toEqual({
       currentPage: 1,
       pageSize: 10,
@@ -104,8 +171,8 @@ describe("GdgMembersRouter similar-users route", () => {
     expect(response.body.data).toEqual([]);
   });
 
-  it("passes exploratory strategy to module controller", async () => {
-    getSimilarUsers.mockResolvedValue({
+  it("uses the mixed exploratory strategy by default", async () => {
+    getSuggestedUsers.mockResolvedValue({
       list: [similarUserPayload],
       count: 1,
     });
@@ -116,7 +183,12 @@ describe("GdgMembersRouter similar-users route", () => {
       .get("/gdgmembers/GDG-1/suggested-users?pageNumber=1&pageSize=10")
       .expect(200);
 
-    expect(getSimilarUsers).toHaveBeenCalledWith("GDG-1", 1, 10, "exploratory");
+    expect(getSuggestedUsers).toHaveBeenCalledWith(
+      "GDG-1",
+      1,
+      10,
+      "exploratory",
+    );
     expect(response.body.message).toBe(
       "Suggested GDG members fetched successfully",
     );
@@ -129,20 +201,5 @@ describe("GdgMembersRouter similar-users route", () => {
         department: null,
       },
     ]);
-  });
-
-  it("always uses relevant strategy on similar-users endpoint", async () => {
-    getSimilarUsers.mockResolvedValue({
-      list: [similarUserPayload],
-      count: 1,
-    });
-
-    const app = createApp();
-
-    await request(app)
-      .get("/gdgmembers/GDG-1/similar-users?pageNumber=1&pageSize=10")
-      .expect(200);
-
-    expect(getSimilarUsers).toHaveBeenCalledWith("GDG-1", 1, 10, "relevant");
   });
 });

@@ -91,42 +91,10 @@ export class GdgMembersHttpController {
     },
   );
 
-  getIdSimilarUsers: RequestHandler = createExpressController(
-    contract.api.v1.gdgmembers.gdgId.similar_users.GET,
-    async ({ input, output }) => {
-      const result = await this.moduleController.getSimilarUsers(
-        input.params.gdgId,
-        input.query.pageNumber,
-        input.query.pageSize,
-        "relevant",
-      );
-
-      const similarPreview = result.list.map((member) => ({
-        gdgId: member.gdgId,
-        displayName: member.displayName,
-        avatarUrl: member.avatarUrl,
-        program: member.program,
-        department: member.department,
-      }));
-
-      return output(200, {
-        status: "success",
-        message: "Similar GDG members fetched successfully",
-        data: similarPreview,
-        meta: {
-          currentPage: input.query.pageNumber,
-          pageSize: input.query.pageSize,
-          totalRecords: result.count,
-          totalPages: Math.ceil(result.count / input.query.pageSize),
-        },
-      });
-    },
-  );
-
   getIdSuggestedUsers: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.suggested_users.GET,
     async ({ input, output }) => {
-      const result = await this.moduleController.getSimilarUsers(
+      const result = await this.moduleController.getSuggestedUsers(
         input.params.gdgId,
         input.query.pageNumber,
         input.query.pageSize,

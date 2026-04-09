@@ -25,8 +25,58 @@ class MockGdgMemberRepository implements IGdgMemberRepository {
     );
   }
 
-  async findMembersExcludingGdgId(gdgId: string): Promise<GdgMember[]> {
-    return this.members.filter((member) => member.props.gdgId !== gdgId);
+  async findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+    },
+  ): Promise<GdgMember[]> {
+    const { program, department } = filters;
+    return this.members.filter((member) => {
+      if (member.props.gdgId === gdgId || !member.props.isPublic) return false;
+      const sameProgram = Boolean(program && member.props.program === program);
+      const sameDepartment = Boolean(
+        department && member.props.department === department,
+      );
+      return sameProgram || sameDepartment;
+    });
+  }
+
+  async findPublicMembersWithSameYearLevelExcludingGdgId(
+    gdgId: string,
+    yearLevel: number | null,
+  ): Promise<GdgMember[]> {
+    if (yearLevel === null) return [];
+
+    return this.members.filter(
+      (member) =>
+        member.props.gdgId !== gdgId &&
+        member.props.isPublic &&
+        member.props.yearLevel === yearLevel,
+    );
+  }
+
+  async findPublicMembersWithDifferentProgramAndDepartmentExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+    },
+  ): Promise<GdgMember[]> {
+    const { program, department } = filters;
+
+    return this.members.filter((member) => {
+      if (member.props.gdgId === gdgId || !member.props.isPublic) return false;
+      const differentProgram = program
+        ? member.props.program !== program
+        : true;
+      const differentDepartment = department
+        ? member.props.department !== department
+        : true;
+
+      return differentProgram && differentDepartment;
+    });
   }
 
   async saveNew(member: GdgMember): Promise<GdgMember> {
@@ -188,7 +238,7 @@ describe("GetSimilarUsers", () => {
     );
   });
 
-  it("exploratory strategy prioritizes non-similar candidates", async () => {
+  it("exploratory strategy keeps deterministic 80/20 mix", async () => {
     const source = createMember({
       gdgId: "source",
       displayName: "Source Member",
@@ -255,10 +305,12 @@ describe("GetSimilarUsers", () => {
     expect(relevantIds).toEqual(["similar-a", "similar-b"]);
 
     expect(exploratoryResult.count).toBe(4);
-    expect(exploratoryIds[0]).toBe("non-similar-a");
-    expect(exploratoryIds[1]).toBe("non-similar-b");
+    expect(exploratoryIds[0]).toBe("similar-a");
+    expect(exploratoryIds[1]).toBe("similar-b");
     expect(exploratoryIds).toContain("similar-a");
     expect(exploratoryIds).toContain("similar-b");
+    expect(exploratoryIds).toContain("non-similar-a");
+    expect(exploratoryIds).toContain("non-similar-b");
   });
 
   it("exploratory strategy returns page unchanged when no outside candidates exist", async () => {
@@ -321,7 +373,7 @@ describe("GetSimilarUsers", () => {
     expect(exploratoryResult.count).toBe(2);
   });
 
-  it("exploratory strategy uses broader pool than relevant strategy", async () => {
+  it("exploratory strategy is still public-only", async () => {
     const source = createMember({
       gdgId: "source",
       isPublic: true,
@@ -350,13 +402,13 @@ describe("GetSimilarUsers", () => {
     expect(relevant.count).toBe(1);
     expect(relevant.list.map((m) => m.props.gdgId)).toEqual(["public-similar"]);
 
-    expect(exploratory.count).toBe(2);
-    expect(exploratory.list.map((m) => m.props.gdgId)).toContain(
-      "private-candidate",
-    );
+    expect(exploratory.count).toBe(1);
+    expect(exploratory.list.map((m) => m.props.gdgId)).toEqual([
+      "public-similar",
+    ]);
   });
 
-  it("relevant strategy can include private candidates when they are truly relevant", async () => {
+  it("relevant strategy excludes private candidates", async () => {
     const source = createMember({
       gdgId: "source",
       department: "Web Development",
@@ -375,9 +427,80 @@ describe("GetSimilarUsers", () => {
 
     const relevant = await useCase.execute("source", 1, 10, "relevant");
 
-    expect(relevant.count).toBe(1);
-    expect(relevant.list.map((m) => m.props.gdgId)).toEqual([
-      "private-relevant",
-    ]);
+    expect(relevant.count).toBe(0);
+    expect(relevant.list.map((m) => m.props.gdgId)).toEqual([]);
+  });
+
+  it("exploratory strategy caps the pool size to 15", async () => {
+    const source = createMember({
+      gdgId: "source",
+      program: "BSCS",
+      department: "Web Development",
+      yearLevel: 3,
+    });
+
+    await repository.saveNew(source);
+
+    for (let index = 1; index <= 30; index += 1) {
+      await repository.saveNew(
+        createMember({
+          gdgId: `candidate-${index}`,
+          isPublic: true,
+          program: index <= 20 ? "BSCS" : "BSIT",
+          department: index <= 20 ? "Web Development" : "Cloud Solutions",
+          yearLevel: index % 4,
+        }),
+      );
+    }
+
+    const pageOne = await useCase.execute("source", 1, 10, "exploratory");
+    const pageTwo = await useCase.execute("source", 2, 10, "exploratory");
+
+    expect(pageOne.count).toBe(15);
+    expect(pageOne.list).toHaveLength(10);
+    expect(pageTwo.list).toHaveLength(5);
+  });
+
+  it("exploratory strategy tops up pool from other public members", async () => {
+    const source = createMember({
+      gdgId: "source",
+      program: "BSCS",
+      department: "Web Development",
+      yearLevel: 3,
+      isPublic: true,
+    });
+
+    await repository.saveNew(source);
+
+    for (let index = 1; index <= 2; index += 1) {
+      await repository.saveNew(
+        createMember({
+          gdgId: `relevant-${index}`,
+          program: "BSCS",
+          department: "Web Development",
+          yearLevel: 3,
+          isPublic: true,
+        }),
+      );
+    }
+
+    for (let index = 1; index <= 20; index += 1) {
+      await repository.saveNew(
+        createMember({
+          gdgId: `fallback-${index}`,
+          program: "BS in Applied Math",
+          department: "Data Science",
+          yearLevel: 1,
+          isPublic: true,
+        }),
+      );
+    }
+
+    const result = await useCase.execute("source", 1, 20, "exploratory");
+
+    expect(result.count).toBe(15);
+    expect(result.list).toHaveLength(15);
+    expect(result.list.map((m) => m.props.gdgId)).toContain("relevant-1");
+    expect(result.list.map((m) => m.props.gdgId)).toContain("relevant-2");
   });
 });
