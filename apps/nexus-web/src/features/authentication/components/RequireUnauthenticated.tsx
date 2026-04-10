@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { LINKS } from "@/lib/constants/links";
+import { LoadingScreen } from "@/components/shared";
 import { STATUS, useAuthContext } from "../store/useAuthStore";
 
 export const RequireUnauthenticated = ({
@@ -33,20 +34,15 @@ export const RequireUnauthenticated = ({
   }, [status, memberProfile, pathname, router]);
 
   if (status === STATUS.AUTHENTICATED || status === STATUS.CHECKING) {
-    const message = status === STATUS.CHECKING ? "Checking session..." : "Redirecting...";
-    return (
-      <div className="w-full h-full min-h-screen flex justify-center items-center text-zinc-400 animate-pulse">
-        {message}
-      </div>
-    );
+    const message =
+      status === STATUS.CHECKING
+        ? "Checking your session..."
+        : "Taking you to your account...";
+    return <LoadingScreen message={message} />;
   }
 
   if (status === STATUS.LOGGINGOUT) {
-    <>
-      <div className="w-full h-full min-h-full flex justify-center items-center">
-        Loggin out...
-      </div>
-    </>;
+    return <LoadingScreen message="Signing you out..." />;
   }
 
   return <>{children}</>;
