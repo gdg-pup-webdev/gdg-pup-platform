@@ -1,11 +1,23 @@
 import { supabase } from "@/v1/lib/supabase";
-import { GdgMember } from "../domain/GdgMember";
+import { GdgMember, SparkmatesSectionId } from "../domain/GdgMember";
 import {
   IGdgMemberRepository,
   GdgMemberFilters,
 } from "../domain/IGdgMemberRepository";
 import { Tables } from "@/v1/types/supabase.types";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
+
+const DEFAULT_SPARKMATES_SECTION_ORDER: SparkmatesSectionId[] = [
+  "customButtons",
+  "skillsAndInterests",
+  "projects",
+  "gdgImpact",
+  "badges",
+];
+
+const isSparkmatesSectionId = (value: string): value is SparkmatesSectionId => {
+  return (DEFAULT_SPARKMATES_SECTION_ORDER as string[]).includes(value);
+};
 
 export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   private readonly tableName = "gdg_members";
@@ -32,6 +44,12 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technicalSkills: row.technical_skills?.split(",") || [],
       learningInterests: row.learning_interests?.split(",") || [],
       toolsAndTechnologies: row.tools_and_technologies?.split(",") || [],
+      sectionOrder:
+        row.section_order
+          ?.split(",")
+          .filter((item): item is SparkmatesSectionId =>
+            isSparkmatesSectionId(item),
+          ) || DEFAULT_SPARKMATES_SECTION_ORDER,
       isPublic: row.is_public,
     });
   }
@@ -59,6 +77,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technical_skills: p.technicalSkills.join(","),
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
+      section_order: p.sectionOrder.join(","),
       is_public: p.isPublic,
 
       created_at: new Date().toISOString(),
