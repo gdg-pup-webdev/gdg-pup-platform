@@ -25,7 +25,7 @@ export const AuthParallaxMascot = () => {
         transform: 'translate(' + (mousePosition.x * 25) + 'px, ' + (mousePosition.y * 25) + 'px)'
       }}
     >
-       <Image src="/auth/auth-sparky.webp" alt="Sparky" className="object-contain" fill priority />
+       <Image src="/auth/auth-sparky.webp" alt="Sparky" className="object-contain pointer-events-none select-none" fill priority />
     </div>
   );
 };

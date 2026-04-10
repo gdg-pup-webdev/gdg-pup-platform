@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { LINKS } from "@/lib/constants/links";
 import { STATUS, useAuthContext } from "../store/useAuthStore";
 import { useEffect } from "react";
+import { LoadingScreen } from "@/components/shared";
 
 export const RequireAuthenticated = ({
   children,
@@ -34,33 +35,15 @@ export const RequireAuthenticated = ({
   }, [status, memberProfile, pathname, router]);
 
   if (status === STATUS.UNAUTHENTICATED) {
-    return (
-      <>
-        <div className="w-full h-full min-h-full flex justify-center items-center">
-          Redirecting to login...
-        </div>
-      </>
-    );
+    return <LoadingScreen message="Redirecting to Sign In..." />;
   }
 
   if (status === STATUS.CHECKING) {
-    return (
-      <>
-        <div className="w-full h-full min-h-full flex justify-center items-center">
-          Checking authentication...
-        </div>
-      </>
-    );
+    return <LoadingScreen message="Checking authentication..." />;
   }
 
   if (status === STATUS.LOGGINGIN) {
-    return (
-      <>
-        <div className="w-full h-full min-h-full flex justify-center items-center">
-          Logging in...
-        </div>
-      </>
-    );
+    return <LoadingScreen message="Signing you in..." />;
   }
 
   return <>{children}</>;

@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Stack, Text, Button, Container } from '@packages/spark-ui';
-import { LoadingScreen } from "@/components/shared";
+import { AuthTransitionCard } from "@/features/authentication/components/AuthTransitionCard";
+import { resolvePostAuthTarget } from "@/features/authentication/utils/redirect";
+import { LINKS } from "@/lib/constants/links";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 const NEXUS_API_URL =
   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
@@ -11,140 +13,132 @@ const NEXUS_API_URL =
 function ConfirmPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { setAuthToken, memberProfile } = useAuthContext();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
   );
   const [message, setMessage] = useState("Verifying your email...");
+  const [countdown, setCountdown] = useState(3);
+  const [errorDetail, setErrorDetail] = useState<string | undefined>(undefined);
+
+  const destination = useMemo(
+    () =>
+      resolvePostAuthTarget({
+        next: searchParams.get("next"),
+        callbackUrl: searchParams.get("callbackUrl"),
+        isOnboarded: memberProfile?.isPublic !== null,
+      }),
+    [memberProfile?.isPublic, searchParams],
+  );
 
   useEffect(() => {
+    let isCancelled = false;
+
     const confirmEmail = async () => {
       try {
-        // Get the token_hash and type from URL parameters
         const token_hash = searchParams.get("token_hash");
         const type = searchParams.get("type");
-
-        console.log("Verification attempt:", {
-          token_hash,
-          type,
-          NEXUS_API_URL,
-        });
 
         if (!token_hash || !type) {
           setStatus("error");
           setMessage("Invalid verification link. Please try signing up again.");
+          setErrorDetail("Missing token_hash or type query parameter.");
           return;
         }
 
-        // Call backend API to verify
-        const url = `${NEXUS_API_URL}/api/v1/auth-system/verify`;
-        console.log("Calling API:", url);
-
-        const response = await fetch(url, {
+        const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/verify`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ data: { token_hash, type } }),
         });
 
-        console.log("Response status:", response.status);
-        console.log("Response headers:", response.headers);
-
-        // Check if response is JSON
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text();
-          console.error("Non-JSON response:", text);
-          setStatus("error");
-          setMessage(
-            `Server returned non-JSON response. Status: ${response.status}`,
-          );
-          return;
-        }
-
         const data = await response.json();
-        console.log("Response data:", data);
 
         if (!response.ok || data.status !== "success") {
-          // Extract detailed error if available
-          let errorMessage = data.message;
-          if (
-            data.errors &&
-            Array.isArray(data.errors) &&
-            data.errors.length > 0
-          ) {
-            errorMessage =
-              data.errors[0].detail || data.errors[0].title || errorMessage;
-          }
+          const errorMessage =
+            data?.errors?.[0]?.detail ||
+            data?.errors?.[0]?.title ||
+            data?.message ||
+            "Failed to verify email. Please try again.";
 
-          console.error("Verification error:", errorMessage, data);
-          setStatus("error");
-          setMessage(
-            errorMessage || "Failed to verify email. Please try again.",
-          );
-          return;
+          throw new Error(errorMessage);
         }
 
-        if (data.data?.user) {
-          setStatus("success");
-          setMessage("Email verified successfully! Redirecting...");
-
-          // Redirect to home or dashboard after 2 seconds
-          setTimeout(() => {
-            router.push("/");
-          }, 2000);
+        const token = data?.data?.token;
+        if (token) {
+          setAuthToken(token);
+          setMessage("Email verified successfully. Redirecting you to your account...");
         } else {
-          setStatus("error");
-          setMessage("Verification failed. Please try again.");
+          setMessage("Email verified successfully. Redirecting you to Sign In...");
+        }
+
+        if (isCancelled) return;
+        setStatus("success");
+
+        const redirectTo = token
+          ? destination
+          : `${LINKS.auth_signin}?reason=verify-success`;
+
+        for (let i = 3; i >= 1; i -= 1) {
+          if (isCancelled) return;
+          setCountdown(i);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+
+        if (!isCancelled) {
+          router.push(redirectTo);
         }
       } catch (err: any) {
-        console.error("Unexpected error:", err);
+        const rawMessage = err?.message || "Verification failed";
+        const lower = rawMessage.toLowerCase();
+
+        const friendlyMessage =
+          lower.includes("expired") || lower.includes("invalid")
+            ? "This verification link is no longer valid. Please request a new one."
+            : "We could not verify your email right now. Please try again.";
+
         setStatus("error");
-        setMessage(`An unexpected error occurred: ${err.message}`);
+        setMessage(friendlyMessage);
+        setErrorDetail(rawMessage);
       }
     };
 
     confirmEmail();
-  }, [searchParams, router]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [destination, memberProfile?.isPublic, router, searchParams, setAuthToken]);
+
+  if (status === "loading") {
+    return (
+      <AuthTransitionCard
+        status="loading"
+        title="Verifying your email"
+        description={message}
+      />
+    );
+  }
+
+  if (status === "success") {
+    return (
+      <AuthTransitionCard
+        status="success"
+        title="Email verified"
+        description={message}
+        countdownSeconds={countdown}
+      />
+    );
+  }
 
   return (
-    <Stack justify="center" align="center" className="min-h-screen bg-linear-to-br from-purple-50 to-blue-50 px-4">
-      <Container maxWidth="sm" padding="none">
-        <div className="bg-white p-8 rounded-2xl shadow-xl">
-        <Stack gap="md" className="text-center">
-          {status === "loading" && (
-            <>
-              <LoadingScreen fullPage={false} message="Verifying your email..." />
-            </>
-          )}
-
-          {status === "success" && (
-            <>
-              <div className="text-green-500 text-6xl">✓</div>
-              <Text variant="heading-2" className="text-gray-800">
-                Email Verified!
-              </Text>
-              <Text variant="body" className="text-gray-600">{message}</Text>
-            </>
-          )}
-
-          {status === "error" && (
-            <>
-              <div className="text-red-500 text-6xl">✗</div>
-              <Text variant="heading-2" className="text-gray-800">
-                Verification Failed
-              </Text>
-              <Text variant="body" className="text-gray-600">{message}</Text>
-              <Button
-                onClick={() => router.push("/")}
-                variant="default"
-              >
-                Go to Home
-              </Button>
-            </>
-          )}
-        </Stack>
-        </div>
-      </Container>
-    </Stack>
+    <AuthTransitionCard
+      status="error"
+      title="Verification failed"
+      description={message}
+      detail={errorDetail}
+      primaryAction={{ label: "Go to Sign In", href: LINKS.auth_signin }}
+      secondaryAction={{ label: "Go Home", href: LINKS.landing }}
+    />
   );
 }
 
@@ -152,9 +146,11 @@ export default function ConfirmPage() {
   return (
     <Suspense
       fallback={
-        <Stack justify="center" align="center" className="min-h-screen bg-linear-to-br from-purple-50 to-blue-50 px-4">
-          <LoadingScreen message="Loading verification..." />
-        </Stack>
+        <AuthTransitionCard
+          status="loading"
+          title="Loading verification"
+          description="Preparing your verification details..."
+        />
       }
     >
       <ConfirmPageContent />
