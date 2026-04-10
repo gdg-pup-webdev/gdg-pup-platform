@@ -30,7 +30,7 @@ export const SuggestedPeopleSection = ({
         className="text-white placeholder:text-[#C1C7CD]"
       />
 
-      <div className="mt-4 flex items-center justify-between gap-3">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <Text variant="body-lg" className="text-white">
           Suggested To You
         </Text>

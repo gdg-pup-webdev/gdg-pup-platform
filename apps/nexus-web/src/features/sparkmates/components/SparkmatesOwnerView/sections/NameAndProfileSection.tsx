@@ -122,10 +122,9 @@ export const NameAndProfileSection = ({
       <div className="sm:hidden relative">
 
         {/* Horizon — absolute, full-viewport-width, sits BEHIND the avatar (z-0) */}
-        {/* left/right: -12px breaks out of the parent's px-3 (12px) padding */}
+        {/* -left-3 and -right-3 breaks out of the parent's px-3 (12px) padding */}
         <div
-          className="absolute z-0 pointer-events-none overflow-hidden"
-          style={{ left: "-12px", right: "-12px", top: 0, height: "220px" }}
+          className="absolute z-0 top-0 h-[220px] -left-3 -right-3 pointer-events-none overflow-hidden"
         >
           <Image
             src={ASSETS.SPARKMATES.HORIZON}
