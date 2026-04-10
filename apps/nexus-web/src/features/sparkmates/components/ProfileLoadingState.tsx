@@ -6,9 +6,9 @@
 
 import React from 'react';
 
-export function LoadingState() {
+export function ProfileLoadingState() {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className=" min-h-screen relative overflow-hidden bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 py-32">
       {/* Background gradients */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-linear-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-linear-to-tr from-blue-500/20 to-green-500/20 rounded-full blur-3xl animate-pulse" />

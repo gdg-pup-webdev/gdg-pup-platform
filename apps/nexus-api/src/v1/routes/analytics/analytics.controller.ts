@@ -16,8 +16,7 @@ export class AnalyticsHttpController {
       );
       return output(201, {
         status: "success",
-        message: "NFC scan recorded successfully",
-        data: result,
+        message: "NFC scan recorded successfully", 
       });
     },
   );
@@ -47,7 +46,6 @@ export class AnalyticsHttpController {
       return output(201, {
         status: "success",
         message: "Profile view recorded successfully",
-        data: result,
       });
     },
   );
