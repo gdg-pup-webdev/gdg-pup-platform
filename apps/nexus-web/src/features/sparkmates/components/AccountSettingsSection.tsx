@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useGetProfileOfUserByGdgId } from "../hooks/useGetProfileOfUserByGdgId";
-import { Text, Button, ShineBorder, Badge } from "@packages/spark-ui";
+import { Text, Button } from "@packages/spark-ui";
 import { GradientProfilePicture } from "./SparkmatesOwnerView/components/GradientProfilePicture";
 import { ASSETS } from "@/lib/constants/assets";
 import { UploadProfileImageDialog } from "./UploadProfileImageDialog";
@@ -47,11 +47,12 @@ export function AccountSettingsSection() {
       .join(" ") || "Your Name";
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-6 pt-10">
-      {/* 1. Profile Header Card */}
-      <div className="rounded-3xl p-[1px] bg-gradient-to-r from-[#FB2C36] via-[#F0B100] to-[#2B7FFF]">
-        <div className="relative rounded-[23px] overflow-hidden bg-[#010B1D] px-6 sm:px-8 py-8 shadow-xl">
-        
+    <div className="w-full max-w-3xl mx-auto space-y-6 sm:pt-10">
+
+      {/* ── 1. Profile Header Card ─────────────────────────────────────────────
+           rainbow-border + bg-white/5 backdrop-blur-md on ALL breakpoints.
+           The mobile hero image lives in SettingsSection.tsx behind this card. */}
+      <div className="relative overflow-hidden rounded-[28px] rainbow-border backdrop-blur-md bg-white/5 px-6 sm:px-8 py-8 shadow-[inset_0px_4px_16px_0px_rgba(255,255,255,0.05)]">
         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
           <div className="shrink-0">
             <GradientProfilePicture
@@ -60,19 +61,17 @@ export function AccountSettingsSection() {
               fallback={profile.displayName?.charAt(0) || "U"}
             />
           </div>
-          
+
           <div className="flex-1 text-center sm:text-left flex flex-col justify-center min-h-[100px] h-full">
             <Text variant="heading-5" weight="bold" gradient="white-yellow">
               {fullName}
             </Text>
             <div className="mt-2 flex items-center justify-center sm:justify-start gap-2">
-              <Text variant="body-sm" className="text-zinc-400">
-                GDG ID:
-              </Text>
+              <Text variant="body-sm" className="text-zinc-400">GDG ID:</Text>
               <Text variant="body-sm" weight="bold" gradient="yellow">{profile.gdgId}</Text>
             </div>
           </div>
-          
+
           <div className="flex flex-col gap-3 w-full sm:w-auto shrink-0 mt-4 sm:mt-0 justify-center min-h-[100px]">
             <Button
               variant="colored"
@@ -91,17 +90,15 @@ export function AccountSettingsSection() {
             </Button>
           </div>
         </div>
-        </div>
       </div>
 
-      {/* 2. Security & Privacy Card */}
-      <div className="rounded-3xl p-[1px] bg-gradient-to-r from-[#FB2C36] via-[#F0B100] to-[#2B7FFF]">
-        <div className="relative rounded-[23px] overflow-hidden bg-[#010B1D] px-6 sm:px-8 py-8 shadow-xl">
-        
+      {/* ── 2. Security & Privacy Card ─────────────────────────────────────────
+           Same rainbow-border + bg-white/5 backdrop-blur-md pattern. */}
+      <div className="relative overflow-hidden rounded-[28px] rainbow-border backdrop-blur-md bg-white/5 px-6 sm:px-8 py-8 shadow-[inset_0px_4px_16px_0px_rgba(255,255,255,0.05)]">
         <div className="relative z-10 space-y-6">
           <div className="pb-2 border-b border-white/10">
             <Text variant="heading-6" weight="bold" gradient="white-blue">
-              Security & Privacy
+              Security &amp; Privacy
             </Text>
           </div>
 
@@ -134,7 +131,6 @@ export function AccountSettingsSection() {
               Change
             </Button>
           </div>
-        </div>
         </div>
       </div>
 
