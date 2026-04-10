@@ -70,7 +70,7 @@ const optionsLoggedIn = [
   },
   {
     label: "Account Settings",
-    href: "/sparkmates/settings",
+    href: "/sparkmates/me/settings",
   },
   {
     label: "Sign Out",
