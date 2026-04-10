@@ -1,16 +1,14 @@
 import { supabase } from "@/v1/lib/supabase";
 import { INfcRepo } from "../domain/INfcRepo";
+import { nfcCardsModuleController } from "../../nfcCards";
 
 export class NfcRepo implements INfcRepo {
   async getNfcIdByGdgId(gdgId: string): Promise<string | null> {
-    const { data, error } = await supabase
-      .from("nfc_cards")
-      .select("id")
-      .eq("gdg_id", gdgId)
-      .maybeSingle();
-    if (error) {
-      throw new Error(error.message);
+    try {
+      const data = await nfcCardsModuleController.getCardByGdgId(gdgId);
+      return data?.id;
+    } catch (error) {
+      return null;
     }
-    return data?.id ?? null;
   }
 }
