@@ -34,6 +34,20 @@ const rasterAssets: RasterAssetConfig[] = [
   { source: "auth/auth-horizon.png", target: "auth/auth-horizon.webp", maxWidth: 1920, maxHeight: 1920, quality: 76 },
   { source: "auth/auth-sparky.png", target: "auth/auth-sparky.webp", maxWidth: 1600, maxHeight: 1600, quality: 78 },
   { source: "pages/events/event-cover.png", target: "pages/events/event-cover.webp", maxWidth: 1920, maxHeight: 1920, quality: 78 },
+  // products — remaining PNGs
+  { source: "products/gold-1.jpg", target: "products/gold-1.webp", maxWidth: 1920, maxHeight: 1920, quality: 74 },
+  { source: "products/Cirby.png", target: "products/cirby.webp", maxWidth: 800, maxHeight: 800, quality: 78 },
+  { source: "products/Sparky.png", target: "products/sparky.webp", maxWidth: 800, maxHeight: 800, quality: 78 },
+  { source: "products/executives-logo.png", target: "products/executives-logo.webp", maxWidth: 1600, maxHeight: 1600, quality: 76 },
+  { source: "products/cogwheel-asset.png", target: "products/cogwheel-asset.webp", maxWidth: 1920, maxHeight: 1920, quality: 74 },
+  { source: "products/gold-4.png", target: "products/gold-4.webp", maxWidth: 1920, maxHeight: 1920, quality: 74 },
+  { source: "products/rl-1.png", target: "products/rl-1.webp", maxWidth: 1920, maxHeight: 1920, quality: 72 },
+  { source: "products/SPACE_BG_3_1.png", target: "products/space-bg-3-1.webp", maxWidth: 1920, maxHeight: 1920, quality: 72 },
+  { source: "products/SPACE_BG_3_2.png", target: "products/space-bg-3-2.webp", maxWidth: 1920, maxHeight: 1920, quality: 72 },
+  { source: "products/SPACE_BG_3_3.png", target: "products/space-bg-3-3.webp", maxWidth: 1920, maxHeight: 1920, quality: 72 },
+  { source: "products/RL-SPACE_BG_3_1.png", target: "products/rl-space-bg-3-1.webp", maxWidth: 1920, maxHeight: 1920, quality: 72 },
+  { source: "products/RL-SPACE_BG_3_2.png", target: "products/rl-space-bg-3-2.webp", maxWidth: 1920, maxHeight: 1920, quality: 72 },
+  { source: "products/RL-SPACE_BG_3_3.png", target: "products/rl-space-bg-3-3.webp", maxWidth: 1920, maxHeight: 1920, quality: 72 },
 ];
 
 const svgAssets = [
