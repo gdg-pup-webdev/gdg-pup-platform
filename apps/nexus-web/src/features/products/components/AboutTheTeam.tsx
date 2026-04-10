@@ -26,8 +26,6 @@ export function AboutTheTeam({ description, categories }: AboutTheTeamProps) {
         style={{
           background:
             "linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(163, 163, 163, 0.06))",
-          backdropFilter: "blur(70px) saturate(120%)",
-          WebkitBackdropFilter: "blur(70px) saturate(120%)",
           outlineOffset: "-1px",
         }}
       >

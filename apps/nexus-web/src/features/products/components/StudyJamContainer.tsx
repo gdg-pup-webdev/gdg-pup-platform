@@ -58,7 +58,7 @@ export function StudyJamContainer({
   contentClassName = "",
   ringGradient = "linear-gradient(90deg, #EA4335, #F9AB00, #34A853, #4285F4)",
   contentBackgroundColor = "rgba(255, 255, 255, 0.08)",
-  contentBackdropFilter = "blur(70px) saturate(180%)",
+  contentBackdropFilter = "",
 }: StudyJamContainerProps) {
   return (
     <div

@@ -35,11 +35,11 @@ export function ResourceLibraryGrid() {
                   src={item.image}
                   alt={item.body}
                   fill
-                  className="object-cover scale-125 opacity-40 bg-white/10 backdrop-blur-xl"
+                  className="object-cover scale-125 opacity-40 bg-white/10"
                 />
 
                 <CardHeader className="absolute top-2 sm:top-3 md:top-6 left-2 md:left-4 z-10 p-0 max-w-[calc(100%-16px)]">
-                  <div className="flex items-center gap-1 sm:gap-1.5 md:gap-3 px-1.5 sm:px-2 md:px-5 h-[20px] sm:h-[28px] md:h-[50px] rounded-full backdrop-blur-xl border border-white/20">
+                  <div className="flex items-center gap-1 sm:gap-1.5 md:gap-3 px-1.5 sm:px-2 md:px-5 h-[20px] sm:h-[28px] md:h-[50px] rounded-full border border-white/20">
                     <div
                       className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-6 md:h-6 rounded-full shrink-0"
                       style={{

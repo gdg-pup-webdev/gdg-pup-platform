@@ -10,17 +10,17 @@ export function ProductsSection() {
     <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
-        src="/products/SPACE_BG_3_3.png"
+        src="/products/space-bg-3-3.webp"
         alt=""
         className="absolute top-250 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
       <img
-        src="/products/SPACE_BG_3_2.png"
+        src="/products/space-bg-3-2.webp"
         alt=""
         className="absolute top-135 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
       <img
-        src="/products/SPACE_BG_3_1.png"
+        src="/products/space-bg-3-1.webp"
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
@@ -30,16 +30,16 @@ export function ProductsSection() {
       />
 
       {/* Decorative elements */}
-      <div className="absolute w-[1000px] h-[1000px] origin-top-left rotate-[7.71deg] opacity-10 mix-blend-hard-light bg-white/80 rounded-full blur-[200px] -translate-x-1/3" />
-      <div className="absolute w-[792px] h-[640px] opacity-60 bg-blue-500/20 rounded-full blur-[289.55px] translate-y-9/10" />
+      <div className="absolute w-[1000px] h-[1000px] origin-top-left rotate-[7.71deg] opacity-10 mix-blend-hard-light bg-white/80 rounded-full blur-[50px] -translate-x-1/3" />
+      <div className="absolute w-[792px] h-[640px] opacity-30 bg-blue-500/20 rounded-full blur-[100px] translate-y-9/10" />
       <img
-        src="/products/gold-1.jpg"
+        src="/products/gold-1.webp"
         alt=""
         className="absolute -top-40 -left-40 w-[1200px] h-[1600px] rotate-[-162deg] mix-blend-screen blur-[150px] pointer-events-none z-0 -translate-x-3/5 -translate-y-1/10 opacity-30"
       />
       <img
         className="w-155 h-auto absolute top-90 -left-125 opacity-25 translate-x-1/3"
-        src="/products/cogwheel-asset.png"
+        src="/products/cogwheel-asset.webp"
         alt=""
       />
       <img

@@ -23,7 +23,7 @@ const TEAM_IMAGES: Record<string, string> = {
   cybersecurity: "/products/cybersecurity-logo.webp",
   "cloud-solutions": "/products/cloud-solutions-logo.webp",
   "project-management": "/products/project-management-logo.webp",
-  executives: "/products/executives-logo.png",
+  executives: "/products/executives-logo.webp",
 };
 
 const TEAM_GLOW_COLORS: Record<string, string> = {
@@ -81,17 +81,17 @@ export function TeamStructureSection({
     <div className="relative overflow-x-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
-        src="/products/RL-SPACE_BG_3_3.png"
+        src="/products/rl-space-bg-3-3.webp"
         alt=""
         className="absolute top-280 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
       <img
-        src="/products/RL-SPACE_BG_3_2.png"
+        src="/products/rl-space-bg-3-2.webp"
         alt=""
         className="absolute top-165 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
       <img
-        src="/products/RL-SPACE_BG_3_1.png"
+        src="/products/rl-space-bg-3-1.webp"
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
@@ -102,7 +102,7 @@ export function TeamStructureSection({
       />
       <img
         className="w-165 h-auto absolute bottom-180 -right-10 opacity-25 translate-x-1/3 rotate-[-16deg] z-10"
-        src="/products/cogwheel-asset.png"
+        src="/products/cogwheel-asset.webp"
         alt=""
       />
       <img
@@ -111,28 +111,28 @@ export function TeamStructureSection({
         alt=""
       />
 
-      {/* Decorative blobs */}
+      {/* Decorative blobs — use radial-gradient instead of filter:blur for GPU efficiency */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
-          width: "min(900px, 65vw)",
-          height: "min(800px, 70vh)",
-          top: "calc(4rem - 300px)",
-          left: "max(calc((100vw - 80rem) / 2), 0px)",
-          background: "#4285F433",
-          filter: "blur(579px)",
+          width: "min(1100px, 80vw)",
+          height: "min(1000px, 85vh)",
+          top: "calc(4rem - 400px)",
+          left: "max(calc((100vw - 80rem) / 2 - 100px), -100px)",
+          background: "radial-gradient(ellipse at center, #4285F440 0%, #4285F420 40%, transparent 70%)",
+          transform: "translateZ(0)",
           zIndex: 0,
         }}
       />
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
-          width: "min(800px, 60vw)",
-          height: "min(900px, 75vh)",
-          top: "calc(4rem + 300px)",
-          right: "max(calc((100vw - 80rem) / 2 - 300px), -150px)",
-          background: "#34A85333",
-          filter: "blur(579px)",
+          width: "min(1000px, 75vw)",
+          height: "min(1100px, 90vh)",
+          top: "calc(4rem + 200px)",
+          right: "max(calc((100vw - 80rem) / 2 - 400px), -200px)",
+          background: "radial-gradient(ellipse at center, #34A85340 0%, #34A85320 40%, transparent 70%)",
+          transform: "translateZ(0)",
           zIndex: 0,
         }}
       />
@@ -171,7 +171,7 @@ export function TeamStructureSection({
 
             {/* Team image + spirals */}
             <div className="relative w-full mt-20 flex flex-col items-center">
-              {/* Amber Glow */}
+              {/* Amber Glow — radial-gradient, no CPU/GPU blur */}
               <div className="relative w-full flex justify-center items-center">
                 <div
                   className="
@@ -179,10 +179,10 @@ export function TeamStructureSection({
     w-[var(--glow-size)] h-[var(--glow-size)]
     md:w-[var(--glow-size-md)] md:h-[var(--glow-size-md)]
     lg:w-[var(--glow-size-lg)] lg:h-[var(--glow-size-lg)]
-    blur-[218.5px]
   "
                   style={{
-                    backgroundColor: glowColor,
+                    background: `radial-gradient(ellipse at center, ${glowColor}99 0%, ${glowColor}55 35%, ${glowColor}22 60%, transparent 75%)`,
+                    transform: "translateZ(0)",
                     ["--glow-size" as string]: glowSize.base,
                     ["--glow-size-md" as string]: glowSize.md,
                     ["--glow-size-lg" as string]: glowSize.lg,
@@ -197,10 +197,10 @@ export function TeamStructureSection({
                 />
               </div>
 
-              {/* Gold glow behind image */}
+              {/* Gold glow behind image — reduced blur cost */}
               <div className="absolute left-1/2 -translate-x-1/2 -top-40 lg:-top-50 md:top-2 w-[1000px] md:w-[1000px] lg:w-[1900px] pointer-events-none z-10">
                 <Image
-                  src="/products/gold-4.png"
+                  src="/products/gold-4.webp"
                   alt=""
                   width={1200}
                   height={600}

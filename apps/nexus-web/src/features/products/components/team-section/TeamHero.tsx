@@ -9,7 +9,7 @@ const TEAM_IMAGES: Record<string, string> = {
   cybersecurity: "/products/cybersecurity-logo.webp",
   "cloud-solutions": "/products/cloud-solutions-logo.webp",
   "project-management": "/products/project-management-logo.webp",
-  executives: "/products/executives-logo.png",
+  executives: "/products/executives-logo.webp",
 };
 
 const TEAM_GLOW_COLORS: Record<string, string> = {
@@ -55,17 +55,17 @@ export function TeamHero({ teamName, teamSlug }: TeamHeroProps) {
     <div className="relative w-full mt-20 flex flex-col items-center">
       {/* Main image */}
       <div className="relative w-full flex justify-center items-center">
-        {/* Amber glow */}
+        {/* Amber glow — radial-gradient, no CPU/GPU blur */}
         <div
           className="
     absolute rounded-full pointer-events-none z-[11]
     w-[var(--glow-size)] h-[var(--glow-size)]
     md:w-[var(--glow-size-md)] md:h-[var(--glow-size-md)]
     lg:w-[var(--glow-size-lg)] lg:h-[var(--glow-size-lg)]
-    blur-[218.5px]
   "
           style={{
-            backgroundColor: glowColor,
+            background: `radial-gradient(ellipse at center, ${glowColor}99 0%, ${glowColor}55 35%, ${glowColor}22 60%, transparent 75%)`,
+            transform: "translateZ(0)",
             ["--glow-size" as string]: glowSize.base,
             ["--glow-size-md" as string]: glowSize.md,
             ["--glow-size-lg" as string]: glowSize.lg,
@@ -80,14 +80,14 @@ export function TeamHero({ teamName, teamSlug }: TeamHeroProps) {
         />
       </div>
 
-      {/* Gold glow behind image */}
+      {/* Gold glow behind image — reduced blur cost */}
       <div className="absolute left-1/2 -translate-x-1/2 -top-40 lg:-top-50 md:top-2 w-[1000px] md:w-[1000px] lg:w-[1900px] pointer-events-none z-10">
         <Image
-          src="/products/gold-4.png"
+          src="/products/gold-4.webp"
           alt=""
           width={1200}
           height={600}
-          className="w-full h-auto mix-blend-screen opacity-50 lg:opacity-30 blur-[50px]"
+          className="w-full h-auto  opacity-50 lg:opacity-30"
         />
       </div>
 

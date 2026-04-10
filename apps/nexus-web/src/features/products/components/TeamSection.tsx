@@ -21,17 +21,17 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
     <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
-        src="/products/RL-SPACE_BG_3_3.png"
+        src="/products/rl-space-bg-3-3.webp"
         alt=""
         className="absolute top-280 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
       <img
-        src="/products/RL-SPACE_BG_3_2.png"
+        src="/products/rl-space-bg-3-2.webp"
         alt=""
         className="absolute top-165 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
       />
       <img
-        src="/products/RL-SPACE_BG_3_1.png"
+        src="/products/rl-space-bg-3-1.webp"
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
@@ -41,28 +41,28 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
         }}
       />
 
-      {/* Decorative blobs */}
+      {/* Decorative blobs — use radial-gradient instead of filter:blur for GPU efficiency */}
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
-          width: "min(900px, 65vw)",
-          height: "min(800px, 70vh)",
-          top: "calc(4rem - 300px)",
-          left: "max(calc((100vw - 80rem) / 2), 0px)",
-          background: "#4285F433",
-          filter: "blur(579px)",
+          width: "min(1100px, 80vw)",
+          height: "min(1000px, 85vh)",
+          top: "calc(4rem - 400px)",
+          left: "max(calc((100vw - 80rem) / 2 - 100px), -100px)",
+          background: "radial-gradient(ellipse at center, #4285F440 0%, #4285F420 40%, transparent 70%)",
+          transform: "translateZ(0)",
           zIndex: 0,
         }}
       />
       <div
         className="absolute rounded-full pointer-events-none"
         style={{
-          width: "min(800px, 60vw)",
-          height: "min(900px, 75vh)",
-          top: "calc(4rem + 300px)",
-          right: "max(calc((100vw - 80rem) / 2 - 300px), -150px)",
-          background: "#34A85333",
-          filter: "blur(579px)",
+          width: "min(1000px, 75vw)",
+          height: "min(1100px, 90vh)",
+          top: "calc(4rem + 200px)",
+          right: "max(calc((100vw - 80rem) / 2 - 400px), -200px)",
+          background: "radial-gradient(ellipse at center, #34A85340 0%, #34A85320 40%, transparent 70%)",
+          transform: "translateZ(0)",
           zIndex: 0,
         }}
       />
