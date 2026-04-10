@@ -49,6 +49,7 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
         gradient="white-blue"
         align="center"
         weight="bold"
+        className="text-3xl leading-none sm:text-4xl md:text-5xl"
       >
         STUDY JAMS
       </Text>

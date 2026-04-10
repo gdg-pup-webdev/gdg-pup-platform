@@ -38,10 +38,10 @@ export function ResourceLibraryGrid() {
                   className="object-cover scale-125 opacity-40 bg-white/10 backdrop-blur-xl"
                 />
 
-                <CardHeader className="absolute top-3 md:top-6 left-2 md:left-4 z-10 p-0">
-                  <div className="flex items-center gap-1.5 md:gap-3 px-2 md:px-5 h-[28px] md:h-[50px] rounded-full backdrop-blur-xl border border-white/20">
+                <CardHeader className="absolute top-2 sm:top-3 md:top-6 left-2 md:left-4 z-10 p-0 max-w-[calc(100%-16px)]">
+                  <div className="flex items-center gap-1 sm:gap-1.5 md:gap-3 px-1.5 sm:px-2 md:px-5 h-[20px] sm:h-[28px] md:h-[50px] rounded-full backdrop-blur-xl border border-white/20">
                     <div
-                      className="w-3 h-3 md:w-6 md:h-6 rounded-full shrink-0"
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-6 md:h-6 rounded-full shrink-0"
                       style={{
                         padding: "2px",
                         background:
@@ -53,8 +53,7 @@ export function ResourceLibraryGrid() {
                       }}
                     />
                     <CardTitle
-                      className="font-medium tracking-wide"
-                      style={{ fontSize: "clamp(8px, 4cqw, 1.125rem)" }}
+                      className="font-medium tracking-wide text-[0.45rem] xs:text-[0.55rem] sm:text-xs md:text-sm lg:text-[1.125rem] whitespace-nowrap overflow-hidden text-ellipsis leading-none"
                     >
                       <Text gradient="white-blue">
                         {item.header.toUpperCase()}
