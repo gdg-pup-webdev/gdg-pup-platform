@@ -11,6 +11,9 @@ export const NfcScanRecord = cz.object({
 export const NfcScanRecordInsertDTO = NfcScanRecord.omit({
   id: true,
   date: true,
+  nfcCardId: true,
+}).extend({
+  ownerGdgId: cz.string(),
 });
 
 export const NfcAnalyticsRecord = cz.object({

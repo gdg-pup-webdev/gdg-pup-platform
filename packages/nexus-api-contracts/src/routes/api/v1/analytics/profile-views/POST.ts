@@ -9,7 +9,7 @@ export const body = OpenApiSchemas.Request.Body.withPayload(
 );
 
 export const response = {
-  201: OpenApiSchemas.Response.single(ProfileViewRecord),
+  201: OpenApiSchemas.Response.empty(),
   ...OpenApiSchemas.Response.standardErrors(),
 };
 
