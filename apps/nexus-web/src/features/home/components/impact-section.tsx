@@ -27,10 +27,7 @@ export function ImpactSection() {
   const impactCards = [
     {
       color: "#2E74FF",
-      corner: ASSETS.HOME.BLUE_CORNER,
       title: "2,000+ Members",
-      logo: ASSETS.HOME.TEAM_ICON,
-      logoAlt: "team icon",
       description:
         "Fostered a vibrant and engaged ecosystem of tech enthusiasts and innovators.",
       image: ASSETS.HOME.BLUE_IMG_PLACEHOLDER,
@@ -38,10 +35,7 @@ export function ImpactSection() {
     },
     {
       color: "#34A853",
-      corner: ASSETS.HOME.GREEN_CORNER,
       title: "Multiple Tech Teams",
-      logo: ASSETS.HOME.TECH_ICON,
-      logoAlt: "tech icon",
       description:
         "Launched specialized teams to drive technical excellence and project execution.",
       image: ASSETS.HOME.GREEN_IMG_PLACEHOLDER,
@@ -49,10 +43,7 @@ export function ImpactSection() {
     },
     {
       color: "#F9AB00",
-      corner: ASSETS.HOME.YELLOW_CORNER,
       title: "Workshops & Hackathons",
-      logo: ASSETS.HOME.LIGHTBULB_ICON,
-      logoAlt: "lightbulb icon",
       description:
         "Organized dozens of high-impact events focused on building and competing.",
       image: ASSETS.HOME.YELLOW_IMG_PLACEHOLDER,
@@ -60,10 +51,7 @@ export function ImpactSection() {
     },
     {
       color: "#EA4335",
-      corner: ASSETS.HOME.RED_CORNER,
       title: "Industry Collaborations",
-      logo: ASSETS.HOME.HANDSHAKE_ICON,
-      logoAlt: "handshake icon",
       description:
         "Bridged the gap between our community and leading professional organizations.",
       image: ASSETS.HOME.RED_IMG_PLACEHOLDER,
@@ -96,20 +84,17 @@ export function ImpactSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-          className="mt-35 grid grid-cols-1 auto-rows-fr gap-10 justify-items-stretch md:grid-cols-4 lg:grid-cols-4"
+          className="mt-35 grid grid-cols-1 auto-rows-fr gap-8 justify-items-stretch md:grid-cols-2 lg:grid-cols-4"
         >
           {impactCards.map((card) => (
             <ImpactCard
               key={`${card.color}-${card.title}`}
               color={card.color}
-              corner={card.corner}
               title={card.title}
-              logo={card.logo}
-              logoAlt={card.logoAlt}
               description={card.description}
               image={card.image}
               imageAlt={card.imageAlt}
-              className="justify-between"
+              className="justify-between min-h-[420px]"
             />
           ))}
         </motion.div>
