@@ -2,7 +2,7 @@
 
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useGetProfileAnalytics, useGetNfcAnalytics } from "@/features/analytics";
-import { CosmosParticles } from "@/components/shared";
+import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { Text, Badge } from "@packages/spark-ui";
 import { SparkmatesRainbowStreak } from "../SparkmatesOwnerView/components/SparkmatesRainbowStreak";
 import { FadeInSection } from "../SparkmatesOwnerView/components/FadeInSection";
@@ -19,14 +19,9 @@ export const AnalyticsPageContent = () => {
   const isLoading = loadingProfile || loadingNfc;
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-20">
-          <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading analytics..." />;
   }
+
 
   const totalViews = profileAnalytics?.totalViews || 0;
   const totalScans = nfcAnalytics?.totalScans || 0;
