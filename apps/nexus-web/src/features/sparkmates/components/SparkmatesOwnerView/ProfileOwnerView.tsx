@@ -19,6 +19,7 @@ import { ProjectsSection } from "./sections/ProjectsSection";
 import { ImpactSection } from "./sections/ImpactSection";
 import { SuggestedPeopleSection } from "./sections/SuggestedPeopleSection";
 import { SparkmatesMiniPreviewCard } from "./components/SparkmatesMiniPreviewCard";
+import { CustomButtonsSection } from "./sections/CustomButtonsSection";
  
 export function ProfileOwnerView({
   gdgId,
@@ -127,9 +128,9 @@ export function ProfileOwnerView({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-3 sm:px-6 pb-24 pt-24 sm:pt-36 text-white"
+      className="min-h-screen overflow-x-hidden bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-3 sm:px-6 pb-24 pt-24 sm:pt-36 text-white"
     >
-      <div className="relative min-h-screen w-full">
+      <div className="relative w-full">
         {/* RAINBOW ON THE BACKGROUND — desktop only */}
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden hidden sm:block">
           <SparkmatesRainbowStreak />
@@ -171,7 +172,7 @@ export function ProfileOwnerView({
 
             <div className="mt-6 space-y-6">
 
-              {/* {userprofile && <CustomButtonsSection profile={userprofile} />} */}
+              {userprofile && <CustomButtonsSection profile={userprofile} />}
               <Divider />
 
               {userprofile && <SkillsAndLinksSection profile={userprofile} />}

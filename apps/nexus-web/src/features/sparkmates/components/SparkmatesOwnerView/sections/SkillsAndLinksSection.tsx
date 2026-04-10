@@ -124,43 +124,6 @@ function CategoryCard({
   );
 }
 
-function OtherLinksCard({
-  links,
-  onOpenExternal,
-}: {
-  links: string[];
-  onOpenExternal: (url: string) => void;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-6 py-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
-      <div className="mb-3 flex items-center gap-3">
-        <SkillSectionIcon type="links" />
-        <Text variant="body-lg" className="text-white" weight="medium">
-          Other Links
-        </Text>
-      </div>
-      {links.length > 0 ? (
-        <div className="space-y-2">
-          {links.map((link, index) => (
-            <Button
-              key={`${link}-${index}`}
-              variant="ghost"
-              className="h-auto w-full justify-start rounded-xl border border-white/20 bg-[#091734] px-3 py-2 text-left text-white"
-              onClick={() => onOpenExternal(link)}
-            >
-              <span className="block truncate">{link}</span>
-            </Button>
-          ))}
-        </div>
-      ) : (
-        <Text variant="body-sm" className="text-[#C1C7CD]">
-          No links yet.
-        </Text>
-      )}
-    </div>
-  );
-}
-
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
     {children}
@@ -251,13 +214,11 @@ export function SkillsAndLinksSection({
           chips={profile.toolsAndTechnologies ?? []}
           iconType="tools"
         />
-        <OtherLinksCard links={profile.otherLinks ?? []} onOpenExternal={(url) => {window.open( url, '_blank');}} />
       </div>
 
       {profile.technicalSkills?.length === 0 &&
       profile.learningInterests?.length === 0 &&
-      profile.toolsAndTechnologies?.length === 0 &&
-      profile.otherLinks?.length === 0 ? (
+      profile.toolsAndTechnologies?.length === 0 ? (
         <Button
           variant="outline"
           className="w-full border-white/25 bg-white/5 text-white"
