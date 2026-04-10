@@ -61,15 +61,45 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-2",
     gradient: "white-yellow",
     href: "/products/executives",
-    image: "/products/executives-logo.png",
+    image: "/products/executives-logo.webp",
   },
 ] as const;
 
-export const GDG_PRODUCTS = [
-  "GDG ID Platform",
-  "GDG Sparky Fortune",
-  "GDG Photobooth",
-  "Product Name",
-  "Product Name",
-  "Product Name",
+export interface GdgProduct {
+  image: string;
+  title: string;
+  url: string;
+}
+
+export const GDG_PRODUCTS: GdgProduct[] = [
+  {
+    image: "/products/placeholders/gdg-id-platform.webp",
+    title: "GDG ID Platform",
+    url: "#",
+  },
+  {
+    image: "/products/placeholders/gdg-sparky-fortune.webp",
+    title: "GDG Sparky Fortune",
+    url: "#",
+  },
+  {
+    image: "/products/placeholders/gdg-photobooth.webp",
+    title: "GDG Photobooth",
+    url: "#",
+  },
+  {
+    image: "/products/placeholders/product-name-1.webp",
+    title: "Product Name",
+    url: "#",
+  },
+  {
+    image: "/products/placeholders/product-name-2.webp",
+    title: "Product Name",
+    url: "#",
+  },
+  {
+    image: "/products/placeholders/product-name-3.webp",
+    title: "Product Name",
+    url: "#",
+  },
 ];
