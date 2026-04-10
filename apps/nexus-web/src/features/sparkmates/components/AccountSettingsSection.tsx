@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { LoadingScreen } from "@/components/shared";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useGetProfileOfUserByGdgId } from "../hooks/useGetProfileOfUserByGdgId";
 import { Text, Button } from "@packages/spark-ui";
@@ -24,11 +25,7 @@ export function AccountSettingsSection() {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 pb-24 pt-40">
-        <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-      </div>
-    );
+    return <LoadingScreen message="Loading settings..." />;
   }
 
   if (isError || !profile || !gdgId) {

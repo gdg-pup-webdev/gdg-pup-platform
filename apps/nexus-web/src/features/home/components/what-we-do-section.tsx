@@ -50,7 +50,7 @@ export function WhatWeDoSection() {
                       color="on-primary"
                       className="text-2xl"
                     >
-                      We design experiences that turn
+                      We design experiences that turn {" "}
                       <br className="hidden lg:inline" />
                       curiosity into capability:
                     </Text>
@@ -100,7 +100,7 @@ export function WhatWeDoSection() {
               variant="body"
               weight="normal"
               color="on-primary"
-              className="lg:hidden text-lg mx-auto"
+              className="text-lg mx-auto lg:mx-0"
             >
               Every step is built around one principle: learning by doing.
             </Text>

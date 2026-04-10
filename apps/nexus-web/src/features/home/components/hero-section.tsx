@@ -9,6 +9,7 @@ import {
   type MotionValue,
 } from "motion/react";
 import { Button, Container, Stack, Text } from "@packages/spark-ui";
+import Link from "next/link";
 import { ASSETS } from "@/lib/constants/assets";
 
 /* ------------------------------------------------------------------ */
@@ -154,8 +155,8 @@ export function HeroSection() {
                 variants={prefersReduced ? undefined : ctaItemVariants}
                 className="mt-8 inline-block"
               >
-                <Button variant="default" size="lg">
-                  Spark your Journey
+                <Button asChild variant="default" size="lg">
+                  <Link href="/signin">Spark your Journey</Link>
                 </Button>
               </motion.div>
             </motion.div>

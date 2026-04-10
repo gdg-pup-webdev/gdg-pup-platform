@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Stack, Text, Button, Container } from '@packages/spark-ui';
+import { LoadingScreen } from "@/components/shared";
 
 const NEXUS_API_URL =
   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
@@ -111,11 +112,7 @@ function ConfirmPageContent() {
         <Stack gap="md" className="text-center">
           {status === "loading" && (
             <>
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
-              <Text variant="heading-2" className="text-gray-800">
-                Verifying Email
-              </Text>
-              <Text variant="body" className="text-gray-600">{message}</Text>
+              <LoadingScreen fullPage={false} message="Verifying your email..." />
             </>
           )}
 
@@ -156,14 +153,7 @@ export default function ConfirmPage() {
     <Suspense
       fallback={
         <Stack justify="center" align="center" className="min-h-screen bg-linear-to-br from-purple-50 to-blue-50 px-4">
-          <Container maxWidth="sm" padding="none">
-            <div className="bg-white p-8 rounded-2xl shadow-xl text-center">
-            <Stack gap="md">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
-              <Text variant="body" className="text-gray-600">Loading verification...</Text>
-            </Stack>
-            </div>
-          </Container>
+          <LoadingScreen message="Loading verification..." />
         </Stack>
       }
     >

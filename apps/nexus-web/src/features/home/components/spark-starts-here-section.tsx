@@ -2,6 +2,7 @@
 
 import { Button, Container, Stack, Text, Inline } from "@packages/spark-ui";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
 import { ASSETS } from "@/lib/constants/assets";
@@ -49,8 +50,8 @@ export function SparkStartsHereSection() {
                   >
                     Your Spark Starts Here.
                   </Text>
-                  <Button variant="colored" subVariant="yellow" size="lg">
-                    Spark your Journey
+                  <Button asChild variant="colored" subVariant="yellow" size="lg">
+                  <Link href="/signin">Spark your Journey</Link>
                   </Button>
                 </Stack>
 
