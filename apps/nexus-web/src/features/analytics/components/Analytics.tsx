@@ -58,7 +58,23 @@ const Analyticss = ( ) => {
     if (lastTracked.current === currentViewKey) return;
 
     if (pathMatch("/sparkmates/:gdgId", pathname)) {
+      console.log("Matched profile view pattern");
       const profileGdgId = params.gdgId;
+
+
+      const source = searchParams.get("source") || "direct";
+
+      
+      if (source === "nfc_card") {
+        const scanContext = searchParams.get("scanContext") || null;
+        const scannerId = searchParams.get("scannerId") || null;
+
+        recordNfcScan({
+          ownerGdgId: profileGdgId as string,
+          scanContext: scanContext || null,
+          scannerId: scannerId || viewerGdgId,
+        });
+      }
 
       if (!profileGdgId || profileGdgId === "me") {
         // Viewing own profile - do not track
@@ -72,7 +88,6 @@ const Analyticss = ( ) => {
         return;
       }
 
-      const source = searchParams.get("source") || "direct";
 
       recordProfileView({
         profileGdgId: profileGdgId as string,
@@ -81,16 +96,7 @@ const Analyticss = ( ) => {
         viewerGdgId: viewerGdgId,
       });
 
-      if (source === "nfc-card") {
-        const scanContext = searchParams.get("scanContext") || null;
-        const scannerId = searchParams.get("scannerId") || null;
-
-        recordNfcScan({
-          ownerGdgId: profileGdgId as string,
-          scanContext: scanContext || null,
-          scannerId: scannerId || viewerGdgId,
-        });
-      }
+      
 
     }
     
