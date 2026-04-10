@@ -4,9 +4,10 @@ import { Button, Modal, ShineBorder, Text } from "@packages/spark-ui";
 import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useSparkmateProfile } from "../../hooks";
 import { SparkmatesSource } from "../../types";
+import { useUpdateSparkmateProfile } from "../../hooks/useUpdateSparkmateProfile";
 import { SkillsAndLinksSection } from "./sections/SkillsAndLinksSection"; 
 import { viewIcon } from "./icons/viewIcon"; 
 import { Divider } from "./components/Divider"; 
@@ -20,6 +21,19 @@ import { ImpactSection } from "./sections/ImpactSection";
 import { SuggestedPeopleSection } from "./sections/SuggestedPeopleSection";
 import { SparkmatesMiniPreviewCard } from "./components/SparkmatesMiniPreviewCard";
 import { CustomButtonsSection } from "./sections/CustomButtonsSection";
+import {
+  moveSparkmatesSection,
+  normalizeSparkmatesSectionOrder,
+  SparkmatesSectionId,
+} from "../../sectionOrder";
+
+const SECTION_LABELS: Record<SparkmatesSectionId, string> = {
+  customButtons: "Custom Buttons",
+  skillsAndInterests: "Skills and Interests",
+  projects: "Projects",
+  gdgImpact: "GDG Impact",
+  badges: "Badges",
+};
  
 export function ProfileOwnerView({
   gdgId,
@@ -31,6 +45,15 @@ export function ProfileOwnerView({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isPreviewClosing, setIsPreviewClosing] = useState(false);
   const [previewTilt, setPreviewTilt] = useState({ rotateX: 0, rotateY: 0 });
+  const [isDesktopReorderMode, setIsDesktopReorderMode] = useState(false);
+  const [isMobileReorderModalOpen, setIsMobileReorderModalOpen] = useState(false);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [mobileDraggingIndex, setMobileDraggingIndex] = useState<number | null>(null);
+  const [mobileDropIndex, setMobileDropIndex] = useState<number | null>(null);
+  const mobileDraggingIndexRef = useRef<number | null>(null);
+  const mobileDropIndexRef = useRef<number | null>(null);
+  const mobileRowRefs = useRef<Array<HTMLDivElement | null>>([]);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -72,6 +95,128 @@ export function ProfileOwnerView({
     data: userprofiledata,
   } = useGetProfileOfUserByGdgId(gdgId);
   const userprofile = userprofiledata?.data;
+  const { mutate: updateProfileOrder, isPending: isSavingSectionOrder } =
+    useUpdateSparkmateProfile(gdgId);
+  const [sectionOrder, setSectionOrder] = useState<SparkmatesSectionId[]>(
+    normalizeSparkmatesSectionOrder(userprofile?.sectionOrder),
+  );
+
+  useEffect(() => {
+    setSectionOrder(normalizeSparkmatesSectionOrder(userprofile?.sectionOrder));
+  }, [userprofile?.sectionOrder]);
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("sparkmates:desktop-reorder-mode", {
+        detail: { enabled: isDesktopReorderMode },
+      }),
+    );
+
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("sparkmates:desktop-reorder-mode", {
+          detail: { enabled: false },
+        }),
+      );
+    };
+  }, [isDesktopReorderMode]);
+
+  const saveSectionOrder = (next: SparkmatesSectionId[]) => {
+    setSectionOrder(next);
+    updateProfileOrder(
+      { sectionOrder: next },
+      {
+        onError: () => {
+          setSectionOrder(normalizeSparkmatesSectionOrder(userprofile?.sectionOrder));
+        },
+      },
+    );
+  };
+
+  const handleMoveSection = (fromIndex: number, toIndex: number) => {
+    const next = moveSparkmatesSection(sectionOrder, fromIndex, toIndex);
+    if (next === sectionOrder) return;
+    saveSectionOrder(next);
+  };
+
+  const handleDropSection = (targetIndex: number) => {
+    if (!isDesktopReorderMode || draggingIndex === null) return;
+
+    const next = moveSparkmatesSection(sectionOrder, draggingIndex, targetIndex);
+    setDraggingIndex(null);
+    setDropTargetIndex(null);
+    if (next === sectionOrder) return;
+
+    saveSectionOrder(next);
+  };
+
+  const handleMobileTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (mobileDraggingIndexRef.current === null) return;
+
+    const touchY = event.touches[0]?.clientY;
+    if (typeof touchY !== "number") return;
+
+    let nextDropIndex = mobileDropIndexRef.current;
+    for (let i = 0; i < mobileRowRefs.current.length; i += 1) {
+      const row = mobileRowRefs.current[i];
+      if (!row) continue;
+      const rect = row.getBoundingClientRect();
+      if (touchY >= rect.top && touchY <= rect.bottom) {
+        nextDropIndex = i;
+        break;
+      }
+    }
+
+    if (typeof nextDropIndex === "number" && nextDropIndex !== mobileDropIndexRef.current) {
+      mobileDropIndexRef.current = nextDropIndex;
+      setMobileDropIndex(nextDropIndex);
+    }
+
+    event.preventDefault();
+  };
+
+  const finalizeMobileDrag = () => {
+    const fromIndex = mobileDraggingIndexRef.current;
+    const toIndex = mobileDropIndexRef.current;
+
+    if (
+      fromIndex !== null &&
+      toIndex !== null &&
+      fromIndex !== toIndex
+    ) {
+      const next = moveSparkmatesSection(
+        sectionOrder,
+        fromIndex,
+        toIndex,
+      );
+      if (next !== sectionOrder) {
+        saveSectionOrder(next);
+      }
+    }
+
+    mobileDraggingIndexRef.current = null;
+    mobileDropIndexRef.current = null;
+    setMobileDraggingIndex(null);
+    setMobileDropIndex(null);
+  };
+
+  const renderSection = (sectionId: SparkmatesSectionId) => {
+    if (!userprofile) return null;
+
+    if (sectionId === "customButtons") {
+      return <CustomButtonsSection profile={userprofile} />;
+    }
+    if (sectionId === "skillsAndInterests") {
+      return <SkillsAndLinksSection profile={userprofile} />;
+    }
+    if (sectionId === "projects") {
+      return <ProjectsSection profile={userprofile} />;
+    }
+    if (sectionId === "gdgImpact") {
+      return <ImpactSection profile={userprofile} />;
+    }
+    return <BadgesSection profile={userprofile} />;
+  };
 
 
   if (isLoading) {
@@ -168,26 +313,121 @@ export function ProfileOwnerView({
               </div>
             </div>
 
-            {userprofile && <NameAndProfileSection profile={userprofile} />}
+            {userprofile && (
+              <NameAndProfileSection
+                profile={userprofile}
+                onOpenReorderDesktop={() => setIsDesktopReorderMode((prev) => !prev)}
+                onOpenReorderMobile={() => setIsMobileReorderModalOpen(true)}
+              />
+            )}
+
+            <AnimatePresence>
+              {isDesktopReorderMode ? (
+                <motion.div
+                  key="reorder-navbar"
+                  initial={{ opacity: 0, y: -24, scale: 0.985 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -24, scale: 0.985 }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  className="fixed left-0 right-0 top-0 z-[60] hidden md:px-16 md:pt-10 sm:block pointer-events-none"
+                >
+                  <div className="pointer-events-auto mx-auto h-22 max-w-7xl md:rounded-[1.875rem] px-8 md:px-12 lg:px-20 flex items-center shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040,0px_4px_36px_0px_#FFFFFF40_inset] bg-black/80 backdrop-blur-xl relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]">
+                    <div className="relative flex w-full items-center justify-between gap-3">
+                      <Text variant="body" className="text-white" weight="bold">
+                        Reorder mode enabled: drag sections directly. Drop to save instantly.
+                      </Text>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="text-white"
+                        onClick={() => {
+                          setIsDesktopReorderMode(false);
+                          setDraggingIndex(null);
+                          setDropTargetIndex(null);
+                        }}
+                      >
+                        Done
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
 
             <div className="mt-6 space-y-6">
+              {sectionOrder.map((sectionId, index) => {
+                const isLast = index === sectionOrder.length - 1;
+                const isDraggingCurrent = draggingIndex === index;
+                const isDropTarget = isDesktopReorderMode && dropTargetIndex === index;
 
-              {userprofile && <CustomButtonsSection profile={userprofile} />}
-              <Divider />
+                return (
+                  <motion.div
+                    key={sectionId}
+                    layout
+                    initial={false}
+                    animate={{
+                      opacity: isDesktopReorderMode ? 1 : 1,
+                      y: isDesktopReorderMode ? 0 : 0,
+                      scale: isDraggingCurrent ? 0.995 : 1,
+                      filter: isDesktopReorderMode
+                        ? "saturate(0.55) brightness(0.92)"
+                        : "saturate(1) brightness(1)",
+                    }}
+                    transition={{ duration: 0.22, ease: "easeOut" }}
+                    className={`relative isolate space-y-4 rounded-2xl transition-all ${
+                      isDesktopReorderMode
+                        ? "hidden sm:block border border-white/20 bg-black/40 backdrop-blur-xl p-3 before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[1.25px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]"
+                        : ""
+                    } ${isDraggingCurrent ? "opacity-60 scale-[0.995]" : ""} ${
+                      isDropTarget
+                        ? "shadow-[0_0_22px_rgba(255,255,255,0.22),0_0_30px_rgba(66,133,244,0.18)]"
+                        : isDesktopReorderMode
+                          ? "shadow-[0px_4px_36px_0px_#FFFFFF2A_inset,0_0_14px_rgba(255,255,255,0.08)]"
+                          : ""
+                    }`}
+                    draggable={isDesktopReorderMode && !isSavingSectionOrder}
+                    onDragStart={() => {
+                      if (!isDesktopReorderMode) return;
+                      setDraggingIndex(index);
+                    }}
+                    onDragOver={(event) => {
+                      if (!isDesktopReorderMode) return;
+                      event.preventDefault();
+                      if (draggingIndex !== index) {
+                        setDropTargetIndex(index);
+                      }
+                    }}
+                    onDrop={() => handleDropSection(index)}
+                    onDragEnd={() => {
+                      setDraggingIndex(null);
+                      setDropTargetIndex(null);
+                    }}
+                  >
+                    {isDesktopReorderMode ? (
+                      <div className="relative hidden sm:flex items-center justify-between rounded-xl border border-white/20 bg-black/30 px-3 py-2">
+                        <Text variant="body-sm" className="text-white" weight="bold">
+                          {SECTION_LABELS[sectionId]}
+                        </Text>
+                        <Text variant="body-sm" className="text-[#C1C7CD]">
+                          Drag me ::
+                        </Text>
+                      </div>
+                    ) : null}
 
-              {userprofile && <SkillsAndLinksSection profile={userprofile} />}
+                    <motion.div
+                      animate={{
+                        opacity: isDesktopReorderMode ? 0.85 : 1,
+                      }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className={isDesktopReorderMode ? "pointer-events-none select-none" : ""}
+                    >
+                      {renderSection(sectionId)}
+                    </motion.div>
 
-              <Divider />
-
-              {userprofile && <ProjectsSection profile={userprofile} />}
-
-              <Divider />
-
-              {userprofile && <ImpactSection profile={userprofile} />}
-
-              <Divider />
-
-              {userprofile && <BadgesSection profile={userprofile} />}
+                    {!isLast ? <Divider /> : null}
+                  </motion.div>
+                );
+              })}
             </div>
           </FadeInSection>
 
@@ -242,6 +482,77 @@ export function ProfileOwnerView({
                 {userprofile ? <SparkmatesMiniPreviewCard profile={userprofile} /> : null}
               </div>
               </motion.div>
+            </div>
+          </div>
+        </Modal>
+
+        <Modal
+          open={isMobileReorderModalOpen}
+          onOpenChange={setIsMobileReorderModalOpen}
+          size="sm"
+          scrollBehavior="inside"
+          className="bg-transparent border-none p-0 !shadow-none isolate sm:hidden"
+        >
+          <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/90 backdrop-blur-2xl px-5 py-6 border border-white/10">
+            <Text variant="heading-6" className="text-white" weight="bold">
+              Reorder Sections
+            </Text>
+            <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
+              Move sections up or down.
+            </Text>
+
+            <div className="mt-4 space-y-2">
+              {sectionOrder.map((sectionId, index) => {
+                const isDragging = mobileDraggingIndex === index;
+                const isDropTarget =
+                  mobileDraggingIndex !== null &&
+                  mobileDropIndex === index &&
+                  mobileDraggingIndex !== index;
+
+                return (
+                  <div
+                    key={`mobile-${sectionId}`}
+                    ref={(el) => {
+                      mobileRowRefs.current[index] = el;
+                    }}
+                    data-mobile-reorder-index={index}
+                    className={`rounded-xl border px-3 py-2 transition-all ${
+                      isDropTarget
+                        ? "border-[#57CAFF] bg-[#1A2B4A] shadow-[0_0_18px_rgba(87,202,255,0.3)]"
+                        : "border-white/20 bg-[#091734]/70"
+                    } ${isDragging ? "opacity-70 scale-[0.99]" : ""}`}
+                    onTouchStart={() => {
+                      mobileDraggingIndexRef.current = index;
+                      mobileDropIndexRef.current = index;
+                      setMobileDraggingIndex(index);
+                      setMobileDropIndex(index);
+                    }}
+                    onTouchMove={handleMobileTouchMove}
+                    onTouchEnd={finalizeMobileDrag}
+                    onTouchCancel={finalizeMobileDrag}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <Text variant="body" className="text-white">
+                        {SECTION_LABELS[sectionId]}
+                      </Text>
+                      <Text variant="body-sm" className="text-[#C1C7CD]">
+                        Drag ::
+                      </Text>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <Button
+                variant="default"
+                size="sm"
+                className="text-white"
+                onClick={() => setIsMobileReorderModalOpen(false)}
+              >
+                Done
+              </Button>
             </div>
           </div>
         </Modal>
