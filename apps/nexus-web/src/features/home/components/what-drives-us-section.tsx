@@ -27,7 +27,7 @@ export function WhatDrivesUsSection() {
             width={473}
             height={630}
             draggable={false}
-            className="pointer-events-none select-none absolute top-0 left-5 w-24 h-auto lg:w-[473px] lg:h-[630px] lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-20"
+            className="pointer-events-none select-none absolute top-0 left-0 w-24 h-auto lg:w-[473px] lg:h-[630px] lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-20"
           />
 
           {/* Content on right */}
