@@ -1,8 +1,10 @@
 import { NfcRepository } from "./infrastructure/NfcRepository";
 import { NfcCardsModuleController } from "./NfcCardsModuleController";
+import { ActivateByGdgId } from "./useCase/ActivateByGdgId";
 import { ActivateCardUseCase } from "./useCase/ActivateCardUseCase";
 import { CreateCardsBulkUseCase } from "./useCase/CreateCardsBulkUseCase";
 import { CreateCardUseCase } from "./useCase/CreateCardUseCase";
+import { GetCardByGdgId } from "./useCase/GetCardByGdgId";
 import { GetCardStatusUseCase } from "./useCase/GetCardStatusUseCase";
 import { GetCardUseCase } from "./useCase/GetCardUseCase";
 import { GetDestinationUrlUseCase } from "./useCase/GetDestinationUrlUseCase";
@@ -22,6 +24,9 @@ const setDestinationUrlUC = new SetDestinationUrlUseCase(cardRepository);
 
 const listCardsOfUserUC = new ListCardsOfUserUseCase(cardRepository);
 
+const activatebygdgid = new ActivateByGdgId(cardRepository);
+const getbygdgid = new GetCardByGdgId(cardRepository);
+
 export const nfcCardsModuleController = new NfcCardsModuleController(
   activateCardUC,
   createCardBulkUC,
@@ -31,6 +36,8 @@ export const nfcCardsModuleController = new NfcCardsModuleController(
   getDestinationUrlUseCase,
   setDestinationUrlUC,
   listCardsOfUserUC,
+  activatebygdgid,
+  getbygdgid,
 );
 
 export { NfcCardsModuleController };

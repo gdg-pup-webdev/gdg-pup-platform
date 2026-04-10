@@ -29,6 +29,7 @@ export const eventRecord = cz.object({
   speakers: cz.array(cz.string()),
   type: cz.string().nullable().optional(),
   teamId: cz.string().uuid().nullable().optional(),
+  teamName: cz.string().nullable().optional(),
 });
 
 export const eventRecordInsertDTO = eventRecord.omit({
@@ -36,6 +37,7 @@ export const eventRecordInsertDTO = eventRecord.omit({
   createdAt: true,
   updatedAt: true,
   attendees_count: true,
+  teamName: true,
 });
 
 export const eventRecordUpdateDTO = eventRecordInsertDTO.partial();

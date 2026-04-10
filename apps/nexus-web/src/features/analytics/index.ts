@@ -1,3 +1,3 @@
 export * from "./hooks/useRecordAnalytics";
 export * from "./hooks/useGetAnalytics";
-export * from "./components/AnalyticsTracker";
+export * from "./components/Analytics";

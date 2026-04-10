@@ -1,4 +1,5 @@
 import { AnalyticsController } from "./AnalyticsController";
+import { NfcRepo } from "./infrastructure/NfcRepo";
 import { SupabaseNfcScanRepository } from "./infrastructure/SupabaseNfcScanRepository";
 import { SupabaseProfileViewRepository } from "./infrastructure/SupabaseProfileViewRepository";
 import { GetNfcAnalytics } from "./useCases/GetNfcAnalytics";
@@ -8,10 +9,11 @@ import { ProfileVisited } from "./useCases/ProfileVisited";
 
 const nfcScanRepo = new SupabaseNfcScanRepository();
 const profileViewRepo = new SupabaseProfileViewRepository();
+const nfcrepo = new NfcRepo();
 
 const getNfcAnalytics = new GetNfcAnalytics(nfcScanRepo);
 const getProfileAnalytics = new GetProfileAnalytics(profileViewRepo);
-const nfcCardScanned = new NfcCardScanned(nfcScanRepo);
+const nfcCardScanned = new NfcCardScanned(nfcScanRepo, nfcrepo);
 const profileVisited = new ProfileVisited(profileViewRepo);
 
 export const analyticsController = new AnalyticsController(

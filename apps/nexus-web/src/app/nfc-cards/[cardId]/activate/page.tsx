@@ -12,7 +12,7 @@
 "use client";
 
 import { configs } from "@/configs/servers.config";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { ASSETS } from "@/lib/constants/assets";
@@ -23,6 +23,8 @@ export default function ActivateCardPage() {
   const { cardId } = useParams();
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const redirecturl = searchParams.get("redirect") || `/nfc-cards/${cardId}`;
   const { decodedToken, status: authStatus } = useAuthContext();
 
   const activateCardMutation = useCardActivation();
@@ -36,7 +38,7 @@ export default function ActivateCardPage() {
     activateCardMutation.mutate(cardId as string, {
       onSuccess: () => {
         toast.success("Card activated successfully!");
-        router.push(`/nfc-cards/${cardId}`);
+        router.push(redirecturl);
       },
       onError: (error: any) => {
         toast.error(error.message || "Something went wrong");

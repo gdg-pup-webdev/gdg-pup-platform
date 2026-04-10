@@ -65,6 +65,7 @@ export class EventSystemController {
       speakers: event.props.speakers,
       type: event.props.type,
       teamId: event.props.teamId,
+      teamName: event.props.teamName ?? null,
     };
   }
 

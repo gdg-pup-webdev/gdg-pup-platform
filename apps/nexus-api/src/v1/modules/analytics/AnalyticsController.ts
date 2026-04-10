@@ -70,7 +70,11 @@ export class AnalyticsController {
     };
   }
 
-  async nfcCardScanned(props: NfcScanInsertProps) {
+  async nfcCardScanned(props: {
+    ownerGdgId: string;
+    scanContext?: string | null;
+    scannerId?: string | null;
+  }) {
     const scan = await this.nfcCardScannedUseCase.execute(props);
 
     return {

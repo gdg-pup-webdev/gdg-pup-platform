@@ -10,7 +10,7 @@ import { extractErrorMessage } from "@/lib/utils";
 export const useRecordNfcScan = () => {
   return useMutation({
     mutationFn: async (payload: {
-      nfcCardId: string;
+      ownerGdgId: string;
       scanContext?: string | null;
       scannerId?: string | null;
     }) => {
@@ -20,7 +20,7 @@ export const useRecordNfcScan = () => {
         {
           body: {
             data: {
-              nfcCardId: payload.nfcCardId,
+              ownerGdgId: payload.ownerGdgId,
               scanContext: payload.scanContext ?? null,
               scannerId: payload.scannerId ?? null,
             },
@@ -32,7 +32,7 @@ export const useRecordNfcScan = () => {
         throw new Error(extractErrorMessage(res.body));
       }
 
-      return res.body.data;
+      return true
     },
   });
 };
@@ -67,7 +67,7 @@ export const useRecordProfileView = () => {
         throw new Error(extractErrorMessage(res.body));
       }
 
-      return res.body.data;
+      return true
     },
   });
 };

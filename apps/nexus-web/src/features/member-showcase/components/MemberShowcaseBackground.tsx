@@ -77,7 +77,7 @@ export function MemberShowcaseBackground({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-28 pb-24 md:px-8 md:pt-40 md:pb-32 lg:px-16 lg:pt-60 lg:pb-48"
+      className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-28 pb-24 md:px-8 md:pt-40 md:pb-32 lg:pt-44 lg:pb-48"
     >
       <motion.div
         ref={orangeBlobRef}
