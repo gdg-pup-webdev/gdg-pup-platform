@@ -13,6 +13,7 @@
 import React, { useState } from "react";
 import { configs } from "@/configs/servers.config";
 import { ASSETS } from "@/lib/constants/assets";
+import { LoadingScreen } from "@/components/shared";
 
 export default function UserProfilePage({ params }: { params: Promise<{ id: string }> }) {
   // Unwrap the params Promise (required in Next.js 15+)
@@ -58,11 +59,7 @@ export default function UserProfilePage({ params }: { params: Promise<{ id: stri
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-white">
-        <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-white rounded-full"></div>
-      </div>
-    );
+    return <LoadingScreen message="Loading profile..." />;
   }
 
   if (error) {
