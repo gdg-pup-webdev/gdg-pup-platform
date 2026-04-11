@@ -8,7 +8,11 @@ import Image from "next/image";
 import { Badge, Button, Input, Text, Modal, Textarea } from "@packages/spark-ui";
 import { useRouter } from "next/navigation";
 import { UserProfile, useUpdateSparkmateProfile } from "@/features/sparkmates";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  parseCustomButtonLinks,
+  serializeCustomButtonLinks,
+} from "../../../utils/customButtonFavorites";
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
@@ -42,11 +46,17 @@ export const NameAndProfileSection = ({
     portfolioWebsiteUrl: profile.portfolioWebsiteUrl || "",
   });
 
-  const [links, setLinks] = useState<string[]>(profile.otherLinks || []);
+  const parsedProfileLinks = useMemo(
+    () => parseCustomButtonLinks(profile.otherLinks),
+    [profile.otherLinks],
+  );
+  const [links, setLinks] = useState<string[]>(parsedProfileLinks.links);
   const [newLink, setNewLink] = useState("");
 
   // Sync when profile is refreshed after query invalidation
-  useEffect(() => { setLinks(profile.otherLinks ?? []); }, [profile.otherLinks]);
+  useEffect(() => {
+    setLinks(parsedProfileLinks.links);
+  }, [parsedProfileLinks]);
 
   const handleAddLink = () => {
     if (newLink && !links.includes(newLink)) {
@@ -81,7 +91,12 @@ export const NameAndProfileSection = ({
   };
 
   const handleSaveLinks = () => {
-    updateProfile({ otherLinks: links }, { onSuccess: () => setIsLinksModalOpen(false) });
+    updateProfile(
+      {
+        otherLinks: serializeCustomButtonLinks(links, parsedProfileLinks.starredUrls),
+      },
+      { onSuccess: () => setIsLinksModalOpen(false) },
+    );
   };
 
   const fullName =
