@@ -63,7 +63,7 @@ export function OnboardingForm({ gdgId, firstName }: OnboardingFormProps) {
     >
       <div className="relative z-10 w-full">
         <Container className="py-12">
-          <div className="relative overflow-hidden w-full max-w-4xl mx-auto rounded-3xl border border-white/20 bg-[rgba(255,255,255,0.02)] shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)] backdrop-blur-2xl">
+          <div className="relative overflow-hidden w-full max-w-4xl mx-auto rounded-3xl border border-white/20 bg-[rgba(255,255,255,0.02)] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)] backdrop-blur-2xl">
             <ShineBorder
               borderWidth={1.5}
               duration={10}
