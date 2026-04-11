@@ -16,6 +16,12 @@ export const ASSETS = {
         GDG_LOGO_WEBP: "/branding/gdg-logo.webp",
     },
 
+    // ─── Not Found ───────────────────────────────────────────────────────────────
+    NOT_FOUND: {
+        RESTING_SPARKY: "/not-found/not-found-resting-sparky.webp",
+        THINKING_SPARKY: "/not-found/not-found-thinking-sparky.webp",
+    },
+
     // ─── Home ─────────────────────────────────────────────────────────────────────
     HOME: {
         HERO: {
