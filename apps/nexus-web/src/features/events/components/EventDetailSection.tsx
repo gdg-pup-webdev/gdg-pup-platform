@@ -258,7 +258,7 @@ export function EventDetailSection({
             <span>Back</span>
           </button>
 
-          <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[260px] md:min-h-[520px]">
+          <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[260px] md:min-h-[520px] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)]">
             <img
               src={eventDetail?.image_url || "/pages/events/event-cover.webp"}
               alt={eventTitle}

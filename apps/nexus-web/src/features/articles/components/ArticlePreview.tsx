@@ -225,7 +225,7 @@ return (
           - bg-white/[0.03]: Adds that subtle "white opacity"
           - backdrop-blur-xl: Makes the blobs behind it look creamy and professional
       */}
-      <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/5 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)]">
         
         {/* THE GRADIENT BORDER OVERLAY (Matching History Page) */}
         <div

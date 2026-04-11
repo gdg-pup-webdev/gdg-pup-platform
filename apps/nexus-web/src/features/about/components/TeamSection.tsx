@@ -741,7 +741,7 @@ export function TeamSection() {
                 width={138}
                 height={78}
                 alt="GDG Logo"
-                className="block h-auto w-[min(44vw,8.5rem)] md:w-[9.75rem]"
+                className="pointer-events-none select-none block h-auto w-[min(44vw,8.5rem)] md:w-[9.75rem]"
               />
               <Text
                 as="h1"
@@ -794,7 +794,7 @@ export function TeamSection() {
                   <DropdownContent
                     size="full"
                     position="bottom-start"
-                    className="w-[calc(100vw-2rem)] max-w-full min-w-0 rounded-[12px] border-0 p-px shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
+                    className="w-[calc(100vw-2rem)] max-w-full min-w-0 rounded-[12px] border-0 p-px shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)]"
                     style={{ background: STATIC_RAINBOW_GRADIENT }}
                   >
                     <div className="max-h-[56vh] overflow-y-auto overscroll-contain touch-pan-y rounded-[11px] bg-[rgba(15,14,14,0.97)] backdrop-blur-md">
@@ -837,7 +837,7 @@ export function TeamSection() {
                       <DropdownContent
                         size="md"
                         position="top-end"
-                        className="w-[min(19rem,calc(100vw-2rem))] max-h-[60vh] overflow-y-auto overscroll-contain touch-pan-y rounded-[12px] border border-transparent bg-[rgba(15,14,14,0.97)] backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
+                        className="w-[min(19rem,calc(100vw-2rem))] max-h-[60vh] overflow-y-auto overscroll-contain touch-pan-y rounded-[12px] border border-transparent bg-[rgba(15,14,14,0.97)] backdrop-blur-md shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)]"
                         style={{
                           background: `linear-gradient(rgba(15,14,14,0.97), rgba(15,14,14,0.97)) padding-box, ${STATIC_RAINBOW_GRADIENT} border-box`,
                         }}
