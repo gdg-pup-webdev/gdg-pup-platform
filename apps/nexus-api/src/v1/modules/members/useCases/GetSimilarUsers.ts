@@ -18,8 +18,7 @@ export class GetSimilarUsers {
   private readonly relatedShare = 0.8;
   private readonly exploratoryPoolSize = 15;
   private readonly candidateFetchLimit = 120;
-  private readonly exploratoryInitialFetchLimit = 60;
-  private readonly exploratoryFallbackFetchLimit = 90;
+  private readonly exploratoryPublicFetchLimit = 90;
   private readonly requestRotationCounters = new Map<string, number>();
   private readonly enableTimingLogs =
     process.env.DEBUG_SUGGESTED_USERS_TIMING === "1";
@@ -38,7 +37,6 @@ export class GetSimilarUsers {
     strategy: SimilarUsersStrategy = "relevant",
   ): Promise<{ list: GdgMember[]; count: number }> {
     const flowStartedAt = this.nowMs();
-    let stageStartedAt = flowStartedAt;
     const stageDurationsMs: Record<string, number> = {};
 
     if (pageNumber < 1)
@@ -46,35 +44,26 @@ export class GetSimilarUsers {
     if (pageSize < 1)
       throw new BadRequestError("Page size must be greater than 0");
 
-    const sourceMember = await this.repo.findByGdgId(gdgMemberId);
-    stageStartedAt = this.recordStage(
+    const sourceMember = await this.withTimedStageAsync(
       stageDurationsMs,
       "findSourceMember",
-      stageStartedAt,
+      () => this.repo.findByGdgId(gdgMemberId),
     );
 
     if (!sourceMember) {
       throw new NotFoundError(`Member not found for gdgId: ${gdgMemberId}`);
     }
 
-    const relevantCandidates = await this.getRelevantCandidates(
-      gdgMemberId,
-      sourceMember,
-    );
-    stageStartedAt = this.recordStage(
+    const relevantCandidates = await this.withTimedStageAsync(
       stageDurationsMs,
       "fetchRelevantCandidates",
-      stageStartedAt,
+      () => this.getRelevantCandidates(gdgMemberId, sourceMember),
     );
 
-    const rankedRelevantMembers = this.rankBySimilarity(
-      sourceMember,
-      relevantCandidates,
-    );
-    stageStartedAt = this.recordStage(
+    const rankedRelevantMembers = this.withTimedStage(
       stageDurationsMs,
       "rankRelevantCandidates",
-      stageStartedAt,
+      () => this.rankBySimilarity(sourceMember, relevantCandidates),
     );
 
     const from = (pageNumber - 1) * pageSize;
@@ -98,74 +87,67 @@ export class GetSimilarUsers {
       };
     }
 
-    const publicCandidates = await this.repo.findPublicMembersExcludingGdgId(
-      gdgMemberId,
-      this.exploratoryInitialFetchLimit,
-    );
-    stageStartedAt = this.recordStage(
+    const publicCandidates = await this.withTimedStageAsync(
       stageDurationsMs,
       "fetchExploratoryPublicPool",
-      stageStartedAt,
+      () =>
+        this.repo.findPublicMembersExcludingGdgId(
+          gdgMemberId,
+          this.exploratoryPublicFetchLimit,
+        ),
     );
 
-    const nonRelevantCandidates = this.getNonRelevantCandidates(
-      sourceMember,
-      rankedRelevantMembers,
-      publicCandidates,
-    );
-    stageStartedAt = this.recordStage(
+    const nonRelevantCandidates = this.withTimedStage(
       stageDurationsMs,
       "filterExploratoryNonRelevant",
-      stageStartedAt,
+      () =>
+        this.getNonRelevantCandidates(
+          sourceMember,
+          rankedRelevantMembers,
+          publicCandidates,
+        ),
     );
 
-    const rankedStrictNonRelevantMembers = this.rankForExploration(
-      sourceMember,
-      nonRelevantCandidates,
-    );
-    stageStartedAt = this.recordStage(
+    const rankedStrictNonRelevantMembers = this.withTimedStage(
       stageDurationsMs,
       "rankExploratoryNonRelevant",
-      stageStartedAt,
+      () => this.rankForExploration(sourceMember, nonRelevantCandidates),
     );
 
-    const expandedNonRelevantMembers = await this.expandExploratoryCandidates(
-      gdgMemberId,
-      sourceMember,
-      rankedRelevantMembers,
-      rankedStrictNonRelevantMembers,
-      publicCandidates,
-    );
-    stageStartedAt = this.recordStage(
+    const expandedNonRelevantMembers = this.withTimedStage(
       stageDurationsMs,
       "expandExploratoryNonRelevant",
-      stageStartedAt,
+      () =>
+        this.expandExploratoryCandidates(
+          sourceMember,
+          rankedRelevantMembers,
+          rankedStrictNonRelevantMembers,
+          publicCandidates,
+        ),
     );
 
-    const rotatedRelevantMembers = this.rotateForRequestVariety(
-      sourceMember.props.gdgId,
-      "related",
-      rankedRelevantMembers,
-    );
-    const rotatedExpandedNonRelevantMembers = this.rotateForRequestVariety(
-      sourceMember.props.gdgId,
-      "non-related",
-      expandedNonRelevantMembers,
-    );
-    stageStartedAt = this.recordStage(
-      stageDurationsMs,
-      "rotateExploratoryPools",
-      stageStartedAt,
-    );
+    const { rotatedRelevantMembers, rotatedExpandedNonRelevantMembers } =
+      this.withTimedStage(stageDurationsMs, "rotateExploratoryPools", () => ({
+        rotatedRelevantMembers: this.rotateForRequestVariety(
+          sourceMember.props.gdgId,
+          "related",
+          rankedRelevantMembers,
+        ),
+        rotatedExpandedNonRelevantMembers: this.rotateForRequestVariety(
+          sourceMember.props.gdgId,
+          "non-related",
+          expandedNonRelevantMembers,
+        ),
+      }));
 
-    const exploratorySequence = this.buildExploratorySequence(
-      rotatedRelevantMembers,
-      rotatedExpandedNonRelevantMembers,
-    );
-    this.recordStage(
+    const exploratorySequence = this.withTimedStage(
       stageDurationsMs,
       "buildExploratorySequence",
-      stageStartedAt,
+      () =>
+        this.buildExploratorySequence(
+          rotatedRelevantMembers,
+          rotatedExpandedNonRelevantMembers,
+        ),
     );
 
     const list = exploratorySequence
@@ -200,6 +182,28 @@ export class GetSimilarUsers {
     const finishedAt = this.nowMs();
     stageDurationsMs[stage] = finishedAt - startedAt;
     return finishedAt;
+  }
+
+  private withTimedStage<T>(
+    stageDurationsMs: Record<string, number>,
+    stage: string,
+    run: () => T,
+  ): T {
+    const startedAt = this.nowMs();
+    const result = run();
+    this.recordStage(stageDurationsMs, stage, startedAt);
+    return result;
+  }
+
+  private async withTimedStageAsync<T>(
+    stageDurationsMs: Record<string, number>,
+    stage: string,
+    run: () => Promise<T>,
+  ): Promise<T> {
+    const startedAt = this.nowMs();
+    const result = await run();
+    this.recordStage(stageDurationsMs, stage, startedAt);
+    return result;
   }
 
   private logTimingSummary(params: {
@@ -399,13 +403,12 @@ export class GetSimilarUsers {
     return combined;
   }
 
-  private async expandExploratoryCandidates(
-    gdgMemberId: string,
+  private expandExploratoryCandidates(
     sourceMember: GdgMember,
     rankedRelevantMembers: Array<{ member: GdgMember; score: number }>,
     rankedStrictNonRelevantMembers: Array<{ member: GdgMember; score: number }>,
     publicCandidates: GdgMember[],
-  ): Promise<Array<{ member: GdgMember; score: number }>> {
+  ): Array<{ member: GdgMember; score: number }> {
     const totalStrictCandidates =
       rankedRelevantMembers.length + rankedStrictNonRelevantMembers.length;
     if (totalStrictCandidates >= this.exploratoryPoolSize) {
@@ -422,27 +425,6 @@ export class GetSimilarUsers {
     let fallbackCandidates = publicCandidates.filter(
       (member) => !usedIds.has(member.props.gdgId),
     );
-
-    // Only fetch a larger fallback pool when the initial public sample cannot fill the exploratory pool.
-    if (
-      totalStrictCandidates + fallbackCandidates.length < this.exploratoryPoolSize
-    ) {
-      const expandedPublicCandidates =
-        await this.repo.findPublicMembersExcludingGdgId(
-          gdgMemberId,
-          this.exploratoryFallbackFetchLimit,
-        );
-
-      const seenIds = new Set(publicCandidates.map((member) => member.props.gdgId));
-      const additionalCandidates = expandedPublicCandidates.filter(
-        (member) => !seenIds.has(member.props.gdgId),
-      );
-
-      fallbackCandidates = [
-        ...fallbackCandidates,
-        ...additionalCandidates.filter((member) => !usedIds.has(member.props.gdgId)),
-      ];
-    }
 
     if (fallbackCandidates.length === 0) return rankedStrictNonRelevantMembers;
 

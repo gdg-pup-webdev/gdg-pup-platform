@@ -13,8 +13,8 @@ import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
 
 export class GdgMembersHttpController {
-  private readonly nfcCardContract =
-    (contract as any).api?.v1?.gdgmembers?.gdgId?.nfc_card;
+  private readonly nfcCardContract = (contract as any).api?.v1?.gdgmembers
+    ?.gdgId?.nfc_card;
 
   constructor(
     private readonly moduleController: GdgMembersController = gdgMembersController,
