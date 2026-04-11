@@ -50,6 +50,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
           .filter((item): item is SparkmatesSectionId =>
             isSparkmatesSectionId(item),
           ) || DEFAULT_SPARKMATES_SECTION_ORDER,
+      isOnboarded: row.is_onboarded,
       isPublic: row.is_public,
     });
   }
@@ -78,6 +79,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
       section_order: p.sectionOrder.join(","),
+      is_onboarded: p.isOnboarded,
       is_public: p.isPublic,
 
       created_at: new Date().toISOString(),

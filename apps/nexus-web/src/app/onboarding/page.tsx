@@ -23,7 +23,7 @@ export default function OnboardingPage() {
     }
 
     // Redirect to profile if already onboarded
-    if (status === STATUS.AUTHENTICATED && memberProfile && memberProfile.isPublic !== null) {
+    if (status === STATUS.AUTHENTICATED && memberProfile && memberProfile.isOnboarded) {
       router.push("/sparkmates/me");
     }
   }, [status, memberProfile, router]);

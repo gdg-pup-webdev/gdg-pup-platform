@@ -81,6 +81,7 @@ export type GdgMemberProps = {
   toolsAndTechnologies: string[];
   sectionOrder: SparkmatesSectionId[];
 
+  isOnboarded: boolean | null;
   isPublic: boolean | null;
 };
 

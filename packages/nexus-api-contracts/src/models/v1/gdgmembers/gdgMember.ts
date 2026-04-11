@@ -33,6 +33,7 @@ export const gdgMemberRecord = cz.object({
   learningInterests: cz.array(cz.string()),
   toolsAndTechnologies: cz.array(cz.string()),
   sectionOrder: cz.array(sparkmatesSectionId),
+  isOnboarded: cz.boolean().nullable(),
   isPublic: cz.boolean().nullable(),
 });
 
