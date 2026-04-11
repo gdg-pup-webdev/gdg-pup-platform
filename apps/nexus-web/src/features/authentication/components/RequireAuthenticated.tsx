@@ -27,7 +27,7 @@ export const RequireAuthenticated = ({
       if (!memberProfile) return;
 
       // If they haven't completed onboarding, force them to do it unless they are already there
-      if (memberProfile.isPublic === null && pathname !== LINKS.onboarding) {
+      if (!memberProfile.isOnboarded && pathname !== LINKS.onboarding) {
         console.log("Redirecting to onboarding... profile incomplete");
         router.push(LINKS.onboarding);
       }
