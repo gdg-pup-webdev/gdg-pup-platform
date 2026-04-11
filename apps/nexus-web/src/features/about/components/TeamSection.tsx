@@ -741,7 +741,7 @@ export function TeamSection() {
                 width={138}
                 height={78}
                 alt="GDG Logo"
-                className="block h-auto w-[min(44vw,8.5rem)] md:w-[9.75rem]"
+                className="pointer-events-none select-none block h-auto w-[min(44vw,8.5rem)] md:w-[9.75rem]"
               />
               <Text
                 as="h1"
