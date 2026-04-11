@@ -8,7 +8,6 @@ import {
   Badge,
   Button,
   Input,
-  ShineBorder,
   Text,
 } from "@packages/spark-ui";
 import { toast } from "react-toastify";
@@ -28,6 +27,7 @@ import {
   normalizeSparkmatesSectionOrder,
   SparkmatesSectionId,
 } from "../../sectionOrder";
+import { parseCustomButtonLinks } from "../../utils/customButtonFavorites";
 
 const viewIcon = (
   <svg
@@ -397,9 +397,11 @@ export function ProfilePublicView({
 
   const avatarUrl = profile?.avatarUrl || ASSETS.PROFILE.DEFAULT_AVATAR;
 
-  const customLinks = (profile?.otherLinks ?? []).map((url) => ({
+  const parsedCustomButtonLinks = parseCustomButtonLinks(profile?.otherLinks);
+  const customLinks = parsedCustomButtonLinks.links.map((url) => ({
     title: getLinkTitle(url),
     url,
+    isStarred: parsedCustomButtonLinks.starredUrls.has(url),
   }));
 
   const projectList = projectsQuery.data || [];
@@ -433,19 +435,12 @@ export function ProfilePublicView({
             {customLinks.map((item, index) => (
               <div
                 key={`${item.title}-${index}`}
-                className="relative overflow-hidden rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[border-color,box-shadow] duration-300"
+                className={`relative overflow-hidden rounded-2xl p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[box-shadow,background] duration-300 ${
+                  item.isStarred
+                    ? "rainbow-border bg-[#0F2449] bg-[linear-gradient(90deg,#0F2449_0%,#2A4F91_50%,#0F2449_100%)]"
+                    : "border border-white/20 bg-[rgba(255,255,255,0.05)]"
+                }`}
               >
-                <ShineBorder
-                  borderWidth={1.25}
-                  duration={9}
-                  shineColor={[
-                    "#FB2C36",
-                    "#F0B100",
-                    "#00C950",
-                    "#2B7FFF",
-                  ]}
-                  className="opacity-100 transition-opacity duration-300"
-                />
                 <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <Text
