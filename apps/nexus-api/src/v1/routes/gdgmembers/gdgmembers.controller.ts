@@ -13,57 +13,74 @@ import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
 
 export class GdgMembersHttpController {
+  private readonly nfcCardContract =
+    (contract as any).api?.v1?.gdgmembers?.gdgId?.nfc_card;
+
   constructor(
     private readonly moduleController: GdgMembersController = gdgMembersController,
     private readonly rbaccontroller: RbacModuleController = rbacController,
     private readonly nfccontroller: NfcCardsModuleController = nfcCardsModuleController,
   ) {}
 
-  activateNfcCardByGdgId: RequestHandler = createExpressController(
-    contract.api.v1.gdgmembers.gdgId.nfc_card.activate.POST,
-    async ({ input, output, ctx }) => {
-      const usr = ctx.req.decodedToken?.memberInfo.gdgId || null;
-      if (!usr) {
-        return output(403, {
+  activateNfcCardByGdgId: RequestHandler = this.nfcCardContract?.activate?.POST
+    ? createExpressController(
+        this.nfcCardContract.activate.POST,
+        async ({ input, output, ctx }) => {
+          const usr = ctx.req.decodedToken?.memberInfo.gdgId || null;
+          if (!usr) {
+            return output(403, {
+              status: "fail",
+              message: "Unauthorized: No user information found in token",
+            });
+          }
+
+          if (usr !== input.params.gdgId) {
+            return output(403, {
+              status: "fail",
+              message: "Unauthorized: You can only activate your own NFC card",
+            });
+          }
+
+          const result = await this.nfccontroller.activateCardByGdgId(
+            input.params.gdgId,
+            usr,
+          );
+
+          return output(200, {
+            status: "success",
+            message: "NFC card activated successfully",
+            data: result,
+          });
+        },
+      )
+    : (_req, res) => {
+        res.status(501).json({
           status: "fail",
-          message: "Unauthorized: No user information found in token",
+          message: "NFC card contract is not available in this build",
         });
-      }
+      };
 
-      if (!usr || usr !== input.params.gdgId) {
-        return output(403, {
+  getNfcCardOfUser: RequestHandler = this.nfcCardContract?.GET
+    ? createExpressController(
+        this.nfcCardContract.GET,
+        async ({ input, output }) => {
+          const result = await this.nfccontroller.getCardByGdgId(
+            input.params.gdgId,
+          );
+
+          return output(200, {
+            status: "success",
+            message: "NFC card fetched successfully",
+            data: result,
+          });
+        },
+      )
+    : (_req, res) => {
+        res.status(501).json({
           status: "fail",
-          message: "Unauthorized: You can only activate your own NFC card",
+          message: "NFC card contract is not available in this build",
         });
-      }
-
-      const result = await this.nfccontroller.activateCardByGdgId(
-        input.params.gdgId,
-        usr,
-      );
-
-      return output(200, {
-        status: "success",
-        message: "NFC card activated successfully",
-        data: result,
-      });
-    },
-  );
-
-  getNfcCardOfUser: RequestHandler = createExpressController(
-    contract.api.v1.gdgmembers.gdgId.nfc_card.GET,
-    async ({ input, output }) => {
-      const result = await this.nfccontroller.getCardByGdgId(
-        input.params.gdgId,
-      );
-
-      return output(200, {
-        status: "success",
-        message: "NFC card fetched successfully",
-        data: result,
-      });
-    },
-  );
+      };
 
   listRolesOfUser: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.roles.GET,

@@ -20,6 +20,10 @@ vi.mock("@packages/nexus-api-contracts", () => ({
             suggested_users: { GET: {} },
             make_private: { POST: {} },
             make_public: { POST: {} },
+            nfc_card: {
+              GET: {},
+              activate: { POST: {} },
+            },
             roles: {
               GET: {},
               POST: {},
