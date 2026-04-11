@@ -1,5 +1,13 @@
 import { cz } from "@packages/typed-rest/shared";
 
+const sparkmatesSectionId = cz.union([
+  cz.literal("customButtons"),
+  cz.literal("skillsAndInterests"),
+  cz.literal("projects"),
+  cz.literal("gdgImpact"),
+  cz.literal("badges"),
+]);
+
 /**
  * Represents a GDG Member record in the system.
  */
@@ -24,6 +32,7 @@ export const gdgMemberRecord = cz.object({
   technicalSkills: cz.array(cz.string()),
   learningInterests: cz.array(cz.string()),
   toolsAndTechnologies: cz.array(cz.string()),
+  sectionOrder: cz.array(sparkmatesSectionId),
   isPublic: cz.boolean().nullable(),
 });
 
@@ -33,10 +42,15 @@ export const gdgMemberRecord = cz.object({
  */
 export const gdgMemberRecordInsertDTO = gdgMemberRecord.omit({
   gdgId: true,
-  avatarUrl: true, 
+  avatarUrl: true,
+  sectionOrder: true,
 });
 
 /**
  * Data Transfer Object for updating an existing GDG Member.
  */
-export const gdgMemberRecordUpdateDTO = gdgMemberRecordInsertDTO.partial();
+export const gdgMemberRecordUpdateDTO = gdgMemberRecordInsertDTO
+  .partial()
+  .extend({
+    sectionOrder: cz.array(sparkmatesSectionId).optional(),
+  });
