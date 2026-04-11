@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Container, Stack, Text } from "@packages/spark-ui"; 
 import type { Event } from "../types";
 import { normalizeEventDescription, splitBoldSegments } from "../utils/description";
@@ -31,6 +31,7 @@ export function EventDetailSection({
   eventId,
   title,
 }: EventDetailSectionProps) { 
+  const router = useRouter();
   const [expanded, setExpanded] = useState(false);
 
   const { data : eventDetail, isLoading, error} = useEvent(eventId)
@@ -99,6 +100,15 @@ export function EventDetailSection({
 
     return `${monthDay}, ${startTime}${endTime ? ` \u2013 ${endTime}` : ""} (${gmt})`;
   }, [eventDetail]);
+
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    router.push("/events");
+  };
 
   return (
     <div
@@ -229,8 +239,9 @@ export function EventDetailSection({
 
       <Container className="relative z-10">
         <Stack gap="md" className="md:gap-5">
-          <Link
-            href="/events"
+          <button
+            type="button"
+            onClick={handleBack}
             className="inline-flex items-center gap-2 text-white/85 hover:text-white transition-colors text-sm md:text-base w-fit"
           >
             <svg
@@ -245,7 +256,7 @@ export function EventDetailSection({
               <path d="M15 18l-6-6 6-6" />
             </svg>
             <span>Back</span>
-          </Link>
+          </button>
 
           <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[260px] md:min-h-[520px]">
             <img
