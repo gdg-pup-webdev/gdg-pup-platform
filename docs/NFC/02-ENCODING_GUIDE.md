@@ -6,8 +6,8 @@ This document outlines the technical methods for "burning" (encoding) our system
 
 Every card must hold a unique URL record (NDEF Record).
 
-- **Format:** `https://gdg-pup.com/tap/[CARD_UUID]`
-- **Purpose:** A neutral entry point that redirects to either **Activation** (if new) or **Profile** (if owned).
+- **Format:** `https://gdgpup.org/sparkmates/[GDG_ID]?source=nfc_card`
+- **Purpose:** A direct entry point to the assigned member's public Sparkmates profile.
 
 ---
 
@@ -40,7 +40,7 @@ This method outsources the work to the card printing vendor.
 
 1.  **Generate Excel Sheet:** Create a spreadsheet with:
     - `PRINT_ID`: The human-readable ID (e.g., GDG-001).
-    - `NFC_URL`: The specific payload (e.g., gdg-pup.com/activate/...).
+    - `NFC_URL`: The specific payload (e.g., https://gdgpup.org/sparkmates/usr_123?source=nfc_card).
 2.  **Send to Vendor:** Email this file along with the artwork.
 3.  **Receive:** The vendor ships boxes of cards that are already programmed.
 
@@ -54,14 +54,14 @@ It is critical that every physical card corresponds to a row in our database. Du
 
 Before you write to the physical cards, your database table must be populated like this:
 
-| card_id (UUID) | user_id (FK) | is_activated | status  |
-| :------------- | :----------- | :----------- | :------ |
-| `a1b2-c3d4...` | **`NULL`**   | **`FALSE`**  | `READY` |
-| `e5f6-g7h8...` | **`NULL`**   | **`FALSE`**  | `READY` |
+| card_id (UUID) | gdg_id (FK) | status  | activated_at |
+| :------------- | :----------- | :------ | :----------- |
+| `a1b2-c3d4...` | **`usr_12`** | `issued`| `NULL`       |
+| `e5f6-g7h8...` | **`usr_34`** | `issued`| `NULL`       |
 
-- **uuid:** The unique ID burned into the card.
-- **user_id:** Must be **NULL**. The card is unowned.
-- **is_activated:** Must be **FALSE**.
+- **id:** The unique UUID burned into the card.
+- **gdg_id:** Must be pre-assigned to a valid member.
+- **status:** Must be exactly `"issued"`.
 
 ### Generation Script (Node.js Example)
 
@@ -81,7 +81,7 @@ import fs from "fs";
 const supabase = createClient("YOUR_SUPABASE_URL", "YOUR_SERVICE_ROLE_KEY");
 
 const BATCH_SIZE = 100; // How many cards are we making?
-const BASE_URL = "https://gdg-pup.com/tap";
+const BASE_URL = "https://gdgpup.org/sparkmates";
 
 let csvContent = "NFC_URL\n";
 const dbRecords = [];
@@ -91,17 +91,20 @@ console.log(`Generating ${BATCH_SIZE} unique cards...`);
 for (let i = 0; i < BATCH_SIZE; i++) {
   const id = uuidv4(); // Generate ID here, not in DB
 
+  const gdgId = `usr_${Math.floor(Math.random() * 90000) + 10000}`; // Example GDG ID logic
+
   // 1. For the Physical Card (CSV)
-  const fullUrl = `${BASE_URL}/${id}`;
+  const fullUrl = `${BASE_URL}/${gdgId}?source=nfc_card`;
   csvContent += `${fullUrl}\n`;
 
   // 2. For the Database (Pre-Fill)
-  // We explicitly set the 'id' here to match the CSV
+  // We explicitly set the 'id' here to formally register the minted UUID
+  // NOTE: In production, gdg_id MUST be assigned correctly to target users
   dbRecords.push({
     id: id,
-    user_id: null, // No owner yet
-    is_activated: false, // Waiting for user
-    status: "READY",
+    gdg_id: gdgId, // Must link to actual member's GDG ID
+    status: "issued", // Ready for activation verification
+    activated_at: null
   });
 }
 

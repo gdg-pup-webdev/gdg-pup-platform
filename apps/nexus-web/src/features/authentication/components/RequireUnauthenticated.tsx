@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { LINKS } from "@/lib/constants/links";
 import { LoadingScreen } from "@/components/shared";
 import { STATUS, useAuthContext } from "../store/useAuthStore";
@@ -13,6 +13,7 @@ export const RequireUnauthenticated = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { status, memberProfile } = useAuthContext();
 
   useEffect(() => {
@@ -26,12 +27,17 @@ export const RequireUnauthenticated = ({
         return;
       }
 
-      // Already onboarded, redirect away from auth pages to their profile
+      // Already onboarded, redirect away from auth pages
       if (pathname !== LINKS.onboarding) {
-        router.push(LINKS.sparkmates_me);
+        const next = searchParams.get("next");
+        if (next && next.startsWith("/")) {
+          router.push(next);
+        } else {
+          router.push(LINKS.sparkmates_me);
+        }
       }
     }
-  }, [status, memberProfile, pathname, router]);
+  }, [status, memberProfile, pathname, router, searchParams]);
 
   if (status === STATUS.AUTHENTICATED || status === STATUS.CHECKING) {
     const message =
