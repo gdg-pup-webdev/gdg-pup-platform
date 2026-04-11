@@ -1,61 +1,50 @@
-# 📦 NFC Card Distribution & Self-Activation
+# 📦 NFC Card Distribution & Activation
 
-This document outlines the operational workflow for distributing NFC cards. We utilize a **Self-Service Activation** model, meaning cards are distributed "blank" (pre-programmed but unlinked) and users activate them personally.
+This document outlines the operational workflow for distributing NFC cards. We utilize a **Pre-Assigned Activation** model, meaning cards are linked to a specific user *before* or *during* distribution, and the user must explicitly "activate" the card to verify possession before it can be used.
 
-## 1. The Strategy: "Unboxing" Experience
+## 1. The Strategy: "Pre-Assigned" Model
 
-We moved away from the Admin-led provisioning. Now, the user is in control.
-
-- **Speed:** No long lines at the help desk. Just hand out the cards like swag.
-- **Engagement:** The user gets a magical "first tap" experience on their own device.
-- **Scalability:** We can distribute 1,000+ cards in minutes.
+- **Security:** Cards are explicitly linked to a user (`gdgId`) upon physical creation/distribution. If someone steals a card, they cannot claim it or use it, because the backend explicitly ties the physical card UUID to a single user.
+- **Verification:** The user must natively log in to the platform and authorize the activation to prove they physically received the exact card assigned to them.
+- **Status Machine:** Cards strictly progress through statuses: `"issued"` ➡️ `"activated"` ➡️ `"suspended"`/`"revoked"`.
 
 ---
 
 ## 2. The Distribution Workflow 🤝
 
-### Step 1: Handout
+### Step 1: Assignment
+- **System:** Administrators bulk-generate NFC cards using the `CreateCardsBulkUseCase` or individually via `CreateCardUseCase`.
+- **Database:** Cards are inserted into the `nfc_cards` table with:
+  - `id`: The UUID burned into the card.
+  - `gdg_id`: The ID of the specific member receiving the card.
+  - `status`: Strictly set to `"issued"`.
+  - `activated_at`: `NULL`.
 
-- **Venue:** Check-in desk or Swag bag.
-- **Action:** Volunteer hands a card to the member.
-- **Validation:** Ideally verify they are a registered attendee, but technically **it doesn't matter** if a non-member gets a card, because they cannot activate it without a valid GDG Account login.
+### Step 2: Handout
+- **Action:** An administrator or volunteer physically hands the pre-assigned card to the correct member.
 
 ---
 
-## 3. The Activation Workflow (User Journey) �
+## 3. The Activation Workflow (User Journey)
 
-This happens on the user's phone, at their own pace.
+This happens on the user's device to securely formalize their possession of the card.
 
-### Step 1: The Magic Tap
+### Step 1: The Trigger
+- **Action:** The user logs into the Nexus Platform.
+- **Action:** The user taps the card on their phone (which hits an intercept endpoint) OR actively clicks an "Activate Card" button within their Sparkmates setting dashboard.
 
-User taps their new card on their phone.
+### Step 2: Authorization Check
+- **API Call:** The frontend sends a request to `POST .../useCase/ActivateCardUseCase` (if activated by card UUID) or `ActivateByGdgId` (if automatically inferred from their session).
+- **Validation Engine:** 
+  1. The backend compares requesting user's ID against the card's `ownerGdgId`. If they do not match, it instantly throws an `Unauthorized: Only the card owner can activate the card` error.
+  2. The backend checks the card's domain `status`. It must be exactly `"issued"` to proceed. Doing this on an already active card throws an error.
 
-- **Card Payload:** `https://gdg-pup.com/tap/crd_123`
-- **Result:** Phone opens browser. The page checks `GET /api/identity/cards/crd_123/status`.
-
-### Step 2: System Check
-
-The system checks the `nfc_cards` database table for ID `a1b2-c3d4...`.
-
-- **Condition:** Is `user_id` NULL?
-  - **YES:** Show **Activation Screen**.
-  - **NO:** Show **Public Profile** (Already owned).
-
-### Step 3: Authentication
-
-- **Screen:** "Welcome! Please login to claim this card."
-- **Action:** User logs in with their GDG / Google Account.
-
-### Step 4: Confirmation
-
-- **Screen:** "Do you want to link this card to **[Jane Doe]**?"
-- **Action:** User clicks **"Start My Portfolio"**.
-
-### Step 5: Success
-
-- **System:** Updates database -> Sets `user_id` to Jane's ID.
-- **UI:** Redirects immediately to Jane's new Public Profile.
-- **Result:** The card is now permanently hers.
+### Step 3: Success & Persistence
+- **Mutation:** The core domain entity `NfcCard` fires `.activate()`, changing internal state securely.
+- **Database Updates:** The `NfcRepository` executes `persistUpdates(card)` directly to the `nfc_cards` row:
+  - `status` updates to `"activated"`.
+  - `activated_at` receives a fresh ISO 8601 timestamp.
+- **Result:** The card is officially live! It can now be used smoothly at check-in events and public scans.
 
 ---
 
@@ -63,54 +52,28 @@ The system checks the `nfc_cards` database table for ID `a1b2-c3d4...`.
 
 ```mermaid
 sequenceDiagram
-    participant User as User
-    participant Card as New Card
-    participant App as Web App (Activation)
-    participant API as Identity API
+    participant Admin as Organizer
     participant DB as Database
+    participant User as User
+    participant Card as NFC Card
+    participant App as Web App
+    participant API as Nexus API
 
-    User->>Card: Taps Card (First Time)
-    Card-->>User: Opens /tap/xyz-123
-    User->>App: Browser Loads "Traffic Cop" Page
+    Note over Admin,DB: Phase 1: Card Provisioning (Issued)
+    Admin->>API: Bulk Register Cards (Assigns UUIDs to GDG IDs)
+    API->>DB: INSERT nfc_cards (status: 'issued', gdg_id: '123')
+    Admin->>User: Hands physical card to User
 
-    App->>API: GET /cards/xyz-123/status
-    API->>DB: Is this card linked?
-    DB-->>API: No (user_id is NULL)
-    API-->>App: { status: "READY" }
-    App->>User: Redirects to /activate/xyz-123
-
-    App->>User: Prompts Login
-    User->>App: Logs In & Clicks "Activate"
-
-    App->>API: POST /api/identity/cards/activate { cardId: xyz-123 }
-
-    API->>DB: UDPATE nfc_cards SET user_id = CURRENT_USER
-    DB-->>API: Success
-
+    Note over User,API: Phase 2: User Activation (Activated)
+    User->>App: Logs in & triggers Activation
+    App->>API: POST /api/v1/nfc/activate
+    API->>DB: Fetch Card
+    DB-->>API: Returns Card Entity
+    
+    Note right of API: Security Check:<br/>1. Is Current User == ownerGdgId?<br/>2. Is status == "issued"?
+    
+    API->>DB: UPDATE nfc_cards SET status='activated', activated_at=NOW()
+    DB-->>API: Success Response
     API-->>App: 200 OK
-    App->>User: Redirects to /id/xyz-123 (Profile)
+    App->>User: "Card Activated Successfully!"
 ```
-
----
-
-## 5. Handling Issues
-
-### "This card is already active!"
-
-If a user taps a card that belongs to someone else:
-
-- **Screen:** "This card belongs to **[John Smith]**."
-- **Action:** User cannot claim it.
-
-### "Card Not Found"
-
-If a user taps a card that wasn't in our CSV/Database:
-
-- **Screen:** "Invalid Card. Please return to the help desk."
-- **Reason:** The card might be damaged or was missed during the Encoding Phase.
-
-### Lost Cards
-
-The user can login to their dashboard and click **"Deactivate Card"**.
-
-- This sets `nfc_cards.status` to `LOST` and unlinks it so no one else can scan it.
