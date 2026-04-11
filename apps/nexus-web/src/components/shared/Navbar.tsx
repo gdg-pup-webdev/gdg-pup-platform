@@ -70,7 +70,7 @@ const optionsLoggedIn = [
   },
   {
     label: "Account Settings",
-    href: "/sparkmates/settings",
+    href: "/sparkmates/me/settings",
   },
   {
     label: "Sign Out",
@@ -163,6 +163,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [activeMobileSection, setActiveMobileSection] = useState<string | null>(
     null,
   );
+  const [hideForReorderMode, setHideForReorderMode] = useState(false);
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -189,6 +190,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const customEvent = event as CustomEvent<{ enabled?: boolean }>;
+      setHideForReorderMode(Boolean(customEvent.detail?.enabled));
+    };
+
+    window.addEventListener("sparkmates:desktop-reorder-mode", handler as EventListener);
+
+    return () => {
+      window.removeEventListener("sparkmates:desktop-reorder-mode", handler as EventListener);
+    };
   }, []);
 
   const dropdownLinks = {
@@ -228,10 +242,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        animate={
+          hideForReorderMode
+            ? { opacity: 0, y: -90 }
+            : { opacity: 1, y: 0 }
+        }
+        transition={{ duration: hideForReorderMode ? 0.3 : 0.45, ease: "easeOut" }}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 transition-all duration-700 ease-out",
+          hideForReorderMode && "pointer-events-none",
         )}
       >
         <Box

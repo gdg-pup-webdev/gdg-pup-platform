@@ -92,23 +92,23 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
                     : "opacity-0 transition-opacity duration-300"
                 }
               />
-              <div className="flex items-start justify-between">
-                <div>
+              <div className="flex items-start justify-between min-w-0">
+                <div className="min-w-0 flex-1">
                   <Text
                     variant="body-lg"
-                    className="text-white"
+                    className="text-white truncate block"
                     weight="medium"
                   >
                     {item.title}
                   </Text>
-                  <Text variant="body" className="text-[#E5E5E5]">
+                  <Text variant="body" className="text-[#E5E5E5] break-all block pr-4">
                     {item.url}
                   </Text>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-white"
+                  className="h-8 w-8 p-0 text-white shrink-0"
                   onClick={() => toggleStar(index)}
                 >
                   {starredCustomButtons.has(index) ? "★" : "☆"}

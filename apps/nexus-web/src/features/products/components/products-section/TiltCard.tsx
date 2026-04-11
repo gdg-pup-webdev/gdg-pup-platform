@@ -4,7 +4,8 @@ import React from "react";
 import { ShineBorder } from "@packages/spark-ui";
 
 // ---------------------------------------------------------------------------
-// TiltCard — replicates the TeamCard 3-D tilt + ShineBorder hover effect
+// TiltCard — 3-D tilt + ShineBorder hover effect
+// mousemove is throttled via requestAnimationFrame to avoid layout thrashing
 // ---------------------------------------------------------------------------
 const TILT_MAX = 6;       // degrees
 const PERSPECTIVE = 1000; // px
@@ -20,6 +21,8 @@ interface TiltCardProps {
 export function TiltCard({ children, className }: TiltCardProps) {
   const cardRef = React.useRef<HTMLDivElement>(null);
   const shineRef = React.useRef<HTMLDivElement>(null);
+  const rafRef = React.useRef<number | null>(null);
+  const lastPos = React.useRef<{ nx: number; ny: number } | null>(null);
 
   const handleMouseMove = React.useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -27,23 +30,32 @@ export function TiltCard({ children, className }: TiltCardProps) {
       const rect = cardRef.current.getBoundingClientRect();
       const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-      Object.assign(cardRef.current.style, {
-        transform: `perspective(${PERSPECTIVE}px) rotateX(${-ny * TILT_MAX}deg) rotateY(${nx * TILT_MAX}deg)`,
-        transition: "transform 0.1s ease",
-        zIndex: "10",
+      lastPos.current = { nx, ny };
+
+      // Throttle to one DOM write per animation frame
+      if (rafRef.current !== null) return;
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        if (!cardRef.current || !lastPos.current) return;
+        const { nx, ny } = lastPos.current;
+        cardRef.current.style.transform = `perspective(${PERSPECTIVE}px) rotateX(${-ny * TILT_MAX}deg) rotateY(${nx * TILT_MAX}deg)`;
+        cardRef.current.style.transition = "transform 0.1s ease";
+        cardRef.current.style.zIndex = "10";
+        shineRef.current?.style.setProperty("--duration", `${SHINE_HOVER}s`);
       });
-      shineRef.current?.style.setProperty("--duration", `${SHINE_HOVER}s`);
     },
     []
   );
 
   const handleMouseLeave = React.useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
     if (!cardRef.current) return;
-    Object.assign(cardRef.current.style, {
-      transform: `perspective(${PERSPECTIVE}px) rotateX(0deg) rotateY(0deg)`,
-      transition: "transform 0.4s ease",
-      zIndex: "",
-    });
+    cardRef.current.style.transform = `perspective(${PERSPECTIVE}px) rotateX(0deg) rotateY(0deg)`;
+    cardRef.current.style.transition = "transform 0.4s ease";
+    cardRef.current.style.zIndex = "";
     shineRef.current?.style.setProperty("--duration", `${SHINE_IDLE}s`);
   }, []);
 

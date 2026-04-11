@@ -2,12 +2,13 @@
 
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useGetProfileAnalytics, useGetNfcAnalytics } from "@/features/analytics";
-import { CosmosParticles } from "@/components/shared";
+import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { Text, Badge } from "@packages/spark-ui";
-import { SparkmatesRainbowStreak } from "../SparkmatesOwnerView/components/SparkmatesRainbowStreak";
 import { FadeInSection } from "../SparkmatesOwnerView/components/FadeInSection";
 import { Eye, Smartphone, TrendingUp, Calendar, ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { ASSETS } from "@/lib/constants/assets";
 
 export const AnalyticsPageContent = () => {
   const { decodedToken } = useAuthContext();
@@ -19,14 +20,9 @@ export const AnalyticsPageContent = () => {
   const isLoading = loadingProfile || loadingNfc;
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-20">
-          <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading analytics..." />;
   }
+
 
   const totalViews = profileAnalytics?.totalViews || 0;
   const totalScans = nfcAnalytics?.totalScans || 0;
@@ -34,40 +30,101 @@ export const AnalyticsPageContent = () => {
   const recentScans = nfcAnalytics?.latestScans.scans || [];
 
   return (
-    <CosmosParticles
-      particleColors={["#ffffff", "#4285f4"]}
-      particleCount={180}
-      particleSpread={14}
-      speed={0.028}
-      particleBaseSize={75}
-      moveParticlesOnHover
-      alphaParticles={true}
-      disableRotation={false}
-      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-6 pb-24 pt-36 text-white"
-    >
-      <div className="relative min-h-screen w-full overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-          <SparkmatesRainbowStreak />
-        </div>
+    <div className="relative min-h-screen bg-[#010B1D] overflow-hidden">
+      {/* ── CosmosParticles — desktop only (hidden on mobile for perf) ── */}
+      <div className="hidden sm:block absolute inset-0 pointer-events-none z-0">
+        <CosmosParticles
+          particleColors={["#ffffff", "#4285f4"]}
+          particleCount={180}
+          particleSpread={14}
+          speed={0.028}
+          particleBaseSize={75}
+          moveParticlesOnHover
+          alphaParticles
+          disableRotation={false}
+          className="absolute inset-0 w-full h-full"
+        />
+      </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-5xl">
+      {/* ── Mobile hero image ────────────────────────────────────────────── */}
+      <div className="sm:hidden absolute inset-x-0 top-0 h-[400px] pointer-events-none select-none z-0">
+        <Image
+          src={ASSETS.SPARKMATES.SETTINGS_MOBILE_HERO}
+          alt=""
+          fill
+          className="object-cover object-top"
+          sizes="100vw"
+          priority
+        />
+        <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-b from-transparent to-[#010B1D]" />
+      </div>
+
+      {/* ── Decorative element 1 — left, desktop only */}
+      <div
+        className="hidden sm:block pointer-events-none select-none absolute z-0"
+        style={{
+          left: "-80px",
+          top: "0px",
+          transform: "rotate(26.31deg)",
+          transformOrigin: "center center",
+          width: "480px",
+        }}
+        aria-hidden
+      >
+        <Image
+          src={ASSETS.SPARKMATES.SETTINGS_ELEMENT_1}
+          alt=""
+          width={480}
+          height={620}
+          className="w-full h-auto"
+          sizes="480px"
+        />
+      </div>
+
+      {/* ── Decorative element 2 — right, desktop only */}
+      <div
+        className="hidden sm:block pointer-events-none select-none absolute z-0"
+        style={{
+          right: "-80px",
+          top: "260px",
+          transform: "rotate(-18deg)",
+          transformOrigin: "center center",
+          width: "560px",
+        }}
+        aria-hidden
+      >
+        <Image
+          src={ASSETS.SPARKMATES.SETTINGS_ELEMENT_2}
+          alt=""
+          width={560}
+          height={730}
+          className="w-full h-auto"
+          sizes="560px"
+        />
+      </div>
+
+      <div className="relative z-10 px-4 sm:px-6 pb-24 pt-24 sm:pt-40">
+        <div className="mx-auto w-full max-w-5xl">
           <FadeInSection delay={0.02}>
-            <div className="mb-8 flex items-center justify-between">
+            {/* Heading — centred on mobile, left-aligned on desktop */}
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <Link href="/sparkmates/me" className="mb-4 flex items-center gap-2 text-[#C1C7CD] transition-colors hover:text-white">
+                <Link href="/sparkmates/me" className="mb-4 flex items-center justify-center sm:justify-start gap-2 text-[#C1C7CD] transition-colors hover:text-white w-fit mx-auto sm:mx-0">
                   <ChevronLeft size={16} />
                   <span>Back to Portfolio</span>
                 </Link>
-                <Text variant="heading-4" className="text-white">
+                <Text variant="heading-4" weight="bold" gradient="white-blue" className="mb-2 text-center sm:text-left">
                   Analytics Overview
                 </Text>
-                <Text variant="body" className="text-[#C1C7CD]">
+                <p className="text-[#C1C7CD] text-center sm:text-left text-sm sm:text-base">
                   Track your digital presence and network impact.
-                </Text>
+                </p>
               </div>
-              <Badge variant="outline" className="border-blue-500/30 bg-blue-500/10 text-blue-400">
-                Live Data
-              </Badge>
+              <div className="flex justify-center sm:justify-end">
+                <Badge variant="outline" className="border-blue-500/30 bg-blue-500/10 text-blue-400 w-fit">
+                  Live Data
+                </Badge>
+              </div>
             </div>
 
             {/* Stats Grid */}
@@ -180,6 +237,6 @@ export const AnalyticsPageContent = () => {
           </FadeInSection>
         </div>
       </div>
-    </CosmosParticles>
+    </div>
   );
 };

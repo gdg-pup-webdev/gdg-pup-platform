@@ -67,7 +67,7 @@ export const loadRoutes = (app: Express) => {
   const analyticsRouter = new AnalyticsRouter(analyticsHttpController);
 
   const gdgMembersHttpController = new GdgMembersHttpController(
-    gdgMembersController,
+    gdgMembersController, rbacController, nfcCardsModuleController
   );
   const gdgMembersRouter = new GdgMembersRouter(gdgMembersHttpController);
 

@@ -1,5 +1,5 @@
 import { supabase } from "@/v1/lib/supabase";
-import { GdgMember } from "../domain/GdgMember";
+import { GdgMember, SparkmatesSectionId } from "../domain/GdgMember";
 import {
   IGdgMemberRepository,
   GdgMemberFilters,
@@ -26,6 +26,18 @@ type SimilarityMemberRow = Pick<
   | "tools_and_technologies"
   | "is_public"
 >;
+
+const DEFAULT_SPARKMATES_SECTION_ORDER: SparkmatesSectionId[] = [
+  "customButtons",
+  "skillsAndInterests",
+  "projects",
+  "gdgImpact",
+  "badges",
+];
+
+const isSparkmatesSectionId = (value: string): value is SparkmatesSectionId => {
+  return (DEFAULT_SPARKMATES_SECTION_ORDER as string[]).includes(value);
+};
 
 export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   private readonly tableName = "gdg_members";
@@ -54,6 +66,12 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technicalSkills: row.technical_skills?.split(",") || [],
       learningInterests: row.learning_interests?.split(",") || [],
       toolsAndTechnologies: row.tools_and_technologies?.split(",") || [],
+      sectionOrder:
+        row.section_order
+          ?.split(",")
+          .filter((item): item is SparkmatesSectionId =>
+            isSparkmatesSectionId(item),
+          ) || DEFAULT_SPARKMATES_SECTION_ORDER,
       isPublic: row.is_public,
     });
   }
@@ -81,7 +99,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technical_skills: p.technicalSkills.join(","),
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
-      // Preserve explicit true/false and allow DB default when value is null.
+      section_order: p.sectionOrder.join(","),
       is_public: p.isPublic ?? undefined,
 
       updated_at: new Date().toISOString(),
@@ -111,6 +129,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technical_skills: p.technicalSkills.join(","),
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
+      section_order: p.sectionOrder.join(","),
       // Null means "no visibility change" on update.
       is_public: p.isPublic ?? undefined,
       updated_at: new Date().toISOString(),
@@ -139,6 +158,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       technicalSkills: row.technical_skills?.split(",") || [],
       learningInterests: row.learning_interests?.split(",") || [],
       toolsAndTechnologies: row.tools_and_technologies?.split(",") || [],
+      sectionOrder: DEFAULT_SPARKMATES_SECTION_ORDER,
       isPublic: row.is_public,
     });
   }

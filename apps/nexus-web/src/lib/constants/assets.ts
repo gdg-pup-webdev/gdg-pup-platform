@@ -137,6 +137,7 @@ export const ASSETS = {
 
         ADMINISTRATIVE: {
             CATHYREN_SACATANI: "/team/team-administrative-cathyren-sacatani.webp",
+            FRANCIS_CHUAUNSU: "/team/team-administrative-francis-jason-chuaunsu.webp",
             IRAH_JOSE: "/team/team-administrative-irah-markeisha-jose.webp",
             KURT_LOPEZ: "/team/team-administrative-kurt-lopez.webp",
             MARYROSE_MARQUEZ: "/team/team-administrative-maryrose-marquez.webp",
@@ -333,6 +334,9 @@ export const ASSETS = {
     SPARKMATES: {
         HORIZON: "/sparkmates/sparkmates-horizon.webp",
         SPARKY: "/sparkmates/sparkmates-sparky.webp",
+        SETTINGS_MOBILE_HERO: "/sparkmates/sparkmates-settings-mobile.webp",
+        SETTINGS_ELEMENT_1: "/sparkmates/sparkmates-settings-element1.webp",
+        SETTINGS_ELEMENT_2: "/sparkmates/sparkmates-settings-element2.webp",
     },
     SPARKY_POINTS: {
         SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",

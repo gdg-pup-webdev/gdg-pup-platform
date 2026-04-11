@@ -2,6 +2,10 @@ import {
   gdgMembersController,
   GdgMembersController,
 } from "@/v1/modules/members";
+import {
+  nfcCardsModuleController,
+  NfcCardsModuleController,
+} from "@/v1/modules/nfcCards";
 import { rbacController } from "@/v1/modules/rbacSystem";
 import { RbacModuleController } from "@/v1/modules/rbacSystem/RbacModuleController";
 import { contract } from "@packages/nexus-api-contracts";
@@ -12,7 +16,54 @@ export class GdgMembersHttpController {
   constructor(
     private readonly moduleController: GdgMembersController = gdgMembersController,
     private readonly rbaccontroller: RbacModuleController = rbacController,
+    private readonly nfccontroller: NfcCardsModuleController = nfcCardsModuleController,
   ) {}
+
+  activateNfcCardByGdgId: RequestHandler = createExpressController(
+    contract.api.v1.gdgmembers.gdgId.nfc_card.activate.POST,
+    async ({ input, output, ctx }) => {
+      const usr = ctx.req.decodedToken?.memberInfo.gdgId || null;
+      if (!usr) {
+        return output(403, {
+          status: "fail",
+          message: "Unauthorized: No user information found in token",
+        });
+      }
+
+      if (!usr || usr !== input.params.gdgId) {
+        return output(403, {
+          status: "fail",
+          message: "Unauthorized: You can only activate your own NFC card",
+        });
+      }
+
+      const result = await this.nfccontroller.activateCardByGdgId(
+        input.params.gdgId,
+        usr,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "NFC card activated successfully",
+        data: result,
+      });
+    },
+  );
+
+  getNfcCardOfUser: RequestHandler = createExpressController(
+    contract.api.v1.gdgmembers.gdgId.nfc_card.GET,
+    async ({ input, output }) => {
+      const result = await this.nfccontroller.getCardByGdgId(
+        input.params.gdgId,
+      );
+
+      return output(200, {
+        status: "success",
+        message: "NFC card fetched successfully",
+        data: result,
+      });
+    },
+  );
 
   listRolesOfUser: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.roles.GET,

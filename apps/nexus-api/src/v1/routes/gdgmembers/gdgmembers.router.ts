@@ -35,5 +35,11 @@ export class GdgMembersRouter {
       "/:gdgId/roles/:roleName",
       this.controller.deleteRoleFromUser,
     );
+
+    this.router.get("/:gdgId/nfc-card", this.controller.getNfcCardOfUser);
+    this.router.post(
+      "/:gdgId/nfc-card/activate",
+      this.controller.activateNfcCardByGdgId,
+    );
   }
 }

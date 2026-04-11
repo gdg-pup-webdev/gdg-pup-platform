@@ -25,6 +25,7 @@ interface AuthState {
   status: StatusType;
   token: string | null;
   decodedToken: TokenPayload | null;
+  setAuthToken: (token: string) => void;
   logout: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   error: Error | null;
@@ -157,6 +158,11 @@ export const AuthContextProvider = ({
     }
   };
 
+  const setAuthToken = (nextToken: string) => {
+    setToken(nextToken);
+    setState({ status: STATUS.AUTHENTICATED, error: null });
+  };
+
   return (
     <>
       <AuthContext.Provider
@@ -165,6 +171,7 @@ export const AuthContextProvider = ({
           error: state.error,
           token,
           decodedToken,
+          setAuthToken,
           login,
           logout,
           refreshToken,

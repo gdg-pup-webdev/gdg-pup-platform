@@ -11,11 +11,19 @@ import {
   ShineBorder,
   Text,
 } from "@packages/spark-ui";
-import { CosmosParticles } from "@/components/shared";  
+import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
 import { SparkmatesSource, useSparkmateProfile, useSuggestedSparkmates } from "../.."; 
 import { PublicSkillsAndLinksSection } from "./components/PublicSkillsAndLinksSection";
 import { ComingSoonPlaceholder } from "../ComingSoonPlaceholder";
+import { usePublicMemberProjects } from "../../hooks/usePublicMemberProjects";
+import { ProjectCard } from "../SparkmatesOwnerView/components/ProjectCard";
+import { GradientProfilePicture } from "../SparkmatesOwnerView/components/GradientProfilePicture";
+import { ConnectedSuggestedCard } from "../SparkmatesOwnerView/components/ConnectedSuggestedCard";
+import {
+  normalizeSparkmatesSectionOrder,
+  SparkmatesSectionId,
+} from "../../sectionOrder";
 
 const viewIcon = (
   <svg
@@ -46,26 +54,6 @@ const searchIcon = (
     <path d="m20 20-3.5-3.5" strokeLinecap="round" />
   </svg>
 );
-
-// TODO: Replace with actual assets and data from nextjs public assets
-const FIGMA_ASSETS = {
-  profileCard:
-    "https://www.figma.com/api/mcp/asset/3b8f15f0-f794-48d7-90f6-7463afc9d894",
-  profileRing:
-    "https://www.figma.com/api/mcp/asset/323fd0a6-f443-4caf-abc2-779db7ae33f3",
-  suggestedRing:
-    "https://www.figma.com/api/mcp/asset/a40a5418-1468-4827-bd4c-4527aa87f5ea",
-  customLinkGradient:
-    "https://www.figma.com/api/mcp/asset/487a6240-2dc1-485b-b27c-b192f5ff9947",
-  projectOne:
-    "https://www.figma.com/api/mcp/asset/09b49507-b6fe-4d0f-9332-6444a16245d7",
-  projectTwo:
-    "https://www.figma.com/api/mcp/asset/902a5aa1-eaa6-4a5e-8b70-7dd296a0102f",
-  projectThree:
-    "https://www.figma.com/api/mcp/asset/c806405e-7622-4201-a669-939b69396d7f",
-  badge:
-    "https://www.figma.com/api/mcp/asset/298196a1-6987-40f4-b7ee-621502d4cac0",
-};
 
 // function resolveAuthenticatedAvatar(user: ReturnType<typeof useAuthContext>["user"]) {
 //   if (!user) return null;
@@ -150,75 +138,6 @@ function SocialGlyph({ type }: { type: "github" | "linkedin" | "website" }) {
   );
 }
 
-function GradientProfilePicture({
-  src,
-  alt,
-  fallback,
-}: {
-  src?: string;
-  alt: string;
-  fallback: string;
-}) {
-  return (
-    <div className="relative h-43 w-43 shrink-0">
-      <img
-        src={FIGMA_ASSETS.profileRing}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-contain"
-      />
-      <div className="absolute left-1/2 top-1/2 h-41 w-41 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-        <Avatar
-          src={src}
-          alt={alt}
-          fallback={fallback}
-          className="h-full w-full rounded-full"
-        />
-      </div>
-    </div>
-  );
-}
-
-function ConnectedSuggestedCard({
-  avatarUrl,
-  name,
-  bio,
-}: {
-  avatarUrl?: string;
-  name: string;
-  bio: string;
-}) {
-  return (
-    <article className="relative flex items-center pl-11.5">
-      <div className="w-full overflow-hidden rounded-r-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] pl-16 pr-4 py-3.5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
-        <Text variant="body-lg" className="truncate text-white" weight="medium">
-          {name}
-        </Text>
-        <Text variant="body-sm" className="truncate text-[#E5E5E5]">
-          {bio}
-        </Text>
-      </div>
-
-      <div className="absolute left-0 top-1/2 h-23.5 w-23.5 -translate-y-1/2">
-        <img
-          src={FIGMA_ASSETS.suggestedRing}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-contain"
-        />
-        <div className="absolute left-1/2 top-1/2 h-21.5 w-21.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-          <Avatar
-            src={avatarUrl}
-            alt={name}
-            fallback={name.charAt(0)}
-            className="h-full w-full rounded-full"
-          />
-        </div>
-      </div>
-    </article>
-  );
-}
-
 function Divider() {
   return (
     <div className="h-px w-full bg-[linear-gradient(90deg,#0F2449_0%,#2A4F91_50%,#0F2449_100%)]" />
@@ -256,28 +175,6 @@ const SPARK_BADGE = {
   variantId: "id",
 } as const;
 
-function ProjectCard({ image }: { image: string }) {
-  return (
-    <article className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
-      <Text variant="body" className="text-white" weight="medium">
-        Project Title
-      </Text>
-      <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
-        Month Year · Month Year
-      </Text>
-      <Text variant="body-sm" className="mt-1 text-[#E5E5E5]">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
-        ullamcorper sed eros, non sollicitudin.
-      </Text>
-      <img
-        src={image}
-        alt="Project preview"
-        className="mt-2 h-20 w-full rounded-md object-cover"
-      />
-    </article>
-  );
-}
-
 export function ProfilePublicView({
   gdgId,
   source,
@@ -286,9 +183,6 @@ export function ProfilePublicView({
   source: SparkmatesSource;
 }) {
   const [search, setSearch] = useState("");
-  const [starredCustomButtons, setStarredCustomButtons] = useState<Set<number>>(
-    () => new Set([0]),
-  );
 
   const {
     data: profile,
@@ -303,6 +197,8 @@ export function ProfilePublicView({
     // viewerPortfolio: profile?.portfolio ?? null,
   });
 
+  const projectsQuery = usePublicMemberProjects(gdgId);
+
   // const isOwner = useMemo(() => {
   //   return Boolean(
   //     false,
@@ -311,14 +207,9 @@ export function ProfilePublicView({
   // }, [profile?.owner_user_id, user?.id]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-20">
-          <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading profile..." />;
   }
+
 
   if (isError || !profile) {
     const message =
@@ -384,20 +275,14 @@ export function ProfilePublicView({
     // user?.user_metadata?.full_name ||
     profile.gdgId;
 
-  const avatarUrl = ASSETS.BRANDING.GDG_LOGO_WEBP; //resolveAuthenticatedAvatar(user);
+  const avatarUrl = profile?.avatarUrl || ASSETS.PROFILE.DEFAULT_AVATAR;
 
   const customLinks = (profile?.otherLinks ?? []).map((url) => ({
     title: getLinkTitle(url),
     url,
   }));
 
-  const badgeCards = [1, 2, 3];
-
-  const projectImages = [
-    FIGMA_ASSETS.projectOne,
-    FIGMA_ASSETS.projectTwo,
-    FIGMA_ASSETS.projectThree,
-  ];
+  const projectList = projectsQuery.data || [];
 
   const socialLinks = [
     { key: "github", url: profile?.githubUrl, label: "GitHub" },
@@ -413,16 +298,124 @@ export function ProfilePublicView({
     },
   ] as const;
 
-  const toggleStar = (index: number) => {
-    setStarredCustomButtons((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
-      return next;
-    });
+  const sectionOrder = normalizeSparkmatesSectionOrder(profile.sectionOrder);
+
+  const renderOrderedSection = (sectionId: SparkmatesSectionId) => {
+    if (sectionId === "customButtons") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              Custom Button
+            </Text>
+          </div>
+          <div className="space-y-2.5">
+            {customLinks.map((item, index) => (
+              <div
+                key={`${item.title}-${index}`}
+                className="relative overflow-hidden rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[border-color,box-shadow] duration-300"
+              >
+                <ShineBorder
+                  borderWidth={1.25}
+                  duration={9}
+                  shineColor={[
+                    "#FB2C36",
+                    "#F0B100",
+                    "#00C950",
+                    "#2B7FFF",
+                  ]}
+                  className="opacity-100 transition-opacity duration-300"
+                />
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <Text
+                      variant="body-lg"
+                      className="text-white truncate block"
+                      weight="medium"
+                    >
+                      {item.title}
+                    </Text>
+                    <Text variant="body" className="text-[#E5E5E5] break-all block">
+                      {item.url}
+                    </Text>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {customLinks.length === 0 ? (
+              <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center">
+                <Text variant="body-sm" className="text-[#C1C7CD]">
+                  No custom links yet.
+                </Text>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      );
+    }
+
+    if (sectionId === "skillsAndInterests") {
+      return <PublicSkillsAndLinksSection portfolio={profile} />;
+    }
+
+    if (sectionId === "projects") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              Projects
+            </Text>
+            <Button
+              variant="default"
+              size="sm"
+              className="text-white"
+              iconRight={viewIcon}
+            >
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3.5">
+            {projectsQuery.isLoading ? (
+              <Text variant="body-sm" className="text-zinc-500">
+                Loading projects...
+              </Text>
+            ) : projectList.length > 0 ? (
+              projectList.map((project: any) => (
+                <ProjectCard key={project.id} project={project} />
+              ))
+            ) : (
+              <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center text-[#C1C7CD]">
+                <Text variant="body-sm">No projects added yet.</Text>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
+
+    if (sectionId === "gdgImpact") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              GDG Impact
+            </Text>
+          </div>
+          <ComingSoonPlaceholder />
+        </section>
+      );
+    }
+
+    return (
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Text variant="heading-6" gradient="white-blue" weight="bold">
+            Badges
+          </Text>
+        </div>
+        <ComingSoonPlaceholder />
+      </section>
+    );
   };
 
   return (
@@ -435,14 +428,14 @@ export function ProfilePublicView({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-6 pb-24 pt-36 text-white"
+      className="min-h-screen overflow-x-hidden bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-3 sm:px-6 pb-24 pt-24 sm:pt-36 text-white"
     >
-      <div className="relative min-h-screen w-full overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <div className="relative w-full">
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden hidden sm:block">
           <SparkmatesRainbowStreak />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
+        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
           <FadeInSection className="p-0" delay={0.02}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Text variant="heading-5" className="text-white">
@@ -451,15 +444,85 @@ export function ProfilePublicView({
             </div>
 
             <div className="mt-6 p-0">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="sm:hidden relative">
+                <div
+                  className="absolute z-0 top-0 h-[220px] -left-3 -right-3 pointer-events-none overflow-hidden"
+                >
+                  <Image
+                    src={ASSETS.SPARKMATES.HORIZON}
+                    alt=""
+                    aria-hidden
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: "50% 65%" }}
+                    priority
+                  />
+                  <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-[#010B1D] to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#010B1D] to-transparent" />
+                </div>
+
+                <div className="relative z-10 flex justify-center pt-10">
+                  <GradientProfilePicture
+                    size="sm"
+                    src={avatarUrl}
+                    alt={displayName}
+                    fallback={displayName.charAt(0)}
+                  />
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center text-center px-4 mt-3 pb-2">
+                  <Text variant="heading-6" className="text-white leading-tight" weight="bold">
+                    {displayName}
+                  </Text>
+
+                  <Text variant="body-sm" className="text-[#C1C7CD] mt-1">
+                    {profile?.program || "Program and Year not set"}
+                  </Text>
+
+                  <div className="mt-2.5 flex flex-wrap justify-center gap-2">
+                    <Badge variant={SPARK_BADGE.variantYellow as never}>UI/UX</Badge>
+                    <Badge variant={SPARK_BADGE.variantRed as never}>Marketing</Badge>
+                    <Badge variant={SPARK_BADGE.variantId as never}>{profile.gdgId}</Badge>
+                  </div>
+
+                  <Text
+                    variant="body-sm"
+                    className="mt-3 max-w-xs text-[#E5E5E5] leading-relaxed"
+                  >
+                    {profile?.bio ||
+                      "Share your story to let sparkmates know what you are building."}
+                  </Text>
+
+                  <div className="mt-4 flex gap-2 justify-center">
+                    {socialLinks.map((social) => (
+                      <Button
+                        key={social.key}
+                        variant="ghost"
+                        size="sm"
+                        title={social.label}
+                        disabled={!social.url}
+                        className="h-8 w-8 rounded-full border border-white/25 bg-[#091734] p-0 text-[11px] text-white disabled:opacity-40"
+                        onClick={() => {
+                          if (!social.url) return;
+                          openExternal(social.url);
+                        }}
+                      >
+                        <SocialGlyph type={social.key} />
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden sm:flex sm:flex-row sm:items-start sm:gap-4 sm:justify-between mt-6">
                 <div className="flex min-w-0 items-start gap-4">
                   <GradientProfilePicture
-                    src={avatarUrl ?? FIGMA_ASSETS.profileCard}
+                    src={avatarUrl}
                     alt={displayName}
                     fallback={displayName.charAt(0)}
                   />
 
-                  <div className="min-w-0">
+                  <div className="min-w-0 pt-2">
                     <Text
                       variant="heading-6"
                       className="text-white"
@@ -467,24 +530,17 @@ export function ProfilePublicView({
                     >
                       {displayName}
                     </Text>
-                    <Text variant="body-sm" className="text-[#C1C7CD]">
-                      {profile?.program ||
-                        "Program and Year not set"}
+                    <Text variant="body-sm" className="text-[#C1C7CD] mt-1">
+                      {profile?.program || "Program and Year not set"}
                     </Text>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <Badge variant={SPARK_BADGE.variantYellow as never}>
-                        UI/UX
-                      </Badge>
-                      <Badge variant={SPARK_BADGE.variantRed as never}>
-                        Marketing
-                      </Badge>
-                      <Badge variant={SPARK_BADGE.variantId as never}>
-                        {profile.gdgId}
-                      </Badge>
+                      <Badge variant={SPARK_BADGE.variantYellow as never}>UI/UX</Badge>
+                      <Badge variant={SPARK_BADGE.variantRed as never}>Marketing</Badge>
+                      <Badge variant={SPARK_BADGE.variantId as never}>{profile.gdgId}</Badge>
                     </div>
                     <Text
                       variant="body-sm"
-                      className="mt-2 max-w-130 text-[#E5E5E5]"
+                      className="mt-2 max-w-sm text-[#E5E5E5] leading-relaxed"
                     >
                       {profile?.bio ||
                         "Share your story to let sparkmates know what you are building."}
@@ -512,183 +568,13 @@ export function ProfilePublicView({
               </div>
             </div>
 
-            <div className="mt-8 space-y-8">
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Custom Button
-                  </Text>
+            <div className="mt-6 space-y-6">
+              {sectionOrder.map((sectionId, index) => (
+                <div key={sectionId} className="space-y-6">
+                  {renderOrderedSection(sectionId)}
+                  {index < sectionOrder.length - 1 ? <Divider /> : null}
                 </div>
-                <div className="space-y-2.5">
-                  {customLinks.map((item, index) => (
-                    <div
-                      key={`${item.title}-${index}`}
-                      className="relative overflow-hidden rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[border-color,box-shadow] duration-300"
-                    >
-                      <ShineBorder
-                        borderWidth={1.25}
-                        duration={9}
-                        shineColor={[
-                          "#FB2C36",
-                          "#F0B100",
-                          "#00C950",
-                          "#2B7FFF",
-                        ]}
-                        className={
-                          starredCustomButtons.has(index)
-                            ? "opacity-100 transition-opacity duration-300"
-                            : "opacity-0 transition-opacity duration-300"
-                        }
-                      />
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <Text
-                            variant="body-lg"
-                            className="text-white"
-                            weight="medium"
-                          >
-                            {item.title}
-                          </Text>
-                          <Text variant="body" className="text-[#E5E5E5]">
-                            {item.url}
-                          </Text>
-                        </div>
-                        {starredCustomButtons.has(index) && (
-                          <div className="h-8 w-8 flex items-center justify-center text-white text-xl">
-                            ★
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  {customLinks.length === 0 ? (
-                    <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center">
-                      <Text variant="body-sm" className="text-[#C1C7CD]">
-                        No custom links yet.
-                      </Text>
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-
-              <Divider />
-
-              <PublicSkillsAndLinksSection
-                portfolio={profile}
-                onOpenExternal={openExternal}
-              />
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Projects
-                  </Text>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View All
-                  </Button>
-                </div>
-                <div className="space-y-3.5">
-                  {projectImages.map((image, index) => (
-                    <ProjectCard key={`project-${index}`} image={image} />
-                  ))}
-                </div>
-              </section>
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    GDG Impact
-                  </Text>
-                  {/* <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View
-                  </Button> */}
-                </div>
-                {/* <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Track your milestones and growth within GDG.
-                </Text>
-                <div className="grid grid-cols-3 gap-4">
-                  {["Study Jam", "Workshop", "Hackathon"].map((label) => (
-                    <div
-                      key={label}
-                      className="rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.04)] px-5 py-6 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]"
-                    >
-                      <Text
-                        variant="heading-5"
-                        align="center"
-                        gradient="white-yellow"
-                        weight="bold"
-                      >
-                        00
-                      </Text>
-                      <Text
-                        variant="body-sm"
-                        align="center"
-                        className="text-white"
-                      >
-                        {label}
-                      </Text>
-                    </div>
-                  ))}
-                </div> */}
-                <ComingSoonPlaceholder /> 
-              </section>
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Badges
-                  </Text>
-                  {/* <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View All
-                  </Button> */}
-                </div>
-                {/* <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Unlock exclusive collectibles by attending events.
-                </Text>
-                <div className="grid grid-cols-3 gap-4">
-                  {badgeCards.map((badge) => (
-                    <div
-                      key={badge}
-                      className="rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.04)] p-4 text-center shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]"
-                    >
-                      <img
-                        src={FIGMA_ASSETS.badge}
-                        alt="Badge"
-                        className="mx-auto h-20 w-20 object-cover"
-                      />
-                      <Text
-                        variant="body-sm"
-                        className="mt-2 text-white"
-                        align="center"
-                      >
-                        Badge Name
-                      </Text>
-                    </div>
-                  ))}
-                </div> */}
-                <ComingSoonPlaceholder />
-              </section>
+              ))}
             </div>
           </FadeInSection>
 
@@ -702,7 +588,7 @@ export function ProfilePublicView({
               className="text-white placeholder:text-[#C1C7CD]"
             />
 
-            <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <Text variant="body-lg" className="text-white">
                 Suggested To You
               </Text>
@@ -723,6 +609,7 @@ export function ProfilePublicView({
                   avatarUrl={member.avatarUrl ?? undefined}
                   name={member.name}
                   bio={member.bio}
+                  gdgId={member.gdgId}
                 />
               ))}
 

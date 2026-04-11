@@ -21,8 +21,12 @@ const inputBaseStyles =
 
 export const NameAndProfileSection = ({
   profile,
+  onOpenReorderDesktop,
+  onOpenReorderMobile,
 }: {
   profile: UserProfile;
+  onOpenReorderDesktop?: () => void;
+  onOpenReorderMobile?: () => void;
 }) => {
   const router = useRouter();
   const { mutate: updateProfile, isPending } = useUpdateSparkmateProfile(profile.gdgId);
@@ -63,6 +67,8 @@ export const NameAndProfileSection = ({
 
   const handleAddSocialLink = () => setIsLinksModalOpen(true);
   const handleEditProfileDetails = () => setIsEditModalOpen(true);
+  const handleOpenReorderDesktop = () => onOpenReorderDesktop?.();
+  const handleOpenReorderMobile = () => onOpenReorderMobile?.();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -113,6 +119,12 @@ export const NameAndProfileSection = ({
     </div>
   );
 
+  const reorderIcon = (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
+    </svg>
+  );
+
   return (
     <div className="mt-4 p-0 relative">
 
@@ -122,10 +134,9 @@ export const NameAndProfileSection = ({
       <div className="sm:hidden relative">
 
         {/* Horizon — absolute, full-viewport-width, sits BEHIND the avatar (z-0) */}
-        {/* left/right: -12px breaks out of the parent's px-3 (12px) padding */}
+        {/* -left-3 and -right-3 breaks out of the parent's px-3 (12px) padding */}
         <div
-          className="absolute z-0 pointer-events-none overflow-hidden"
-          style={{ left: "-12px", right: "-12px", top: 0, height: "220px" }}
+          className="absolute z-0 top-0 h-[220px] -left-3 -right-3 pointer-events-none overflow-hidden"
         >
           <Image
             src={ASSETS.SPARKMATES.HORIZON}
@@ -142,15 +153,25 @@ export const NameAndProfileSection = ({
           <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#010B1D] to-transparent" />
         </div>
 
-        {/* Edit button — absolute, top right */}
-        <button
-          onClick={handleEditProfileDetails}
-          aria-label="Edit Profile"
-          title="Edit Profile"
-          className="absolute top-3 right-0 z-20 h-8 w-8 flex items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
-        >
-          {editIcon}
-        </button>
+        {/* Edit/reorder buttons — absolute, top right */}
+        <div className="absolute top-3 right-0 z-20 flex items-center gap-2">
+          <button
+            onClick={handleOpenReorderMobile}
+            aria-label="Reorder Sections"
+            title="Reorder Sections"
+            className="h-8 w-8 flex items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+          >
+            {reorderIcon}
+          </button>
+          <button
+            onClick={handleEditProfileDetails}
+            aria-label="Edit Profile"
+            title="Edit Profile"
+            className="h-8 w-8 flex items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+          >
+            {editIcon}
+          </button>
+        </div>
 
         {/* Avatar — normal flow, z-10 above horizon */}
         {/* pt-10 (40px) + h-32/2 (64px) = avatar center at ~104px from top */}
@@ -248,6 +269,16 @@ export const NameAndProfileSection = ({
 
         {/* Right: edit button */}
         <div className="shrink-0 flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-white"
+            title="Reorder Sections"
+            aria-label="Reorder Sections"
+            onClick={handleOpenReorderDesktop}
+          >
+            {reorderIcon}
+          </Button>
           <Button
             variant="ghost"
             size="sm"

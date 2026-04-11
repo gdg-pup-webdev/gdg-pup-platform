@@ -7,12 +7,29 @@ import { handlePostgresError } from "@/v1/lib/supabase.utils";
 type EventRow = Tables<"event">;
 type EventInsertDTO = TablesInsert<"event">;
 type EventUpdateDTO = TablesUpdate<"event">;
+type TeamRelation = { name?: string | null } | null;
+type EventRowWithTeam = EventRow & {
+  team?: TeamRelation | TeamRelation[];
+};
 
 export class EventRepository implements IEventRepository {
   private readonly tableName = "event";
+  private readonly selectWithTeam = "*, team(name)";
 
-  private mapToDomain(row: any): Event {
-    const eventRow = row as any;
+  private extractTeamName(row: EventRowWithTeam): string | null {
+    const team = row?.team;
+
+    if (!team) return null;
+
+    if (Array.isArray(team)) {
+      const first = team[0];
+      return typeof first?.name === "string" ? first.name : null;
+    }
+
+    return typeof team.name === "string" ? team.name : null;
+  }
+
+  private mapToDomain(row: EventRowWithTeam): Event {
     /**
      * Helper to clean array fields from corrupted data.
      * Handles:
@@ -61,30 +78,30 @@ export class EventRepository implements IEventRepository {
     };
 
     return Event.hydrate({
-      id: eventRow.id,
-      title: eventRow.title,
-      description: eventRow.description || "",
-      category: eventRow.category || "",
-      venue: eventRow.venue || "",
-      start_date: new Date(eventRow.start_date || ""),
-      end_date: new Date(eventRow.end_date || ""),
-      attendance_points: Number(eventRow.attendance_points),
-      attendees_count: Number(eventRow.attendees_count),
-      rsvp: eventRow.rsvp ?? null,
-      createdAt: new Date(eventRow.created_at),
-      updatedAt: new Date(eventRow.updated_at),
-      bevy_event_id: eventRow.gdg_event_id?.toString() ?? null,
-      creatorId: eventRow.creator_id || "",
-      image_url: eventRow.thumbnail_url || null,
-      bevyPreviewUrl: eventRow.bevy_preview_url || null,
-      tags: cleanArray(eventRow.tags),
-      max_capacity: eventRow.max_capacity
-        ? parseInt(eventRow.max_capacity)
-        : 999999,
-      short_description: eventRow.short_description || null,
-      speakers: cleanArray(eventRow.speakers),
-      type: eventRow.type || null,
-      teamId: eventRow.team_id || null,
+      id: row.id,
+      title: row.title,
+      description: row.description || "",
+      category: row.category || "",
+      venue: row.venue || "",
+      start_date: new Date(row.start_date || ""),
+      end_date: new Date(row.end_date || ""),
+      attendance_points: Number(row.attendance_points),
+      attendees_count: Number(row.attendees_count),
+      rsvp:
+        row.rsvp !== null && row.rsvp !== undefined ? Number(row.rsvp) : null,
+      createdAt: new Date(row.created_at),
+      updatedAt: new Date(row.updated_at),
+      bevy_event_id: row.gdg_event_id?.toString() ?? null,
+      creatorId: row.creator_id || "",
+      image_url: row.thumbnail_url || null,
+      bevyPreviewUrl: row.bevy_preview_url || null,
+      tags: cleanArray(row.tags),
+      max_capacity: row.max_capacity ? parseInt(row.max_capacity) : 999999,
+      short_description: row.short_description || null,
+      speakers: cleanArray(row.speakers),
+      type: row.type || null,
+      teamId: row.team_id || null,
+      teamName: this.extractTeamName(row),
     });
   }
 
@@ -144,7 +161,7 @@ export class EventRepository implements IEventRepository {
 
     const selectStr = filters?.teamName
       ? "*, team!inner(name)"
-      : "*, team(name)";
+      : this.selectWithTeam;
 
     let query = supabase
       .from(this.tableName)
@@ -211,9 +228,9 @@ export class EventRepository implements IEventRepository {
 
     const { data, count, error } = await supabase
       .from(this.tableName)
-      .select("*", { count: "exact" })
+      .select(this.selectWithTeam, { count: "exact" })
       .gte("start_date", new Date(year, 0, 1).toISOString())
-      .lte("start_date", new Date(year, 11, 31).toISOString())
+      .lt("start_date", new Date(year + 1, 0, 1).toISOString())
       .order("start_date", { ascending: true })
       .range(from, to);
 
@@ -230,7 +247,7 @@ export class EventRepository implements IEventRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .insert(dto)
-      .select("*")
+      .select(this.selectWithTeam)
       .single();
 
     if (error) handlePostgresError(error);
@@ -243,7 +260,7 @@ export class EventRepository implements IEventRepository {
       .from(this.tableName)
       .update(dto)
       .eq("id", event.props.id)
-      .select("*")
+      .select(this.selectWithTeam)
       .single();
 
     if (error) handlePostgresError(error);
@@ -262,7 +279,7 @@ export class EventRepository implements IEventRepository {
   async findById(eventId: string): Promise<Event> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select("*")
+      .select(this.selectWithTeam)
       .eq("id", eventId)
       .maybeSingle();
 
@@ -275,7 +292,7 @@ export class EventRepository implements IEventRepository {
   async findByBevyId(bevyEventId: string): Promise<Event | undefined> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select("*")
+      .select(this.selectWithTeam)
       .eq("gdg_event_id", parseInt(bevyEventId))
       .maybeSingle();
 

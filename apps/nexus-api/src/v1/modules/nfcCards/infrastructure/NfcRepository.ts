@@ -8,6 +8,29 @@ export class NfcRepository implements INfcRepository {
 
   constructor() {}
 
+   async findByGdgid(gdgId: string): Promise<NfcCard | null> {
+    const { data, error } = await supabase
+      .from(this.nfcTable)
+      .select("*")
+      .eq("gdg_id", gdgId)
+      .maybeSingle();
+
+    if (error) handlePostgresError(error);
+
+    if (!data) return null;
+
+    return NfcCard.hydrate({
+      id: data.id,
+      ownerGdgId: data.gdg_id,
+      status: data.status,
+      notes: data.notes,
+      destinationUrl: data.destination_url,
+      activated_at: data.activated_at,
+      suspended_at: data.suspended_at,
+      revoked_at: data.revoked_at,
+    });
+  }
+
   async listCardsByGdgId(gdgId: string): Promise<NfcCard[]> {
     const { data, error } = await supabase
       .from(this.nfcTable)
