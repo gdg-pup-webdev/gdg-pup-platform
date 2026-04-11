@@ -20,6 +20,10 @@ import { usePublicMemberProjects } from "../../hooks/usePublicMemberProjects";
 import { ProjectCard } from "../SparkmatesOwnerView/components/ProjectCard";
 import { GradientProfilePicture } from "../SparkmatesOwnerView/components/GradientProfilePicture";
 import { ConnectedSuggestedCard } from "../SparkmatesOwnerView/components/ConnectedSuggestedCard";
+import {
+  normalizeSparkmatesSectionOrder,
+  SparkmatesSectionId,
+} from "../../sectionOrder";
 
 const viewIcon = (
   <svg
@@ -294,6 +298,126 @@ export function ProfilePublicView({
     },
   ] as const;
 
+  const sectionOrder = normalizeSparkmatesSectionOrder(profile.sectionOrder);
+
+  const renderOrderedSection = (sectionId: SparkmatesSectionId) => {
+    if (sectionId === "customButtons") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              Custom Button
+            </Text>
+          </div>
+          <div className="space-y-2.5">
+            {customLinks.map((item, index) => (
+              <div
+                key={`${item.title}-${index}`}
+                className="relative overflow-hidden rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[border-color,box-shadow] duration-300"
+              >
+                <ShineBorder
+                  borderWidth={1.25}
+                  duration={9}
+                  shineColor={[
+                    "#FB2C36",
+                    "#F0B100",
+                    "#00C950",
+                    "#2B7FFF",
+                  ]}
+                  className="opacity-100 transition-opacity duration-300"
+                />
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <Text
+                      variant="body-lg"
+                      className="text-white truncate block"
+                      weight="medium"
+                    >
+                      {item.title}
+                    </Text>
+                    <Text variant="body" className="text-[#E5E5E5] break-all block">
+                      {item.url}
+                    </Text>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {customLinks.length === 0 ? (
+              <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center">
+                <Text variant="body-sm" className="text-[#C1C7CD]">
+                  No custom links yet.
+                </Text>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      );
+    }
+
+    if (sectionId === "skillsAndInterests") {
+      return <PublicSkillsAndLinksSection portfolio={profile} />;
+    }
+
+    if (sectionId === "projects") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              Projects
+            </Text>
+            <Button
+              variant="default"
+              size="sm"
+              className="text-white"
+              iconRight={viewIcon}
+            >
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3.5">
+            {projectsQuery.isLoading ? (
+              <Text variant="body-sm" className="text-zinc-500">
+                Loading projects...
+              </Text>
+            ) : projectList.length > 0 ? (
+              projectList.map((project: any) => (
+                <ProjectCard key={project.id} project={project} />
+              ))
+            ) : (
+              <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center text-[#C1C7CD]">
+                <Text variant="body-sm">No projects added yet.</Text>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
+
+    if (sectionId === "gdgImpact") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              GDG Impact
+            </Text>
+          </div>
+          <ComingSoonPlaceholder />
+        </section>
+      );
+    }
+
+    return (
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Text variant="heading-6" gradient="white-blue" weight="bold">
+            Badges
+          </Text>
+        </div>
+        <ComingSoonPlaceholder />
+      </section>
+    );
+  };
+
   return (
     <CosmosParticles
       particleColors={["#ffffff", "#4285f4"]}
@@ -445,182 +569,12 @@ export function ProfilePublicView({
             </div>
 
             <div className="mt-6 space-y-6">
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Custom Button
-                  </Text>
+              {sectionOrder.map((sectionId, index) => (
+                <div key={sectionId} className="space-y-6">
+                  {renderOrderedSection(sectionId)}
+                  {index < sectionOrder.length - 1 ? <Divider /> : null}
                 </div>
-                <div className="space-y-2.5">
-                  {customLinks.map((item, index) => (
-                    <div
-                      key={`${item.title}-${index}`}
-                      className="relative overflow-hidden rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[border-color,box-shadow] duration-300"
-                    >
-                      <ShineBorder
-                        borderWidth={1.25}
-                        duration={9}
-                        shineColor={[
-                          "#FB2C36",
-                          "#F0B100",
-                          "#00C950",
-                          "#2B7FFF",
-                        ]}
-                        className="opacity-100 transition-opacity duration-300"
-                      />
-                      <div className="flex items-start justify-between">
-                        <div className="min-w-0 flex-1">
-                          <Text
-                            variant="body-lg"
-                            className="text-white truncate block"
-                            weight="medium"
-                          >
-                            {item.title}
-                          </Text>
-                          <Text variant="body" className="text-[#E5E5E5] break-all block">
-                            {item.url}
-                          </Text>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {customLinks.length === 0 ? (
-                    <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center">
-                      <Text variant="body-sm" className="text-[#C1C7CD]">
-                        No custom links yet.
-                      </Text>
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-
-              <Divider />
-
-              <PublicSkillsAndLinksSection
-                portfolio={profile}
-              />
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Projects
-                  </Text>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View All
-                  </Button>
-                </div>
-                <div className="space-y-3.5">
-                  {projectsQuery.isLoading ? (
-                    <Text variant="body-sm" className="text-zinc-500">
-                      Loading projects...
-                    </Text>
-                  ) : projectList.length > 0 ? (
-                    projectList.map((project: any) => (
-                      <ProjectCard key={project.id} project={project} />
-                    ))
-                  ) : (
-                    <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center text-[#C1C7CD]">
-                      <Text variant="body-sm">No projects added yet.</Text>
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    GDG Impact
-                  </Text>
-                  {/* <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View
-                  </Button> */}
-                </div>
-                {/* <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Track your milestones and growth within GDG.
-                </Text>
-                <div className="grid grid-cols-3 gap-4">
-                  {["Study Jam", "Workshop", "Hackathon"].map((label) => (
-                    <div
-                      key={label}
-                      className="rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.04)] px-5 py-6 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]"
-                    >
-                      <Text
-                        variant="heading-5"
-                        align="center"
-                        gradient="white-yellow"
-                        weight="bold"
-                      >
-                        00
-                      </Text>
-                      <Text
-                        variant="body-sm"
-                        align="center"
-                        className="text-white"
-                      >
-                        {label}
-                      </Text>
-                    </div>
-                  ))}
-                </div> */}
-                <ComingSoonPlaceholder /> 
-              </section>
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Badges
-                  </Text>
-                  {/* <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View All
-                  </Button> */}
-                </div>
-                {/* <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Unlock exclusive collectibles by attending events.
-                </Text>
-                <div className="grid grid-cols-3 gap-4">
-                  {badgeCards.map((badge) => (
-                    <div
-                      key={badge}
-                      className="rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.04)] p-4 text-center shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]"
-                    >
-                      <img
-                        src={ASSETS.PROFILE.AVATAR_RING}
-                        alt="Badge"
-                        className="mx-auto h-20 w-20 object-cover"
-                      />
-                      <Text
-                        variant="body-sm"
-                        className="mt-2 text-white"
-                        align="center"
-                      >
-                        Badge Name
-                      </Text>
-                    </div>
-                  ))}
-                </div> */}
-                <ComingSoonPlaceholder />
-              </section>
+              ))}
             </div>
           </FadeInSection>
 
