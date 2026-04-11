@@ -137,7 +137,7 @@ export const ASSETS = {
 
         ADMINISTRATIVE: {
             CATHYREN_SACATANI: "/team/team-administrative-cathyren-sacatani.webp",
-            FRANCIS_CHUAUNSU: "/team/team-administrative-francis-jason-chuaunsu.png",
+            FRANCIS_CHUAUNSU: "/team/team-administrative-francis-jason-chuaunsu.webp",
             IRAH_JOSE: "/team/team-administrative-irah-markeisha-jose.webp",
             KURT_LOPEZ: "/team/team-administrative-kurt-lopez.webp",
             MARYROSE_MARQUEZ: "/team/team-administrative-maryrose-marquez.webp",
