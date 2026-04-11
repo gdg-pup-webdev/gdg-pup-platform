@@ -1,6 +1,6 @@
-import { Button, ShineBorder, Text, Modal, Input } from "@packages/spark-ui";
+import { Button, Text, Modal, Input } from "@packages/spark-ui";
 import { profile } from "console";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Divider } from "../components/Divider";
 import { ProjectCard } from "../components/ProjectCard";
 import { addIcon } from "../icons/addIcon";
@@ -10,24 +10,40 @@ import { getLinkHostname } from "../utils/getLinkHostname";
 import { ProjectsSection } from "./ProjectsSection";
 import { ImpactSection } from "./ImpactSection";
 import { BadgesSection } from "./BadgesSection";
+import {
+  parseCustomButtonLinks,
+  serializeCustomButtonLinks,
+} from "../../../utils/customButtonFavorites";
 
 export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
-  const [starredCustomButtons, setStarredCustomButtons] = useState<Set<number>>(
-    () => new Set([0]),
+  const parsedProfileLinks = useMemo(
+    () => parseCustomButtonLinks(profile.otherLinks),
+    [profile.otherLinks],
   );
   const { mutate: updateProfile, isPending } = useUpdateSparkmateProfile(profile.gdgId);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [links, setLinks] = useState<string[]>(profile.otherLinks || []);
+  const [links, setLinks] = useState<string[]>(parsedProfileLinks.links);
+  const [starredCustomButtons, setStarredCustomButtons] = useState<Set<string>>(
+    () => new Set(parsedProfileLinks.starredUrls),
+  );
   const [newLink, setNewLink] = useState("");
 
-  const toggleStar = (index: number) => {
+  useEffect(() => {
+    setLinks(parsedProfileLinks.links);
+    setStarredCustomButtons(new Set(parsedProfileLinks.starredUrls));
+  }, [parsedProfileLinks]);
+
+  const toggleStar = (url: string) => {
     setStarredCustomButtons((prev) => {
       const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
+      if (next.has(url)) {
+        next.delete(url);
       } else {
-        next.add(index);
+        next.add(url);
       }
+
+      updateProfile({ otherLinks: serializeCustomButtonLinks(links, next) });
+
       return next;
     });
   };
@@ -40,18 +56,24 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
   };
 
   const handleRemoveLink = (index: number) => {
+    const removedLink = links[index];
     setLinks(links.filter((_, i) => i !== index));
+    setStarredCustomButtons((prev) => {
+      const next = new Set(prev);
+      next.delete(removedLink);
+      return next;
+    });
   };
 
   const handleSave = () => {
-    updateProfile({ otherLinks: links }, {
+    updateProfile({ otherLinks: serializeCustomButtonLinks(links, starredCustomButtons) }, {
       onSuccess: () => {
         setIsEditModalOpen(false);
       },
     });
   };
 
-  const customLinks = (profile.otherLinks ?? []).map((url) => ({
+  const customLinks = links.map((url) => ({
     title: getLinkHostname(url),
     url,
   }));
@@ -80,18 +102,12 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
           {customLinks.map((item, index) => (
             <div
               key={`${item.title}-${index}`}
-              className="relative overflow-hidden rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[border-color,box-shadow] duration-300"
+              className={`relative overflow-hidden rounded-2xl p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[box-shadow,background] duration-300 ${
+                starredCustomButtons.has(item.url)
+                  ? "rainbow-border bg-[linear-gradient(90deg,#0F2449_0%,#2A4F91_50%,#0F2449_100%)]"
+                  : "border border-white/20 bg-[rgba(255,255,255,0.05)]"
+              }`}
             >
-              <ShineBorder
-                borderWidth={1.25}
-                duration={9}
-                shineColor={["#FB2C36", "#F0B100", "#00C950", "#2B7FFF"]}
-                className={
-                  starredCustomButtons.has(index)
-                    ? "opacity-100 transition-opacity duration-300"
-                    : "opacity-0 transition-opacity duration-300"
-                }
-              />
               <div className="flex items-start justify-between min-w-0">
                 <div className="min-w-0 flex-1">
                   <Text
@@ -109,9 +125,9 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 text-white shrink-0"
-                  onClick={() => toggleStar(index)}
+                  onClick={() => toggleStar(item.url)}
                 >
-                  {starredCustomButtons.has(index) ? "★" : "☆"}
+                  {starredCustomButtons.has(item.url) ? "★" : "☆"}
                 </Button>
               </div>
             </div>
