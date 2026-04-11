@@ -18,7 +18,8 @@ export class GetSimilarUsers {
   private readonly relatedShare = 0.8;
   private readonly exploratoryPoolSize = 15;
   private readonly candidateFetchLimit = 120;
-  private readonly exploratoryFallbackFetchLimit = 180;
+  private readonly exploratoryInitialFetchLimit = 60;
+  private readonly exploratoryFallbackFetchLimit = 90;
   private readonly requestRotationCounters = new Map<string, number>();
   private readonly enableTimingLogs =
     process.env.DEBUG_SUGGESTED_USERS_TIMING === "1";
@@ -99,7 +100,7 @@ export class GetSimilarUsers {
 
     const publicCandidates = await this.repo.findPublicMembersExcludingGdgId(
       gdgMemberId,
-      this.exploratoryFallbackFetchLimit,
+      this.exploratoryInitialFetchLimit,
     );
     stageStartedAt = this.recordStage(
       stageDurationsMs,
@@ -128,7 +129,8 @@ export class GetSimilarUsers {
       stageStartedAt,
     );
 
-    const expandedNonRelevantMembers = this.expandExploratoryCandidates(
+    const expandedNonRelevantMembers = await this.expandExploratoryCandidates(
+      gdgMemberId,
       sourceMember,
       rankedRelevantMembers,
       rankedStrictNonRelevantMembers,
@@ -397,12 +399,13 @@ export class GetSimilarUsers {
     return combined;
   }
 
-  private expandExploratoryCandidates(
+  private async expandExploratoryCandidates(
+    gdgMemberId: string,
     sourceMember: GdgMember,
     rankedRelevantMembers: Array<{ member: GdgMember; score: number }>,
     rankedStrictNonRelevantMembers: Array<{ member: GdgMember; score: number }>,
     publicCandidates: GdgMember[],
-  ): Array<{ member: GdgMember; score: number }> {
+  ): Promise<Array<{ member: GdgMember; score: number }>> {
     const totalStrictCandidates =
       rankedRelevantMembers.length + rankedStrictNonRelevantMembers.length;
     if (totalStrictCandidates >= this.exploratoryPoolSize) {
@@ -416,9 +419,30 @@ export class GetSimilarUsers {
       ),
     ]);
 
-    const fallbackCandidates = publicCandidates.filter(
+    let fallbackCandidates = publicCandidates.filter(
       (member) => !usedIds.has(member.props.gdgId),
     );
+
+    // Only fetch a larger fallback pool when the initial public sample cannot fill the exploratory pool.
+    if (
+      totalStrictCandidates + fallbackCandidates.length < this.exploratoryPoolSize
+    ) {
+      const expandedPublicCandidates =
+        await this.repo.findPublicMembersExcludingGdgId(
+          gdgMemberId,
+          this.exploratoryFallbackFetchLimit,
+        );
+
+      const seenIds = new Set(publicCandidates.map((member) => member.props.gdgId));
+      const additionalCandidates = expandedPublicCandidates.filter(
+        (member) => !seenIds.has(member.props.gdgId),
+      );
+
+      fallbackCandidates = [
+        ...fallbackCandidates,
+        ...additionalCandidates.filter((member) => !usedIds.has(member.props.gdgId)),
+      ];
+    }
 
     if (fallbackCandidates.length === 0) return rankedStrictNonRelevantMembers;
 

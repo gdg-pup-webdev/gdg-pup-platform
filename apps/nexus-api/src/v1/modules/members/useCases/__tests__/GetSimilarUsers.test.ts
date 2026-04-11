@@ -155,6 +155,14 @@ class MockGdgMemberRepository implements IGdgMemberRepository {
   }
 }
 
+const DEFAULT_SECTION_ORDER: GdgMember["props"]["sectionOrder"] = [
+  "customButtons",
+  "skillsAndInterests",
+  "projects",
+  "gdgImpact",
+  "badges",
+];
+
 const createMember = (overrides: Partial<GdgMember["props"]>): GdgMember =>
   GdgMember.hydrate({
     gdgId: overrides.gdgId || crypto.randomUUID(),
@@ -177,6 +185,7 @@ const createMember = (overrides: Partial<GdgMember["props"]>): GdgMember =>
     technicalSkills: overrides.technicalSkills ?? [],
     learningInterests: overrides.learningInterests ?? [],
     toolsAndTechnologies: overrides.toolsAndTechnologies ?? [],
+    sectionOrder: overrides.sectionOrder ?? [...DEFAULT_SECTION_ORDER],
     isPublic: overrides.isPublic ?? true,
   });
 
