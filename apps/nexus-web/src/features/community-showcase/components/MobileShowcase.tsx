@@ -9,6 +9,7 @@ import { CarouselArrowIcon } from "./CarouselArrowIcon";
 import { Event, useEvents } from "@/features/events";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { ASSETS } from "@/lib/constants/assets";
+import { useRouter } from "next/navigation";
 
 /**
  * MobileShowcase
@@ -21,6 +22,7 @@ import { ASSETS } from "@/lib/constants/assets";
  *   - Single-card planet carousel with prev/next navigation
  */
 export function MobileShowcase({events } : {events: Event[]}) {
+  const router = useRouter();
   const [mobileEventIndex, setMobileEventIndex] = useState(0);
   const [mobileCarouselScale, setMobileCarouselScale] = useState(1);
 
@@ -267,6 +269,14 @@ export function MobileShowcase({events } : {events: Event[]}) {
             variant="colored"
             subVariant="blue"
             className="mt-10 h-12 w-38 rounded-lg text-xl font-medium"
+            disabled={!EVENTS[mobileEventIndex].id}
+            onClick={() => {
+              const currentEvent = EVENTS[mobileEventIndex];
+              if (!currentEvent?.id) return;
+              router.push(
+                `/events/${currentEvent.id}?title=${encodeURIComponent(currentEvent.title)}`,
+              );
+            }}
           >
             Learn more
           </Button>
