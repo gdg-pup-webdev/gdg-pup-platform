@@ -8,6 +8,7 @@ import { CarouselArrowIcon } from "./CarouselArrowIcon";
 import { PlanetCard } from "./PlanetCard";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { ASSETS } from "@/lib/constants/assets";
+import { useRouter } from "next/navigation";
 
 /**
  * PastEventsCarousel
@@ -16,6 +17,8 @@ import { ASSETS } from "@/lib/constants/assets";
  * Auto-scrolls continuously; pauses on hover; supports click-to-step and drag.
  */
 export function PastEventsCarousel() {
+  const router = useRouter();
+
   const {
     trackRef,
     isPastEventsDragging,
@@ -132,6 +135,11 @@ export function PastEventsCarousel() {
                       variant="colored"
                       subVariant="blue"
                       className="mt-5 xl:mt-7 h-10 xl:h-13 min-w-34 shrink-0 whitespace-nowrap rounded-lg px-4 xl:min-w-36"
+                      disabled={!event.id}
+                      onClick={() => {
+                        if (!event.id) return;
+                        router.push(`/events/${event.id}?title=${encodeURIComponent(event.title)}`);
+                      }}
                     >
                       Learn more
                     </Button>
