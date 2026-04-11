@@ -229,17 +229,23 @@ export function AboutSection() {
               {/* Left: Image/Illustration */}
               <Box className="flex justify-center lg:col-span-1 lg:justify-end">
                 <Box className="relative w-40 h-40 md:w-80 md:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
-                  <Image
-                    src={ASSETS.ABOUT.WHO.MASCOT_1}
-                    alt="Mission - Cirby"
-                    width={400}
-                    height={400}
-                    className="w-full h-auto object-contain pointer-events-none"
-                    style={{
-                      filter:
-                        "drop-shadow(0 10px 30px rgba(66, 133, 244, 0.3))",
-                    }}
-                  />
+                  <motion.div
+                    animate={{ y: [-12, 12, -12] }}
+                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                    className="w-full h-full"
+                  >
+                    <Image
+                      src={ASSETS.ABOUT.WHO.MASCOT_1}
+                      alt="Mission - Cirby"
+                      width={400}
+                      height={400}
+                      className="w-full h-full object-contain pointer-events-none"
+                      style={{
+                        filter:
+                          "drop-shadow(0 10px 30px rgba(66, 133, 244, 0.3))",
+                      }}
+                    />
+                  </motion.div>
                 </Box>
               </Box>
 
@@ -283,17 +289,23 @@ export function AboutSection() {
               {/* Left: Content */}
               <Stack gap="2xl" className="md:w-1/2 items-center md:mr-10">
                 {/* mobile mascot above values */}
-                <Box className="md:hidden">
-                  <Image
-                    src={ASSETS.ABOUT.WHO.MASCOT_2}
-                    alt="Our Values - Sparky Flying"
-                    width={200}
-                    height={200}
-                    className="w-full h-auto object-contain max-w-52 mx-auto pointer-events-none"
-                    style={{
-                      filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
-                    }}
-                  />
+                <Box className="md:hidden w-full relative h-52 flex items-center justify-center">
+                  <motion.div
+                    animate={{ y: [-10, 10, -10] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+                    className="w-full h-full"
+                  >
+                    <Image
+                      src={ASSETS.ABOUT.WHO.MASCOT_2}
+                      alt="Our Values - Sparky Flying"
+                      width={200}
+                      height={200}
+                      className="w-full h-full object-contain pointer-events-none"
+                      style={{
+                        filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
+                      }}
+                    />
+                  </motion.div>
                 </Box>
                 <Text
                   as="h2"
@@ -454,19 +466,25 @@ export function AboutSection() {
               {/* Right: Image/Illustration */}
               <Box className="flex justify-center md:w-1/2 relative">
                 <Box
-                  className="absolute right-0 top-0 lg:w-150 lg:h-80 flex items-center justify-center"
+                  className="absolute right-0 top-0 lg:w-150 lg:h-80 flex items-center justify-center pointer-events-none"
                   style={{ transform: "translateX(15%)" }}
                 >
-                  <Image
-                    src={ASSETS.ABOUT.WHO.MASCOT_2}
-                    alt="Our Values - Sparky Flying"
-                    width={400}
-                    height={400}
-                    className="w-full h-auto object-contain hidden sm:block pointer-events-none"
-                    style={{
-                      filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
-                    }}
-                  />
+                  <motion.div
+                    animate={{ y: [-15, 15, -15] }}
+                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                    className="w-full h-full justify-center hidden sm:flex items-center"
+                  >
+                    <Image
+                      src={ASSETS.ABOUT.WHO.MASCOT_2}
+                      alt="Our Values - Sparky Flying"
+                      width={400}
+                      height={400}
+                      className="w-full h-full object-contain pointer-events-none"
+                      style={{
+                        filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
+                      }}
+                    />
+                  </motion.div>
                 </Box>
               </Box>
             </Stack>
