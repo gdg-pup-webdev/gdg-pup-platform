@@ -497,7 +497,7 @@ export function TeamSection() {
         }}
       />
       <div
-        className="absolute rounded-full pointer-events-none hidden md:block"
+        className="fixed rounded-full pointer-events-none hidden md:block"
         style={{
           width: "min(560px, 42vw)",
           height: "min(560px, 42vw)",
@@ -509,7 +509,7 @@ export function TeamSection() {
         }}
       />
       <div
-        className="absolute rounded-full pointer-events-none hidden md:block"
+        className="fixed rounded-full pointer-events-none hidden md:block"
         style={{
           width: "min(500px, 38vw)",
           height: "min(500px, 38vw)",
