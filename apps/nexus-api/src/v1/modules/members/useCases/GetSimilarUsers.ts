@@ -19,6 +19,9 @@ export class GetSimilarUsers {
   private readonly exploratoryPoolSize = 15;
   private readonly candidateFetchLimit = 120;
   private readonly exploratoryFallbackFetchLimit = 180;
+  private readonly requestRotationCounters = new Map<string, number>();
+  private readonly enableTimingLogs =
+    process.env.DEBUG_SUGGESTED_USERS_TIMING === "1";
   private readonly stableCollator = new Intl.Collator("en", {
     usage: "sort",
     sensitivity: "base",
@@ -33,12 +36,22 @@ export class GetSimilarUsers {
     pageSize: number,
     strategy: SimilarUsersStrategy = "relevant",
   ): Promise<{ list: GdgMember[]; count: number }> {
+    const flowStartedAt = this.nowMs();
+    let stageStartedAt = flowStartedAt;
+    const stageDurationsMs: Record<string, number> = {};
+
     if (pageNumber < 1)
       throw new BadRequestError("Page number must be greater than 0");
     if (pageSize < 1)
       throw new BadRequestError("Page size must be greater than 0");
 
     const sourceMember = await this.repo.findByGdgId(gdgMemberId);
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "findSourceMember",
+      stageStartedAt,
+    );
+
     if (!sourceMember) {
       throw new NotFoundError(`Member not found for gdgId: ${gdgMemberId}`);
     }
@@ -47,14 +60,35 @@ export class GetSimilarUsers {
       gdgMemberId,
       sourceMember,
     );
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "fetchRelevantCandidates",
+      stageStartedAt,
+    );
+
     const rankedRelevantMembers = this.rankBySimilarity(
       sourceMember,
       relevantCandidates,
+    );
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "rankRelevantCandidates",
+      stageStartedAt,
     );
 
     const from = (pageNumber - 1) * pageSize;
 
     if (strategy === "relevant") {
+      this.logTimingSummary({
+        gdgMemberId,
+        pageNumber,
+        pageSize,
+        strategy,
+        totalCount: rankedRelevantMembers.length,
+        startedAt: flowStartedAt,
+        stageDurationsMs,
+      });
+
       return {
         list: rankedRelevantMembers
           .slice(from, from + pageSize)
@@ -63,35 +97,130 @@ export class GetSimilarUsers {
       };
     }
 
-    const nonRelevantCandidates = await this.getNonRelevantCandidates(
+    const publicCandidates = await this.repo.findPublicMembersExcludingGdgId(
       gdgMemberId,
+      this.exploratoryFallbackFetchLimit,
+    );
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "fetchExploratoryPublicPool",
+      stageStartedAt,
+    );
+
+    const nonRelevantCandidates = this.getNonRelevantCandidates(
       sourceMember,
       rankedRelevantMembers,
+      publicCandidates,
     );
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "filterExploratoryNonRelevant",
+      stageStartedAt,
+    );
+
     const rankedStrictNonRelevantMembers = this.rankForExploration(
       sourceMember,
       nonRelevantCandidates,
     );
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "rankExploratoryNonRelevant",
+      stageStartedAt,
+    );
 
-    const expandedNonRelevantMembers = await this.expandExploratoryCandidates(
-      gdgMemberId,
+    const expandedNonRelevantMembers = this.expandExploratoryCandidates(
       sourceMember,
       rankedRelevantMembers,
       rankedStrictNonRelevantMembers,
+      publicCandidates,
+    );
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "expandExploratoryNonRelevant",
+      stageStartedAt,
+    );
+
+    const rotatedRelevantMembers = this.rotateForRequestVariety(
+      sourceMember.props.gdgId,
+      "related",
+      rankedRelevantMembers,
+    );
+    const rotatedExpandedNonRelevantMembers = this.rotateForRequestVariety(
+      sourceMember.props.gdgId,
+      "non-related",
+      expandedNonRelevantMembers,
+    );
+    stageStartedAt = this.recordStage(
+      stageDurationsMs,
+      "rotateExploratoryPools",
+      stageStartedAt,
     );
 
     const exploratorySequence = this.buildExploratorySequence(
-      rankedRelevantMembers,
-      expandedNonRelevantMembers,
+      rotatedRelevantMembers,
+      rotatedExpandedNonRelevantMembers,
     );
+    this.recordStage(
+      stageDurationsMs,
+      "buildExploratorySequence",
+      stageStartedAt,
+    );
+
     const list = exploratorySequence
       .slice(from, from + pageSize)
       .map((entry) => entry.member);
+
+    this.logTimingSummary({
+      gdgMemberId,
+      pageNumber,
+      pageSize,
+      strategy,
+      totalCount: exploratorySequence.length,
+      startedAt: flowStartedAt,
+      stageDurationsMs,
+    });
 
     return {
       list,
       count: exploratorySequence.length,
     };
+  }
+
+  private nowMs(): number {
+    return Date.now();
+  }
+
+  private recordStage(
+    stageDurationsMs: Record<string, number>,
+    stage: string,
+    startedAt: number,
+  ): number {
+    const finishedAt = this.nowMs();
+    stageDurationsMs[stage] = finishedAt - startedAt;
+    return finishedAt;
+  }
+
+  private logTimingSummary(params: {
+    gdgMemberId: string;
+    pageNumber: number;
+    pageSize: number;
+    strategy: SimilarUsersStrategy;
+    totalCount: number;
+    startedAt: number;
+    stageDurationsMs: Record<string, number>;
+  }): void {
+    if (!this.enableTimingLogs) return;
+
+    const totalDurationMs = this.nowMs() - params.startedAt;
+    console.info("[suggested-users-timing]", {
+      gdgMemberId: params.gdgMemberId,
+      strategy: params.strategy,
+      pageNumber: params.pageNumber,
+      pageSize: params.pageSize,
+      totalCount: params.totalCount,
+      totalDurationMs,
+      stageDurationsMs: params.stageDurationsMs,
+    });
   }
 
   private async getRelevantCandidates(
@@ -100,50 +229,31 @@ export class GetSimilarUsers {
   ): Promise<GdgMember[]> {
     const sourceProps = sourceMember.props;
 
-    const [sameProgramOrDepartment, sameYearLevel, publicFallback] =
-      await Promise.all([
-        this.repo.findPublicMembersWithSameProgramOrDepartmentExcludingGdgId(
-          gdgMemberId,
-          {
-            program: sourceProps.program,
-            department: sourceProps.department,
-          },
-          this.candidateFetchLimit,
-        ),
-        this.repo.findPublicMembersWithSameYearLevelExcludingGdgId(
-          gdgMemberId,
-          sourceProps.yearLevel,
-          this.candidateFetchLimit,
-        ),
-        this.repo.findPublicMembersExcludingGdgId(
-          gdgMemberId,
-          this.candidateFetchLimit,
-        ),
-      ]);
+    const candidates = await this.repo.findPublicSimilarMembersExcludingGdgId(
+      gdgMemberId,
+      {
+        program: sourceProps.program,
+        department: sourceProps.department,
+        yearLevel: sourceProps.yearLevel,
+        technicalSkills: sourceProps.technicalSkills,
+        learningInterests: sourceProps.learningInterests,
+        toolsAndTechnologies: sourceProps.toolsAndTechnologies,
+      },
+      this.candidateFetchLimit,
+    );
 
-    const merged = this.dedupeByGdgId([
-      ...sameProgramOrDepartment,
-      ...sameYearLevel,
-      ...publicFallback,
-    ]);
-
-    return merged.filter((candidate) =>
+    return candidates.filter((candidate) =>
       this.hasCoreRelevance(sourceMember, candidate),
     );
   }
 
-  private async getNonRelevantCandidates(
-    gdgMemberId: string,
+  private getNonRelevantCandidates(
     sourceMember: GdgMember,
     rankedRelevantMembers: Array<{ member: GdgMember; score: number }>,
-  ): Promise<GdgMember[]> {
+    publicCandidates: GdgMember[],
+  ): GdgMember[] {
     const relevantIds = new Set(
       rankedRelevantMembers.map((entry) => entry.member.props.gdgId),
-    );
-
-    const publicCandidates = await this.repo.findPublicMembersExcludingGdgId(
-      gdgMemberId,
-      this.exploratoryFallbackFetchLimit,
     );
 
     return publicCandidates.filter(
@@ -287,12 +397,12 @@ export class GetSimilarUsers {
     return combined;
   }
 
-  private async expandExploratoryCandidates(
-    gdgMemberId: string,
+  private expandExploratoryCandidates(
     sourceMember: GdgMember,
     rankedRelevantMembers: Array<{ member: GdgMember; score: number }>,
     rankedStrictNonRelevantMembers: Array<{ member: GdgMember; score: number }>,
-  ): Promise<Array<{ member: GdgMember; score: number }>> {
+    publicCandidates: GdgMember[],
+  ): Array<{ member: GdgMember; score: number }> {
     const totalStrictCandidates =
       rankedRelevantMembers.length + rankedStrictNonRelevantMembers.length;
     if (totalStrictCandidates >= this.exploratoryPoolSize) {
@@ -306,11 +416,7 @@ export class GetSimilarUsers {
       ),
     ]);
 
-    const publicPool = await this.repo.findPublicMembersExcludingGdgId(
-      gdgMemberId,
-      this.exploratoryFallbackFetchLimit,
-    );
-    const fallbackCandidates = publicPool.filter(
+    const fallbackCandidates = publicCandidates.filter(
       (member) => !usedIds.has(member.props.gdgId),
     );
 
@@ -323,16 +429,6 @@ export class GetSimilarUsers {
     return [...rankedStrictNonRelevantMembers, ...rankedFallback];
   }
 
-  private dedupeByGdgId(candidates: GdgMember[]): GdgMember[] {
-    const map = new Map<string, GdgMember>();
-
-    for (const candidate of candidates) {
-      map.set(candidate.props.gdgId, candidate);
-    }
-
-    return [...map.values()];
-  }
-
   private seededOrderKey(sourceGdgId: string, member: GdgMember): number {
     const key = `${sourceGdgId}:${member.props.gdgId}`;
     let hash = 0;
@@ -342,6 +438,24 @@ export class GetSimilarUsers {
     }
 
     return hash;
+  }
+
+  private rotateForRequestVariety<T>(
+    sourceGdgId: string,
+    lane: "related" | "non-related",
+    candidates: T[],
+  ): T[] {
+    if (candidates.length <= 1) return candidates;
+
+    const key = `${sourceGdgId}:${lane}`;
+    const currentCounter = this.requestRotationCounters.get(key) ?? 0;
+    const nextCounter = currentCounter + 1;
+    this.requestRotationCounters.set(key, nextCounter);
+
+    const offset = nextCounter % candidates.length;
+    if (offset === 0) return candidates;
+
+    return [...candidates.slice(offset), ...candidates.slice(0, offset)];
   }
 
   private calculateSimilarityScore(

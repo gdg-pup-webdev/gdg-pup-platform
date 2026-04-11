@@ -318,6 +318,87 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     );
   }
 
+  async findPublicSimilarMembersExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+      yearLevel: number | null;
+      technicalSkills: string[];
+      learningInterests: string[];
+      toolsAndTechnologies: string[];
+    },
+    limit = 120,
+  ): Promise<GdgMember[]> {
+    const clauses: string[] = [];
+
+    const pushEqClause = (
+      column: "program" | "department" | "year_level",
+      value: string | number,
+    ): void => {
+      clauses.push(`${column}.eq.${this.wrapOrFilterValue(String(value))}`);
+    };
+
+    const pushCollectionClauses = (
+      column:
+        | "technical_skills"
+        | "learning_interests"
+        | "tools_and_technologies",
+      values: string[],
+    ): void => {
+      const normalized = [
+        ...new Set(values.map((value) => value.trim().toLowerCase())),
+      ]
+        .filter(Boolean)
+        .slice(0, 8);
+
+      for (const value of normalized) {
+        const pattern = `%${value}%`;
+        clauses.push(
+          `${column}.ilike.${this.wrapOrFilterValue(this.escapeLikePattern(pattern))}`,
+        );
+      }
+    };
+
+    if (filters.program) pushEqClause("program", filters.program);
+    if (filters.department) pushEqClause("department", filters.department);
+    if (filters.yearLevel !== null)
+      pushEqClause("year_level", filters.yearLevel);
+    pushCollectionClauses("technical_skills", filters.technicalSkills);
+    pushCollectionClauses("learning_interests", filters.learningInterests);
+    pushCollectionClauses(
+      "tools_and_technologies",
+      filters.toolsAndTechnologies,
+    );
+
+    if (clauses.length === 0) return [];
+
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select(this.similarityProjection)
+      .eq("is_public", true)
+      .neq("gdg_id", gdgId)
+      .or(clauses.join(","))
+      .order("display_name", { ascending: true, nullsFirst: false })
+      .order("first_name", { ascending: true, nullsFirst: false })
+      .order("gdg_id", { ascending: true, nullsFirst: false })
+      .limit(limit);
+
+    if (error) throw new Error(`Database error: ${error.message}`);
+
+    return (data || []).map((row) =>
+      this.mapSimilarityToDomain(row as SimilarityMemberRow),
+    );
+  }
+
+  private wrapOrFilterValue(value: string): string {
+    return `"${value.replace(/"/g, '\\"')}"`;
+  }
+
+  private escapeLikePattern(value: string): string {
+    return value.replace(/[%,_]/g, (token) => `\\${token}`);
+  }
+
   async saveNew(member: GdgMember): Promise<GdgMember> {
     const p = member.props;
     const { data, error } = await supabase

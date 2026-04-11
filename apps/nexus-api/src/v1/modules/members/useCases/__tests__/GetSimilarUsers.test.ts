@@ -68,6 +68,71 @@ class MockGdgMemberRepository implements IGdgMemberRepository {
     return typeof limit === "number" ? rows.slice(0, limit) : rows;
   }
 
+  async findPublicSimilarMembersExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+      yearLevel: number | null;
+      technicalSkills: string[];
+      learningInterests: string[];
+      toolsAndTechnologies: string[];
+    },
+    limit?: number,
+  ): Promise<GdgMember[]> {
+    const normalize = (value: string): string => value.trim().toLowerCase();
+    const normalizeCollection = (values: string[]): string[] => [
+      ...new Set(values.map((value) => normalize(value)).filter(Boolean)),
+    ];
+
+    const sourceSkills = normalizeCollection(filters.technicalSkills);
+    const sourceInterests = normalizeCollection(filters.learningInterests);
+    const sourceTools = normalizeCollection(filters.toolsAndTechnologies);
+
+    const rows = this.members.filter((member) => {
+      if (member.props.gdgId === gdgId || !member.props.isPublic) return false;
+
+      const sameProgram = Boolean(
+        filters.program && member.props.program === filters.program,
+      );
+      const sameDepartment = Boolean(
+        filters.department && member.props.department === filters.department,
+      );
+      const sameYearLevel =
+        filters.yearLevel !== null &&
+        member.props.yearLevel === filters.yearLevel;
+
+      const candidateSkills = normalizeCollection(member.props.technicalSkills);
+      const candidateInterests = normalizeCollection(
+        member.props.learningInterests,
+      );
+      const candidateTools = normalizeCollection(
+        member.props.toolsAndTechnologies,
+      );
+
+      const sharesSkill = sourceSkills.some((value) =>
+        candidateSkills.includes(value),
+      );
+      const sharesInterest = sourceInterests.some((value) =>
+        candidateInterests.includes(value),
+      );
+      const sharesTool = sourceTools.some((value) =>
+        candidateTools.includes(value),
+      );
+
+      return (
+        sameProgram ||
+        sameDepartment ||
+        sameYearLevel ||
+        sharesSkill ||
+        sharesInterest ||
+        sharesTool
+      );
+    });
+
+    return typeof limit === "number" ? rows.slice(0, limit) : rows;
+  }
+
   async saveNew(member: GdgMember): Promise<GdgMember> {
     this.members.push(member);
     return member;
@@ -233,7 +298,7 @@ describe("GetSimilarUsers", () => {
     });
   });
 
-  it("exploratory strategy keeps deterministic 80/20 mix", async () => {
+  it("exploratory strategy keeps 80/20 mix with related-first slots", async () => {
     const source = createMember({
       gdgId: "source",
       displayName: "Source Member",
@@ -300,12 +365,75 @@ describe("GetSimilarUsers", () => {
     expect(relevantIds).toEqual(["similar-a", "similar-b"]);
 
     expect(exploratoryResult.count).toBe(4);
-    expect(exploratoryIds[0]).toBe("similar-a");
-    expect(exploratoryIds[1]).toBe("similar-b");
+    expect(["similar-a", "similar-b"]).toContain(exploratoryIds[0]);
+    expect(["similar-a", "similar-b"]).toContain(exploratoryIds[1]);
     expect(exploratoryIds).toContain("similar-a");
     expect(exploratoryIds).toContain("similar-b");
     expect(exploratoryIds).toContain("non-similar-a");
     expect(exploratoryIds).toContain("non-similar-b");
+  });
+
+  it("exploratory strategy rotates suggestions per request", async () => {
+    const source = createMember({
+      gdgId: "source",
+      program: "BSCS",
+      department: "Web Development",
+      yearLevel: 3,
+      technicalSkills: ["TypeScript"],
+    });
+
+    const similarA = createMember({
+      gdgId: "similar-a",
+      program: "BSCS",
+      department: "Web Development",
+      yearLevel: 3,
+      technicalSkills: ["TypeScript"],
+    });
+    const similarB = createMember({
+      gdgId: "similar-b",
+      program: "BSCS",
+      department: "Web Development",
+      yearLevel: 2,
+      technicalSkills: ["TypeScript"],
+    });
+    const similarC = createMember({
+      gdgId: "similar-c",
+      program: "BSCS",
+      department: "Web Development",
+      yearLevel: 1,
+      technicalSkills: ["TypeScript"],
+    });
+
+    const nonSimilarA = createMember({
+      gdgId: "non-similar-a",
+      program: "BSA",
+      department: "Finance",
+      yearLevel: 7,
+      technicalSkills: ["Excel"],
+    });
+    const nonSimilarB = createMember({
+      gdgId: "non-similar-b",
+      program: "BSTM",
+      department: "Hospitality",
+      yearLevel: 8,
+      technicalSkills: ["Operations"],
+    });
+
+    await repository.saveNew(source);
+    await repository.saveNew(similarA);
+    await repository.saveNew(similarB);
+    await repository.saveNew(similarC);
+    await repository.saveNew(nonSimilarA);
+    await repository.saveNew(nonSimilarB);
+
+    const first = await useCase.execute("source", 1, 10, "exploratory");
+    const second = await useCase.execute("source", 1, 10, "exploratory");
+
+    const firstIds = first.list.map((m) => m.props.gdgId).join(",");
+    const secondIds = second.list.map((m) => m.props.gdgId).join(",");
+
+    expect(first.count).toBe(second.count);
+    expect(firstIds).not.toBe(secondIds);
   });
 
   it("exploratory strategy returns page unchanged when no outside candidates exist", async () => {

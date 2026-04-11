@@ -381,7 +381,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
-          is_public: boolean
+          is_public: boolean | null
           last_name: string | null
           learning_interests: string | null
           linkedin_url: string | null
@@ -391,6 +391,7 @@ export type Database = {
           other_links: string | null
           portfolio_url: string | null
           program: string | null
+          section_order: string | null
           skills_summary: string | null
           suffix: string | null
           technical_skills: string | null
@@ -408,7 +409,7 @@ export type Database = {
           first_name?: string | null
           gdg_id: string
           github_url?: string | null
-          is_public?: boolean
+          is_public?: boolean | null
           last_name?: string | null
           learning_interests?: string | null
           linkedin_url?: string | null
@@ -418,6 +419,7 @@ export type Database = {
           other_links?: string | null
           portfolio_url?: string | null
           program?: string | null
+          section_order?: string | null
           skills_summary?: string | null
           suffix?: string | null
           technical_skills?: string | null
@@ -435,7 +437,7 @@ export type Database = {
           first_name?: string | null
           gdg_id?: string
           github_url?: string | null
-          is_public?: boolean
+          is_public?: boolean | null
           last_name?: string | null
           learning_interests?: string | null
           linkedin_url?: string | null
@@ -445,6 +447,7 @@ export type Database = {
           other_links?: string | null
           portfolio_url?: string | null
           program?: string | null
+          section_order?: string | null
           skills_summary?: string | null
           suffix?: string | null
           technical_skills?: string | null
@@ -1468,7 +1471,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
-          is_public: boolean
+          is_public: boolean | null
           last_name: string | null
           learning_interests: string | null
           linkedin_url: string | null
@@ -1478,6 +1481,7 @@ export type Database = {
           other_links: string | null
           portfolio_url: string | null
           program: string | null
+          section_order: string | null
           skills_summary: string | null
           suffix: string | null
           technical_skills: string | null

@@ -31,6 +31,18 @@ export interface IGdgMemberRepository {
     yearLevel: number | null,
     limit?: number,
   ): Promise<GdgMember[]>;
+  findPublicSimilarMembersExcludingGdgId(
+    gdgId: string,
+    filters: {
+      program: string | null;
+      department: string | null;
+      yearLevel: number | null;
+      technicalSkills: string[];
+      learningInterests: string[];
+      toolsAndTechnologies: string[];
+    },
+    limit?: number,
+  ): Promise<GdgMember[]>;
   saveNew(member: GdgMember): Promise<GdgMember>;
   persistUpdates(member: GdgMember): Promise<GdgMember>;
   deleteByGdgId(gdgId: string): Promise<void>;
