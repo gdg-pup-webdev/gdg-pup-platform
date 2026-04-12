@@ -238,7 +238,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       // Handle scalar fields (program, department, yearLevel)
       if (fieldName === "yearLevel") {
         // year_level is a number, so use .eq instead of .ilike
-        orQuery = `${mappedFieldName}.eq.${this.wrapOrFilterValue(String(fieldValue))}`;
+        orQuery = `${mappedFieldName}.eq.${this.wrapOrFilterValue(String(fieldValue  || 3))}`;
       } else {
         orQuery = `${mappedFieldName}.ilike.${this.wrapOrFilterValue(`%${String(fieldValue).trim()}%`)}`;
       }

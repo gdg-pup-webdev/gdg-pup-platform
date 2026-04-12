@@ -169,13 +169,7 @@ export class GdgMembersHttpController {
         "exploratory",
       );
 
-      const suggestedPreview = result.list.map((member) => ({
-        gdgId: member.gdgId,
-        displayName: member.displayName,
-        avatarUrl: member.avatarUrl,
-        program: member.program,
-        department: member.department,
-      }));
+      const suggestedPreview = result.list.map((member) => (member));
 
       return output(200, {
         status: "success",

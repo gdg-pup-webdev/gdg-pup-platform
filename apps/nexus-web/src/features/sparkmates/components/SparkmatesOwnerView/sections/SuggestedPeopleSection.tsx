@@ -14,10 +14,17 @@ export const SuggestedPeopleSection = ({
 }) => {
   const [search, setSearch] = useState("");
 
-  const suggestedUsers = useSuggestedSparkmates({
+  const {data, isLoading} = useSuggestedSparkmates({
     search,
     viewerGdgId: profile?.gdgId,
   });
+
+  const suggestedUsers = data?.data || [];
+ 
+ 
+ 
+  
+  
 
   return (
     <FadeInSection delay={0.1}>
@@ -49,8 +56,8 @@ export const SuggestedPeopleSection = ({
           <ConnectedSuggestedCard
             key={member.gdgId}
             avatarUrl={member.avatarUrl ?? undefined}
-            name={member.name}
-            bio={member.bio}
+            name={member.displayName || member.firstName || member.gdgId}
+            bio={member.bio || ""}
             gdgId={member.gdgId}
           />
         ))}
