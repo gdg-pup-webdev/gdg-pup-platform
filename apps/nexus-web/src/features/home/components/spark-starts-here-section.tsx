@@ -51,7 +51,7 @@ export function SparkStartsHereSection() {
                     Your Spark Starts Here.
                   </Text>
                   <Button asChild variant="colored" subVariant="yellow" size="lg">
-                  <Link href="/signin">Spark your Journey</Link>
+                  <Link prefetch={false} href="/signin">Spark your Journey</Link>
                   </Button>
                 </Stack>
 
