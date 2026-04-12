@@ -179,7 +179,7 @@ export const ArticleList = () => {
         {/* ── Article grid ── */}
         {!isLoading && !error && data && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
               {data.data.map((article, i) => {
                 const colors =
                   ARTICLE_COLOR_MAP[article.id] ?? DEFAULT_COLOR;
