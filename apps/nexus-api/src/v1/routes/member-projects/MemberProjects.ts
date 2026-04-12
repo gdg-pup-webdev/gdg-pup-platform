@@ -2,6 +2,7 @@ import { RequestHandler, Router } from "express";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 import { memberProjectsController as moduleController } from "@/v1/modules/memberProjects";
+import { ValidationError } from "@/v1/errors/HttpError";
 
 export class MemberProjectsHttpController {
   constructor(private readonly module: typeof moduleController) {}
@@ -105,6 +106,71 @@ export class MemberProjectsHttpController {
     },
   );
 
+  postAddImage: RequestHandler = createExpressController(
+    contract.api.v1.member_projects.id.images.POST,
+    async ({ input, output }) => {
+      const image = input.files.image;
+
+      if (!image) {
+        throw new ValidationError("Image file is required.");
+      }
+
+      const result = await this.module.addImage({
+        id: input.params.id,
+        image: {
+          buffer: await image.arrayBuffer(),
+          name: image.name,
+          type: image.type,
+        },
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Member project image added successfully",
+        data: result,
+      });
+    },
+  );
+
+  deleteImage: RequestHandler = createExpressController(
+    contract.api.v1.member_projects.id.images.imageIndex.DELETE,
+    async ({ input, output }) => {
+      const imageIndex = Number(input.params.imageIndex);
+
+      if (!Number.isInteger(imageIndex) || imageIndex < 0) {
+        throw new ValidationError("imageIndex must be a non-negative integer.");
+      }
+
+      const result = await this.module.deleteImage({
+        id: input.params.id,
+        imageIndex,
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Member project image deleted successfully",
+        data: result,
+      });
+    },
+  );
+
+  patchReorderImages: RequestHandler = createExpressController(
+    contract.api.v1.member_projects.id.images.reorder.PATCH,
+    async ({ input, output }) => {
+      const result = await this.module.reorderImages({
+        id: input.params.id,
+        fromIndex: input.body.data.fromIndex,
+        toIndex: input.body.data.toIndex,
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Member project images reordered successfully",
+        data: result,
+      });
+    },
+  );
+
   deleteDelete: RequestHandler = createExpressController(
     contract.api.v1.member_projects.id.DELETE,
     async ({ input, output }) => {
@@ -203,6 +269,9 @@ export class MemberProjectsRouter {
     this.router.get("/random", this.controller.getRandom);
     this.router.get("/:id", this.controller.getOne);
     this.router.patch("/:id", this.controller.patchUpdate);
+    this.router.post("/:id/images", this.controller.postAddImage);
+    this.router.patch("/:id/images/reorder", this.controller.patchReorderImages);
+    this.router.delete("/:id/images/:imageIndex", this.controller.deleteImage);
     this.router.delete("/:id", this.controller.deleteDelete);
     this.router.get("/member/:memberGdgId", this.controller.getByMember);
   }

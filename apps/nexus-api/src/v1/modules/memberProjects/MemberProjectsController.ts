@@ -7,6 +7,9 @@ import { ListMemberProjects } from "./useCases/ListMemberProjects";
 import { GetMemberProjectsByGdgId } from "./useCases/GetMemberProjectsByGdgId";
 import { SearchMemberProjects } from "./useCases/SearchMemberProjects";
 import { GetRandomMemberProjects } from "./useCases/GetRandomMemberProjects";
+import { AddMemberProjectImage } from "./useCases/AddMemberProjectImage";
+import { DeleteMemberProjectImage } from "./useCases/DeleteMemberProjectImage";
+import { ReorderMemberProjectImages } from "./useCases/ReorderMemberProjectImages";
 import { FileToUpload } from "./domain/IFileStorage";
 
 export type MemberProjectDTO = {
@@ -15,6 +18,7 @@ export type MemberProjectDTO = {
   startDate: string;
   endDate: string | null;
   description: string;
+  images: string[];
   mainImageUrl: string | null;
   secondaryImageUrl: string | null;
   tertiaryImageUrl: string | null;
@@ -39,7 +43,10 @@ export class MemberProjectsController {
     private listUseCase: ListMemberProjects,
     private getByMemberUseCase: GetMemberProjectsByGdgId,
     private searchUseCase: SearchMemberProjects,
-    private randomUseCase: GetRandomMemberProjects
+    private randomUseCase: GetRandomMemberProjects,
+    private addImageUseCase: AddMemberProjectImage,
+    private deleteImageUseCase: DeleteMemberProjectImage,
+    private reorderImagesUseCase: ReorderMemberProjectImages,
   ) {}
 
   private toDTO(project: MemberProject): MemberProjectDTO {
@@ -50,9 +57,10 @@ export class MemberProjectsController {
       startDate: props.startDate.toISOString(),
       endDate: props.endDate ? props.endDate.toISOString() : null,
       description: props.description,
-      mainImageUrl: props.mainImageUrl,
-      secondaryImageUrl: props.secondaryImageUrl,
-      tertiaryImageUrl: props.tertiaryImageUrl,
+      images: [...props.images],
+      mainImageUrl: props.images[0] || null,
+      secondaryImageUrl: props.images[1] || null,
+      tertiaryImageUrl: props.images[2] || null,
       memberGdgId: props.memberGdgId,
       createdAt: props.createdAt.toISOString(),
       updatedAt: props.updatedAt.toISOString(),
@@ -155,5 +163,43 @@ export class MemberProjectsController {
       list: result.list.map((p) => this.toDTO(p)),
       count: result.count,
     };
+  }
+
+  async addImage(input: {
+    id: string;
+    image: { buffer: ArrayBuffer; name: string; type: string };
+  }): Promise<MemberProjectDTO> {
+    const project = await this.addImageUseCase.execute({
+      projectId: input.id,
+      image: new FileToUpload(input.image),
+    });
+
+    return this.toDTO(project);
+  }
+
+  async deleteImage(input: {
+    id: string;
+    imageIndex: number;
+  }): Promise<MemberProjectDTO> {
+    const project = await this.deleteImageUseCase.execute({
+      projectId: input.id,
+      imageIndex: input.imageIndex,
+    });
+
+    return this.toDTO(project);
+  }
+
+  async reorderImages(input: {
+    id: string;
+    fromIndex: number;
+    toIndex: number;
+  }): Promise<MemberProjectDTO> {
+    const project = await this.reorderImagesUseCase.execute({
+      projectId: input.id,
+      fromIndex: input.fromIndex,
+      toIndex: input.toIndex,
+    });
+
+    return this.toDTO(project);
   }
 }
