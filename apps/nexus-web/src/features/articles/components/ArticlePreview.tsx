@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useGetOneArticle } from "@/features/articles/hooks/useGetOneArticle";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BrandedSkeleton } from "@/components/shared";
 
 // Maps article ID to its milestone color
@@ -191,8 +191,17 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
 }
 
 export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
+  const router = useRouter();
   const { data, isLoading } = useGetOneArticle(articleId);
   const colors = ARTICLE_COLOR_MAP[articleId] ?? DEFAULT_COLOR;
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push("/articles");
+  };
 
   if (!data || isLoading) {
     return (
@@ -270,13 +279,14 @@ return (
 
           {/* ── Top navigation bar ── */}
           <div className="flex items-center justify-between mb-12 text-sm font-medium">
-            <Link prefetch={false}
-              href="/about/history"
+            <button
+              type="button"
+              onClick={handleBack}
               className="flex items-center gap-2 text-gray-400 hover:text-white transition-all group"
             >
               <span className="transition-transform group-hover:-translate-x-1">←</span> 
-              Back to History
-            </Link>
+              Back
+            </button>
             <span className="text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/10">
               {colors.year} • {readTime} min read
             </span>
