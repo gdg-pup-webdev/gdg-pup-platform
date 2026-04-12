@@ -283,7 +283,7 @@ export const ForgotPasswordFlow = () => {
 
       <div className="flex justify-center mt-6 items-center gap-[8px]">
         <span className="text-white/80 text-[16px] font-medium">Remembered your password?</span>
-        <Link href="/signin" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>Sign In</Link>
+        <Link prefetch={false} href="/signin" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>Sign In</Link>
       </div>
     </Stack>
   );
