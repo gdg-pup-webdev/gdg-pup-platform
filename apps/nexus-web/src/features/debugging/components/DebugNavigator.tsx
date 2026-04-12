@@ -53,7 +53,7 @@ export const DebugNavigator = () => {
         {isOpen && (
           <div className="absolute right-0 bottom-[110%] flex w-50 flex-col rounded-2xl bg-white p-4 text-black shadow-md">
             {Object.entries(DEBUGGIN_LINKS).map(([key, value]) => (
-              <Link
+              <Link prefetch={false}
                 className="cursor-pointer hover:bg-gray-400"
                 key={key}
                 href={value}
