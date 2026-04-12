@@ -14,6 +14,7 @@ import { GetRandomMemberProjects } from "./useCases/GetRandomMemberProjects";
 import { AddMemberProjectImage } from "./useCases/AddMemberProjectImage";
 import { DeleteMemberProjectImage } from "./useCases/DeleteMemberProjectImage";
 import { ReorderMemberProjectImages } from "./useCases/ReorderMemberProjectImages";
+import { ReorderMemberProjects } from "./useCases/ReorderMemberProjects";
 
 const repo = new MemberProjectRepository();
 const storage = new FileStorageAdapter(filesModuleController);
@@ -30,6 +31,7 @@ const randomUC = new GetRandomMemberProjects(repo);
 const addImageUC = new AddMemberProjectImage(repo, storage);
 const deleteImageUC = new DeleteMemberProjectImage(repo, storage);
 const reorderImagesUC = new ReorderMemberProjectImages(repo);
+const reorderProjectsUC = new ReorderMemberProjects(repo);
 
 export const memberProjectsController = new MemberProjectsController(
   createUC,
@@ -43,4 +45,5 @@ export const memberProjectsController = new MemberProjectsController(
   addImageUC,
   deleteImageUC,
   reorderImagesUC,
+  reorderProjectsUC,
 );

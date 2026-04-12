@@ -112,9 +112,29 @@ export class MemberProjectRepository implements IMemberProjectRepository {
   }
 
   async saveNew(project: MemberProject) {
+    const memberGdgId = project.props.memberGdgId;
+    const { data: latestProjectForMember, error: latestProjectError } = await (supabase as any)
+      .from("member_projects")
+      .select("position")
+      .eq("memberGdgId", memberGdgId)
+      .order("position", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (latestProjectError) {
+      handlePostgresError(latestProjectError);
+    }
+
+    const nextPosition = typeof latestProjectForMember?.position === "number"
+      ? latestProjectForMember.position + 1
+      : 0;
+
     const { data, error } = await (supabase as any)
       .from("member_projects")
-      .insert(this.toDb(project))
+      .insert({
+        ...this.toDb(project),
+        position: nextPosition,
+      })
       .select("id")
       .single();
 
@@ -165,6 +185,64 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     }
   }
 
+  async reorderByMember(
+    memberGdgId: string,
+    fromIndex: number,
+    toIndex: number,
+  ): Promise<void> {
+    const { data, error } = await (supabase as any)
+      .from("member_projects")
+      .select("id")
+      .eq("memberGdgId", memberGdgId)
+      .order("position", { ascending: true })
+      .order("createdAt", { ascending: true });
+
+    if (error) {
+      handlePostgresError(error);
+    }
+
+    const rows = data || [];
+
+    if (
+      fromIndex < 0 ||
+      toIndex < 0 ||
+      fromIndex >= rows.length ||
+      toIndex >= rows.length
+    ) {
+      throw new Error("Project reorder indices are out of range.");
+    }
+
+    if (fromIndex === toIndex) {
+      return;
+    }
+
+    const orderedIds = rows.map((row: { id: string }) => row.id);
+    const [movedId] = orderedIds.splice(fromIndex, 1);
+
+    if (!movedId) {
+      throw new Error("Unable to reorder member projects.");
+    }
+
+    orderedIds.splice(toIndex, 0, movedId);
+
+    for (let index = 0; index < orderedIds.length; index += 1) {
+      const currentId = orderedIds[index];
+
+      const { error: updateError } = await (supabase as any)
+        .from("member_projects")
+        .update({
+          position: index,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", currentId)
+        .eq("memberGdgId", memberGdgId);
+
+      if (updateError) {
+        handlePostgresError(updateError);
+      }
+    }
+  }
+
   async findById(id: string): Promise<MemberProject | null> {
     return await this.fetchById(id);
   }
@@ -195,6 +273,8 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       .from("member_projects")
       .select(this.selectWithRelations, { count: "exact" })
       .eq("memberGdgId", memberGdgId)
+      .order("position", { ascending: true })
+      .order("createdAt", { ascending: true })
       .range((page - 1) * limit, page * limit - 1);
 
     if (error) handlePostgresError(error);

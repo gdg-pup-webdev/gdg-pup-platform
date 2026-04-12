@@ -1,6 +1,22 @@
 import { Button, Text, Modal } from "@packages/spark-ui";
-import React, { useState } from "react";
-import { ProjectCard } from "../components/ProjectCard";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  type DragEndEvent,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableProjectCardItem } from "../components/SortableProjectCardItem";
 import { addIcon } from "../icons/addIcon";
 import { UserProfile } from "@/features/sparkmates";
 import { useMemberProjects } from "@/features/sparkmates/hooks/useMemberProjects";
@@ -76,6 +92,20 @@ const dedupeFiles = (files: File[]): File[] => {
   return unique;
 };
 
+const areSameOrder = (left: string[], right: string[]): boolean => {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let index = 0; index < left.length; index += 1) {
+    if (left[index] !== right[index]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
   const {
     projectsQuery,
@@ -84,10 +114,19 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
     deleteProject,
     addProjectImage,
     deleteProjectImage,
+    reorderProjects,
   } = useMemberProjects(profile.gdgId);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectFormState>(createEmptyProject());
   const [isSavingProject, setIsSavingProject] = useState(false);
+  const [orderedProjectIds, setOrderedProjectIds] = useState<string[]>([]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   const handleUpdateProject = (index: number, field: keyof Omit<ProjectFormState, "id">, value: string | File | null) => {
     if (index !== 0) {
@@ -288,14 +327,97 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
     }
   };
 
+  const projectList = projectsQuery.data || [];
+
+  const projectIdsFromQuery = useMemo(
+    () => projectList.map((project: any) => String(project.id)),
+    [projectList],
+  );
+
+  useEffect(() => {
+    setOrderedProjectIds((previousIds) => {
+      if (projectIdsFromQuery.length === 0) {
+        return previousIds.length === 0 ? previousIds : [];
+      }
+
+      if (previousIds.length === 0) {
+        return projectIdsFromQuery;
+      }
+
+      const incomingIdSet = new Set(projectIdsFromQuery);
+      const retainedIds = previousIds.filter((id) => incomingIdSet.has(id));
+      const appendedIds = projectIdsFromQuery.filter((id) => !retainedIds.includes(id));
+      const nextIds = [...retainedIds, ...appendedIds];
+
+      return areSameOrder(previousIds, nextIds) ? previousIds : nextIds;
+    });
+  }, [projectIdsFromQuery]);
+
+  const orderedProjectList = useMemo(() => {
+    const projectsById = new Map(
+      projectList.map((project: any) => [String(project.id), project]),
+    );
+
+    const effectiveProjectIds = orderedProjectIds.length > 0
+      ? orderedProjectIds
+      : projectIdsFromQuery;
+
+    return effectiveProjectIds
+      .map((id) => projectsById.get(id))
+      .filter((project): project is any => Boolean(project));
+  }, [orderedProjectIds, projectIdsFromQuery, projectList]);
+
+  const effectiveProjectIds = orderedProjectIds.length > 0
+    ? orderedProjectIds
+    : projectIdsFromQuery;
+
+  const handleProjectDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) {
+      return;
+    }
+
+    const activeId = String(active.id);
+    const overId = String(over.id);
+
+    if (activeId === overId) {
+      return;
+    }
+
+    const fromIndex = effectiveProjectIds.indexOf(activeId);
+    const toIndex = effectiveProjectIds.indexOf(overId);
+
+    if (fromIndex < 0 || toIndex < 0) {
+      return;
+    }
+
+    const nextOrder = arrayMove(effectiveProjectIds, fromIndex, toIndex);
+    setOrderedProjectIds(nextOrder);
+
+    void (async () => {
+      try {
+        await reorderProjects.mutateAsync({
+          memberGdgId: profile.gdgId,
+          fromIndex,
+          toIndex,
+        });
+      } catch {
+        const refreshed = await projectsQuery.refetch();
+        const backendIds = (refreshed.data || []).map((project: any) => String(project.id));
+        setOrderedProjectIds(backendIds);
+      }
+    })();
+  };
+
   const isSaving =
     isSavingProject ||
     createProject.isPending ||
     updateProject.isPending ||
     deleteProject.isPending ||
     addProjectImage.isPending ||
-    deleteProjectImage.isPending;
-  const projectList = projectsQuery.data || [];
+    deleteProjectImage.isPending ||
+    reorderProjects.isPending;
 
   return (
     <section className="space-y-4 pt-6">
@@ -303,17 +425,30 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
         <Text variant="heading-6" gradient="white-blue" weight="bold">
           Projects
         </Text>
-        <Button
-          variant="dashed-outline"
-          size="sm"
-          className="px-3"
-          title="Add Project"
-          aria-label="Add Project"
-          iconLeft={addIcon}
-          onClick={handleOpenAddProjectModal}
-        >
-          Add Project
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link prefetch={false} href="/sparkmates/me/projects">
+            <Button
+              variant="outline"
+              size="sm"
+              className="px-3 text-white border-white/20 hover:bg-white/10"
+              title="View All Projects"
+              aria-label="View All Projects"
+            >
+              View All
+            </Button>
+          </Link>
+          <Button
+            variant="dashed-outline"
+            size="sm"
+            className="px-3"
+            title="Add Project"
+            aria-label="Add Project"
+            iconLeft={addIcon}
+            onClick={handleOpenAddProjectModal}
+          >
+            Add Project
+          </Button>
+        </div>
       </div>
       <Text variant="body-sm" className="text-[#C1C7CD]">
         Feature your best works to highlight your skills.
@@ -323,13 +458,29 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
         {projectsQuery.isLoading ? (
           <Text variant="body-sm" className="text-zinc-500">Loading projects...</Text>
         ) : projectList.length > 0 ? (
-          projectList.map((project: any) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onEdit={() => handleOpenEditProjectModal(project)}
-            />
-          ))
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleProjectDragEnd}
+          >
+            <SortableContext
+              items={effectiveProjectIds}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-3.5">
+                {orderedProjectList.map((project: any) => (
+                  <SortableProjectCardItem
+                    key={project.id}
+                    id={String(project.id)}
+                    project={project}
+                    onEdit={() => handleOpenEditProjectModal(project)}
+                    sortingDisabled={reorderProjects.isPending}
+                    handleDisabled={reorderProjects.isPending}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         ) : (
           <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center text-[#C1C7CD]">
             <Text variant="body-sm">No projects added yet.</Text>

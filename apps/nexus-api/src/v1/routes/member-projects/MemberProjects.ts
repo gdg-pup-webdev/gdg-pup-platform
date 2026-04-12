@@ -208,6 +208,22 @@ export class MemberProjectsHttpController {
     },
   );
 
+  patchReorderProjectsByMember: RequestHandler = createExpressController(
+    contract.api.v1.member_projects.member.memberGdgId.reorder.PATCH,
+    async ({ input, output }) => {
+      await this.module.reorderProjects({
+        memberGdgId: input.params.memberGdgId,
+        fromIndex: input.body.data.fromIndex,
+        toIndex: input.body.data.toIndex,
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Member projects reordered successfully",
+      });
+    },
+  );
+
   getSearch: RequestHandler = createExpressController(
     contract.api.v1.member_projects.search.GET,
     async ({ input, output }) => {
@@ -273,6 +289,7 @@ export class MemberProjectsRouter {
     this.router.patch("/:id/images/reorder", this.controller.patchReorderImages);
     this.router.delete("/:id/images/:imageIndex", this.controller.deleteImage);
     this.router.delete("/:id", this.controller.deleteDelete);
+    this.router.patch("/member/:memberGdgId/reorder", this.controller.patchReorderProjectsByMember);
     this.router.get("/member/:memberGdgId", this.controller.getByMember);
   }
 }

@@ -34,6 +34,10 @@ class MockMemberProjectRepository extends IMemberProjectRepository {
     this.items.delete(id);
   }
 
+  async reorderByMember(): Promise<void> {
+    return;
+  }
+
   async findById(id: string): Promise<MemberProject | null> {
     const item = this.items.get(id);
     return item ? this.clone(item) : null;

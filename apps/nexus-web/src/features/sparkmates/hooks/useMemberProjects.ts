@@ -7,6 +7,7 @@ import {
   addMemberProjectImage,
   deleteMemberProjectImage,
   reorderMemberProjectImages,
+  reorderMemberProjects,
 } from "../api";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { toast } from "react-toastify";
@@ -15,6 +16,11 @@ import type { ProjectFormState } from "@/features/onboarding/types";
 export function useMemberProjects(gdgId?: string) {
   const { token } = useAuthContext();
   const queryClient = useQueryClient();
+
+  const invalidateProjectQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
+    queryClient.invalidateQueries({ queryKey: ["memberProjectsInfinite", gdgId] });
+  };
 
   const projectsQuery = useQuery({
     queryKey: ["memberProjects", gdgId],
@@ -31,7 +37,7 @@ export function useMemberProjects(gdgId?: string) {
       return createMemberProject(gdgId, data, token ?? undefined);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
+      invalidateProjectQueries();
       toast.success("Project created successfully");
     },
     onError: (error) => {
@@ -44,7 +50,7 @@ export function useMemberProjects(gdgId?: string) {
       return updateMemberProject(id, data, token ?? undefined);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
+      invalidateProjectQueries();
       toast.success("Project updated successfully");
     },
     onError: (error) => {
@@ -57,7 +63,7 @@ export function useMemberProjects(gdgId?: string) {
       return deleteMemberProject(id, token ?? undefined);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
+      invalidateProjectQueries();
       toast.success("Project deleted successfully");
     },
     onError: (error) => {
@@ -70,7 +76,7 @@ export function useMemberProjects(gdgId?: string) {
       return addMemberProjectImage(id, image, token ?? undefined);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
+      invalidateProjectQueries();
       toast.success("Project image added successfully");
     },
     onError: (error) => {
@@ -83,7 +89,7 @@ export function useMemberProjects(gdgId?: string) {
       return deleteMemberProjectImage(id, imageIndex, token ?? undefined);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
+      invalidateProjectQueries();
       toast.success("Project image deleted successfully");
     },
     onError: (error) => {
@@ -104,11 +110,32 @@ export function useMemberProjects(gdgId?: string) {
       return reorderMemberProjectImages(id, fromIndex, toIndex, token ?? undefined);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
+      invalidateProjectQueries();
       toast.success("Project images reordered successfully");
     },
     onError: (error) => {
       toast.error(error.message || "Failed to reorder project images");
+    },
+  });
+
+  const reorderProjects = useMutation({
+    mutationFn: ({
+      memberGdgId,
+      fromIndex,
+      toIndex,
+    }: {
+      memberGdgId: string;
+      fromIndex: number;
+      toIndex: number;
+    }) => {
+      return reorderMemberProjects(memberGdgId, fromIndex, toIndex, token ?? undefined);
+    },
+    onSuccess: () => {
+      invalidateProjectQueries();
+      toast.success("Projects reordered successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to reorder projects");
     },
   });
 
@@ -120,5 +147,6 @@ export function useMemberProjects(gdgId?: string) {
     addProjectImage,
     deleteProjectImage,
     reorderProjectImages,
+    reorderProjects,
   };
 }

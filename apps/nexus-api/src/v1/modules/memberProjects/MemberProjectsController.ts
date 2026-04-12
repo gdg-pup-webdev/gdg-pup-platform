@@ -10,6 +10,7 @@ import { GetRandomMemberProjects } from "./useCases/GetRandomMemberProjects";
 import { AddMemberProjectImage } from "./useCases/AddMemberProjectImage";
 import { DeleteMemberProjectImage } from "./useCases/DeleteMemberProjectImage";
 import { ReorderMemberProjectImages } from "./useCases/ReorderMemberProjectImages";
+import { ReorderMemberProjects } from "./useCases/ReorderMemberProjects";
 import { FileToUpload } from "./domain/IFileStorage";
 
 export type MemberProjectDTO = {
@@ -47,6 +48,7 @@ export class MemberProjectsController {
     private addImageUseCase: AddMemberProjectImage,
     private deleteImageUseCase: DeleteMemberProjectImage,
     private reorderImagesUseCase: ReorderMemberProjectImages,
+    private reorderProjectsUseCase: ReorderMemberProjects,
   ) {}
 
   private toDTO(project: MemberProject): MemberProjectDTO {
@@ -201,5 +203,17 @@ export class MemberProjectsController {
     });
 
     return this.toDTO(project);
+  }
+
+  async reorderProjects(input: {
+    memberGdgId: string;
+    fromIndex: number;
+    toIndex: number;
+  }): Promise<void> {
+    await this.reorderProjectsUseCase.execute({
+      memberGdgId: input.memberGdgId,
+      fromIndex: input.fromIndex,
+      toIndex: input.toIndex,
+    });
   }
 }
