@@ -288,7 +288,7 @@ export function ProfileOwnerView({
                 My Portfolio
               </Text>
               <div className="flex gap-2">
-                <Link href="/sparkmates/me/analytics">
+                <Link prefetch={false} href="/sparkmates/me/analytics">
                   <Button
                     variant="outline"
                     size="sm"

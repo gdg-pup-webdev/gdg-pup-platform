@@ -86,7 +86,7 @@ export const SparkmatesLanding = () => {
               {/* CTA Buttons */}
               <div className="flex flex-col gap-[16px] items-center w-full">
                 {/* View My Portfolio — dynamic link */}
-                <Link
+                <Link prefetch={false}
                   href={portfolioHref}
                   className="relative flex items-center justify-center w-full px-[16px] py-[12px] rounded-[8px] bg-gradient-to-b from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-90"
                   aria-label={status === STATUS.AUTHENTICATED ? `View my portfolio` : "Sign in to view your portfolio"}
@@ -106,7 +106,7 @@ export const SparkmatesLanding = () => {
                 </Link>
 
                 {/* View My XPark Points with rainbow bottom border */}
-                {/* <Link
+                {/* <Link prefetch={false}
                   href="/leaderboard"
                   className="relative flex items-center justify-center px-[8px] py-[8px] transition-opacity hover:opacity-80 group overflow-hidden"
                 >

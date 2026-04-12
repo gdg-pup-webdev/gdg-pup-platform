@@ -257,7 +257,7 @@ export function PartnershipSection() {
                 </p>
 
                 <div className="pt-2">
-                  <Link href="https://forms.gle/UNEPNZYaATrd1jjM7" target="_blank" rel="noopener noreferrer" className="inline-block hover:scale-105 transition-transform" style={{ textDecoration: "none" }}>
+                  <Link prefetch={false} href="https://forms.gle/UNEPNZYaATrd1jjM7" target="_blank" rel="noopener noreferrer" className="inline-block hover:scale-105 transition-transform" style={{ textDecoration: "none" }}>
                     {/* Gradient border wrapper */}
                     <div className="p-[1px] rounded-[10px] bg-[linear-gradient(90deg,#EA4335_0%,#FBBC04_33%,#34A853_66%,#4285F4_100%)] cursor-pointer" style={{ boxShadow: "0px 4px 46.1px 0px rgba(0,0,0,0.25), 0px 4px 4px 0px rgba(0,0,0,0.25)" }}>
                       {/* Inner background and shadows */}

@@ -249,7 +249,7 @@ return (
 
           {/* ── Top navigation bar ── */}
           <div className="flex items-center justify-between mb-12 text-sm font-medium">
-            <Link
+            <Link prefetch={false}
               href="/about/history"
               className="flex items-center gap-2 text-gray-400 hover:text-white transition-all group"
             >

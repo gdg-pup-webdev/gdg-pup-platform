@@ -2,6 +2,7 @@ import { Stack, Text } from "@packages/spark-ui";
 import { StudyJamContainer } from "../StudyJamContainer";
 import { useGetLearningResources } from "@/features/learning-resources/hooks";
 import { normalizeEventDescription } from "@/features/events/utils/description";
+import { ASSETS } from "@/lib/constants/assets";
 import {
   StudyJamCardsLoading,
   TEAM_SECTION_CARD_CLASSNAME,
@@ -65,7 +66,7 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
               key={index}
               className={TEAM_SECTION_CARD_CLASSNAME}
               imageSrc={
-                resource.thumbnailUrl || "/products/iot_study_jam_image.jpg"
+                resource.thumbnailUrl || ASSETS.PRODUCTS.STUDY_JAM_PLACEHOLDER
               }
               imageAlt={`Study Jam ${resource.title}`}
               title={resource.title || "Study Jam"}

@@ -472,7 +472,7 @@ export function BenefitsSection() {
               </Text>
 
               <Box>
-                <Link href="/id">
+                <Link prefetch={false} href="/id">
                   <Button size="lg" variant="default" className="px-15">
                     Get ID
                   </Button>

@@ -231,7 +231,7 @@ export function HeroSection() {
                 className="mt-6 md:mt-8 inline-block"
               >
                 <Button asChild variant="default" size={ctaButtonSize}>
-                  <Link href="/signin">Spark your Journey</Link>
+                  <Link prefetch={false} href="/signin">Spark your Journey</Link>
                 </Button>
               </motion.div>
             </motion.div>

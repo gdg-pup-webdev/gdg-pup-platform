@@ -28,7 +28,7 @@ export const ArticleList = () => {
         />
 
         {data?.data.map((article) => (
-          <Link href={`/articles/${article.id}`} key={article.id}>
+          <Link prefetch={false} href={`/articles/${article.id}`} key={article.id}>
             <div
               className="border-5 p-5 flex flex-col gap-2 hover:bg-gray-400"
               key={article.id}
