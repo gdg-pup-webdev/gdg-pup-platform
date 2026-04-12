@@ -89,6 +89,7 @@ export function MemberShowcaseAchievements() {
   }, []);
 
   const { data, isLoading, error } = useMemberShowcases(page, pageSize);
+  const isAchievementsLoading = isLoading || !data;
 
   const MEMBER_ACHIEVEMENT_CARDS = data
     ? data.data.map((showcase) => ({
@@ -142,13 +143,13 @@ export function MemberShowcaseAchievements() {
               subVariant="blue"
               variant="colored"
               onClick={handleOnPreviousPage}
-              disabled={page === 1 || isLoading}
+              disabled={page === 1 || isAchievementsLoading}
             >
               ←
             </Button>
           </motion.div>
 
-          {isLoading ? (
+          {isAchievementsLoading ? (
             <AchievementsLoadingState />
           ) : (
             <motion.div
@@ -216,7 +217,7 @@ export function MemberShowcaseAchievements() {
               subVariant="blue"
               variant="colored"
               onClick={handleOnNextPage}
-              disabled={page === (data ? data.meta.totalPages : 1) || isLoading}
+              disabled={page === (data ? data.meta.totalPages : 1) || isAchievementsLoading}
             >
               →
             </Button>
