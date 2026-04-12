@@ -50,7 +50,7 @@ export class ArticleRepository implements IArticleRepo {
   }
 
   async persistUpdates(article: Article): Promise<Article> {
-    console.log("updating" , article);
+    console.log("updating", article);
     // {
     //     author_id?: string | null;
     //     content?: string | null;
@@ -120,7 +120,7 @@ export class ArticleRepository implements IArticleRepo {
     }
 
     const { data, error, count } = await query
-      .order("created_at", { ascending: false })
+      .order("published_at", { ascending: true })
       .range(from, to);
 
     if (error) handlePostgresError(error);

@@ -10,6 +10,7 @@
     "gen-types:supabase": "supabase gen types typescript --project-id xrsmassoekhstkeuwozc > src/v1/types/supabase.types.ts",
     "gen-types:zod": "supazod -i src/v1/types/supabase.types.ts -o src/v1/types/supabase.schema.ts",
     "gen-types": "pnpm run gen-types:supabase && pnpm run gen-types:zod",
+    "verify:suggested-pool": "tsx scripts/verify-gdg-members-visibility.ts",
     "test": "vitest run",
     "test:w": "vitest",
     "test-rbac": "vitest run src/modules/rbacSystem/",

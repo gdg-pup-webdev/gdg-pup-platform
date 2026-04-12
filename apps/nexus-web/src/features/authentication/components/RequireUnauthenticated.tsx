@@ -44,11 +44,11 @@ export const RequireUnauthenticated = ({
       status === STATUS.CHECKING
         ? "Checking your session..."
         : "Taking you to your account...";
-    return <LoadingScreen message={message} />;
+    return <LoadingScreen message={message} fullPage={false} showBackground={false} />;
   }
 
   if (status === STATUS.LOGGINGOUT) {
-    return <LoadingScreen message="Signing you out..." />;
+    return <LoadingScreen message="Signing you out..." fullPage={false} showBackground={false} />;
   }
 
   return <>{children}</>;

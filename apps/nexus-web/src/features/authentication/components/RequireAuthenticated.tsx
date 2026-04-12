@@ -35,15 +35,15 @@ export const RequireAuthenticated = ({
   }, [status, memberProfile, pathname, router]);
 
   if (status === STATUS.UNAUTHENTICATED) {
-    return <LoadingScreen message="Redirecting to Sign In..." />;
+    return <LoadingScreen message="Redirecting to Sign In..." fullPage={false} showBackground={false} />;
   }
 
   if (status === STATUS.CHECKING) {
-    return <LoadingScreen message="Checking authentication..." />;
+    return <LoadingScreen message="Checking authentication..." fullPage={false} showBackground={false} />;
   }
 
   if (status === STATUS.LOGGINGIN) {
-    return <LoadingScreen message="Signing you in..." />;
+    return <LoadingScreen message="Signing you in..." fullPage={false} showBackground={false} />;
   }
 
   return <>{children}</>;

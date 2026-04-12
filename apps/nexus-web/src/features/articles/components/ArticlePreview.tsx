@@ -2,11 +2,11 @@
 import React from "react";
 import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useGetOneArticle } from "@/features/articles/hooks/useGetOneArticle";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { BrandedSkeleton } from "@/components/shared";
 
 // Maps article ID to its milestone color
 const ARTICLE_COLOR_MAP: Record<string, {
@@ -191,13 +191,43 @@ function ArticleBlobBackground({ colors }: { colors: { blob: string } }) {
 }
 
 export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
+  const router = useRouter();
   const { data, isLoading } = useGetOneArticle(articleId);
   const colors = ARTICLE_COLOR_MAP[articleId] ?? DEFAULT_COLOR;
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push("/articles");
+  };
+
   if (!data || isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#0F0E0E]">
-        <Loader2 size={32} className="animate-spin" style={{ color: colors.border }} />
+      <div className="relative min-h-screen bg-[#0F0E0E] overflow-hidden px-4 pb-14 md:px-8">
+        <ArticleBlobBackground colors={colors} />
+        <div className="relative z-10 max-w-5xl mx-auto mt-28 md:mt-40">
+          <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/5 p-6 md:p-12 lg:p-16">
+            <div className="flex items-center justify-between mb-10">
+              <BrandedSkeleton className="h-4 w-36" variant="text" />
+              <BrandedSkeleton className="h-8 w-36" variant="chip" />
+            </div>
+            <div className="space-y-4 mb-10">
+              <BrandedSkeleton className="h-12 w-full" variant="text" />
+              <BrandedSkeleton className="h-12 w-4/5" variant="text" />
+            </div>
+            <BrandedSkeleton className="w-full aspect-video rounded-2xl mb-12" withGradientRing />
+            <div className="space-y-4">
+              <BrandedSkeleton className="h-5 w-full" variant="text" />
+              <BrandedSkeleton className="h-5 w-full" variant="text" />
+              <BrandedSkeleton className="h-5 w-11/12" variant="text" />
+              <BrandedSkeleton className="h-5 w-full" variant="text" />
+              <BrandedSkeleton className="h-5 w-10/12" variant="text" />
+              <BrandedSkeleton className="h-5 w-9/12" variant="text" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -249,13 +279,14 @@ return (
 
           {/* ── Top navigation bar ── */}
           <div className="flex items-center justify-between mb-12 text-sm font-medium">
-            <Link prefetch={false}
-              href="/about/history"
+            <button
+              type="button"
+              onClick={handleBack}
               className="flex items-center gap-2 text-gray-400 hover:text-white transition-all group"
             >
               <span className="transition-transform group-hover:-translate-x-1">←</span> 
-              Back to History
-            </Link>
+              Back
+            </button>
             <span className="text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/10">
               {colors.year} • {readTime} min read
             </span>

@@ -24,6 +24,10 @@ export class GdgMembersRouter {
       "/:gdgId/profile-image",
       this.controller.changeProfileImage,
     );
+    this.router.get(
+      "/:gdgId/suggested-users",
+      this.controller.getIdSuggestedUsers,
+    );
 
     this.router.get("/:gdgId/roles", this.controller.listRolesOfUser);
     this.router.post("/:gdgId/roles", this.controller.addRoleToUser);
