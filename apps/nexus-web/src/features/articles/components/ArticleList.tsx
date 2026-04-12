@@ -195,10 +195,10 @@ export const ArticleList = () => {
                       ease: "easeOut",
                       delay: i * 0.06,
                     }}
+                    className="h-full"
                   >
-                    <Link prefetch={false} href={`/articles/${article.id}`}>
-                      <div className="group relative rounded-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl border border-white/10 hover:border-white/20 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)] hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)] transition-all duration-300 cursor-pointer">
-                        {/* Gradient border overlay — accent color */}
+                    <Link prefetch={false} href={`/articles/${article.id}`} className="block h-full">
+                      <div className="group relative flex flex-col h-full rounded-2xl overflow-hidden bg-white/[0.03] backdrop-blur-xl border border-white/10 hover:border-white/20 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)] hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)] transition-all duration-300 cursor-pointer">
                         <div
                           className="absolute inset-0 rounded-2xl pointer-events-none z-10 opacity-60 group-hover:opacity-100 transition-opacity duration-300"
                           style={{
@@ -212,7 +212,7 @@ export const ArticleList = () => {
                         />
 
                         {/* Hero image */}
-                        <div className="relative h-44 overflow-hidden">
+                        <div className="relative h-44 overflow-hidden shrink-0"> {/* Prevent image from shrinking */}
                           <img
                             src={
                               article.image_url ||
@@ -237,8 +237,8 @@ export const ArticleList = () => {
                           </span>
                         </div>
 
-                        {/* Card body */}
-                        <div className="p-5 flex flex-col gap-3">
+                        {/* Card body - 4. Add flex-1 to take up remaining height */}
+                        <div className="p-5 flex flex-col gap-3 flex-1">
                           {/* Read time */}
                           <div className="flex items-center gap-1.5 text-gray-500 text-xs">
                             <Clock size={11} />
@@ -257,9 +257,9 @@ export const ArticleList = () => {
                             </p>
                           )}
 
-                          {/* Read more link */}
+                          {/* Read more link - 5. Change mt-1 to mt-auto to push it to the bottom */}
                           <div
-                            className="flex items-center gap-1.5 text-xs font-semibold mt-1 transition-all duration-200 group-hover:gap-2.5"
+                            className="flex items-center gap-1.5 text-xs font-semibold mt-auto transition-all duration-200 group-hover:gap-2.5"
                             style={{ color: colors.accent }}
                           >
                             Read story
