@@ -5,7 +5,8 @@ import {
   GdgMemberFilters,
 } from "../domain/IGdgMemberRepository";
 import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
-import { handlePostgresError } from "@/v1/lib/supabase.utils"; 
+import { handlePostgresError } from "@/v1/lib/supabase.utils";
+import { string } from "zod";
 
 type SimilarityMemberRow = Pick<
   Tables<"gdg_members">,
@@ -72,6 +73,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
           .filter((item): item is SparkmatesSectionId =>
             isSparkmatesSectionId(item),
           ) || DEFAULT_SPARKMATES_SECTION_ORDER,
+      isOnboarded: row.is_onboarded,
       isPublic: row.is_public,
     });
   }
@@ -100,7 +102,8 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
       section_order: p.sectionOrder.join(","),
-      is_public: p.isPublic ?? undefined,
+      is_onboarded: p.isOnboarded,
+      is_public: p.isPublic,
 
       updated_at: new Date().toISOString(),
     };
@@ -159,31 +162,37 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       learningInterests: row.learning_interests?.split(",") || [],
       toolsAndTechnologies: row.tools_and_technologies?.split(",") || [],
       sectionOrder: DEFAULT_SPARKMATES_SECTION_ORDER,
-      isPublic: row.is_public,
+      isPublic: row.is_public || false,
+      isOnboarded: false,
     });
   }
 
-  async listRandomMembers(pageNumber: number, pageSize: number, seed: number): Promise<{ list: GdgMember[]; count: number }> {
-  const from = (pageNumber - 1) * pageSize;
-  const to = from + pageSize - 1;
+  async listRandomMembers(
+    pageNumber: number,
+    pageSize: number,
+    seed: number,
+  ): Promise<{ list: GdgMember[]; count: number }> {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
 
-  // We use the md5 hash of the ID concatenated with the seed to create a deterministic string
-  // and then sort by that string.
-  const { data, error } = await supabase
-    .from(this.tableName)
-    .select("*")
-    // This creates a virtual order based on the seed
-    .order(`md5(gdg_id::text || '${seed}')`) 
-    .range(from, to);
+    // We use the md5 hash of the ID concatenated with the seed to create a deterministic string
+    // and then sort by that string.
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      // This creates a virtual order based on the seed
+      .order(`gdg_id`)
+      .range(from, to);
 
-  if (error) throw new Error(`Database error: ${error.message}`);
-  return {
-    list: (data || []).map((row) => this.mapToDomain(row)),
-    count: data?.length || 0,
-  };
-}
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return {
+      list: (data || []).map((row) => this.mapToDomain(row)),
+      count: data?.length || 0,
+    };
+  }
 
-  async findSimilarMembersBasedOnField(
+ async findSimilarMembersBasedOnField(
+    memberGdgId: string,
     fieldName: string,
     fieldValue: unknown,
     pageNumber: number,
@@ -192,13 +201,67 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
+    // map fieldname from domain to database column names
+    const mappedFieldName = {
+      program: "program",
+      department: "department",
+      yearLevel: "year_level",
+      technicalSkills: "technical_skills",
+      learningInterests: "learning_interests",
+      toolsAndTechnologies: "tools_and_technologies",
+    }[fieldName];
+
+    if (!mappedFieldName) {
+      throw new Error(`Unsupported field name: ${fieldName}`);
+    }
+
+    console.log(`Finding similar members based on ${fieldName} with value`, fieldValue);
+
+    let orQuery = "";
+
+    if (Array.isArray(fieldValue)) {
+      // Handle array fields (technicalSkills, learningInterests, toolsAndTechnologies)
+      if (fieldValue.length === 0) {
+        return { list: [], count: 0 };
+      }
+
+      // Create an ilike clause for EACH item in the array, properly escaped
+      const clauses = fieldValue
+        .filter(Boolean)
+        .map((val) => {
+          const pattern = `%${String(val).trim()}%`;
+          return `${mappedFieldName}.ilike.${this.wrapOrFilterValue(this.escapeLikePattern(pattern))}`;
+        });
+
+      orQuery = clauses.join(",");
+    } else {
+      // Handle scalar fields (program, department, yearLevel)
+      if (fieldName === "yearLevel") {
+        // year_level is a number, so use .eq instead of .ilike
+        orQuery = `${mappedFieldName}.eq.${this.wrapOrFilterValue(String(fieldValue))}`;
+      } else {
+        orQuery = `${mappedFieldName}.ilike.${this.wrapOrFilterValue(`%${String(fieldValue).trim()}%`)}`;
+      }
+    }
+
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
-      .or(`${fieldName}.ilike.${fieldValue}`)
+      .eq("is_public", true)
+      .neq("gdg_id", memberGdgId)
+      .or(orQuery)
       .range(from, to);
 
-    if (error) throw new Error(`Database error: ${error.message}`);
+    if (error) {
+      console.error(
+        `Error finding similar members based on ${fieldName}:`,
+        error,
+      );
+      throw new Error(`Database error: ${error.message}`);
+    }
+
+    console.log(`No error for ${fieldName}, returning`);
+
     return {
       list: (data || []).map((row) => this.mapToDomain(row)),
       count: data?.length || 0,

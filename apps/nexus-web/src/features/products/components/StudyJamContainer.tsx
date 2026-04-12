@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { Skeleton } from "@packages/spark-ui";
+import { BrandedSkeleton } from "@/components/shared";
 import {
   normalizeEventDescription,
   splitBoldSegments,
@@ -98,7 +98,7 @@ export function StudyJamContainer({
               className="w-full aspect-square rounded-[11px] object-cover bg-white/5"
             />
           ) : (
-            <Skeleton className="w-full aspect-square rounded-[11px] bg-white/10 border border-white/5" />
+            <BrandedSkeleton className="w-full aspect-square rounded-[11px]" withGradientRing />
           )}
         </div>
 
@@ -106,12 +106,12 @@ export function StudyJamContainer({
         <div className="flex w-full flex-col items-center gap-3.25 text-center">
           <div className="min-h-[3.5rem] text-white text-2xl leading-tight font-bold text-center line-clamp-2">
             {title ?? (
-              <Skeleton className="mx-auto h-8 w-2/3 rounded-md bg-white/10 border border-white/5" />
+              <BrandedSkeleton className="mx-auto h-8 w-2/3 rounded-md" />
             )}
           </div>
           <div className="min-h-[1rem] text-xs italic text-white/90 text-center line-clamp-1">
             {subtitle ?? (
-              <Skeleton className="mx-auto h-5 w-1/2 rounded-md bg-white/10 border border-white/5" />
+              <BrandedSkeleton className="mx-auto h-5 w-1/2 rounded-md" />
             )}
           </div>
         </div>
@@ -123,9 +123,9 @@ export function StudyJamContainer({
               renderDescriptionContent(description)
             ) : (
               <div className="w-full space-y-2">
-                <Skeleton className="h-3 w-full rounded bg-white/10" />
-                <Skeleton className="h-3 w-5/6 rounded bg-white/10" />
-                <Skeleton className="h-3 w-2/3 rounded bg-white/10" />
+                <BrandedSkeleton className="h-3 w-full rounded" variant="text" />
+                <BrandedSkeleton className="h-3 w-5/6 rounded" variant="text" />
+                <BrandedSkeleton className="h-3 w-2/3 rounded" variant="text" />
               </div>
             )}
           </div>
@@ -137,13 +137,13 @@ export function StudyJamContainer({
                 </span>
               ) : (
                 (category ?? (
-                  <Skeleton className="h-6 w-28 rounded-full bg-white/10 border border-white/5" />
+                  <BrandedSkeleton className="h-6 w-28" variant="chip" />
                 ))
               )}
             </div>
             <div className="text-xs text-white/80">
               {date ?? (
-                <Skeleton className="h-4 w-20 rounded-md bg-white/10 border border-white/5" />
+                <BrandedSkeleton className="h-4 w-20 rounded-md" variant="text" />
               )}
             </div>
           </div>

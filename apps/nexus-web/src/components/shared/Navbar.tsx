@@ -123,7 +123,7 @@ const NavbarAvatarWidget = () => {
           >
             <div className={dropdownInnerClasses}>
               {optionsLoggedIn.map((option) => (
-                <Link
+                <Link prefetch={false}
                   key={option.href}
                   href={option.href}
                   className={dropdownItemClasses}
@@ -136,7 +136,7 @@ const NavbarAvatarWidget = () => {
           </div>
         </div>
       ) : (
-        <Link
+        <Link prefetch={false}
           href="/signin"
           className="relative flex justify-center items-center group  hover:opacity-80 hover:scale-105 transition-all duration-200"
         >
@@ -221,6 +221,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { href: "/events", label: "Events" },
+    { href: "/merch", label: "Merch" },
     { href: "/products", label: "Products" },
   ];
 
@@ -271,7 +272,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="w-full h-full"
           >
             {/* Brand */}
-            <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Link prefetch={false} href="/" className="hover:opacity-80 transition-opacity">
               <Inline gap="sm" align="center">
                 <Image
                   src={ASSETS.BRANDING.GDG_LOGO_WEBP}
@@ -336,7 +337,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className={dropdownInnerClasses}>
                       {dropdownLinks.about.map((link) => (
-                        <Link
+                        <Link prefetch={false}
                           key={link.href}
                           href={link.href}
                           className={dropdownItemClasses}
@@ -394,7 +395,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className={dropdownInnerClasses}>
                       {dropdownLinks.community.map((link) => (
-                        <Link
+                        <Link prefetch={false}
                           key={link.href}
                           href={link.href}
                           className={dropdownItemClasses}
@@ -409,7 +410,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {/* Nav Links */}
                 {navLinks.map((link) => (
-                  <Link
+                  <Link prefetch={false}
                     key={link.href}
                     href={link.href}
                     className="text-gray-300 hover:text-white transition-colors flex items-center h-full"
@@ -424,7 +425,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Auth Section */}
               {!hideAuth && (
                 <Inline gap="md" align="center" className="h-full">
-                  <Link href="/id" className="flex items-center">
+                  <Link prefetch={false} href="/id" className="flex items-center">
                     <Button variant="colored" subVariant="blue" size="md">
                       Get ID
                     </Button>
@@ -539,7 +540,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="bg-white/5 py-2">
                         {dropdownLinks.about.map((link) => (
-                          <Link
+                          <Link prefetch={false}
                             key={link.href}
                             href={link.href}
                             className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
@@ -597,7 +598,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="bg-white/5 py-2">
                         {dropdownLinks.community.map((link) => (
-                          <Link
+                          <Link prefetch={false}
                             key={link.href}
                             href={link.href}
                             className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
@@ -657,7 +658,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="bg-white/5 py-2">
                         {navLinks.map((link) => (
-                          <Link
+                          <Link prefetch={false}
                             key={link.href}
                             href={link.href}
                             className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
@@ -675,7 +676,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {!hideAuth && (
                   <Box className="px-5 py-5">
                     <Stack gap="sm">
-                      <Link
+                      <Link prefetch={false}
                         href="/sparkmates"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="block w-full"
@@ -695,7 +696,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </Box>
                       ) : status === STATUS.AUTHENTICATED ? (
                         <Box>
-                          <Link
+                          <Link prefetch={false}
                             href="/sparkmates/me"
                             className="flex items-center gap-3 p-3 rounded-t-lg bg-white/5 border-x border-t border-white/10 hover:bg-white/10 transition-colors"
                             onClick={() => setIsMobileMenuOpen(false)}
@@ -722,7 +723,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           
                           <div className="bg-black/40 py-2 rounded-b-lg border border-white/10">
                             {optionsLoggedIn.map((link) => (
-                              <Link
+                              <Link prefetch={false}
                                 key={link.href}
                                 href={link.href}
                                 className="block px-4 py-2.5 text-sm font-semibold text-gray-300 transition-all hover:bg-white/10 hover:text-white"
@@ -734,7 +735,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           </div>
                         </Box>
                       ) : (
-                        <Link
+                        <Link prefetch={false}
                           href="/signin"
                           className="block w-full text-center py-3 px-4 rounded-lg border border-gray-500 text-base font-bold text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
                           onClick={() => setIsMobileMenuOpen(false)}

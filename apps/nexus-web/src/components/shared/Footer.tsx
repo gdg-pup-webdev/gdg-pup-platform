@@ -101,7 +101,7 @@ export const Footer: React.FC = () => {
         <Box className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-8 md:gap-10 mb-10 text-center md:text-left">
           {/* Brand Section */}
           <Box className="lg:col-span-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <Link href="/" className="flex items-center justify-center md:justify-start gap-3 mb-6 group">
+            <Link prefetch={false} href="/" className="flex items-center justify-center md:justify-start gap-3 mb-6 group">
               <Image
                 src={ASSETS.BRANDING.GDG_LOGO_WEBP}
                 alt="GDG Logo"
@@ -123,7 +123,7 @@ export const Footer: React.FC = () => {
             </Text>
             <Stack gap="xs" className="items-center md:items-start">
               {footerSections.about.map((link) => (
-                <Link
+                <Link prefetch={false}
                   key={link.href}
                   href={link.href}
                   className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
@@ -143,7 +143,7 @@ export const Footer: React.FC = () => {
             </Text>
             <Stack gap="xs" className="items-center md:items-start">
               {footerSections.network.map((link) => (
-                <Link
+                <Link prefetch={false}
                   key={link.href}
                   href={link.href}
                   className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
@@ -163,7 +163,7 @@ export const Footer: React.FC = () => {
             </Text>
             <Stack gap="xs" className="items-center md:items-start">
               {footerSections.nexus.map((link) => (
-                <Link
+                <Link prefetch={false}
                   key={link.href}
                   href={link.href}
                   className="text-gray-300 hover:text-white hover:translate-x-1 transition-all duration-200"
@@ -205,7 +205,7 @@ export const Footer: React.FC = () => {
               Contact
             </Text>
             <Stack gap="xs" className="items-center md:items-start text-center md:text-left">
-              <Link
+              <Link prefetch={false}
                 href="mailto:support@gdgpup.org"
                 className="text-gray-300 hover:text-white transition-colors duration-200"
               >
@@ -213,7 +213,7 @@ export const Footer: React.FC = () => {
                   support@gdgpup.org
                 </Text>
               </Link>
-              <Link
+              <Link prefetch={false}
                 href="mailto:hello@gdgpup.org"
                 className="text-gray-300 hover:text-white transition-colors duration-200"
               >

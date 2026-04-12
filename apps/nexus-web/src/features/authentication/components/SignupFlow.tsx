@@ -286,7 +286,7 @@ export const SignupFlow = () => {
 
       <div className="flex justify-center mt-4 items-center gap-[8px]">
         <span className="text-white/80 text-[16px] font-medium">Already have an account?</span>
-        <Link href="/signin" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>Sign In</Link>
+        <Link prefetch={false} href="/signin" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>Sign In</Link>
       </div>
     </Stack>
   );

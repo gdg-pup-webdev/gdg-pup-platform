@@ -27,7 +27,7 @@ export const RequireAuthenticated = ({
       if (!memberProfile) return;
 
       // If they haven't completed onboarding, force them to do it unless they are already there
-      if (memberProfile.isPublic === null && pathname !== LINKS.onboarding) {
+      if (!memberProfile.isOnboarded && pathname !== LINKS.onboarding) {
         console.log("Redirecting to onboarding... profile incomplete");
         router.push(LINKS.onboarding);
       }
@@ -35,15 +35,15 @@ export const RequireAuthenticated = ({
   }, [status, memberProfile, pathname, router]);
 
   if (status === STATUS.UNAUTHENTICATED) {
-    return <LoadingScreen message="Redirecting to Sign In..." />;
+    return <LoadingScreen message="Redirecting to Sign In..." fullPage={false} showBackground={false} />;
   }
 
   if (status === STATUS.CHECKING) {
-    return <LoadingScreen message="Checking authentication..." />;
+    return <LoadingScreen message="Checking authentication..." fullPage={false} showBackground={false} />;
   }
 
   if (status === STATUS.LOGGINGIN) {
-    return <LoadingScreen message="Signing you in..." />;
+    return <LoadingScreen message="Signing you in..." fullPage={false} showBackground={false} />;
   }
 
   return <>{children}</>;

@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Skeleton, Stack, Text } from "@packages/spark-ui";
+import { Container, Stack, Text } from "@packages/spark-ui";
 import type { Event } from "../types";
 import {
   normalizeEventDescription,
   splitBoldSegments,
 } from "../utils/description";
 import { useEvents } from "../hooks/useEvents";
+import { BrandedSkeleton } from "@/components/shared";
 
 type GalleryYearSectionProps = {
   yearParam: string;
@@ -220,7 +221,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
       <Container className="relative z-10">
         <Stack gap="xl" className="md:gap-2xl">
-          <Link
+          <Link prefetch={false}
             href="/events#events-gallery"
             className="inline-flex items-center gap-2 text-white/85 hover:text-white transition-colors text-sm md:text-base w-fit"
           >
@@ -268,29 +269,29 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="animate-pulse">
                   {/* One big rectangle skeleton */}
-                  <Skeleton className="h-[220px] md:h-[560px] w-full rounded-2xl bg-white/10 border border-white/10" />
+                  <BrandedSkeleton className="h-[220px] md:h-[560px] w-full rounded-2xl" withGradientRing />
 
                   <div className="mt-5 md:mt-7 space-y-6">
                     {/* Big text skeleton like a title */}
                     <div className="flex justify-center md:justify-start">
-                      <Skeleton className="h-7 md:h-12 w-3/4 md:w-1/2 rounded-lg bg-white/10" />
+                      <BrandedSkeleton className="h-7 md:h-12 w-3/4 md:w-1/2 rounded-lg" />
                     </div>
                     {/* Event details */}
                     <div className="flex flex-nowrap items-center justify-center gap-2 md:gap-5">
-                      <Skeleton className="h-4 w-12 md:w-16 rounded-full bg-white/10" />
-                      <Skeleton className="h-4 w-24 md:w-32 rounded-lg bg-white/10" />
-                      <Skeleton className="h-4 w-16 md:w-20 rounded-lg bg-white/10" />
+                      <BrandedSkeleton className="h-4 w-12 md:w-16" variant="chip" />
+                      <BrandedSkeleton className="h-4 w-24 md:w-32 rounded-lg" />
+                      <BrandedSkeleton className="h-4 w-16 md:w-20 rounded-lg" />
                     </div>
 
                     {/* Three stack of smaller text skeletons (description) */}
                     <div className="space-y-3">
-                      <Skeleton className="h-4 w-full rounded bg-white/10" />
-                      <Skeleton className="h-4 w-full rounded bg-white/10" />
-                      <Skeleton className="h-4 w-3/4 rounded bg-white/10" />
+                      <BrandedSkeleton className="h-4 w-full rounded" />
+                      <BrandedSkeleton className="h-4 w-full rounded" />
+                      <BrandedSkeleton className="h-4 w-3/4 rounded" />
                     </div>
 
                     {/* Rectangle skeleton at the bottom (button) */}
-                    <Skeleton className="h-10 md:h-11 w-full rounded-md bg-white/10 border border-white/5 mt-6 md:mt-7" />
+                    <BrandedSkeleton className="h-10 md:h-11 w-full rounded-md mt-6 md:mt-7" variant="button" withGradientRing />
                   </div>
                 </div>
               ))}

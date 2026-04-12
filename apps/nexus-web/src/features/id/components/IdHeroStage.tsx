@@ -221,7 +221,7 @@ export function IdHeroStage() {
           />
         </div>
 
-        <Link href="#" className="relative -top-23 sm:top-0">
+        <Link prefetch={false} href="#" className="relative -top-23 sm:top-0">
           <Button variant="default">Get Your Digital ID</Button>
         </Link>
       </motion.div>

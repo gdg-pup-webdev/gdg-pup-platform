@@ -245,6 +245,7 @@ export function useOnboardingForm(gdgId: string) {
               learningInterests: parseCsv(form.learningInterests),
               toolsAndTechnologies: parseCsv(form.toolsAndTechnologies),
               otherLinks: parseCsv(form.otherLinks),
+              isOnboarded: true,
               isPublic: form.isPublic,
             },
           },
@@ -330,6 +331,7 @@ export function useOnboardingForm(gdgId: string) {
           params: { gdgId },
           body: {
             data: {
+              isOnboarded: true,
               isPublic: false,
             },
           },

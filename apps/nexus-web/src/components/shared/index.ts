@@ -1,4 +1,5 @@
 export { AuthGuard } from "./AuthGuard";
+export { BrandedSkeleton } from "./BrandedSkeleton";
 export { CosmosParticles } from "./CosmosParticles";
 export { Footer } from "./Footer";
 export { LoadingScreen } from "./LoadingScreen";

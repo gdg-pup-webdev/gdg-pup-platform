@@ -16,6 +16,7 @@ export interface IGdgMemberRepository {
   ): Promise<{ list: GdgMember[]; count: number }>;
 
   findSimilarMembersBasedOnField(
+    memberGdgId: string,
     fieldName: string, 
     fieldValue: string | number | string[] | null,
     pageNumber: number,

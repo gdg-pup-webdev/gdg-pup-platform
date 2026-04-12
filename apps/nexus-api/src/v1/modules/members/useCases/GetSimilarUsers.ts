@@ -41,16 +41,18 @@ export class GetSimilarUsers {
      * will not delete, but will refactor for better performance.
      */
 
-    const sourceMember = await this.repo.findByGdgId(gdgMemberId);
-
-    if (!sourceMember) {
-      throw new NotFoundError(`Member not found for gdgId: ${gdgMemberId}`);
-    }
 
     if (pageNumber < 1)
       throw new BadRequestError("Page number must be greater than 0");
     if (pageSize < 1)
       throw new BadRequestError("Page size must be greater than 0");
+
+    
+    const member = await this.repo.findByGdgId(gdgMemberId);
+
+    if (!member) {
+      throw new NotFoundError(`Member not found for gdgId: ${gdgMemberId}`);
+    }
 
     /**
      * define the ratios
@@ -72,100 +74,128 @@ export class GetSimilarUsers {
     /**
      * defining the limits based on the ratios
      */
-    const similarBasedOnProgramLimit = Math.floor(
+    let similarBasedOnProgramLimit = Math.ceil(
       (pageSize * similarityBasisRatios.program) / totalRatio,
     );
-    const similarBasedOnDepartmentLimit = Math.floor(
+    let similarBasedOnDepartmentLimit = Math.ceil(
       (pageSize * similarityBasisRatios.department) / totalRatio,
     );
-    const similarBasedOnYearLevelLimit = Math.floor(
+    let similarBasedOnYearLevelLimit = Math.ceil(
       (pageSize * similarityBasisRatios.yearLevel) / totalRatio,
     );
-    const similarBasedOnTechnicalSkillsLimit = Math.floor(
+    let similarBasedOnTechnicalSkillsLimit = Math.ceil(
       (pageSize * similarityBasisRatios.technicalSkills) / totalRatio,
     );
-    const similarBasedOnLearningInterestsLimit = Math.floor(
+    let similarBasedOnLearningInterestsLimit = Math.ceil(
       (pageSize * similarityBasisRatios.learningInterests) / totalRatio,
     );
-    const similarBasedOnToolsAndTechnologiesLimit = Math.floor(
+    let similarBasedOnToolsAndTechnologiesLimit = Math.ceil(
       (pageSize * similarityBasisRatios.toolsAndTechnologies) / totalRatio,
     );
 
-    const [
-      usersOnProgram,
-      usersOnDepartment,
-      usersOnYearLevel,
-      usersOnTechnicalSkills,
-      usersOnLearningInterests,
-      usersOnToolsAndTechnologies,
-    ] = await Promise.all([
-      this.repo.findSimilarMembersBasedOnField(
-        "program",
-        gdgMemberId,
-        pageNumber,
-        similarBasedOnProgramLimit,
-      ),
-      this.repo.findSimilarMembersBasedOnField(
-        "department",
-        gdgMemberId,
-        pageNumber,
-        similarBasedOnDepartmentLimit,
-      ),
-      this.repo.findSimilarMembersBasedOnField(
-        "year_level",
-        gdgMemberId,
-        pageNumber,
-        similarBasedOnYearLevelLimit,
-      ),
-      this.repo.findSimilarMembersBasedOnField(
-        "technical_skills",
-        gdgMemberId,
-        pageNumber,
-        similarBasedOnTechnicalSkillsLimit,
-      ),
-      this.repo.findSimilarMembersBasedOnField(
-        "learning_interests",
-        gdgMemberId,
-        pageNumber,
-        similarBasedOnLearningInterestsLimit,
-      ),
-      this.repo.findSimilarMembersBasedOnField(
-        "tools_and_technologies",
-        gdgMemberId,
-        pageNumber,
-        similarBasedOnToolsAndTechnologiesLimit,
-      ),
-    ]);
+    let countLimit = similarBasedOnProgramLimit +
+      similarBasedOnDepartmentLimit +
+      similarBasedOnYearLevelLimit +
+      similarBasedOnTechnicalSkillsLimit +
+      similarBasedOnLearningInterestsLimit +
+      similarBasedOnToolsAndTechnologiesLimit
 
-    const randomMemberLimit =
-      pageSize -
-      (usersOnProgram.count +
-        usersOnDepartment.count +
-        usersOnYearLevel.count +
-        usersOnTechnicalSkills.count +
-        usersOnLearningInterests.count +
-        usersOnToolsAndTechnologies.count);
+    /**
+     * To avoid breaking the algorithm on small page sizes, we used ceil on the limits which may cause the total count limit to be greater than the page size. In that case, we will reduce the limits one by one starting from the least important similarity basis until the total count limit is equal to the page size.
+     */
+    if (countLimit > pageSize) { 
+      const excess = countLimit - pageSize;
+      let iterations = 0;
+      while (countLimit > pageSize && iterations < excess) {
+        if (similarBasedOnToolsAndTechnologiesLimit > 0) {
+          similarBasedOnToolsAndTechnologiesLimit--;
+          countLimit--;
+        } else if (similarBasedOnLearningInterestsLimit > 0) {
+          similarBasedOnLearningInterestsLimit--;
+          countLimit--;
+        } else if (similarBasedOnTechnicalSkillsLimit > 0) {
+          similarBasedOnTechnicalSkillsLimit--;
+          countLimit--;
+        } else if (similarBasedOnYearLevelLimit > 0) {
+          similarBasedOnYearLevelLimit--;
+          countLimit--;
+        } else if (similarBasedOnDepartmentLimit > 0) {
+          similarBasedOnDepartmentLimit--;
+          countLimit--;
+        } else if (similarBasedOnProgramLimit > 0) {
+          similarBasedOnProgramLimit--;
+          countLimit--;
+        } else {
+          break;
+        }
+        iterations++;
+      }
+    }
+    
 
-    const randomMembers = await this.repo.listRandomMembers(
-      pageNumber,
-      randomMemberLimit,
-      this.stringToNumber(`${gdgMemberId}${Date.now()}`),
-    );
+    console.log("limits: ", {
+      similarBasedOnProgramLimit,
+      similarBasedOnDepartmentLimit,
+      similarBasedOnYearLevelLimit,
+      similarBasedOnTechnicalSkillsLimit,
+      similarBasedOnLearningInterestsLimit,
+      similarBasedOnToolsAndTechnologiesLimit,
+    })
+const seen = new Set<string>();
+const result: GdgMember[] = [];
 
-    const combinedMembers = [
-      ...usersOnProgram.list,
-      ...usersOnDepartment.list,
-      ...usersOnYearLevel.list,
-      ...usersOnTechnicalSkills.list,
-      ...usersOnLearningInterests.list,
-      ...usersOnToolsAndTechnologies.list,
-      ...randomMembers.list,
-    ].slice(0, pageSize);
+const addUnique = (users: GdgMember[]) => {
+  for (const user of users) {
+    if (!seen.has(user.props.gdgId)) {
+      seen.add(user.props.gdgId);
+      result.push(user);
+
+      if (result.length >= pageSize) break;
+    }
+  }
+};
+
+    const strategies = [
+  { field: "program", value: member.props.program, limit: similarBasedOnProgramLimit },
+  { field: "department", value: member.props.department, limit: similarBasedOnDepartmentLimit },
+  { field: "yearLevel", value: member.props.yearLevel, limit: similarBasedOnYearLevelLimit },
+  { field: "technicalSkills", value: member.props.technicalSkills, limit: similarBasedOnTechnicalSkillsLimit },
+  { field: "learningInterests", value: member.props.learningInterests, limit: similarBasedOnLearningInterestsLimit },
+  { field: "toolsAndTechnologies", value: member.props.toolsAndTechnologies, limit: similarBasedOnToolsAndTechnologiesLimit },
+];
+
+    for (const strategy of strategies) {
+  if (result.length >= pageSize) break;
+
+  const remaining = pageSize - result.length;
+
+  const { list } = await this.repo.findSimilarMembersBasedOnField(
+    member.props.gdgId,
+    strategy.field,
+    strategy.value,
+    pageNumber,
+    Math.min(strategy.limit, remaining) // 🔥 prevent over-fetch
+  );
+
+  addUnique(list);
+}
+
+   if (result.length < pageSize) {
+  const remaining = pageSize - result.length;
+
+  const randomMembers = await this.repo.listRandomMembers(
+    pageNumber,
+    remaining,
+    this.stringToNumber(`${gdgMemberId}${Date.now()}`)
+  );
+
+  addUnique(randomMembers.list);
+}
 
     /**
      * sorting based on similarity
      */
-    const sortedMembers = this.rankBySimilarity(sourceMember, combinedMembers);
+    const sortedMembers = this.rankBySimilarity(member, result);
 
     return {
       list: sortedMembers,

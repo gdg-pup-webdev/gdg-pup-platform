@@ -7,7 +7,6 @@ import {
   Card,
   CardFooter,
   CardHeader,
-  Skeleton,
   Stack,
   Text,
 } from "@packages/spark-ui";
@@ -22,6 +21,7 @@ import {
 import { useMemberShowcases } from "../hooks/useMemberShowcases";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { BrandedSkeleton } from "@/components/shared";
 
 const achievementsSectionVariants = createSectionVariants(
   SECTION_DELAYS.achievements,
@@ -33,15 +33,16 @@ function AchievementSkeletonCard() {
     <Card className="relative w-full overflow-hidden bg-[#1d2231]/85 shadow-[0_7px_18px_rgba(0,0,0,0.25)] backdrop-blur-md">
       <div className="relative z-10">
         {/* Fixed 293×208 aspect ratio skeleton matches the image wrapper */}
-        <Skeleton
+        <BrandedSkeleton
           className="w-full rounded-lg"
           style={{ aspectRatio: "293/208" }}
+          withGradientRing
         />
         <div className="mt-3 px-4 md:mt-3.5">
-          <Skeleton className="h-6 w-3/4" />
+          <BrandedSkeleton className="h-6 w-3/4" />
         </div>
         <div className="mt-4 flex justify-end px-4 pb-4 md:mt-5">
-          <Skeleton className="h-10 w-10 rounded-md" />
+          <BrandedSkeleton className="h-10 w-10 rounded-md" variant="button" />
         </div>
       </div>
     </Card>
@@ -88,6 +89,7 @@ export function MemberShowcaseAchievements() {
   }, []);
 
   const { data, isLoading, error } = useMemberShowcases(page, pageSize);
+  const isAchievementsLoading = isLoading || !data;
 
   const MEMBER_ACHIEVEMENT_CARDS = data
     ? data.data.map((showcase) => ({
@@ -141,13 +143,13 @@ export function MemberShowcaseAchievements() {
               subVariant="blue"
               variant="colored"
               onClick={handleOnPreviousPage}
-              disabled={page === 1 || isLoading}
+              disabled={page === 1 || isAchievementsLoading}
             >
               ←
             </Button>
           </motion.div>
 
-          {isLoading ? (
+          {isAchievementsLoading ? (
             <AchievementsLoadingState />
           ) : (
             <motion.div
@@ -185,7 +187,7 @@ export function MemberShowcaseAchievements() {
                         {card.title}
                       </CardHeader>
                       <CardFooter className="mt-4 flex justify-end md:mt-5">
-                        <Link href={card.articleUrl || "#"}>
+                        <Link prefetch={false} href={card.articleUrl || "#"}>
                           <Button
                             className="w-fit"
                             size="lg"
@@ -215,7 +217,7 @@ export function MemberShowcaseAchievements() {
               subVariant="blue"
               variant="colored"
               onClick={handleOnNextPage}
-              disabled={page === (data ? data.meta.totalPages : 1) || isLoading}
+              disabled={page === (data ? data.meta.totalPages : 1) || isAchievementsLoading}
             >
               →
             </Button>

@@ -28,7 +28,7 @@ function ActionButton({ action, primary = true }: { action: AuthTransitionAction
 
   if (action.href) {
     return (
-      <Link href={action.href} className={className}>
+      <Link prefetch={false} href={action.href} className={className}>
         {action.label}
       </Link>
     );
