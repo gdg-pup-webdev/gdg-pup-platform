@@ -185,7 +185,7 @@ export function MemberShowcaseAchievements() {
                         {card.title}
                       </CardHeader>
                       <CardFooter className="mt-4 flex justify-end md:mt-5">
-                        <Link href={card.articleUrl || "#"}>
+                        <Link prefetch={false} href={card.articleUrl || "#"}>
                           <Button
                             className="w-fit"
                             size="lg"
