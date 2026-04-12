@@ -112,6 +112,14 @@ export const ASSETS = {
             DECOR_ELEMENT_1: "/about/about-who-decor-element-1.webp",
             DECOR_ELEMENT_2: "/about/about-who-decor-element-2.webp",
         },
+        HISTORY: {
+            THE_SPARK: "/about/history/the-spark.webp",
+            YEAR_TWO_TEST: "/about/history/year-two-test.webp",
+            YEAR_THREE_TURNAROUND: "/about/history/year-three-turnaround.webp",
+            THE_IMPACT: "/about/history/the-impact.webp",
+            BG_ORBITAL_RINGS: "/about/history/bg-orbital-rings.webp",
+            BG_GEAR: "/about/history/bg-gear.webp",
+        },
     },
 
     // ─── ID card page ─────────────────────────────────────────────────────────────
@@ -274,12 +282,12 @@ export const ASSETS = {
 
     // ─── Partners ─────────────────────────────────────────────────────────────────
     PARTNERS: {
-        ACADARENA: "/partners/partner-acadarena-white.png",
-        DATACAMP: "/partners/partner-datacamp-new.png",
+        ACADARENA: "/partners/partner-acadarena-white.webp",
+        DATACAMP: "/partners/partner-datacamp-new.webp",
         YSPACE: "/partners/partner-yspace.webp",
         POCKY: "/partners/partner-pocky.webp",
         PLDT: "/partners/partner-pldt.webp",
-        GLOBE: "/partners/partner-globe-white.png",
+        GLOBE: "/partners/partner-globe-white.webp",
         MOUNTAIN_DEW: "/partners/partner-mountain-dew.webp",
         WHITECLOAK: "/partners/partner-whitecloak.webp",
         FLOWERSTORE: "/partners/partner-flowerstore.webp",
@@ -288,14 +296,14 @@ export const ASSETS = {
         HEY_ROOMIE: "/partners/partner-hey-roomie.webp",
         HOMEROOM: "/partners/partner-homeroom.webp",
         GEN_AI_PH: "/partners/partner-gen-ai-ph.webp",
-        DEVCON: "/partners/partner-devcon.png",
+        DEVCON: "/partners/partner-devcon.webp",
         /** Aurora/glow SVG overlay matching Figma background */
         BG_AURORA_OVERLAY: "/partners/bg-aurora-overlay.svg",
         /** Cirby sticker mascot shown in the CTA card */
         CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
         /** Figma decorative floating assets */
         DECOR_ASSET_1: "/partners/decor-asset-1.webp",
-        DECOR_ASSET_2: "/partners/decor-asset-2.png",
+        DECOR_ASSET_2: "/partners/decor-asset-2.webp",
         DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
         DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
     },
@@ -306,6 +314,10 @@ export const ASSETS = {
         AVATAR_DEFAULT: "/auth/auth-avatar-default.webp",
         SIGNIN_LOGO: "/auth/auth-signin-logo.webp",
         SIGNIN_HORIZON: "/auth/auth-signin-horizon.webp",
+        RAINBOW_STREAK: "/auth/auth-rainbow-streak.webp",
+    },
+    EVENTS: {
+        CIRBY_ICON: "/pages/events/cirby-event-icon.webp",
     },
     MEMBER_SHOWCASE: {
         ACHIEVEMENTS: {
@@ -333,9 +345,12 @@ export const ASSETS = {
         },
     },
     PROFILE: {
-        AVATAR_RING: "/profile-avatar-ring.png",
-        DEFAULT_AVATAR: "/profile-default-avatar.png",
-        DEFAULT_BADGE: "/profile-badge-default.png",
+        AVATAR_RING: "/profile-avatar-ring.webp",
+        DEFAULT_AVATAR: "/profile-default-avatar.webp",
+        DEFAULT_BADGE: "/profile-badge-default.webp",
+    },
+    PRODUCTS: {
+        STUDY_JAM_PLACEHOLDER: "/products/iot_study_jam_image.webp",
     },
     SPARKMATES: {
         HORIZON: "/sparkmates/sparkmates-horizon.webp",
@@ -362,7 +377,7 @@ export const ASSETS = {
         HEADLINE_GRADIENT_CONTRIBUTORS: "/leaderboard/leaderboard-headline-gradient-contributors.webp",
         SPARKY_MASCOT: "/leaderboard/leaderboard-sparky-mascot.webp",
         GOLD_TEXTURE: "/leaderboard/leaderboard-gold-texture.webp",
-        FOOTER_MAP: "/leaderboard/leaderboard-footer-map.png",
+        FOOTER_MAP: "/leaderboard/leaderboard-footer-map.webp",
         AVATAR_GOLD: "/leaderboard/leaderboard-avatar-gold.webp",
         AVATAR_SILVER: "/leaderboard/leaderboard-avatar-silver.webp",
         AVATAR_BRONZE: "/leaderboard/leaderboard-avatar-bronze.webp",
