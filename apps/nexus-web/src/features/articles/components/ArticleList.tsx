@@ -133,15 +133,14 @@ export const ArticleList = () => {
             GDG PUP · Stories
           </p>
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            Our{" "}
             <span
               className="bg-clip-text text-transparent"
               style={{
                 backgroundImage:
-                  "linear-gradient(90deg,#4285F4,#EA4335,#F9AB00,#00C950)",
+                "linear-gradient(to right, #EA4335, #F9AB00, #34A853, #4285F4)",
               }}
             >
-              Articles
+            Our Articles
             </span>
           </h1>
           <p className="mt-4 text-gray-400 text-base md:text-lg max-w-xl mx-auto">
