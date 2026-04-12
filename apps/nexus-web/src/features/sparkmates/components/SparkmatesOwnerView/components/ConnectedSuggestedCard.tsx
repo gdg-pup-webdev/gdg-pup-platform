@@ -12,7 +12,7 @@ export function ConnectedSuggestedCard({
   gdgId : string;
 }) {
   return (
-    <Link href={`/sparkmates/${gdgId}`} className="relative flex items-center pl-11.5">
+    <Link prefetch={false} href={`/sparkmates/${gdgId}`} className="relative flex items-center pl-11.5">
       <div className="w-full overflow-hidden rounded-r-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] pl-16 pr-4 py-3.5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
         <Text variant="body-lg" className="truncate text-white" weight="medium">
           {name}

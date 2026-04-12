@@ -262,7 +262,7 @@ const milestones = [
     title: "The Spark",
     excerpt: "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.",
     buttonColor: "green" as const,
-    image: "/about/history/the-spark.jpg",
+    image: ASSETS.ABOUT.HISTORY.THE_SPARK,
     href: "/articles/a5e895ea-1223-4958-af05-1319cc98ec0a"
   },
   {
@@ -278,7 +278,7 @@ const milestones = [
     title: "Year Two: The Test",
     excerpt: "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.",
     buttonColor: "red" as const,
-    image: "/about/history/year-two-test.jpg",
+    image: ASSETS.ABOUT.HISTORY.YEAR_TWO_TEST,
     href: "/articles/55cf5ee1-1ab1-4a9d-b9d0-497d644baa53"
   },
   {
@@ -286,7 +286,7 @@ const milestones = [
     title: "Year Three: The Turnaround",
     excerpt: "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.",
     buttonColor: "blue" as const,
-    image: "/about/history/year-three-turnaround.jpg",
+    image: ASSETS.ABOUT.HISTORY.YEAR_THREE_TURNAROUND,
     href: "/articles/aa4ec512-a068-4866-ba5d-8bf9bb90325c"
   },
   {
@@ -294,7 +294,7 @@ const milestones = [
     title: "The Impact",
     excerpt: "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.",
     buttonColor: "green" as const,
-    image: "/about/history/the-impact.png",
+    image: ASSETS.ABOUT.HISTORY.THE_IMPACT,
     href: "/articles/e5c96ec3-71c2-4e36-b065-0105aee46a08"
   },
   {
@@ -363,7 +363,7 @@ const MilestoneCard = ({
         </Text>
       </CardContent>
       <CardFooter className="justify-center">
-        <Link href={milestone.href}>
+        <Link prefetch={false} href={milestone.href}>
           <button
             className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
           >
@@ -527,13 +527,13 @@ export function HistorySection() {
 {/* Orbital rings */}
 <div className="absolute pointer-events-none"
   style={{ top: "12%", left: "50%", transform: "translateX(-50%)", width: "70%", opacity: 0.9 }}>
-  <Image src="/about/history/bg-orbital-rings.png" alt="" width={900} height={900} className="w-full h-auto" />
+  <Image src={ASSETS.ABOUT.HISTORY.BG_ORBITAL_RINGS} alt="" width={900} height={900} className="w-full h-auto" />
 </div>
 
 {/* Gear */}
 <div className="absolute pointer-events-none hidden lg:block"
   style={{ top: "45%", right: "-8%", width: "25%", opacity: 0.20 }}>
-  <Image src="/about/history/bg-gear.png" alt="" width={400} height={400} className="w-full h-auto" />
+  <Image src={ASSETS.ABOUT.HISTORY.BG_GEAR} alt="" width={400} height={400} className="w-full h-auto" />
 </div>
 
 {/* Star */}
@@ -640,7 +640,7 @@ export function HistorySection() {
       ))}
     </div>
     <Box>
-      <Link href="/signup">
+      <Link prefetch={false} href="/signup">
         <Button size="lg" variant="default">
           Join Our Journey
         </Button>

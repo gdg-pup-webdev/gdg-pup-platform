@@ -29,7 +29,7 @@ export function ResourceLibraryGrid() {
       <div className="grid grid-cols-2 gap-4 mt-8 sm:gap-5 md:grid-cols-3 md:gap-6 md:mt-10 lg:grid-cols-4 lg:gap-10 lg:mt-25">
         {RESOURCE_LIBRARY.map((item) => (
           <TiltCard key={item.href} className="relative block w-full">
-            <Link href={item.href} className="block w-full">
+            <Link prefetch={false} href={item.href} className="block w-full">
               <Card className="relative w-full aspect-[286/390] overflow-hidden rounded-[30px] @container">
                 <Image
                   src={item.image}

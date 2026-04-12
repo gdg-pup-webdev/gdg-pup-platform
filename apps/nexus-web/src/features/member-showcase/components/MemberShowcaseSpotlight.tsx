@@ -130,7 +130,7 @@ export function MemberShowcaseSpotlight() {
                   {data ? data.data.description : ""}
                 </Text>
                 <div className="justify-center hidden lg:flex lg:justify-start">
-                  <Link href={data ? data.data.articleUrl : "#"}>
+                  <Link prefetch={false} href={data ? data.data.articleUrl : "#"}>
                     <Button variant="colored" subVariant="blue" size="lg">
                       Learn more
                     </Button>

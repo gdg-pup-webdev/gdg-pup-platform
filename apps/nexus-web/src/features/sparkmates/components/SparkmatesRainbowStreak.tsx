@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { ASSETS } from "@/lib/constants/assets";
 
 export const SparkmatesRainbowStreak = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -31,7 +32,7 @@ export const SparkmatesRainbowStreak = () => {
     >
       <div className="relative w-full h-full animate-sparkmates-drift origin-center">
         <Image
-          src="/auth/auth-rainbow-streak.png"
+          src={ASSETS.AUTH.RAINBOW_STREAK}
           alt="Rainbow Streak"
           className="object-cover blur-[60px]"
           fill

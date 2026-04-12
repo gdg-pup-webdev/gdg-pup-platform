@@ -78,7 +78,7 @@ export function TeamStructureDropdowns({
         />
       </div>
 
-      <Link href="/products">
+      <Link prefetch={false} href="/products">
         <Button size="lg">Back to Resources</Button>
       </Link>
     </Stack>
