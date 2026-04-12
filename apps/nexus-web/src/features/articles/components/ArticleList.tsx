@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { useListArticles } from "../hooks/useListArticle";
 import { ASSETS } from "@/lib/constants/assets";
+import { BrandedSkeleton } from "@/components/shared";
 import { ChevronLeft, ChevronRight, Clock, ArrowRight } from "lucide-react";
 
 // ── Same color map as ArticlePreview so each card matches its article page ──
@@ -155,14 +156,14 @@ export const ArticleList = () => {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden animate-pulse"
+                className="rounded-2xl bg-white/5 border border-white/10 overflow-hidden"
               >
-                <div className="h-44 bg-white/10" />
+                <BrandedSkeleton className="h-44 w-full rounded-none" withGradientRing />
                 <div className="p-5 flex flex-col gap-3">
-                  <div className="h-4 w-20 bg-white/10 rounded-full" />
-                  <div className="h-5 w-3/4 bg-white/10 rounded-full" />
-                  <div className="h-4 w-full bg-white/10 rounded-full" />
-                  <div className="h-4 w-2/3 bg-white/10 rounded-full" />
+                  <BrandedSkeleton className="h-4 w-20" variant="chip" />
+                  <BrandedSkeleton className="h-5 w-3/4" variant="text" />
+                  <BrandedSkeleton className="h-4 w-full" variant="text" />
+                  <BrandedSkeleton className="h-4 w-2/3" variant="text" />
                 </div>
               </div>
             ))}
