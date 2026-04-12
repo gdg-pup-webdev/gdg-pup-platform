@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import type { SparkmatesPortfolio, SuggestedSparkmate } from "../types";
+import { useSuggestedMembers } from "./useSuggestedMembers";
 
 const DUMMY_SUGGESTED_SPARKMATES: SuggestedSparkmate[] = [
   {
@@ -131,25 +132,30 @@ export function useSuggestedSparkmates({
   search: string;
   viewerGdgId?: string; 
 }) {
-  return useMemo(() => {
-    const searchTerm = search.trim().toLowerCase();
 
-    const sorted = [...DUMMY_SUGGESTED_SPARKMATES]
-      // .filter((candidate) => candidate.gdgId !== viewerGdgId)
-      // .map((candidate) => ({
-      //   candidate,
-      //   score: getSimilarityScore(viewerPortfolio, candidate),
-      // }))
-      // .sort((left, right) => right.score - left.score)
-      // .map((entry) => entry.candidate);
+  return useSuggestedMembers(viewerGdgId || "", 1, 10);
 
-    if (!searchTerm) {
-      return sorted;
-    }
 
-    return sorted.filter((candidate) => {
-      const haystack = `${candidate.name} ${candidate.bio} ${candidate.programYear}`.toLowerCase();
-      return haystack.includes(searchTerm);
-    });
-  }, [search, viewerGdgId]);
+
+  // return useMemo(() => {
+  //   const searchTerm = search.trim().toLowerCase();
+
+  //   const sorted = [...DUMMY_SUGGESTED_SPARKMATES]
+  //     // .filter((candidate) => candidate.gdgId !== viewerGdgId)
+  //     // .map((candidate) => ({
+  //     //   candidate,
+  //     //   score: getSimilarityScore(viewerPortfolio, candidate),
+  //     // }))
+  //     // .sort((left, right) => right.score - left.score)
+  //     // .map((entry) => entry.candidate);
+
+  //   if (!searchTerm) {
+  //     return sorted;
+  //   }
+
+  //   return sorted.filter((candidate) => {
+  //     const haystack = `${candidate.name} ${candidate.bio} ${candidate.programYear}`.toLowerCase();
+  //     return haystack.includes(searchTerm);
+  //   });
+  // }, [search, viewerGdgId]);
 }

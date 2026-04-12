@@ -1484,6 +1484,7 @@ export type Database = {
           other_links: string | null
           portfolio_url: string | null
           program: string | null
+          section_order: string | null
           skills_summary: string | null
           suffix: string | null
           technical_skills: string | null
