@@ -2,29 +2,30 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import { Button, Inline, Skeleton, Stack, Text } from "@packages/spark-ui";
+import { Button, Inline, Stack, Text } from "@packages/spark-ui";
 import { ASSETS } from "@/lib/constants/assets";
 import { ITEM_VARIANTS } from "./memberShowcaseMotion";
 import { useSpotlight } from "../hooks/useSpotlight";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
+import { BrandedSkeleton } from "@/components/shared";
 
 function SpotlightSkeleton() {
   return (
     <div className="flex flex-col items-center gap-8 px-0 md:gap-10 md:px-6 lg:flex-row lg:gap-12 lg:px-24">
       {/* Image skeleton with Sparky overlaid */}
       <div className="relative w-full shrink-0 lg:w-120">
-        <Skeleton className="w-full rounded-2xl" style={{ aspectRatio: "640/390" }} />
+        <BrandedSkeleton className="w-full rounded-2xl" style={{ aspectRatio: "640/390" }} withGradientRing />
       </div>
       {/* Text skeleton */}
       <div className="flex-1 w-full">
         <Stack gap="md">
-          <Skeleton className="h-8 w-3/4" />
-          <Skeleton className="h-4 w-1/3" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-          <Skeleton className="h-4 w-4/6" />
-          <Skeleton className="h-10 w-32 mt-2" />
+          <BrandedSkeleton className="h-8 w-3/4" />
+          <BrandedSkeleton className="h-4 w-1/3" variant="text" />
+          <BrandedSkeleton className="h-4 w-full" variant="text" />
+          <BrandedSkeleton className="h-4 w-5/6" variant="text" />
+          <BrandedSkeleton className="h-4 w-4/6" variant="text" />
+          <BrandedSkeleton className="h-10 w-32 mt-2" variant="button" withGradientRing />
         </Stack>
       </div>
     </div>
