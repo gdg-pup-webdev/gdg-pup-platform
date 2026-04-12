@@ -6,6 +6,7 @@ import { Card, Text, Skeleton } from "@packages/spark-ui";
 import { useEvents } from "../hooks/useEvents";
 import type { Event } from "../types";
 import { cn } from "@/lib/utils";
+import { ASSETS } from "@/lib/constants/assets";
 import { normalizeEventDescription } from "../utils/description";
 import { DateSelector } from "./DateSelector";
 
@@ -360,7 +361,7 @@ export function EventsCalendar({
                 >
                   {isSkeleton && <EventSkeleton />}
                   {firstEvent && (
-                    <Link
+                    <Link prefetch={false}
                       href={getEventRouteHref(firstEvent)}
                       className="absolute inset-0 z-20 hidden md:block"
                       aria-label={`View details for ${firstEvent.title}`}
@@ -505,7 +506,7 @@ export function EventsCalendar({
                   <div>
                     <div className="relative mb-3 h-36 mt-6">
                       <img
-                        src="/pages/events/cirby-event-icon.png"
+                        src={ASSETS.EVENTS.CIRBY_ICON}
                         alt="Cirby"
                         className="absolute -top-8 -left-3 z-20 h-14 w-14 object-contain"
                       />
@@ -614,7 +615,7 @@ export function EventsCalendar({
                       {about}
                     </Text>
 
-                    <Link
+                    <Link prefetch={false}
                       href={getEventRouteHref(selectedMobileEvent)}
                       onClick={() => setSelectedMobileEvent(null)}
                       className="h-9 w-full rounded-md border border-[#4285F4] bg-[linear-gradient(90deg,rgba(20,57,132,0.95)_0%,rgba(43,127,255,0.95)_50%,rgba(20,57,132,0.95)_100%)] text-white text-sm font-medium inline-flex items-center justify-center gap-1"

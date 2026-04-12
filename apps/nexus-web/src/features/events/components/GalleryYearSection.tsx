@@ -220,7 +220,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
       <Container className="relative z-10">
         <Stack gap="xl" className="md:gap-2xl">
-          <Link
+          <Link prefetch={false}
             href="/events#events-gallery"
             className="inline-flex items-center gap-2 text-white/85 hover:text-white transition-colors text-sm md:text-base w-fit"
           >

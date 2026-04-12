@@ -113,7 +113,7 @@ export function EventsGallery() {
               }}
             >
               {visibleItems.map((item) => (
-                <Link
+                <Link prefetch={false}
                   key={`${item.id}-${startIndex}`}
                   href={`/events/gallery/${item.year}`}
                   className="group relative rounded-2xl p-[1px] transition-all duration-300 ease-out hover:shadow-[0_12px_36px_rgba(0,0,0,0.42)] cursor-pointer"
