@@ -35,7 +35,8 @@ function SpotlightSkeleton() {
 export function MemberShowcaseSpotlight() {
   const prefersReduced = useReducedMotion();
 
-  const { data, isLoading, error} = useSpotlight();
+  const { data, isLoading } = useSpotlight();
+  const isSpotlightLoading = isLoading || !data?.data;
 
   return (
     <div>
@@ -52,7 +53,7 @@ export function MemberShowcaseSpotlight() {
           </Text>
         </div>
 
-        {isLoading ? (
+        {isSpotlightLoading ? (
           <SpotlightSkeleton />
         ) : (
           <motion.div
