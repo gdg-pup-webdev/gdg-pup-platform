@@ -141,7 +141,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
               />
             </div>
 
-            <Link href={`/products/${teamSlug}/team-structure`}>
+            <Link prefetch={false} href={`/products/${teamSlug}/team-structure`}>
               <Button size="lg">See team leads and structure</Button>
             </Link>
           </Stack>
