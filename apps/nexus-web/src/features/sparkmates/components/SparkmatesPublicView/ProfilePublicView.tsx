@@ -28,6 +28,7 @@ import {
   SparkmatesSectionId,
 } from "../../sectionOrder";
 import { parseCustomButtonLinks } from "../../utils/customButtonFavorites";
+import { useSearchMember } from "../../hooks/useSearchMember";
 
 const viewIcon = (
   <svg
@@ -209,6 +210,25 @@ export function ProfilePublicView({
     });
   
     const suggestedUsers = data?.data || [];
+
+
+
+  const [trueSearch, setTrueSearch] = useState("");
+  const [viewingSearchResults, setViewingSearchResults] = useState(false);
+  const { data: searchData } = useSearchMember(trueSearch);
+  const handleOnSearch = () => {
+    setTrueSearch(search);
+    setViewingSearchResults(true);
+  };
+
+  const handleClearSearch = () => {
+    setSearch("");
+    setTrueSearch("");
+    setViewingSearchResults(false);
+  };
+
+
+
 
   const projectsQuery = usePublicMemberProjects(gdgId);
 
@@ -561,9 +581,7 @@ export function ProfilePublicView({
 
             <div className="mt-6 p-0">
               <div className="sm:hidden relative">
-                <div
-                  className="absolute z-0 top-0 h-[220px] -left-3 -right-3 pointer-events-none overflow-hidden"
-                >
+                <div className="absolute z-0 top-0 h-[220px] -left-3 -right-3 pointer-events-none overflow-hidden">
                   <Image
                     src={ASSETS.SPARKMATES.HORIZON}
                     alt=""
@@ -587,7 +605,11 @@ export function ProfilePublicView({
                 </div>
 
                 <div className="relative z-10 flex flex-col items-center text-center px-4 mt-3 pb-2">
-                  <Text variant="heading-6" className="text-white leading-tight" weight="bold">
+                  <Text
+                    variant="heading-6"
+                    className="text-white leading-tight"
+                    weight="bold"
+                  >
                     {displayName}
                   </Text>
 
@@ -596,9 +618,15 @@ export function ProfilePublicView({
                   </Text>
 
                   <div className="mt-2.5 flex flex-wrap justify-center gap-2">
-                    <Badge variant={SPARK_BADGE.variantYellow as never}>UI/UX</Badge>
-                    <Badge variant={SPARK_BADGE.variantRed as never}>Marketing</Badge>
-                    <Badge variant={SPARK_BADGE.variantId as never}>{profile.gdgId}</Badge>
+                    <Badge variant={SPARK_BADGE.variantYellow as never}>
+                      UI/UX
+                    </Badge>
+                    <Badge variant={SPARK_BADGE.variantRed as never}>
+                      Marketing
+                    </Badge>
+                    <Badge variant={SPARK_BADGE.variantId as never}>
+                      {profile.gdgId}
+                    </Badge>
                   </div>
 
                   <Text
@@ -650,9 +678,15 @@ export function ProfilePublicView({
                       {profile?.program || "Program and Year not set"}
                     </Text>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      <Badge variant={SPARK_BADGE.variantYellow as never}>UI/UX</Badge>
-                      <Badge variant={SPARK_BADGE.variantRed as never}>Marketing</Badge>
-                      <Badge variant={SPARK_BADGE.variantId as never}>{profile.gdgId}</Badge>
+                      <Badge variant={SPARK_BADGE.variantYellow as never}>
+                        UI/UX
+                      </Badge>
+                      <Badge variant={SPARK_BADGE.variantRed as never}>
+                        Marketing
+                      </Badge>
+                      <Badge variant={SPARK_BADGE.variantId as never}>
+                        {profile.gdgId}
+                      </Badge>
                     </div>
                     <Text
                       variant="body-sm"
@@ -695,14 +729,28 @@ export function ProfilePublicView({
           </FadeInSection>
 
           <FadeInSection delay={0.1}>
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search"
-              leftIcon={searchIcon}
-              containerClassName="h-9 border-white/20 bg-black/20"
-              className="text-white placeholder:text-[#C1C7CD]"
-            />
+            <div className="w-full flex flex-row  gap-2">
+              <Input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search"
+                leftIcon={searchIcon}
+                containerClassName="h-9 border-white/20 bg-black/20"
+                className="text-white placeholder:text-[#C1C7CD]"
+              />
+              <div
+                className="w-fit flex justify-center items-center h-full border border-white/20"
+                onClick={handleClearSearch}
+              >
+                Clear
+              </div>
+              <div
+                className="w-fit flex justify-center items-center h-full border border-white/20"
+                onClick={handleOnSearch}
+              >
+                Search
+              </div>
+            </div>
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <Text variant="body-lg" className="text-white">
@@ -719,23 +767,53 @@ export function ProfilePublicView({
             </div>
 
             <div className="mt-5 space-y-4">
-              {suggestedUsers.map((member) => (
-                <ConnectedSuggestedCard
-                  key={member.gdgId}
-                  avatarUrl={member.avatarUrl ?? undefined}
-                  name={member.displayName || member.firstName || member.gdgId}
-                  bio={member.bio || ""}
-                  gdgId={member.gdgId}
-                />
-              ))}
+              {viewingSearchResults && (
+                <>
+                  {searchData?.data.map((member) => (
+                    <ConnectedSuggestedCard
+                      key={member.gdgId}
+                      avatarUrl={member.avatarUrl ?? undefined}
+                      name={
+                        member.displayName || member.firstName || member.gdgId
+                      }
+                      bio={member.bio || "---"}
+                      gdgId={member.gdgId}
+                    />
+                  ))}
 
-              {suggestedUsers.length === 0 ? (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
-                  <Text variant="body-sm" className="text-[#C1C7CD]">
-                    No matches found.
-                  </Text>
-                </div>
-              ) : null}
+                  {searchData?.data.length === 0 ? (
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
+                      <Text variant="body-sm" className="text-[#C1C7CD]">
+                        No matches found.
+                      </Text>
+                    </div>
+                  ) : null}
+                </>
+              )}
+
+              {!viewingSearchResults && (
+                <>
+                  {suggestedUsers.map((member) => (
+                    <ConnectedSuggestedCard
+                      key={member.gdgId}
+                      avatarUrl={member.avatarUrl ?? undefined}
+                      name={
+                        member.displayName || member.firstName || member.gdgId
+                      }
+                      bio={member.bio || "---"}
+                      gdgId={member.gdgId}
+                    />
+                  ))}
+
+                  {suggestedUsers.length === 0 ? (
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
+                      <Text variant="body-sm" className="text-[#C1C7CD]">
+                        No matches found.
+                      </Text>
+                    </div>
+                  ) : null}
+                </>
+              )}
             </div>
           </FadeInSection>
         </div>
