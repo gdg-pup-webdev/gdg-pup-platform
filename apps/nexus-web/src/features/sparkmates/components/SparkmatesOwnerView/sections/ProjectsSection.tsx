@@ -1,20 +1,23 @@
 import { Button, Text, Modal } from "@packages/spark-ui";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ProjectCard } from "../components/ProjectCard";
 import { addIcon } from "../icons/addIcon";
-import { editIcon } from "../icons/editIcon";
 import { UserProfile } from "@/features/sparkmates";
-import { cn } from "@/lib/utils";
 import { useMemberProjects } from "@/features/sparkmates/hooks/useMemberProjects";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
 import { toast } from "react-toastify";
+
+const MAX_PROJECT_IMAGES = 4;
 
 const createEmptyProject = (): ProjectFormState => ({
   title: "",
   startDate: "",
   endDate: "",
   description: "",
+  imageFiles: [],
+  imageUrls: [],
+  originalImageUrls: [],
   mainImageFile: null,
   mainImageUrl: null,
   secondaryImageFile: null,
@@ -23,93 +26,275 @@ const createEmptyProject = (): ProjectFormState => ({
   tertiaryImageUrl: null,
 });
 
-export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
-  const { projectsQuery, createProject, updateProject, deleteProject } = useMemberProjects(profile.gdgId);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [localProjects, setLocalProjects] = useState<ProjectFormState[]>([]);
+const toProjectFormState = (project: any): ProjectFormState => {
+  const images = getProjectImages(project);
 
-  // Initialize local projects state from fetched data when modal opens
-  useEffect(() => {
-    if (isEditModalOpen && projectsQuery.data) {
-      if (projectsQuery.data.length > 0) {
-        setLocalProjects(
-          projectsQuery.data.map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            startDate: p.startDate ? p.startDate.slice(0, 10) : "",
-            endDate: p.endDate ? p.endDate.slice(0, 10) : "",
-            description: p.description,
-            mainImageFile: null,
-            mainImageUrl: p.mainImageUrl,
-            secondaryImageFile: null,
-            secondaryImageUrl: p.secondaryImageUrl,
-            tertiaryImageFile: null,
-            tertiaryImageUrl: p.tertiaryImageUrl,
-          }))
-        );
-      } else {
-        setLocalProjects([createEmptyProject()]);
-      }
+  return {
+    id: project.id,
+    title: project.title ?? "",
+    startDate: project.startDate ? project.startDate.slice(0, 10) : "",
+    endDate: project.endDate ? project.endDate.slice(0, 10) : "",
+    description: project.description ?? "",
+    imageFiles: [],
+    imageUrls: [...images],
+    originalImageUrls: [...images],
+    mainImageFile: null,
+    mainImageUrl: images[0] || null,
+    secondaryImageFile: null,
+    secondaryImageUrl: images[1] || null,
+    tertiaryImageFile: null,
+    tertiaryImageUrl: images[2] || null,
+  };
+};
+
+const getProjectImages = (project: any): string[] => {
+  if (Array.isArray(project?.images)) {
+    return project.images.filter((image: unknown): image is string => typeof image === "string" && image.length > 0);
+  }
+
+  return [project?.mainImageUrl, project?.secondaryImageUrl, project?.tertiaryImageUrl].filter(
+    (image): image is string => typeof image === "string" && image.length > 0,
+  );
+};
+
+const getFileSignature = (file: File) =>
+  `${file.name}-${file.size}-${file.lastModified}-${file.type}`;
+
+const dedupeFiles = (files: File[]): File[] => {
+  const seen = new Set<string>();
+  const unique: File[] = [];
+
+  for (const file of files) {
+    const signature = getFileSignature(file);
+    if (seen.has(signature)) {
+      continue;
     }
-  }, [isEditModalOpen, projectsQuery.data]);
+    seen.add(signature);
+    unique.push(file);
+  }
+
+  return unique;
+};
+
+export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
+  const {
+    projectsQuery,
+    createProject,
+    updateProject,
+    deleteProject,
+    addProjectImage,
+    deleteProjectImage,
+  } = useMemberProjects(profile.gdgId);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<ProjectFormState>(createEmptyProject());
+  const [isSavingProject, setIsSavingProject] = useState(false);
 
   const handleUpdateProject = (index: number, field: keyof Omit<ProjectFormState, "id">, value: string | File | null) => {
-    setLocalProjects((prev) => {
-      const next = [...prev];
-      if (!next[index]) return prev;
-      
+    if (index !== 0) {
+      return;
+    }
+
+    setEditingProject((prev) => {
+      const next = { ...prev };
+
       if (field === "mainImageFile") {
-        next[index].mainImageFile = value as File | null;
+        next.mainImageFile = value as File | null;
       } else if (field === "secondaryImageFile") {
-        next[index].secondaryImageFile = value as File | null;
+        next.secondaryImageFile = value as File | null;
       } else if (field === "tertiaryImageFile") {
-        next[index].tertiaryImageFile = value as File | null;
+        next.tertiaryImageFile = value as File | null;
       } else {
-        (next[index] as any)[field] = value;
+        (next as any)[field] = value;
       }
+
       return next;
     });
   };
 
-  const handleAddProject = () => {
-    setLocalProjects((prev) => [...prev, createEmptyProject()]);
-  };
-
-  const handleRemoveProject = async (index: number) => {
-    const projectToRemove = localProjects[index];
-    if (projectToRemove.id) {
-      if (confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
-        await deleteProject.mutateAsync(projectToRemove.id);
-      } else {
-        return;
-      }
+  const handleUpdateProjectImages = (
+    index: number,
+    files: File[],
+    mode: "append" | "replace" = "append",
+  ) => {
+    if (index !== 0) {
+      return;
     }
-    
-    setLocalProjects((prev) => {
-      if (prev.length === 1) return [createEmptyProject()];
-      return prev.filter((_, i) => i !== index);
+
+    setEditingProject((prev) => {
+      const current = prev.imageFiles || [];
+      const baseImages = prev.imageUrls || [];
+      const maxNewUploads = Math.max(0, MAX_PROJECT_IMAGES - baseImages.length);
+      let nextImageFiles: File[];
+
+      if (mode === "append") {
+        nextImageFiles = dedupeFiles([...current, ...files]).slice(0, maxNewUploads);
+      } else {
+        nextImageFiles = dedupeFiles(files).slice(0, maxNewUploads);
+      }
+
+      return {
+        ...prev,
+        imageFiles: nextImageFiles,
+      };
     });
   };
 
-  const handleSave = async () => {
-    try {
-      const validProjects = localProjects.filter((p) => p.title.trim() && p.description.trim() && p.startDate);
-      
-      for (const project of validProjects) {
-        if (project.id) {
-          await updateProject.mutateAsync({ id: project.id, data: project });
-        } else {
-          await createProject.mutateAsync(project);
-        }
+  const handleRemoveExistingProjectImage = (projectIndex: number, imageIndex: number) => {
+    if (projectIndex !== 0) {
+      return;
+    }
+
+    setEditingProject((prev) => {
+      const existing = prev.imageUrls || [];
+      if (imageIndex < 0 || imageIndex >= existing.length) {
+        return prev;
       }
+
+      return {
+        ...prev,
+        imageUrls: existing.filter((_, currentIndex) => currentIndex !== imageIndex),
+      };
+    });
+  };
+
+  const getRemovedImageIndices = (original: string[], desired: string[]): number[] => {
+    const desiredCounts = new Map<string, number>();
+    for (const imageUrl of desired) {
+      desiredCounts.set(imageUrl, (desiredCounts.get(imageUrl) || 0) + 1);
+    }
+
+    const runningCounts = new Map<string, number>();
+    const removedIndices: number[] = [];
+
+    for (let index = 0; index < original.length; index += 1) {
+      const imageUrl = original[index];
+      const seenCount = (runningCounts.get(imageUrl) || 0) + 1;
+      runningCounts.set(imageUrl, seenCount);
+
+      if (seenCount > (desiredCounts.get(imageUrl) || 0)) {
+        removedIndices.push(index);
+      }
+    }
+
+    return removedIndices;
+  };
+
+  const handleOpenAddProjectModal = () => {
+    setEditingProject(createEmptyProject());
+    setIsEditModalOpen(true);
+  };
+
+  const handleOpenEditProjectModal = (project: any) => {
+    setEditingProject(toProjectFormState(project));
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteCurrentProject = async () => {
+    if (!editingProject.id) {
+      return;
+    }
+
+    const confirmed = confirm("Are you sure you want to delete this project? This action cannot be undone.");
+    if (!confirmed) {
+      return;
+    }
+
+    setIsSavingProject(true);
+
+    try {
+      await deleteProject.mutateAsync(editingProject.id);
       setIsEditModalOpen(false);
-      projectsQuery.refetch();
-    } catch (error) {
-      toast.error("Failed to save projects");
+      setEditingProject(createEmptyProject());
+      await projectsQuery.refetch();
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to delete project");
+    } finally {
+      setIsSavingProject(false);
     }
   };
 
-  const isSaving = createProject.isPending || updateProject.isPending;
+  const handleSave = async () => {
+    if (isSavingProject) {
+      return;
+    }
+
+    const title = editingProject.title.trim();
+    const description = editingProject.description.trim();
+    if (!title || !description || !editingProject.startDate) {
+      toast.error("Please complete title, description, and start date before saving.");
+      return;
+    }
+
+    setIsSavingProject(true);
+
+    try {
+      const existingImages = editingProject.imageUrls || [];
+      const pendingImageFiles = dedupeFiles(editingProject.imageFiles || []);
+
+      const projectPayload: Omit<ProjectFormState, "id"> = {
+        ...editingProject,
+        title,
+        description,
+        imageFiles: [],
+        mainImageFile: null,
+        secondaryImageFile: null,
+        tertiaryImageFile: null,
+      };
+
+      if (editingProject.id) {
+        const originalImages = editingProject.originalImageUrls || [];
+        const removedIndices = getRemovedImageIndices(originalImages, existingImages).sort((a, b) => b - a);
+
+        for (const imageIndex of removedIndices) {
+          await deleteProjectImage.mutateAsync({ id: editingProject.id, imageIndex });
+        }
+
+        const remainingSlots = Math.max(0, MAX_PROJECT_IMAGES - existingImages.length);
+        if (pendingImageFiles.length > remainingSlots) {
+          throw new Error(
+            `Project "${title}" exceeds the ${MAX_PROJECT_IMAGES}-image limit. Remove some existing images first.`,
+          );
+        }
+
+        await updateProject.mutateAsync({ id: editingProject.id, data: projectPayload });
+
+        for (const image of pendingImageFiles) {
+          await addProjectImage.mutateAsync({ id: editingProject.id, image });
+        }
+      } else {
+        if (pendingImageFiles.length > MAX_PROJECT_IMAGES) {
+          throw new Error(`Project "${title}" exceeds the ${MAX_PROJECT_IMAGES}-image limit.`);
+        }
+
+        const created = await createProject.mutateAsync(projectPayload);
+        const createdProjectId = (created as { id?: string } | undefined)?.id;
+
+        if (!createdProjectId) {
+          throw new Error("Failed to resolve the newly created project ID.");
+        }
+
+        for (const image of pendingImageFiles) {
+          await addProjectImage.mutateAsync({ id: createdProjectId, image });
+        }
+      }
+
+      setIsEditModalOpen(false);
+      setEditingProject(createEmptyProject());
+      await projectsQuery.refetch();
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to save projects");
+    } finally {
+      setIsSavingProject(false);
+    }
+  };
+
+  const isSaving =
+    isSavingProject ||
+    createProject.isPending ||
+    updateProject.isPending ||
+    deleteProject.isPending ||
+    addProjectImage.isPending ||
+    deleteProjectImage.isPending;
   const projectList = projectsQuery.data || [];
 
   return (
@@ -119,14 +304,15 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
           Projects
         </Text>
         <Button
-          variant="ghost"
+          variant="dashed-outline"
           size="sm"
-          className="h-8 w-8 p-0 text-white"
-          title="Edit Projects"
-          aria-label="Edit Projects"
-          onClick={() => setIsEditModalOpen(true)}
+          className="px-3"
+          title="Add Project"
+          aria-label="Add Project"
+          iconLeft={addIcon}
+          onClick={handleOpenAddProjectModal}
         >
-          {editIcon}
+          Add Project
         </Button>
       </div>
       <Text variant="body-sm" className="text-[#C1C7CD]">
@@ -138,7 +324,11 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
           <Text variant="body-sm" className="text-zinc-500">Loading projects...</Text>
         ) : projectList.length > 0 ? (
           projectList.map((project: any) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onEdit={() => handleOpenEditProjectModal(project)}
+            />
           ))
         ) : (
           <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center text-[#C1C7CD]">
@@ -147,38 +337,45 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
         )}
       </div>
 
-      {projectList.length === 0 && (
-        <Button 
-          variant="dashed-outline" 
-          className="w-full" 
-          iconLeft={addIcon}
-          onClick={() => setIsEditModalOpen(true)}
-        >
-          Add New Projects
-        </Button>
-      )}
-
-      <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="md" className="bg-transparent border-none p-0 !shadow-none isolate">
+      <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="md" className="bg-transparent border-none p-0 shadow-none! isolate">
         <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
         <div className="space-y-6">
           <div>
-            <Text variant="heading-6" weight="bold" gradient="white-yellow">Manage Projects</Text>
+            <Text variant="heading-6" weight="bold" gradient="white-yellow">
+              {editingProject.id ? "Edit Project" : "Add Project"}
+            </Text>
             <Text variant="body-sm" className="text-zinc-400 mt-1">
-              Add your best works and projects to showcase your skills in action.
+              {editingProject.id
+                ? "Update this project details and images."
+                : "Create a new project and upload up to 4 images."}
             </Text>
           </div>
           
           <ProjectsManager
-            projects={localProjects}
+            projects={[editingProject]}
             updateProject={handleUpdateProject}
-            addProject={handleAddProject}
-            removeProject={handleRemoveProject}
+            addProject={() => {}}
+            removeProject={() => {}}
+            singleProjectMode
+            imageInputMode="list"
+            updateProjectImages={handleUpdateProjectImages}
+            removeExistingProjectImage={handleRemoveExistingProjectImage}
           />
           
           <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
             <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+            {editingProject.id && (
+              <Button
+                variant="ghost"
+                className="text-red-300 hover:text-red-200"
+                onClick={handleDeleteCurrentProject}
+                disabled={isSaving}
+              >
+                Delete Project
+              </Button>
+            )}
             <Button variant="colored" subVariant="blue" onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? "Saving..." : editingProject.id ? "Save Changes" : "Create Project"}
             </Button>
           </div>
         </div>

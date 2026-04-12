@@ -1,9 +1,11 @@
 import { memberProjectsRecord } from "#models/v1/memberProjects/record.js";
-import { OpenApiSchemas } from "@packages/typed-rest/shared";
+import { cz, OpenApiSchemas } from "@packages/typed-rest/shared";
 
 export const files = {
   image: OpenApiSchemas.Models.file(),
 };
+
+export const body = cz.object({})
 
 export const response = {
   200: OpenApiSchemas.Response.single(memberProjectsRecord),
