@@ -36,140 +36,347 @@ export class GetSimilarUsers {
     pageSize: number,
     strategy: SimilarUsersStrategy = "relevant",
   ): Promise<{ list: GdgMember[]; count: number }> {
-    const flowStartedAt = this.nowMs();
-    const stageDurationsMs: Record<string, number> = {};
+    /**
+     * this function is too complex.
+     * will not delete, but will refactor for better performance.
+     */
+
+    const sourceMember = await this.repo.findByGdgId(gdgMemberId);
+
+    if (!sourceMember) {
+      throw new NotFoundError(`Member not found for gdgId: ${gdgMemberId}`);
+    }
 
     if (pageNumber < 1)
       throw new BadRequestError("Page number must be greater than 0");
     if (pageSize < 1)
       throw new BadRequestError("Page size must be greater than 0");
 
-    const sourceMember = await this.withTimedStageAsync(
-      stageDurationsMs,
-      "findSourceMember",
-      () => this.repo.findByGdgId(gdgMemberId),
+    /**
+     * define the ratios
+     */
+    const similarityBasisRatios = {
+      program: 15,
+      department: 30,
+      yearLevel: 15,
+      technicalSkills: 20,
+      learningInterests: 25,
+      toolsAndTechnologies: 20,
+      random: 15,
+    };
+    const totalRatio = Object.values(similarityBasisRatios).reduce(
+      (a, b) => a + b,
+      0,
     );
 
-    if (!sourceMember) {
-      throw new NotFoundError(`Member not found for gdgId: ${gdgMemberId}`);
-    }
-
-    const relevantCandidates = await this.withTimedStageAsync(
-      stageDurationsMs,
-      "fetchRelevantCandidates",
-      () => this.getRelevantCandidates(gdgMemberId, sourceMember),
+    /**
+     * defining the limits based on the ratios
+     */
+    const similarBasedOnProgramLimit = Math.floor(
+      (pageSize * similarityBasisRatios.program) / totalRatio,
+    );
+    const similarBasedOnDepartmentLimit = Math.floor(
+      (pageSize * similarityBasisRatios.department) / totalRatio,
+    );
+    const similarBasedOnYearLevelLimit = Math.floor(
+      (pageSize * similarityBasisRatios.yearLevel) / totalRatio,
+    );
+    const similarBasedOnTechnicalSkillsLimit = Math.floor(
+      (pageSize * similarityBasisRatios.technicalSkills) / totalRatio,
+    );
+    const similarBasedOnLearningInterestsLimit = Math.floor(
+      (pageSize * similarityBasisRatios.learningInterests) / totalRatio,
+    );
+    const similarBasedOnToolsAndTechnologiesLimit = Math.floor(
+      (pageSize * similarityBasisRatios.toolsAndTechnologies) / totalRatio,
     );
 
-    const rankedRelevantMembers = this.withTimedStage(
-      stageDurationsMs,
-      "rankRelevantCandidates",
-      () => this.rankBySimilarity(sourceMember, relevantCandidates),
-    );
-
-    const from = (pageNumber - 1) * pageSize;
-
-    if (strategy === "relevant") {
-      this.logTimingSummary({
+    const [
+      usersOnProgram,
+      usersOnDepartment,
+      usersOnYearLevel,
+      usersOnTechnicalSkills,
+      usersOnLearningInterests,
+      usersOnToolsAndTechnologies,
+    ] = await Promise.all([
+      this.repo.findSimilarMembersBasedOnField(
+        "program",
         gdgMemberId,
         pageNumber,
-        pageSize,
-        strategy,
-        totalCount: rankedRelevantMembers.length,
-        startedAt: flowStartedAt,
-        stageDurationsMs,
-      });
+        similarBasedOnProgramLimit,
+      ),
+      this.repo.findSimilarMembersBasedOnField(
+        "department",
+        gdgMemberId,
+        pageNumber,
+        similarBasedOnDepartmentLimit,
+      ),
+      this.repo.findSimilarMembersBasedOnField(
+        "year_level",
+        gdgMemberId,
+        pageNumber,
+        similarBasedOnYearLevelLimit,
+      ),
+      this.repo.findSimilarMembersBasedOnField(
+        "technical_skills",
+        gdgMemberId,
+        pageNumber,
+        similarBasedOnTechnicalSkillsLimit,
+      ),
+      this.repo.findSimilarMembersBasedOnField(
+        "learning_interests",
+        gdgMemberId,
+        pageNumber,
+        similarBasedOnLearningInterestsLimit,
+      ),
+      this.repo.findSimilarMembersBasedOnField(
+        "tools_and_technologies",
+        gdgMemberId,
+        pageNumber,
+        similarBasedOnToolsAndTechnologiesLimit,
+      ),
+    ]);
 
-      return {
-        list: rankedRelevantMembers
-          .slice(from, from + pageSize)
-          .map((entry) => entry.member),
-        count: rankedRelevantMembers.length,
-      };
-    }
+    const randomMemberLimit =
+      pageSize -
+      (usersOnProgram.count +
+        usersOnDepartment.count +
+        usersOnYearLevel.count +
+        usersOnTechnicalSkills.count +
+        usersOnLearningInterests.count +
+        usersOnToolsAndTechnologies.count);
 
-    const publicCandidates = await this.withTimedStageAsync(
-      stageDurationsMs,
-      "fetchExploratoryPublicPool",
-      () =>
-        this.repo.findPublicMembersExcludingGdgId(
-          gdgMemberId,
-          this.exploratoryPublicFetchLimit,
-        ),
-    );
-
-    const nonRelevantCandidates = this.withTimedStage(
-      stageDurationsMs,
-      "filterExploratoryNonRelevant",
-      () =>
-        this.getNonRelevantCandidates(
-          sourceMember,
-          rankedRelevantMembers,
-          publicCandidates,
-        ),
-    );
-
-    const rankedStrictNonRelevantMembers = this.withTimedStage(
-      stageDurationsMs,
-      "rankExploratoryNonRelevant",
-      () => this.rankForExploration(sourceMember, nonRelevantCandidates),
-    );
-
-    const expandedNonRelevantMembers = this.withTimedStage(
-      stageDurationsMs,
-      "expandExploratoryNonRelevant",
-      () =>
-        this.expandExploratoryCandidates(
-          sourceMember,
-          rankedRelevantMembers,
-          rankedStrictNonRelevantMembers,
-          publicCandidates,
-        ),
-    );
-
-    const { rotatedRelevantMembers, rotatedExpandedNonRelevantMembers } =
-      this.withTimedStage(stageDurationsMs, "rotateExploratoryPools", () => ({
-        rotatedRelevantMembers: this.rotateForRequestVariety(
-          sourceMember.props.gdgId,
-          "related",
-          rankedRelevantMembers,
-        ),
-        rotatedExpandedNonRelevantMembers: this.rotateForRequestVariety(
-          sourceMember.props.gdgId,
-          "non-related",
-          expandedNonRelevantMembers,
-        ),
-      }));
-
-    const exploratorySequence = this.withTimedStage(
-      stageDurationsMs,
-      "buildExploratorySequence",
-      () =>
-        this.buildExploratorySequence(
-          rotatedRelevantMembers,
-          rotatedExpandedNonRelevantMembers,
-        ),
-    );
-
-    const list = exploratorySequence
-      .slice(from, from + pageSize)
-      .map((entry) => entry.member);
-
-    this.logTimingSummary({
-      gdgMemberId,
+    const randomMembers = await this.repo.listRandomMembers(
       pageNumber,
-      pageSize,
-      strategy,
-      totalCount: exploratorySequence.length,
-      startedAt: flowStartedAt,
-      stageDurationsMs,
-    });
+      randomMemberLimit,
+      this.stringToNumber(`${gdgMemberId}${Date.now()}`),
+    );
+
+    const combinedMembers = [
+      ...usersOnProgram.list,
+      ...usersOnDepartment.list,
+      ...usersOnYearLevel.list,
+      ...usersOnTechnicalSkills.list,
+      ...usersOnLearningInterests.list,
+      ...usersOnToolsAndTechnologies.list,
+      ...randomMembers.list,
+    ].slice(0, pageSize);
+
+    /**
+     * sorting based on similarity
+     */
+    const sortedMembers = this.rankBySimilarity(sourceMember, combinedMembers);
 
     return {
-      list,
-      count: exploratorySequence.length,
+      list: sortedMembers,
+      count: sortedMembers.length,
     };
+
+    // const flowStartedAt = this.nowMs();
+    // const stageDurationsMs: Record<string, number> = {};
+
+    // const relevantCandidates = await this.withTimedStageAsync(
+    //   stageDurationsMs,
+    //   "fetchRelevantCandidates",
+    //   () => this.getRelevantCandidates(gdgMemberId, sourceMember),
+    // );
+
+    // const rankedRelevantMembers = this.withTimedStage(
+    //   stageDurationsMs,
+    //   "rankRelevantCandidates",
+    //   () => this.rankBySimilarity(sourceMember, relevantCandidates),
+    // );
+
+    // const from = (pageNumber - 1) * pageSize;
+
+    // if (strategy === "relevant") {
+    //   this.logTimingSummary({
+    //     gdgMemberId,
+    //     pageNumber,
+    //     pageSize,
+    //     strategy,
+    //     totalCount: rankedRelevantMembers.length,
+    //     startedAt: flowStartedAt,
+    //     stageDurationsMs,
+    //   });
+
+    //   return {
+    //     list: rankedRelevantMembers
+    //       .slice(from, from + pageSize)
+    //       .map((entry) => entry.member),
+    //     count: rankedRelevantMembers.length,
+    //   };
+    // }
+
+    // const publicCandidates = await this.withTimedStageAsync(
+    //   stageDurationsMs,
+    //   "fetchExploratoryPublicPool",
+    //   () =>
+    //     this.repo.findPublicMembersExcludingGdgId(
+    //       gdgMemberId,
+    //       this.exploratoryPublicFetchLimit,
+    //     ),
+    // );
+
+    // const nonRelevantCandidates = this.withTimedStage(
+    //   stageDurationsMs,
+    //   "filterExploratoryNonRelevant",
+    //   () =>
+    //     this.getNonRelevantCandidates(
+    //       sourceMember,
+    //       rankedRelevantMembers,
+    //       publicCandidates,
+    //     ),
+    // );
+
+    // const rankedStrictNonRelevantMembers = this.withTimedStage(
+    //   stageDurationsMs,
+    //   "rankExploratoryNonRelevant",
+    //   () => this.rankForExploration(sourceMember, nonRelevantCandidates),
+    // );
+
+    // const expandedNonRelevantMembers = this.withTimedStage(
+    //   stageDurationsMs,
+    //   "expandExploratoryNonRelevant",
+    //   () =>
+    //     this.expandExploratoryCandidates(
+    //       sourceMember,
+    //       rankedRelevantMembers,
+    //       rankedStrictNonRelevantMembers,
+    //       publicCandidates,
+    //     ),
+    // );
+
+    // const { rotatedRelevantMembers, rotatedExpandedNonRelevantMembers } =
+    //   this.withTimedStage(stageDurationsMs, "rotateExploratoryPools", () => ({
+    //     rotatedRelevantMembers: this.rotateForRequestVariety(
+    //       sourceMember.props.gdgId,
+    //       "related",
+    //       rankedRelevantMembers,
+    //     ),
+    //     rotatedExpandedNonRelevantMembers: this.rotateForRequestVariety(
+    //       sourceMember.props.gdgId,
+    //       "non-related",
+    //       expandedNonRelevantMembers,
+    //     ),
+    //   }));
+
+    // const exploratorySequence = this.withTimedStage(
+    //   stageDurationsMs,
+    //   "buildExploratorySequence",
+    //   () =>
+    //     this.buildExploratorySequence(
+    //       rotatedRelevantMembers,
+    //       rotatedExpandedNonRelevantMembers,
+    //     ),
+    // );
+
+    // const list = exploratorySequence
+    //   .slice(from, from + pageSize)
+    //   .map((entry) => entry.member);
+
+    // this.logTimingSummary({
+    //   gdgMemberId,
+    //   pageNumber,
+    //   pageSize,
+    //   strategy,
+    //   totalCount: exploratorySequence.length,
+    //   startedAt: flowStartedAt,
+    //   stageDurationsMs,
+    // });
+
+    // return {
+    //   list,
+    //   count: exploratorySequence.length,
+    // };
   }
 
+  private rankBySimilarity(
+    source: GdgMember,
+    candidates: GdgMember[],
+  ): GdgMember[] {
+    const collator = new Intl.Collator("en", {
+      usage: "sort",
+      sensitivity: "base",
+      numeric: true,
+    });
+
+    return candidates
+      .map((member) => ({
+        member,
+        score: this.calculateSimilarityScore(source, member),
+      }))
+      .sort((left, right) => {
+        if (right.score !== left.score) return right.score - left.score;
+        return collator.compare(
+          this.sortKey(left.member),
+          this.sortKey(right.member),
+        );
+      })
+      .map((entry, index) => entry.member);
+  }
+
+  private stringToNumber(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  }
+
+  private calculateSimilarityScore(
+    source: GdgMember,
+    candidate: GdgMember,
+  ): number {
+    const sourceProps = source.props;
+    const candidateProps = candidate.props;
+
+    return (
+      this.scoreStringSimilarity(
+        sourceProps.program,
+        candidateProps.program,
+        SIMILARITY_WEIGHTS.program,
+      ) +
+      this.scoreYearLevelSimilarity(
+        sourceProps.yearLevel,
+        candidateProps.yearLevel,
+        SIMILARITY_WEIGHTS.yearLevel,
+      ) +
+      this.scoreStringSimilarity(
+        sourceProps.department,
+        candidateProps.department,
+        SIMILARITY_WEIGHTS.department,
+      ) +
+      this.scoreExactMatch(
+        sourceProps.membershipType,
+        candidateProps.membershipType,
+        SIMILARITY_WEIGHTS.membershipType,
+      ) +
+      this.scoreCollectionOverlap(
+        sourceProps.technicalSkills,
+        candidateProps.technicalSkills,
+        SIMILARITY_WEIGHTS.technicalSkills,
+      ) +
+      this.scoreCollectionOverlap(
+        sourceProps.learningInterests,
+        candidateProps.learningInterests,
+        SIMILARITY_WEIGHTS.learningInterests,
+      ) +
+      this.scoreCollectionOverlap(
+        sourceProps.toolsAndTechnologies,
+        candidateProps.toolsAndTechnologies,
+        SIMILARITY_WEIGHTS.toolsAndTechnologies,
+      )
+    );
+  }
+
+  /**
+   * BELOW ARE UNUSED FUNCTIONS THAT MAY BE USED IN THE FUTURE FOR THE "EXPLORATORY" STRATEGY
+   */
+
+  /** */
   private nowMs(): number {
     return Date.now();
   }
@@ -267,24 +474,6 @@ export class GetSimilarUsers {
         !relevantIds.has(member.props.gdgId) &&
         !this.hasCoreRelevance(sourceMember, member),
     );
-  }
-
-  private rankBySimilarity(
-    source: GdgMember,
-    candidates: GdgMember[],
-  ): Array<{ member: GdgMember; score: number }> {
-    return candidates
-      .map((member) => ({
-        member,
-        score: this.calculateSimilarityScore(source, member),
-      }))
-      .sort((left, right) => {
-        if (right.score !== left.score) return right.score - left.score;
-        return this.stableCollator.compare(
-          this.sortKey(left.member),
-          this.sortKey(right.member),
-        );
-      });
   }
 
   private rankForExploration(
@@ -462,52 +651,6 @@ export class GetSimilarUsers {
     if (offset === 0) return candidates;
 
     return [...candidates.slice(offset), ...candidates.slice(0, offset)];
-  }
-
-  private calculateSimilarityScore(
-    source: GdgMember,
-    candidate: GdgMember,
-  ): number {
-    const sourceProps = source.props;
-    const candidateProps = candidate.props;
-
-    return (
-      this.scoreStringSimilarity(
-        sourceProps.program,
-        candidateProps.program,
-        SIMILARITY_WEIGHTS.program,
-      ) +
-      this.scoreYearLevelSimilarity(
-        sourceProps.yearLevel,
-        candidateProps.yearLevel,
-        SIMILARITY_WEIGHTS.yearLevel,
-      ) +
-      this.scoreStringSimilarity(
-        sourceProps.department,
-        candidateProps.department,
-        SIMILARITY_WEIGHTS.department,
-      ) +
-      this.scoreExactMatch(
-        sourceProps.membershipType,
-        candidateProps.membershipType,
-        SIMILARITY_WEIGHTS.membershipType,
-      ) +
-      this.scoreCollectionOverlap(
-        sourceProps.technicalSkills,
-        candidateProps.technicalSkills,
-        SIMILARITY_WEIGHTS.technicalSkills,
-      ) +
-      this.scoreCollectionOverlap(
-        sourceProps.learningInterests,
-        candidateProps.learningInterests,
-        SIMILARITY_WEIGHTS.learningInterests,
-      ) +
-      this.scoreCollectionOverlap(
-        sourceProps.toolsAndTechnologies,
-        candidateProps.toolsAndTechnologies,
-        SIMILARITY_WEIGHTS.toolsAndTechnologies,
-      )
-    );
   }
 
   private scoreExactMatch<T extends string | number | null>(

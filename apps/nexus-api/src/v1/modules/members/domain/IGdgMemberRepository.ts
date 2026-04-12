@@ -14,6 +14,17 @@ export interface IGdgMemberRepository {
     pageSize: number,
     filters?: GdgMemberFilters,
   ): Promise<{ list: GdgMember[]; count: number }>;
+
+  findSimilarMembersBasedOnField(
+    fieldName: string, 
+    fieldValue: string | number | string[] | null,
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ list: GdgMember[]; count: number }>;
+
+  listRandomMembers(pageNumber: number, pageSize: number, seed: number): Promise<{ list: GdgMember[]; count: number }>;
+
+  //
   findPublicMembersExcludingGdgId(
     gdgId: string,
     limit?: number,
@@ -43,6 +54,8 @@ export interface IGdgMemberRepository {
     },
     limit?: number,
   ): Promise<GdgMember[]>;
+  //
+
   saveNew(member: GdgMember): Promise<GdgMember>;
   persistUpdates(member: GdgMember): Promise<GdgMember>;
   deleteByGdgId(gdgId: string): Promise<void>;

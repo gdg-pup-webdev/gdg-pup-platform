@@ -5,7 +5,7 @@ import {
   GdgMemberFilters,
 } from "../domain/IGdgMemberRepository";
 import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
-import { handlePostgresError } from "@/v1/lib/supabase.utils";
+import { handlePostgresError } from "@/v1/lib/supabase.utils"; 
 
 type SimilarityMemberRow = Pick<
   Tables<"gdg_members">,
@@ -161,6 +161,48 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       sectionOrder: DEFAULT_SPARKMATES_SECTION_ORDER,
       isPublic: row.is_public,
     });
+  }
+
+  async listRandomMembers(pageNumber: number, pageSize: number, seed: number): Promise<{ list: GdgMember[]; count: number }> {
+  const from = (pageNumber - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  // We use the md5 hash of the ID concatenated with the seed to create a deterministic string
+  // and then sort by that string.
+  const { data, error } = await supabase
+    .from(this.tableName)
+    .select("*")
+    // This creates a virtual order based on the seed
+    .order(`md5(gdg_id::text || '${seed}')`) 
+    .range(from, to);
+
+  if (error) throw new Error(`Database error: ${error.message}`);
+  return {
+    list: (data || []).map((row) => this.mapToDomain(row)),
+    count: data?.length || 0,
+  };
+}
+
+  async findSimilarMembersBasedOnField(
+    fieldName: string,
+    fieldValue: unknown,
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ list: GdgMember[]; count: number }> {
+    const from = (pageNumber - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select("*")
+      .or(`${fieldName}.ilike.${fieldValue}`)
+      .range(from, to);
+
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return {
+      list: (data || []).map((row) => this.mapToDomain(row)),
+      count: data?.length || 0,
+    };
   }
 
   async search(query: string, limit: number): Promise<GdgMember[]> {
