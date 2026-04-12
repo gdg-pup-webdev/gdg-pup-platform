@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Card, Text, Skeleton } from "@packages/spark-ui";
+import { Card, Text } from "@packages/spark-ui";
 import { useEvents } from "../hooks/useEvents";
 import type { Event } from "../types";
 import { cn } from "@/lib/utils";
 import { ASSETS } from "@/lib/constants/assets";
+import { BrandedSkeleton } from "@/components/shared";
 import { normalizeEventDescription } from "../utils/description";
 import { DateSelector } from "./DateSelector";
 
@@ -139,11 +140,17 @@ const EVENT_SEQUENCE_GRADIENTS = [
 function EventSkeleton() {
   return (
     <div className="absolute inset-0 z-10 overflow-hidden">
-      <div className="absolute inset-0 animate-pulse opacity-70 bg-muted" />
+      <div
+        className="absolute inset-0 opacity-80"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(22,36,86,0.28) 0%, rgba(66,133,244,0.16) 45%, rgba(234,67,53,0.18) 100%)",
+        }}
+      />
       <div className="relative z-20 h-full md:p-2 flex flex-col">
         <div className="mt-auto space-y-1 md:space-y-2">
-          <Skeleton className="h-1.5 md:h-3 w-4/5 bg-black/15 border-none" />
-          <Skeleton className="h-1.5 md:h-3 w-1/2 bg-black/10 border-none" />
+          <BrandedSkeleton className="h-1.5 md:h-3 w-4/5" variant="text" />
+          <BrandedSkeleton className="h-1.5 md:h-3 w-1/2" variant="text" />
         </div>
       </div>
     </div>
