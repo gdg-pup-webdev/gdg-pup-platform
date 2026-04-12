@@ -109,7 +109,7 @@ export const AnalyticsPageContent = () => {
             {/* Heading — centred on mobile, left-aligned on desktop */}
             <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <Link href="/sparkmates/me" className="mb-4 flex items-center justify-center sm:justify-start gap-2 text-[#C1C7CD] transition-colors hover:text-white w-fit mx-auto sm:mx-0">
+                <Link prefetch={false} href="/sparkmates/me" className="mb-4 flex items-center justify-center sm:justify-start gap-2 text-[#C1C7CD] transition-colors hover:text-white w-fit mx-auto sm:mx-0">
                   <ChevronLeft size={16} />
                   <span>Back to Portfolio</span>
                 </Link>
