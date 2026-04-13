@@ -21,5 +21,6 @@ export const configs = {
   },
   security: {
     disabled: process.env.SECURITY_DISABLED === "true" || false,
-  }
+  },
+  hideApiDocs: process.env.HIDE_API_DOCS === "true" || false,
 };
