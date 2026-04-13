@@ -311,6 +311,43 @@ export const publicEventAttendanceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicEventImagesRowSchema = z.object({
+  created_at: z.string(),
+  eventId: z.string().nullable(),
+  id: z.string(),
+  imageUrl: z.string().nullable(),
+  position: z.number().nullable(),
+  updatedAt: z.string().nullable(),
+});
+
+export const publicEventImagesInsertSchema = z.object({
+  created_at: z.string().optional(),
+  eventId: z.string().optional().nullable(),
+  id: z.string().optional(),
+  imageUrl: z.string().optional().nullable(),
+  position: z.number().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
+export const publicEventImagesUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  eventId: z.string().optional().nullable(),
+  id: z.string().optional(),
+  imageUrl: z.string().optional().nullable(),
+  position: z.number().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
+export const publicEventImagesRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("event_images_eventId_fkey"),
+    columns: z.tuple([z.literal("eventId")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("event"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicFileRecordRowSchema = z.object({
   created_at: z.string(),
   deleted_at: z.string().nullable(),

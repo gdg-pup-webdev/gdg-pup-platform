@@ -26,9 +26,9 @@ function ConfirmPageContent() {
       resolvePostAuthTarget({
         next: searchParams.get("next"),
         callbackUrl: searchParams.get("callbackUrl"),
-        isOnboarded: memberProfile?.isPublic !== null,
+        isOnboarded: memberProfile?.isOnboarded ?? undefined,
       }),
-    [memberProfile?.isPublic, searchParams],
+    [memberProfile?.isOnboarded, searchParams],
   );
 
   useEffect(() => {
@@ -107,7 +107,7 @@ function ConfirmPageContent() {
     return () => {
       isCancelled = true;
     };
-  }, [destination, memberProfile?.isPublic, router, searchParams, setAuthToken]);
+  }, [destination, memberProfile?.isOnboarded, router, searchParams, setAuthToken]);
 
   if (status === "loading") {
     return (

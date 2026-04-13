@@ -285,6 +285,41 @@ export type Database = {
           },
         ]
       }
+      event_images: {
+        Row: {
+          created_at: string
+          eventId: string | null
+          id: string
+          imageUrl: string | null
+          position: number | null
+          updatedAt: string | null
+        }
+        Insert: {
+          created_at?: string
+          eventId?: string | null
+          id?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Update: {
+          created_at?: string
+          eventId?: string | null
+          id?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_images_eventId_fkey"
+            columns: ["eventId"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       file_record: {
         Row: {
           created_at: string

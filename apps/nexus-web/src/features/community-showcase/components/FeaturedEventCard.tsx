@@ -87,7 +87,7 @@ const TRUNCATED_ABOUT =
           onMouseLeave={() => setIsCardHovered(false)}
         >
           <img
-            src={event.image_url || ASSETS.PLACEHOLDERS.DEFAULT}
+            src={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
             alt=""
             className="w-full h-full object-cover rounded-[30px]"
           />

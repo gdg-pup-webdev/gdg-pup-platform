@@ -25,6 +25,7 @@ describe("EventsRouter sync routes", () => {
     rsvp: 39,
     bevy_event_id: "12345",
     image_url: null,
+    images: [],
     bevyPreviewUrl: null,
     short_description: null,
     max_capacity: 100,

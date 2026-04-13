@@ -393,3 +393,15 @@ CREATE TABLE public.wallet_transaction (
   point_type text,
   CONSTRAINT wallet_transaction_pkey PRIMARY KEY (id)
 );
+CREATE TABLE public.event_images (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  eventId uuid NOT NULL,
+  imageUrl text NOT NULL,
+  position smallint NOT NULL,
+  createdAt timestamp with time zone NOT NULL DEFAULT now(),
+  updatedAt timestamp with time zone,
+  CONSTRAINT event_images_pkey PRIMARY KEY (id),
+  CONSTRAINT event_images_eventId_fkey FOREIGN KEY (eventId) REFERENCES public.event(id) ON DELETE CASCADE,
+  CONSTRAINT event_images_eventId_position_key UNIQUE (eventId, position),
+  CONSTRAINT event_images_position_check CHECK (position >= 0 AND position <= 19)
+);

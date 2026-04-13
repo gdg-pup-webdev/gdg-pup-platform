@@ -96,6 +96,7 @@ const makeEvent = (bevyEventId: string, rsvp: number | null = null) =>
     rsvp,
     bevy_event_id: bevyEventId,
     image_url: null,
+    images: [],
     bevyPreviewUrl: null,
     short_description: null,
     max_capacity: 100,

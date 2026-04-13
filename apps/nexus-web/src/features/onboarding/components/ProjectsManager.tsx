@@ -141,7 +141,7 @@ export function ProjectsManager({
   addProject,
   removeProject,
   singleProjectMode = false,
-  imageInputMode = "legacy",
+  imageInputMode = "list",
   updateProjectImages,
   removeExistingProjectImage,
 }: ProjectsManagerProps) {
