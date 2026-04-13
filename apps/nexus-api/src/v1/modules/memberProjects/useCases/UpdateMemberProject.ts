@@ -23,7 +23,7 @@ export class UpdateMemberProject {
       throw new NotFoundError(`Member Project with ID ${input.id} not found`);
     }
 
-    if (input.images) {
+    if (input.images !== undefined) {
       if (input.images.length > MEMBER_PROJECT_MAX_IMAGES) {
         throw new ValidationError(
           `A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`,

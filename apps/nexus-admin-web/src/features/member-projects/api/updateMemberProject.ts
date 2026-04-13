@@ -6,11 +6,6 @@ import { UpdateMemberProjectDTO } from "../types";
 export async function updateMemberProject(
   id: string,
   data: UpdateMemberProjectDTO,
-  files?: {
-    mainImage?: File;
-    secondaryImage?: File;
-    tertiaryImage?: File;
-  }
 ) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
@@ -18,8 +13,7 @@ export async function updateMemberProject(
     {
       params: { id },
       body: { data },
-      files: files as any,
-    }
+    },
   );
 
   if (result.status === 200 && result.body) {

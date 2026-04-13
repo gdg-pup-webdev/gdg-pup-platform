@@ -3,21 +3,13 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { CreateMemberProjectDTO } from "../types";
 
-export async function createMemberProject(
-  data: CreateMemberProjectDTO,
-  files?: {
-    mainImage?: File;
-    secondaryImage?: File;
-    tertiaryImage?: File;
-  }
-) {
+export async function createMemberProject(data: CreateMemberProjectDTO) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.POST,
     {
       body: { data },
-      files: files as any,
-    }
+    },
   );
 
   if (result.status === 201 && result.body) {

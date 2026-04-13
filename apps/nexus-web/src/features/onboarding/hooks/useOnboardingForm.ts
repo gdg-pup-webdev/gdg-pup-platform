@@ -3,7 +3,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
-import { useAuthContext, STATUS } from "@/features/authentication/store/useAuthStore";
+import {
+  useAuthContext,
+  STATUS,
+} from "@/features/authentication/store/useAuthStore";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { LINKS } from "@/lib/constants/links";
@@ -57,7 +60,9 @@ export function useOnboardingForm(gdgId: string) {
   const [profileFile, setProfileFile] = useState<File | null>(null);
   const [serverAvatarUrl, setServerAvatarUrl] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(initialState);
-  const [projects, setProjects] = useState<ProjectFormState[]>([createEmptyProject()]);
+  const [projects, setProjects] = useState<ProjectFormState[]>([
+    createEmptyProject(),
+  ]);
 
   useEffect(() => {
     if (!token || !gdgId) return;
@@ -114,7 +119,10 @@ export function useOnboardingForm(gdgId: string) {
           },
         );
 
-        if (projectsResult.status === 200 && projectsResult.body.data.length > 0) {
+        if (
+          projectsResult.status === 200 &&
+          projectsResult.body.data.length > 0
+        ) {
           setProjects(
             projectsResult.body.data.map((project) => ({
               id: project.id,
@@ -149,11 +157,18 @@ export function useOnboardingForm(gdgId: string) {
     };
   }, [gdgId, token]);
 
-  const updateField = (field: keyof FormState, value: string | boolean | null) => {
+  const updateField = (
+    field: keyof FormState,
+    value: string | boolean | null,
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateProject = (index: number, field: keyof Omit<ProjectFormState, "id">, value: string | File | null) => {
+  const updateProject = (
+    index: number,
+    field: keyof Omit<ProjectFormState, "id">,
+    value: string | File | null,
+  ) => {
     setProjects((prev) => {
       const next = [...prev];
       const item = next[index];
@@ -197,7 +212,9 @@ export function useOnboardingForm(gdgId: string) {
     }
 
     if (form.isPublic === null) {
-      toast.error("Please select your profile visibility (Public or Private) before saving.");
+      toast.error(
+        "Please select your profile visibility (Public or Private) before saving.",
+      );
       return;
     }
 
@@ -256,7 +273,12 @@ export function useOnboardingForm(gdgId: string) {
         throw new Error(extractErrorMessage(updateResult.body));
       }
 
-      const validProjects = projects.filter((project) => project.title.trim() && project.description.trim() && project.startDate);
+      const validProjects = projects.filter(
+        (project) =>
+          project.title.trim() &&
+          project.description.trim() &&
+          project.startDate,
+      );
 
       for (const project of validProjects) {
         const images = [
@@ -311,7 +333,9 @@ export function useOnboardingForm(gdgId: string) {
 
       setIsSuccess(true);
     } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : "Unable to save your profile.");
+      toast.error(
+        error instanceof Error ? error.message : "Unable to save your profile.",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -336,7 +360,10 @@ export function useOnboardingForm(gdgId: string) {
       );
       await fetchMemberProfile();
     } catch (error) {
-      console.error("Failed to mark onboarding as completed during skip", error);
+      console.error(
+        "Failed to mark onboarding as completed during skip",
+        error,
+      );
     }
     router.push(LINKS.sparkmates_me);
   };

@@ -38,7 +38,9 @@ export async function getMemberProjectsPaginated(
     return result.body;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to fetch projects");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to fetch projects",
+  );
 }
 
 export async function getMemberProjects(memberGdgId: string, token?: string) {
@@ -51,10 +53,16 @@ export async function getMemberProjects(memberGdgId: string, token?: string) {
   return response.data;
 }
 
-export async function createMemberProject(memberGdgId: string, project: Omit<ProjectFormState, "id">, token?: string) {
-  const images = [project.mainImageUrl, project.secondaryImageUrl, project.tertiaryImageUrl].filter(
-    (image): image is string => Boolean(image),
-  );
+export async function createMemberProject(
+  memberGdgId: string,
+  project: Omit<ProjectFormState, "id">,
+  token?: string,
+) {
+  const images = [
+    project.mainImageUrl,
+    project.secondaryImageUrl,
+    project.tertiaryImageUrl,
+  ].filter((image): image is string => Boolean(image));
 
   const bodyData = {
     title: project.title.trim(),
@@ -78,13 +86,21 @@ export async function createMemberProject(memberGdgId: string, project: Omit<Pro
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to create project");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to create project",
+  );
 }
 
-export async function updateMemberProject(projectId: string, project: Omit<ProjectFormState, "id">, token?: string) {
-  const images = [project.mainImageUrl, project.secondaryImageUrl, project.tertiaryImageUrl].filter(
-    (image): image is string => Boolean(image),
-  );
+export async function updateMemberProject(
+  projectId: string,
+  project: Omit<ProjectFormState, "id">,
+  token?: string,
+) {
+  const images = [
+    project.mainImageUrl,
+    project.secondaryImageUrl,
+    project.tertiaryImageUrl,
+  ].filter((image): image is string => Boolean(image));
 
   const bodyData = {
     title: project.title.trim(),
@@ -108,7 +124,9 @@ export async function updateMemberProject(projectId: string, project: Omit<Proje
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to update project");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to update project",
+  );
 }
 
 export async function deleteMemberProject(projectId: string, token?: string) {
@@ -125,7 +143,9 @@ export async function deleteMemberProject(projectId: string, token?: string) {
     return true;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to delete project");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to delete project",
+  );
 }
 
 export async function addMemberProjectImage(
@@ -148,7 +168,9 @@ export async function addMemberProjectImage(
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to add project image");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to add project image",
+  );
 }
 
 export async function deleteMemberProjectImage(
@@ -172,7 +194,9 @@ export async function deleteMemberProjectImage(
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to delete project image");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to delete project image",
+  );
 }
 
 export async function reorderMemberProjectImages(
@@ -200,7 +224,9 @@ export async function reorderMemberProjectImages(
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to reorder project images");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to reorder project images",
+  );
 }
 
 export async function reorderMemberProjects(
@@ -228,5 +254,7 @@ export async function reorderMemberProjects(
     return true;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to reorder projects");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to reorder projects",
+  );
 }
