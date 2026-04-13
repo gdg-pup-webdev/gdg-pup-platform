@@ -123,11 +123,11 @@ export function useOnboardingForm(gdgId: string) {
               endDate: toDateInputValue(project.endDate),
               description: project.description,
               mainImageFile: null,
-              mainImageUrl: project.mainImageUrl,
+              mainImageUrl: project.images[0] || null,
               secondaryImageFile: null,
-              secondaryImageUrl: project.secondaryImageUrl,
+              secondaryImageUrl: project.images[1] || null,
               tertiaryImageFile: null,
-              tertiaryImageUrl: project.tertiaryImageUrl,
+              tertiaryImageUrl: project.images[2] || null,
             })),
           );
         }
@@ -259,11 +259,18 @@ export function useOnboardingForm(gdgId: string) {
       const validProjects = projects.filter((project) => project.title.trim() && project.description.trim() && project.startDate);
 
       for (const project of validProjects) {
+        const images = [
+          project.mainImageUrl,
+          project.secondaryImageUrl,
+          project.tertiaryImageUrl,
+        ].filter((image): image is string => Boolean(image));
+
         const bodyData = {
           title: project.title.trim(),
           startDate: project.startDate,
           endDate: project.endDate || null,
           description: project.description.trim(),
+          images,
         };
 
         if (project.id) {
@@ -274,11 +281,6 @@ export function useOnboardingForm(gdgId: string) {
               token: token ?? undefined,
               params: { id: project.id },
               body: { data: bodyData },
-              files: {
-                mainImage: project.mainImageFile || undefined,
-                secondaryImage: project.secondaryImageFile || undefined,
-                tertiaryImage: project.tertiaryImageFile || undefined,
-              },
             },
           );
 
@@ -298,11 +300,6 @@ export function useOnboardingForm(gdgId: string) {
                 ...bodyData,
                 memberGdgId: gdgId,
               },
-            },
-            files: {
-              mainImage: project.mainImageFile || undefined,
-              secondaryImage: project.secondaryImageFile || undefined,
-              tertiaryImage: project.tertiaryImageFile || undefined,
             },
           },
         );

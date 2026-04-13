@@ -52,11 +52,16 @@ export async function getMemberProjects(memberGdgId: string, token?: string) {
 }
 
 export async function createMemberProject(memberGdgId: string, project: Omit<ProjectFormState, "id">, token?: string) {
+  const images = [project.mainImageUrl, project.secondaryImageUrl, project.tertiaryImageUrl].filter(
+    (image): image is string => Boolean(image),
+  );
+
   const bodyData = {
     title: project.title.trim(),
     startDate: project.startDate,
     endDate: project.endDate || null,
     description: project.description.trim(),
+    images,
     memberGdgId,
   };
 
@@ -66,11 +71,6 @@ export async function createMemberProject(memberGdgId: string, project: Omit<Pro
     {
       token: token ?? undefined,
       body: { data: bodyData },
-      files: {
-        mainImage: project.mainImageFile || undefined,
-        secondaryImage: project.secondaryImageFile || undefined,
-        tertiaryImage: project.tertiaryImageFile || undefined,
-      },
     },
   );
 
@@ -82,11 +82,16 @@ export async function createMemberProject(memberGdgId: string, project: Omit<Pro
 }
 
 export async function updateMemberProject(projectId: string, project: Omit<ProjectFormState, "id">, token?: string) {
+  const images = [project.mainImageUrl, project.secondaryImageUrl, project.tertiaryImageUrl].filter(
+    (image): image is string => Boolean(image),
+  );
+
   const bodyData = {
     title: project.title.trim(),
     startDate: project.startDate,
     endDate: project.endDate || null,
     description: project.description.trim(),
+    images,
   };
 
   const result = await callEndpoint(
@@ -96,11 +101,6 @@ export async function updateMemberProject(projectId: string, project: Omit<Proje
       token: token ?? undefined,
       params: { id: projectId },
       body: { data: bodyData },
-      files: {
-        mainImage: project.mainImageFile || undefined,
-        secondaryImage: project.secondaryImageFile || undefined,
-        tertiaryImage: project.tertiaryImageFile || undefined,
-      },
     },
   );
 
