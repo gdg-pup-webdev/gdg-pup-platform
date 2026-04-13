@@ -35,7 +35,7 @@ const getSwaggerSpec = () => {
 };
 
 export const loadDocs = (app: Express) => {
-  if (process.env.HIDE_API_DOCS === "true") {
+  if (configs.hideApiDocs) {
     console.log("Skipping API documentation (HIDE_API_DOCS=true).");
     return;
   }
