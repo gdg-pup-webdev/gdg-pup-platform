@@ -2,12 +2,14 @@ import { MemberProject } from "../domain/MemberProject";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { IFileStorage, FileToUpload } from "../domain/IFileStorage";
 import { IMemberService } from "../domain/IMemberService";
+import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
 
 export type CreateMemberProjectInput = {
   title: string;
   startDate: Date;
   endDate: Date | null;
   description: string;
+  images?: FileToUpload[];
   mainImage: FileToUpload | null;
   secondaryImage: FileToUpload | null;
   tertiaryImage: FileToUpload | null;
@@ -24,26 +26,25 @@ export class CreateMemberProject {
   async execute(input: CreateMemberProjectInput): Promise<MemberProject> {
     const memberExists = await this.memberModule.memberExistsByGdgId(input.memberGdgId);
     if (!memberExists) {
-      throw new Error(`Member with GDG ID ${input.memberGdgId} not found`);
+      throw new NotFoundError(`Member with GDG ID ${input.memberGdgId} not found`);
     }
 
-    let mainImageUrl = null;
-    let secondaryImageUrl = null;
-    let tertiaryImageUrl = null;
+    const files: FileToUpload[] = [
+      ...(input.images || []),
+      input.mainImage,
+      input.secondaryImage,
+      input.tertiaryImage,
+    ].filter((file): file is FileToUpload => Boolean(file));
 
-    if (input.mainImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.mainImage);
-      mainImageUrl = uploaded.publicUrl;
+    if (files.length > 4) {
+      throw new ValidationError("A member project can only contain up to 4 images.");
     }
 
-    if (input.secondaryImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.secondaryImage);
-      secondaryImageUrl = uploaded.publicUrl;
-    }
+    const images: string[] = [];
 
-    if (input.tertiaryImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.tertiaryImage);
-      tertiaryImageUrl = uploaded.publicUrl;
+    for (const file of files) {
+      const uploaded = await this.fileStorage.uploadFile(file);
+      images.push(uploaded.publicUrl);
     }
 
     const project = MemberProject.create({
@@ -51,9 +52,7 @@ export class CreateMemberProject {
       startDate: input.startDate,
       endDate: input.endDate,
       description: input.description,
-      mainImageUrl,
-      secondaryImageUrl,
-      tertiaryImageUrl,
+      images,
       memberGdgId: input.memberGdgId,
     });
 

@@ -20,6 +20,9 @@ export type ProjectFormState = {
   startDate: string;
   endDate: string;
   description: string;
+  imageFiles?: File[];
+  imageUrls?: string[];
+  originalImageUrls?: string[];
   mainImageFile: File | null;
   mainImageUrl: string | null;
   secondaryImageFile: File | null;

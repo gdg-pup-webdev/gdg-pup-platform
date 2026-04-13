@@ -145,14 +145,23 @@ CREATE TABLE public.member_projects (
   startDate timestamp with time zone,
   endDate timestamp with time zone,
   description text,
-  mainImageUrl text,
-  secondaryImageUrl text,
-  tertiaryImageUrl text,
   memberGdgId text,
   createdAt timestamp with time zone NOT NULL DEFAULT now(),
   updatedAt timestamp with time zone,
   CONSTRAINT member_projects_pkey PRIMARY KEY (id),
   CONSTRAINT member_projects_memberGdgId_fkey FOREIGN KEY (memberGdgId) REFERENCES public.gdg_members(gdg_id)
+);
+CREATE TABLE public.member_project_images (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  memberProjectId uuid NOT NULL,
+  imageUrl text NOT NULL,
+  position smallint NOT NULL,
+  createdAt timestamp with time zone NOT NULL DEFAULT now(),
+  updatedAt timestamp with time zone,
+  CONSTRAINT member_project_images_pkey PRIMARY KEY (id),
+  CONSTRAINT member_project_images_memberProjectId_fkey FOREIGN KEY (memberProjectId) REFERENCES public.member_projects(id) ON DELETE CASCADE,
+  CONSTRAINT member_project_images_memberProjectId_position_key UNIQUE (memberProjectId, position),
+  CONSTRAINT member_project_images_position_check CHECK (position >= 0 AND position <= 3)
 );
 CREATE TABLE public.member_showcase (
   id uuid NOT NULL,

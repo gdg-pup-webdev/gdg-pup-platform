@@ -410,6 +410,7 @@ export const publicGdgMembersRowSchema = z.object({
   first_name: z.string().nullable(),
   gdg_id: z.string(),
   github_url: z.string().nullable(),
+  is_onboarded: z.boolean().nullable(),
   is_public: z.boolean().nullable(),
   last_name: z.string().nullable(),
   learning_interests: z.string().nullable(),
@@ -439,6 +440,7 @@ export const publicGdgMembersInsertSchema = z.object({
   first_name: z.string().optional().nullable(),
   gdg_id: z.string(),
   github_url: z.string().optional().nullable(),
+  is_onboarded: z.boolean().optional().nullable(),
   is_public: z.boolean().optional().nullable(),
   last_name: z.string().optional().nullable(),
   learning_interests: z.string().optional().nullable(),
@@ -468,6 +470,7 @@ export const publicGdgMembersUpdateSchema = z.object({
   first_name: z.string().optional().nullable(),
   gdg_id: z.string().optional(),
   github_url: z.string().optional().nullable(),
+  is_onboarded: z.boolean().optional().nullable(),
   is_public: z.boolean().optional().nullable(),
   last_name: z.string().optional().nullable(),
   learning_interests: z.string().optional().nullable(),
@@ -573,6 +576,43 @@ export const publicLearningResourceRelationshipsSchema = z.tuple([
   }),
 ]);
 
+export const publicMemberProjectImagesRowSchema = z.object({
+  created_at: z.string(),
+  id: z.string(),
+  imageUrl: z.string().nullable(),
+  memberProjectId: z.string().nullable(),
+  position: z.number().nullable(),
+  updatedAt: z.string().nullable(),
+});
+
+export const publicMemberProjectImagesInsertSchema = z.object({
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  imageUrl: z.string().optional().nullable(),
+  memberProjectId: z.string().optional().nullable(),
+  position: z.number().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
+export const publicMemberProjectImagesUpdateSchema = z.object({
+  created_at: z.string().optional(),
+  id: z.string().optional(),
+  imageUrl: z.string().optional().nullable(),
+  memberProjectId: z.string().optional().nullable(),
+  position: z.number().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
+});
+
+export const publicMemberProjectImagesRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("member_project_images_memberProjectId_fkey"),
+    columns: z.tuple([z.literal("memberProjectId")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("member_projects"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
+
 export const publicMemberProjectsRowSchema = z.object({
   createdAt: z.string(),
   description: z.string().nullable(),
@@ -580,6 +620,7 @@ export const publicMemberProjectsRowSchema = z.object({
   id: z.string(),
   mainImageUrl: z.string().nullable(),
   memberGdgId: z.string().nullable(),
+  position: z.number().nullable(),
   secondaryImageUrl: z.string().nullable(),
   startDate: z.string().nullable(),
   tertiaryImageUrl: z.string().nullable(),
@@ -594,6 +635,7 @@ export const publicMemberProjectsInsertSchema = z.object({
   id: z.string().optional(),
   mainImageUrl: z.string().optional().nullable(),
   memberGdgId: z.string().optional().nullable(),
+  position: z.number().optional().nullable(),
   secondaryImageUrl: z.string().optional().nullable(),
   startDate: z.string().optional().nullable(),
   tertiaryImageUrl: z.string().optional().nullable(),
@@ -608,6 +650,7 @@ export const publicMemberProjectsUpdateSchema = z.object({
   id: z.string().optional(),
   mainImageUrl: z.string().optional().nullable(),
   memberGdgId: z.string().optional().nullable(),
+  position: z.number().optional().nullable(),
   secondaryImageUrl: z.string().optional().nullable(),
   startDate: z.string().optional().nullable(),
   tertiaryImageUrl: z.string().optional().nullable(),
@@ -1509,6 +1552,16 @@ export const publicGetSparkmatesAnalyticsReturnsSchema = z.array(
   }),
 );
 
+export const publicShowLimitArgsSchema = z.never();
+
+export const publicShowLimitReturnsSchema = z.number();
+
+export const publicShowTrgmArgsSchema = z.object({
+  "": z.string(),
+});
+
+export const publicShowTrgmReturnsSchema = z.array(z.string());
+
 export const publicVerifyMemberArgsSchema = z.object({
   search_term: z.string(),
 });
@@ -1524,6 +1577,7 @@ export const publicVerifyMemberReturnsSchema = z.array(
     first_name: z.string().nullable(),
     gdg_id: z.string(),
     github_url: z.string().nullable(),
+    is_onboarded: z.boolean().nullable(),
     is_public: z.boolean().nullable(),
     last_name: z.string().nullable(),
     learning_interests: z.string().nullable(),
