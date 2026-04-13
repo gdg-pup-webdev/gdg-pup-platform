@@ -330,6 +330,7 @@ export type Database = {
           file_type: string
           folder_id: string | null
           id: string
+          is_deleted: boolean | null
           preview_url: string | null
           storage_ref: string | null
           updated_at: string
@@ -343,6 +344,7 @@ export type Database = {
           file_type?: string
           folder_id?: string | null
           id?: string
+          is_deleted?: boolean | null
           preview_url?: string | null
           storage_ref?: string | null
           updated_at?: string
@@ -356,6 +358,7 @@ export type Database = {
           file_type?: string
           folder_id?: string | null
           id?: string
+          is_deleted?: boolean | null
           preview_url?: string | null
           storage_ref?: string | null
           updated_at?: string

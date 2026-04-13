@@ -1,4 +1,3 @@
- 
 import { supabase } from "@/v1/lib/supabase";
 import {
   FileRecord,
@@ -25,6 +24,7 @@ export class SupabaseFileRepository implements IFileRepository {
       preview_url: props.previewUrl,
       storage_ref: props.storageReference,
       file_type: props.fileType,
+      is_deleted: false,
     };
   }
 
@@ -45,6 +45,7 @@ export class SupabaseFileRepository implements IFileRepository {
       ...(props.id !== undefined && { id: props.id }),
       ...(props.createdAt !== undefined && { created_at: props.createdAt }),
       ...(props.updatedAt !== undefined && { updated_at: props.updatedAt }),
+      ...(props.isDeleted !== undefined && { is_deleted: props.isDeleted }),
       ...(props.deletedAt !== undefined && { deleted_at: props.deletedAt }),
     };
   }
@@ -61,8 +62,17 @@ export class SupabaseFileRepository implements IFileRepository {
       fileType: row.file_type || "",
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      isDeleted: Boolean(row.is_deleted),
       deletedAt: row.deleted_at,
     };
+  }
+
+  private toHydratedRecord(row: any): FileRecord | null {
+    const domainRecord = this.toDomainRecord(row);
+    if (domainRecord.isDeleted) {
+      return null;
+    }
+    return FileRecord.hydrate(domainRecord);
   }
 
   // --- Repository Methods ---
@@ -89,7 +99,7 @@ export class SupabaseFileRepository implements IFileRepository {
       .maybeSingle();
 
     if (error) throw new Error(`Failed to find file: ${error.message}`);
-    return data ? FileRecord.hydrate(this.toDomainRecord(data)) : null;
+    return data ? this.toHydratedRecord(data) : null;
   }
 
   async findByPreviewUrl(previewUrl: string): Promise<FileRecord | null> {
@@ -100,7 +110,7 @@ export class SupabaseFileRepository implements IFileRepository {
       .maybeSingle();
 
     if (error) throw new Error(`Failed to find file by URL: ${error.message}`);
-    return data ? FileRecord.hydrate(this.toDomainRecord(data)) : null;
+    return data ? this.toHydratedRecord(data) : null;
   }
 
   async saveUpdates(file: FileRecord): Promise<FileRecord> {
@@ -116,6 +126,11 @@ export class SupabaseFileRepository implements IFileRepository {
 
     if (error)
       throw new Error(`Failed to update file record: ${error.message}`);
+
+    if (file.props.isDeleted) {
+      return file;
+    }
+
     return FileRecord.hydrate(this.toDomainRecord(data));
   }
 
@@ -129,15 +144,16 @@ export class SupabaseFileRepository implements IFileRepository {
     const { data, error, count } = await supabase
       .from(this.TABLE_NAME)
       .select("*", { count: "exact" })
+      .eq("is_deleted", false)
       .order("created_at", { ascending: false })
       .range(from, to);
 
     if (error) throw new Error(`Failed to list files: ${error.message}`);
 
     return {
-      list: (data || []).map((row) =>
-        FileRecord.hydrate(this.toDomainRecord(row)),
-      ),
+      list: (data || [])
+        .map((row) => this.toHydratedRecord(row))
+        .filter((record): record is FileRecord => record !== null),
       count: count || 0,
     };
   }
@@ -152,24 +168,26 @@ export class SupabaseFileRepository implements IFileRepository {
 
     let query = supabase
       .from(this.TABLE_NAME)
-      .select("*", { count: "exact" });
+      .select("*", { count: "exact" })
+      .eq("is_deleted", false);
 
     if (folderId === null) {
-        query = query.is("folder_id", null);
+      query = query.is("folder_id", null);
     } else {
-        query = query.eq("folder_id", folderId);
+      query = query.eq("folder_id", folderId);
     }
 
     const { data, error, count } = await query
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (error) throw new Error(`Failed to list files by folder: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to list files by folder: ${error.message}`);
 
     return {
-      list: (data || []).map((row) =>
-        FileRecord.hydrate(this.toDomainRecord(row)),
-      ),
+      list: (data || [])
+        .map((row) => this.toHydratedRecord(row))
+        .filter((record): record is FileRecord => record !== null),
       count: count || 0,
     };
   }
@@ -177,7 +195,14 @@ export class SupabaseFileRepository implements IFileRepository {
   async deleteById(id: string): Promise<boolean> {
     const { error } = await supabase
       .from(this.TABLE_NAME)
-      .delete()
+      .update(
+        this.toDbUpdate({
+          isDeleted: true,
+          deletedAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }),
+      )
+      .eq("is_deleted", false)
       .eq("id", id);
 
     if (error)

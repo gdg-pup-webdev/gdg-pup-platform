@@ -17,10 +17,9 @@ export class DeleteFileByPreviewUrl {
     const storageRes = await this.fileStorage.deleteFile(
       fileRecord.props.storageReference,
     );
-    const repositoryRes = await this.fileRepository.deleteById(
-      fileRecord.props.id,
-    );
+    fileRecord.markAsDeleted();
+    await this.fileRepository.saveUpdates(fileRecord);
 
-    return storageRes && repositoryRes;
+    return storageRes;
   }
 }

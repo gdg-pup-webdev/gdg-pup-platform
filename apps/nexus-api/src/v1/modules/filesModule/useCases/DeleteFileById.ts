@@ -25,7 +25,8 @@ export class DeleteFileById {
 
     await this.fileStorage.deleteFile(file.props.storageReference);
 
-    await this.fileRepository.deleteById(fileId);
+    file.markAsDeleted();
+    await this.fileRepository.saveUpdates(file);
 
     return true;
   }
