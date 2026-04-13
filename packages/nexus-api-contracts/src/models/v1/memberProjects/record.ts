@@ -29,9 +29,14 @@ export const memberProjectsRecordInsertDTO = memberProjectsRecord.omit({
   createdAt: true,
   updatedAt: true,
   member: true,
-  images: true,
+  images: true, 
 })
 
 /** Data Transfer Object for updating an existing member project. */
 export const memberProjectsRecordUpdateDTO =
-  memberProjectsRecordInsertDTO.partial();
+  memberProjectsRecord.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  member: true, 
+}).partial();

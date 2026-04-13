@@ -1,8 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, AlertTriangle, Plus, Trash2, UserPlus, Image as ImageIcon, Upload, ExternalLink, Calendar, Layout, FileText, Edit2 } from "lucide-react";
-import { MemberProject, CreateMemberProjectDTO, UpdateMemberProjectDTO } from "../types";
+import {
+  Trash2,
+  UserPlus,
+  Calendar,
+  Layout,
+  FileText,
+  Edit2,
+} from "lucide-react";
+import {
+  MemberProject,
+  CreateMemberProjectDTO,
+  UpdateMemberProjectDTO,
+} from "../types";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
@@ -11,7 +22,6 @@ import {
   AdminFormModal,
   AdminInputField,
   AdminTextAreaField,
-  AdminImageUploadField,
   AdminUserSearchField,
   AdminUserSearchOption,
 } from "@/components/admin/form";
@@ -23,47 +33,50 @@ import { ModalActionRow } from "@/components/admin/ModalActionRow";
 interface ProjectFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateMemberProjectDTO | UpdateMemberProjectDTO, files?: { mainImage?: File; secondaryImage?: File; tertiaryImage?: File }) => void;
+  onSubmit: (data: CreateMemberProjectDTO | UpdateMemberProjectDTO) => void;
   initialData?: MemberProject;
   isSubmitting: boolean;
 }
 
-export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSubmitting }: ProjectFormModalProps) {
-  const [formData, setFormData] = useState<Omit<CreateMemberProjectDTO, "member">>({
+export function ProjectFormModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+  isSubmitting,
+}: ProjectFormModalProps) {
+  const [formData, setFormData] = useState<
+    Omit<CreateMemberProjectDTO, "member">
+  >({
     title: "",
     description: "",
-    startDate: new Date().toISOString().split('T')[0],
+    startDate: new Date().toISOString().split("T")[0],
     endDate: null,
     memberGdgId: "",
   });
 
-  const [files, setFiles] = useState<{
-    mainImage?: File;
-    secondaryImage?: File;
-    tertiaryImage?: File;
-  }>({});
-
-  const [previews, setPreviews] = useState<{
-    main?: string | null;
-    secondary?: string | null;
-    tertiary?: string | null;
-  }>({});
-  const [selectedMember, setSelectedMember] = useState<AdminUserSearchOption[]>([]);
+  const [imageInputs, setImageInputs] = useState<string[]>(["", "", ""]);
+  const [selectedMember, setSelectedMember] = useState<AdminUserSearchOption[]>(
+    [],
+  );
 
   useEffect(() => {
     if (initialData) {
       setFormData({
         title: initialData.title,
         description: initialData.description,
-        startDate: new Date(initialData.startDate).toISOString().split('T')[0],
-        endDate: initialData.endDate ? new Date(initialData.endDate).toISOString().split('T')[0] : null,
+        startDate: new Date(initialData.startDate).toISOString().split("T")[0],
+        endDate: initialData.endDate
+          ? new Date(initialData.endDate).toISOString().split("T")[0]
+          : null,
         memberGdgId: initialData.memberGdgId,
+        // images: initialData.images,
       });
-      setPreviews({
-        main: initialData.mainImageUrl,
-        secondary: initialData.secondaryImageUrl,
-        tertiary: initialData.tertiaryImageUrl,
-      });
+      setImageInputs([
+        initialData.images[0] || "",
+        initialData.images[1] || "",
+        initialData.images[2] || "",
+      ]);
       setSelectedMember([
         {
           gdgId: initialData.memberGdgId,
@@ -74,14 +87,13 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
       setFormData({
         title: "",
         description: "",
-        startDate: new Date().toISOString().split('T')[0],
+        startDate: new Date().toISOString().split("T")[0],
         endDate: null,
         memberGdgId: "",
       });
-      setPreviews({});
+      setImageInputs([]);
       setSelectedMember([]);
     }
-    setFiles({});
   }, [initialData, isOpen]);
 
   useEffect(() => {
@@ -91,16 +103,15 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
     }));
   }, [selectedMember]);
 
-  const handleFileChange = (type: 'main' | 'secondary' | 'tertiary') => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFiles(prev => ({ ...prev, [`${type}Image`]: file }));
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviews(prev => ({ ...prev, [type]: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleImageInputChange = (index: number, value: string) => {
+    const nextInputs = [...imageInputs];
+    nextInputs[index] = value;
+    setImageInputs(nextInputs);
+
+    setFormData((prev) => ({
+      ...prev,
+      images: nextInputs.map((image) => image.trim()).filter(Boolean),
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -109,13 +120,13 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
       toast.error("Please select a member");
       return;
     }
-    onSubmit(formData, files);
+    onSubmit(formData);
   };
 
   return (
-    <AdminFormModal 
-      isOpen={isOpen} 
-      onClose={onClose} 
+    <AdminFormModal
+      isOpen={isOpen}
+      onClose={onClose}
       onSubmit={handleSubmit}
       title={initialData ? "Update Project" : "Create New Project"}
       isSubmitting={isSubmitting}
@@ -129,7 +140,9 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
             type="text"
             placeholder="e.g. GDG Platform Redesign"
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
           />
         </div>
 
@@ -158,7 +171,9 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
             required
             type="date"
             value={formData.startDate}
-            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, startDate: e.target.value })
+            }
           />
         </div>
 
@@ -167,7 +182,9 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
             label="End Date (Optional)"
             type="date"
             value={formData.endDate || ""}
-            onChange={(e) => setFormData({ ...formData, endDate: e.target.value || null })}
+            onChange={(e) =>
+              setFormData({ ...formData, endDate: e.target.value || null })
+            }
           />
         </div>
 
@@ -178,37 +195,38 @@ export function ProjectFormModal({ isOpen, onClose, onSubmit, initialData, isSub
             rows={4}
             placeholder="Provide a detailed description of the project, role, and achievements..."
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
           />
         </div>
 
-        {/* Image Uploads */}
+        {/* Image URLs */}
         <div className="md:col-span-2">
-          <label className="mb-3 block text-xs font-bold uppercase tracking-widest text-gray-500">Project Gallery</label>
+          <label className="mb-3 block text-xs font-bold uppercase tracking-widest text-gray-500">
+            Project Gallery
+          </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <AdminImageUploadField
-              label="Main Image"
-              previewUrl={previews.main || null}
-              onImageChange={(file, url) => {
-                setFiles(prev => ({ ...prev, mainImage: file || undefined }));
-                setPreviews(prev => ({ ...prev, main: url }));
-              }}
+            <AdminInputField
+              label="Image URL 1"
+              type="url"
+              placeholder="https://..."
+              value={imageInputs[0]}
+              onChange={(e) => handleImageInputChange(0, e.target.value)}
             />
-            <AdminImageUploadField
-              label="Secondary Image"
-              previewUrl={previews.secondary || null}
-              onImageChange={(file, url) => {
-                setFiles(prev => ({ ...prev, secondaryImage: file || undefined }));
-                setPreviews(prev => ({ ...prev, secondary: url }));
-              }}
+            <AdminInputField
+              label="Image URL 2"
+              type="url"
+              placeholder="https://..."
+              value={imageInputs[1]}
+              onChange={(e) => handleImageInputChange(1, e.target.value)}
             />
-            <AdminImageUploadField
-              label="Tertiary Image"
-              previewUrl={previews.tertiary || null}
-              onImageChange={(file, url) => {
-                setFiles(prev => ({ ...prev, tertiaryImage: file || undefined }));
-                setPreviews(prev => ({ ...prev, tertiary: url }));
-              }}
+            <AdminInputField
+              label="Image URL 3"
+              type="url"
+              placeholder="https://..."
+              value={imageInputs[2]}
+              onChange={(e) => handleImageInputChange(2, e.target.value)}
             />
           </div>
         </div>
@@ -228,7 +246,13 @@ interface DeleteConfirmModalProps {
   isDeleting: boolean;
 }
 
-export function DeleteConfirmModal({ isOpen, onClose, onConfirm, itemName, isDeleting }: DeleteConfirmModalProps) {
+export function DeleteConfirmModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  itemName,
+  isDeleting,
+}: DeleteConfirmModalProps) {
   return (
     <ConfirmDialog
       isOpen={isOpen}
@@ -239,9 +263,13 @@ export function DeleteConfirmModal({ isOpen, onClose, onConfirm, itemName, isDel
       confirmLabel="Confirm Delete"
       description={
         <>
-          <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
+          <p className="text-sm font-bold text-red-900">
+            Warning: Dangerous Action
+          </p>
           <p className="mt-1">
-            Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
+            Are you sure you want to delete{" "}
+            <span className="font-bold underline">"{itemName}"</span>? This
+            action is permanent and cannot be undone.
           </p>
         </>
       }
@@ -260,8 +288,15 @@ interface ProjectViewModalProps {
   onDelete: (project: MemberProject) => void;
 }
 
-export function ProjectViewModal({ isOpen, onClose, project, onEdit, onDelete }: ProjectViewModalProps) {
+export function ProjectViewModal({
+  isOpen,
+  onClose,
+  project,
+  onEdit,
+  onDelete,
+}: ProjectViewModalProps) {
   if (!project) return null;
+  const projectImages = project.images || [];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Project Details">
@@ -292,8 +327,13 @@ export function ProjectViewModal({ isOpen, onClose, project, onEdit, onDelete }:
 
         {/* Main Image */}
         <div className="relative h-64 w-full overflow-hidden rounded-sm bg-gray-100 border border-gray-100 shadow-inner">
-          {project.mainImageUrl ? (
-            <Image src={project.mainImageUrl} alt={project.title} fill className="object-cover" />
+          {projectImages[0] ? (
+            <Image
+              src={projectImages[0]}
+              alt={project.title}
+              fill
+              className="object-cover"
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-gray-300">
               <Layout size={64} strokeWidth={1} />
@@ -304,10 +344,17 @@ export function ProjectViewModal({ isOpen, onClose, project, onEdit, onDelete }:
         <div>
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-teal-600 mb-1">
             <Calendar size={14} />
-            {new Date(project.startDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
-            {project.endDate ? ` — ${new Date(project.endDate).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}` : ' — Present'}
+            {new Date(project.startDate).toLocaleDateString(undefined, {
+              month: "long",
+              year: "numeric",
+            })}
+            {project.endDate
+              ? ` — ${new Date(project.endDate).toLocaleDateString(undefined, { month: "long", year: "numeric" })}`
+              : " — Present"}
           </div>
-          <h3 className="text-2xl font-black text-gray-900 tracking-tight">{project.title}</h3>
+          <h3 className="text-2xl font-black text-gray-900 tracking-tight">
+            {project.title}
+          </h3>
           <div className="mt-2 flex items-center gap-2 text-sm font-bold text-gray-400 uppercase">
             <UserPlus size={14} />
             Member GDG ID: {project.memberGdgId}
@@ -320,24 +367,33 @@ export function ProjectViewModal({ isOpen, onClose, project, onEdit, onDelete }:
               <FileText size={14} />
               Description
             </h4>
-            <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">{project.description}</p>
+            <p className="text-sm leading-relaxed text-gray-700 whitespace-pre-wrap">
+              {project.description}
+            </p>
           </div>
-          
+
           {/* Gallery */}
-          {(project.secondaryImageUrl || project.tertiaryImageUrl) && (
+          {projectImages.length > 1 && (
             <div>
-              <h4 className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Project Gallery</h4>
+              <h4 className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">
+                Project Gallery
+              </h4>
               <div className="grid grid-cols-2 gap-4">
-                {project.secondaryImageUrl && (
-                  <div className="relative aspect-video overflow-hidden rounded-sm border border-gray-100 shadow-sm bg-white">
-                    <Image src={project.secondaryImageUrl} alt="Secondary" fill className="object-cover" />
-                  </div>
-                )}
-                {project.tertiaryImageUrl && (
-                  <div className="relative aspect-video overflow-hidden rounded-sm border border-gray-100 shadow-sm bg-white">
-                    <Image src={project.tertiaryImageUrl} alt="Tertiary" fill className="object-cover" />
-                  </div>
-                )}
+                {projectImages
+                  .slice(1)
+                  .map((imageUrl: string, index: number) => (
+                    <div
+                      key={`${imageUrl}-${index}`}
+                      className="relative aspect-video overflow-hidden rounded-sm border border-gray-100 shadow-sm bg-white"
+                    >
+                      <Image
+                        src={imageUrl}
+                        alt={`Project gallery image ${index + 2}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
               </div>
             </div>
           )}
