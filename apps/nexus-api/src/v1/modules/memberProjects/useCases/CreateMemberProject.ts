@@ -1,49 +1,41 @@
 import { MemberProject } from "../domain/MemberProject";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
-import { IFileStorage, FileToUpload } from "../domain/IFileStorage";
 import { IMemberService } from "../domain/IMemberService";
+import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
 
 export type CreateMemberProjectInput = {
   title: string;
   startDate: Date;
   endDate: Date | null;
   description: string;
-  mainImage: FileToUpload | null;
-  secondaryImage: FileToUpload | null;
-  tertiaryImage: FileToUpload | null;
+  images?: string[];
   memberGdgId: string;
 };
 
 export class CreateMemberProject {
   constructor(
     private repository: IMemberProjectRepository,
-    private fileStorage: IFileStorage,
-    private memberModule: IMemberService
+    private memberModule: IMemberService,
   ) {}
 
   async execute(input: CreateMemberProjectInput): Promise<MemberProject> {
-    const memberExists = await this.memberModule.memberExistsByGdgId(input.memberGdgId);
+    const memberExists = await this.memberModule.memberExistsByGdgId(
+      input.memberGdgId,
+    );
     if (!memberExists) {
-      throw new Error(`Member with GDG ID ${input.memberGdgId} not found`);
+      throw new NotFoundError(
+        `Member with GDG ID ${input.memberGdgId} not found`,
+      );
     }
 
-    let mainImageUrl = null;
-    let secondaryImageUrl = null;
-    let tertiaryImageUrl = null;
+    const images = [...(input.images || [])].filter(
+      (image): image is string => typeof image === "string" && image.length > 0,
+    );
 
-    if (input.mainImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.mainImage);
-      mainImageUrl = uploaded.publicUrl;
-    }
-
-    if (input.secondaryImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.secondaryImage);
-      secondaryImageUrl = uploaded.publicUrl;
-    }
-
-    if (input.tertiaryImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.tertiaryImage);
-      tertiaryImageUrl = uploaded.publicUrl;
+    if (images.length > 4) {
+      throw new ValidationError(
+        "A member project can only contain up to 4 images.",
+      );
     }
 
     const project = MemberProject.create({
@@ -51,9 +43,7 @@ export class CreateMemberProject {
       startDate: input.startDate,
       endDate: input.endDate,
       description: input.description,
-      mainImageUrl,
-      secondaryImageUrl,
-      tertiaryImageUrl,
+      images,
       memberGdgId: input.memberGdgId,
     });
 

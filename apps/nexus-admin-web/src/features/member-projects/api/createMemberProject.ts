@@ -16,7 +16,6 @@ export async function createMemberProject(
     contract.api.v1.member_projects.POST,
     {
       body: { data },
-      files: files as any,
     }
   );
 

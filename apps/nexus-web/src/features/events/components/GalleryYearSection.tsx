@@ -366,7 +366,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                   >
                     <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[220px] md:min-h-[560px]">
                       <img
-                        src={event.image_url || FALLBACK_COVER}
+                        src={event.image_url || event.images?.[0] || FALLBACK_COVER}
                         alt={event.title}
                         className="absolute inset-0 h-full w-full object-cover object-center"
                         draggable={false}

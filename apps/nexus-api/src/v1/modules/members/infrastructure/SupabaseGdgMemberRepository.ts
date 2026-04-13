@@ -133,6 +133,8 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       learning_interests: p.learningInterests.join(","),
       tools_and_technologies: p.toolsAndTechnologies.join(","),
       section_order: p.sectionOrder.join(","),
+      // Null means "no onboarding-state change" on update.
+      is_onboarded: p.isOnboarded ?? undefined,
       // Null means "no visibility change" on update.
       is_public: p.isPublic ?? undefined,
       updated_at: new Date().toISOString(),

@@ -133,15 +133,7 @@ describe("GdgMembersRouter suggested-users route", () => {
     expect(response.body).toEqual({
       status: "success",
       message: "Suggested GDG members fetched successfully",
-      data: [
-        {
-          gdgId: "GDG-2",
-          displayName: "Second User",
-          avatarUrl: null,
-          program: null,
-          department: null,
-        },
-      ],
+      data: [similarUserPayload],
       meta: {
         currentPage: 2,
         pageSize: 1,
@@ -196,14 +188,6 @@ describe("GdgMembersRouter suggested-users route", () => {
     expect(response.body.message).toBe(
       "Suggested GDG members fetched successfully",
     );
-    expect(response.body.data).toEqual([
-      {
-        gdgId: "GDG-2",
-        displayName: "Second User",
-        avatarUrl: null,
-        program: null,
-        department: null,
-      },
-    ]);
+    expect(response.body.data).toEqual([similarUserPayload]);
   });
 });

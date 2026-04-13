@@ -32,6 +32,8 @@ export function OnboardingForm({ gdgId, firstName }: OnboardingFormProps) {
     updateProject,
     addProject,
     removeProject,
+    updateProjectImages,
+    removeExistingProjectImage,
     handleSave,
     handleSkip,
     fetchMemberProfile,
@@ -140,6 +142,9 @@ export function OnboardingForm({ gdgId, firstName }: OnboardingFormProps) {
                     updateProject={updateProject}
                     addProject={addProject}
                     removeProject={removeProject}
+                    imageInputMode="list"
+                    updateProjectImages={updateProjectImages}
+                    removeExistingProjectImage={removeExistingProjectImage}
                   />
                 </div>
               )}

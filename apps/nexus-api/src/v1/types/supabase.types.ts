@@ -285,6 +285,41 @@ export type Database = {
           },
         ]
       }
+      event_images: {
+        Row: {
+          created_at: string
+          eventId: string | null
+          id: string
+          imageUrl: string | null
+          position: number | null
+          updatedAt: string | null
+        }
+        Insert: {
+          created_at?: string
+          eventId?: string | null
+          id?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Update: {
+          created_at?: string
+          eventId?: string | null
+          id?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_images_eventId_fkey"
+            columns: ["eventId"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       file_record: {
         Row: {
           created_at: string
@@ -544,6 +579,41 @@ export type Database = {
           },
         ]
       }
+      member_project_images: {
+        Row: {
+          created_at: string
+          id: string
+          imageUrl: string | null
+          memberProjectId: string | null
+          position: number | null
+          updatedAt: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          imageUrl?: string | null
+          memberProjectId?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          imageUrl?: string | null
+          memberProjectId?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_project_images_memberProjectId_fkey"
+            columns: ["memberProjectId"]
+            isOneToOne: false
+            referencedRelation: "member_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_projects: {
         Row: {
           createdAt: string
@@ -552,6 +622,7 @@ export type Database = {
           id: string
           mainImageUrl: string | null
           memberGdgId: string | null
+          position: number | null
           secondaryImageUrl: string | null
           startDate: string | null
           tertiaryImageUrl: string | null
@@ -565,6 +636,7 @@ export type Database = {
           id?: string
           mainImageUrl?: string | null
           memberGdgId?: string | null
+          position?: number | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
@@ -578,6 +650,7 @@ export type Database = {
           id?: string
           mainImageUrl?: string | null
           memberGdgId?: string | null
+          position?: number | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
@@ -1462,6 +1535,8 @@ export type Database = {
           source: Database["public"]["Enums"]["sparkmates_source"]
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       verify_member: {
         Args: { search_term: string }
         Returns: {
@@ -1474,6 +1549,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
+          is_onboarded: boolean | null
           is_public: boolean | null
           last_name: string | null
           learning_interests: string | null
