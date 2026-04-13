@@ -6,7 +6,13 @@ export function useCreateMemberProject() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ data }: { data: CreateMemberProjectDTO }) => createMemberProject(data),
+    mutationFn: ({ 
+      data, 
+      files 
+    }: { 
+      data: CreateMemberProjectDTO; 
+      files?: { mainImage?: File; secondaryImage?: File; tertiaryImage?: File } 
+    }) => createMemberProject(data, files),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["member-projects"] });
     },

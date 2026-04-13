@@ -24,7 +24,7 @@ export function MemberProjectCard({ project, onView, onEdit, onDelete }: MemberP
     <AdminEntityCard
       title={project.title}
       description={project.description}
-      mediaImageUrl={project.images[0]}
+      mediaImageUrl={project.mainImageUrl}
       mediaAlt={project.title}
       mediaFallback={<Layout size={54} strokeWidth={1.2} />}
       mediaLabel={

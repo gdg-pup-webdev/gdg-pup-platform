@@ -6,7 +6,15 @@ export function useUpdateMemberProject() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateMemberProjectDTO }) => updateMemberProject(id, data),
+    mutationFn: ({ 
+      id, 
+      data, 
+      files 
+    }: { 
+      id: string; 
+      data: UpdateMemberProjectDTO; 
+      files?: { mainImage?: File; secondaryImage?: File; tertiaryImage?: File } 
+    }) => updateMemberProject(id, data, files),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["member-projects"] });
       queryClient.invalidateQueries({ queryKey: ["member-projects", "detail", id] });

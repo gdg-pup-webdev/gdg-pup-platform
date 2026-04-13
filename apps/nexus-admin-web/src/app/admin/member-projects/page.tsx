@@ -83,17 +83,22 @@ export default function MemberProjectsPage() {
     }
   };
 
-  const handleFormSubmit = async (data: CreateMemberProjectDTO | UpdateMemberProjectDTO) => {
+  const handleFormSubmit = async (
+    data: CreateMemberProjectDTO | UpdateMemberProjectDTO, 
+    files?: { mainImage?: File; secondaryImage?: File; tertiaryImage?: File }
+  ) => {
     try {
       if (selectedProject) {
         await updateMutation.mutateAsync({ 
           id: selectedProject.id, 
-          data: data as UpdateMemberProjectDTO,
+          data: data as UpdateMemberProjectDTO, 
+          files 
         });
         toast.success("Project updated successfully");
       } else {
         await createMutation.mutateAsync({ 
-          data: data as CreateMemberProjectDTO,
+          data: data as CreateMemberProjectDTO, 
+          files 
         });
         toast.success("Project created successfully");
       }

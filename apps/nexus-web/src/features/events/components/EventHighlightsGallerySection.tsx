@@ -17,8 +17,9 @@ type EventHighlightsGallerySectionProps = {
 
 
 const PLACEHOLDER_TILE_URL = "/pages/events/event-cover.webp";
+const EVENT_MAX_IMAGES = 20;
 const PLACEHOLDER_IMAGES = Array.from(
-  { length: 12 },
+  { length: EVENT_MAX_IMAGES },
   () => PLACEHOLDER_TILE_URL,
 );
 
@@ -88,12 +89,10 @@ export function EventHighlightsGallerySection({
   eventId,
   title,
 }: EventHighlightsGallerySectionProps) { 
-  const INITIAL_COUNT = 4;
-  const STEP = 10;
+  const INITIAL_COUNT = 12;
+  const STEP = 8;
   
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
-
-  console.log(`[EventHighlightsGallerySection] Rendered with visibleCount: ${visibleCount}`);
 
 
 
@@ -110,7 +109,9 @@ export function EventHighlightsGallerySection({
   const dateLabel = formatDateLabel(eventDetail?.start_date || "", eventDetail?.end_date || "");
   const venue = eventDetail?.venue?.trim() || "Location TBA";
 
-  const galleryImages = PLACEHOLDER_IMAGES;
+  const galleryImages =
+    (eventDetail?.images || []).filter((image: string) => Boolean(image)).slice(0, EVENT_MAX_IMAGES);
+  const effectiveGalleryImages = galleryImages.length > 0 ? galleryImages : PLACEHOLDER_IMAGES;
 
 
   return (
@@ -343,7 +344,7 @@ export function EventHighlightsGallerySection({
               <>
                 <div className="md:hidden mt-2">
                   <div className="flex flex-col gap-5">
-                    {galleryImages.slice(0, visibleCount).map((src, index) => (
+                    {effectiveGalleryImages.slice(0, visibleCount).map((src, index) => (
                       <div
                         key={`${src}-${index}`}
                         className="relative w-full overflow-hidden rounded-[10px] border border-white/15 bg-black/30 aspect-video"
@@ -362,7 +363,7 @@ export function EventHighlightsGallerySection({
                 </div>
 
                 <div className="hidden md:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-                  {galleryImages.slice(0, visibleCount).map((src, index) => (
+                  {effectiveGalleryImages.slice(0, visibleCount).map((src, index) => (
                     <div
                       key={`${src}-${index}`}
                       className="relative overflow-hidden rounded-[6px] border border-white/10 bg-black/30 aspect-video"
@@ -379,11 +380,15 @@ export function EventHighlightsGallerySection({
                   ))}
                 </div>
 
-                {visibleCount < galleryImages.length && (
+                {visibleCount < effectiveGalleryImages.length && (
                   <div className="mt-8 md:mt-12 flex justify-center">
                     <button
                       type="button"
-                      onClick={() => setVisibleCount((prev) => prev + STEP)}
+                      onClick={() =>
+                        setVisibleCount((prev) =>
+                          Math.min(prev + STEP, effectiveGalleryImages.length, EVENT_MAX_IMAGES),
+                        )
+                      }
 
                       className="w-full md:w-fit md:min-w-[240px] px-8 py-3.5 border border-white rounded-[12px] text-white text-sm md:text-base font-medium bg-transparent hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer flex items-center justify-center font-outfit"
                     >

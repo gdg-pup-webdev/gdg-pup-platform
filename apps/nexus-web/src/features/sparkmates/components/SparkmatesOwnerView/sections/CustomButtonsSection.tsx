@@ -1,19 +1,95 @@
 import { Button, Text, Modal, Input } from "@packages/spark-ui";
-import { profile } from "console";
-import React, { useEffect, useMemo, useState } from "react";
-import { Divider } from "../components/Divider";
-import { ProjectCard } from "../components/ProjectCard";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  type DragEndEvent,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import React, { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { addIcon } from "../icons/addIcon";
+import { burgerIcon } from "../icons/burgerIcon";
 import { editIcon } from "../icons/editIcon"; 
 import { UserProfile, useUpdateSparkmateProfile } from "@/features/sparkmates";
 import { getLinkHostname } from "../utils/getLinkHostname";
-import { ProjectsSection } from "./ProjectsSection";
-import { ImpactSection } from "./ImpactSection";
-import { BadgesSection } from "./BadgesSection";
 import {
   parseCustomButtonLinks,
   serializeCustomButtonLinks,
 } from "../../../utils/customButtonFavorites";
+
+type SortableCustomButtonItemProps = {
+  id: string;
+  link: string;
+  onRemove: () => void;
+  sortingDisabled?: boolean;
+};
+
+const SortableCustomButtonItem = ({
+  id,
+  link,
+  onRemove,
+  sortingDisabled = false,
+}: SortableCustomButtonItemProps) => {
+  const {
+    setNodeRef,
+    setActivatorNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id, disabled: sortingDisabled });
+
+  const constrainedTransform = transform
+    ? {
+      ...transform,
+      x: 0,
+      scaleX: 1,
+      scaleY: 1,
+    }
+    : null;
+
+  const style: CSSProperties = {
+    transform: CSS.Transform.toString(constrainedTransform),
+    transition,
+    position: isDragging ? "relative" : undefined,
+    zIndex: isDragging ? 30 : undefined,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 border border-white/10"
+    >
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        <button
+          type="button"
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+          disabled={sortingDisabled}
+          className="h-8 w-8 shrink-0 rounded-md border border-white/10 bg-white/5 text-zinc-300 hover:text-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40 cursor-grab active:cursor-grabbing"
+          aria-label="Reorder link"
+        >
+          <span className="flex items-center justify-center">{burgerIcon}</span>
+        </button>
+        <Text variant="body-sm" className="truncate flex-1 text-white">{link}</Text>
+      </div>
+      <Button variant="ghost" size="sm" onClick={onRemove} className="text-red-400">Remove</Button>
+    </div>
+  );
+};
 
 export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
   const parsedProfileLinks = useMemo(
@@ -27,6 +103,13 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
     () => new Set(parsedProfileLinks.starredUrls),
   );
   const [newLink, setNewLink] = useState("");
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   useEffect(() => {
     setLinks(parsedProfileLinks.links);
@@ -49,8 +132,9 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
   };
 
   const handleAddLink = () => {
-    if (newLink && !links.includes(newLink)) {
-      setLinks([...links, newLink]);
+    const normalizedLink = newLink.trim();
+    if (normalizedLink && !links.includes(normalizedLink)) {
+      setLinks((previousLinks) => [...previousLinks, normalizedLink]);
       setNewLink("");
     }
   };
@@ -73,10 +157,42 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
     });
   };
 
+  const handleLinkDragEnd = (event: DragEndEvent) => {
+    if (isPending) {
+      return;
+    }
+
+    const { active, over } = event;
+    if (!over) {
+      return;
+    }
+
+    const activeId = String(active.id);
+    const overId = String(over.id);
+
+    if (activeId === overId) {
+      return;
+    }
+
+    const fromIndex = sortableLinkIds.indexOf(activeId);
+    const toIndex = sortableLinkIds.indexOf(overId);
+
+    if (fromIndex < 0 || toIndex < 0) {
+      return;
+    }
+
+    setLinks((previousLinks) => arrayMove(previousLinks, fromIndex, toIndex));
+  };
+
   const customLinks = links.map((url) => ({
     title: getLinkHostname(url),
     url,
   }));
+
+  const sortableLinkIds = useMemo(
+    () => links.map((link, index) => `${index}::${link}`),
+    [links],
+  );
 
   return (
     <section className="space-y-4">
@@ -174,13 +290,28 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
 
             {links.length > 0 && (
               <div className="space-y-2">
-                <Text variant="body-sm" className="text-zinc-300 font-medium">Added Links</Text>
-                {links.map((link, index) => (
-                  <div key={index} className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 border border-white/10">
-                    <Text variant="body-sm" className="truncate flex-1 text-white">{link}</Text>
-                    <Button variant="ghost" size="sm" onClick={() => handleRemoveLink(index)} className="text-red-400">Remove</Button>
-                  </div>
-                ))}
+                <Text variant="body-sm" className="text-zinc-300 font-medium">
+                  Added Links (drag to reorder)
+                </Text>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleLinkDragEnd}
+                >
+                  <SortableContext items={sortableLinkIds} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-2">
+                      {links.map((link, index) => (
+                        <SortableCustomButtonItem
+                          key={sortableLinkIds[index]}
+                          id={sortableLinkIds[index]}
+                          link={link}
+                          onRemove={() => handleRemoveLink(index)}
+                          sortingDisabled={isPending}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
               </div>
             )}
 

@@ -99,7 +99,7 @@ export function PastEventsCarousel() {
                   >
                     <div className="flex w-full flex-col items-center">
                       <PlanetCard
-                        image={event.image_url || ASSETS.PLACEHOLDERS.DEFAULT}
+                        image={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
                         alt={event.title}
                         style={{
                           width: "clamp(140px,14vw,260px)",
