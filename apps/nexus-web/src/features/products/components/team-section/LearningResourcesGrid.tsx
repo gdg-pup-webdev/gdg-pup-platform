@@ -47,10 +47,14 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
   return (
     <Stack gap="xl" className="mt-16">
       {
-        isLoading || data === null  || data?.data.length === 0 ? <>
+        isLoading &&  <>
         {/* loading rectangle */}
         <div className="w-1/3 h-10 bg-gray-300 rounded animate-pulse mx-auto" />
-      </> : <> <Text
+      </> 
+      }
+
+      {
+        !isLoading && !data?.data.length && ( (data?.data?.length || -1) > 0) && <> <Text
         variant="heading-1"
         gradient="white-blue"
         align="center"
