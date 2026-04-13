@@ -15,8 +15,11 @@ export const swaggerLoader = (app: Express) => {
     servers: [
       {
         url: `http://localhost:${configs.port}`,
-        description: "Development server",
+        description: "Local Dev",
       },
+      { url: "https://identity.dev.gdgpup.org", description: "Development" },
+      { url: "https://identity.staging.gdgpup.org", description: "Staging" },
+      { url: "https://identity.gdgpup.org", description: "Production" },
     ],
   });
 
@@ -51,8 +54,11 @@ export const swaggerLoaderManual = (app: Express) => {
       servers: [
         {
           url: `http://localhost:${configs.port}`,
-          description: "Development server",
+          description: "Local Dev",
         },
+        { url: "https://identity.dev.gdgpup.org", description: "Development" },
+        { url: "https://identity.staging.gdgpup.org", description: "Staging" },
+        { url: "https://identity.gdgpup.org", description: "Production" },
       ],
       components: {
         securitySchemes: {
