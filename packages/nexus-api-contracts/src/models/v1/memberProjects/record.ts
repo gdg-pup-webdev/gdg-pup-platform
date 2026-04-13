@@ -29,9 +29,8 @@ export const memberProjectsRecordInsertDTO = memberProjectsRecord.omit({
   createdAt: true,
   updatedAt: true,
   member: true,
-}).extend({
-  images: memberProjectsRecord.shape.images.optional().default([]),
-});
+  images: true,
+})
 
 /** Data Transfer Object for updating an existing member project. */
 export const memberProjectsRecordUpdateDTO =

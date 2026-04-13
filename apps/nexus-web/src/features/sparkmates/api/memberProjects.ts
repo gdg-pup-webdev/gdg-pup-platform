@@ -66,11 +66,6 @@ export async function createMemberProject(memberGdgId: string, project: Omit<Pro
     {
       token: token ?? undefined,
       body: { data: bodyData },
-      files: {
-        mainImage: project.mainImageFile || undefined,
-        secondaryImage: project.secondaryImageFile || undefined,
-        tertiaryImage: project.tertiaryImageFile || undefined,
-      },
     },
   );
 
@@ -96,11 +91,6 @@ export async function updateMemberProject(projectId: string, project: Omit<Proje
       token: token ?? undefined,
       params: { id: projectId },
       body: { data: bodyData },
-      files: {
-        mainImage: project.mainImageFile || undefined,
-        secondaryImage: project.secondaryImageFile || undefined,
-        tertiaryImage: project.tertiaryImageFile || undefined,
-      },
     },
   );
 
