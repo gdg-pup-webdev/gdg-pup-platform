@@ -4,6 +4,12 @@ import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
 import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
 import converter from "openapi-to-postmanv2";
+import fs from "fs";
+import path from "path";
+
+// process.cwd() resolves to apps/nexus-api/ at runtime because the Dockerfile
+// sets WORKDIR /app/apps/nexus-api before starting the server.
+const PREBUILT_SPEC_PATH = path.resolve(process.cwd(), "dist/openapi.json");
 
 let scalarMiddleware: any = null;
 let swaggerSpecCache: any = null;
@@ -11,25 +17,35 @@ let postmanCollectionCache: any = null;
 
 const getSwaggerSpec = () => {
   if (!swaggerSpecCache) {
-    const options = generateOpenApiOptions({
-      info: {
-        title: "Nexus API",
-        version: "2.1.0",
-        description: [
-          "Documentation for the GDG PUP Platform Nexus API.",
-          "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
-          "Public endpoints are marked without a lock icon in Swagger.",
-        ].join(" "),
-      },
-      servers: [
-        { url: "http://localhost:8000", description: "Local Dev" },
-        { url: "https://api.dev.gdgpup.org", description: "Development" },
-        { url: "https://api.staging.gdgpup.org", description: "Staging" },
-        { url: "https://api.gdgpup.org", description: "Production" },
-      ],
-      generateExample: true,
-    });
-    swaggerSpecCache = swaggerJsdoc(options);
+    // In production: load the pre-built spec generated at build time.
+    // This avoids the V8 heap spike that caused OOM crashes on first /docs request.
+    if (fs.existsSync(PREBUILT_SPEC_PATH)) {
+      console.log("[docs] Loading pre-built OpenAPI spec from disk...");
+      const raw = fs.readFileSync(PREBUILT_SPEC_PATH, "utf-8");
+      swaggerSpecCache = JSON.parse(raw);
+    } else {
+      // Fallback: dynamic generation for local dev (no pre-built file).
+      console.log("[docs] Pre-built spec not found. Generating dynamically (local dev only)...");
+      const options = generateOpenApiOptions({
+        info: {
+          title: "Nexus API",
+          version: "2.1.0",
+          description: [
+            "Documentation for the GDG PUP Platform Nexus API.",
+            "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
+            "Public endpoints are marked without a lock icon in Swagger.",
+          ].join(" "),
+        },
+        servers: [
+          { url: "http://localhost:8000", description: "Local Dev" },
+          { url: "https://api.dev.gdgpup.org", description: "Development" },
+          { url: "https://api.staging.gdgpup.org", description: "Staging" },
+          { url: "https://api.gdgpup.org", description: "Production" },
+        ],
+        generateExample: true,
+      });
+      swaggerSpecCache = swaggerJsdoc(options);
+    }
   }
   return swaggerSpecCache;
 };
