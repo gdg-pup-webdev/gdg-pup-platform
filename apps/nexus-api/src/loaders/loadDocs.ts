@@ -35,8 +35,8 @@ const getSwaggerSpec = () => {
 };
 
 export const loadDocs = (app: Express) => {
-  if (process.env.NODE_ENV === "production") {
-    console.log("Skipping API documentation in production environment.");
+  if (process.env.HIDE_API_DOCS === "true") {
+    console.log("Skipping API documentation (HIDE_API_DOCS=true).");
     return;
   }
 
