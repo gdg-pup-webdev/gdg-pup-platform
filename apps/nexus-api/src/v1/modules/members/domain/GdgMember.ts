@@ -50,6 +50,8 @@ export type GdgMemberProps = {
    * profile
    */
   avatarUrl: string | null;
+  avatarUrl64: string | null;
+  avatarUrl512: string | null;
 
   // education
   program: string | null;
@@ -126,7 +128,13 @@ export class GdgMember {
     this._props.isPublic = false
   }
 
-  changeProfilePicture(url: string) : void {
-    this._props.avatarUrl = url
+  changeProfilePicture(urls: {
+    avatarUrl: string;
+    avatarUrl64: string;
+    avatarUrl512: string;
+  }) : void {
+    this._props.avatarUrl = urls.avatarUrl
+    this._props.avatarUrl64 = urls.avatarUrl64
+    this._props.avatarUrl512 = urls.avatarUrl512
   }
 }
