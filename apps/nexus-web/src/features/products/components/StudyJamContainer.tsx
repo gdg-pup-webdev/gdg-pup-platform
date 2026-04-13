@@ -5,6 +5,7 @@ import {
   normalizeEventDescription,
   splitBoldSegments,
 } from "@/features/events/utils/description";
+import { useRouter } from "next/navigation";
 
 interface StudyJamContainerProps {
   children?: ReactNode;
@@ -21,6 +22,7 @@ interface StudyJamContainerProps {
   ringGradient?: string;
   contentBackgroundColor?: string;
   contentBackdropFilter?: string;
+  onClick?: () => void;
 }
 
 function renderDescriptionContent(description: ReactNode) {
@@ -59,10 +61,12 @@ export function StudyJamContainer({
   ringGradient = "linear-gradient(90deg, #EA4335, #F9AB00, #34A853, #4285F4)",
   contentBackgroundColor = "rgba(255, 255, 255, 0.08)",
   contentBackdropFilter = "",
-}: StudyJamContainerProps) {
+  onClick,
+}: StudyJamContainerProps) { 
   return (
     <div
-      className={`relative h-full w-full max-w-[340px] md:min-w-[340px] ${className}`}
+      className={`relative h-full w-full max-w-[340px] md:min-w-[340px] ${className}`} 
+      onClick={onClick}
     >
       <div
         className={`absolute inset-0 z-3 rounded-2xl pointer-events-none ${ringClassName}`}

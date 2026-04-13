@@ -46,7 +46,11 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
 
   return (
     <Stack gap="xl" className="mt-16">
-      <Text
+      {
+        isLoading || data === null  || data?.data.length === 0 ? <>
+        {/* loading rectangle */}
+        <div className="w-1/3 h-10 bg-gray-300 rounded animate-pulse mx-auto" />
+      </> : <> <Text
         variant="heading-1"
         gradient="white-blue"
         align="center"
@@ -54,7 +58,8 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
         className="text-3xl leading-none sm:text-4xl md:text-5xl"
       >
         LEARNING RESOURCES
-      </Text>
+      </Text></>
+      }
 
       <div className="w-full flex flex-col md:flex-row flex-wrap gap-6 items-center md:items-stretch justify-center">
         {isLoading ? (
@@ -64,7 +69,7 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
           data.data.map((resource, index) => (
             <StudyJamContainer
               key={index}
-              className={TEAM_SECTION_CARD_CLASSNAME}
+              className={`${TEAM_SECTION_CARD_CLASSNAME} hover:cursor-pointer `}
               imageSrc={
                 resource.thumbnailUrl || ASSETS.PRODUCTS.STUDY_JAM_PLACEHOLDER
               }
@@ -85,6 +90,7 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
                     ))}
                 </>
               }
+              onClick={() => window.open(resource.url, "_blank")}
               date={new Date(resource.createdAt).toLocaleDateString(undefined, {
                 year: "numeric",
                 month: "short",
