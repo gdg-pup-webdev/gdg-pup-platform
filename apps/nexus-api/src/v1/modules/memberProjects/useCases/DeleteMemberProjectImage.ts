@@ -1,6 +1,6 @@
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { IFileStorage } from "../domain/IFileStorage";
-import { InternalServerError, NotFoundError, ValidationError } from "@/v1/errors/HttpError";
+import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
 
 export type DeleteMemberProjectImageInput = {
   projectId: string;
@@ -26,11 +26,14 @@ export class DeleteMemberProjectImage {
       throw new ValidationError((error as Error).message, error);
     }
 
+    const persisted = await this.repository.persistUpdates(project);
+
     const deleted = await this.fileStorage.deleteFile(imageUrl);
     if (!deleted) {
-      throw new InternalServerError(`Failed to delete image from storage: ${imageUrl}`);
+      // DB state is already consistent; keep request successful and surface cleanup failure in logs.
+      console.error(`Failed to delete image from storage after DB update: ${imageUrl}`);
     }
 
-    return await this.repository.persistUpdates(project);
+    return persisted;
   }
 }

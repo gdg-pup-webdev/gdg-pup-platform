@@ -1,6 +1,5 @@
 import { MemberProject } from "../domain/MemberProject";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
-import { IFileStorage, FileToUpload } from "../domain/IFileStorage";
 import { IMemberService } from "../domain/IMemberService";
 import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
 
@@ -9,42 +8,34 @@ export type CreateMemberProjectInput = {
   startDate: Date;
   endDate: Date | null;
   description: string;
-  images?: FileToUpload[];
-  mainImage: FileToUpload | null;
-  secondaryImage: FileToUpload | null;
-  tertiaryImage: FileToUpload | null;
+  images?: string[];
   memberGdgId: string;
 };
 
 export class CreateMemberProject {
   constructor(
     private repository: IMemberProjectRepository,
-    private fileStorage: IFileStorage,
-    private memberModule: IMemberService
+    private memberModule: IMemberService,
   ) {}
 
   async execute(input: CreateMemberProjectInput): Promise<MemberProject> {
-    const memberExists = await this.memberModule.memberExistsByGdgId(input.memberGdgId);
+    const memberExists = await this.memberModule.memberExistsByGdgId(
+      input.memberGdgId,
+    );
     if (!memberExists) {
-      throw new NotFoundError(`Member with GDG ID ${input.memberGdgId} not found`);
+      throw new NotFoundError(
+        `Member with GDG ID ${input.memberGdgId} not found`,
+      );
     }
 
-    const files: FileToUpload[] = [
-      ...(input.images || []),
-      input.mainImage,
-      input.secondaryImage,
-      input.tertiaryImage,
-    ].filter((file): file is FileToUpload => Boolean(file));
+    const images = [...(input.images || [])].filter(
+      (image): image is string => typeof image === "string" && image.length > 0,
+    );
 
-    if (files.length > 4) {
-      throw new ValidationError("A member project can only contain up to 4 images.");
-    }
-
-    const images: string[] = [];
-
-    for (const file of files) {
-      const uploaded = await this.fileStorage.uploadFile(file);
-      images.push(uploaded.publicUrl);
+    if (images.length > 4) {
+      throw new ValidationError(
+        "A member project can only contain up to 4 images.",
+      );
     }
 
     const project = MemberProject.create({

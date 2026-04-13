@@ -1,5 +1,3 @@
-
-
 export const MEMBER_PROJECT_MAX_IMAGES = 4;
 
 export type MemberProjectProps = {
@@ -14,15 +12,18 @@ export type MemberProjectProps = {
   updatedAt: Date;
 
   member: {
-    gdgId: string; 
+    gdgId: string;
     name: string | null;
-    thumbnailImageUrl: string | null; 
+    thumbnailImageUrl: string | null;
     email: string | null;
   } | null;
 };
 
 export type MemberProjectUpdateProps = Partial<
-  Pick<MemberProjectProps, "title" | "startDate" | "endDate" | "description" | "images">
+  Pick<
+    MemberProjectProps,
+    "title" | "startDate" | "endDate" | "description" | "images"
+  >
 >;
 
 export class MemberProject {
@@ -42,7 +43,9 @@ export class MemberProject {
       .filter((image) => image.length > 0);
 
     if (sanitized.length > MEMBER_PROJECT_MAX_IMAGES) {
-      throw new Error(`A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`);
+      throw new Error(
+        `A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`,
+      );
     }
 
     return sanitized;
@@ -54,7 +57,12 @@ export class MemberProject {
     }
   }
 
-  public static create(props: Omit<MemberProjectProps, "id" | "createdAt" | "updatedAt" | "member">): MemberProject {
+  public static create(
+    props: Omit<
+      MemberProjectProps,
+      "id" | "createdAt" | "updatedAt" | "member"
+    >,
+  ): MemberProject {
     const now = new Date();
     const images = MemberProject.sanitizeImages(props.images);
 
@@ -76,16 +84,34 @@ export class MemberProject {
   }
 
   public update(props: MemberProjectUpdateProps): void {
-    const nextImages = props.images
-      ? MemberProject.sanitizeImages(props.images)
-      : this._props.images;
+    const nextImages =
+      props.images !== undefined
+        ? MemberProject.sanitizeImages(props.images)
+        : this._props.images;
 
-    this._props = {
+    const nextProps: MemberProjectProps = {
       ...this._props,
-      ...props,
       images: nextImages,
       updatedAt: new Date(),
     };
+
+    if (props.title !== undefined) {
+      nextProps.title = props.title;
+    }
+
+    if (props.startDate !== undefined) {
+      nextProps.startDate = props.startDate;
+    }
+
+    if (props.endDate !== undefined) {
+      nextProps.endDate = props.endDate;
+    }
+
+    if (props.description !== undefined) {
+      nextProps.description = props.description;
+    }
+
+    this._props = nextProps;
   }
 
   public addImage(imageUrl: string): void {
@@ -95,7 +121,9 @@ export class MemberProject {
     }
 
     if (this._props.images.length >= MEMBER_PROJECT_MAX_IMAGES) {
-      throw new Error(`A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`);
+      throw new Error(
+        `A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`,
+      );
     }
 
     this._props = {
@@ -129,7 +157,10 @@ export class MemberProject {
     MemberProject.assertIndex(fromIndex);
     MemberProject.assertIndex(toIndex);
 
-    if (fromIndex >= this._props.images.length || toIndex >= this._props.images.length) {
+    if (
+      fromIndex >= this._props.images.length ||
+      toIndex >= this._props.images.length
+    ) {
       throw new Error("Image reorder indices are out of range.");
     }
 
@@ -157,7 +188,9 @@ export class MemberProject {
     MemberProject.assertIndex(index);
 
     if (index >= MEMBER_PROJECT_MAX_IMAGES) {
-      throw new Error(`Image index must be less than ${MEMBER_PROJECT_MAX_IMAGES}.`);
+      throw new Error(
+        `Image index must be less than ${MEMBER_PROJECT_MAX_IMAGES}.`,
+      );
     }
 
     const sanitized = imageUrl.trim();
@@ -173,7 +206,9 @@ export class MemberProject {
       images[index] = sanitized;
     } else {
       if (images.length >= MEMBER_PROJECT_MAX_IMAGES) {
-        throw new Error(`A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`);
+        throw new Error(
+          `A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`,
+        );
       }
 
       // Keep the list contiguous by appending when a higher legacy slot is provided.

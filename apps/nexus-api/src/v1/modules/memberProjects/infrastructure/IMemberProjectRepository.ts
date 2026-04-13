@@ -1,5 +1,6 @@
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
+import { ValidationError } from "@/v1/errors/HttpError";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { MemberProject, MemberProjectProps } from "../domain/MemberProject";
 import { Tables } from "@/v1/types/supabase.types";
@@ -19,7 +20,8 @@ type MemberProjectRowWithRelations = Tables<"member_projects"> & {
 };
 
 export class MemberProjectRepository implements IMemberProjectRepository {
-  private readonly selectWithRelations = "*, member:gdg_members(*), images:member_project_images(*)";
+  private readonly selectWithRelations =
+    "*, member:gdg_members(*), images:member_project_images(*)";
 
   constructor() {}
 
@@ -42,6 +44,53 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       .filter((imageUrl) => Boolean(imageUrl));
   }
 
+  private async fetchImageRows(projectId: string): Promise<MemberProjectImageRow[]> {
+    const { data, error } = await (supabase as any)
+      .from("member_project_images")
+      .select("*")
+      .eq("memberProjectId", projectId)
+      .order("position", { ascending: true });
+
+    if (error) {
+      handlePostgresError(error);
+    }
+
+    return (data || []) as MemberProjectImageRow[];
+  }
+
+  private async restoreImageRows(
+    projectId: string,
+    imageRows: MemberProjectImageRow[],
+  ): Promise<void> {
+    const { error: clearError } = await (supabase as any)
+      .from("member_project_images")
+      .delete()
+      .eq("memberProjectId", projectId);
+
+    if (clearError) {
+      handlePostgresError(clearError);
+    }
+
+    if (imageRows.length === 0) {
+      return;
+    }
+
+    const payload = imageRows.map((row) => ({
+      memberProjectId: row.memberProjectId,
+      imageUrl: row.imageUrl,
+      position: row.position,
+      updatedAt: new Date().toISOString(),
+    }));
+
+    const { error: restoreError } = await (supabase as any)
+      .from("member_project_images")
+      .insert(payload);
+
+    if (restoreError) {
+      handlePostgresError(restoreError);
+    }
+  }
+
   private toProps(data: MemberProjectRowWithRelations): MemberProjectProps {
     return {
       ...data,
@@ -54,16 +103,21 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       startDate: new Date(data.startDate || data.createdAt),
       endDate: data.endDate ? new Date(data.endDate) : null,
 
-      member: data.member ? {
-        gdgId: data.member.gdg_id,
-        name: data.member.display_name,
-        thumbnailImageUrl: data.member.avatar_image_url,
-        email: data.member.email,
-      } : null,
+      member: data.member
+        ? {
+            gdgId: data.member.gdg_id,
+            name: data.member.display_name,
+            thumbnailImageUrl: data.member.avatar_image_url,
+            email: data.member.email,
+          }
+        : null,
     };
   }
 
-  private async syncImageRows(projectId: string, imageUrls: string[]): Promise<void> {
+  private async syncImageRows(
+    projectId: string,
+    imageUrls: string[],
+  ): Promise<void> {
     const { error: deleteError } = await (supabase as any)
       .from("member_project_images")
       .delete()
@@ -108,12 +162,16 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       return null;
     }
 
-    return MemberProject.hydrate(this.toProps(data as MemberProjectRowWithRelations));
+    return MemberProject.hydrate(
+      this.toProps(data as MemberProjectRowWithRelations),
+    );
   }
 
   async saveNew(project: MemberProject) {
     const memberGdgId = project.props.memberGdgId;
-    const { data: latestProjectForMember, error: latestProjectError } = await (supabase as any)
+    const { data: latestProjectForMember, error: latestProjectError } = await (
+      supabase as any
+    )
       .from("member_projects")
       .select("position")
       .eq("memberGdgId", memberGdgId)
@@ -125,9 +183,10 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       handlePostgresError(latestProjectError);
     }
 
-    const nextPosition = typeof latestProjectForMember?.position === "number"
-      ? latestProjectForMember.position + 1
-      : 0;
+    const nextPosition =
+      typeof latestProjectForMember?.position === "number"
+        ? latestProjectForMember.position + 1
+        : 0;
 
     const { data, error } = await (supabase as any)
       .from("member_projects")
@@ -142,17 +201,44 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       handlePostgresError(error);
     }
 
-    await this.syncImageRows(data.id, project.props.images);
+    try {
+      await this.syncImageRows(data.id, project.props.images);
+    } catch (error) {
+      // Best effort DB cleanup for partially created records.
+      const { error: cleanupImagesError } = await (supabase as any)
+        .from("member_project_images")
+        .delete()
+        .eq("memberProjectId", data.id);
+
+      if (cleanupImagesError) {
+        handlePostgresError(cleanupImagesError);
+      }
+
+      const { error: cleanupProjectError } = await (supabase as any)
+        .from("member_projects")
+        .delete()
+        .eq("id", data.id);
+
+      if (cleanupProjectError) {
+        handlePostgresError(cleanupProjectError);
+      }
+
+      throw error;
+    }
 
     const fetched = await this.fetchById(data.id);
     if (!fetched) {
-      throw new Error(`Failed to load newly created member project ${data.id}.`);
+      throw new Error(
+        `Failed to load newly created member project ${data.id}.`,
+      );
     }
 
     return fetched;
   }
 
   async persistUpdates(memberProject: MemberProject): Promise<MemberProject> {
+    const previousImageRows = await this.fetchImageRows(memberProject.props.id);
+
     const { data, error } = await (supabase as any)
       .from("member_projects")
       .update(this.toDb(memberProject))
@@ -164,23 +250,45 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       handlePostgresError(error);
     }
 
-    await this.syncImageRows(memberProject.props.id, memberProject.props.images);
+    try {
+      await this.syncImageRows(
+        memberProject.props.id,
+        memberProject.props.images,
+      );
+    } catch (error) {
+      await this.restoreImageRows(memberProject.props.id, previousImageRows);
+      throw error;
+    }
 
     const fetched = await this.fetchById(data.id);
     if (!fetched) {
-      throw new Error(`Failed to load updated member project ${memberProject.props.id}.`);
+      throw new Error(
+        `Failed to load updated member project ${memberProject.props.id}.`,
+      );
     }
 
     return fetched;
   }
 
   async delete(id: string): Promise<void> {
+    const existingImageRows = await this.fetchImageRows(id);
+
+    const { error: deleteImagesError } = await (supabase as any)
+      .from("member_project_images")
+      .delete()
+      .eq("memberProjectId", id);
+
+    if (deleteImagesError) {
+      handlePostgresError(deleteImagesError);
+    }
+
     const { error } = await (supabase as any)
       .from("member_projects")
       .delete()
       .eq("id", id);
 
     if (error) {
+      await this.restoreImageRows(id, existingImageRows);
       handlePostgresError(error);
     }
   }
@@ -209,7 +317,9 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       fromIndex >= rows.length ||
       toIndex >= rows.length
     ) {
-      throw new Error("Project reorder indices are out of range.");
+      throw new ValidationError(
+        `Project reorder indices are out of range. Current project count: ${rows.length}.`,
+      );
     }
 
     if (fromIndex === toIndex) {
@@ -220,7 +330,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     const [movedId] = orderedIds.splice(fromIndex, 1);
 
     if (!movedId) {
-      throw new Error("Unable to reorder member projects.");
+      throw new ValidationError("Unable to reorder member projects.");
     }
 
     orderedIds.splice(toIndex, 0, movedId);
@@ -259,7 +369,9 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     if (error) handlePostgresError(error);
 
     return {
-      list: (data || []).map((row: MemberProjectRowWithRelations) => MemberProject.hydrate(this.toProps(row))),
+      list: (data || []).map((row: MemberProjectRowWithRelations) =>
+        MemberProject.hydrate(this.toProps(row)),
+      ),
       count: count || 0,
     };
   }
@@ -280,7 +392,9 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     if (error) handlePostgresError(error);
 
     return {
-      list: (data || []).map((row: MemberProjectRowWithRelations) => MemberProject.hydrate(this.toProps(row))),
+      list: (data || []).map((row: MemberProjectRowWithRelations) =>
+        MemberProject.hydrate(this.toProps(row)),
+      ),
       count: count || 0,
     };
   }
@@ -299,7 +413,9 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     if (error) handlePostgresError(error);
 
     return {
-      list: (data || []).map((row: MemberProjectRowWithRelations) => MemberProject.hydrate(this.toProps(row))),
+      list: (data || []).map((row: MemberProjectRowWithRelations) =>
+        MemberProject.hydrate(this.toProps(row)),
+      ),
       count: count || 0,
     };
   }
@@ -318,7 +434,9 @@ export class MemberProjectRepository implements IMemberProjectRepository {
     const shuffled = (data || []).sort(() => Math.random() - 0.5);
 
     return {
-      list: shuffled.map((row: MemberProjectRowWithRelations) => MemberProject.hydrate(this.toProps(row))),
+      list: shuffled.map((row: MemberProjectRowWithRelations) =>
+        MemberProject.hydrate(this.toProps(row)),
+      ),
       count: count || 0,
     };
   }

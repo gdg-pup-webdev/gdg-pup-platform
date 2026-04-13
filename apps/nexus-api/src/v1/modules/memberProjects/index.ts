@@ -20,8 +20,8 @@ const repo = new MemberProjectRepository();
 const storage = new FileStorageAdapter(filesModuleController);
 const member = new MemberAdapter();
 
-const createUC = new CreateMemberProject(repo, storage, member);
-const updateUC = new UpdateMemberProject(repo, storage);
+const createUC = new CreateMemberProject(repo, member);
+const updateUC = new UpdateMemberProject(repo);
 const deleteUC = new DeleteMemberProject(repo, storage);
 const getOneUC = new GetMemberProject(repo);
 const listUC = new ListMemberProjects(repo);

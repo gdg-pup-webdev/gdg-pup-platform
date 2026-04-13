@@ -1,6 +1,12 @@
 import { MemberProject } from "./domain/MemberProject";
-import { CreateMemberProject, CreateMemberProjectInput } from "./useCases/CreateMemberProject";
-import { UpdateMemberProject, UpdateMemberProjectInput } from "./useCases/UpdateMemberProject";
+import {
+  CreateMemberProject,
+  CreateMemberProjectInput,
+} from "./useCases/CreateMemberProject";
+import {
+  UpdateMemberProject,
+  UpdateMemberProjectInput,
+} from "./useCases/UpdateMemberProject";
 import { DeleteMemberProject } from "./useCases/DeleteMemberProject";
 import { GetMemberProject } from "./useCases/GetMemberProject";
 import { ListMemberProjects } from "./useCases/ListMemberProjects";
@@ -20,9 +26,6 @@ export type MemberProjectDTO = {
   endDate: string | null;
   description: string;
   images: string[];
-  mainImageUrl: string | null;
-  secondaryImageUrl: string | null;
-  tertiaryImageUrl: string | null;
   memberGdgId: string;
   createdAt: string;
   updatedAt: string;
@@ -32,7 +35,6 @@ export type MemberProjectDTO = {
     imageUrl: string | null;
     email: string | null;
   } | null;
-
 };
 
 export class MemberProjectsController {
@@ -60,19 +62,18 @@ export class MemberProjectsController {
       endDate: props.endDate ? props.endDate.toISOString() : null,
       description: props.description,
       images: [...props.images],
-      mainImageUrl: props.images[0] || null,
-      secondaryImageUrl: props.images[1] || null,
-      tertiaryImageUrl: props.images[2] || null,
       memberGdgId: props.memberGdgId,
       createdAt: props.createdAt.toISOString(),
       updatedAt: props.updatedAt.toISOString(),
 
-      member: props.member ? {
-        gdgId: props.member.gdgId,
-        name: props.member.name,
-        imageUrl: props.member.thumbnailImageUrl,
-        email: props.member.email,
-      } : null,
+      member: props.member
+        ? {
+            gdgId: props.member.gdgId,
+            name: props.member.name,
+            imageUrl: props.member.thumbnailImageUrl,
+            email: props.member.email,
+          }
+        : null,
     };
   }
 
@@ -81,20 +82,16 @@ export class MemberProjectsController {
     startDate: string;
     endDate: string | null;
     description: string;
+    images?: string[];
     memberGdgId: string;
-    mainImage?: { buffer: ArrayBuffer; name: string; type: string };
-    secondaryImage?: { buffer: ArrayBuffer; name: string; type: string };
-    tertiaryImage?: { buffer: ArrayBuffer; name: string; type: string };
   }): Promise<MemberProjectDTO> {
     const createInput: CreateMemberProjectInput = {
       title: input.title,
       startDate: new Date(input.startDate),
       endDate: input.endDate ? new Date(input.endDate) : null,
       description: input.description,
+      images: input.images,
       memberGdgId: input.memberGdgId,
-      mainImage: input.mainImage ? new FileToUpload(input.mainImage) : null,
-      secondaryImage: input.secondaryImage ? new FileToUpload(input.secondaryImage) : null,
-      tertiaryImage: input.tertiaryImage ? new FileToUpload(input.tertiaryImage) : null,
     };
 
     const project = await this.createUseCase.execute(createInput);
@@ -107,19 +104,20 @@ export class MemberProjectsController {
     startDate?: string;
     endDate?: string | null;
     description?: string;
-    mainImage?: { buffer: ArrayBuffer; name: string; type: string };
-    secondaryImage?: { buffer: ArrayBuffer; name: string; type: string };
-    tertiaryImage?: { buffer: ArrayBuffer; name: string; type: string };
+    images?: string[];
   }): Promise<MemberProjectDTO> {
     const updateInput: UpdateMemberProjectInput = {
       id: input.id,
       title: input.title,
       startDate: input.startDate ? new Date(input.startDate) : undefined,
-      endDate: input.endDate !== undefined ? (input.endDate ? new Date(input.endDate) : null) : undefined,
+      endDate:
+        input.endDate !== undefined
+          ? input.endDate
+            ? new Date(input.endDate)
+            : null
+          : undefined,
       description: input.description,
-      mainImage: input.mainImage ? new FileToUpload(input.mainImage) : undefined,
-      secondaryImage: input.secondaryImage ? new FileToUpload(input.secondaryImage) : undefined,
-      tertiaryImage: input.tertiaryImage ? new FileToUpload(input.tertiaryImage) : undefined,
+      images: input.images,
     };
 
     const project = await this.updateUseCase.execute(updateInput);
@@ -135,7 +133,10 @@ export class MemberProjectsController {
     return this.toDTO(project);
   }
 
-  async list(page: number = 1, limit: number = 10): Promise<{ list: MemberProjectDTO[]; count: number }> {
+  async list(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ list: MemberProjectDTO[]; count: number }> {
     const result = await this.listUseCase.execute(page, limit);
     return {
       list: result.list.map((p) => this.toDTO(p)),
@@ -143,15 +144,27 @@ export class MemberProjectsController {
     };
   }
 
-  async getByMember(memberGdgId: string, page: number = 1, limit: number = 10): Promise<{ list: MemberProjectDTO[]; count: number }> {
-    const result = await this.getByMemberUseCase.execute(memberGdgId, page, limit);
+  async getByMember(
+    memberGdgId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ list: MemberProjectDTO[]; count: number }> {
+    const result = await this.getByMemberUseCase.execute(
+      memberGdgId,
+      page,
+      limit,
+    );
     return {
       list: result.list.map((p) => this.toDTO(p)),
       count: result.count,
     };
   }
 
-  async search(query: string, page: number = 1, limit: number = 10): Promise<{ list: MemberProjectDTO[]; count: number }> {
+  async search(
+    query: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ list: MemberProjectDTO[]; count: number }> {
     const result = await this.searchUseCase.execute(query, page, limit);
     return {
       list: result.list.map((p) => this.toDTO(p)),
@@ -159,7 +172,10 @@ export class MemberProjectsController {
     };
   }
 
-  async getRandom(page: number = 1, limit: number = 10): Promise<{ list: MemberProjectDTO[]; count: number }> {
+  async getRandom(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ list: MemberProjectDTO[]; count: number }> {
     const result = await this.randomUseCase.execute(page, limit);
     return {
       list: result.list.map((p) => this.toDTO(p)),

@@ -10,25 +10,8 @@ export class MemberProjectsHttpController {
   postCreate: RequestHandler = createExpressController(
     contract.api.v1.member_projects.POST,
     async ({ input, output }) => {
-      const { mainImage, secondaryImage, tertiaryImage } = input.files;
-
       const result = await this.module.create({
         ...input.body.data,
-        mainImage: mainImage ? {
-          buffer: await mainImage.arrayBuffer(),
-          name: mainImage.name,
-          type: mainImage.type,
-        } : undefined,
-        secondaryImage: secondaryImage ? {
-          buffer: await secondaryImage.arrayBuffer(),
-          name: secondaryImage.name,
-          type: secondaryImage.type,
-        } : undefined,
-        tertiaryImage: tertiaryImage ? {
-          buffer: await tertiaryImage.arrayBuffer(),
-          name: tertiaryImage.name,
-          type: tertiaryImage.type,
-        } : undefined,
       });
 
       return output(201, {
@@ -76,26 +59,9 @@ export class MemberProjectsHttpController {
   patchUpdate: RequestHandler = createExpressController(
     contract.api.v1.member_projects.id.PATCH,
     async ({ input, output }) => {
-      const { mainImage, secondaryImage, tertiaryImage } = input.files;
-
       const result = await this.module.update({
         id: input.params.id,
         ...input.body.data,
-        mainImage: mainImage ? {
-          buffer: await mainImage.arrayBuffer(),
-          name: mainImage.name,
-          type: mainImage.type,
-        } : undefined,
-        secondaryImage: secondaryImage ? {
-          buffer: await secondaryImage.arrayBuffer(),
-          name: secondaryImage.name,
-          type: secondaryImage.type,
-        } : undefined,
-        tertiaryImage: tertiaryImage ? {
-          buffer: await tertiaryImage.arrayBuffer(),
-          name: tertiaryImage.name,
-          type: tertiaryImage.type,
-        } : undefined,
       });
 
       return output(200, {
@@ -286,10 +252,16 @@ export class MemberProjectsRouter {
     this.router.get("/:id", this.controller.getOne);
     this.router.patch("/:id", this.controller.patchUpdate);
     this.router.post("/:id/images", this.controller.postAddImage);
-    this.router.patch("/:id/images/reorder", this.controller.patchReorderImages);
+    this.router.patch(
+      "/:id/images/reorder",
+      this.controller.patchReorderImages,
+    );
     this.router.delete("/:id/images/:imageIndex", this.controller.deleteImage);
     this.router.delete("/:id", this.controller.deleteDelete);
-    this.router.patch("/member/:memberGdgId/reorder", this.controller.patchReorderProjectsByMember);
+    this.router.patch(
+      "/member/:memberGdgId/reorder",
+      this.controller.patchReorderProjectsByMember,
+    );
     this.router.get("/member/:memberGdgId", this.controller.getByMember);
   }
 }

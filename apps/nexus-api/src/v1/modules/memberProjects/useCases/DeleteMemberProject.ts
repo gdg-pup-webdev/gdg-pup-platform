@@ -1,6 +1,6 @@
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { IFileStorage } from "../domain/IFileStorage";
-import { InternalServerError, NotFoundError } from "@/v1/errors/HttpError";
+import { NotFoundError } from "@/v1/errors/HttpError";
 
 export class DeleteMemberProject {
   constructor(
@@ -14,13 +14,16 @@ export class DeleteMemberProject {
       throw new NotFoundError(`Member Project with ID ${id} not found`);
     }
 
-    for (const imageUrl of project.props.images) {
-      const deleted = await this.fileStorage.deleteFile(imageUrl);
-      if (!deleted) {
-        throw new InternalServerError(`Failed to delete member project image: ${imageUrl}`);
-      }
-    }
+    const imageUrls = [...project.props.images];
 
     await this.repository.delete(id);
+
+    for (const imageUrl of imageUrls) {
+      const deleted = await this.fileStorage.deleteFile(imageUrl);
+      if (!deleted) {
+        // Project is already deleted from DB; keep request successful and surface cleanup failure in logs.
+        console.error(`Failed to delete member project image from storage: ${imageUrl}`);
+      }
+    }
   }
 }

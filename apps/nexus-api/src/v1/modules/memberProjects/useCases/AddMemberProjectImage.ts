@@ -1,7 +1,11 @@
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { IFileStorage, FileToUpload } from "../domain/IFileStorage";
 import { MEMBER_PROJECT_MAX_IMAGES } from "../domain/MemberProject";
-import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
+import {
+  InternalServerError,
+  NotFoundError,
+  ValidationError,
+} from "@/v1/errors/HttpError";
 
 export type AddMemberProjectImageInput = {
   projectId: string;
@@ -31,6 +35,17 @@ export class AddMemberProjectImage {
       throw new ValidationError((error as Error).message, error);
     }
 
-    return await this.repository.persistUpdates(project);
+    try {
+      return await this.repository.persistUpdates(project);
+    } catch (error) {
+      const cleaned = await this.fileStorage.deleteFile(uploaded.publicUrl);
+      if (!cleaned) {
+        throw new InternalServerError(
+          `Failed to persist new project image and failed to clean up uploaded file: ${uploaded.publicUrl}`,
+          error,
+        );
+      }
+      throw error;
+    }
   }
 }
