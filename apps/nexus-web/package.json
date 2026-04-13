@@ -22,7 +22,7 @@
     "@packages/spark-ui": "workspace:*",
     "@packages/typed-rest": "workspace:*",
     "@supabase/supabase-js": "^2.90.1",
-    "@tanstack/react-query": "^5.90.20",
+    "@tanstack/react-query": "^5.99.0",
     "cookies-next": "^6.1.1",
     "date-fns": "^4.1.0",
     "jwt-decode": "^4.0.0",
