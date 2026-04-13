@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Text } from "@packages/spark-ui";
+import { Button, Container, Stack, Text } from "@packages/spark-ui";
 import type { Event } from "../types";
 import {
   normalizeEventDescription,
@@ -350,6 +350,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                 );
                 const venue = event.venue?.trim() || "Location TBA";
                 const routeId = getHighlightsRouteId(event);
+                const highlightsHref = `/events/gallery/${parsedYear}/${encodeURIComponent(routeId)}`;
                 const descriptionKey = `${event.id || routeId}-${event.start_date}`;
                 const isExpanded = Boolean(
                   expandedDescriptions[descriptionKey],
@@ -378,12 +379,12 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                       <Text
                         variant="heading-3"
                         weight="bold"
-                        className="text-white text-[1.375rem] md:text-[3rem] leading-tight text-center md:text-left"
+                        className="text-white text-[1.375rem] md:text-[3rem] leading-tight text-left"
                       >
                         {event.title}
                       </Text>
 
-                      <div className="mt-3 md:mt-4 flex flex-nowrap items-center justify-center gap-2 md:gap-5 text-white/85 overflow-hidden">
+                      <div className="mt-3 md:mt-4 flex flex-nowrap items-center justify-start gap-2 md:gap-5 text-white/85 overflow-hidden">
                         <span className="rounded-full bg-[#F9AB00] text-black text-[8px] md:text-xs font-semibold px-2 py-0.5 uppercase tracking-wide whitespace-nowrap shrink-0">
                           {tag}
                         </span>
@@ -422,13 +423,13 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
                       <Text
                         variant="body"
-                        className="text-white/85 mt-5 md:mt-6 text-justify"
+                        className="text-white/85 mt-5 md:mt-6 text-left"
                       >
                         {renderDescriptionWithBold(descriptionPreview)}
                       </Text>
 
                       {isLongDescription ? (
-                        <div className="mt-3 flex justify-center">
+                        <div className="mt-3 flex justify-start">
                           <button
                             type="button"
                             onClick={() =>
@@ -446,6 +447,23 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                           </button>
                         </div>
                       ) : null}
+
+                      <div className="mt-6 md:mt-7 flex justify-start">
+                        <Link
+                          prefetch={false}
+                          href={highlightsHref}
+                          className="w-full md:w-fit md:min-w-[240px]"
+                        >
+                          <Button
+                            variant="colored"
+                            subVariant="blue"
+                            size="md"
+                            className="w-full md:w-fit md:min-w-[240px]"
+                          >
+                            view highlights
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                   </article>
                 );

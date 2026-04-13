@@ -111,7 +111,7 @@ export function EventHighlightsGallerySection({
 
   const galleryImages =
     (eventDetail?.images || []).filter((image: string) => Boolean(image)).slice(0, EVENT_MAX_IMAGES);
-  const effectiveGalleryImages = galleryImages.length > 0 ? galleryImages : PLACEHOLDER_IMAGES;
+  const effectiveGalleryImages = galleryImages.length > 0 ? galleryImages : [];
 
 
   return (
@@ -339,6 +339,23 @@ export function EventHighlightsGallerySection({
             {isLoading ? (
               <div className="px-0 md:px-16">
                 <GallerySkeletonGrid />
+              </div>
+            ) : effectiveGalleryImages.length === 0 ? (
+              <div className="mt-2 rounded-[14px] border border-dashed border-white/20 bg-black/35 px-5 py-10 md:px-8 md:py-14 text-center">
+                <Image
+                  src="/sparky-points/sparkypoints-cirby-denied.webp"
+                  alt="Sparky"
+                  width={320}
+                  height={320}
+                  className="mx-auto mb-4 h-auto w-44 md:w-64"
+                />
+                <Text
+                  variant="heading-6"
+                  align="center"
+                  className="text-white font-semibold"
+                >
+                  oops, there's no highlights here
+                </Text>
               </div>
             ) : (
               <>
