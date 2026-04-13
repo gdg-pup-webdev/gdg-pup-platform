@@ -16,7 +16,12 @@ const DEFAULT_SPARKMATES_SECTION_ORDER: SparkmatesSectionId[] = [
 
 export type AddGdgMemberInput = Omit<
   GdgMemberProps,
-  "gdgId" | "isPublic" | "avatarUrl" | "sectionOrder"
+  | "gdgId"
+  | "isPublic"
+  | "avatarUrl"
+  | "avatarUrl64"
+  | "avatarUrl512"
+  | "sectionOrder"
 >;
 
 export class AddGdgMember {
@@ -35,6 +40,8 @@ export class AddGdgMember {
       ...input,
       gdgId: id,
       avatarUrl: null,
+      avatarUrl64: null,
+      avatarUrl512: null,
       isPublic: true,
       sectionOrder: DEFAULT_SPARKMATES_SECTION_ORDER,
     });

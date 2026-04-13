@@ -1,5 +1,5 @@
 import { FileBuffer } from "./domain/FileBuffer";
-import { FileRecordUpdateProps } from "./domain/FileRecord";
+import { FileRecord, FileRecordUpdateProps } from "./domain/FileRecord";
 import { FolderInsertProps, FolderUpdateProps } from "./domain/Folder";
 import { DeleteFileById } from "./useCases/DeleteFileById";
 import { DeleteFileByPreviewUrl } from "./useCases/DeleteFileByPreviewUrl";
@@ -30,6 +30,30 @@ export class FilesModuleController {
     private deleteFolderByIdUseCase: DeleteFolderById,
   ) {}
 
+  private toFileResponse(file: FileRecord) {
+    return {
+      id: file.props.id,
+      fileName: file.props.fileName,
+      fileDescription: file.props.fileDescription,
+      folderId: file.props.folderId,
+      fileType: file.props.fileType,
+      createdAt: file.props.createdAt,
+      updatedAt: file.props.updatedAt,
+      previewUrl: file.props.previewUrl,
+      previewUrl64: file.props.previewUrl64,
+      previewUrl128: file.props.previewUrl128,
+      previewUrl256: file.props.previewUrl256,
+      previewUrl512: file.props.previewUrl512,
+      downloadUrl: file.props.previewUrl,
+      deletedAt: file.props.deletedAt,
+      storageReference: file.props.storageReference,
+      storageRef64: file.props.storageRef64,
+      storageRef128: file.props.storageRef128,
+      storageRef256: file.props.storageRef256,
+      storageRef512: file.props.storageRef512,
+    };
+  }
+
   async deleteFileByPreviewUrl(publicUrl: string) {
     const result = await this.deleteFileByPreviewUrlUseCase.execute(publicUrl);
     return result;
@@ -43,19 +67,7 @@ export class FilesModuleController {
   async getOneFileById(id: string) {
     const result = await this.getOneFileByIdUseCase.execute(id);
 
-    return {
-      id: result.props.id,
-      fileName: result.props.fileName,
-      fileDescription: result.props.fileDescription,
-      folderId: result.props.folderId,
-      fileType: result.props.fileType,
-      createdAt: result.props.createdAt,
-      updatedAt: result.props.updatedAt,
-      previewUrl: result.props.previewUrl,
-      downloadUrl: result.props.previewUrl,
-      deletedAt: result.props.deletedAt,
-      storageReference: result.props.storageReference,
-    };
+    return this.toFileResponse(result);
   }
 
   async listFilesWithPagination(page: number, pageSize: number) {
@@ -65,19 +77,7 @@ export class FilesModuleController {
     );
 
     return {
-      list: result.list.map((f) => ({
-        id: f.props.id,
-        fileName: f.props.fileName,
-        fileDescription: f.props.fileDescription,
-        folderId: f.props.folderId,
-        fileType: f.props.fileType,
-        createdAt: f.props.createdAt,
-        updatedAt: f.props.updatedAt,
-        previewUrl: f.props.previewUrl,
-        downloadUrl: f.props.previewUrl,
-        deletedAt: f.props.deletedAt,
-        storageReference: f.props.storageReference,
-      })),
+      list: result.list.map((f) => this.toFileResponse(f)),
       count: result.count,
     };
   }
@@ -90,19 +90,7 @@ export class FilesModuleController {
     );
 
     return {
-      list: result.list.map((f) => ({
-        id: f.props.id,
-        fileName: f.props.fileName,
-        fileDescription: f.props.fileDescription,
-        folderId: f.props.folderId,
-        fileType: f.props.fileType,
-        createdAt: f.props.createdAt,
-        updatedAt: f.props.updatedAt,
-        previewUrl: f.props.previewUrl,
-        downloadUrl: f.props.previewUrl,
-        deletedAt: f.props.deletedAt,
-        storageReference: f.props.storageReference,
-      })),
+      list: result.list.map((f) => this.toFileResponse(f)),
       count: result.count,
     };
   }
@@ -115,19 +103,7 @@ export class FilesModuleController {
     );
 
     return {
-      list: result.list.map((f) => ({
-        id: f.props.id,
-        fileName: f.props.fileName,
-        fileDescription: f.props.fileDescription,
-        folderId: f.props.folderId,
-        fileType: f.props.fileType,
-        createdAt: f.props.createdAt,
-        updatedAt: f.props.updatedAt,
-        previewUrl: f.props.previewUrl,
-        downloadUrl: f.props.previewUrl,
-        deletedAt: f.props.deletedAt,
-        storageReference: f.props.storageReference,
-      })),
+      list: result.list.map((f) => this.toFileResponse(f)),
       count: result.count,
     };
   }
@@ -135,19 +111,7 @@ export class FilesModuleController {
   async updateFileById(id: string, updateDTO: FileRecordUpdateProps) {
     const result = await this.updateFileByIdUseCase.execute(id, updateDTO);
 
-    return {
-      id: result.props.id,
-      fileName: result.props.fileName,
-      fileDescription: result.props.fileDescription,
-      folderId: result.props.folderId,
-      fileType: result.props.fileType,
-      createdAt: result.props.createdAt,
-      updatedAt: result.props.updatedAt,
-      previewUrl: result.props.previewUrl,
-      downloadUrl: result.props.previewUrl,
-      deletedAt: result.props.deletedAt,
-      storageReference: result.props.storageReference,
-    };
+    return this.toFileResponse(result);
   }
 
   async uploadFile(
@@ -168,19 +132,7 @@ export class FilesModuleController {
       path,
     );
 
-    return {
-      id: result.props.id,
-      fileName: result.props.fileName,
-      fileDescription: result.props.fileDescription,
-      folderId: result.props.folderId,
-      fileType: result.props.fileType,
-      createdAt: result.props.createdAt,
-      updatedAt: result.props.updatedAt,
-      previewUrl: result.props.previewUrl,
-      downloadUrl: result.props.previewUrl,
-      deletedAt: result.props.deletedAt,
-      storageReference: result.props.storageReference,
-    };
+    return this.toFileResponse(result);
   }
 
   // Folder methods

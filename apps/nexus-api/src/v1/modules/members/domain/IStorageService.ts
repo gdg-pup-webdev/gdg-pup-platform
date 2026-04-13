@@ -13,10 +13,24 @@ export class FileToUpload {
 export class UploadedFile {
   storageReference: string;
   publicUrl: string;
+  publicUrl64: string;
+  publicUrl512: string;
 
-  constructor({ storageReference, publicUrl }: { storageReference: string; publicUrl: string }) {
+  constructor({
+    storageReference,
+    publicUrl,
+    publicUrl64,
+    publicUrl512,
+  }: {
+    storageReference: string;
+    publicUrl: string;
+    publicUrl64: string;
+    publicUrl512: string;
+  }) {
     this.storageReference = storageReference;
     this.publicUrl = publicUrl;
+    this.publicUrl64 = publicUrl64;
+    this.publicUrl512 = publicUrl512;
   }
 }
 
