@@ -1,20 +1,34 @@
 import { IEventRepository, EventFilters } from "../domain/IEventRepository";
 import { Event } from "../domain/Event";
-import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
+import { Tables } from "@/v1/types/supabase.types";
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 
 type EventRow = Tables<"event">;
-type EventInsertDTO = TablesInsert<"event">;
-type EventUpdateDTO = TablesUpdate<"event">;
 type TeamRelation = { name?: string | null } | null;
+type EventImageRow = {
+  id: string;
+  eventId: string;
+  imageUrl: string;
+  position: number;
+  createdAt: string;
+  updatedAt: string | null;
+};
 type EventRowWithTeam = EventRow & {
   team?: TeamRelation | TeamRelation[];
+  images?: EventImageRow[] | null;
 };
 
 export class EventRepository implements IEventRepository {
   private readonly tableName = "event";
-  private readonly selectWithTeam = "*, team(name)";
+  private readonly selectWithRelations = "*, team(name), images:event_images(*)";
+
+  private toImages(data: EventImageRow[] | null | undefined): string[] {
+    return [...(data || [])]
+      .sort((a, b) => a.position - b.position)
+      .map((image) => image.imageUrl)
+      .filter((imageUrl) => Boolean(imageUrl));
+  }
 
   private extractTeamName(row: EventRowWithTeam): string | null {
     const team = row?.team;
@@ -94,6 +108,7 @@ export class EventRepository implements IEventRepository {
       bevy_event_id: row.gdg_event_id?.toString() ?? null,
       creatorId: row.creator_id || "",
       image_url: row.thumbnail_url || null,
+      images: this.toImages(row.images),
       bevyPreviewUrl: row.bevy_preview_url || null,
       tags: cleanArray(row.tags),
       max_capacity: row.max_capacity ? parseInt(row.max_capacity) : 999999,
@@ -151,6 +166,36 @@ export class EventRepository implements IEventRepository {
     };
   }
 
+  private async syncImageRows(eventId: string, imageUrls: string[]): Promise<void> {
+    const { error: deleteError } = await (supabase as any)
+      .from("event_images")
+      .delete()
+      .eq("eventId", eventId);
+
+    if (deleteError) {
+      handlePostgresError(deleteError);
+    }
+
+    if (imageUrls.length === 0) {
+      return;
+    }
+
+    const payload = imageUrls.map((imageUrl, position) => ({
+      eventId,
+      imageUrl,
+      position,
+      updatedAt: new Date().toISOString(),
+    }));
+
+    const { error: insertError } = await (supabase as any)
+      .from("event_images")
+      .insert(payload);
+
+    if (insertError) {
+      handlePostgresError(insertError);
+    }
+  }
+
   async listEvents(
     pageNumber: number,
     pageSize: number,
@@ -160,8 +205,8 @@ export class EventRepository implements IEventRepository {
     const to = from + pageSize - 1;
 
     const selectStr = filters?.teamName
-      ? "*, team!inner(name)"
-      : this.selectWithTeam;
+      ? "*, team!inner(name), images:event_images(*)"
+      : this.selectWithRelations;
 
     let query = supabase
       .from(this.tableName)
@@ -196,8 +241,10 @@ export class EventRepository implements IEventRepository {
 
     if (error) handlePostgresError(error);
 
+    const typedRows = (data || []) as unknown as EventRowWithTeam[];
+
     return {
-      list: (data || []).map((row) => this.mapToDomain(row)),
+      list: typedRows.map((row) => this.mapToDomain(row)),
       count: count ?? 0,
     };
   }
@@ -228,7 +275,7 @@ export class EventRepository implements IEventRepository {
 
     const { data, count, error } = await supabase
       .from(this.tableName)
-      .select(this.selectWithTeam, { count: "exact" })
+      .select(this.selectWithRelations, { count: "exact" })
       .gte("start_date", new Date(year, 0, 1).toISOString())
       .lt("start_date", new Date(year + 1, 0, 1).toISOString())
       .order("start_date", { ascending: true })
@@ -236,8 +283,10 @@ export class EventRepository implements IEventRepository {
 
     if (error) handlePostgresError(error);
 
+    const typedRows = (data || []) as unknown as EventRowWithTeam[];
+
     return {
-      list: (data || []).map((row) => this.mapToDomain(row)),
+      list: typedRows.map((row) => this.mapToDomain(row)),
       count: count ?? 0,
     };
   }
@@ -247,11 +296,14 @@ export class EventRepository implements IEventRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .insert(dto)
-      .select(this.selectWithTeam)
+      .select("id")
       .single();
 
     if (error) handlePostgresError(error);
-    return this.mapToDomain(data);
+
+    await this.syncImageRows(data.id, event.props.images);
+
+    return await this.findById(data.id);
   }
 
   async persistUpdates(event: Event): Promise<Event> {
@@ -260,11 +312,14 @@ export class EventRepository implements IEventRepository {
       .from(this.tableName)
       .update(dto)
       .eq("id", event.props.id)
-      .select(this.selectWithTeam)
+      .select("id")
       .single();
 
     if (error) handlePostgresError(error);
-    return this.mapToDomain(data);
+
+    await this.syncImageRows(event.props.id, event.props.images);
+
+    return await this.findById(data.id);
   }
 
   async deleteEvent(eventId: string): Promise<void> {
@@ -279,24 +334,26 @@ export class EventRepository implements IEventRepository {
   async findById(eventId: string): Promise<Event> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select(this.selectWithTeam)
+      .select(this.selectWithRelations)
       .eq("id", eventId)
       .maybeSingle();
 
     if (error) handlePostgresError(error);
     if (!data) throw new Error(`Event with ID ${eventId} not found`);
 
-    return this.mapToDomain(data);
+    return this.mapToDomain(data as unknown as EventRowWithTeam);
   }
 
   async findByBevyId(bevyEventId: string): Promise<Event | undefined> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select(this.selectWithTeam)
+      .select(this.selectWithRelations)
       .eq("gdg_event_id", parseInt(bevyEventId))
       .maybeSingle();
 
     if (error) handlePostgresError(error);
-    return data ? this.mapToDomain(data) : undefined;
+    return data
+      ? this.mapToDomain(data as unknown as EventRowWithTeam)
+      : undefined;
   }
 }

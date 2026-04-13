@@ -1,6 +1,7 @@
 import { EventUpdateProps } from "../domain/Event";
 import { IEventRepository } from "../domain/IEventRepository";
 import { FileToUpload, IFileStorage } from "../domain/IFileStorage";
+import { ValidationError } from "@/v1/errors/HttpError";
 
 export class UpdateEvent {
   constructor(
@@ -15,15 +16,27 @@ export class UpdateEvent {
       throw new Error("Event not found");
     }
 
-    const { image, ...props } = updateProps;
+    const { image, images, image_url, ...props } = updateProps;
 
-    // Handle new image upload if provided
-    if (image) {
-      const res = await this.filestorage.uploadFile(image);
-      props.image_url = res.publicUrl;
+    try {
+      if (images !== undefined) {
+        currentEvent.update({ images });
+      }
+
+      // Apply scalar updates first.
+      currentEvent.update({
+        ...props,
+        ...(image_url !== undefined ? { image_url } : {}),
+      });
+
+      // Handle new main image upload if provided.
+      if (image) {
+        const res = await this.filestorage.uploadFile(image);
+        currentEvent.update({ image_url: res.publicUrl });
+      }
+    } catch (error) {
+      throw new ValidationError((error as Error).message, error);
     }
-
-    currentEvent.update(props);
 
     const updatedEvent =
       await this.eventRepository.persistUpdates(currentEvent);
