@@ -7,6 +7,7 @@ import converter from "openapi-to-postmanv2";
 
 let scalarMiddleware: any = null;
 let swaggerSpecCache: any = null;
+let postmanCollectionCache: any = null;
 
 const getSwaggerSpec = () => {
   if (!swaggerSpecCache) {
@@ -20,7 +21,12 @@ const getSwaggerSpec = () => {
           "Public endpoints are marked without a lock icon in Swagger.",
         ].join(" "),
       },
-      servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
+      servers: [
+        { url: "http://localhost:8000", description: "Local Dev" },
+        { url: "https://api.dev.gdgpup.org", description: "Development" },
+        { url: "https://api.staging.gdgpup.org", description: "Staging" },
+        { url: "https://api.gdgpup.org", description: "Production" },
+      ],
       generateExample: true,
     });
     swaggerSpecCache = swaggerJsdoc(options);
@@ -29,6 +35,11 @@ const getSwaggerSpec = () => {
 };
 
 export const loadDocs = (app: Express) => {
+  if (process.env.NODE_ENV === "production") {
+    console.log("Skipping API documentation in production environment.");
+    return;
+  }
+
   /**
    * EXPOSE THE OPENAPI DOCUMENT
    */
@@ -43,6 +54,11 @@ export const loadDocs = (app: Express) => {
       "attachment; filename=collection.postman_collection.json",
     );
     res.setHeader("Content-Type", "application/json");
+
+    if (postmanCollectionCache) {
+      res.send(postmanCollectionCache);
+      return;
+    }
 
     const optionsWithoutExamples = generateOpenApiOptions({
       info: {
@@ -60,7 +76,7 @@ export const loadDocs = (app: Express) => {
         { url: "https://api.staging.gdgpup.org", description: "Staging" },
         { url: "https://api.gdgpup.org", description: "Production" },
       ],
-      generateExample: true,
+      generateExample: false,
     });
     const swaggerSpecWithoutExamples = swaggerJsdoc(optionsWithoutExamples);
 
@@ -112,7 +128,8 @@ export const loadDocs = (app: Express) => {
         if (collection.item) cleanPostmanItems(collection.item);
         // --- RECURSIVE CLEANUP END ---
 
-        res.send(JSON.stringify(collection, null, 2));
+        postmanCollectionCache = JSON.stringify(collection, null, 2);
+        res.send(postmanCollectionCache);
 
         return;
       },
