@@ -129,7 +129,7 @@ export function MobileShowcase({events } : {events: Event[]}) {
         {/* Gradient-bordered event image */}
         <div className="mt-4 w-full rounded-2xl overflow-hidden shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] p-[2px] bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)]">
           <img
-            src={EVENTS[0]?.image_url || ASSETS.PLACEHOLDERS.DEFAULT}
+            src={EVENTS[0]?.image_url || EVENTS[0]?.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
             alt="Featured event"
             className="w-full h-[clamp(72px,20vw,96px)] object-cover rounded-[14px]"
           />
@@ -225,6 +225,7 @@ export function MobileShowcase({events } : {events: Event[]}) {
               <PlanetCard
                 image={
                   EVENTS[mobileEventIndex].image_url ||
+                  EVENTS[mobileEventIndex].images?.[0] ||
                   ASSETS.PLACEHOLDERS.DEFAULT
                 }
                 alt={EVENTS[mobileEventIndex].title}

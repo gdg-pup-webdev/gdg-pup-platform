@@ -260,7 +260,7 @@ export function EventDetailSection({
 
           <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[260px] md:min-h-[520px] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)]">
             <img
-              src={eventDetail?.image_url || "/pages/events/event-cover.webp"}
+              src={eventDetail?.image_url || eventDetail?.images?.[0] || "/pages/events/event-cover.webp"}
               alt={eventTitle}
               className="absolute inset-0 h-full w-full object-cover object-center"
               draggable={false}

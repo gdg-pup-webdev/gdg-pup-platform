@@ -21,6 +21,7 @@ const createEventFixture = (
     attendees_count: 3,
     bevy_event_id: null,
     image_url: null,
+    images: [],
     bevyPreviewUrl: null,
     short_description: "Short desc",
     max_capacity: 100,
@@ -47,6 +48,9 @@ describe("EventSystemController", () => {
   const listEventsByYearUseCase = { execute: vi.fn() };
   const getEventsByTypeUseCase = { execute: vi.fn() };
   const getEventsByTeamUseCase = { execute: vi.fn() };
+  const addEventImageUseCase = { execute: vi.fn() };
+  const deleteEventImageUseCase = { execute: vi.fn() };
+  const reorderEventImagesUseCase = { execute: vi.fn() };
   const importAndSyncAllToBevyUseCase = { execute: vi.fn() };
   const syncEventToBevyUseCase = { execute: vi.fn() };
 
@@ -65,6 +69,9 @@ describe("EventSystemController", () => {
       listEventsByYearUseCase as any,
       getEventsByTypeUseCase as any,
       getEventsByTeamUseCase as any,
+      addEventImageUseCase as any,
+      deleteEventImageUseCase as any,
+      reorderEventImagesUseCase as any,
       importAndSyncAllToBevyUseCase as any,
       syncEventToBevyUseCase as any,
     );

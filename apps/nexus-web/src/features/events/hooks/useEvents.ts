@@ -7,12 +7,13 @@
 
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { EventsQueryParams, EventFilters, Event } from "../types";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
+import { addEventImage, deleteEventImage, reorderEventImages } from "../api/eventImages";
 
 /**
  * Hook to fetch events with TanStack Query
@@ -89,6 +90,51 @@ export function useEvent(eventId: string) {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
     retry: 2,
+  });
+}
+
+export function useAddEventImage(eventId: string, token?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (image: File) => {
+      return addEventImage(eventId, image, token ?? undefined);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events", "detail", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+}
+
+export function useDeleteEventImage(eventId: string, token?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (imageIndex: number) => {
+      return deleteEventImage(eventId, imageIndex, token ?? undefined);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events", "detail", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+}
+
+export function useReorderEventImages(eventId: string, token?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ fromIndex, toIndex }: { fromIndex: number; toIndex: number }) => {
+      return reorderEventImages(eventId, fromIndex, toIndex, token ?? undefined);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events", "detail", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
   });
 }
 

@@ -4,7 +4,21 @@ import { LearningResource } from "../domain/LearningResource";
 
 export class SupabaseLearningResourceRepository implements ILearningResourceRepository {
   private readonly tableName = "learning_resource";
-  private readonly selectQuery = "*, team(id, name, description), event(id, title, description, start_date, end_date, venue, thumbnail_url)";
+  private readonly eventSelect = "event(id, title, description, start_date, end_date, venue, thumbnail_url, images:event_images(imageUrl, position))";
+  private readonly selectQuery = `*, team(id, name, description), ${this.eventSelect}`;
+
+  private resolveEventImageUrl(event: any): string | null {
+    const mainImage = typeof event?.thumbnail_url === "string" ? event.thumbnail_url.trim() : "";
+    if (mainImage.length > 0) {
+      return mainImage;
+    }
+
+    const images = Array.isArray(event?.images) ? [...event.images] : [];
+    images.sort((a, b) => Number(a?.position || 0) - Number(b?.position || 0));
+
+    const first = images.find((image) => typeof image?.imageUrl === "string" && image.imageUrl.trim().length > 0);
+    return first?.imageUrl || null;
+  }
 
   private mapToDomain(row: any): LearningResource {
     return LearningResource.hydrate({
@@ -27,7 +41,7 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
         id: row.event.id, 
         title: row.event.title,
         description: row.event.description,
-        imageUrl: row.event.thumbnail_url,
+        imageUrl: this.resolveEventImageUrl(row.event),
         startDate: row.event.start_date ? new Date(row.event.start_date) : null,
         endDate: row.event.end_date ? new Date(row.event.end_date) : null,
         venue: row.event.venue
@@ -56,7 +70,7 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
     
     // Determine the select string. If teamName filter is used, we must use !inner join to filter the main table rows.
     const selectQuery = filters?.teamName 
-      ? "*, team!inner(id, name, description), event(id, title, description, start_date, end_date, venue, thumbnail_url)"
+      ? `*, team!inner(id, name, description), ${this.eventSelect}`
       : this.selectQuery;
 
     let query = supabase

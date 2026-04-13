@@ -19,6 +19,7 @@ export function EventCard({ event, onView, onEdit, onDelete, onSync }: EventCard
     day: "numeric",
     year: "numeric",
   });
+  const mainImage = event.image_url || event.images?.[0] || null;
 
   const extraItems = [
     ...(event.bevyPreviewUrl
@@ -51,7 +52,7 @@ export function EventCard({ event, onView, onEdit, onDelete, onSync }: EventCard
     <AdminEntityCard
       title={event.title}
       description={event.description || "No event description provided."}
-      mediaImageUrl={event.image_url}
+      mediaImageUrl={mainImage}
       mediaAlt={event.title}
       mediaFallback={<Calendar size={56} />}
       mediaLabel={
@@ -94,6 +95,16 @@ export function EventCard({ event, onView, onEdit, onDelete, onSync }: EventCard
                 key: "speakers",
                 icon: <Users size={13} />,
                 content: `${event.speakers.length} speakers`,
+                className: "font-semibold uppercase tracking-wider text-[10px]",
+              },
+            ]
+          : []),
+        ...(event.images && event.images.length > 0
+          ? [
+              {
+                key: "highlights",
+                icon: <Calendar size={13} />,
+                content: `${event.images.length} highlights`,
                 className: "font-semibold uppercase tracking-wider text-[10px]",
               },
             ]
