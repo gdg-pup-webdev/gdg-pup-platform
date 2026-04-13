@@ -27,6 +27,10 @@ inputs:
     description: "Comma-separated KEY=VALUE pairs to set as Cloud Run env vars (e.g. FOO=bar,BAZ=qux)"
     required: false
     default: ""
+  memory:
+    description: "Cloud Run memory limit (e.g. 512Mi, 1Gi, 2Gi). Defaults to service's existing setting if not set."
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -57,6 +61,7 @@ runs:
           --region="${{ inputs.region }}" \
           --project="${{ inputs.gcp-project-id }}" \
           ${{ inputs.env-vars != '' && format('--update-env-vars "{0}"', inputs.env-vars) || '' }} \
+          ${{ inputs.memory != '' && format('--memory "{0}"', inputs.memory) || '' }} \
           --quiet
 
     - name: Health check

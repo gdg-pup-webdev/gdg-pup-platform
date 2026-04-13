@@ -15,17 +15,33 @@ let scalarMiddleware: any = null;
 let swaggerSpecCache: any = null;
 let postmanCollectionCache: any = null;
 
-const getSwaggerSpec = () => {
-  if (!swaggerSpecCache) {
-    // In production: load the pre-built spec generated at build time.
-    // This avoids the V8 heap spike that caused OOM crashes on first /docs request.
-    if (fs.existsSync(PREBUILT_SPEC_PATH)) {
-      console.log("[docs] Loading pre-built OpenAPI spec from disk...");
+/**
+ * Eagerly initializes the Swagger spec at module load time.
+ * This ensures we know immediately at startup whether the prebuilt
+ * openapi.json is present, and avoids an OOM crash on the first /docs request.
+ */
+const initSwaggerSpec = () => {
+  if (fs.existsSync(PREBUILT_SPEC_PATH)) {
+    console.log(`[docs] ✅ Pre-built OpenAPI spec found at: ${PREBUILT_SPEC_PATH}`);
+    try {
       const raw = fs.readFileSync(PREBUILT_SPEC_PATH, "utf-8");
       swaggerSpecCache = JSON.parse(raw);
+      console.log("[docs] ✅ OpenAPI spec loaded successfully from disk.");
+    } catch (err) {
+      console.error("[docs] ❌ Failed to parse pre-built OpenAPI spec:", err);
+    }
+  } else {
+    if (process.env.NODE_ENV === "production") {
+      // In production, never attempt dynamic generation — it will OOM.
+      // The build pipeline MUST produce dist/openapi.json before deployment.
+      console.error(
+        `[docs] ❌ CRITICAL: dist/openapi.json not found at ${PREBUILT_SPEC_PATH}. ` +
+        "Dynamic generation is disabled in production to prevent OOM crashes. " +
+        "Ensure the build step runs scripts/generate-openapi.ts before deploying."
+      );
     } else {
       // Fallback: dynamic generation for local dev (no pre-built file).
-      console.log("[docs] Pre-built spec not found. Generating dynamically (local dev only)...");
+      console.warn("[docs] ⚠️  Pre-built spec not found. Generating dynamically (local dev only)...");
       const options = generateOpenApiOptions({
         info: {
           title: "Nexus API",
@@ -45,10 +61,18 @@ const getSwaggerSpec = () => {
         generateExample: true,
       });
       swaggerSpecCache = swaggerJsdoc(options);
+      console.log("[docs] ✅ OpenAPI spec generated dynamically.");
     }
   }
-  return swaggerSpecCache;
 };
+
+// Only initialize the spec if docs are actually going to be served.
+// No point loading/generating it if hideApiDocs=true.
+if (!configs.hideApiDocs) {
+  initSwaggerSpec();
+}
+
+const getSwaggerSpec = () => swaggerSpecCache;
 
 export const loadDocs = (app: Express) => {
   if (configs.hideApiDocs) {
