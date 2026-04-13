@@ -420,12 +420,7 @@ export function useOnboardingForm(gdgId: string) {
             {
               token: token ?? undefined,
               params: { id: project.id },
-              body: { data: bodyData },
-              files: {
-                mainImage: undefined,
-                secondaryImage: undefined,
-                tertiaryImage: undefined,
-              },
+              body: { data: bodyData }, 
             },
           );
 
@@ -469,11 +464,6 @@ export function useOnboardingForm(gdgId: string) {
                 ...bodyData,
                 memberGdgId: gdgId,
               },
-            },
-            files: {
-              mainImage: undefined,
-              secondaryImage: undefined,
-              tertiaryImage: undefined,
             },
           },
         );

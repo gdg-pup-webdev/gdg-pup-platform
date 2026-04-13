@@ -1,7 +1,11 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { MemberProject } from "../../domain/MemberProject";
 import { IMemberProjectRepository } from "../../domain/IMemberProjectRepository";
-import { IFileStorage, FileToUpload, UploadedFile } from "../../domain/IFileStorage";
+import {
+  IFileStorage,
+  FileToUpload,
+  UploadedFile,
+} from "../../domain/IFileStorage";
 import { IMemberService } from "../../domain/IMemberService";
 import { AddMemberProjectImage } from "../AddMemberProjectImage";
 import { DeleteMemberProjectImage } from "../DeleteMemberProjectImage";
@@ -43,7 +47,10 @@ class MockMemberProjectRepository extends IMemberProjectRepository {
     return item ? this.clone(item) : null;
   }
 
-  async findAll(page: number, limit: number): Promise<{ list: MemberProject[]; count: number }> {
+  async findAll(
+    page: number,
+    limit: number,
+  ): Promise<{ list: MemberProject[]; count: number }> {
     const all = Array.from(this.items.values()).map((item) => this.clone(item));
     const from = (page - 1) * limit;
     const to = from + limit;
@@ -54,7 +61,11 @@ class MockMemberProjectRepository extends IMemberProjectRepository {
     };
   }
 
-  async findByMemberGdgId(memberGdgId: string, page: number, limit: number): Promise<{ list: MemberProject[]; count: number }> {
+  async findByMemberGdgId(
+    memberGdgId: string,
+    page: number,
+    limit: number,
+  ): Promise<{ list: MemberProject[]; count: number }> {
     const filtered = Array.from(this.items.values())
       .filter((item) => item.props.memberGdgId === memberGdgId)
       .map((item) => this.clone(item));
@@ -68,12 +79,19 @@ class MockMemberProjectRepository extends IMemberProjectRepository {
     };
   }
 
-  async search(query: string, page: number, limit: number): Promise<{ list: MemberProject[]; count: number }> {
+  async search(
+    query: string,
+    page: number,
+    limit: number,
+  ): Promise<{ list: MemberProject[]; count: number }> {
     const normalized = query.toLowerCase();
     const filtered = Array.from(this.items.values())
       .filter((item) => {
         const props = item.props;
-        return props.title.toLowerCase().includes(normalized) || props.description.toLowerCase().includes(normalized);
+        return (
+          props.title.toLowerCase().includes(normalized) ||
+          props.description.toLowerCase().includes(normalized)
+        );
       })
       .map((item) => this.clone(item));
 
@@ -86,7 +104,10 @@ class MockMemberProjectRepository extends IMemberProjectRepository {
     };
   }
 
-  async findRandom(page: number, limit: number): Promise<{ list: MemberProject[]; count: number }> {
+  async findRandom(
+    page: number,
+    limit: number,
+  ): Promise<{ list: MemberProject[]; count: number }> {
     return this.findAll(page, limit);
   }
 }
@@ -149,7 +170,9 @@ describe("MemberProjects image usecases", () => {
   });
 
   it("adds an image to a project", async () => {
-    const existing = await repository.saveNew(makeProject(["https://cdn.example.com/a.png"]));
+    const existing = await repository.saveNew(
+      makeProject(["https://cdn.example.com/a.png"]),
+    );
     const usecase = new AddMemberProjectImage(repository, fileStorage);
 
     const updated = await usecase.execute({
@@ -200,7 +223,9 @@ describe("MemberProjects image usecases", () => {
       "https://cdn.example.com/1.png",
       "https://cdn.example.com/3.png",
     ]);
-    expect(fileStorage.deletedPublicUrls).toContain("https://cdn.example.com/2.png");
+    expect(fileStorage.deletedPublicUrls).toContain(
+      "https://cdn.example.com/2.png",
+    );
   });
 
   it("reorders images using fromIndex and toIndex", async () => {
@@ -226,7 +251,7 @@ describe("MemberProjects image usecases", () => {
     ]);
   });
 
-  it("cleans up replaced image on legacy slot update", async () => {
+  it("replaces images list on update", async () => {
     const existing = await repository.saveNew(
       makeProject([
         "https://cdn.example.com/main.png",
@@ -234,14 +259,34 @@ describe("MemberProjects image usecases", () => {
       ]),
     );
 
-    const usecase = new UpdateMemberProject(repository, fileStorage);
+    const usecase = new UpdateMemberProject(repository);
     const updated = await usecase.execute({
       id: existing.props.id,
-      mainImage: makeFile("replacement-main.png"),
+      images: ["https://cdn.example.com/replacement-main.png"],
     });
 
-    expect(updated.props.images[0]).not.toBe("https://cdn.example.com/main.png");
-    expect(fileStorage.deletedPublicUrls).toContain("https://cdn.example.com/main.png");
+    expect(updated.props.images).toEqual([
+      "https://cdn.example.com/replacement-main.png",
+    ]);
+  });
+
+  it("preserves existing dates during partial update", async () => {
+    const existing = await repository.saveNew(
+      makeProject(["https://cdn.example.com/main.png"]),
+    );
+
+    const originalStartDate = existing.props.startDate.toISOString();
+    const originalEndDate = existing.props.endDate;
+
+    const usecase = new UpdateMemberProject(repository);
+    const updated = await usecase.execute({
+      id: existing.props.id,
+      title: "Renamed Project",
+      description: "Updated description only",
+    });
+
+    expect(updated.props.startDate.toISOString()).toBe(originalStartDate);
+    expect(updated.props.endDate).toBe(originalEndDate);
   });
 
   it("deletes all stored images when deleting project", async () => {
@@ -266,7 +311,7 @@ describe("MemberProjects image usecases", () => {
 
   it("rejects create when more than 4 files are provided", async () => {
     const memberService = new MockMemberService(true);
-    const usecase = new CreateMemberProject(repository, fileStorage, memberService);
+    const usecase = new CreateMemberProject(repository, memberService);
 
     await expect(
       usecase.execute({
@@ -275,10 +320,13 @@ describe("MemberProjects image usecases", () => {
         startDate: new Date("2026-01-01T00:00:00.000Z"),
         endDate: null,
         memberGdgId: "GDG-0001",
-        images: [makeFile("a.png"), makeFile("b.png")],
-        mainImage: makeFile("c.png"),
-        secondaryImage: makeFile("d.png"),
-        tertiaryImage: makeFile("e.png"),
+        images: [
+          "https://cdn.example.com/a.png",
+          "https://cdn.example.com/b.png",
+          "https://cdn.example.com/c.png",
+          "https://cdn.example.com/d.png",
+          "https://cdn.example.com/e.png",
+        ],
       }),
     ).rejects.toThrow(ValidationError);
   });
