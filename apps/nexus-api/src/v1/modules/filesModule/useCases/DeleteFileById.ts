@@ -23,7 +23,17 @@ export class DeleteFileById {
       return true;
     }
 
-    await this.fileStorage.deleteFile(file.props.storageReference);
+    const references = [
+      file.props.storageReference,
+      file.props.storageRef64,
+      file.props.storageRef128,
+      file.props.storageRef256,
+      file.props.storageRef512,
+    ].filter((ref): ref is string => Boolean(ref));
+
+    await Promise.all(
+      references.map((reference) => this.fileStorage.deleteFile(reference)),
+    );
 
     file.markAsDeleted();
     await this.fileRepository.saveUpdates(file);

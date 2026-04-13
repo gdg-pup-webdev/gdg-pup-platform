@@ -22,7 +22,15 @@ export class SupabaseFileRepository implements IFileRepository {
       file_description: props.fileDescription,
       folder_id: props.folderId,
       preview_url: props.previewUrl,
+      preview_url_64: props.previewUrl64,
+      preview_url_128: props.previewUrl128,
+      preview_url_256: props.previewUrl256,
+      preview_url_512: props.previewUrl512,
       storage_ref: props.storageReference,
+      storage_ref_64: props.storageRef64,
+      storage_ref_128: props.storageRef128,
+      storage_ref_256: props.storageRef256,
+      storage_ref_512: props.storageRef512,
       file_type: props.fileType,
       is_deleted: false,
     };
@@ -38,8 +46,28 @@ export class SupabaseFileRepository implements IFileRepository {
       }),
       ...(props.folderId !== undefined && { folder_id: props.folderId }),
       ...(props.previewUrl !== undefined && { preview_url: props.previewUrl }),
+      ...(props.previewUrl64 !== undefined && { preview_url_64: props.previewUrl64 }),
+      ...(props.previewUrl128 !== undefined && {
+        preview_url_128: props.previewUrl128,
+      }),
+      ...(props.previewUrl256 !== undefined && {
+        preview_url_256: props.previewUrl256,
+      }),
+      ...(props.previewUrl512 !== undefined && {
+        preview_url_512: props.previewUrl512,
+      }),
       ...(props.storageReference !== undefined && {
         storage_ref: props.storageReference,
+      }),
+      ...(props.storageRef64 !== undefined && { storage_ref_64: props.storageRef64 }),
+      ...(props.storageRef128 !== undefined && {
+        storage_ref_128: props.storageRef128,
+      }),
+      ...(props.storageRef256 !== undefined && {
+        storage_ref_256: props.storageRef256,
+      }),
+      ...(props.storageRef512 !== undefined && {
+        storage_ref_512: props.storageRef512,
       }),
       ...(props.fileType !== undefined && { file_type: props.fileType }),
       ...(props.id !== undefined && { id: props.id }),
@@ -52,13 +80,48 @@ export class SupabaseFileRepository implements IFileRepository {
 
   // 3. Mapper for data coming out of the DB
   private toDomainRecord(row: any): FileRow {
+    const previewUrl1024 =
+      row.preview_url ||
+      row.preview_url_512 ||
+      row.preview_url_256 ||
+      row.preview_url_128 ||
+      row.preview_url_64;
+    const storageRef1024 =
+      row.storage_ref ||
+      row.storage_ref_512 ||
+      row.storage_ref_256 ||
+      row.storage_ref_128 ||
+      row.storage_ref_64;
+
+    if (!previewUrl1024 || !storageRef1024) {
+      throw new Error(`File record ${row.id} is missing base preview/storage references.`);
+    }
+
+    const previewUrl512 = row.preview_url_512 || previewUrl1024;
+    const previewUrl256 = row.preview_url_256 || previewUrl512;
+    const previewUrl128 = row.preview_url_128 || previewUrl256;
+    const previewUrl64 = row.preview_url_64 || previewUrl128;
+
+    const storageRef512 = row.storage_ref_512 || storageRef1024;
+    const storageRef256 = row.storage_ref_256 || storageRef512;
+    const storageRef128 = row.storage_ref_128 || storageRef256;
+    const storageRef64 = row.storage_ref_64 || storageRef128;
+
     return {
       id: row.id,
       fileName: row.file_name,
       fileDescription: row.file_description,
       folderId: row.folder_id,
-      previewUrl: row.preview_url,
-      storageReference: row.storage_ref,
+      previewUrl: previewUrl1024,
+      previewUrl64,
+      previewUrl128,
+      previewUrl256,
+      previewUrl512,
+      storageReference: storageRef1024,
+      storageRef64,
+      storageRef128,
+      storageRef256,
+      storageRef512,
       fileType: row.file_type || "",
       createdAt: row.created_at,
       updatedAt: row.updated_at,

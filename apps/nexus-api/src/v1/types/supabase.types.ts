@@ -332,7 +332,15 @@ export type Database = {
           id: string
           is_deleted: boolean | null
           preview_url: string | null
+          preview_url_128: string | null
+          preview_url_256: string | null
+          preview_url_512: string | null
+          preview_url_64: string | null
           storage_ref: string | null
+          storage_ref_128: string | null
+          storage_ref_256: string | null
+          storage_ref_512: string | null
+          storage_ref_64: string | null
           updated_at: string
         }
         Insert: {
@@ -346,7 +354,15 @@ export type Database = {
           id?: string
           is_deleted?: boolean | null
           preview_url?: string | null
+          preview_url_128?: string | null
+          preview_url_256?: string | null
+          preview_url_512?: string | null
+          preview_url_64?: string | null
           storage_ref?: string | null
+          storage_ref_128?: string | null
+          storage_ref_256?: string | null
+          storage_ref_512?: string | null
+          storage_ref_64?: string | null
           updated_at?: string
         }
         Update: {
@@ -360,7 +376,15 @@ export type Database = {
           id?: string
           is_deleted?: boolean | null
           preview_url?: string | null
+          preview_url_128?: string | null
+          preview_url_256?: string | null
+          preview_url_512?: string | null
+          preview_url_64?: string | null
           storage_ref?: string | null
+          storage_ref_128?: string | null
+          storage_ref_256?: string | null
+          storage_ref_512?: string | null
+          storage_ref_64?: string | null
           updated_at?: string
         }
         Relationships: [

@@ -24,14 +24,25 @@ export class DeleteFolderById {
       }
 
       for (const file of list) {
-        try {
-          await this.fileStorage.deleteFile(file.props.storageReference);
-        } catch (error) {
-          console.error(
-            `Failed to delete file from storage: ${file.props.storageReference}`,
-            error,
-          );
+        const references = [
+          file.props.storageReference,
+          file.props.storageRef64,
+          file.props.storageRef128,
+          file.props.storageRef256,
+          file.props.storageRef512,
+        ].filter((ref): ref is string => Boolean(ref));
+
+        for (const reference of references) {
+          try {
+            await this.fileStorage.deleteFile(reference);
+          } catch (error) {
+            console.error(
+              `Failed to delete file from storage: ${reference}`,
+              error,
+            );
+          }
         }
+
         file.markAsDeleted();
         await this.fileRepository.saveUpdates(file);
       }

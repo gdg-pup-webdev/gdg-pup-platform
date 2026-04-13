@@ -3,6 +3,7 @@ import { FilesModuleController } from "./FilesModuleController";
 import { IFileStorage } from "./domain/IFileStorage";
 import { GCPFileStorage } from "./infrastructure/GCPFileStorage";
 import { HybridFileStorage } from "./infrastructure/HybridFileStorage";
+import { SharpImageResizer } from "./infrastructure/SharpImageResizer";
 import { SupabaseFileRepository } from "./infrastructure/SupabaseFileRepository";
 import { SupabaseFileStorage } from "./infrastructure/SupabaseFileStorage";
 import { SupabaseFolderRepository } from "./infrastructure/SupabaseFolderRepository";
@@ -26,7 +27,11 @@ const fileRepository = new SupabaseFileRepository();
 const folderRepository = new SupabaseFolderRepository();
 const gcpFileStorage = new GCPFileStorage();
 const supabaseFileStorage = new SupabaseFileStorage();
-const fileStorage: IFileStorage =new HybridFileStorage(gcpFileStorage, supabaseFileStorage)
+const fileStorage: IFileStorage = new HybridFileStorage(
+  gcpFileStorage,
+  supabaseFileStorage,
+);
+const imageResizer = new SharpImageResizer(fileStorage);
 
 /**
  * use cases
@@ -51,6 +56,7 @@ const uploadFileUseCase: UploadFile = new UploadFile(
   fileStorage,
   fileRepository,
   folderRepository,
+  imageResizer,
 );
 const deleteFileByPreviewUrlUseCase: DeleteFileByPreviewUrl =
   new DeleteFileByPreviewUrl(fileRepository, fileStorage);

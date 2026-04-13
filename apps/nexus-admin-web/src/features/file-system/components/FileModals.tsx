@@ -26,6 +26,36 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
 import { ModalActionRow, type ModalActionItem } from "@/components/admin/ModalActionRow";
 
+type ImageResolution = 64 | 128 | 256 | 512 | 1024;
+
+type FileRecordWithImageVariants = FileRecord & {
+  previewUrl64?: string | null;
+  previewUrl128?: string | null;
+  previewUrl256?: string | null;
+  previewUrl512?: string | null;
+};
+
+const IMAGE_RESOLUTION_OPTIONS: Array<{
+  resolution: ImageResolution;
+  label: string;
+  field: "previewUrl64" | "previewUrl128" | "previewUrl256" | "previewUrl512" | "previewUrl";
+}> = [
+  { resolution: 64, label: "64", field: "previewUrl64" },
+  { resolution: 128, label: "128", field: "previewUrl128" },
+  { resolution: 256, label: "256", field: "previewUrl256" },
+  { resolution: 512, label: "512", field: "previewUrl512" },
+  { resolution: 1024, label: "1024", field: "previewUrl" },
+];
+
+const resolveImageUrl = (
+  file: FileRecordWithImageVariants,
+  resolution: ImageResolution,
+): string | null => {
+  const found = IMAGE_RESOLUTION_OPTIONS.find((option) => option.resolution === resolution);
+  if (!found) return null;
+  return file[found.field] || null;
+};
+
 // ==========================================
 // Folder Form Modal (Create / Update)
 // ==========================================
@@ -259,9 +289,32 @@ interface FileDetailsModalProps {
 }
 
 export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOpen }: FileDetailsModalProps) {
-  if (!item) return null;
+  const isFolder = Boolean((item as any)?.isFolder);
+  const fileRecord = !isFolder && item ? (item as FileRecordWithImageVariants) : null;
+  const isImageFile = Boolean(
+    fileRecord && fileRecord.fileType?.toLowerCase().startsWith("image/"),
+  );
+  const [selectedResolution, setSelectedResolution] = useState<ImageResolution>(256);
 
-  const isFolder = (item as any).isFolder;
+  useEffect(() => {
+    if (!isOpen || isFolder || !fileRecord) {
+      return;
+    }
+
+    const has256 = Boolean(resolveImageUrl(fileRecord, 256));
+    if (has256) {
+      setSelectedResolution(256);
+      return;
+    }
+
+    const firstAvailable = IMAGE_RESOLUTION_OPTIONS.find((option) =>
+      Boolean(fileRecord[option.field]),
+    );
+
+    setSelectedResolution(firstAvailable?.resolution ?? 1024);
+  }, [isOpen, isFolder, fileRecord]);
+
+  if (!item) return null;
   
   const getFileIcon = () => {
     if (isFolder) return FolderIcon;
@@ -282,6 +335,15 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
   const description = isFolder ? (item as Folder).description : (item as FileRecord).fileDescription;
   const createdAt = isFolder ? (item as Folder).createdAt : (item as FileRecord).createdAt;
   const updatedAt = isFolder ? (item as Folder).updatedAt : (item as FileRecord).updatedAt;
+  const selectedImageUrl = fileRecord
+    ? resolveImageUrl(fileRecord, selectedResolution)
+    : null;
+  const fallbackImageUrl = fileRecord
+    ? IMAGE_RESOLUTION_OPTIONS.map((option) => fileRecord[option.field]).find(
+        (url): url is string => Boolean(url),
+      ) || null
+    : null;
+  const displayedImageUrl = selectedImageUrl || fallbackImageUrl;
 
   const resourceActions: ModalActionItem[] = isFolder
     ? [
@@ -358,6 +420,62 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
             <p className="mt-1 text-xs font-medium text-gray-400">ID: {item.id}</p>
           </div>
         </div>
+
+        {!isFolder && isImageFile && fileRecord && (
+          <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+            <div>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Image Preview</h4>
+              <p className="mt-1 text-xs text-gray-500">
+                Selected Resolution: <span className="font-bold text-gray-700">{selectedResolution}px</span>
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4 md:flex-row">
+              <div className="flex shrink-0 gap-2 md:w-24 md:flex-col">
+                {IMAGE_RESOLUTION_OPTIONS.map((option) => {
+                  const hasResolution = Boolean(fileRecord[option.field]);
+                  const isSelected = selectedResolution === option.resolution;
+
+                  return (
+                    <button
+                      key={option.resolution}
+                      type="button"
+                      onClick={() => {
+                        if (!hasResolution) return;
+                        setSelectedResolution(option.resolution);
+                      }}
+                      disabled={!hasResolution}
+                      className={`rounded-lg border px-2 py-2 text-center text-xs font-bold transition ${
+                        isSelected
+                          ? "border-teal-500 bg-teal-50 text-teal-700"
+                          : hasResolution
+                            ? "border-gray-200 bg-white text-gray-700 hover:border-teal-300 hover:bg-teal-50/40"
+                            : "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex min-h-[260px] flex-1 items-center justify-center overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
+                {displayedImageUrl ? (
+                  <img
+                    src={displayedImageUrl}
+                    alt={`${name} preview`}
+                    className="h-auto max-h-[420px] w-full object-contain"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-2 text-gray-400">
+                    <ImageIcon size={28} />
+                    <span className="text-xs font-semibold">No preview available</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>

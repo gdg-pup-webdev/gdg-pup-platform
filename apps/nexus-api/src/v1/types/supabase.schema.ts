@@ -359,7 +359,15 @@ export const publicFileRecordRowSchema = z.object({
   id: z.string(),
   is_deleted: z.boolean().nullable(),
   preview_url: z.string().nullable(),
+  preview_url_128: z.string().nullable(),
+  preview_url_256: z.string().nullable(),
+  preview_url_512: z.string().nullable(),
+  preview_url_64: z.string().nullable(),
   storage_ref: z.string().nullable(),
+  storage_ref_128: z.string().nullable(),
+  storage_ref_256: z.string().nullable(),
+  storage_ref_512: z.string().nullable(),
+  storage_ref_64: z.string().nullable(),
   updated_at: z.string(),
 });
 
@@ -374,7 +382,15 @@ export const publicFileRecordInsertSchema = z.object({
   id: z.string().optional(),
   is_deleted: z.boolean().optional().nullable(),
   preview_url: z.string().optional().nullable(),
+  preview_url_128: z.string().optional().nullable(),
+  preview_url_256: z.string().optional().nullable(),
+  preview_url_512: z.string().optional().nullable(),
+  preview_url_64: z.string().optional().nullable(),
   storage_ref: z.string().optional().nullable(),
+  storage_ref_128: z.string().optional().nullable(),
+  storage_ref_256: z.string().optional().nullable(),
+  storage_ref_512: z.string().optional().nullable(),
+  storage_ref_64: z.string().optional().nullable(),
   updated_at: z.string().optional(),
 });
 
@@ -389,7 +405,15 @@ export const publicFileRecordUpdateSchema = z.object({
   id: z.string().optional(),
   is_deleted: z.boolean().optional().nullable(),
   preview_url: z.string().optional().nullable(),
+  preview_url_128: z.string().optional().nullable(),
+  preview_url_256: z.string().optional().nullable(),
+  preview_url_512: z.string().optional().nullable(),
+  preview_url_64: z.string().optional().nullable(),
   storage_ref: z.string().optional().nullable(),
+  storage_ref_128: z.string().optional().nullable(),
+  storage_ref_256: z.string().optional().nullable(),
+  storage_ref_512: z.string().optional().nullable(),
+  storage_ref_64: z.string().optional().nullable(),
   updated_at: z.string().optional(),
 });
 
