@@ -147,7 +147,7 @@ const TRUNCATED_ABOUT =
                   className={is39Hovered ? "" : "text-white"}
                   gradient={is39Hovered ? "white-blue" : undefined}
                 >
-                  39
+                  {event.rsvp || 0}
                 </Text>
               </div>
               <div
@@ -171,7 +171,7 @@ const TRUNCATED_ABOUT =
               className="h-9 max-w-72 px-3 py-1 rounded-2xl outline-[1.50px] outline-offset-[-1.50px] outline-white inline-flex flex-col justify-center items-center gap-2"
             >
               <Text variant="body" color="on-secondary">
-                TODO: Team Here
+                {event.teamName || event.category}
               </Text>
             </div>
           </Stack>

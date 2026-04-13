@@ -61,7 +61,7 @@ export function EventDetailSection({
     isLongAbout && !expanded ? `${aboutText.slice(0, 360).trimEnd()}...` : aboutText;
   const fullAboutParagraphs = aboutText.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
   const aboutParagraphs = aboutPreview.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
-  const keyThemes : string[] = ["test"]
+  const keyThemes : string[] = eventDetail?.tags?.filter((tag) => Boolean(tag?.trim())) || [];
     // eventDetail?.tags?.filter((tag) => Boolean(tag?.trim())) ||
     // (eventDetail?.category ? [eventDetail.category] : []);
 

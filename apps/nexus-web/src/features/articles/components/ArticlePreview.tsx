@@ -200,7 +200,9 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
       router.back();
       return;
     }
-    router.push("/articles");
+    
+    router.back();
+    // router.push("/articles");
   };
 
   if (!data || isLoading) {
