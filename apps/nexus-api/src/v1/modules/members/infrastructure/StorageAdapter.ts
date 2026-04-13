@@ -16,6 +16,8 @@ export class StorageAdapter implements IStorageService {
     return new UploadedFile({
       storageReference: result.storageReference || "",
       publicUrl: result.previewUrl || "",
+      publicUrl64: result.previewUrl64 || result.previewUrl || "",
+      publicUrl512: result.previewUrl512 || result.previewUrl || "",
     });
   }
 

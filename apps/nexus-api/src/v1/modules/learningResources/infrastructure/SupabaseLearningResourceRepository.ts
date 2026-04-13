@@ -20,7 +20,8 @@ export class SupabaseLearningResourceRepository implements ILearningResourceRepo
     return first?.imageUrl || null;
   }
 
-  private mapToDomain(row: any): LearningResource {
+  // this function uses arrow function syntax to preserve the correct 'this' context when used as a callback in array mapping (since this function is being used as a callback in some array mapping). It converts a database row into a LearningResource domain object, including nested team and event data if available. 
+ private mapToDomain = (row: any): LearningResource => {
     return LearningResource.hydrate({
       id: row.id,
       title: row.title,

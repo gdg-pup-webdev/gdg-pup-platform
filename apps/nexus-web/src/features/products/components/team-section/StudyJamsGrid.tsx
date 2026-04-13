@@ -7,6 +7,7 @@ import {
   StudyJamCardsLoading,
   TEAM_SECTION_CARD_CLASSNAME,
 } from "./StudyJamCardsLoading";
+import { useRouter } from "next/navigation";
 
 const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
@@ -43,6 +44,8 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
       ],
   });
 
+  const router = useRouter();
+
   return (
     <Stack gap="xl" className="mt-16">
       <Text
@@ -63,7 +66,7 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
           data.data.map((studyjam, index) => (
             <StudyJamContainer
               key={index}
-              className={TEAM_SECTION_CARD_CLASSNAME}
+              className={`${TEAM_SECTION_CARD_CLASSNAME} hover:cursor-pointer`}
               imageSrc={
                 studyjam.image_url || studyjam.images?.[0] || ASSETS.PRODUCTS.STUDY_JAM_PLACEHOLDER
               }
@@ -75,6 +78,7 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
                   : "Study Jam"
               }
               description={getDescriptionPreview(studyjam.description)}
+              onClick={() => {router.push(`/events/${studyjam.id}`)}}
               category={
                 <>
                   {studyjam.tags &&

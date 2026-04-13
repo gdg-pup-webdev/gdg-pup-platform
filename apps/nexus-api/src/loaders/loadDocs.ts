@@ -234,11 +234,6 @@ export const loadDocs = (app: Express) => {
    * (DEFAULT) LOAD SCALAR DOCUMENTATION
    */
   app.use("/docs", async (req, res, next) => {
-    // Prevent scalar from intercepting the static files or sub-paths
-    if (req.path !== "/" && req.path !== "") {
-      return next();
-    }
-
     try {
       if (!scalarMiddleware) {
         // Dynamic import happens here, only when user visits /docs

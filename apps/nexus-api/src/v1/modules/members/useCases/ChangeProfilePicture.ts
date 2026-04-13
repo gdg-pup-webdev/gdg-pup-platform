@@ -15,8 +15,12 @@ export class ChangeProfilePicture {
       await this.storage.deleteFile(member.props.avatarUrl);
     }
 
-    const { storageReference, publicUrl } = await this.storage.uploadFile(file);
-    member.changeProfilePicture(publicUrl);
+    const { publicUrl, publicUrl64, publicUrl512 } = await this.storage.uploadFile(file);
+    member.changeProfilePicture({
+      avatarUrl: publicUrl,
+      avatarUrl64: publicUrl64,
+      avatarUrl512: publicUrl512,
+    });
     await this.repo.persistUpdates(member);
 
     return member;
