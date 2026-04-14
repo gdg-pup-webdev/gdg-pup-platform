@@ -23,6 +23,7 @@ export type ProjectFormState = {
   imageFiles?: File[];
   imageUrls?: string[];
   originalImageUrls?: string[];
+  imageOrder?: string[];
   mainImageFile: File | null;
   mainImageUrl: string | null;
   secondaryImageFile: File | null;
