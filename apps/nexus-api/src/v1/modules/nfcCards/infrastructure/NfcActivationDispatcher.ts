@@ -1,6 +1,7 @@
-import { mailerController } from "@/v1/modules/mailer";
+import { mailerController, NfcActivationEmailTemplate } from "@/v1/modules/mailer";
 import { INfcActivationEventDispatcher } from "../domain/INfcActivationEventDispatcher";
 import { gdgMembersController } from "@/v1/modules/members";
+import { configs } from "@/configs/configs";
 
 export class NfcActivationDispatcher implements INfcActivationEventDispatcher {
   async dispatchActivationSuccess(
@@ -15,8 +16,13 @@ export class NfcActivationDispatcher implements INfcActivationEventDispatcher {
 
       await mailerController.sendEmail(
         member.email,
-        "Your Nexus Card is Activated! 🎉",
-        `Hi ${member.firstName},\n\nYour physical Nexus Card (${cardId}) has been successfully activated and permanently linked to your digital identity.\n\nYou can now tap your card to share your Sparkmates profile at any event!`,
+        "Your Nexus Card is Activated!",
+        NfcActivationEmailTemplate.render(
+          member.firstName,
+          member.gdgId,
+          cardId,
+          configs.clientBaseUrl ?? "https://gdgpup.org",
+        ),
       );
 
       console.log(`[NfcActivationDispatcher] Successfully dispatched activation email to ${member.email}`);
