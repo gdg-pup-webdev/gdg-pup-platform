@@ -263,9 +263,13 @@ export function MobileShowcase({events } : {events: Event[]}) {
             variant="colored"
             subVariant="blue"
             className="mt-10 h-12 w-38 rounded-lg text-xl font-medium"
-            disabled={!EVENTS[mobileEventIndex].id}
+            disabled={!EVENTS[mobileEventIndex].id && !EVENTS[mobileEventIndex].bevyPreviewUrl}
             onClick={() => {
               const currentEvent = EVENTS[mobileEventIndex];
+              if (currentEvent?.bevyPreviewUrl) {
+                window.open(currentEvent.bevyPreviewUrl, "_blank", "noopener,noreferrer");
+                return;
+              }
               if (!currentEvent?.id) return;
               router.push(
                 `/events/${currentEvent.id}?title=${encodeURIComponent(currentEvent.title)}`,
