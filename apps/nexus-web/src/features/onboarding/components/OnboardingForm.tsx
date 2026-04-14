@@ -247,7 +247,7 @@ function OnboardingSuccessModal({
         {/* Text */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-white">
-            {firstName ? `You're all set, ${firstName}! 🎉` : "Profile Complete! 🎉"}
+            {firstName ? `You're all set, ${firstName}!` : "Profile Complete!"}
           </h2>
           <p className="text-zinc-400 text-sm leading-relaxed">
             Your Sparkmates profile is ready. Redirecting you to your portfolio...
