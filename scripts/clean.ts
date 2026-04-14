@@ -79,7 +79,7 @@ function showHelp(): void {
   console.log("  pnpm clean");
   console.log("  pnpm clean --dry-run");
   console.log("  pnpm clean --install");
-  console.log("  pnpm clean --build");
+  console.log("  pnpm clean --install --build");
   console.log("  pnpm clean --gen-types");
   console.log("  pnpm clean --all");
   console.log("  pnpm clean --dry-run --all");
@@ -89,7 +89,9 @@ function showHelp(): void {
   console.log(color("Options:", "bold"));
   console.log("  --dry-run       Show what would be removed without deleting");
   console.log("  --install       Run pnpm install after clean completes");
-  console.log("  --build         Run pnpm build after clean completes");
+  console.log(
+    "  --build         Run pnpm build after clean completes (requires --install or --all)",
+  );
   console.log(
     "  --gen-types     Run pnpm gen-types after clean (requires Supabase CLI login)",
   );
@@ -275,7 +277,7 @@ async function askYesNo(question: string): Promise<boolean> {
 async function pauseBeforeBuildAfterGenTypesSkip(): Promise<void> {
   if (!process.stdin.isTTY || !process.stdout.isTTY) {
     warn(
-      "gen-types was skipped due Supabase requirements; continuing to build in non-interactive mode.",
+      "gen-types was skipped due to Supabase requirements; continuing to build in non-interactive mode.",
     );
     return;
   }
@@ -286,7 +288,7 @@ async function pauseBeforeBuildAfterGenTypesSkip(): Promise<void> {
   });
 
   try {
-    warn("gen-types was skipped due Supabase requirements.");
+    warn("gen-types was skipped due to Supabase requirements.");
     await rl.question(
       "Press Enter to continue with build, or Ctrl+C to cancel... ",
     );
