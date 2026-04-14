@@ -2,8 +2,8 @@
   "name": "gdg-pup-platform",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev --filter=!identity-api... --filter=!@packages/identity-api-contracts", 
-    "dev:nexus-api": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...", 
+    "dev": "turbo run dev --filter=!identity-api... --filter=!@packages/identity-api-contracts",
+    "dev:nexus-api": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
     "dev:storybook": "turbo dev --filter=storybook...",
     "benchmark:api": "pnpm --filter nexus-api run benchmark",
     "build": "turbo run build --filter=!storybook --filter=!identity-api",
@@ -21,6 +21,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "test": "turbo run test --filter=!identity-api",
+    "scan:dep": "tsx scripts/deprecated-scanner/deprecated-scanner.ts",
     "gcs:test": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts",
     "gcs:test:keep": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts --keep"
   },

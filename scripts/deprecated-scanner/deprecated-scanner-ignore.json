@@ -1,0 +1,13 @@
+{
+  "patterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    ".next/",
+    "storybook-static/",
+    "coverage/",
+    "*.map",
+    ".git/",
+    "logs/"
+  ]
+}
