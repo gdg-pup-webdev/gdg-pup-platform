@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Card, Stack, Text } from "@packages/spark-ui";
 import { Event } from "@/features/events";
 import { ASSETS } from "@/lib/constants/assets";
+import { normalizeEventDescription } from "@/features/events/utils/description";
 
 /**
  * FeaturedEventCard
@@ -30,7 +31,7 @@ export function FeaturedEventCard({ onOpenModal, event }: FeaturedEventCardProps
 
 
 
-const ABOUT_TEXT = event.description || "No description available for this event.";
+const ABOUT_TEXT = normalizeEventDescription(event.description) || "No description available for this event.";
 
 const TRUNCATED_ABOUT =
   ABOUT_TEXT.length > 493 ? ABOUT_TEXT.slice(0, 493) + "..." : ABOUT_TEXT;
@@ -58,6 +59,7 @@ const TRUNCATED_ABOUT =
           align="center"
           color="on-secondary"
           className="z-10"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
         >
           {new Date(event.end_date).toLocaleString("en-US", {
             month: "long",
@@ -73,6 +75,7 @@ const TRUNCATED_ABOUT =
           align="center"
           color="on-secondary"
           className="mt-4 z-10"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
         >
           Today&apos;s Highlight
         </Text>
@@ -147,7 +150,7 @@ const TRUNCATED_ABOUT =
                   className={is39Hovered ? "" : "text-white"}
                   gradient={is39Hovered ? "white-blue" : undefined}
                 >
-                  39
+                  {event.rsvp ?? event.attendees_count}
                 </Text>
               </div>
               <div
@@ -171,7 +174,7 @@ const TRUNCATED_ABOUT =
               className="h-9 max-w-72 px-3 py-1 rounded-2xl outline-[1.50px] outline-offset-[-1.50px] outline-white inline-flex flex-col justify-center items-center gap-2"
             >
               <Text variant="body" color="on-secondary">
-                TODO: Team Here
+                {event.category}
               </Text>
             </div>
           </Stack>

@@ -8,6 +8,7 @@ import { PlanetCard } from "./PlanetCard";
 import { CarouselArrowIcon } from "./CarouselArrowIcon";
 import { Event, useEvents } from "@/features/events";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
+import { normalizeEventDescription } from "@/features/events/utils/description";
 import { ASSETS } from "@/lib/constants/assets";
 import { useRouter } from "next/navigation";
 
@@ -78,6 +79,7 @@ export function MobileShowcase({events } : {events: Event[]}) {
           align="center"
           weight="bold"
           className="z-20"
+          style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))' }}
         >
           Community Showcase
         </Text>
@@ -103,14 +105,17 @@ export function MobileShowcase({events } : {events: Event[]}) {
         >
           {EVENTS[0]?.title}
         </Text>
-        <Text variant="body" align="center" color="on-secondary">
+        <Text
+          variant="body"
+          align="center"
+          color="on-secondary"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
+        >
           {new Date(EVENTS[0]?.end_date).toLocaleDateString(undefined, {
             month: "short",
             year: "numeric",
             day: "numeric",
-            
           })}
-          {/* MS Teams &nbsp; • &nbsp; Feb 27, 2026, 8:00 PM - 9:30 PM */}
         </Text>
         <img
           className="w-120 h-auto max-w-none left-1/2 -translate-x-1/2 top-32 absolute -z-10"
@@ -123,6 +128,7 @@ export function MobileShowcase({events } : {events: Event[]}) {
           color="on-secondary"
           className="mt-2"
           weight="semibold"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
         >
           Today&apos;s Highlight
         </Text>
@@ -141,14 +147,12 @@ export function MobileShowcase({events } : {events: Event[]}) {
             className="h-9 px-3 py-1 rounded-lg outline-[1.50px] outline-offset-[-1.50px] outline-white flex items-center"
           >
             <Text variant="body" color="on-secondary" className="z-10">
-              TODO: PUT TEAM HERE
-              {/* UI / UX Designs */}
+              {EVENTS[0]?.category}
             </Text>
           </div>
           <div className="flex flex-col items-end mt-0">
             <Text variant="heading-4" className="text-white">
-              {/* {EVENTS[0]?.attendees_count || 0} */}
-              39
+              {EVENTS[0]?.rsvp ?? EVENTS[0]?.attendees_count ?? 0}
             </Text>
             <Text variant="body" className="text-white leading-5">
               RSVP&apos;d
@@ -161,21 +165,10 @@ export function MobileShowcase({events } : {events: Event[]}) {
           variant="body"
           className="text-white mt-4 leading-7 self-stretch text-center justify-start"
         >
-          {EVENTS[0]?.description}
-          {/* Join us for an empowering session on February 27, 2026, from 8:00 PM
-          to 9:30 PM, as we delve into the world of intermediate UI/UX design!
-          In the &quot;Interactive UI/UX Design Bootcamp,&quot; we&apos;ll
-          transform your ideas into reality by guiding you through the creation
-          of both low- and high-fidelity wireframes. Learn how to turn these
-          wireframes into interactive prototypes to showcase real user flows.
-          We&apos;ll introduce key Figma features like Auto Layout and
-          Components that boost design efficiency and maintain consistency. To
-          top it all off, engage in our &quot;Hero Maker: Proto-Design
-          Challenge,&quot; a mini design task where you can apply what
-          you&apos;ve learned. Become part of the design revolution and elevate
-          your skills with GDG PUP! Don&apos;t miss this opportunity to enhance
-          your design capabilities. Book your seat today and bring your vision
-          to life! */}
+          {(() => {
+            const desc = normalizeEventDescription(EVENTS[0]?.description);
+            return desc.length > 300 ? desc.slice(0, 300) + "..." : desc;
+          })()}
         </Text>
       </Stack>
 
