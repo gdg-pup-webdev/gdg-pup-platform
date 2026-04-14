@@ -110,8 +110,10 @@ function printUsage(): void {
     "  -h, --help           Show this help message",
     "",
     paintBold("Ignore Config JSON"),
+    "  Directory patterns ending in / match anywhere under root_dir.",
+    "  Prefix a directory pattern with / to match only from root_dir.",
     "  {",
-    '    "patterns": ["dist/", "node_modules/", "*.map"]',
+    '    "patterns": ["dist/", "node_modules/", "/logs/", "*.map"]',
     "  }",
     "",
     paintBold("Examples"),
@@ -163,6 +165,26 @@ function patternToRegExp(pattern: string): RegExp {
   return new RegExp(`^${escaped}$`);
 }
 
+function matchesDirectoryPattern(
+  normalizedPath: string,
+  directoryPattern: string,
+  rootAnchored: boolean,
+): boolean {
+  if (rootAnchored) {
+    return (
+      normalizedPath === directoryPattern ||
+      normalizedPath.startsWith(`${directoryPattern}/`)
+    );
+  }
+
+  return (
+    normalizedPath === directoryPattern ||
+    normalizedPath.startsWith(`${directoryPattern}/`) ||
+    normalizedPath.endsWith(`/${directoryPattern}`) ||
+    normalizedPath.includes(`/${directoryPattern}/`)
+  );
+}
+
 function normalizeIgnoreConfig(value: unknown): IgnoreConfig {
   if (!value || typeof value !== "object") {
     throw new Error("Ignore config must be a JSON object.");
@@ -204,10 +226,15 @@ function isIgnored(
     const normalizedPattern = toPosixPath(pattern);
 
     if (normalizedPattern.endsWith("/")) {
-      const dirPattern = normalizedPattern.slice(0, -1);
+      const patternWithoutTrailingSlash = normalizedPattern.slice(0, -1);
+      const rootAnchored = patternWithoutTrailingSlash.startsWith("/");
+      const dirPattern = rootAnchored
+        ? patternWithoutTrailingSlash.slice(1)
+        : patternWithoutTrailingSlash;
+
       if (
-        normalized === dirPattern ||
-        normalized.startsWith(`${dirPattern}/`)
+        dirPattern.length > 0 &&
+        matchesDirectoryPattern(normalized, dirPattern, rootAnchored)
       ) {
         return true;
       }
@@ -234,7 +261,7 @@ function isIgnored(
 }
 
 function detectReason(line: string): Finding["reason"] | null {
-  if (/\b@deprecated\b/.test(line)) {
+  if (/@deprecated\b/.test(line)) {
     return "@deprecated";
   }
 
