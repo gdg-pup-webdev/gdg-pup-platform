@@ -7,6 +7,7 @@ import { useAuthContext, STATUS } from "@/features/authentication/store/useAuthS
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { LINKS } from "@/lib/constants/links";
+import { arrayMove } from "@dnd-kit/sortable";
 import { FormState, ProjectFormState } from "../types";
 
 const MAX_PROJECT_IMAGES = 4;
@@ -35,6 +36,7 @@ const createEmptyProject = (): ProjectFormState => ({
   imageFiles: [],
   imageUrls: [],
   originalImageUrls: [],
+  imageOrder: [],
   mainImageFile: null,
   mainImageUrl: null,
   secondaryImageFile: null,
@@ -58,7 +60,7 @@ const getProjectImages = (project: {
   );
 };
 
-const getFileSignature = (file: File) =>
+export const getFileSignature = (file: File) =>
   `${file.name}-${file.size}-${file.lastModified}-${file.type}`;
 
 const dedupeFiles = (files: File[]): File[] => {
@@ -191,6 +193,7 @@ export function useOnboardingForm(gdgId: string) {
                 imageFiles: [],
                 imageUrls: [...images],
                 originalImageUrls: [...images],
+                imageOrder: [...images],
                 mainImageFile: null,
                 mainImageUrl: images[0] || null,
                 secondaryImageFile: null,
@@ -226,8 +229,10 @@ export function useOnboardingForm(gdgId: string) {
   const updateProject = (index: number, field: keyof Omit<ProjectFormState, "id">, value: string | File | null) => {
     setProjects((prev) => {
       const next = [...prev];
-      const item = next[index];
-      if (!item) return prev;
+      if (!next[index]) return prev;
+      
+      const item = { ...next[index] };
+      next[index] = item;
 
       if (field === "mainImageFile") {
         item.mainImageFile = value as File | null;
@@ -267,21 +272,37 @@ export function useOnboardingForm(gdgId: string) {
   ) => {
     setProjects((prev) => {
       const next = [...prev];
-      const item = next[index];
+      if (!next[index]) return prev;
 
-      if (!item) {
-        return prev;
-      }
+      const item = { ...next[index] };
+      next[index] = item;
 
       const current = item.imageFiles || [];
       const existingImages = item.imageUrls || [];
       const maxNewUploads = Math.max(0, MAX_PROJECT_IMAGES - existingImages.length);
 
-      item.imageFiles = (
+      const nextFiles = (
         mode === "append"
           ? dedupeFiles([...current, ...files])
           : dedupeFiles(files)
       ).slice(0, maxNewUploads);
+
+      item.imageFiles = nextFiles;
+      
+      // Update imageOrder
+      const currentOrder = item.imageOrder || [];
+      if (mode === "replace") {
+        // If replacing, we keep existing URLs but replace all files
+        item.imageOrder = [
+          ...currentOrder.filter(id => !id.startsWith("file:")),
+          ...nextFiles.map(f => `file:${getFileSignature(f)}`)
+        ].slice(0, MAX_PROJECT_IMAGES);
+      } else {
+        // If appending, just add new file signatures
+        const existingSignatures = nextFiles.map(f => `file:${getFileSignature(f)}`);
+        const filteredSignatures = existingSignatures.filter(sig => !currentOrder.includes(sig));
+        item.imageOrder = [...currentOrder, ...filteredSignatures].slice(0, MAX_PROJECT_IMAGES);
+      }
 
       return next;
     });
@@ -290,18 +311,49 @@ export function useOnboardingForm(gdgId: string) {
   const removeExistingProjectImage = (index: number, imageIndex: number) => {
     setProjects((prev) => {
       const next = [...prev];
-      const item = next[index];
+      if (!next[index]) return prev;
 
-      if (!item) {
-        return prev;
-      }
+      const item = { ...next[index] };
+      next[index] = item;
 
       const existing = item.imageUrls || [];
       if (imageIndex < 0 || imageIndex >= existing.length) {
         return prev;
       }
 
+      const removedUrl = existing[imageIndex];
       item.imageUrls = existing.filter((_, currentIndex) => currentIndex !== imageIndex);
+      
+      // Update imageOrder
+      item.imageOrder = (item.imageOrder || []).filter(id => id !== removedUrl);
+      
+      return next;
+    });
+  };
+
+  const reorderProjectImages = (
+    projectIndex: number,
+    fromIndex: number,
+    toIndex: number,
+  ) => {
+    setProjects((prev) => {
+      const next = [...prev];
+      const current = next[projectIndex];
+      if (!current) return prev;
+
+      const currentOrder = current.imageOrder || [];
+      // Re-derive imageOrder from state in case it was never initialized
+      const order = currentOrder.length > 0
+        ? currentOrder
+        : [
+            ...(current.imageUrls || []),
+            ...(current.imageFiles || []).map(f => `file:${getFileSignature(f)}`),
+          ];
+
+      const reordered = arrayMove(order, fromIndex, toIndex);
+
+      const updated = { ...current, imageOrder: reordered };
+      next[projectIndex] = updated;
       return next;
     });
   };
@@ -387,10 +439,14 @@ export function useOnboardingForm(gdgId: string) {
 
         if (project.id) {
           const originalImages = project.originalImageUrls || [];
+          const existingImages = project.imageUrls || [];
+          const imageOrder = project.imageOrder || [];
+          
+          // 1. Delete removed images from server
           const removedIndices = getRemovedImageIndices(originalImages, existingImages).sort((a, b) => b - a);
 
           for (const imageIndex of removedIndices) {
-            const deleteImageResult = await callEndpoint(
+            await callEndpoint(
               configs.nexusApiBaseUrl,
               contract.api.v1.member_projects.id.images.imageIndex.DELETE,
               {
@@ -401,31 +457,13 @@ export function useOnboardingForm(gdgId: string) {
                 },
               },
             );
-
-            if (deleteImageResult.status !== 200) {
-              throw new Error(extractErrorMessage(deleteImageResult.body));
-            }
           }
 
-          const remainingSlots = Math.max(0, MAX_PROJECT_IMAGES - existingImages.length);
-          if (pendingImageFiles.length > remainingSlots) {
-            throw new Error(
-              `Project "${project.title.trim()}" exceeds the ${MAX_PROJECT_IMAGES}-image limit. Remove existing images first.`,
-            );
-          }
-
-          const patchProjectResult = await callEndpoint(
-            configs.nexusApiBaseUrl,
-            contract.api.v1.member_projects.id.PATCH,
-            {
-              token: token ?? undefined,
-              params: { id: project.id },
-              body: { data: bodyData }, 
-            },
-          );
-
-          if (patchProjectResult.status !== 200) {
-            throw new Error(extractErrorMessage(patchProjectResult.body));
+          // 2. Upload new images first (they append to the end)
+          const signatureToUrlMap = new Map<string, string>();
+          // Add existing URLs to the map
+          for (const url of existingImages) {
+            signatureToUrlMap.set(url, url);
           }
 
           for (const image of pendingImageFiles) {
@@ -440,9 +478,68 @@ export function useOnboardingForm(gdgId: string) {
               },
             );
 
-            if (addImageResult.status !== 200) {
+            if (addImageResult.status === 200) {
+              const newProjectData = addImageResult.body.data;
+              const newImageUrl = newProjectData.images[newProjectData.images.length - 1];
+              signatureToUrlMap.set(`file:${getFileSignature(image)}`, newImageUrl);
+            } else {
               throw new Error(extractErrorMessage(addImageResult.body));
             }
+          }
+
+          // 3. Post-upload reordering to match user's final desired order
+          // The current backend state contains [RemainingExistingImages..., NewlyUploadedImages...]
+          const backendImagesBeforeReorder = [
+            ...originalImages.filter(url => existingImages.includes(url)),
+            ...pendingImageFiles.map(f => signatureToUrlMap.get(`file:${getFileSignature(f)}`)!)
+          ];
+          
+          const desiredOrder = imageOrder.map(sig => signatureToUrlMap.get(sig)).filter(Boolean) as string[];
+          
+          let currentBackendOrder = [...backendImagesBeforeReorder];
+          
+          for (let i = 0; i < desiredOrder.length; i += 1) {
+            const targetUrl = desiredOrder[i];
+            const currentIndex = currentBackendOrder.indexOf(targetUrl);
+            
+            if (currentIndex !== i && currentIndex !== -1) {
+              const reorderResult = await callEndpoint(
+                configs.nexusApiBaseUrl,
+                contract.api.v1.member_projects.id.images.reorder.PATCH,
+                {
+                  token: token ?? undefined,
+                  params: { id: project.id },
+                  body: {
+                    data: {
+                      fromIndex: currentIndex,
+                      toIndex: i,
+                    },
+                  },
+                },
+              );
+
+              if (reorderResult.status !== 200) {
+                throw new Error(extractErrorMessage(reorderResult.body));
+              }
+
+              const [moved] = currentBackendOrder.splice(currentIndex, 1);
+              currentBackendOrder.splice(i, 0, moved);
+            }
+          }
+
+          // 4. Update project metadata
+          const patchProjectResult = await callEndpoint(
+            configs.nexusApiBaseUrl,
+            contract.api.v1.member_projects.id.PATCH,
+            {
+              token: token ?? undefined,
+              params: { id: project.id },
+              body: { data: bodyData }, 
+            },
+          );
+
+          if (patchProjectResult.status !== 200) {
+            throw new Error(extractErrorMessage(patchProjectResult.body));
           }
 
           continue;
@@ -544,6 +641,7 @@ export function useOnboardingForm(gdgId: string) {
     removeProject,
     updateProjectImages,
     removeExistingProjectImage,
+    reorderProjectImages,
     handleSave,
     handleSkip,
     fetchMemberProfile,
