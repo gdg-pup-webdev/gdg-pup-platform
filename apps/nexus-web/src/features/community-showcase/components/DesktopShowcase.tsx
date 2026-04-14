@@ -58,6 +58,7 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
               align="center"
               weight="bold"
               className="z-20"
+              style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))' }}
             >
               Community Showcase
             </Text>
@@ -67,6 +68,7 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
               weight="bold"
               align="center"
               className="text-white z-10"
+              style={{ textShadow: '0 0 24px rgba(0,0,0,1), 0 2px 12px rgba(0,0,0,0.9)' }}
             >
               Discover what our community has been building together.
             </Text>
@@ -74,7 +76,7 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
 
           {/* Horizon illustration */}
           <img
-            className="w-[min(1700px,140vw)] h-auto max-w-none left-1/2 -translate-x-1/2 -top-30 absolute"
+            className="w-[min(1700px,140vw)] h-auto max-w-none left-1/2 -translate-x-1/2 -top-30 absolute -z-10"
             src="/community-showcase/community-showcase-horizon.webp"
             alt=""
           />
