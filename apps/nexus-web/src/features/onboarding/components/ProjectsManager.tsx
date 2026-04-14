@@ -1,29 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input, Text } from "@packages/spark-ui";
 import { ProjectFormState } from "../types";
-import { getFileSignature } from "../hooks/useOnboardingForm";
 import { cn } from "@/lib/utils";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 const MAX_PROJECT_IMAGES = 4;
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-lg p-px focus-within:p-0.5 bg-[#737373] hover:bg-linear-to-r focus-within:bg-linear-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out">
@@ -48,45 +28,6 @@ type ProjectsManagerProps = {
     mode?: "append" | "replace",
   ) => void;
   removeExistingProjectImage?: (index: number, imageIndex: number) => void;
-  reorderProjectImages?: (projectIndex: number, fromIndex: number, toIndex: number) => void;
-};
-
-const SortableImageItem = ({
-  id,
-  children,
-}: {
-  id: string;
-  children: React.ReactNode;
-}) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 50 : undefined,
-    opacity: isDragging ? 0.5 : undefined,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        "relative group/item",
-        isDragging && "z-50"
-      )}
-    >
-      <div {...attributes} {...listeners} className="absolute inset-0 z-10 cursor-grab active:cursor-grabbing" />
-      {children}
-    </div>
-  );
 };
 
 const LocalImagePreview = ({
@@ -116,34 +57,29 @@ const LocalImagePreview = ({
   }, [file]);
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-blue-400/30 bg-zinc-950/60 h-24">
+    <div className="relative overflow-hidden rounded-xl border border-blue-400/30 bg-zinc-950/60">
       {previewUrl ? (
         <img
           src={previewUrl}
           alt={file.name}
-          className="h-full w-full object-cover"
+          className="h-24 w-full object-cover"
           onError={() => setPreviewUrl(null)}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-zinc-900 text-[11px] text-zinc-400">
+        <div className="flex h-24 w-full items-center justify-center bg-zinc-900 text-[11px] text-zinc-400">
           Preview unavailable
         </div>
       )}
       <button
         type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove();
-        }}
-        className="absolute right-1 top-1 z-20 flex h-5 w-5 items-center justify-center rounded-full border border-white/20 bg-black/60 text-[10px] font-bold text-white transition hover:border-red-400 hover:bg-red-500"
+        onClick={onRemove}
+        className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-white/30 bg-black/70 text-xs font-bold text-white transition hover:border-red-300 hover:bg-red-500/80"
         aria-label={`Remove ${file.name}`}
         title="Remove image"
       >
-        ✕
+        X
       </button>
-      <div className="absolute bottom-0 left-0 right-0 truncate bg-black/40 px-2 py-0.5 text-[10px] text-zinc-300 backdrop-blur-sm group-hover/item:visible invisible">
-        {file.name}
-      </div>
+      <div className="truncate px-2 py-1 text-[11px] text-zinc-300">{file.name}</div>
     </div>
   );
 };
@@ -160,36 +96,31 @@ const UploadedImagePreview = ({
   const [isBroken, setIsBroken] = React.useState(false);
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-zinc-700/50 bg-zinc-950/60 h-24">
+    <div className="relative overflow-hidden rounded-xl border border-zinc-700/50 bg-zinc-950/60">
       {!isBroken ? (
         <img
           src={imageUrl}
           alt={`Uploaded project image ${imageIndex + 1}`}
-          className="h-full w-full object-cover"
+          className="h-24 w-full object-cover"
           onError={() => setIsBroken(true)}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-zinc-900 text-[11px] text-zinc-400">
-          Uploaded unavailable
+        <div className="flex h-24 w-full items-center justify-center bg-zinc-900 text-[11px] text-zinc-400">
+          Uploaded image unavailable
         </div>
       )}
       {onRemove && (
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="absolute right-1 top-1 z-20 flex h-5 w-5 items-center justify-center rounded-full border border-white/20 bg-black/60 text-[10px] font-bold text-white transition hover:border-red-400 hover:bg-red-500"
+          onClick={onRemove}
+          className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-white/30 bg-black/70 text-xs font-bold text-white transition hover:border-red-300 hover:bg-red-500/80"
           aria-label={`Remove uploaded image ${imageIndex + 1}`}
           title="Remove image"
         >
-          ✕
+          X
         </button>
       )}
-      <div className="absolute bottom-0 left-0 right-0 truncate bg-black/40 px-2 py-0.5 text-[10px] text-zinc-400 backdrop-blur-sm group-hover/item:visible invisible">
-        Already Uploaded
-      </div>
+      <div className="truncate px-2 py-1 text-[11px] text-zinc-400">Uploaded</div>
     </div>
   );
 };
@@ -213,93 +144,7 @@ export function ProjectsManager({
   imageInputMode = "list",
   updateProjectImages,
   removeExistingProjectImage,
-  reorderProjectImages,
 }: ProjectsManagerProps) {
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const [errors, setErrors] = useState<Record<number, string>>({});
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const clearError = (index: number) => {
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors[index];
-      return newErrors;
-    });
-  };
-
-  const processFiles = (index: number, files: File[], remainingSlots: number) => {
-    clearError(index);
-    const validFiles: File[] = [];
-
-    for (const file of files) {
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        setErrors(prev => ({ ...prev, [index]: "Please upload valid images (JPEG, PNG, WEBP)." }));
-        continue;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        setErrors(prev => ({ ...prev, [index]: "One or more images exceed the 5MB limit." }));
-        continue;
-      }
-      validFiles.push(file);
-    }
-
-    if (validFiles.length > 0) {
-      const nextFiles = validFiles.slice(0, remainingSlots);
-      updateProjectImages?.(index, nextFiles, "append");
-    }
-  };
-
-  const handleDragEnd = (event: DragEndEvent, projectIndex: number) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const existingItems = projects[projectIndex].imageOrder || [];
-
-      const oldIndex = existingItems.indexOf(active.id as string);
-      const newIndex = existingItems.indexOf(over.id as string);
-
-      if (oldIndex !== -1 && newIndex !== -1) {
-        reorderProjectImages?.(projectIndex, oldIndex, newIndex);
-      }
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    setDragOverIndex(index);
-  };
-
-  const handleDragLeave = () => {
-    setDragOverIndex(null);
-  };
-
-  const handleDrop = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    setDragOverIndex(null);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const files = Array.from(e.dataTransfer.files);
-      
-      const project = projects[index];
-      const existingImages = getExistingProjectImages(project);
-      const selectedFiles = project.imageFiles || [];
-      const occupiedSlots = existingImages.length + selectedFiles.length;
-      const remainingSlots = Math.max(0, MAX_PROJECT_IMAGES - occupiedSlots);
-      
-      processFiles(index, files, remainingSlots);
-    }
-  };
-
   return (
     <div className="mt-6 sm:col-span-2">
       <div className="mb-3 flex items-center justify-between">
@@ -384,21 +229,19 @@ export function ProjectsManager({
                   const occupiedSlots = existingImages.length + selectedFiles.length;
                   const remainingSlots = Math.max(0, MAX_PROJECT_IMAGES - occupiedSlots);
                   const uploadInputId = `project-images-${index}`;
-                  const isDraggingOver = dragOverIndex === index;
-
-                  const sortableItems = project.imageOrder || [];
 
                   return (
                     <>
                       <input
                         id={uploadInputId}
                         type="file"
-                        accept={ALLOWED_TYPES.join(',')}
+                        accept="image/*"
                         multiple
                         disabled={remainingSlots === 0}
                         onChange={(event) => {
                           const files = Array.from(event.target.files || []);
-                          processFiles(index, files, remainingSlots);
+                          const nextFiles = files.slice(0, remainingSlots);
+                          updateProjectImages?.(index, nextFiles, "append");
                           event.currentTarget.value = "";
                         }}
                         className="hidden"
@@ -406,85 +249,45 @@ export function ProjectsManager({
 
                       <label
                         htmlFor={uploadInputId}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, index)}
                         className={cn(
-                          "flex w-full items-center justify-center gap-2 rounded-xl border border-dashed transition-all cursor-pointer",
-                          isDraggingOver 
-                            ? "border-blue-500 bg-blue-500/10 scale-[1.01]" 
-                            : errors[index]
-                              ? "border-red-500/50 bg-red-500/5 hover:border-red-500/80 text-red-400"
-                              : "border-[#4f75b9]/70 bg-[#0a162a] hover:border-[#7ba7ff] hover:bg-[#122442] text-[#d8e4ff]",
-                          "px-4 py-3 text-sm font-medium",
+                          "flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[#4f75b9]/70 bg-[#0a162a] px-4 py-3 text-sm font-medium text-[#d8e4ff] transition",
+                          "hover:border-[#7ba7ff] hover:bg-[#122442]",
                           remainingSlots === 0 && "pointer-events-none cursor-not-allowed opacity-45",
                         )}
                       >
                         <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-current text-xs leading-none">
-                          {errors[index] ? "!" : isDraggingOver ? "↓" : "+"}
+                          +
                         </span>
                         <span>
-                          {remainingSlots === 0 
-                            ? "Maximum of 4 images reached" 
-                            : isDraggingOver 
-                              ? "Drop images to upload" 
-                              : errors[index]
-                                ? errors[index]
-                                : "Upload or drag project images"}
+                          {remainingSlots === 0 ? "Maximum of 4 images reached" : "Upload Project Images"}
                         </span>
                       </label>
 
                       <p className="text-[11px] text-zinc-500">
-                        {existingImages.length} saved · {selectedFiles.length} new · {remainingSlots} slots left
+                        Existing: {existingImages.length} · Added: {selectedFiles.length} · Remaining slots: {remainingSlots}
                       </p>
 
                       {(existingImages.length > 0 || selectedFiles.length > 0) && (
-                        <div className="mt-2">
-                          <p className="mb-2 text-[10px] text-zinc-400 italic">Tip: Drag images to reorder</p>
-                          <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={(e) => handleDragEnd(e, index)}
-                          >
-                            <SortableContext
-                              items={sortableItems}
-                              strategy={rectSortingStrategy}
-                            >
-                              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                                {(project.imageOrder || []).map((id, itemIndex) => {
-                                  if (id.startsWith("file:")) {
-                                    const file = selectedFiles.find(f => `file:${getFileSignature(f)}` === id);
-                                    if (!file) return null;
-                                    const fileIndex = selectedFiles.indexOf(file);
-                                    return (
-                                      <SortableImageItem key={id} id={id}>
-                                        <LocalImagePreview
-                                          file={file}
-                                          onRemove={() => {
-                                            const next = selectedFiles.filter((_, i) => i !== fileIndex);
-                                            updateProjectImages?.(index, next, "replace");
-                                          }}
-                                        />
-                                      </SortableImageItem>
-                                    );
-                                  } else {
-                                    const imageUrl = id;
-                                    const imageIndex = existingImages.indexOf(imageUrl);
-                                    if (imageIndex === -1) return null;
-                                    return (
-                                      <SortableImageItem key={id} id={id}>
-                                        <UploadedImagePreview
-                                          imageUrl={imageUrl}
-                                          imageIndex={imageIndex}
-                                          onRemove={() => removeExistingProjectImage?.(index, imageIndex)}
-                                        />
-                                      </SortableImageItem>
-                                    );
-                                  }
-                                })}
-                              </div>
-                            </SortableContext>
-                          </DndContext>
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                          {existingImages.map((imageUrl, imageIndex) => (
+                            <UploadedImagePreview
+                              key={`${imageUrl}-${imageIndex}`}
+                              imageUrl={imageUrl}
+                              imageIndex={imageIndex}
+                              onRemove={() => removeExistingProjectImage?.(index, imageIndex)}
+                            />
+                          ))}
+
+                          {selectedFiles.map((file, fileIndex) => (
+                            <LocalImagePreview
+                              key={`${file.name}-${file.lastModified}-${fileIndex}`}
+                              file={file}
+                              onRemove={() => {
+                                const next = selectedFiles.filter((_, i) => i !== fileIndex);
+                                updateProjectImages?.(index, next, "replace");
+                              }}
+                            />
+                          ))}
                         </div>
                       )}
                     </>
@@ -493,54 +296,34 @@ export function ProjectsManager({
               </div>
             ) : (
               <>
-                <div className="space-y-3">
-                  {["mainImageFile", "secondaryImageFile", "tertiaryImageFile"].map((field) => {
-                    const labelMap: Record<string, string> = {
-                      mainImageFile: "Main Image",
-                      secondaryImageFile: "Secondary Image",
-                      tertiaryImageFile: "Tertiary Image"
-                    };
-                    const fieldKey = `${index}-${field}`;
-                    return (
-                      <div key={field}>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="text-xs text-zinc-400">{labelMap[field]} (Optional)</label>
-                          {errors[fieldKey as any] && (
-                            <span className="text-[10px] text-red-400">{errors[fieldKey as any]}</span>
-                          )}
-                        </div>
-                        <input
-                          type="file"
-                          accept={ALLOWED_TYPES.join(',')}
-                          onChange={(event) => {
-                            const file = event.target.files?.[0];
-                            if (file) {
-                              if (!ALLOWED_TYPES.includes(file.type)) {
-                                setErrors(prev => ({ ...prev, [fieldKey]: "Invalid type (JPEG, PNG, WEBP only)." }));
-                                event.target.value = "";
-                                return;
-                              }
-                              if (file.size > MAX_FILE_SIZE) {
-                                setErrors(prev => ({ ...prev, [fieldKey]: "Must be < 5MB." }));
-                                event.target.value = "";
-                                return;
-                              }
-                            }
-                            setErrors(prev => {
-                              const newErrors = { ...prev };
-                              delete newErrors[fieldKey as any];
-                              return newErrors;
-                            });
-                            updateProject(index, field as any, file ?? null);
-                          }}
-                          className={cn(
-                            "block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors",
-                            errors[fieldKey as any] && "border-red-500/50 bg-red-500/5"
-                          )}
-                        />
-                      </div>
-                    );
-                  })}
+                <div>
+                  <label className="text-xs text-zinc-400 block mb-2">Main Image (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => updateProject(index, "mainImageFile", event.target.files?.[0] ?? null)}
+                    className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-zinc-400 block mb-2">Secondary Image (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => updateProject(index, "secondaryImageFile", event.target.files?.[0] ?? null)}
+                    className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-zinc-400 block mb-2">Tertiary Image (Optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => updateProject(index, "tertiaryImageFile", event.target.files?.[0] ?? null)}
+                    className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
+                  />
                 </div>
               </>
             )}
