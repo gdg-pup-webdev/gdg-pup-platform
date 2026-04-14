@@ -22,6 +22,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const MAX_PROJECT_IMAGES = 4;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="relative group w-full rounded-lg p-px focus-within:p-0.5 bg-[#737373] hover:bg-linear-to-r focus-within:bg-linear-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out">
@@ -214,6 +216,7 @@ export function ProjectsManager({
   reorderProjectImages,
 }: ProjectsManagerProps) {
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [errors, setErrors] = useState<Record<number, string>>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -225,6 +228,36 @@ export function ProjectsManager({
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const clearError = (index: number) => {
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[index];
+      return newErrors;
+    });
+  };
+
+  const processFiles = (index: number, files: File[], remainingSlots: number) => {
+    clearError(index);
+    const validFiles: File[] = [];
+
+    for (const file of files) {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        setErrors(prev => ({ ...prev, [index]: "Please upload valid images (JPEG, PNG, WEBP)." }));
+        continue;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        setErrors(prev => ({ ...prev, [index]: "One or more images exceed the 5MB limit." }));
+        continue;
+      }
+      validFiles.push(file);
+    }
+
+    if (validFiles.length > 0) {
+      const nextFiles = validFiles.slice(0, remainingSlots);
+      updateProjectImages?.(index, nextFiles, "append");
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent, projectIndex: number) => {
     const { active, over } = event;
@@ -256,7 +289,6 @@ export function ProjectsManager({
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const files = Array.from(e.dataTransfer.files);
-      const imageFiles = files.filter(file => file.type.startsWith('image/'));
       
       const project = projects[index];
       const existingImages = getExistingProjectImages(project);
@@ -264,10 +296,7 @@ export function ProjectsManager({
       const occupiedSlots = existingImages.length + selectedFiles.length;
       const remainingSlots = Math.max(0, MAX_PROJECT_IMAGES - occupiedSlots);
       
-      if (imageFiles.length > 0) {
-        const nextFiles = imageFiles.slice(0, remainingSlots);
-        updateProjectImages?.(index, nextFiles, "append");
-      }
+      processFiles(index, files, remainingSlots);
     }
   };
 
@@ -364,13 +393,12 @@ export function ProjectsManager({
                       <input
                         id={uploadInputId}
                         type="file"
-                        accept="image/*"
+                        accept={ALLOWED_TYPES.join(',')}
                         multiple
                         disabled={remainingSlots === 0}
                         onChange={(event) => {
                           const files = Array.from(event.target.files || []);
-                          const nextFiles = files.slice(0, remainingSlots);
-                          updateProjectImages?.(index, nextFiles, "append");
+                          processFiles(index, files, remainingSlots);
                           event.currentTarget.value = "";
                         }}
                         className="hidden"
@@ -385,20 +413,24 @@ export function ProjectsManager({
                           "flex w-full items-center justify-center gap-2 rounded-xl border border-dashed transition-all cursor-pointer",
                           isDraggingOver 
                             ? "border-blue-500 bg-blue-500/10 scale-[1.01]" 
-                            : "border-[#4f75b9]/70 bg-[#0a162a] hover:border-[#7ba7ff] hover:bg-[#122442]",
-                          "px-4 py-3 text-sm font-medium text-[#d8e4ff]",
+                            : errors[index]
+                              ? "border-red-500/50 bg-red-500/5 hover:border-red-500/80 text-red-400"
+                              : "border-[#4f75b9]/70 bg-[#0a162a] hover:border-[#7ba7ff] hover:bg-[#122442] text-[#d8e4ff]",
+                          "px-4 py-3 text-sm font-medium",
                           remainingSlots === 0 && "pointer-events-none cursor-not-allowed opacity-45",
                         )}
                       >
                         <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-current text-xs leading-none">
-                          {isDraggingOver ? "↓" : "+"}
+                          {errors[index] ? "!" : isDraggingOver ? "↓" : "+"}
                         </span>
                         <span>
                           {remainingSlots === 0 
                             ? "Maximum of 4 images reached" 
                             : isDraggingOver 
                               ? "Drop images to upload" 
-                              : "Upload or drag project images"}
+                              : errors[index]
+                                ? errors[index]
+                                : "Upload or drag project images"}
                         </span>
                       </label>
 
@@ -462,35 +494,53 @@ export function ProjectsManager({
             ) : (
               <>
                 <div className="space-y-3">
-                  <div>
-                    <label className="text-xs text-zinc-400 block mb-2">Main Image (Optional)</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => updateProject(index, "mainImageFile", event.target.files?.[0] ?? null)}
-                      className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-zinc-400 block mb-2">Secondary Image (Optional)</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => updateProject(index, "secondaryImageFile", event.target.files?.[0] ?? null)}
-                      className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-zinc-400 block mb-2">Tertiary Image (Optional)</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => updateProject(index, "tertiaryImageFile", event.target.files?.[0] ?? null)}
-                      className="block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors"
-                    />
-                  </div>
+                  {["mainImageFile", "secondaryImageFile", "tertiaryImageFile"].map((field) => {
+                    const labelMap: Record<string, string> = {
+                      mainImageFile: "Main Image",
+                      secondaryImageFile: "Secondary Image",
+                      tertiaryImageFile: "Tertiary Image"
+                    };
+                    const fieldKey = `${index}-${field}`;
+                    return (
+                      <div key={field}>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-xs text-zinc-400">{labelMap[field]} (Optional)</label>
+                          {errors[fieldKey as any] && (
+                            <span className="text-[10px] text-red-400">{errors[fieldKey as any]}</span>
+                          )}
+                        </div>
+                        <input
+                          type="file"
+                          accept={ALLOWED_TYPES.join(',')}
+                          onChange={(event) => {
+                            const file = event.target.files?.[0];
+                            if (file) {
+                              if (!ALLOWED_TYPES.includes(file.type)) {
+                                setErrors(prev => ({ ...prev, [fieldKey]: "Invalid type (JPEG, PNG, WEBP only)." }));
+                                event.target.value = "";
+                                return;
+                              }
+                              if (file.size > MAX_FILE_SIZE) {
+                                setErrors(prev => ({ ...prev, [fieldKey]: "Must be < 5MB." }));
+                                event.target.value = "";
+                                return;
+                              }
+                            }
+                            setErrors(prev => {
+                              const newErrors = { ...prev };
+                              delete newErrors[fieldKey as any];
+                              return newErrors;
+                            });
+                            updateProject(index, field as any, file ?? null);
+                          }}
+                          className={cn(
+                            "block w-full text-sm text-zinc-300 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-200 hover:file:bg-zinc-700 transition-colors",
+                            errors[fieldKey as any] && "border-red-500/50 bg-red-500/5"
+                          )}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </>
             )}
