@@ -2,20 +2,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, type Variants } from "motion/react";
 import { Button, Stack, Text } from "@packages/spark-ui";
-// import { PAST_EVENTS } from '../data/past-events';
 import { PlanetCard } from "./PlanetCard";
 import { CarouselArrowIcon } from "./CarouselArrowIcon";
-import { Event, useEvents } from "@/features/events";
-import { useListEvents } from "@/features/events/hooks/useListEvents";
+import { Event } from "@/features/events";
 import { normalizeEventDescription } from "@/features/events/utils/description";
 import { ASSETS } from "@/lib/constants/assets";
 import { useRouter } from "next/navigation";
 
-const planetVariants = {
+const planetVariants: Variants = {
   enter: (dir: number) => ({
-    x: dir > 0 ? 120 : -120,
+    x: dir > 0 ? 40 : -40,
     opacity: 0,
     scale: 0.88,
   }),
@@ -23,20 +21,28 @@ const planetVariants = {
     x: 0,
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.38, ease: "easeOut" },
   },
   exit: (dir: number) => ({
-    x: dir > 0 ? -120 : 120,
+    x: dir > 0 ? -40 : 40,
     opacity: 0,
     scale: 0.88,
-    transition: { duration: 0.28, ease: [0.55, 0, 1, 0.45] },
+    transition: { duration: 0.28, ease: "easeIn" },
   }),
 };
 
-const textVariants = {
+const textVariants: Variants = {
   enter: { opacity: 0, y: 12 },
-  center: { opacity: 1, y: 0, transition: { duration: 0.32, ease: "easeOut", delay: 0.12 } },
-  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: "easeIn" } },
+  center: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.32, ease: "easeOut", delay: 0.12 },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    transition: { duration: 0.2, ease: "easeIn" },
+  },
 };
 
 /**
@@ -47,16 +53,16 @@ const textVariants = {
  *   - Background decoration (blobs, stardust, Cirby)
  *   - Section heading
  *   - Featured event card with description
- *   - Single-card planet carousel with prev/next navigation
+ *   - Single-card planet carousel with prev/next navigation + smooth transitions
  */
-export function MobileShowcase({events } : {events: Event[]}) {
+
+export function MobileShowcase({ events }: { events: Event[] }) {
   const router = useRouter();
   const [mobileEventIndex, setMobileEventIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const [mobileCarouselScale, setMobileCarouselScale] = useState(1);
 
-  const EVENTS = events
-
+  const EVENTS = events;
 
   // Responsive scale so the fixed-size carousel doesn't overflow narrow screens
   useEffect(() => {
@@ -106,235 +112,246 @@ export function MobileShowcase({events } : {events: Event[]}) {
       {/* ── Content constrained to max-w-7xl ── */}
       <div className="max-w-7xl mx-auto w-full">
 
-      {/* ── Section heading ── */}
-      <Stack gap="md" className="items-center mb-12">
-        <Text
-          variant="heading-4"
-          gradient="white-blue"
-          align="center"
-          weight="bold"
-          className="z-20"
-          style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))' }}
-        >
-          Community Showcase
-        </Text>
-        <Text
-          as="h2"
-          variant="body"
-          align="center"
-          className="text-white text-sm md:text-base"
-        >
-          Discover what our community has been <br /> building together.
-        </Text>
-      </Stack>
-
-      {/* ── Featured event ── */}
-      <Stack gap="xs" className="mb-10">
-        <Text
-          variant="heading-5"
-          gradient="white-green"
-          align="center"
-          weight="bold"
-          className="z-20"
-        >
-          {EVENTS[0]?.title}
-        </Text>
-        <Text
-          variant="body"
-          align="center"
-          color="on-secondary"
-          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
-        >
-          {new Date(EVENTS[0]?.end_date).toLocaleDateString(undefined, {
-            month: "short",
-            year: "numeric",
-            day: "numeric",
-          })}
-        </Text>
-        <img
-          className="w-120 h-auto max-w-none left-1/2 -translate-x-1/2 top-32 absolute -z-10"
-          src="/community-showcase/community-showcase-horizon.webp"
-          alt=""
-        />
-        <Text
-          variant="body"
-          align="center"
-          color="on-secondary"
-          className="mt-2"
-          weight="semibold"
-          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
-        >
-          Today&apos;s Highlight
-        </Text>
-        {/* Gradient-bordered event image */}
-        <div className="mt-4 w-full rounded-2xl overflow-hidden shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] p-[2px] bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)]">
-          <img
-            src={EVENTS[0]?.image_url || EVENTS[0]?.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
-            alt="Featured event"
-            className="w-full h-[clamp(72px,20vw,96px)] object-cover rounded-[14px]"
-          />
-        </div>
-        {/* Category tag + RSVP count */}
-        <div className="flex justify-between items-start w-full mt-3">
-          <div
-            data-property-1="Default"
-            className="h-9 px-3 py-1 rounded-lg outline-[1.50px] outline-offset-[-1.50px] outline-white flex items-center"
+        {/* ── Section heading ── */}
+        <Stack gap="md" className="items-center mb-12">
+          <Text
+            variant="heading-4"
+            gradient="white-blue"
+            align="center"
+            weight="bold"
+            className="z-20"
+            style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))' }}
           >
-            <Text variant="body" color="on-secondary" className="z-10">
-              {EVENTS[0]?.category}
-            </Text>
+            Community Showcase
+          </Text>
+          <Text
+            as="h2"
+            variant="body"
+            align="center"
+            className="text-white text-sm md:text-base"
+          >
+            Discover what our community has been <br /> building together.
+          </Text>
+        </Stack>
+
+        {/* ── Featured event ── */}
+        <Stack gap="xs" className="mb-10">
+          <Text
+            variant="heading-5"
+            gradient="white-green"
+            align="center"
+            weight="bold"
+            className="z-20"
+          >
+            {EVENTS[0]?.title}
+          </Text>
+          <Text
+            variant="body"
+            align="center"
+            color="on-secondary"
+            style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
+          >
+            {new Date(EVENTS[0]?.end_date).toLocaleDateString(undefined, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+            })}
+          </Text>
+          <img
+            className="w-120 h-auto max-w-none left-1/2 -translate-x-1/2 top-32 absolute -z-10"
+            src="/community-showcase/community-showcase-horizon.webp"
+            alt=""
+          />
+          <Text
+            variant="body"
+            align="center"
+            color="on-secondary"
+            className="mt-2"
+            weight="semibold"
+            style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
+          >
+            Today&apos;s Highlight
+          </Text>
+          {/* Gradient-bordered event image */}
+          <div className="mt-4 w-full rounded-2xl overflow-hidden shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] p-[2px] bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)]">
+            <img
+              src={EVENTS[0]?.image_url || EVENTS[0]?.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
+              alt="Featured event"
+              className="w-full h-[clamp(72px,20vw,96px)] object-cover rounded-[14px]"
+            />
           </div>
-          <div className="flex flex-col items-end mt-0">
-            <Text variant="heading-4" className="text-white">
-              {EVENTS[0]?.rsvp ?? EVENTS[0]?.attendees_count ?? 0}
-            </Text>
-            <Text variant="body" className="text-white leading-5">
-              RSVP&apos;d
-            </Text>
+          {/* Category tag + RSVP count */}
+          <div className="flex justify-between items-start w-full mt-3">
+            <div
+              data-property-1="Default"
+              className="h-9 px-3 py-1 rounded-lg outline-[1.50px] outline-offset-[-1.50px] outline-white flex items-center"
+            >
+              <Text variant="body" color="on-secondary" className="z-10">
+                {EVENTS[0]?.category}
+              </Text>
+            </div>
+            <div className="flex flex-col items-end mt-0">
+              <Text variant="heading-4" className="text-white">
+                {EVENTS[0]?.rsvp ?? EVENTS[0]?.attendees_count ?? 0}
+              </Text>
+              <Text variant="body" className="text-white leading-5">
+                RSVP&apos;d
+              </Text>
+            </div>
           </div>
+
+          {/* Description */}
+          <Text
+            variant="body"
+            className="text-white mt-4 leading-7 self-stretch text-center justify-start"
+          >
+            {(() => {
+              const desc = normalizeEventDescription(EVENTS[0]?.description);
+              return desc.length > 300 ? desc.slice(0, 300) + "..." : desc;
+            })()}
+          </Text>
+        </Stack>
+
+        {/* ── Past Events heading ── */}
+        <Stack gap="xs" className="mb-6">
+          <Text
+            variant="heading-3"
+            gradient="white-blue"
+            align="center"
+            weight="bold"
+          >
+            Past Events
+          </Text>
+          <Text
+            variant="body-lg"
+            weight="semibold"
+            align="center"
+            color="on-secondary"
+          >
+            Look back on the great things we&apos;ve accomplished.
+          </Text>
+        </Stack>
+
+        {/* ── Single-card planet carousel ── */}
+        <div
+          className="flex items-start justify-center gap-4 mt-4 origin-[top_center]"
+          style={{
+            transform: `scale(${mobileCarouselScale})`,
+            marginBottom: `${330 * (mobileCarouselScale - 1)}px`,
+          }}
+        >
+          {/* Prev */}
+          <Button
+            variant="colored"
+            subVariant="blue"
+            aria-label="Previous event"
+            className="h-15 w-15 shrink-0 rounded-full mt-[270px]"
+            onClick={goToPrev}
+          >
+            <CarouselArrowIcon direction="left" />
+          </Button>
+
+          {EVENTS.length > 0 && (
+            /*
+             * Outer: flex-1 flex justify-center — same as the original, lets
+             *   the flex row distribute space correctly on all screen sizes.
+             * Inner: relative 270×270 — creates the stacking context so
+             *   exit + enter motion.divs overlap instead of sitting side-by-side.
+             * motion.div: absolute top-0 left-0 — stacks layers, sizes itself
+             *   from PlanetCard content, keeping the sphere a perfect circle.
+             */
+            <div className="relative mt-15 mx-auto flex-1 flex justify-center">
+              <div className="relative" style={{ width: 270, height: 270 }}>
+                <AnimatePresence mode="wait" custom={direction}>
+                  <motion.div
+                    key={mobileEventIndex}
+                    custom={direction}
+                    variants={planetVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    style={{ position: "absolute", top: 0, left: 0 }}
+                  >
+                    <PlanetCard
+                      image={
+                        EVENTS[mobileEventIndex].image_url ||
+                        EVENTS[mobileEventIndex].images?.[0] ||
+                        ASSETS.PLACEHOLDERS.DEFAULT
+                      }
+                      alt={EVENTS[mobileEventIndex].title}
+                      size={270}
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
+
+          {/* Next */}
+          <Button
+            variant="colored"
+            subVariant="blue"
+            aria-label="Next event"
+            className="h-15 w-15 shrink-0 rounded-full mt-[270px]"
+            onClick={goToNext}
+          >
+            <CarouselArrowIcon direction="right" />
+          </Button>
         </div>
 
-        {/* Description */}
-        <Text
-          variant="body"
-          className="text-white mt-4 leading-7 self-stretch text-center justify-start"
-        >
-          {(() => {
-            const desc = normalizeEventDescription(EVENTS[0]?.description);
-            return desc.length > 300 ? desc.slice(0, 300) + "..." : desc;
-          })()}
-        </Text>
-      </Stack>
-
-      {/* ── Past Events heading ── */}
-      <Stack gap="xs" className="mb-6">
-        <Text
-          variant="heading-3"
-          gradient="white-blue"
-          align="center"
-          weight="bold"
-        >
-          Past Events
-        </Text>
-        <Text
-          variant="body-lg"
-          weight="semibold"
-          align="center"
-          color="on-secondary"
-        >
-          Look back on the great things we&apos;ve accomplished.
-        </Text>
-      </Stack>
-
-      {/* ── Single-card planet carousel ── */}
-      <div
-        className="flex items-start justify-center gap-4 mt-4 origin-[top_center]"
-        style={{
-          transform: `scale(${mobileCarouselScale})`,
-          marginBottom: `${330 * (mobileCarouselScale - 1)}px`,
-        }}
-      >
-        {/* Prev */}
-        <Button
-          variant="colored"
-          subVariant="blue"
-          aria-label="Previous event"
-          className="h-15 w-15 shrink-0 rounded-full mt-[270px]"
-          onClick={goToPrev}
-        >
-          <CarouselArrowIcon direction="left" />
-        </Button>
-
+        {/* Text beneath planet */}
         {EVENTS.length > 0 && (
-          <div className="relative mt-15 mx-auto flex-1 flex justify-center overflow-hidden">
+          <div className="flex flex-col items-center w-full mt-10">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={mobileEventIndex}
                 custom={direction}
-                variants={planetVariants}
+                variants={textVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="flex justify-center"
+                className="flex flex-col items-center w-full"
               >
-                <PlanetCard
-                  image={
-                    EVENTS[mobileEventIndex].image_url ||
-                    EVENTS[mobileEventIndex].images?.[0] ||
-                    ASSETS.PLACEHOLDERS.DEFAULT
-                  }
-                  alt={EVENTS[mobileEventIndex].title}
-                  size={270}
-                />
+                <Text variant="body" align="center" color="muted" className="text-xl">
+                  {new Date(
+                    EVENTS[mobileEventIndex].end_date,
+                  ).toLocaleDateString(undefined, {
+                    month: "short",
+                    year: "numeric",
+                    day: "numeric",
+                  })}
+                </Text>
+                <Text
+                  variant="heading-6"
+                  align="center"
+                  color="on-secondary"
+                  className="mt-1 w-full"
+                >
+                  {EVENTS[mobileEventIndex].title}
+                </Text>
+                <Button
+                  variant="colored"
+                  subVariant="blue"
+                  className="mt-10 h-12 w-38 rounded-lg text-xl font-medium"
+                  disabled={!EVENTS[mobileEventIndex].id && !EVENTS[mobileEventIndex].bevyPreviewUrl}
+                  onClick={() => {
+                    const currentEvent = EVENTS[mobileEventIndex];
+                    if (currentEvent?.bevyPreviewUrl) {
+                      window.open(currentEvent.bevyPreviewUrl, "_blank", "noopener,noreferrer");
+                      return;
+                    }
+                    if (!currentEvent?.id) return;
+                    router.push(
+                      `/events/${currentEvent.id}?title=${encodeURIComponent(currentEvent.title)}`,
+                    );
+                  }}
+                >
+                  Learn more
+                </Button>
               </motion.div>
             </AnimatePresence>
           </div>
         )}
-        {/* Next */}
-        <Button
-          variant="colored"
-          subVariant="blue"
-          aria-label="Next event"
-          className="h-15 w-15 shrink-0 rounded-full mt-[270px]"
-          onClick={goToNext}
-        >
-          <CarouselArrowIcon direction="right" />
-        </Button>
-      </div>
-
-      {/* Text beneath planet */}
-      {EVENTS.length > 0 && (
-        <div className="flex flex-col items-center w-full mt-10">
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={mobileEventIndex}
-              custom={direction}
-              variants={textVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              className="flex flex-col items-center w-full"
-            >
-              <Text variant="body" align="center" color="muted" className="text-xl">
-                {new Date(
-                  EVENTS[mobileEventIndex].end_date,
-                ).toLocaleDateString(undefined, {
-                  month: "short",
-                  year: "numeric",
-                  day: "numeric",
-                })}
-              </Text>
-              <Text
-                variant="heading-6"
-                align="center"
-                color="on-secondary"
-                className="mt-1 w-full"
-              >
-                {EVENTS[mobileEventIndex].title}
-              </Text>
-              <Button
-                variant="colored"
-                subVariant="blue"
-                className="mt-10 h-12 w-38 rounded-lg text-xl font-medium"
-                disabled={!EVENTS[mobileEventIndex].id && !EVENTS[mobileEventIndex].bevyPreviewUrl}
-                onClick={() => {
-                  const currentEvent = EVENTS[mobileEventIndex];
-                  if (currentEvent?.bevyPreviewUrl) {
-                    window.open(currentEvent.bevyPreviewUrl, "_blank", "noopener,noreferrer");
-                    return;
-                  }
-                  if (!currentEvent?.id) return;
-                  router.push(
-                    `/events/${currentEvent.id}?title=${encodeURIComponent(currentEvent.title)}`,
-                  );
-                }}
-              >
-                Learn more
-              </Button>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      )}
 
       </div>{/* end max-w-7xl */}
     </div>
