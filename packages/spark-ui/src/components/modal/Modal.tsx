@@ -199,6 +199,7 @@ export const Modal = React.forwardRef<HTMLDialogElement, ModalProps>(
         >
           {/* Panel */}
           <div
+            data-lenis-prevent="true"
             className={cn(
               modalPanelVariants({ size, placement }),
               scrollBehavior === "inside" && "max-h-[80vh] overflow-y-auto",

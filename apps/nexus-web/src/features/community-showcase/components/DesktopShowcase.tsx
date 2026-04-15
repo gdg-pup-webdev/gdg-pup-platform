@@ -31,7 +31,7 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
         <div className="pointer-events-none w-241.5 h-244.25 left-0 top-0 absolute bg-sky-400/20 rounded-full blur-[400px] -translate-x-1/5 translate-y-3/4" />
         <div className="pointer-events-none w-241.5 h-244.25 left-0 bottom-0 absolute bg-pink-400/30 rounded-full blur-[400px] translate-x-1/2 translate-y-4/20" />
         <img
-          className="pointer-events-none w-[30vw] max-w-123.25 h-auto right-0 top-55 absolute -mr-[6vw]"
+          className="pointer-events-none z-20 w-[30vw] max-w-123.25 h-auto right-0 top-20 absolute -mr-[6vw]"
           src="/community-showcase/community-showcase-cirby.webp"
           alt=""
         />
@@ -58,15 +58,16 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
               align="center"
               weight="bold"
               className="z-20"
+              style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))' }}
             >
               Community Showcase
             </Text>
             <Text
               as="h2"
-              variant="heading-4"
-              weight="bold"
+              variant="body"
               align="center"
-              className="text-white z-10"
+              className="text-white z-10 text-sm md:text-base"
+              style={{ textShadow: '0 0 24px rgba(0,0,0,1), 0 2px 12px rgba(0,0,0,0.9)' }}
             >
               Discover what our community has been building together.
             </Text>
@@ -74,7 +75,7 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
 
           {/* Horizon illustration */}
           <img
-            className="w-[min(1700px,140vw)] h-auto max-w-none left-1/2 -translate-x-1/2 -top-30 absolute"
+            className="w-[min(1700px,140vw)] h-auto max-w-none left-1/2 -translate-x-1/2 -top-30 absolute -z-10"
             src="/community-showcase/community-showcase-horizon.webp"
             alt=""
           />

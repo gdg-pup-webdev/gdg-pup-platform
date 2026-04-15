@@ -1,6 +1,7 @@
 "use client";
 
 import { Event } from "@/features/events";
+import { normalizeEventDescription } from "@/features/events/utils/description";
 
 /**
  * EventModal
@@ -94,9 +95,7 @@ export function EventModal({ isVisible, onClose, event }: EventModalProps) {
                   "opacity 700ms ease 80ms, transform 800ms cubic-bezier(0.22,1,0.36,1)",
               }}
             >
-              {
-                event.description
-              }
+              {normalizeEventDescription(event.description)}
               {/* Join us for an empowering session on February 27, 2026, from 8:00
               PM to 9:30 PM, as we delve into the world of intermediate UI/UX
               design! In the &quot;Interactive UI/UX Design Bootcamp,&quot;

@@ -7,12 +7,12 @@ import { extractErrorMessage } from "@/lib/utils";
 export const useDeleteRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (roleName: string) => {
+    mutationFn: async (roleId: string) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles.roleName.DELETE,
+        contract.api.v1.roles.roleId.DELETE,
         {
-          params: { roleName },
+          params: { roleId: roleId },
         }
       );
 

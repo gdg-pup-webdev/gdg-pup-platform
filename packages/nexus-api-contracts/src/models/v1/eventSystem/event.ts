@@ -16,18 +16,21 @@ export const eventRecord = cz.object({
 
   attendance_points: cz.number(),
   attendees_count: cz.number(),
+  rsvp: cz.number().nullable().optional(),
   bevy_event_id: cz.string().nullable().optional(),
   image_url: cz.string().nullable().optional(),
+  images: cz.array(cz.string()).max(20),
   bevyPreviewUrl: cz.string().nullable().optional(),
 
   short_description: cz.string().nullable().optional(),
   max_capacity: cz.number(),
   tags: cz.array(cz.string()),
-  
+
   // New props
   speakers: cz.array(cz.string()),
   type: cz.string().nullable().optional(),
   teamId: cz.string().uuid().nullable().optional(),
+  teamName: cz.string().nullable().optional(),
 });
 
 export const eventRecordInsertDTO = eventRecord.omit({
@@ -35,6 +38,9 @@ export const eventRecordInsertDTO = eventRecord.omit({
   createdAt: true,
   updatedAt: true,
   attendees_count: true,
+  teamName: true,
+}).extend({
+  images: cz.array(cz.string()).max(20).optional(),
 });
 
 export const eventRecordUpdateDTO = eventRecordInsertDTO.partial();

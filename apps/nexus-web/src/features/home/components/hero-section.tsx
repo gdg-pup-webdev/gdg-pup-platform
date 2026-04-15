@@ -4,11 +4,12 @@ import {
   motion,
   useReducedMotion,
   useScroll,
-  useSpring,
   useTransform,
   type MotionValue,
 } from "motion/react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Container, Stack, Text } from "@packages/spark-ui";
+import Link from "next/link";
 import { ASSETS } from "@/lib/constants/assets";
 
 /* ------------------------------------------------------------------ */
@@ -28,6 +29,14 @@ const HERO_LAYERS = [
   { src: ASSETS.HOME.HERO.LAYER_F5, speed: 0.08, zIndex: 1 },
   { src: ASSETS.HOME.HERO.LAYER_BG, speed: 0.1, zIndex: 0 },
 ] as const;
+
+const MOBILE_DISABLED_LAYERS = new Set<string>([
+  ASSETS.HOME.HERO.LAYER_B1,
+  ASSETS.HOME.HERO.LAYER_B2,
+  ASSETS.HOME.HERO.LAYER_F1,
+  ASSETS.HOME.HERO.LAYER_F4,
+  ASSETS.HOME.HERO.LAYER_F5,
+]);
 
 /* ------------------------------------------------------------------ */
 /*  CTA entrance animation variants                                   */
@@ -57,29 +66,44 @@ interface ParallaxLayerProps {
   src: string;
   speed: number;
   zIndex: number;
-  scrollY: MotionValue<number>;
+  scrollYProgress: MotionValue<number>;
+  distance: number;
+  isMobileViewport: boolean;
+  disableParallax: boolean;
 }
 
-function ParallaxLayer({ src, speed, zIndex, scrollY }: ParallaxLayerProps) {
-  const rawY = useTransform(scrollY, [0, 1000], [0, -1000 * speed]);
-  // Spring-smooth the transform for a less mechanical feel
-  const y = useSpring(rawY, { stiffness: 80, damping: 20, mass: 0.4 });
+const ParallaxLayer = memo(function ParallaxLayer({
+  src,
+  speed,
+  zIndex,
+  scrollYProgress,
+  distance,
+  isMobileViewport,
+  disableParallax,
+}: ParallaxLayerProps) {
+  const y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, -distance * speed],
+  );
 
   return (
     <motion.div
-      style={{ y, zIndex }}
-      className="absolute inset-0 will-change-transform"
+      style={{ y: disableParallax ? 0 : y, zIndex }}
+      className={`absolute inset-0 ${disableParallax ? "" : "will-change-transform"}`}
     >
       <img
         src={src}
         alt=""
         role="presentation"
         draggable={false}
-        className="h-full w-full object-fill select-none"
+        className={`h-full w-full select-none ${
+          isMobileViewport ? "object-cover object-center" : "object-fill"
+        }`}
       />
     </motion.div>
   );
-}
+});
 
 /* ------------------------------------------------------------------ */
 /*  HeroSection                                                       */
@@ -87,22 +111,70 @@ function ParallaxLayer({ src, speed, zIndex, scrollY }: ParallaxLayerProps) {
 
 export function HeroSection() {
   const prefersReduced = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
 
-  // Single scroll listener shared across all parallax layers
-  const { scrollY } = useScroll();
-  const ctaOpacity = useTransform(scrollY, [0, 400], [1, 0]);
-  const ctaY = useTransform(scrollY, [0, 400], [0, -60]);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 1023px)");
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsMobileViewport(event.matches);
+    };
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
+
+  // Scope hero motion to this section so transforms remain predictable.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const ctaY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [0, isMobileViewport ? 0 : -48],
+  );
+  const desktopCtaOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.8, 1],
+    [1, 0.9, 0.75],
+  );
+
+  const ctaOpacity = isMobileViewport ? 1 : desktopCtaOpacity;
+
+  const parallaxDistance = isMobileViewport ? 120 : 300;
+  const headingVariant = isMobileViewport ? "heading-4" : "heading-2";
+  const bodyVariant = isMobileViewport ? "body-sm" : "body";
+  const ctaButtonSize = isMobileViewport ? "md" : "lg";
+  const disableParallax = Boolean(prefersReduced);
+  const activeLayers = useMemo(() => {
+    if (!isMobileViewport) {
+      return HERO_LAYERS;
+    }
+
+    return HERO_LAYERS.filter((layer) => !MOBILE_DISABLED_LAYERS.has(layer.src));
+  }, [isMobileViewport]);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative h-[100svh] min-h-[560px] w-full overflow-hidden"
+    >
       {/* Parallax image layers */}
-      {HERO_LAYERS.map((layer) => (
+      {activeLayers.map((layer) => (
         <ParallaxLayer
           key={layer.src}
           src={layer.src}
           speed={layer.speed}
           zIndex={layer.zIndex}
-          scrollY={scrollY}
+          scrollYProgress={scrollYProgress}
+          distance={parallaxDistance}
+          isMobileViewport={isMobileViewport}
+          disableParallax={disableParallax}
         />
       ))}
 
@@ -112,7 +184,11 @@ export function HeroSection() {
         className="absolute inset-0 z-40 flex items-center justify-center"
       >
         <Container>
-          <Stack align="center" justify="center" className="h-screen">
+          <Stack
+            align="center"
+            justify="center"
+            className="h-[100svh] min-h-[560px]"
+          >
             <motion.div
               variants={prefersReduced ? undefined : ctaContainerVariants}
               initial="hidden"
@@ -124,11 +200,11 @@ export function HeroSection() {
               >
                 <Text
                   as="h1"
-                  variant="heading-1"
+                  variant={headingVariant}
                   align="center"
                   gradient="white-blue"
                   weight="bold"
-                  className="text-4xl md:text-5xl lg:text-6xl leading-tight"
+                  className="leading-tight"
                 >
                   Bridging the gap between theory and practice.
                 </Text>
@@ -139,10 +215,10 @@ export function HeroSection() {
                 className="mt-4"
               >
                 <Text
-                  variant="body"
+                  variant={bodyVariant}
                   align="center"
                   weight="bold"
-                  className="text-white max-w-3xl mx-auto leading-relaxed"
+                  className="text-white max-w-[54ch] mx-auto leading-relaxed"
                 >
                   GDG PUP helps student developers grow through real projects,
                   events, and mentorship connecting classroom learning to
@@ -152,10 +228,10 @@ export function HeroSection() {
 
               <motion.div
                 variants={prefersReduced ? undefined : ctaItemVariants}
-                className="mt-8 inline-block"
+                className="mt-6 md:mt-8 inline-block"
               >
-                <Button variant="default" size="lg">
-                  Spark your Journey
+                <Button asChild variant="default" size={ctaButtonSize}>
+                  <Link prefetch={false} href="/signin">Spark your Journey</Link>
                 </Button>
               </motion.div>
             </motion.div>

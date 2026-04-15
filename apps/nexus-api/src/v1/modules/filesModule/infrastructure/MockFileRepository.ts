@@ -6,7 +6,9 @@ export class MockFileRepository implements IFileRepository {
   public count = 0;
 
   async findByPreviewUrl(previewUrl: string): Promise<FileRecord | null> {
-    const found = this.list.find((f) => f.props.previewUrl === previewUrl);
+    const found = this.list.find(
+      (f) => f.props.previewUrl === previewUrl && !f.props.isDeleted,
+    );
     return found || null;
   }
 
@@ -19,7 +21,8 @@ export class MockFileRepository implements IFileRepository {
       id: crypto.randomUUID(),
       createdAt: now,
       updatedAt: now,
-      deletedAt: "", // Assuming empty string for non-deleted
+      isDeleted: false,
+      deletedAt: null,
     });
 
     this.list.push(record);
@@ -29,7 +32,7 @@ export class MockFileRepository implements IFileRepository {
   }
 
   async findById(id: string): Promise<FileRecord | null> {
-    const found = this.list.find((f) => f.props.id === id);
+    const found = this.list.find((f) => f.props.id === id && !f.props.isDeleted);
     return found || null;
   }
 
@@ -55,8 +58,8 @@ export class MockFileRepository implements IFileRepository {
     const end = start + pageSize;
 
     return {
-      list: this.list.slice(start, end),
-      count: this.list.length,
+      list: this.list.filter((f) => !f.props.isDeleted).slice(start, end),
+      count: this.list.filter((f) => !f.props.isDeleted).length,
     };
   }
 
@@ -68,8 +71,8 @@ export class MockFileRepository implements IFileRepository {
     const start = (page - 1) * pageSize;
     const end = start + pageSize;
 
-    const filteredList = this.list.filter((f) =>
-      f.props.folderId === folderId,
+    const filteredList = this.list.filter(
+      (f) => f.props.folderId === folderId && !f.props.isDeleted,
     );
 
     return {
@@ -79,10 +82,14 @@ export class MockFileRepository implements IFileRepository {
   }
 
   async deleteById(id: string): Promise<boolean> {
-    const initialLength = this.list.length;
-    this.list = this.list.filter((f) => f.props.id !== id);
-    this.count = this.list.length;
+    const record = this.list.find((f) => f.props.id === id);
+    if (!record || record.props.isDeleted) {
+      return false;
+    }
 
-    return this.list.length < initialLength;
+    record.markAsDeleted();
+    await this.saveUpdates(record);
+
+    return true;
   }
 }

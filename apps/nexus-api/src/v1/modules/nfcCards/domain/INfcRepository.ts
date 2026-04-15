@@ -7,6 +7,9 @@ import {
 import { NfcVisit } from "./NfcVisit";
 
 export abstract class INfcRepository {
+
+  abstract findByGdgid(gdgId: string): Promise<NfcCard | null>;
+
   abstract listCardsByGdgId(gdgId: string): Promise<NfcCard[]>;
   abstract findById(cardId: string): Promise<NfcCard>;
 

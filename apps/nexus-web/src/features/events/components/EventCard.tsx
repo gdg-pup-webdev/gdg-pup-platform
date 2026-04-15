@@ -58,15 +58,16 @@ export function EventCard({ event }: EventCardProps) {
   };
 
   const isUpcoming = new Date(event.start_date || "") > new Date();
+  const coverImage = event.image_url || event.images?.[0] || null;
 
   return (
-    <Link href={`/events/${event.id}`} className="block">
+    <Link prefetch={false} href={`/events/${event.id}`} className="block">
       <Card className="h-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer overflow-hidden">
         {/* Event Banner */}
-        {event.image_url ? (
+        {coverImage ? (
           <div className="relative h-48 w-full overflow-hidden bg-gray-50">
             <img
-              src={event.image_url}
+              src={coverImage}
               alt={event.title}
               className="w-full h-full object-cover"
             />

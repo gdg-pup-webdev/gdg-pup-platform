@@ -1,13 +1,21 @@
 import { cz } from "@packages/typed-rest/shared";
 
+const sparkmatesSectionId = cz.union([
+  cz.literal("customButtons"),
+  cz.literal("skillsAndInterests"),
+  cz.literal("projects"),
+  cz.literal("gdgImpact"),
+  cz.literal("badges"),
+]);
+
 /**
  * Represents a GDG Member record in the system.
  */
 export const gdgMemberRecord = cz.object({
   gdgId: cz.string(),
-  email: cz.string().email(),
+  email: cz.string() ,
   membershipType: cz.string().nullable(),
-  avatarUrl: cz.string().url().nullable(),
+  avatarUrl: cz.string().nullable(),
   program: cz.string().nullable(),
   yearLevel: cz.number().nullable(),
   department: cz.string().nullable(),
@@ -17,14 +25,16 @@ export const gdgMemberRecord = cz.object({
   lastName: cz.string(),
   suffix: cz.string().nullable(),
   bio: cz.string().nullable(),
-  githubUrl: cz.string().url().nullable(),
-  linkedinUrl: cz.string().url().nullable(),
-  portfolioWebsiteUrl: cz.string().url().nullable(),
+  githubUrl: cz.string().nullable(),
+  linkedinUrl: cz.string().nullable(),
+  portfolioWebsiteUrl: cz.string().nullable(),
   otherLinks: cz.array(cz.string()),
   technicalSkills: cz.array(cz.string()),
   learningInterests: cz.array(cz.string()),
   toolsAndTechnologies: cz.array(cz.string()),
-  isPublic: cz.boolean(),
+  sectionOrder: cz.array(sparkmatesSectionId),
+  isOnboarded: cz.boolean().nullable(),
+  isPublic: cz.boolean().nullable(),
 });
 
 /**
@@ -33,10 +43,15 @@ export const gdgMemberRecord = cz.object({
  */
 export const gdgMemberRecordInsertDTO = gdgMemberRecord.omit({
   gdgId: true,
-  avatarUrl: true, 
+  avatarUrl: true,
+  sectionOrder: true,
 });
 
 /**
  * Data Transfer Object for updating an existing GDG Member.
  */
-export const gdgMemberRecordUpdateDTO = gdgMemberRecordInsertDTO.partial();
+export const gdgMemberRecordUpdateDTO = gdgMemberRecordInsertDTO
+  .partial()
+  .extend({
+    sectionOrder: cz.array(sparkmatesSectionId).optional(),
+  });

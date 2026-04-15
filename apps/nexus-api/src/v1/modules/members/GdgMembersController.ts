@@ -10,6 +10,10 @@ import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
 import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
 import { SearchMember } from "./useCases/SearchMember";
 import { ChangeProfilePicture } from "./useCases/ChangeProfilePicture";
+import {
+  GetSimilarUsers,
+  SimilarUsersStrategy,
+} from "./useCases/GetSimilarUsers";
 
 export class GdgMembersController {
   constructor(
@@ -21,8 +25,9 @@ export class GdgMembersController {
     private readonly updateMemberByGdgIdUseCase: UpdateMemberByGdgId,
     private readonly makeProfilePrivateUseCase: MakeProfilePrivate,
     private readonly makeProfilePublicUseCase: MakeProfilePublic,
-    private readonly searchUseCase: SearchMember, 
-    private readonly changePfpUseCase : ChangeProfilePicture
+    private readonly searchUseCase: SearchMember,
+    private readonly changePfpUseCase: ChangeProfilePicture,
+    private readonly getSuggestedUsersUseCase: GetSimilarUsers,
   ) {}
 
   private flattenMemberData(data: GdgMember) {
@@ -31,20 +36,36 @@ export class GdgMembersController {
 
   async changeProfilePicture(gdgId: string, file: File) {
     const result = await this.changePfpUseCase.execute(gdgId, {
-      buffer:await file.arrayBuffer(),
+      buffer: await file.arrayBuffer(),
       name: file.name,
       type: file.type,
     });
-    
+
     return this.flattenMemberData(result);
   }
-
 
   async search(query: string, limit: number) {
     const result = await this.searchUseCase.execute(query, limit);
     return result.map((m) => m.props);
   }
 
+  async getSuggestedUsers(
+    gdgId: string,
+    pageNumber: number,
+    pageSize: number,
+    strategy: SimilarUsersStrategy = "exploratory",
+  ) {
+    const result = await this.getSuggestedUsersUseCase.execute(
+      gdgId,
+      pageNumber,
+      pageSize,
+      strategy,
+    );
+    return {
+      list: result.list.map((m) => m.props),
+      count: result.count,
+    };
+  }
 
   async addMember(data: AddGdgMemberInput) {
     const result = await this.addUseCase.execute(data);

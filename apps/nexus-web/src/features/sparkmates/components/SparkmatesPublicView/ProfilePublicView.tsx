@@ -1,20 +1,34 @@
 "use client";
 
 import Image from "next/image";
-import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import {
   Avatar,
   Badge,
   Button,
   Input,
-  ShineBorder,
   Text,
 } from "@packages/spark-ui";
-import { CosmosParticles } from "@/components/shared";  
+import { toast } from "react-toastify";
+import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { useCardActivation } from "@/features/nfc-cards/hooks/useActivateCardMutation";
+import { useQueryClient } from "@tanstack/react-query";
 import { SparkmatesSource, useSparkmateProfile, useSuggestedSparkmates } from "../.."; 
 import { PublicSkillsAndLinksSection } from "./components/PublicSkillsAndLinksSection";
+import { ComingSoonPlaceholder } from "../ComingSoonPlaceholder";
+import { usePublicMemberProjects } from "../../hooks/usePublicMemberProjects";
+import { ProjectCard } from "../SparkmatesOwnerView/components/ProjectCard";
+import { GradientProfilePicture } from "../SparkmatesOwnerView/components/GradientProfilePicture";
+import { ConnectedSuggestedCard } from "../SparkmatesOwnerView/components/ConnectedSuggestedCard";
+import {
+  normalizeSparkmatesSectionOrder,
+  SparkmatesSectionId,
+} from "../../sectionOrder";
+import { parseCustomButtonLinks } from "../../utils/customButtonFavorites";
+import { useSearchMember } from "../../hooks/useSearchMember";
 
 const viewIcon = (
   <svg
@@ -45,26 +59,6 @@ const searchIcon = (
     <path d="m20 20-3.5-3.5" strokeLinecap="round" />
   </svg>
 );
-
-// TODO: Replace with actual assets and data from nextjs public assets
-const FIGMA_ASSETS = {
-  profileCard:
-    "https://www.figma.com/api/mcp/asset/3b8f15f0-f794-48d7-90f6-7463afc9d894",
-  profileRing:
-    "https://www.figma.com/api/mcp/asset/323fd0a6-f443-4caf-abc2-779db7ae33f3",
-  suggestedRing:
-    "https://www.figma.com/api/mcp/asset/a40a5418-1468-4827-bd4c-4527aa87f5ea",
-  customLinkGradient:
-    "https://www.figma.com/api/mcp/asset/487a6240-2dc1-485b-b27c-b192f5ff9947",
-  projectOne:
-    "https://www.figma.com/api/mcp/asset/09b49507-b6fe-4d0f-9332-6444a16245d7",
-  projectTwo:
-    "https://www.figma.com/api/mcp/asset/902a5aa1-eaa6-4a5e-8b70-7dd296a0102f",
-  projectThree:
-    "https://www.figma.com/api/mcp/asset/c806405e-7622-4201-a669-939b69396d7f",
-  badge:
-    "https://www.figma.com/api/mcp/asset/298196a1-6987-40f4-b7ee-621502d4cac0",
-};
 
 // function resolveAuthenticatedAvatar(user: ReturnType<typeof useAuthContext>["user"]) {
 //   if (!user) return null;
@@ -149,75 +143,6 @@ function SocialGlyph({ type }: { type: "github" | "linkedin" | "website" }) {
   );
 }
 
-function GradientProfilePicture({
-  src,
-  alt,
-  fallback,
-}: {
-  src?: string;
-  alt: string;
-  fallback: string;
-}) {
-  return (
-    <div className="relative h-43 w-43 shrink-0">
-      <img
-        src={FIGMA_ASSETS.profileRing}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-contain"
-      />
-      <div className="absolute left-1/2 top-1/2 h-41 w-41 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-        <Avatar
-          src={src}
-          alt={alt}
-          fallback={fallback}
-          className="h-full w-full rounded-full"
-        />
-      </div>
-    </div>
-  );
-}
-
-function ConnectedSuggestedCard({
-  avatarUrl,
-  name,
-  bio,
-}: {
-  avatarUrl?: string;
-  name: string;
-  bio: string;
-}) {
-  return (
-    <article className="relative flex items-center pl-11.5">
-      <div className="w-full overflow-hidden rounded-r-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] pl-16 pr-4 py-3.5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
-        <Text variant="body-lg" className="truncate text-white" weight="medium">
-          {name}
-        </Text>
-        <Text variant="body-sm" className="truncate text-[#E5E5E5]">
-          {bio}
-        </Text>
-      </div>
-
-      <div className="absolute left-0 top-1/2 h-23.5 w-23.5 -translate-y-1/2">
-        <img
-          src={FIGMA_ASSETS.suggestedRing}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-contain"
-        />
-        <div className="absolute left-1/2 top-1/2 h-21.5 w-21.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
-          <Avatar
-            src={avatarUrl}
-            alt={name}
-            fallback={name.charAt(0)}
-            className="h-full w-full rounded-full"
-          />
-        </div>
-      </div>
-    </article>
-  );
-}
-
 function Divider() {
   return (
     <div className="h-px w-full bg-[linear-gradient(90deg,#0F2449_0%,#2A4F91_50%,#0F2449_100%)]" />
@@ -255,39 +180,22 @@ const SPARK_BADGE = {
   variantId: "id",
 } as const;
 
-function ProjectCard({ image }: { image: string }) {
-  return (
-    <article className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
-      <Text variant="body" className="text-white" weight="medium">
-        Project Title
-      </Text>
-      <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
-        Month Year · Month Year
-      </Text>
-      <Text variant="body-sm" className="mt-1 text-[#E5E5E5]">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
-        ullamcorper sed eros, non sollicitudin.
-      </Text>
-      <img
-        src={image}
-        alt="Project preview"
-        className="mt-2 h-20 w-full rounded-md object-cover"
-      />
-    </article>
-  );
-}
-
 export function ProfilePublicView({
   gdgId,
   source,
+  nfcCard,
+  isNfcActivationRequired,
 }: {
   gdgId: string;
   source: SparkmatesSource;
+  nfcCard?: any;
+  isNfcActivationRequired?: boolean;
 }) {
   const [search, setSearch] = useState("");
-  const [starredCustomButtons, setStarredCustomButtons] = useState<Set<number>>(
-    () => new Set([0]),
-  );
+  const [activationSuccess, setActivationSuccess] = useState(false);
+  const { decodedToken, status: authStatus } = useAuthContext();
+  const activateCardMutation = useCardActivation();
+  const queryClient = useQueryClient();
 
   const {
     data: profile,
@@ -296,11 +204,33 @@ export function ProfilePublicView({
     error,
   } = useSparkmateProfile({ gdgId, source });
  
-  const suggestedUsers = useSuggestedSparkmates({
-    search,
-    viewerGdgId: profile?.gdgId,
-    // viewerPortfolio: profile?.portfolio ?? null,
-  });
+  const {data   } = useSuggestedSparkmates({
+      search,
+      viewerGdgId: profile?.gdgId,
+    });
+  
+    const suggestedUsers = data?.data || [];
+
+
+
+  const [trueSearch, setTrueSearch] = useState("");
+  const [viewingSearchResults, setViewingSearchResults] = useState(false);
+  const { data: searchData } = useSearchMember(trueSearch);
+  const handleOnSearch = () => {
+    setTrueSearch(search);
+    setViewingSearchResults(true);
+  };
+
+  const handleClearSearch = () => {
+    setSearch("");
+    setTrueSearch("");
+    setViewingSearchResults(false);
+  };
+
+
+
+
+  const projectsQuery = usePublicMemberProjects(gdgId);
 
   // const isOwner = useMemo(() => {
   //   return Boolean(
@@ -310,14 +240,9 @@ export function ProfilePublicView({
   // }, [profile?.owner_user_id, user?.id]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-center rounded-3xl border border-white/10 bg-white/5 p-20">
-          <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Loading profile..." />;
   }
+
 
   if (isError || !profile) {
     const message =
@@ -339,41 +264,149 @@ export function ProfilePublicView({
     );
   }
 
-  // const requiresActivation = profile.source === "nfc_card";
-  // const showActivationGate =
-    // requiresActivation && profile.status !== "activated";
+  if (isNfcActivationRequired && nfcCard && !activationSuccess) {
+    const isOwner = decodedToken?.memberInfo.gdgId === gdgId;
 
-  // if (showActivationGate) {
-  //   return (
-  //     <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-  //       <div className="mx-auto max-w-2xl rounded-3xl border border-white/15 bg-white/5 p-8 text-center">
-  //         <Text variant="heading-5" className="text-white">
-  //           Sparkmates Profile Not Active
-  //         </Text>
-  //         <Text variant="body" className="mt-2 text-[#C1C7CD]">
-  //           This digital portfolio is not activated yet.
-  //         </Text>
-  //         {/* {isOwner ? (
-  //           <Button
-  //             variant="colored"
-  //             subVariant="blue"
-  //             size="lg"
-  //             className="mt-6 w-full"
-  //             disabled={activateMutation.isPending}
-  //             onClick={() => {
-  //               if (!token) return;
-  //               activateMutation.mutate(token);
-  //             }}
-  //           >
-  //             {activateMutation.isPending
-  //               ? "Activating..."
-  //               : "Activate Sparkmates Profile"}
-  //           </Button>
-  //         ) : null} */}
-  //       </div>
-  //     </div>
-  //   );
-  // }
+    return (
+      <CosmosParticles
+        particleColors={["#ffffff", "#4285f4"]}
+        particleCount={180}
+        particleSpread={14}
+        speed={0.028}
+        particleBaseSize={75}
+        moveParticlesOnHover
+        alphaParticles={true}
+        className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] flex items-center justify-center p-4 w-full text-white"
+      >
+        <div className="relative z-10 w-full max-w-lg bg-zinc-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-tr from-[#FB2C36] to-[#2B7FFF] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20 mb-6">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <Text variant="heading-5" className="text-white">
+              Activate Nexus Card
+            </Text>
+            <Text variant="body-sm" className="text-zinc-400 mt-2 font-mono">
+              {nfcCard.id}
+            </Text>
+          </div>
+
+          {authStatus === "checking" ? (
+            <div className="py-8"><LoadingScreen fullPage={false} message="Checking authentication..." /></div>
+          ) : !decodedToken ? (
+            <div className="space-y-4">
+              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-5 text-center">
+                <Text variant="body-sm" className="text-yellow-200">
+                  This digital portfolio is not activated yet. Log in to your account if this is your card to link it!
+                </Text>
+              </div>
+              <Button
+                variant="colored"
+                subVariant="blue"
+                size="lg"
+                className="w-full text-white font-semibold"
+                onClick={() => {
+                  const currentPath = window.location.pathname + window.location.search;
+                  window.location.href = `/signin?next=${encodeURIComponent(currentPath)}`;
+                }}
+              >
+                Log In to Link Card
+              </Button>
+            </div>
+          ) : !isOwner ? (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 text-center">
+               <Text variant="body-sm" className="text-red-200">
+                You are not the owner of this card. You cannot activate it.
+               </Text>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+                <GradientProfilePicture
+                  size="sm"
+                  src={decodedToken.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
+                  alt={decodedToken.memberInfo.firstName}
+                  fallback={decodedToken.memberInfo.firstName.charAt(0)}
+                />
+                <div className="flex-1 min-w-0">
+                  <Text variant="body-sm" className="text-[#C1C7CD]">Activating as</Text>
+                  <Text variant="body-lg" weight="bold" className="text-white truncate">
+                    {decodedToken.memberInfo.firstName} {decodedToken.memberInfo.lastName}
+                  </Text>
+                </div>
+              </div>
+
+              <Button
+                variant="colored"
+                subVariant="blue"
+                size="lg"
+                className="w-full"
+                disabled={activateCardMutation.isPending}
+                onClick={() => {
+                  activateCardMutation.mutate(nfcCard.id, {
+                    onSuccess: () => {
+                      toast.success("Card activated successfully!");
+                      setActivationSuccess(true);
+                      // Provide an initial invalidate but without letting it destroy the gate yet
+                      queryClient.invalidateQueries({ queryKey: ["sparkmates-profile", gdgId] });
+                      queryClient.invalidateQueries({ queryKey: ["nfc-card", gdgId] });
+                    },
+                    onError: (err: any) => {
+                      toast.error(err.message || "Failed to activate card");
+                    }
+                  });
+                }}
+              >
+                {activateCardMutation.isPending ? "Activating..." : "Confirm Activation"}
+              </Button>
+            </div>
+          )}
+        </div>
+      </CosmosParticles>
+    );
+  }
+
+  if (activationSuccess) {
+    return (
+      <CosmosParticles
+        particleColors={["#ffffff", "#4285f4"]}
+        particleCount={180}
+        particleSpread={14}
+        speed={0.028}
+        particleBaseSize={75}
+        moveParticlesOnHover
+        alphaParticles={true}
+        className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] flex items-center justify-center p-4 w-full text-white"
+      >
+        <div className="relative z-10 w-full max-w-lg bg-zinc-900/50 backdrop-blur-xl border border-[#00C950]/30 rounded-3xl p-8 shadow-2xl text-center">
+          <div className="mx-auto w-20 h-20 bg-gradient-to-tr from-[#00C950] to-[#2B7FFF] rounded-full flex items-center justify-center shadow-lg shadow-[#00C950]/30 mb-6">
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <Text variant="heading-4" weight="bold" className="text-white mb-4">
+            Link Successful!
+          </Text>
+          <Text variant="body" className="text-zinc-300 mb-8 max-w-sm mx-auto">
+            Your physical Nexus Card is now officially active and linked to your digital identity. You will also receive a confirmation email shortly.
+          </Text>
+          <Button
+            variant="colored"
+            subVariant="blue"
+            size="lg"
+            className="w-full text-white font-bold"
+            onClick={() => {
+              setActivationSuccess(false);
+            }}
+          >
+            Explore My Public Profile
+          </Button>
+        </div>
+      </CosmosParticles>
+    );
+  }
 
 
 
@@ -383,20 +416,16 @@ export function ProfilePublicView({
     // user?.user_metadata?.full_name ||
     profile.gdgId;
 
-  const avatarUrl = ASSETS.BRANDING.GDG_LOGO_WEBP; //resolveAuthenticatedAvatar(user);
+  const avatarUrl = profile?.avatarUrl || ASSETS.PROFILE.DEFAULT_AVATAR;
 
-  const customLinks = (profile?.otherLinks ?? []).map((url) => ({
+  const parsedCustomButtonLinks = parseCustomButtonLinks(profile?.otherLinks);
+  const customLinks = parsedCustomButtonLinks.links.map((url) => ({
     title: getLinkTitle(url),
     url,
+    isStarred: parsedCustomButtonLinks.starredUrls.has(url),
   }));
 
-  const badgeCards = [1, 2, 3];
-
-  const projectImages = [
-    FIGMA_ASSETS.projectOne,
-    FIGMA_ASSETS.projectTwo,
-    FIGMA_ASSETS.projectThree,
-  ];
+  const projectList = projectsQuery.data || [];
 
   const socialLinks = [
     { key: "github", url: profile?.githubUrl, label: "GitHub" },
@@ -412,16 +441,117 @@ export function ProfilePublicView({
     },
   ] as const;
 
-  const toggleStar = (index: number) => {
-    setStarredCustomButtons((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
-      return next;
-    });
+  const sectionOrder = normalizeSparkmatesSectionOrder(profile.sectionOrder);
+
+  const renderOrderedSection = (sectionId: SparkmatesSectionId) => {
+    if (sectionId === "customButtons") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              Custom Button
+            </Text>
+          </div>
+          <div className="space-y-2.5">
+            {customLinks.map((item, index) => (
+              <div
+                key={`${item.title}-${index}`}
+                className={`relative overflow-hidden rounded-2xl p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[box-shadow,background] duration-300 ${
+                  item.isStarred
+                    ? "rainbow-border bg-[#0F2449] bg-[linear-gradient(90deg,#0F2449_0%,#2A4F91_50%,#0F2449_100%)]"
+                    : "border border-white/20 bg-[rgba(255,255,255,0.05)]"
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <Text
+                      variant="body-lg"
+                      className="text-white truncate block"
+                      weight="medium"
+                    >
+                      {item.title}
+                    </Text>
+                    <Text variant="body" className="text-[#E5E5E5] break-all block">
+                      {item.url}
+                    </Text>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {customLinks.length === 0 ? (
+              <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center">
+                <Text variant="body-sm" className="text-[#C1C7CD]">
+                  No custom links yet.
+                </Text>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      );
+    }
+
+    if (sectionId === "skillsAndInterests") {
+      return <PublicSkillsAndLinksSection portfolio={profile} />;
+    }
+
+    if (sectionId === "projects") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              Projects
+            </Text>
+            <Button
+              variant="default"
+              size="sm"
+              className="text-white"
+              iconRight={viewIcon}
+            >
+              View All
+            </Button>
+          </div>
+          <div className="space-y-3.5">
+            {projectsQuery.isLoading ? (
+              <Text variant="body-sm" className="text-zinc-500">
+                Loading projects...
+              </Text>
+            ) : projectList.length > 0 ? (
+              projectList.map((project: any) => (
+                <ProjectCard key={project.id} project={project} />
+              ))
+            ) : (
+              <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center text-[#C1C7CD]">
+                <Text variant="body-sm">No projects added yet.</Text>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
+
+    if (sectionId === "gdgImpact") {
+      return (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Text variant="heading-6" gradient="white-blue" weight="bold">
+              GDG Impact
+            </Text>
+          </div>
+          <ComingSoonPlaceholder />
+        </section>
+      );
+    }
+
+    return (
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Text variant="heading-6" gradient="white-blue" weight="bold">
+            Badges
+          </Text>
+        </div>
+        <ComingSoonPlaceholder />
+      </section>
+    );
   };
 
   return (
@@ -434,14 +564,14 @@ export function ProfilePublicView({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="min-h-screen bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-6 pb-24 pt-36 text-white"
+      className="min-h-screen overflow-x-hidden bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-3 sm:px-6 pb-24 pt-24 sm:pt-36 text-white"
     >
-      <div className="relative min-h-screen w-full overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <div className="relative w-full">
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden hidden sm:block">
           <SparkmatesRainbowStreak />
         </div>
 
-        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
+        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
           <FadeInSection className="p-0" delay={0.02}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Text variant="heading-5" className="text-white">
@@ -450,15 +580,93 @@ export function ProfilePublicView({
             </div>
 
             <div className="mt-6 p-0">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="sm:hidden relative">
+                <div className="absolute z-0 top-0 h-[220px] -left-3 -right-3 pointer-events-none overflow-hidden">
+                  <Image
+                    src={ASSETS.SPARKMATES.HORIZON}
+                    alt=""
+                    aria-hidden
+                    fill
+                    className="object-cover"
+                    style={{ objectPosition: "50% 65%" }}
+                    priority
+                  />
+                  <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-[#010B1D] to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#010B1D] to-transparent" />
+                </div>
+
+                <div className="relative z-10 flex justify-center pt-10">
+                  <GradientProfilePicture
+                    size="sm"
+                    src={avatarUrl}
+                    alt={displayName}
+                    fallback={displayName.charAt(0)}
+                  />
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center text-center px-4 mt-3 pb-2">
+                  <Text
+                    variant="heading-6"
+                    className="text-white leading-tight"
+                    weight="bold"
+                  >
+                    {displayName}
+                  </Text>
+
+                  <Text variant="body-sm" className="text-[#C1C7CD] mt-1">
+                    {profile?.program || "Program and Year not set"}
+                  </Text>
+
+                  <div className="mt-2.5 flex flex-wrap justify-center gap-2">
+                    <Badge variant={SPARK_BADGE.variantYellow as never}>
+                      UI/UX
+                    </Badge>
+                    <Badge variant={SPARK_BADGE.variantRed as never}>
+                      Marketing
+                    </Badge>
+                    <Badge variant={SPARK_BADGE.variantId as never}>
+                      {profile.gdgId}
+                    </Badge>
+                  </div>
+
+                  <Text
+                    variant="body-sm"
+                    className="mt-3 max-w-xs text-[#E5E5E5] leading-relaxed"
+                  >
+                    {profile?.bio ||
+                      "Share your story to let sparkmates know what you are building."}
+                  </Text>
+
+                  <div className="mt-4 flex gap-2 justify-center">
+                    {socialLinks.map((social) => (
+                      <Button
+                        key={social.key}
+                        variant="ghost"
+                        size="sm"
+                        title={social.label}
+                        disabled={!social.url}
+                        className="h-8 w-8 rounded-full border border-white/25 bg-[#091734] p-0 text-[11px] text-white disabled:opacity-40"
+                        onClick={() => {
+                          if (!social.url) return;
+                          openExternal(social.url);
+                        }}
+                      >
+                        <SocialGlyph type={social.key} />
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden sm:flex sm:flex-row sm:items-start sm:gap-4 sm:justify-between mt-6">
                 <div className="flex min-w-0 items-start gap-4">
                   <GradientProfilePicture
-                    src={avatarUrl ?? FIGMA_ASSETS.profileCard}
+                    src={avatarUrl}
                     alt={displayName}
                     fallback={displayName.charAt(0)}
                   />
 
-                  <div className="min-w-0">
+                  <div className="min-w-0 pt-2">
                     <Text
                       variant="heading-6"
                       className="text-white"
@@ -466,9 +674,8 @@ export function ProfilePublicView({
                     >
                       {displayName}
                     </Text>
-                    <Text variant="body-sm" className="text-[#C1C7CD]">
-                      {profile?.program ||
-                        "Program and Year not set"}
+                    <Text variant="body-sm" className="text-[#C1C7CD] mt-1">
+                      {profile?.program || "Program and Year not set"}
                     </Text>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <Badge variant={SPARK_BADGE.variantYellow as never}>
@@ -483,7 +690,7 @@ export function ProfilePublicView({
                     </div>
                     <Text
                       variant="body-sm"
-                      className="mt-2 max-w-130 text-[#E5E5E5]"
+                      className="mt-2 max-w-sm text-[#E5E5E5] leading-relaxed"
                     >
                       {profile?.bio ||
                         "Share your story to let sparkmates know what you are building."}
@@ -511,195 +718,41 @@ export function ProfilePublicView({
               </div>
             </div>
 
-            <div className="mt-8 space-y-8">
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Custom Button
-                  </Text>
+            <div className="mt-6 space-y-6">
+              {sectionOrder.map((sectionId, index) => (
+                <div key={sectionId} className="space-y-6">
+                  {renderOrderedSection(sectionId)}
+                  {index < sectionOrder.length - 1 ? <Divider /> : null}
                 </div>
-                <div className="space-y-2.5">
-                  {customLinks.map((item, index) => (
-                    <div
-                      key={`${item.title}-${index}`}
-                      className="relative overflow-hidden rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[border-color,box-shadow] duration-300"
-                    >
-                      <ShineBorder
-                        borderWidth={1.25}
-                        duration={9}
-                        shineColor={[
-                          "#FB2C36",
-                          "#F0B100",
-                          "#00C950",
-                          "#2B7FFF",
-                        ]}
-                        className={
-                          starredCustomButtons.has(index)
-                            ? "opacity-100 transition-opacity duration-300"
-                            : "opacity-0 transition-opacity duration-300"
-                        }
-                      />
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <Text
-                            variant="body-lg"
-                            className="text-white"
-                            weight="medium"
-                          >
-                            {item.title}
-                          </Text>
-                          <Text variant="body" className="text-[#E5E5E5]">
-                            {item.url}
-                          </Text>
-                        </div>
-                        {starredCustomButtons.has(index) && (
-                          <div className="h-8 w-8 flex items-center justify-center text-white text-xl">
-                            ★
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                  {customLinks.length === 0 ? (
-                    <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center">
-                      <Text variant="body-sm" className="text-[#C1C7CD]">
-                        No custom links yet.
-                      </Text>
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-
-              <Divider />
-
-              <PublicSkillsAndLinksSection
-                portfolio={profile}
-                onOpenExternal={openExternal}
-              />
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Projects
-                  </Text>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View All
-                  </Button>
-                </div>
-                <div className="space-y-3.5">
-                  {projectImages.map((image, index) => (
-                    <ProjectCard key={`project-${index}`} image={image} />
-                  ))}
-                </div>
-              </section>
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    GDG Impact
-                  </Text>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View
-                  </Button>
-                </div>
-                <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Track your milestones and growth within GDG.
-                </Text>
-                <div className="grid grid-cols-3 gap-4">
-                  {["Study Jam", "Workshop", "Hackathon"].map((label) => (
-                    <div
-                      key={label}
-                      className="rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.04)] px-5 py-6 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]"
-                    >
-                      <Text
-                        variant="heading-5"
-                        align="center"
-                        gradient="white-yellow"
-                        weight="bold"
-                      >
-                        00
-                      </Text>
-                      <Text
-                        variant="body-sm"
-                        align="center"
-                        className="text-white"
-                      >
-                        {label}
-                      </Text>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <Divider />
-
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Text variant="heading-6" gradient="white-blue" weight="bold">
-                    Badges
-                  </Text>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    className="text-white"
-                    iconRight={viewIcon}
-                  >
-                    View All
-                  </Button>
-                </div>
-                <Text variant="body-sm" className="text-[#C1C7CD]">
-                  Unlock exclusive collectibles by attending events.
-                </Text>
-                <div className="grid grid-cols-3 gap-4">
-                  {badgeCards.map((badge) => (
-                    <div
-                      key={badge}
-                      className="rounded-2xl border border-white/20 bg-[rgba(255,255,255,0.04)] p-4 text-center shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]"
-                    >
-                      <img
-                        src={FIGMA_ASSETS.badge}
-                        alt="Badge"
-                        className="mx-auto h-20 w-20 object-cover"
-                      />
-                      <Text
-                        variant="body-sm"
-                        className="mt-2 text-white"
-                        align="center"
-                      >
-                        Badge Name
-                      </Text>
-                    </div>
-                  ))}
-                </div>
-              </section>
+              ))}
             </div>
           </FadeInSection>
 
           <FadeInSection delay={0.1}>
-            <Input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search"
-              leftIcon={searchIcon}
-              containerClassName="h-9 border-white/20 bg-black/20"
-              className="text-white placeholder:text-[#C1C7CD]"
-            />
+            <div className="w-full flex flex-row  gap-2">
+              <Input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search"
+                leftIcon={searchIcon}
+                containerClassName="h-9 border-white/20 bg-black/20"
+                className="text-white placeholder:text-[#C1C7CD]"
+              />
+              <div
+                className="w-fit flex justify-center items-center h-full border border-white/20"
+                onClick={handleClearSearch}
+              >
+                Clear
+              </div>
+              <div
+                className="w-fit flex justify-center items-center h-full border border-white/20"
+                onClick={handleOnSearch}
+              >
+                Search
+              </div>
+            </div>
 
-            <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <Text variant="body-lg" className="text-white">
                 Suggested To You
               </Text>
@@ -714,22 +767,53 @@ export function ProfilePublicView({
             </div>
 
             <div className="mt-5 space-y-4">
-              {suggestedUsers.map((member) => (
-                <ConnectedSuggestedCard
-                  key={member.gdgId}
-                  avatarUrl={member.avatarUrl ?? undefined}
-                  name={member.name}
-                  bio={member.bio}
-                />
-              ))}
+              {viewingSearchResults && (
+                <>
+                  {searchData?.data.map((member) => (
+                    <ConnectedSuggestedCard
+                      key={member.gdgId}
+                      avatarUrl={member.avatarUrl ?? undefined}
+                      name={
+                        member.displayName || member.firstName || member.gdgId
+                      }
+                      bio={member.bio || "---"}
+                      gdgId={member.gdgId}
+                    />
+                  ))}
 
-              {suggestedUsers.length === 0 ? (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
-                  <Text variant="body-sm" className="text-[#C1C7CD]">
-                    No matches found.
-                  </Text>
-                </div>
-              ) : null}
+                  {searchData?.data.length === 0 ? (
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
+                      <Text variant="body-sm" className="text-[#C1C7CD]">
+                        No matches found.
+                      </Text>
+                    </div>
+                  ) : null}
+                </>
+              )}
+
+              {!viewingSearchResults && (
+                <>
+                  {suggestedUsers.map((member) => (
+                    <ConnectedSuggestedCard
+                      key={member.gdgId}
+                      avatarUrl={member.avatarUrl ?? undefined}
+                      name={
+                        member.displayName || member.firstName || member.gdgId
+                      }
+                      bio={member.bio || "---"}
+                      gdgId={member.gdgId}
+                    />
+                  ))}
+
+                  {suggestedUsers.length === 0 ? (
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
+                      <Text variant="body-sm" className="text-[#C1C7CD]">
+                        No matches found.
+                      </Text>
+                    </div>
+                  ) : null}
+                </>
+              )}
             </div>
           </FadeInSection>
         </div>
@@ -769,7 +853,7 @@ export const SparkmatesRainbowStreak = () => {
     >
       <div className="relative w-full h-full animate-sparkmates-drift origin-center">
         <Image
-          src="/auth/auth-rainbow-streak.png"
+          src={ASSETS.AUTH.RAINBOW_STREAK}
           alt="Rainbow Streak"
           className="object-cover blur-[60px]"
           fill

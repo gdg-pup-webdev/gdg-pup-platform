@@ -17,6 +17,7 @@ export type EventInsert = {
   attendance_points: number;
   max_capacity: number;
   image_url: string | null;
+  images?: string[];
   image?: File;
   speakers: string[];
   tags: string[];

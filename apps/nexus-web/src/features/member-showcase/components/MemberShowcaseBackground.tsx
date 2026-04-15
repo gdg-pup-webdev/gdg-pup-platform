@@ -77,7 +77,7 @@ export function MemberShowcaseBackground({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-28 pb-24 md:px-8 md:pt-40 md:pb-32 lg:px-16 lg:pt-60 lg:pb-48"
+      className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-28 pb-24 md:px-8 md:pt-40 md:pb-32 lg:pt-44 lg:pb-48"
     >
       <motion.div
         ref={orangeBlobRef}
@@ -136,11 +136,10 @@ export function MemberShowcaseBackground({
       <Image
         src={ASSETS.MEMBER_SHOWCASE.BACKGROUND.GDG_SHADOW}
         alt="gdg shadow"
-        className="z-3 pointer-events-none absolute -bottom-50 -right-15 h-auto w-auto max-w-none"
+        className="z-3 pointer-events-none absolute -bottom-50 -right-15 w-126.5 h-auto"
         width={506}
         height={507}
-      >
-      </Image>
+      />
       <Image
         src={ASSETS.MEMBER_SHOWCASE.BACKGROUND.VECTOR_1296}
         alt="vector decoration left"

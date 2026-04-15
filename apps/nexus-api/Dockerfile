@@ -54,4 +54,4 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 
 WORKDIR /app/apps/nexus-api
 EXPOSE 8000
-CMD ["node", "dist/index.js"]
+CMD ["node", "--max-old-space-size=512", "dist/index.js"]

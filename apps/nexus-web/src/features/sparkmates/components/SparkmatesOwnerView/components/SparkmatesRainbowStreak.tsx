@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { ASSETS } from "@/lib/constants/assets";
 
 
 
@@ -38,7 +39,7 @@ export const SparkmatesRainbowStreak = () => {
     >
       <div className="relative w-full h-full animate-sparkmates-drift origin-center">
         <Image
-          src="/auth/auth-rainbow-streak.png"
+          src={ASSETS.AUTH.RAINBOW_STREAK}
           alt="Rainbow Streak"
           className="object-cover blur-[60px]"
           fill

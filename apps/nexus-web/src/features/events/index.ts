@@ -11,7 +11,14 @@
 export * from "./components";
 
 // Hooks
-export { useEvents, useEventFilters } from "./hooks/useEvents";
+export {
+  useEvents,
+  useEvent,
+  useEventFilters,
+  useAddEventImage,
+  useDeleteEventImage,
+  useReorderEventImages,
+} from "./hooks/useEvents";
  
 
 // Types

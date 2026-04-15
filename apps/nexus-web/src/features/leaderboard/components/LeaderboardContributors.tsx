@@ -40,13 +40,13 @@ function buildContributorEntries(view: "members" | "core"): LeaderboardEntry[] {
   const roles =
     view === "members"
       ? [
-          "Sparkmate",
-          "Sparkmate",
-          "Role | Department/Team",
-          "Role | Department/Team",
-          "Role | Department/Team",
-          "Role | Department/Team",
-        ]
+        "Sparkmate",
+        "Sparkmate",
+        "Role | Department/Team",
+        "Role | Department/Team",
+        "Role | Department/Team",
+        "Role | Department/Team",
+      ]
       : Array.from({ length: 6 }, () => "Role | Department/Team");
 
   return roles.map((role, index) => ({

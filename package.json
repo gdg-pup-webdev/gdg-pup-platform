@@ -3,28 +3,27 @@
   "private": true,
   "scripts": {
     "dev": "turbo run dev --filter=!identity-api... --filter=!@packages/identity-api-contracts",
-    "dev:nexus": "turbo dev --filter=nexus-api... --filter=nexus-web...",
     "dev:nexus-api": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
-    "dev:backend": "turbo dev --filter=nexus-api... --filter=nexus-admin-web...",
     "dev:storybook": "turbo dev --filter=storybook...",
+    "benchmark:api": "pnpm --filter nexus-api run benchmark",
     "build": "turbo run build --filter=!storybook --filter=!identity-api",
     "build:nexus": "turbo build  --filter=nexus-api... --filter=nexus-web...",
     "build:dev": "pnpm build && make dev-build",
     "build:staging": "pnpm build && make staging-build",
     "build:prod": "pnpm build && make prod-build",
     "start": "turbo run start --filter=!identity-api...",
-    "clean": "node scripts/clean/detect-shell.ts",
-    "reinstall": "pnpm clean && pnpm install",
+    "clean": "tsx scripts/clean.ts",
     "gen-types": "turbo run gen-types --filter=!identity-api... --filter=!@packages/identity-api-contracts",
-    "gen-types:rebuild": "pnpm gen-types && pnpm build",
-    "rebuild-install": "pnpm reinstall && pnpm gen-types:rebuild",
+    "gen-types:rebuild": "pnpm gen-types && pnpm build:nexus",
     "lint": "turbo run lint --filter=!identity-api",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "test": "turbo run test --filter=!identity-api"
+    "test": "turbo run test --filter=!identity-api",
+    "scan:dep": "tsx scripts/deprecated-scanner/deprecated-scanner.ts",
+    "gcs:test": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts",
+    "gcs:test:keep": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts --keep"
   },
-  "devDependencies"
-  : {
+  "devDependencies": {
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "prettier": "3.7.4",
@@ -37,6 +36,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.19.0",
     "@supabase/supabase-js": "^2.98.0",
     "clsx": "^2.1.1",
     "react": "19.2.3",

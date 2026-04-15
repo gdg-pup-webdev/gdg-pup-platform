@@ -18,7 +18,6 @@ export async function updateMemberProject(
     {
       params: { id },
       body: { data },
-      files: files as any,
     }
   );
 

@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
+import { TeamSection } from "@/features/about";
 
 export default function TeamPage() {
-  redirect("/about/team/administrative");
+  return <TeamSection />;
 }
 
 
