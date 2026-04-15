@@ -32,9 +32,7 @@ export function PastEventsCarousel() {
 
   const { data, error, isLoading } = useListEvents(1, 20, {});
 
-  const PAST_EVENTS_CAROUSEL = data
-    ? [...data.data ]
-    : [];
+  const PAST_EVENTS_CAROUSEL = data ? [...data.data] : [];
 
   return (
     <Stack gap="xs" className="mt-22">
@@ -60,7 +58,7 @@ export function PastEventsCarousel() {
 
         {/* Carousel viewport */}
         <div
-          className="relative mt-10 flex items-center justify-center gap-4 lg:gap-10 xl:gap-20"
+          className="relative mt-10 flex w-full items-center justify-center gap-4 px-2 md:px-4 lg:gap-10 xl:gap-20"
           onMouseEnter={() => setIsPastEventsHovered(true)}
           onMouseLeave={() => setIsPastEventsHovered(false)}
         >
@@ -74,7 +72,7 @@ export function PastEventsCarousel() {
             <CarouselArrowIcon direction="left" />
           </Button>
 
-          <div className="relative flex w-[calc(100vw-12rem)] max-w-[1300px] justify-center z-10">
+          <div className="relative z-10 flex min-w-0 flex-1 max-w-[1300px] justify-center">
             <div className="relative w-full overflow-hidden">
               {/* Draggable track */}
               <div
@@ -99,7 +97,11 @@ export function PastEventsCarousel() {
                   >
                     <div className="flex w-full flex-col items-center">
                       <PlanetCard
-                        image={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
+                        image={
+                          event.image_url ||
+                          event.images?.[0] ||
+                          ASSETS.PLACEHOLDERS.DEFAULT
+                        }
                         alt={event.title}
                         style={{
                           width: "clamp(140px,14vw,260px)",
@@ -138,11 +140,17 @@ export function PastEventsCarousel() {
                       disabled={!event.id && !event.bevyPreviewUrl}
                       onClick={() => {
                         if (event.bevyPreviewUrl) {
-                          window.open(event.bevyPreviewUrl, "_blank", "noopener,noreferrer");
+                          window.open(
+                            event.bevyPreviewUrl,
+                            "_blank",
+                            "noopener,noreferrer",
+                          );
                           return;
                         }
                         if (!event.id) return;
-                        router.push(`/events/${event.id}?title=${encodeURIComponent(event.title)}`);
+                        router.push(
+                          `/events/${event.id}?title=${encodeURIComponent(event.title)}`,
+                        );
                       }}
                     >
                       Learn more
