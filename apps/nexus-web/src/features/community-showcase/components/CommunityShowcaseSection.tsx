@@ -33,11 +33,13 @@ export function CommunityShowcaseSection() {
 
   return (
     <div className="relative overflow-hidden pt-32 pb-32 md:pt-60 md:pb-48 px-4 md:px-8 lg:px-16">
-      <MobileShowcase events={EVENTS} />
-      <DesktopShowcase onOpenModal={modal.openModal} events={EVENTS} />
-      {modal.shouldRender && EVENTS.length > 0 && (
-        <EventModal event={EVENTS[0]} isVisible={modal.isVisible} onClose={modal.closeModal} />
-      )}
+      <div className="relative mx-auto w-full max-w-7xl">
+        <MobileShowcase events={EVENTS} />
+        <DesktopShowcase onOpenModal={modal.openModal} events={EVENTS} />
+        {modal.shouldRender && EVENTS.length > 0 && (
+          <EventModal event={EVENTS[0]} isVisible={modal.isVisible} onClose={modal.closeModal} />
+        )}
+      </div>
     </div>
   );
 }

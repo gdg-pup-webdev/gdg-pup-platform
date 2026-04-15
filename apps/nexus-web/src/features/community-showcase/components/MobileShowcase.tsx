@@ -111,7 +111,6 @@ export function MobileShowcase({ events }: { events: Event[] }) {
 
       {/* ── Content constrained to max-w-7xl ── */}
       <div className="max-w-7xl mx-auto w-full">
-
         {/* ── Section heading ── */}
         <Stack gap="md" className="items-center mb-12">
           <Text
@@ -120,7 +119,10 @@ export function MobileShowcase({ events }: { events: Event[] }) {
             align="center"
             weight="bold"
             className="z-20"
-            style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))' }}
+            style={{
+              filter:
+                "drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))",
+            }}
           >
             Community Showcase
           </Text>
@@ -149,7 +151,9 @@ export function MobileShowcase({ events }: { events: Event[] }) {
             variant="body"
             align="center"
             color="on-secondary"
-            style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
+            style={{
+              textShadow: "0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)",
+            }}
           >
             {new Date(EVENTS[0]?.end_date).toLocaleDateString(undefined, {
               month: "short",
@@ -168,14 +172,20 @@ export function MobileShowcase({ events }: { events: Event[] }) {
             color="on-secondary"
             className="mt-2"
             weight="semibold"
-            style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
+            style={{
+              textShadow: "0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)",
+            }}
           >
             Today&apos;s Highlight
           </Text>
           {/* Gradient-bordered event image */}
           <div className="mt-4 w-full rounded-2xl overflow-hidden shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] p-[2px] bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)]">
             <img
-              src={EVENTS[0]?.image_url || EVENTS[0]?.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
+              src={
+                EVENTS[0]?.image_url ||
+                EVENTS[0]?.images?.[0] ||
+                ASSETS.PLACEHOLDERS.DEFAULT
+              }
               alt="Featured event"
               className="w-full h-[clamp(72px,20vw,96px)] object-cover rounded-[14px]"
             />
@@ -301,7 +311,7 @@ export function MobileShowcase({ events }: { events: Event[] }) {
 
         {/* Text beneath planet */}
         {EVENTS.length > 0 && (
-          <div className="flex flex-col items-center w-full mt-10">
+          <div className="mt-10 flex w-full min-h-60 items-start justify-center">
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={mobileEventIndex}
@@ -310,9 +320,14 @@ export function MobileShowcase({ events }: { events: Event[] }) {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                className="flex flex-col items-center w-full"
+                className="flex w-full max-w-xl flex-col items-center"
               >
-                <Text variant="body" align="center" color="muted" className="text-xl">
+                <Text
+                  variant="body"
+                  align="center"
+                  color="muted"
+                  className="text-xl"
+                >
                   {new Date(
                     EVENTS[mobileEventIndex].end_date,
                   ).toLocaleDateString(undefined, {
@@ -325,7 +340,7 @@ export function MobileShowcase({ events }: { events: Event[] }) {
                   variant="heading-6"
                   align="center"
                   color="on-secondary"
-                  className="mt-1 w-full"
+                  className="mt-1 min-h-20 w-full px-2"
                 >
                   {EVENTS[mobileEventIndex].title}
                 </Text>
@@ -333,11 +348,18 @@ export function MobileShowcase({ events }: { events: Event[] }) {
                   variant="colored"
                   subVariant="blue"
                   className="mt-10 h-12 w-38 rounded-lg text-xl font-medium"
-                  disabled={!EVENTS[mobileEventIndex].id && !EVENTS[mobileEventIndex].bevyPreviewUrl}
+                  disabled={
+                    !EVENTS[mobileEventIndex].id &&
+                    !EVENTS[mobileEventIndex].bevyPreviewUrl
+                  }
                   onClick={() => {
                     const currentEvent = EVENTS[mobileEventIndex];
                     if (currentEvent?.bevyPreviewUrl) {
-                      window.open(currentEvent.bevyPreviewUrl, "_blank", "noopener,noreferrer");
+                      window.open(
+                        currentEvent.bevyPreviewUrl,
+                        "_blank",
+                        "noopener,noreferrer",
+                      );
                       return;
                     }
                     if (!currentEvent?.id) return;
@@ -352,8 +374,8 @@ export function MobileShowcase({ events }: { events: Event[] }) {
             </AnimatePresence>
           </div>
         )}
-
-      </div>{/* end max-w-7xl */}
+      </div>
+      {/* end max-w-7xl */}
     </div>
   );
 }

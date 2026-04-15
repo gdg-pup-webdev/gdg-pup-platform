@@ -82,7 +82,7 @@ const TRUNCATED_ABOUT =
       </Stack>
 
       {/* Event image card with gradient border */}
-      <div className="relative left-1/2 mt-15 flex w-[calc(100vw-2rem)] max-w-[1450px] -translate-x-1/2 justify-center z-10">
+      <div className="relative mt-15 flex w-full justify-center z-10">
         <Card
           variant="default"
           className="w-full h-[clamp(200px,25vw,360px)] rounded-[32px] max-w-none p-1 bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] overflow-hidden bg-transparent! border-0! z-10 transform transition-transform duration-1000 ease-out hover:rotate-[-1deg]"
@@ -99,7 +99,7 @@ const TRUNCATED_ABOUT =
 
       {/* About + Stats row — slides down on card hover */}
       <div
-        className={`relative left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-[1450px] flex justify-center mt-10 z-10 transition-transform duration-1000 ease-out ${
+        className={`relative w-full flex justify-center mt-10 z-10 transition-transform duration-1000 ease-out ${
           isCardHovered ? "translate-y-5" : "translate-y-0"
         }`}
       >
