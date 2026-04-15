@@ -126,7 +126,7 @@ export function PastEventsCarousel() {
                         variant="body"
                         align="center"
                         color="on-secondary"
-                        className="mt-2 max-w-[280px] xl:max-w-[320px]"
+                        className="mt-2 max-w-[280px] xl:max-w-[320px] min-h-[3rem] line-clamp-2"
                       >
                         {event.title}
                       </Text>
