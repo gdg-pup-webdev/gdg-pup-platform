@@ -37,7 +37,7 @@ const requiredEnv = (name: string): string => {
 };
 
 const getStorageClient = (): Storage => {
-  const projectId = requiredEnv("GCS_PROJECT_ID");
+  const projectId = requiredEnv("GCP_PROJECT_ID");
   const credentialsFile = process.env.GCS_CREDENTIALS_FILE;
 
   if (credentialsFile && credentialsFile.trim().length > 0) {
