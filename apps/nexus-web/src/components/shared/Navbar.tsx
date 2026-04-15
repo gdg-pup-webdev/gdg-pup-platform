@@ -226,6 +226,16 @@ export const Navbar: React.FC<NavbarProps> = ({
     { href: "/products", label: "Products" },
   ];
 
+  const isAboutActive = dropdownLinks.about.some((l) =>
+    pathname === l.href || pathname.startsWith(l.href + "/"),
+  );
+  const isCommunityActive = dropdownLinks.community.some((l) =>
+    pathname === l.href || pathname.startsWith(l.href + "/"),
+  );
+  const isNavigationActive = navLinks.some((l) =>
+    pathname === l.href || pathname.startsWith(l.href + "/"),
+  );
+
   return (
     <>
       {/* Overlay Backdrop */}
@@ -305,7 +315,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className={cn(
                       "flex items-center gap-1 hover:text-white transition-colors cursor-pointer h-full",
-                      openDropdown === "about" ? "text-white" : "text-gray-300",
+                      openDropdown === "about" || isAboutActive ? "text-white" : "text-gray-300",
                     )}
                   >
                     <Text variant="body" weight="bold" className="text-inherit">
@@ -337,16 +347,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
                   >
                     <div className={dropdownInnerClasses}>
-                      {dropdownLinks.about.map((link) => (
-                        <Link prefetch={false}
-                          key={link.href}
-                          href={link.href}
-                          className={dropdownItemClasses}
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
+                      {dropdownLinks.about.map((link) => {
+                        const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                        return (
+                          <Link prefetch={false}
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                              dropdownItemClasses,
+                              isActive &&
+                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] !text-transparent bg-clip-text",
+                            )}
+                            onClick={() => setOpenDropdown(null)}
+                          >
+                            {link.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -361,7 +378,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className={cn(
                       "flex items-center gap-1 hover:text-white transition-colors cursor-pointer h-full",
-                      openDropdown === "community"
+                      openDropdown === "community" || isCommunityActive
                         ? "text-white"
                         : "text-gray-300",
                     )}
@@ -395,32 +412,48 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
                   >
                     <div className={dropdownInnerClasses}>
-                      {dropdownLinks.community.map((link) => (
-                        <Link prefetch={false}
-                          key={link.href}
-                          href={link.href}
-                          className={dropdownItemClasses}
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
+                      {dropdownLinks.community.map((link) => {
+                        const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                        return (
+                          <Link prefetch={false}
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                              dropdownItemClasses,
+                              isActive &&
+                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] !text-transparent bg-clip-text",
+                            )}
+                            onClick={() => setOpenDropdown(null)}
+                          >
+                            {link.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
 
                 {/* Nav Links */}
-                {navLinks.map((link) => (
-                  <Link prefetch={false}
-                    key={link.href}
-                    href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors flex items-center h-full"
-                  >
-                    <Text variant="body" weight="bold" className="text-inherit">
-                      {link.label}
-                    </Text>
-                  </Link>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                  return (
+                    <Link prefetch={false}
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        "relative flex items-center h-full transition-colors",
+                        isActive ? "text-white" : "text-gray-300 hover:text-white",
+                      )}
+                    >
+                      <Text variant="body" weight="bold" className="text-inherit">
+                        {link.label}
+                      </Text>
+                      {isActive && (
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-white" />
+                      )}
+                    </Link>
+                  );
+                })}
               </Inline>
 
               {/* Auth Section */}
@@ -504,12 +537,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                       activeMobileSection === "about" ? null : "about",
                     )
                   }
-                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                  className={cn(
+                    "w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header",
+                    isAboutActive && "bg-white/5",
+                  )}
                 >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
+                    className={cn(
+                      "uppercase tracking-wider transition-colors group-hover/header:text-gray-200",
+                      isAboutActive ? "text-white" : "text-gray-400",
+                    )}
                   >
                     About
                   </Text>
@@ -540,16 +579,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="overflow-hidden"
                     >
                       <div className="bg-white/5 py-2">
-                        {dropdownLinks.about.map((link) => (
-                          <Link prefetch={false}
-                            key={link.href}
-                            href={link.href}
-                            className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {link.label}
-                          </Link>
-                        ))}
+                        {dropdownLinks.about.map((link) => {
+                          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                          return (
+                            <Link prefetch={false}
+                              key={link.href}
+                              href={link.href}
+                              className={cn(
+                                "block px-8 py-3 text-base font-bold transition-all hover:bg-white/10",
+                                isActive ? "text-white bg-white/10" : "text-gray-200",
+                              )}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
                       </div>
                     </motion.div>
                   )}
@@ -562,12 +607,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                       activeMobileSection === "community" ? null : "community",
                     )
                   }
-                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                  className={cn(
+                    "w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header",
+                    isCommunityActive && "bg-white/5",
+                  )}
                 >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
+                    className={cn(
+                      "uppercase tracking-wider transition-colors group-hover/header:text-gray-200",
+                      isCommunityActive ? "text-white" : "text-gray-400",
+                    )}
                   >
                     Community
                   </Text>
@@ -598,16 +649,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="overflow-hidden"
                     >
                       <div className="bg-white/5 py-2">
-                        {dropdownLinks.community.map((link) => (
-                          <Link prefetch={false}
-                            key={link.href}
-                            href={link.href}
-                            className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {link.label}
-                          </Link>
-                        ))}
+                        {dropdownLinks.community.map((link) => {
+                          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                          return (
+                            <Link prefetch={false}
+                              key={link.href}
+                              href={link.href}
+                              className={cn(
+                                "block px-8 py-3 text-base font-bold transition-all hover:bg-white/10",
+                                isActive ? "text-white bg-white/10" : "text-gray-200",
+                              )}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
                       </div>
                     </motion.div>
                   )}
@@ -622,12 +679,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                         : "navigation",
                     )
                   }
-                  className="w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header"
+                  className={cn(
+                    "w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header",
+                    isNavigationActive && "bg-white/5",
+                  )}
                 >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider group-hover/header:text-gray-200 transition-colors"
+                    className={cn(
+                      "uppercase tracking-wider transition-colors group-hover/header:text-gray-200",
+                      isNavigationActive ? "text-white" : "text-gray-400",
+                    )}
                   >
                     Navigation
                   </Text>
@@ -658,16 +721,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="overflow-hidden"
                     >
                       <div className="bg-white/5 py-2">
-                        {navLinks.map((link) => (
-                          <Link prefetch={false}
-                            key={link.href}
-                            href={link.href}
-                            className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-white/10"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {link.label}
-                          </Link>
-                        ))}
+                        {navLinks.map((link) => {
+                          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                          return (
+                            <Link prefetch={false}
+                              key={link.href}
+                              href={link.href}
+                              className={cn(
+                                "block px-8 py-3 text-base font-bold transition-all hover:bg-white/10",
+                                isActive ? "text-white bg-white/10" : "text-gray-200",
+                              )}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
                       </div>
                     </motion.div>
                   )}
