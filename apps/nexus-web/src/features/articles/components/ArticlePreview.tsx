@@ -282,9 +282,8 @@ return (
             <button
               type="button"
               onClick={handleBack}
-              className="flex items-center gap-2 text-gray-400 hover:text-white transition-all group"
+              className="flex items-center gap-2 text-gray-400 hover:text-white transition-all"
             >
-              <span className="transition-transform group-hover:-translate-x-1">←</span> 
               Back
             </button>
             <span className="text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/10">
