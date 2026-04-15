@@ -25,7 +25,7 @@ Put the GCS variables in your existing API env file:
 Copy this block into `apps/nexus-api/.env` and adjust values:
 
 ```dotenv
-GCS_PROJECT_ID=gdgpup-484914
+GCP_PROJECT_ID=gdgpup-484914
 GCS_BUCKET_NAME=gdgpuporg
 GCS_CREDENTIALS_FILE=apps/nexus-api/gcp-service-account.json
 GCS_UPLOAD_PREFIX=local-test
@@ -36,7 +36,7 @@ GCS_PUBLIC_BASE_URL=https://storage.googleapis.com
 ```
 
 Required variables:
-- `GCS_PROJECT_ID`: your GCP project ID
+- `GCP_PROJECT_ID`: your GCP project ID
 - `GCS_BUCKET_NAME`: target bucket name
 - `GCS_CREDENTIALS_FILE`: path to your service account key JSON
 

@@ -50,7 +50,7 @@ const toPositiveInt = (value: string | undefined, fallback: number): number => {
 
 
 export const gcsStorageConfigs = {
-    projectId: process.env.GCS_PROJECT_ID || "",
+  projectId: process.env.GCP_PROJECT_ID || "",
     bucketName: process.env.GCS_BUCKET_NAME || "",
     credentialsFile: process.env.GCS_CREDENTIALS_FILE || "",
     uploadPrefix: toUploadPrefix(process.env.GCS_UPLOAD_PREFIX),
