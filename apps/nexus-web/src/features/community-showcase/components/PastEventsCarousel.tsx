@@ -135,8 +135,12 @@ export function PastEventsCarousel() {
                       variant="colored"
                       subVariant="blue"
                       className="mt-5 xl:mt-7 h-10 xl:h-13 min-w-34 shrink-0 whitespace-nowrap rounded-lg px-4 xl:min-w-36"
-                      disabled={!event.id}
+                      disabled={!event.id && !event.bevyPreviewUrl}
                       onClick={() => {
+                        if (event.bevyPreviewUrl) {
+                          window.open(event.bevyPreviewUrl, "_blank", "noopener,noreferrer");
+                          return;
+                        }
                         if (!event.id) return;
                         router.push(`/events/${event.id}?title=${encodeURIComponent(event.title)}`);
                       }}
