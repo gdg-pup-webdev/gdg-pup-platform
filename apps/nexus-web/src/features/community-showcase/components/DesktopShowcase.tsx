@@ -64,10 +64,9 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
             </Text>
             <Text
               as="h2"
-              variant="heading-4"
-              weight="bold"
+              variant="body"
               align="center"
-              className="text-white z-10"
+              className="text-white z-10 text-sm md:text-base"
               style={{ textShadow: '0 0 24px rgba(0,0,0,1), 0 2px 12px rgba(0,0,0,0.9)' }}
             >
               Discover what our community has been building together.

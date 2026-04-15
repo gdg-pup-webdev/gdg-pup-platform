@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Button, Stack, Text } from "@packages/spark-ui";
 // import { PAST_EVENTS } from '../data/past-events';
 import { PlanetCard } from "./PlanetCard";
@@ -11,6 +12,32 @@ import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { normalizeEventDescription } from "@/features/events/utils/description";
 import { ASSETS } from "@/lib/constants/assets";
 import { useRouter } from "next/navigation";
+
+const planetVariants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 120 : -120,
+    opacity: 0,
+    scale: 0.88,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -120 : 120,
+    opacity: 0,
+    scale: 0.88,
+    transition: { duration: 0.28, ease: [0.55, 0, 1, 0.45] },
+  }),
+};
+
+const textVariants = {
+  enter: { opacity: 0, y: 12 },
+  center: { opacity: 1, y: 0, transition: { duration: 0.32, ease: "easeOut", delay: 0.12 } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: "easeIn" } },
+};
 
 /**
  * MobileShowcase
@@ -25,6 +52,7 @@ import { useRouter } from "next/navigation";
 export function MobileShowcase({events } : {events: Event[]}) {
   const router = useRouter();
   const [mobileEventIndex, setMobileEventIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
   const [mobileCarouselScale, setMobileCarouselScale] = useState(1);
 
   const EVENTS = events
@@ -43,11 +71,15 @@ export function MobileShowcase({events } : {events: Event[]}) {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const goToPrev = () =>
+  const goToPrev = () => {
+    setDirection(-1);
     setMobileEventIndex((i) => (i === 0 ? EVENTS.length - 1 : i - 1));
+  };
 
-  const goToNext = () =>
+  const goToNext = () => {
+    setDirection(1);
     setMobileEventIndex((i) => (i === EVENTS.length - 1 ? 0 : i + 1));
+  };
 
   return (
     <div className="md:hidden relative z-10">
@@ -71,6 +103,9 @@ export function MobileShowcase({events } : {events: Event[]}) {
         alt=""
       />
 
+      {/* ── Content constrained to max-w-7xl ── */}
+      <div className="max-w-7xl mx-auto w-full">
+
       {/* ── Section heading ── */}
       <Stack gap="md" className="items-center mb-12">
         <Text
@@ -86,9 +121,8 @@ export function MobileShowcase({events } : {events: Event[]}) {
         <Text
           as="h2"
           variant="body"
-          weight="bold"
           align="center"
-          className="text-white"
+          className="text-white text-sm md:text-base"
         >
           Discover what our community has been <br /> building together.
         </Text>
@@ -212,20 +246,29 @@ export function MobileShowcase({events } : {events: Event[]}) {
         </Button>
 
         {EVENTS.length > 0 && (
-          <>
-            {/* Planet */}
-            <div className="relative mt-15 mx-auto flex-1 flex justify-center">
-              <PlanetCard
-                image={
-                  EVENTS[mobileEventIndex].image_url ||
-                  EVENTS[mobileEventIndex].images?.[0] ||
-                  ASSETS.PLACEHOLDERS.DEFAULT
-                }
-                alt={EVENTS[mobileEventIndex].title}
-                size={270}
-              />
-            </div>
-          </>
+          <div className="relative mt-15 mx-auto flex-1 flex justify-center overflow-hidden">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={mobileEventIndex}
+                custom={direction}
+                variants={planetVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="flex justify-center"
+              >
+                <PlanetCard
+                  image={
+                    EVENTS[mobileEventIndex].image_url ||
+                    EVENTS[mobileEventIndex].images?.[0] ||
+                    ASSETS.PLACEHOLDERS.DEFAULT
+                  }
+                  alt={EVENTS[mobileEventIndex].title}
+                  size={270}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
         )}
         {/* Next */}
         <Button
@@ -242,44 +285,58 @@ export function MobileShowcase({events } : {events: Event[]}) {
       {/* Text beneath planet */}
       {EVENTS.length > 0 && (
         <div className="flex flex-col items-center w-full mt-10">
-          <Text variant="body" align="center" color="muted" className="text-xl">
-            {new Date(
-              EVENTS[mobileEventIndex].end_date,
-            ).toLocaleDateString(undefined, {
-              month: "short",
-              year: "numeric",
-              day: "numeric",
-            })}
-          </Text>
-          <Text
-            variant="heading-6"
-            align="center"
-            color="on-secondary"
-            className="mt-1 w-full"
-          >
-            {EVENTS[mobileEventIndex].title}
-          </Text>
-          <Button
-            variant="colored"
-            subVariant="blue"
-            className="mt-10 h-12 w-38 rounded-lg text-xl font-medium"
-            disabled={!EVENTS[mobileEventIndex].id && !EVENTS[mobileEventIndex].bevyPreviewUrl}
-            onClick={() => {
-              const currentEvent = EVENTS[mobileEventIndex];
-              if (currentEvent?.bevyPreviewUrl) {
-                window.open(currentEvent.bevyPreviewUrl, "_blank", "noopener,noreferrer");
-                return;
-              }
-              if (!currentEvent?.id) return;
-              router.push(
-                `/events/${currentEvent.id}?title=${encodeURIComponent(currentEvent.title)}`,
-              );
-            }}
-          >
-            Learn more
-          </Button>
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={mobileEventIndex}
+              custom={direction}
+              variants={textVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="flex flex-col items-center w-full"
+            >
+              <Text variant="body" align="center" color="muted" className="text-xl">
+                {new Date(
+                  EVENTS[mobileEventIndex].end_date,
+                ).toLocaleDateString(undefined, {
+                  month: "short",
+                  year: "numeric",
+                  day: "numeric",
+                })}
+              </Text>
+              <Text
+                variant="heading-6"
+                align="center"
+                color="on-secondary"
+                className="mt-1 w-full"
+              >
+                {EVENTS[mobileEventIndex].title}
+              </Text>
+              <Button
+                variant="colored"
+                subVariant="blue"
+                className="mt-10 h-12 w-38 rounded-lg text-xl font-medium"
+                disabled={!EVENTS[mobileEventIndex].id && !EVENTS[mobileEventIndex].bevyPreviewUrl}
+                onClick={() => {
+                  const currentEvent = EVENTS[mobileEventIndex];
+                  if (currentEvent?.bevyPreviewUrl) {
+                    window.open(currentEvent.bevyPreviewUrl, "_blank", "noopener,noreferrer");
+                    return;
+                  }
+                  if (!currentEvent?.id) return;
+                  router.push(
+                    `/events/${currentEvent.id}?title=${encodeURIComponent(currentEvent.title)}`,
+                  );
+                }}
+              >
+                Learn more
+              </Button>
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
+
+      </div>{/* end max-w-7xl */}
     </div>
   );
 }
