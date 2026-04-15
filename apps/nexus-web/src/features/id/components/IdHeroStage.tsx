@@ -223,7 +223,7 @@ export function IdHeroStage() {
 
         <Link
           prefetch={false}
-          href="https://gdg-id-platform.vercel.app/"
+          href="https://id.gdgpup.org/"
           target="_blank"
           rel="noopener noreferrer"
           className="relative -top-23 sm:top-0"
