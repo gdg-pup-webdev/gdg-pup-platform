@@ -14,14 +14,14 @@ export class MemberProjectsRouter {
      */
     this.router.get("/:id", this.controller.getOne);
     this.router.get("/", this.controller.getList);
+    this.router.get("/search", this.controller.getSearch);
+    this.router.get("/random", this.controller.getRandom);
 
     /**
      * AUTHENTICATED ROUTES
      */
     this.router.use(requireAuthenticated());
     this.router.post("/", this.controller.postCreate);
-    this.router.get("/search", this.controller.getSearch);
-    this.router.get("/random", this.controller.getRandom);
 
     /**
      * PRIVATE ROUTES

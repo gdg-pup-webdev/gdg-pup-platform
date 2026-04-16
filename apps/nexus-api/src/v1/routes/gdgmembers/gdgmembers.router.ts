@@ -12,14 +12,18 @@ export class GdgMembersRouter {
     /**
      * PUBLIC ROUTES 
      */
+    this.router.get("/", this.controller.get);
+    this.router.get("/:gdgId", this.controller.getIdGet);
+    this.router.get(
+      "/:gdgId/suggested-users",
+      this.controller.getIdSuggestedUsers,
+    );
 
     /**
      * AUTHENTICATED ROUTES 
      */
     this.router.use(requireAuthenticated());
 
-    this.router.get("/", this.controller.get);
-    this.router.get("/:gdgId", this.controller.getIdGet);
     
     this.router.post("/", this.controller.post);
     this.router.patch("/:gdgId", this.controller.getIdPatch);
@@ -35,10 +39,6 @@ export class GdgMembersRouter {
     this.router.post(
       "/:gdgId/profile-image",
       this.controller.changeProfileImage,
-    );
-    this.router.get(
-      "/:gdgId/suggested-users",
-      this.controller.getIdSuggestedUsers,
     );
 
     /**
