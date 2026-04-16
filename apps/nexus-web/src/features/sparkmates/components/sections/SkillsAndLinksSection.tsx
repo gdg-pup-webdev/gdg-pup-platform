@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { Badge, Button, Text, Modal, Input } from "@packages/spark-ui";
 import { UserProfile, useUpdateSparkmateProfile } from "@/features/sparkmates";
 import { cn } from "@/lib/utils";
-import { editIcon } from "../icons/editIcon";
-import { addIcon } from "../icons/addIcon";
+import { editIcon } from "../SparkmatesOwnerView/icons/editIcon";
+import { addIcon } from "../SparkmatesOwnerView/icons/addIcon";
 import { useState, useEffect } from "react";
 
 const SPARK_BADGE = {
@@ -134,9 +134,11 @@ const inputBaseStyles =
   "!h-auto py-2 px-3 sm:py-2.5 sm:px-4 !border-none !rounded-[7px] !ring-0 !ring-offset-0 focus-within:!ring-0 focus-within:!ring-offset-0 focus-within:!shadow-none w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
 
 export function SkillsAndLinksSection({
-  profile
+  profile,
+  readOnly
 }: {
-  profile: UserProfile
+  profile: UserProfile,
+  readOnly?: boolean
 }) {
   const { mutate: updateProfile, isPending } = useUpdateSparkmateProfile(profile.gdgId);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -182,16 +184,18 @@ export function SkillsAndLinksSection({
         <Text variant="heading-6" gradient="white-blue" weight="bold">
           Skills and Interests
         </Text>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0 text-white"
-          title="Edit Skills and Interests"
-          aria-label="Edit Skills and Interests"
-          onClick={() => setIsEditModalOpen(true)}
-        >
-          {editIcon}
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-white"
+            title="Edit Skills and Interests"
+            aria-label="Edit Skills and Interests"
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            {editIcon}
+          </Button>
+        )}
       </div>
 
       <Text variant="body-sm" className="text-[#C1C7CD]">
@@ -229,7 +233,8 @@ export function SkillsAndLinksSection({
         </Button>
       ) : null}
 
-      <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="sm" className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-md">
+      {!readOnly && (
+        <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="sm" className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-md">
         <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
         <div className="space-y-6">
           <div>
@@ -323,6 +328,7 @@ export function SkillsAndLinksSection({
         </div>
         </div>
       </Modal>
+      )}
     </section>
   );
 }

@@ -22,8 +22,8 @@ import {
 import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useGetProfileOfUserByGdgId } from "@/features/sparkmates/hooks/useGetProfileOfUserByGdgId";
-import { NameAndProfileSection } from "@/features/sparkmates/components/SparkmatesOwnerView/sections/NameAndProfileSection";
-import { SuggestedPeopleSection } from "@/features/sparkmates/components/SparkmatesOwnerView/sections/SuggestedPeopleSection";
+import { NameAndProfileSection } from "@/features/sparkmates/components/sections/NameAndProfileSection";
+import { SuggestedPeopleSection } from "@/features/sparkmates/components/sections/SuggestedPeopleSection";
 import { FadeInSection } from "@/features/sparkmates/components/SparkmatesOwnerView/components/FadeInSection";
 import { SparkmatesRainbowStreak } from "@/features/sparkmates/components/SparkmatesOwnerView/components/SparkmatesRainbowStreak";
 import { SortableProjectCardItem } from "@/features/sparkmates/components/SparkmatesOwnerView/components/SortableProjectCardItem";

@@ -12,6 +12,7 @@ type SortableProjectCardItemProps = {
   sortingDisabled?: boolean;
   handleDisabled?: boolean;
   isDropTarget?: boolean;
+  readOnly?: boolean;
 };
 
 export function SortableProjectCardItem({
@@ -21,6 +22,7 @@ export function SortableProjectCardItem({
   sortingDisabled = false,
   handleDisabled = false,
   isDropTarget = false,
+  readOnly = false,
 }: SortableProjectCardItemProps) {
   const {
     setNodeRef,
@@ -30,7 +32,7 @@ export function SortableProjectCardItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id, disabled: sortingDisabled });
+  } = useSortable({ id, disabled: sortingDisabled || readOnly });
 
   const constrainedTransform = transform
     ? {
@@ -56,12 +58,12 @@ export function SortableProjectCardItem({
     >
       <ProjectCard
         project={project}
-        onEdit={onEdit}
-        showDragHandle
+        onEdit={readOnly ? undefined : onEdit}
+        showDragHandle={!readOnly}
         dragHandleRef={setActivatorNodeRef}
         dragHandleAttributes={attributes}
         dragHandleListeners={listeners}
-        isDragHandleDisabled={handleDisabled}
+        isDragHandleDisabled={handleDisabled || readOnly}
         isDragging={isDragging}
         isDropTarget={isDropTarget}
       />
