@@ -1,4 +1,4 @@
-import { Button, Text, Modal } from "@packages/spark-ui";
+import { Button, Text, Modal, Spinner } from "@packages/spark-ui";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -22,6 +22,7 @@ import { UserProfile } from "@/features/sparkmates";
 import { useMemberProjects } from "@/features/sparkmates/hooks/useMemberProjects";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
+import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
 import { toast } from "react-toastify";
 
 const MAX_PROJECT_IMAGES = 4;
@@ -63,14 +64,67 @@ const toProjectFormState = (project: any): ProjectFormState => {
   };
 };
 
-const getProjectImages = (project: any): string[] => {
-  if (Array.isArray(project?.images)) {
-    return project.images.filter((image: unknown): image is string => typeof image === "string" && image.length > 0);
+const toImageUrl = (value: unknown): string | null => {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
   }
 
-  return [project?.mainImageUrl, project?.secondaryImageUrl, project?.tertiaryImageUrl].filter(
-    (image): image is string => typeof image === "string" && image.length > 0,
-  );
+  if (value && typeof value === "object") {
+    const candidate =
+      (value as { imageUrl?: unknown }).imageUrl ??
+      (value as { image_url?: unknown }).image_url ??
+      (value as { url?: unknown }).url ??
+      (value as { publicUrl?: unknown }).publicUrl ??
+      (value as { previewUrl?: unknown }).previewUrl;
+
+    if (typeof candidate === "string") {
+      const trimmed = candidate.trim();
+      return trimmed.length > 0 ? trimmed : null;
+    }
+  }
+
+  return null;
+};
+
+const normalizeImageList = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const normalized = value
+    .map((entry) => toImageUrl(entry))
+    .filter((entry): entry is string => Boolean(entry));
+
+  return [...new Set(normalized)];
+};
+
+const getProjectImages = (project: any): string[] => {
+  const images = normalizeImageList(project?.images);
+  if (images.length > 0) {
+    return images;
+  }
+
+  const imageUrls = normalizeImageList(project?.imageUrls);
+  if (imageUrls.length > 0) {
+    return imageUrls;
+  }
+
+  const snakeCaseImageUrls = normalizeImageList(project?.image_urls);
+  if (snakeCaseImageUrls.length > 0) {
+    return snakeCaseImageUrls;
+  }
+
+  return [
+    project?.mainImageUrl,
+    project?.secondaryImageUrl,
+    project?.tertiaryImageUrl,
+    project?.main_image_url,
+    project?.secondary_image_url,
+    project?.tertiary_image_url,
+  ]
+    .map((entry) => toImageUrl(entry))
+    .filter((entry): entry is string => Boolean(entry));
 };
 
 const getFileSignature = (file: File) =>
@@ -117,6 +171,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
     reorderProjects,
   } = useMemberProjects(profile.gdgId);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectFormState>(createEmptyProject());
   const [isSavingProject, setIsSavingProject] = useState(false);
   const [orderedProjectIds, setOrderedProjectIds] = useState<string[]>([]);
@@ -219,22 +274,27 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
   };
 
   const handleOpenAddProjectModal = () => {
+    setIsDeleteConfirmOpen(false);
     setEditingProject(createEmptyProject());
     setIsEditModalOpen(true);
   };
 
   const handleOpenEditProjectModal = (project: any) => {
+    setIsDeleteConfirmOpen(false);
     setEditingProject(toProjectFormState(project));
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteCurrentProject = async () => {
+  const handleDeleteCurrentProject = () => {
     if (!editingProject.id) {
       return;
     }
 
-    const confirmed = confirm("Are you sure you want to delete this project? This action cannot be undone.");
-    if (!confirmed) {
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDeleteCurrentProject = async () => {
+    if (!editingProject.id) {
       return;
     }
 
@@ -242,9 +302,10 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
 
     try {
       await deleteProject.mutateAsync(editingProject.id);
+      setIsDeleteConfirmOpen(false);
       setIsEditModalOpen(false);
       setEditingProject(createEmptyProject());
-      await projectsQuery.refetch();
+      void projectsQuery.refetch();
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : "Failed to delete project");
     } finally {
@@ -419,6 +480,9 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
     deleteProjectImage.isPending ||
     reorderProjects.isPending;
 
+  const isImageMutationPending =
+    addProjectImage.isPending || deleteProjectImage.isPending;
+
   return (
     <section className="space-y-4 pt-6">
       <div className="flex items-center justify-between gap-3">
@@ -464,6 +528,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
                     sortingDisabled={reorderProjects.isPending}
                     handleDisabled={reorderProjects.isPending}
                     readOnly={readOnly}
+                    truncateDescription
                   />
                 ))}
               </div>
@@ -485,7 +550,21 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
         </Button>
       )}
 
-      <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="md" className="bg-transparent border-none p-0 shadow-none! isolate">
+      <Modal
+        open={isEditModalOpen}
+        onOpenChange={(open) => {
+          if (isSaving) {
+            return;
+          }
+          if (!open) {
+            setIsDeleteConfirmOpen(false);
+          }
+          setIsEditModalOpen(open);
+        }}
+        scrollBehavior="inside"
+        size="md"
+        className="bg-transparent border-none p-0 shadow-none! isolate"
+      >
         <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
         <div className="space-y-6">
           <div>
@@ -509,6 +588,13 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
             updateProjectImages={handleUpdateProjectImages}
             removeExistingProjectImage={handleRemoveExistingProjectImage}
           />
+
+          {isImageMutationPending && (
+            <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-[#E5E5E5]">
+              <Spinner size="sm" className="text-white" />
+              <span>Saving project images...</span>
+            </div>
+          )}
           
           <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
             <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
@@ -523,12 +609,25 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
               </Button>
             )}
             <Button variant="colored" subVariant="blue" onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Saving..." : editingProject.id ? "Save Changes" : "Create Project"}
+              {isSaving ? (
+                <span className="inline-flex items-center gap-2">
+                  <Spinner size="sm" className="text-white" />
+                  Saving...
+                </span>
+              ) : editingProject.id ? "Save Changes" : "Create Project"}
             </Button>
           </div>
         </div>
         </div>
       </Modal>
+
+      <ProjectDeleteConfirmDialog
+        open={isDeleteConfirmOpen}
+        onOpenChange={setIsDeleteConfirmOpen}
+        projectTitle={editingProject.title?.trim() || "this project"}
+        onConfirm={handleConfirmDeleteCurrentProject}
+        isPending={isSaving}
+      />
     </section>
   );
 };

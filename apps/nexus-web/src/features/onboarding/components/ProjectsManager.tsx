@@ -14,6 +14,12 @@ const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
 const inputBaseStyles =
   "!h-auto py-2 px-3 sm:py-2.5 sm:px-4 !border-none !rounded-[7px] !ring-0 !ring-offset-0 focus-within:!ring-0 focus-within:!ring-offset-0 focus-within:!shadow-none w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
 
+const textareaBaseStyles =
+  "w-full rounded-[7px] border-none bg-[#0a162a] px-3 py-3 text-white outline-none transition-colors placeholder:text-zinc-500 sm:px-4";
+
+const dateInputStyles =
+  "min-h-12.5 w-full py-3! text-white [color-scheme:dark] outline-none [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100";
+
 
 type ProjectsManagerProps = {
   projects: ProjectFormState[];
@@ -181,13 +187,15 @@ export function ProjectsManager({
               )}
             </div>
 
+            <StyledInputContainer>
               <Input
                 value={project.title}
                 onChange={(event) => updateProject(index, "title", event.target.value)}
                 placeholder="Project title"
-              containerClassName="bg-zinc-900/50! border-zinc-700/80! hover:border-zinc-600! focus-within:border-blue-500/50!"
+                containerClassName={inputBaseStyles}
                 className="text-white! py-3"
               />
+            </StyledInputContainer>
 
             <div className="grid gap-3 sm:grid-cols-2 mt-3">
               <StyledInputContainer>
@@ -195,7 +203,7 @@ export function ProjectsManager({
                   type="date"
                   value={project.startDate}
                   onChange={(event) => updateProject(index, "startDate", event.target.value)}
-                  className={cn(inputBaseStyles, "min-h-12.5 py-3! w-full bg-[#0a162a] outline-none group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]")}
+                  className={cn(inputBaseStyles, dateInputStyles)}
                 />
               </StyledInputContainer>
               <StyledInputContainer>
@@ -203,7 +211,7 @@ export function ProjectsManager({
                   type="date"
                   value={project.endDate}
                   onChange={(event) => updateProject(index, "endDate", event.target.value)}
-                  className={cn(inputBaseStyles, "min-h-12.5 py-3! w-full bg-[#0a162a] outline-none group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]")}
+                  className={cn(inputBaseStyles, dateInputStyles)}
                 />
               </StyledInputContainer>
             </div>
@@ -215,7 +223,7 @@ export function ProjectsManager({
                   onChange={(event) => updateProject(index, "description", event.target.value)}
                   placeholder="Project description"
                   rows={3}
-                  className="w-full rounded-xl border border-zinc-700/80 bg-zinc-900/50 px-4 py-3 text-zinc-200 outline-none transition-all placeholder:text-zinc-500 hover:border-zinc-600 focus:border-blue-500/50"
+                  className={cn(textareaBaseStyles, "min-h-28 resize-y")}
                 />
               </StyledInputContainer>
             </div>

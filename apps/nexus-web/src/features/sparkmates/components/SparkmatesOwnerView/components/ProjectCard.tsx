@@ -11,9 +11,14 @@ type ProjectLike = {
   endDate?: string | null;
   description?: string;
   images?: string[] | null;
+  imageUrls?: string[] | null;
+  image_urls?: string[] | null;
   mainImageUrl?: string | null;
   secondaryImageUrl?: string | null;
   tertiaryImageUrl?: string | null;
+  main_image_url?: string | null;
+  secondary_image_url?: string | null;
+  tertiary_image_url?: string | null;
 };
 
 type ProjectCardProps = {
@@ -27,18 +32,70 @@ type ProjectCardProps = {
   isDragging?: boolean;
   isDragOverlay?: boolean;
   isDropTarget?: boolean;
+  truncateDescription?: boolean;
+};
+
+function toImageUrl(value: unknown): string | null {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
+  if (value && typeof value === "object") {
+    const candidate =
+      (value as { imageUrl?: unknown }).imageUrl ??
+      (value as { image_url?: unknown }).image_url ??
+      (value as { url?: unknown }).url ??
+      (value as { publicUrl?: unknown }).publicUrl ??
+      (value as { previewUrl?: unknown }).previewUrl;
+
+    if (typeof candidate === "string") {
+      const trimmed = candidate.trim();
+      return trimmed.length > 0 ? trimmed : null;
+    }
+  }
+
+  return null;
+}
+
+const normalizeImageList = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const normalized = value
+    .map((entry) => toImageUrl(entry))
+    .filter((entry): entry is string => Boolean(entry));
+
+  return [...new Set(normalized)];
 };
 
 const normalizeProjectImages = (project: ProjectLike): string[] => {
-  if (Array.isArray(project.images)) {
-    return project.images.filter((image): image is string => Boolean(image));
+  const images = normalizeImageList(project.images);
+  if (images.length > 0) {
+    return images;
+  }
+
+  const imageUrls = normalizeImageList(project.imageUrls);
+  if (imageUrls.length > 0) {
+    return imageUrls;
+  }
+
+  const snakeCaseImageUrls = normalizeImageList(project.image_urls);
+  if (snakeCaseImageUrls.length > 0) {
+    return snakeCaseImageUrls;
   }
 
   return [
     project.mainImageUrl,
     project.secondaryImageUrl,
     project.tertiaryImageUrl,
-  ].filter((image): image is string => Boolean(image));
+    project.main_image_url,
+    project.secondary_image_url,
+    project.tertiary_image_url,
+  ]
+    .map((entry) => toImageUrl(entry))
+    .filter((entry): entry is string => Boolean(entry));
 };
 
 export function ProjectCard({
@@ -52,6 +109,7 @@ export function ProjectCard({
   isDragging = false,
   isDragOverlay = false,
   isDropTarget = false,
+  truncateDescription = false,
 }: ProjectCardProps) {
   const images = normalizeProjectImages(project);
   const visibleImages = images.slice(0, 4);
@@ -108,7 +166,14 @@ export function ProjectCard({
         {project.startDate} {project.endDate ? `· ${project.endDate}` : ""}
       </Text>
 
-      <Text variant="body-sm" className="mt-1 whitespace-pre-line text-[#E5E5E5]">
+      <Text
+        variant="body-sm"
+        className={`mt-1 whitespace-pre-line text-[#E5E5E5] ${
+          truncateDescription
+            ? "overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]"
+            : ""
+        }`}
+      >
         {project.description}
       </Text>
 
