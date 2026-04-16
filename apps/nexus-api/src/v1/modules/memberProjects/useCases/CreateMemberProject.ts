@@ -8,6 +8,7 @@ export type CreateMemberProjectInput = {
   startDate: Date;
   endDate: Date | null;
   description: string;
+  projectLink?: string | null;
   images?: string[];
   memberGdgId: string;
 };
@@ -43,6 +44,7 @@ export class CreateMemberProject {
       startDate: input.startDate,
       endDate: input.endDate,
       description: input.description,
+      projectLink: input.projectLink ?? null,
       images,
       memberGdgId: input.memberGdgId,
     });

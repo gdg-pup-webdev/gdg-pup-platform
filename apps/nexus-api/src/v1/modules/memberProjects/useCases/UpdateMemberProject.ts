@@ -11,6 +11,7 @@ export type UpdateMemberProjectInput = {
   startDate?: Date;
   endDate?: Date | null;
   description?: string;
+  projectLink?: string | null;
   images?: string[];
 };
 
@@ -41,6 +42,7 @@ export class UpdateMemberProject {
       startDate: input.startDate,
       endDate: input.endDate,
       description: input.description,
+      projectLink: input.projectLink,
     });
 
     return await this.repository.persistUpdates(project);

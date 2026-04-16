@@ -650,6 +650,7 @@ export type Database = {
           mainImageUrl: string | null
           memberGdgId: string | null
           position: number | null
+          projectLink: string | null
           secondaryImageUrl: string | null
           startDate: string | null
           tertiaryImageUrl: string | null
@@ -664,6 +665,7 @@ export type Database = {
           mainImageUrl?: string | null
           memberGdgId?: string | null
           position?: number | null
+          projectLink?: string | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
@@ -678,6 +680,7 @@ export type Database = {
           mainImageUrl?: string | null
           memberGdgId?: string | null
           position?: number | null
+          projectLink?: string | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
