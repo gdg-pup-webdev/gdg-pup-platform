@@ -117,6 +117,10 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
   }, [parsedProfileLinks]);
 
   const toggleStar = (url: string) => {
+    if (readOnly || isPending) {
+      return;
+    }
+
     setStarredCustomButtons((prev) => {
       const next = new Set(prev);
       if (next.has(url)) {
@@ -242,8 +246,10 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-white shrink-0"
+                  className="h-8 w-8 p-0 text-white shrink-0 disabled:cursor-default disabled:opacity-100"
                   onClick={() => toggleStar(item.url)}
+                  disabled={readOnly || isPending}
+                  aria-label={starredCustomButtons.has(item.url) ? "Starred custom button" : "Unstarred custom button"}
                 >
                   {starredCustomButtons.has(item.url) ? "★" : "☆"}
                 </Button>
