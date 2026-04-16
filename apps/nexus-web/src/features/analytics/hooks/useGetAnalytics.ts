@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/configs/servers.config";
 import { extractErrorMessage } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { extractErrorMessage } from "@/lib/utils";
  * Hook to get NFC scan analytics for a specific card.
  */
 export const useGetNfcAnalytics = (cardId: string, pageNumber = 1, pageSize = 10) => {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["analytics", "nfc-scans", cardId, pageNumber, pageSize],
     queryFn: async () => {
@@ -34,6 +35,7 @@ export const useGetNfcAnalytics = (cardId: string, pageNumber = 1, pageSize = 10
  * Hook to get profile view analytics for a specific member.
  */
 export const useGetProfileAnalytics = (gdgId: string, pageNumber = 1, pageSize = 10) => {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["analytics", "profile-views", gdgId, pageNumber, pageSize],
     queryFn: async () => {

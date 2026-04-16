@@ -11,8 +11,7 @@ export * from './components';
 // Hooks
 export { useNexusHealthCheck  } from './hooks/useHealthChecks';
 
-// API functions
-export { checkNexusHealth } from './api/checkNexusHealth'; 
+// API functions 
 
 // Types
 export * from './types';

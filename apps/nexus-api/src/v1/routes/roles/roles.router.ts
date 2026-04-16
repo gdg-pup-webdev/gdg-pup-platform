@@ -12,9 +12,6 @@ export class RolesRouter {
      * PUBLIC ROUTES 
      */
 
-    this.router.get("/", this.rolesHttpController.listRoles);
-    this.router.get("/:roleId", this.rolesHttpController.getOne);
-
     /**
      * PRIVATE ROUTES 
      */
@@ -22,6 +19,9 @@ export class RolesRouter {
       "roles": ["queries", "mutations"],
     }))
     
+
+    this.router.get("/", this.rolesHttpController.listRoles);
+    this.router.get("/:roleId", this.rolesHttpController.getOne);
     this.router.post("/", this.rolesHttpController.createRole);
  
     this.router.delete("/:roleId", this.rolesHttpController.deleteRole);

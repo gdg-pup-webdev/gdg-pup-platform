@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { Team, TeamInsert, TeamUpdate } from "../types";
 import { getCookie } from "cookies-next";
@@ -9,6 +9,7 @@ const API_URL = "http://localhost:8000";
 
 export const useTeams = (pageNumber = 1, pageSize = 10) => {
   const {token } = useAuthContext();
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["teams", pageNumber, pageSize],
     queryFn: async () => {
@@ -28,6 +29,7 @@ export const useTeams = (pageNumber = 1, pageSize = 10) => {
 
 export const useTeam = (id: string) => {
   const {token } = useAuthContext();
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["team", id],
     queryFn: async () => {
@@ -54,6 +56,7 @@ export const useTeam = (id: string) => {
 export const useCreateTeam = () => {
   const {token } = useAuthContext();
   const queryClient = useQueryClient();
+  const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async (data: TeamInsert) => {
       return await callEndpoint(API_URL, contract.api.v1.gdg_teams.POST, {
@@ -72,6 +75,7 @@ export const useCreateTeam = () => {
 };
 
 export const useUpdateTeam = () => {
+  const callEndpoint = useCallEndpointWithToken();
   const {token } = useAuthContext();
   const queryClient = useQueryClient();
   return useMutation({
@@ -100,6 +104,7 @@ export const useUpdateTeam = () => {
 
 export const useDeleteTeam = () => {
   const {token } = useAuthContext();
+  const callEndpoint = useCallEndpointWithToken();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
@@ -128,6 +133,7 @@ export const useDeleteTeam = () => {
 
 export const useAddTeamMember = () => {
   const {token } = useAuthContext();
+    const callEndpoint = useCallEndpointWithToken();
 
   const queryClient = useQueryClient();
   return useMutation({
@@ -162,6 +168,7 @@ export const useAddTeamMember = () => {
 export const useUpdateTeamMember = () => {
   const {token } = useAuthContext();
 
+  const callEndpoint = useCallEndpointWithToken();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ teamId, memberId, position }: { teamId: string; memberId: string; position: string }) => {
@@ -192,6 +199,7 @@ export const useUpdateTeamMember = () => {
 };
 
 export const useRemoveTeamMember = () => {
+  const callEndpoint = useCallEndpointWithToken();
   const {token } = useAuthContext();
   const queryClient = useQueryClient();
   return useMutation({
@@ -222,6 +230,7 @@ export const useRemoveTeamMember = () => {
 
 export const useUsers = (pageNumber = 1, pageSize = 20) => {
   const {token } = useAuthContext();
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["users", pageNumber, pageSize],
     queryFn: async () => {
@@ -243,6 +252,7 @@ export const useUsers = (pageNumber = 1, pageSize = 20) => {
 export const useSearchUsers = (query: string) => {
   
   const {token } = useAuthContext();
+    const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["users", "search", query],
     queryFn: async () => {
@@ -262,6 +272,7 @@ export const useSearchUsers = (query: string) => {
 export const useSearchTeams = (query: string) => {
   
   const {token } = useAuthContext();
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["teams", "search", query],
     queryFn: async () => {

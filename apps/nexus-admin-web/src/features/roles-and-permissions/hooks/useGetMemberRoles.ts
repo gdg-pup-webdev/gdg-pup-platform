@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
 export const useGetMemberRoles = (gdgId: string) => {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["members", "roles", gdgId],
     queryFn: async () : Promise<{ roles: string[] }> => {

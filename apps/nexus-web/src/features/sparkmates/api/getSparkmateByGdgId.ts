@@ -1,14 +1,16 @@
-import { contract } from "@packages/nexus-api-contracts";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { contract } from "@packages/nexus-api-contracts"; 
 import { configs } from "@/configs/servers.config";
 import type { SparkmatesProfile, SparkmatesSource } from "../types"; 
+import { CallEndpointType } from "@/hooks/useFetchWithToken";
 
 export async function getSparkmateByGdgId({
+  callEndpoint,
   gdgId,
   source,
 }: {
   gdgId: string;
   source?: SparkmatesSource;
+  callEndpoint : CallEndpointType
 }) : Promise<SparkmatesProfile> { 
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,

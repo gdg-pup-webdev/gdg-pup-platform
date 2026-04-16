@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/configs/servers.config";
 import { extractErrorMessage } from "@/lib/utils";
@@ -8,6 +8,7 @@ import { extractErrorMessage } from "@/lib/utils";
  * Hook to record an NFC card scan.
  */
 export const useRecordNfcScan = () => {
+  const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async (payload: {
       ownerGdgId: string;
@@ -41,6 +42,7 @@ export const useRecordNfcScan = () => {
  * Hook to record a profile view.
  */
 export const useRecordProfileView = () => {
+  const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async (payload: {
       profileGdgId: string;

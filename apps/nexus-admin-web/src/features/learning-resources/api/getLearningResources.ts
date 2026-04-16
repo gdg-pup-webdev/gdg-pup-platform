@@ -1,9 +1,10 @@
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { LearningResourcesQueryParams, LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
+import { CallEndpointType } from '../../../hooks/useFetchWithToken';
 
-export async function getLearningResources(params: Partial<LearningResourcesQueryParams> = {}) {
+export async function getLearningResources(callEndpoint: CallEndpointType, params: Partial<LearningResourcesQueryParams> = {}) {
   try {
     const result = await callEndpoint(
       configs.nexusApiBaseUrl,

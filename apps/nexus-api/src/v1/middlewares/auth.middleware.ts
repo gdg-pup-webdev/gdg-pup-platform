@@ -41,11 +41,14 @@ export const requireAuthenticated = (): RequestHandler => (req, res, next) => {
  * router.get('/admin', this.authMiddleware.requireAdminRole(), this.adminController.getAdminData);
  */
 /**
- * @deprecated
+ * @deprecated do not use this class
  */
 export class AuthMiddleware {
   constructor() {}
 
+  /**
+   * @deprecated use requireAuthenticated instead
+   */
   requireAuth = (): RequestHandler => (req, res, next) => {
     const decodedToken = req.decodedToken;
 
@@ -63,13 +66,13 @@ export class AuthMiddleware {
   };
 
   /**
-   * @deprecated
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
    */
   requireAdminRole = (): RequestHandler =>
     this.requireAnyOfTheseRoles(["admin"]);
 
   /**
-   * @deprecated
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
    */
   requireAnyOfTheseRoles =
     (allowedRoles: string[]): RequestHandler =>
@@ -109,7 +112,7 @@ export class AuthMiddleware {
     };
 
   /**
-   * @deprecated
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
    */
   requirePermissions_deprecated =
     (
@@ -180,7 +183,7 @@ export class AuthMiddleware {
     };
 
   /**
-   * @deprecated
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
    */
   requirePermissions =
     (requiredPermissions: Record<string, string[]>): RequestHandler =>
@@ -230,6 +233,6 @@ export class AuthMiddleware {
 }
 
 /**
- * @deprecated
+ * @deprecated do not use this class instance
  */
 export const authMiddlewareInstance = new AuthMiddleware();

@@ -2,14 +2,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateSparkmateProfile } from "../api";
 import type { UserProfile } from "../types";
 import { toast } from "react-toastify";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export function useUpdateSparkmateProfile(gdgId?: string) {
   const queryClient = useQueryClient();
+  const callEndpoint = useCallEndpointWithToken();
 
   return useMutation({
     mutationFn: (data: Partial<UserProfile>) => {
       if (!gdgId) throw new Error("No GDG ID provided");
-      return updateSparkmateProfile({ gdgId, data });
+      return updateSparkmateProfile({ callEndpoint , gdgId, data });
     },
     onSuccess: () => {
       if (gdgId) {

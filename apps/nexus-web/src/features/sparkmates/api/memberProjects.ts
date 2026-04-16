@@ -1,8 +1,8 @@
 import { contract } from "@packages/nexus-api-contracts";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { configs } from "@/configs/servers.config";
 import { extractErrorMessage } from "@/lib/utils";
 import type { ProjectFormState } from "@/features/onboarding/types"; // using the same type as Onboarding
+import { CallEndpointType } from "@/hooks/useFetchWithToken";
 
 export type MemberProjectRecord =
   contract.api.v1.member_projects.member.memberGdgId.GET.response[200]["data"][number];
@@ -11,6 +11,7 @@ export type MemberProjectsPaginatedResponse =
   contract.api.v1.member_projects.member.memberGdgId.GET.response[200];
 
 export async function getMemberProjectsPaginated(
+  callEndpoint: CallEndpointType,
   memberGdgId: string,
   options?: {
     token?: string;
@@ -38,11 +39,17 @@ export async function getMemberProjectsPaginated(
     return result.body;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to fetch projects");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to fetch projects",
+  );
 }
 
-export async function getMemberProjects(memberGdgId: string, token?: string) {
-  const response = await getMemberProjectsPaginated(memberGdgId, {
+export async function getMemberProjects(
+  callEndpoint: CallEndpointType,
+  memberGdgId: string,
+  token?: string,
+) {
+  const response = await getMemberProjectsPaginated(callEndpoint, memberGdgId, {
     token,
     pageNumber: 1,
     pageSize: 10,
@@ -51,7 +58,12 @@ export async function getMemberProjects(memberGdgId: string, token?: string) {
   return response.data;
 }
 
-export async function createMemberProject(memberGdgId: string, project: Omit<ProjectFormState, "id">, token?: string) {
+export async function createMemberProject(
+  callEndpoint: CallEndpointType,
+  memberGdgId: string,
+  project: Omit<ProjectFormState, "id">,
+  token?: string,
+) {
   const bodyData = {
     title: project.title.trim(),
     startDate: project.startDate,
@@ -73,10 +85,17 @@ export async function createMemberProject(memberGdgId: string, project: Omit<Pro
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to create project");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to create project",
+  );
 }
 
-export async function updateMemberProject(projectId: string, project: Omit<ProjectFormState, "id">, token?: string) {
+export async function updateMemberProject(
+  callEndpoint: CallEndpointType,
+  projectId: string,
+  project: Omit<ProjectFormState, "id">,
+  token?: string,
+) {
   const bodyData = {
     title: project.title.trim(),
     startDate: project.startDate,
@@ -98,10 +117,16 @@ export async function updateMemberProject(projectId: string, project: Omit<Proje
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to update project");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to update project",
+  );
 }
 
-export async function deleteMemberProject(projectId: string, token?: string) {
+export async function deleteMemberProject(
+  callEndpoint: CallEndpointType,
+  projectId: string,
+  token?: string,
+) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.id.DELETE,
@@ -115,10 +140,13 @@ export async function deleteMemberProject(projectId: string, token?: string) {
     return true;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to delete project");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to delete project",
+  );
 }
 
 export async function addMemberProjectImage(
+  callEndpoint: CallEndpointType,
   projectId: string,
   image: File,
   token?: string,
@@ -138,10 +166,13 @@ export async function addMemberProjectImage(
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to add project image");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to add project image",
+  );
 }
 
 export async function deleteMemberProjectImage(
+  callEndpoint: CallEndpointType,
   projectId: string,
   imageIndex: number,
   token?: string,
@@ -162,10 +193,14 @@ export async function deleteMemberProjectImage(
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to delete project image");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to delete project image",
+  );
 }
 
 export async function reorderMemberProjectImages(
+  callEndpoint: CallEndpointType,
+
   projectId: string,
   fromIndex: number,
   toIndex: number,
@@ -190,10 +225,13 @@ export async function reorderMemberProjectImages(
     return result.body.data;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to reorder project images");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to reorder project images",
+  );
 }
 
 export async function reorderMemberProjects(
+  callEndpoint: CallEndpointType,
   memberGdgId: string,
   fromIndex: number,
   toIndex: number,
@@ -218,5 +256,7 @@ export async function reorderMemberProjects(
     return true;
   }
 
-  throw new Error(extractErrorMessage(result.body) || "Failed to reorder projects");
+  throw new Error(
+    extractErrorMessage(result.body) || "Failed to reorder projects",
+  );
 }

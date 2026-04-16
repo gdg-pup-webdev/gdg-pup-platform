@@ -1,10 +1,11 @@
 import { configs } from "@/lib/constants/configs";
 import { contract } from "@packages/nexus-api-contracts";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useSyncAllEventToBevy = () => {
   const queryClient = useQueryClient();
+    const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async () => {
       const res = await callEndpoint(

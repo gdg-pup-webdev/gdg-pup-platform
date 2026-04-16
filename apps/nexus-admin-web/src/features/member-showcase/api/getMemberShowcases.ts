@@ -1,8 +1,8 @@
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { CallEndpointType } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export async function getMemberShowcases(pageNumber = 1, pageSize = 10) {
+export async function getMemberShowcases(callEndpoint: CallEndpointType, pageNumber = 1, pageSize = 10) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_showcase.GET,

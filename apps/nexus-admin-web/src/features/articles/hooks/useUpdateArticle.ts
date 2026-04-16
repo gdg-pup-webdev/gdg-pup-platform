@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { ArticleUpdate } from "../types";
 
 export const useUpdateArticle = () => {
   const queryClient = useQueryClient();
+  const callEndpoint = useCallEndpointWithToken();
 
   return useMutation({
     mutationFn: async ({ id, data, thumbnailImage }: { id: string; data: ArticleUpdate; thumbnailImage?: File }) => {

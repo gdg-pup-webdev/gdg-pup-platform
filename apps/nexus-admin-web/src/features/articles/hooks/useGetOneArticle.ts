@@ -1,10 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useQuery } from "@tanstack/react-query"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export const useGetOneArticle = (id: string) => {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["articles", "detail", id],
     queryFn: async () => {

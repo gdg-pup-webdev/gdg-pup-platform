@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import {  useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
 export const useRemoveRoleFromUser = () => {
   const queryClient = useQueryClient();
+  const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {
       

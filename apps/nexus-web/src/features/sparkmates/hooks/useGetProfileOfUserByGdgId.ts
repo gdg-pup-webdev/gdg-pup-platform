@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSparkmateByGdgId } from "../api";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { getSparkmateByGdgId } from "../api"; 
 import { configs } from "@/lib/constants/configs";
 import { contract } from "@packages/nexus-api-contracts";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export const useGetProfileOfUserByGdgId = (gdgId: string | undefined) => {
+  const callEndpoint = useCallEndpointWithToken();
 
     return useQuery({
         queryKey: ['sparkmates', 'profile', gdgId],

@@ -2,13 +2,11 @@
 
 import React from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  SparkmatesPortfolio,
+import { 
   type SparkmatesSource,
 } from "@/features/sparkmates";
 import { ProfilePublicView } from "@/features/sparkmates/components/SparkmatesPublicView/ProfilePublicView";
-import { useNfcCard } from "@/features/nfc-cards/hooks/useNfcCard";
-import { LoadingState } from "@/features/user-profile";
+import { useNfcCard } from "@/features/nfc-cards/hooks/useNfcCard"; 
 import { ProfileLoadingState } from "@/features/sparkmates/components/ProfileLoadingState";
 
 function normalizeSource(raw: string | null): SparkmatesSource {

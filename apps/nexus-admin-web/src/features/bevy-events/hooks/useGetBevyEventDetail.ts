@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { extractErrorMessage } from "@/lib/utils";
  * via the "Import from Bevy" button in the form.
  */
 export const useGetBevyEventDetail = () => {
+  const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async (eventId: string) => {
       const res = await callEndpoint(

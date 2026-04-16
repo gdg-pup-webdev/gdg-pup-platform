@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
 export const useSearchUsers = (q: string, limit =10) => {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["users", "search", q, limit],
     queryFn: async () => {
