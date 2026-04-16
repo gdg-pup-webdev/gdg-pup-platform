@@ -12,6 +12,7 @@ import { SuggestedPeopleSection } from "@/features/sparkmates/components/section
 import { FadeInSection } from "@/features/sparkmates/components/SparkmatesOwnerView/components/FadeInSection";
 import { SparkmatesRainbowStreak } from "@/features/sparkmates/components/SparkmatesOwnerView/components/SparkmatesRainbowStreak";
 import { SortableProjectCardItem } from "@/features/sparkmates/components/SparkmatesOwnerView/components/SortableProjectCardItem";
+import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/SparkmatesBrandedErrorScreen";
 
 const PROJECTS_PER_LOAD = 10;
 
@@ -52,16 +53,25 @@ export default function PublicProjectsPage({
       : "Unable to load sparkmates profile.";
 
     return (
-      <div className="min-h-screen bg-[#010B1D] px-6 pb-24 pt-40 text-white">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-red-500/20 bg-red-950/30 p-8">
-          <Text variant="heading-6" className="text-red-200">
-            Unable to load Sparkmates profile
-          </Text>
-          <Text variant="body" className="mt-2 text-red-100">
-            {message}
-          </Text>
-        </div>
-      </div>
+      <SparkmatesBrandedErrorScreen
+        title="Unable to load Sparkmates profile"
+        message={message}
+        backHref="/sparkmates"
+      />
+    );
+  }
+
+  if (isError) {
+    const message = error instanceof Error
+      ? error.message
+      : "Something went wrong while loading projects.";
+
+    return (
+      <SparkmatesBrandedErrorScreen
+        title="Unable to load projects"
+        message={message}
+        backHref={`/sparkmates/${gdgId}`}
+      />
     );
   }
 
@@ -107,15 +117,6 @@ export default function PublicProjectsPage({
 
               {isLoading ? (
                 <LoadingScreen message="Loading projects..." />
-              ) : isError ? (
-                <div className="rounded-2xl border border-red-500/30 bg-red-950/30 p-6 text-red-200">
-                  <Text variant="body" weight="medium">
-                    Unable to load projects
-                  </Text>
-                  <p className="mt-1 text-sm text-red-100">
-                    {error instanceof Error ? error.message : "Something went wrong while loading projects."}
-                  </p>
-                </div>
               ) : projects.length === 0 ? (
                 <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-8 text-center text-[#C1C7CD]">
                   <Text className="text-[#C1C7CD]" variant="body-sm">No projects yet.</Text>
@@ -128,6 +129,7 @@ export default function PublicProjectsPage({
                         key={project.id}
                         id={String(project.id)}
                         project={project}
+                        projectHref={`/sparkmates/${gdgId}/projects/${project.id}`}
                         readOnly
                         sortingDisabled
                         handleDisabled

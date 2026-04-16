@@ -528,6 +528,9 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
                     key={project.id}
                     id={String(project.id)}
                     project={project}
+                    projectHref={readOnly
+                      ? `/sparkmates/${profile.gdgId}/projects/${project.id}`
+                      : `/sparkmates/me/projects/${project.id}`}
                     onEdit={() => handleOpenEditProjectModal(project)}
                     sortingDisabled={reorderProjects.isPending}
                     handleDisabled={reorderProjects.isPending}
@@ -604,8 +607,9 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
             <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
             {editingProject.id && (
               <Button
-                variant="ghost"
-                className="text-red-300 hover:text-red-200"
+                variant="colored"
+                subVariant="red"
+                className="bg-red-600 hover:bg-red-700 text-white"
                 onClick={handleDeleteCurrentProject}
                 disabled={isSaving}
               >

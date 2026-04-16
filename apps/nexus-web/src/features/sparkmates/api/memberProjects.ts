@@ -10,6 +10,9 @@ export type MemberProjectRecord =
 export type MemberProjectsPaginatedResponse =
   contract.api.v1.member_projects.member.memberGdgId.GET.response[200];
 
+export type MemberProjectDetailResponse =
+  contract.api.v1.member_projects.id.GET.response[200];
+
 const toAbsoluteApiUrl = (value: string): string => {
   const trimmed = value.trim();
   if (!trimmed) {
@@ -132,6 +135,23 @@ export async function getMemberProjects(memberGdgId: string, token?: string) {
   });
 
   return response.data;
+}
+
+export async function getMemberProjectById(projectId: string, token?: string) {
+  const result = await callEndpoint(
+    configs.nexusApiBaseUrl,
+    contract.api.v1.member_projects.id.GET,
+    {
+      token: token ?? undefined,
+      params: { id: projectId },
+    },
+  );
+
+  if (result.status === 200 && result.body) {
+    return normalizeMemberProjectRecord(result.body.data);
+  }
+
+  throw new Error(extractErrorMessage(result.body) || "Failed to fetch project");
 }
 
 export async function createMemberProject(memberGdgId: string, project: Omit<ProjectFormState, "id">, token?: string) {

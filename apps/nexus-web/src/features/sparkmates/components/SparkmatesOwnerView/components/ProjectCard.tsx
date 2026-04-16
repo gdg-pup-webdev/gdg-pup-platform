@@ -3,6 +3,7 @@ import { Text } from "@packages/spark-ui";
 import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
 import type { Ref } from "react";
 import { MdDragIndicator } from "react-icons/md";
+import Link from "next/link";
 import { editIcon } from "../icons/editIcon";
 
 type ProjectLike = {
@@ -33,6 +34,7 @@ type ProjectCardProps = {
   isDragOverlay?: boolean;
   isDropTarget?: boolean;
   truncateDescription?: boolean;
+  projectHref?: string;
 };
 
 function toImageUrl(value: unknown): string | null {
@@ -110,6 +112,7 @@ export function ProjectCard({
   isDragOverlay = false,
   isDropTarget = false,
   truncateDescription = false,
+  projectHref,
 }: ProjectCardProps) {
   const images = normalizeProjectImages(project);
   const visibleImages = images.slice(0, 4);
@@ -129,9 +132,18 @@ export function ProjectCard({
       }`}
     >
       <div className="flex items-start justify-between gap-3">
-        <Text variant="body" className="text-white" weight="medium">
-          {project.title}
-        </Text>
+        {projectHref ? (
+          <Link
+            href={projectHref}
+            className="text-white font-medium text-base hover:text-[#8FC5FF] transition-colors"
+          >
+            {project.title}
+          </Link>
+        ) : (
+          <Text variant="body" className="text-white" weight="medium">
+            {project.title}
+          </Text>
+        )}
         <div className="flex items-center gap-2">
           {showDragHandle && (
             <button
@@ -162,32 +174,66 @@ export function ProjectCard({
         </div>
       </div>
 
-      <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
-        {project.startDate} {project.endDate ? `· ${project.endDate}` : ""}
-      </Text>
+      {projectHref ? (
+        <Link href={projectHref} className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#57CAFF]/70">
+          <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
+            {project.startDate} {project.endDate ? `· ${project.endDate}` : ""}
+          </Text>
 
-      <Text
-        variant="body-sm"
-        className={`mt-1 whitespace-pre-line text-[#E5E5E5] ${
-          truncateDescription
-            ? "overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]"
-            : ""
-        }`}
-      >
-        {project.description}
-      </Text>
+          <Text
+            variant="body-sm"
+            className={`mt-1 whitespace-pre-line text-[#E5E5E5] ${
+              truncateDescription
+                ? "overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]"
+                : ""
+            }`}
+          >
+            {project.description}
+          </Text>
 
-      {visibleImages.length > 0 && (
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {visibleImages.map((imageUrl, index) => (
-            <img
-              key={`${imageUrl}-${index}`}
-              src={imageUrl}
-              alt={`${project.title || "Project"} preview ${index + 1}`}
-              className="h-20 w-full rounded-md object-cover"
-            />
-          ))}
-        </div>
+          {visibleImages.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {visibleImages.map((imageUrl, index) => (
+                <img
+                  key={`${imageUrl}-${index}`}
+                  src={imageUrl}
+                  alt={`${project.title || "Project"} preview ${index + 1}`}
+                  className="h-20 w-full rounded-md object-cover"
+                />
+              ))}
+            </div>
+          )}
+        </Link>
+      ) : (
+        <>
+          <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
+            {project.startDate} {project.endDate ? `· ${project.endDate}` : ""}
+          </Text>
+
+          <Text
+            variant="body-sm"
+            className={`mt-1 whitespace-pre-line text-[#E5E5E5] ${
+              truncateDescription
+                ? "overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]"
+                : ""
+            }`}
+          >
+            {project.description}
+          </Text>
+
+          {visibleImages.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {visibleImages.map((imageUrl, index) => (
+                <img
+                  key={`${imageUrl}-${index}`}
+                  src={imageUrl}
+                  alt={`${project.title || "Project"} preview ${index + 1}`}
+                  className="h-20 w-full rounded-md object-cover"
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </article>
   );

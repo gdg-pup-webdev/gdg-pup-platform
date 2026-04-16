@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Button, Modal, Spinner, Text } from "@packages/spark-ui";
 import React, { useEffect, useMemo, useState } from "react";
@@ -36,6 +37,7 @@ import {
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
+import { getMemberProjectById } from "@/features/sparkmates/api/memberProjects";
 import { toast } from "react-toastify";
 
 const PROJECTS_PER_LOAD = 10;
@@ -197,7 +199,8 @@ const areSameOrder = (left: string[], right: string[]): boolean => {
 };
 
 export default function MyProjectsPage() {
-  const { decodedToken } = useAuthContext();
+  const { decodedToken, token } = useAuthContext();
+  const searchParams = useSearchParams();
   const gdgId = decodedToken?.memberInfo.gdgId;
   const { data: userProfileData, isLoading: isProfileLoading } = useGetProfileOfUserByGdgId(gdgId);
   const userProfile = userProfileData?.data;
@@ -215,6 +218,7 @@ export default function MyProjectsPage() {
   const [editingProject, setEditingProject] = useState<ProjectFormState>(createEmptyProject());
   const [isSavingProject, setIsSavingProject] = useState(false);
   const [orderedProjectIds, setOrderedProjectIds] = useState<string[]>([]);
+  const [handledEditProjectId, setHandledEditProjectId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -236,6 +240,7 @@ export default function MyProjectsPage() {
 
   const projects = data?.pages.flatMap((page) => page.data) || [];
   const totalRecords = data?.pages[0]?.meta.totalRecords || 0;
+  const editProjectId = searchParams.get("editProjectId");
 
   const projectIdsFromQuery = useMemo(
     () => projects.map((project) => String(project.id)),
@@ -290,6 +295,39 @@ export default function MyProjectsPage() {
     setEditingProject(toProjectFormState(project));
     setIsEditModalOpen(true);
   };
+
+  useEffect(() => {
+    if (!editProjectId || handledEditProjectId === editProjectId || isEditModalOpen) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void (async () => {
+      let targetProject = projects.find((project) => String(project.id) === editProjectId);
+
+      if (!targetProject) {
+        try {
+          targetProject = await getMemberProjectById(editProjectId, token ?? undefined);
+        } catch {
+          return;
+        }
+      }
+
+      if (cancelled || !targetProject) {
+        return;
+      }
+
+      setIsDeleteConfirmOpen(false);
+      setEditingProject(toProjectFormState(targetProject));
+      setIsEditModalOpen(true);
+      setHandledEditProjectId(editProjectId);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [editProjectId, handledEditProjectId, isEditModalOpen, projects, token]);
 
   const handleUpdateProject = (
     index: number,
@@ -643,6 +681,7 @@ export default function MyProjectsPage() {
                             key={project.id}
                             id={String(project.id)}
                             project={project}
+                            projectHref={`/sparkmates/me/projects/${project.id}`}
                             onEdit={() => handleOpenEditProjectModal(project)}
                             sortingDisabled={reorderProjects.isPending}
                             handleDisabled={reorderProjects.isPending}
@@ -730,8 +769,9 @@ export default function MyProjectsPage() {
               <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
               {editingProject.id && (
                 <Button
-                  variant="ghost"
-                  className="text-red-300 hover:text-red-200"
+                  variant="colored"
+                  subVariant="red"
+                  className="bg-red-600 hover:bg-red-700 text-white"
                   onClick={handleDeleteCurrentProject}
                   disabled={isSaving}
                 >

@@ -14,6 +14,7 @@ type SortableProjectCardItemProps = {
   isDropTarget?: boolean;
   readOnly?: boolean;
   truncateDescription?: boolean;
+  projectHref?: string;
 };
 
 export function SortableProjectCardItem({
@@ -25,6 +26,7 @@ export function SortableProjectCardItem({
   isDropTarget = false,
   readOnly = false,
   truncateDescription = false,
+  projectHref,
 }: SortableProjectCardItemProps) {
   const {
     setNodeRef,
@@ -69,6 +71,7 @@ export function SortableProjectCardItem({
         isDragging={isDragging}
         isDropTarget={isDropTarget}
         truncateDescription={truncateDescription}
+        projectHref={projectHref}
       />
     </div>
   );
