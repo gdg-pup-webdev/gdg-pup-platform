@@ -1,4 +1,4 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { CreateLearningResourceDTO, LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
