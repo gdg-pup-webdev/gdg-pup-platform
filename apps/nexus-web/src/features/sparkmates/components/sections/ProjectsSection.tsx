@@ -16,8 +16,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { SortableProjectCardItem } from "../components/SortableProjectCardItem";
-import { addIcon } from "../icons/addIcon";
+import { SortableProjectCardItem } from "../SparkmatesOwnerView/components/SortableProjectCardItem";
+import { addIcon } from "../SparkmatesOwnerView/icons/addIcon";
 import { UserProfile } from "@/features/sparkmates";
 import { useMemberProjects } from "@/features/sparkmates/hooks/useMemberProjects";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
@@ -106,7 +106,7 @@ const areSameOrder = (left: string[], right: string[]): boolean => {
   return true;
 };
 
-export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
+export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; readOnly?: boolean }) => {
   const {
     projectsQuery,
     createProject,
@@ -437,17 +437,19 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
               View All
             </Button>
           </Link>
-          <Button
-            variant="dashed-outline"
-            size="sm"
-            className="px-3"
-            title="Add Project"
-            aria-label="Add Project"
-            iconLeft={addIcon}
-            onClick={handleOpenAddProjectModal}
-          >
-            Add Project
-          </Button>
+          {!readOnly && (
+            <Button
+              variant="dashed-outline"
+              size="sm"
+              className="px-3"
+              title="Add Project"
+              aria-label="Add Project"
+              iconLeft={addIcon}
+              onClick={handleOpenAddProjectModal}
+            >
+              Add Project
+            </Button>
+          )}
         </div>
       </div>
       <Text variant="body-sm" className="text-[#C1C7CD]">
@@ -476,6 +478,7 @@ export const ProjectsSection = ({ profile }: { profile: UserProfile }) => {
                     onEdit={() => handleOpenEditProjectModal(project)}
                     sortingDisabled={reorderProjects.isPending}
                     handleDisabled={reorderProjects.isPending}
+                    readOnly={readOnly}
                   />
                 ))}
               </div>

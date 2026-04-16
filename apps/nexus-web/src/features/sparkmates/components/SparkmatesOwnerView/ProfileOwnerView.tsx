@@ -8,19 +8,19 @@ import { AnimatePresence, motion } from "motion/react";
 import { useSparkmateProfile } from "../../hooks";
 import { SparkmatesSource } from "../../types";
 import { useUpdateSparkmateProfile } from "../../hooks/useUpdateSparkmateProfile";
-import { SkillsAndLinksSection } from "./sections/SkillsAndLinksSection"; 
+import { SkillsAndLinksSection } from "../sections/SkillsAndLinksSection"; 
 import { viewIcon } from "./icons/viewIcon"; 
 import { Divider } from "./components/Divider"; 
  import { SparkmatesRainbowStreak } from "./components/SparkmatesRainbowStreak";
 import { FadeInSection } from "./components/FadeInSection";
-import { NameAndProfileSection } from "./sections/NameAndProfileSection";
+import { NameAndProfileSection } from "../sections/NameAndProfileSection";
 import { useGetProfileOfUserByGdgId } from "../../hooks/useGetProfileOfUserByGdgId";
-import { BadgesSection } from "./sections/BadgesSection";
-import { ProjectsSection } from "./sections/ProjectsSection";
-import { ImpactSection } from "./sections/ImpactSection";
-import { SuggestedPeopleSection } from "./sections/SuggestedPeopleSection";
+import { BadgesSection } from "../sections/BadgesSection";
+import { ProjectsSection } from "../sections/ProjectsSection";
+import { ImpactSection } from "../sections/ImpactSection";
+import { SuggestedPeopleSection } from "../sections/SuggestedPeopleSection";
 import { SparkmatesMiniPreviewCard } from "./components/SparkmatesMiniPreviewCard";
-import { CustomButtonsSection } from "./sections/CustomButtonsSection";
+import { CustomButtonsSection } from "../sections/CustomButtonsSection";
 import {
   moveSparkmatesSection,
   normalizeSparkmatesSectionOrder,

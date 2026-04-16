@@ -1,17 +1,19 @@
 import { Input, Button, Text } from "@packages/spark-ui";
 import React, { useState } from "react";
-import { ConnectedSuggestedCard } from "../components/ConnectedSuggestedCard";
-import { FadeInSection } from "../components/FadeInSection";
-import { searchIcon } from "../icons/searchIcon";
-import { viewIcon } from "../icons/viewIcon";
+import { ConnectedSuggestedCard } from "../SparkmatesOwnerView/components/ConnectedSuggestedCard";
+import { FadeInSection } from "../SparkmatesOwnerView/components/FadeInSection";
+import { searchIcon } from "../SparkmatesOwnerView/icons/searchIcon";
+import { viewIcon } from "../SparkmatesOwnerView/icons/viewIcon";
 import { useSuggestedSparkmates } from "@/features/sparkmates/hooks";
 import { UserProfile } from "@/features/sparkmates/types";
 import { useSearchMember } from "@/features/sparkmates/hooks/useSearchMember";
 
 export const SuggestedPeopleSection = ({
   profile,
+  readOnly,
 }: {
   profile: UserProfile;
+  readOnly?: boolean;
 }) => {
   const [search, setSearch] = useState("");
   const [trueSearch, setTrueSearch] = useState("");

@@ -17,15 +17,15 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React, { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { addIcon } from "../icons/addIcon";
-import { burgerIcon } from "../icons/burgerIcon";
-import { editIcon } from "../icons/editIcon"; 
+import { addIcon } from "../SparkmatesOwnerView/icons/addIcon";
+import { burgerIcon } from "../SparkmatesOwnerView/icons/burgerIcon";
+import { editIcon } from "../SparkmatesOwnerView/icons/editIcon"; 
 import { UserProfile, useUpdateSparkmateProfile } from "@/features/sparkmates";
-import { getLinkHostname } from "../utils/getLinkHostname";
+import { getLinkHostname } from "../SparkmatesOwnerView/utils/getLinkHostname";
 import {
   parseCustomButtonLinks,
   serializeCustomButtonLinks,
-} from "../../../utils/customButtonFavorites";
+} from "../../utils/customButtonFavorites";
 
 type SortableCustomButtonItemProps = {
   id: string;
@@ -91,7 +91,7 @@ const SortableCustomButtonItem = ({
   );
 };
 
-export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
+export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfile; readOnly?: boolean }) => {
   const parsedProfileLinks = useMemo(
     () => parseCustomButtonLinks(profile.otherLinks),
     [profile.otherLinks],
@@ -200,16 +200,18 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
           <Text variant="heading-6" gradient="white-blue" weight="bold">
             Custom Button
           </Text>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 text-white"
-            title="Edit Custom Button"
-            aria-label="Edit Custom Button"
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            {editIcon}
-          </Button>
+          {!readOnly && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-white"
+              title="Edit Custom Button"
+              aria-label="Edit Custom Button"
+              onClick={() => setIsEditModalOpen(true)}
+            >
+              {editIcon}
+            </Button>
+          )}
         </div>
         <Text variant="body-sm" className="text-[#C1C7CD]">
           Add a custom button that appears on your profile.
@@ -256,76 +258,77 @@ export const CustomButtonsSection = ({ profile }: { profile: UserProfile }) => {
             </div>
           ) : null}
         </div>
-        <Button 
-          variant="dashed-outline" 
-          className="w-full" 
-          iconLeft={addIcon}
-          onClick={() => setIsEditModalOpen(true)}
-        >
-          Add Custom Buttons
-        </Button>
+        {!readOnly && (
+          <Button 
+            variant="dashed-outline" 
+            className="w-full" 
+            iconLeft={addIcon}
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            Add Custom Buttons
+          </Button>
+        )}
 
-        <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="sm" className="bg-[#091734] text-white border border-white/10">
-          <div className="">
-            <div>
-              <Text variant="heading-6" weight="bold" className="text-white">Manage Custom Buttons</Text>
-              <Text variant="body-sm" className="text-zinc-400 mt-1">
-                Add prominent links to other platforms that will appear on your profile.
-              </Text>
-            </div>
-            
-            <div className="space-y-1.5">
-              <Text variant="body-sm" className="text-zinc-300 font-medium">Link URL</Text>
-              <div className="flex gap-2">
-                <Input 
-                  value={newLink} 
-                  onChange={(e) => setNewLink(e.target.value)} 
-                  placeholder="https://your-link.com"
-                  containerClassName="bg-white/5 border-white/10"
-                  className="bg-transparent text-white placeholder:text-white/40"
-                />
-                <Button variant="default" onClick={handleAddLink}>Add</Button>
-              </div>
-            </div>
-
-            {links.length > 0 && (
-              <div className="space-y-2">
-                <Text variant="body-sm" className="text-zinc-300 font-medium">
-                  Added Links (drag to reorder)
+        {!readOnly && (
+          <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="sm" className="bg-[#091734] text-white border border-white/10">
+            <div className="">
+              <div>
+                <Text variant="heading-6" weight="bold" className="text-white">Manage Custom Buttons</Text>
+                <Text variant="body-sm" className="text-zinc-400 mt-1">
+                  Add prominent links to other platforms that will appear on your profile.
                 </Text>
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleLinkDragEnd}
-                >
-                  <SortableContext items={sortableLinkIds} strategy={verticalListSortingStrategy}>
-                    <div className="space-y-2">
-                      {links.map((link, index) => (
-                        <SortableCustomButtonItem
-                          key={sortableLinkIds[index]}
-                          id={sortableLinkIds[index]}
-                          link={link}
-                          onRemove={() => handleRemoveLink(index)}
-                          sortingDisabled={isPending}
-                        />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
               </div>
-            )}
+              
+              <div className="space-y-1.5">
+                <Text variant="body-sm" className="text-zinc-300 font-medium">Link URL</Text>
+                <div className="flex gap-2">
+                  <Input 
+                    value={newLink} 
+                    onChange={(e) => setNewLink(e.target.value)} 
+                    placeholder="https://your-link.com"
+                    containerClassName="bg-white/5 border-white/10"
+                    className="bg-transparent text-white placeholder:text-white/40"
+                  />
+                  <Button variant="default" onClick={handleAddLink}>Add</Button>
+                </div>
+              </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
-              <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-              <Button variant="default" onClick={handleSave} disabled={isPending}>
-                {isPending ? "Saving..." : "Save Changes"}
-              </Button>
+              {links.length > 0 && (
+                <div className="space-y-2">
+                  <Text variant="body-sm" className="text-zinc-300 font-medium">
+                    Added Links (drag to reorder)
+                  </Text>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleLinkDragEnd}
+                  >
+                    <SortableContext items={sortableLinkIds} strategy={verticalListSortingStrategy}>
+                      <div className="space-y-2">
+                        {links.map((link, index) => (
+                          <SortableCustomButtonItem
+                            key={sortableLinkIds[index]}
+                            id={sortableLinkIds[index]}
+                            link={link}
+                            onRemove={() => handleRemoveLink(index)}
+                            sortingDisabled={isPending}
+                          />
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
+                <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+                <Button variant="default" onClick={handleSave} disabled={isPending}>
+                  {isPending ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
             </div>
-          </div>
-        </Modal>
-      </section>
-
-      
-    
+          </Modal>
+        )}
+    </section>
   );
 };

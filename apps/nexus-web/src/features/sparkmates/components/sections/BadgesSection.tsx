@@ -1,11 +1,11 @@
 import { Button, Text } from "@packages/spark-ui";
 import React from "react";
-import { viewIcon } from "../icons/viewIcon"; 
+import { viewIcon } from "../SparkmatesOwnerView/icons/viewIcon"; 
 import { UserProfile } from "@/features/sparkmates";
 import { ASSETS } from "@/lib/constants/assets";
-import { ComingSoonPlaceholder } from "../../ComingSoonPlaceholder";
+import { ComingSoonPlaceholder } from "../ComingSoonPlaceholder";
 
-export const BadgesSection = ({ profile }: { profile: UserProfile }) => {
+export const BadgesSection = ({ profile, readOnly }: { profile: UserProfile; readOnly?: boolean }) => {
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
