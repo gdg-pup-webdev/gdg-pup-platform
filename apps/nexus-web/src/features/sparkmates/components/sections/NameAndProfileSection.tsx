@@ -128,8 +128,13 @@ export const NameAndProfileSection = ({
         variant="ghost"
         size="sm"
         title="Add Socials"
-        className="h-9 w-9 rounded-full border border-white/25 bg-[#091734] p-0 text-white"
-        onClick={handleAddSocialLink}
+        aria-label="Add Socials"
+        disabled={!!readOnly}
+        className="h-9 w-9 rounded-full border border-white/25 bg-[#091734] p-0 text-white disabled:cursor-not-allowed disabled:opacity-40"
+        onClick={() => {
+          if (readOnly) return;
+          handleAddSocialLink();
+        }}
       >
         +
       </Button>
