@@ -52,7 +52,9 @@ export function MemberShowcaseSubmitStory() {
                   </Text>
                 </Stack>
                 <Button asChild variant="colored" subVariant="blue" size="lg">
-                  <a href="https://forms.gle/wNpWYMT6hGPidtEL8">Submit your story</a>
+                  <a href="https://forms.gle/wNpWYMT6hGPidtEL8" target="_blank" rel="noopener noreferrer">
+                    Submit your story
+                  </a>
                 </Button>
               </Stack>
             </motion.div>
