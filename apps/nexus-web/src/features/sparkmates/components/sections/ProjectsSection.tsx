@@ -425,32 +425,17 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
         <Text variant="heading-6" gradient="white-blue" weight="bold">
           Projects
         </Text>
-        <div className="flex items-center gap-2">
-          <Link prefetch={false} href="/sparkmates/me/projects">
-            <Button
-              variant="outline"
-              size="sm"
-              className="px-3 text-white border-white/20 hover:bg-white/10"
-              title="View All Projects"
-              aria-label="View All Projects"
-            >
-              View All
-            </Button>
-          </Link>
-          {!readOnly && (
-            <Button
-              variant="dashed-outline"
-              size="sm"
-              className="px-3"
-              title="Add Project"
-              aria-label="Add Project"
-              iconLeft={addIcon}
-              onClick={handleOpenAddProjectModal}
-            >
-              Add Project
-            </Button>
-          )}
-        </div>
+        <Link prefetch={false} href="/sparkmates/me/projects">
+          <Button
+            variant="outline"
+            size="sm"
+            className="px-3 text-white border-white/20 hover:bg-white/10"
+            title="View All Projects"
+            aria-label="View All Projects"
+          >
+            View All
+          </Button>
+        </Link>
       </div>
       <Text variant="body-sm" className="text-[#C1C7CD]">
         Feature your best works to highlight your skills.
@@ -484,12 +469,21 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
               </div>
             </SortableContext>
           </DndContext>
-        ) : (
-          <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-4 text-center text-[#C1C7CD]">
-            <Text variant="body-sm">No projects added yet.</Text>
-          </div>
-        )}
+        ) : null}
       </div>
+
+      {!readOnly && (
+        <Button
+          variant="dashed-outline"
+          className="w-full"
+          iconLeft={addIcon}
+          title="Add New Projects"
+          aria-label="Add New Projects"
+          onClick={handleOpenAddProjectModal}
+        >
+          Add New Projects
+        </Button>
+      )}
 
       <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="md" className="bg-transparent border-none p-0 shadow-none! isolate">
         <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
