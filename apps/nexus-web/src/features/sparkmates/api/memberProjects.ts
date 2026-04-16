@@ -10,6 +10,86 @@ export type MemberProjectRecord =
 export type MemberProjectsPaginatedResponse =
   contract.api.v1.member_projects.member.memberGdgId.GET.response[200];
 
+const toAbsoluteApiUrl = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("data:") || trimmed.startsWith("blob:")) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith("//")) {
+    return `${window.location.protocol}${trimmed}`;
+  }
+
+  const normalizedPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return `${configs.nexusApiBaseUrl}${normalizedPath}`;
+};
+
+const normalizeProjectImages = (project: Record<string, unknown>): string[] => {
+  const candidates = [
+    project.images,
+    project.imageUrls,
+    project.image_urls,
+  ];
+
+  for (const candidate of candidates) {
+    if (!Array.isArray(candidate)) {
+      continue;
+    }
+
+    const normalized = candidate
+      .map((entry) => {
+        if (typeof entry === "string") {
+          return toAbsoluteApiUrl(entry);
+        }
+
+        if (entry && typeof entry === "object") {
+          const nested =
+            (entry as { imageUrl?: unknown }).imageUrl ??
+            (entry as { image_url?: unknown }).image_url ??
+            (entry as { url?: unknown }).url ??
+            (entry as { publicUrl?: unknown }).publicUrl ??
+            (entry as { previewUrl?: unknown }).previewUrl;
+
+          if (typeof nested === "string") {
+            return toAbsoluteApiUrl(nested);
+          }
+        }
+
+        return "";
+      })
+      .filter((entry) => entry.length > 0);
+
+    if (normalized.length > 0) {
+      return [...new Set(normalized)];
+    }
+  }
+
+  const singleFields = [
+    project.mainImageUrl,
+    project.secondaryImageUrl,
+    project.tertiaryImageUrl,
+    project.main_image_url,
+    project.secondary_image_url,
+    project.tertiary_image_url,
+  ];
+
+  return singleFields
+    .map((entry) => (typeof entry === "string" ? toAbsoluteApiUrl(entry) : ""))
+    .filter((entry) => entry.length > 0);
+};
+
+const normalizeMemberProjectRecord = (project: MemberProjectRecord): MemberProjectRecord => {
+  const normalizedImages = normalizeProjectImages(project as unknown as Record<string, unknown>);
+  return {
+    ...project,
+    images: normalizedImages,
+  };
+};
+
 export async function getMemberProjectsPaginated(
   memberGdgId: string,
   options?: {
@@ -35,7 +115,10 @@ export async function getMemberProjectsPaginated(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body;
+    return {
+      ...result.body,
+      data: result.body.data.map((project) => normalizeMemberProjectRecord(project)),
+    };
   }
 
   throw new Error(extractErrorMessage(result.body) || "Failed to fetch projects");
@@ -70,7 +153,7 @@ export async function createMemberProject(memberGdgId: string, project: Omit<Pro
   );
 
   if (result.status === 201 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(extractErrorMessage(result.body) || "Failed to create project");
@@ -95,7 +178,7 @@ export async function updateMemberProject(projectId: string, project: Omit<Proje
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(extractErrorMessage(result.body) || "Failed to update project");
@@ -135,7 +218,7 @@ export async function addMemberProjectImage(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(extractErrorMessage(result.body) || "Failed to add project image");
@@ -159,7 +242,7 @@ export async function deleteMemberProjectImage(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(extractErrorMessage(result.body) || "Failed to delete project image");
@@ -187,7 +270,7 @@ export async function reorderMemberProjectImages(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(extractErrorMessage(result.body) || "Failed to reorder project images");
