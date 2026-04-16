@@ -13,8 +13,8 @@ export class MemberShowcaseRouter {
      * PUBLIC ROUTES 
      */
     this.router.get("/", this.controller.getList);
-    this.router.get("/:id", this.controller.getOne);
     this.router.get("/spotlight", this.controller.getSpotlight);
+    this.router.get("/:id", this.controller.getOne);
 
     /**
      * PRIVATE ROUTES 
