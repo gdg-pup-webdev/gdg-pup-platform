@@ -219,14 +219,12 @@ const renderProjectImageGrid = (
 
   if (images.length === 3) {
     return (
-      <div className="mx-auto mt-6 w-full max-w-lg space-y-3">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {images.slice(0, 2).map((imageUrl, index) => renderImageTile(imageUrl, title, index, onSelect, "aspect-square"))}
-        </div>
-        <div className="flex justify-center">
-          <div className="w-full sm:w-[48.5%]">
-            {renderImageTile(images[2], title, 2, onSelect, "aspect-square")}
-          </div>
+      <div className="mx-auto mt-6 grid w-full max-w-lg grid-cols-1 gap-3 sm:grid-cols-2">
+        {images.slice(0, 2).map((imageUrl, index) =>
+          renderImageTile(imageUrl, title, index, onSelect, "aspect-square"),
+        )}
+        <div className="sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.375rem)]">
+          {renderImageTile(images[2], title, 2, onSelect, "aspect-square")}
         </div>
       </div>
     );

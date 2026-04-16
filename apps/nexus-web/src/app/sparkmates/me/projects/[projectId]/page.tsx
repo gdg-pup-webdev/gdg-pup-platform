@@ -1,14 +1,11 @@
 "use client";
 
-import React from "react";
+import { useParams } from "next/navigation";
 import { ProjectDetailsView } from "@/features/sparkmates/components/ProjectDetailsView";
 
-export default function MyProjectDetailsPage({
-  params,
-}: {
-  params: Promise<{ projectId: string }>;
-}) {
-  const { projectId } = React.use(params);
+export default function MyProjectDetailsPage() {
+  const params = useParams<{ projectId: string }>();
+  const projectId = params?.projectId ?? "";
 
   return (
     <ProjectDetailsView
