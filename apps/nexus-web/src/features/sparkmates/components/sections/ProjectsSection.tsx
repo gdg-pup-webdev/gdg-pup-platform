@@ -483,13 +483,17 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
   const isImageMutationPending =
     addProjectImage.isPending || deleteProjectImage.isPending;
 
+  const viewAllProjectsHref = readOnly
+    ? `/sparkmates/${profile.gdgId}/projects`
+    : "/sparkmates/me/projects";
+
   return (
     <section className="space-y-4 pt-6">
       <div className="flex items-center justify-between gap-3">
         <Text variant="heading-6" gradient="white-blue" weight="bold">
           Projects
         </Text>
-        <Link prefetch={false} href="/sparkmates/me/projects">
+        <Link prefetch={false} href={viewAllProjectsHref}>
           <Button
             variant="outline"
             size="sm"

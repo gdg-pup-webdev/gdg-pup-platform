@@ -646,6 +646,7 @@ export default function MyProjectsPage() {
                             onEdit={() => handleOpenEditProjectModal(project)}
                             sortingDisabled={reorderProjects.isPending}
                             handleDisabled={reorderProjects.isPending}
+                            truncateDescription
                           />
                         ))}
                       </div>
