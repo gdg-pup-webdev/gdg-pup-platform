@@ -1,13 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCreateMemberProjectRequest } from "./createMemberProject";
+import { createMemberProject } from "../api/createMemberProject";
 import { CreateMemberProjectDTO } from "../types";
 
 export function useCreateMemberProject() {
-  const createMemberProject = useCreateMemberProjectRequest();
-
-
-
-
   const queryClient = useQueryClient();
 
   return useMutation({

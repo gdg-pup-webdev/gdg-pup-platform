@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+
 export const useListPortfolios = (pageNumber = 1, pageSize = 10) => {
-  const callEndpoint = useFetchApi();
   return useQuery({
     queryKey: ["portfolios", "list", pageNumber, pageSize],
     queryFn: async () => {

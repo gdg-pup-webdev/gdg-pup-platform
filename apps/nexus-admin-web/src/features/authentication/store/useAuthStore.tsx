@@ -82,20 +82,6 @@ export const AuthContextProvider = ({
     return () => clearTimeout(timer);
   }, [token, decodedToken]);
 
-  /**
-   * Check token validity on app load. If token is expired, attempt to refresh it. If refresh fails, clear the token and set status to unauthenticated.
-   */
-  useEffect(() => {
-    if (!token || !decodedToken) return; 
-
-    const currentTime = new Date();
-    const tokenExpiry = new Date(decodedToken.validUntil);
-
-    if (tokenExpiry <= currentTime) {
-      refreshToken();
-    }
-  }, [token, decodedToken]);
-
   useEffect(() => { 
     if (!_hasHydrated) return;
     if (token) {

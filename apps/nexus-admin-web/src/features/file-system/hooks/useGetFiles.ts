@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 
 const API_URL = "http://localhost:8000";
+
 export const useGetFiles = (pageNumber = 1, pageSize = 10, folderId?: string | null, path?: string) => {
-  const callEndpoint = useFetchApi();
   return useQuery({
     queryKey: ["files", pageNumber, pageSize, folderId, path],
     queryFn: async () => {

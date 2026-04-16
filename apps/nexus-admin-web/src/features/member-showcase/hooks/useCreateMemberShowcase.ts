@@ -1,13 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCreateMemberShowcaseRequest } from "./createMemberShowcase";
+import { createMemberShowcase } from "../api/createMemberShowcase";
 import { CreateMemberShowcaseDTO } from "../types";
 
 export function useCreateMemberShowcase() {
-  const createMemberShowcase = useCreateMemberShowcaseRequest();
-
-
-
-
   const queryClient = useQueryClient();
 
   return useMutation({

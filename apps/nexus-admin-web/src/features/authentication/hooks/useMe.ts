@@ -1,12 +1,11 @@
-import { useQuery } from "@tanstack/react-query"; 
+import { useQuery } from "@tanstack/react-query";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils"; 
 import { useAuthContext } from "../store/useAuthStore";
-import { useFetchApi } from "@/hooks/useFetchApi";
 
 export const useMe = () => {
-  const callEndpoint = useFetchApi();
   const { token} = useAuthContext();
 
   return useQuery({

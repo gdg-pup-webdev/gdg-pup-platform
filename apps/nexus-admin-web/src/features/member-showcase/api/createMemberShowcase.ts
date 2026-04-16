@@ -1,12 +1,9 @@
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { CreateMemberShowcaseDTO } from "../types";
 
-export function useCreateMemberShowcaseRequest() {
-  const callEndpoint = useFetchApi();
-
-  return async function createMemberShowcase(data: CreateMemberShowcaseDTO, thumbnailFile: File) {
+export async function createMemberShowcase(data: CreateMemberShowcaseDTO, thumbnailFile: File) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_showcase.POST,
@@ -20,5 +17,4 @@ export function useCreateMemberShowcaseRequest() {
     return result.body;
   }
   throw new Error("Failed to create member showcase");
-}
 }

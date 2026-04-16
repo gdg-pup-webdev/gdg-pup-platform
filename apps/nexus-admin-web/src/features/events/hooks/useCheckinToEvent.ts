@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
@@ -9,8 +9,8 @@ type CheckinInput = {
   attendeeId: string;
   checkinMethod: "QR_CODE" | "MANUAL" | "GOOGLE_FORMS" | "NFC";
 };
+
 export const useCheckinToEvent = () => {
-  const callEndpoint = useFetchApi();
   const queryClient = useQueryClient();
 
   return useMutation({

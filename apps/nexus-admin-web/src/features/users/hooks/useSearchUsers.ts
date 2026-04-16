@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+
 export const useSearchUsers = (q: string, limit =10) => {
-  const callEndpoint = useFetchApi();
   return useQuery({
     queryKey: ["users", "search", q, limit],
     queryFn: async () => {

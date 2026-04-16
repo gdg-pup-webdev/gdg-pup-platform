@@ -1,11 +1,8 @@
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export function useGetRandomMemberProjectsRequest() {
-  const callEndpoint = useFetchApi();
-
-  return async function getRandomMemberProjects(pageNumber = 1, pageSize = 10) {
+export async function getRandomMemberProjects(pageNumber = 1, pageSize = 10) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.random.GET,
@@ -18,5 +15,4 @@ export function useGetRandomMemberProjectsRequest() {
     return result.body;
   }
   throw new Error("Failed to fetch random member projects");
-}
 }

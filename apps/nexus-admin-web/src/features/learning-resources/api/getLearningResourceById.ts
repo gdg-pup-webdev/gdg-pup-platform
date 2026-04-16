@@ -1,12 +1,9 @@
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
 
-export function useGetLearningResourceByIdRequest() {
-  const callEndpoint = useFetchApi();
-
-  return async function getLearningResourceById(id: string) {
+export async function getLearningResourceById(id: string) {
   try {
     const result = await callEndpoint(
       configs.nexusApiBaseUrl,
@@ -33,5 +30,4 @@ export function useGetLearningResourceByIdRequest() {
       error instanceof Error ? error.message : String(error)
     );
   }
-}
 }

@@ -1,11 +1,8 @@
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export function useGetMemberShowcasesRequest() {
-  const callEndpoint = useFetchApi();
-
-  return async function getMemberShowcases(pageNumber = 1, pageSize = 10) {
+export async function getMemberShowcases(pageNumber = 1, pageSize = 10) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_showcase.GET,
@@ -18,5 +15,4 @@ export function useGetMemberShowcasesRequest() {
     return result.body;
   }
   throw new Error("Failed to fetch member showcases");
-}
 }

@@ -31,7 +31,7 @@ import { useListAttendees } from "../hooks/useListAttendees";
 import { useCheckinToEvent } from "../hooks/useCheckinToEvent";
 import { useGetBevyEvents } from "@/features/bevy-events/hooks/useGetBevyEvents";
 import { useGetBevyEventDetail } from "@/features/bevy-events/hooks/useGetBevyEventDetail";
-import { useSearchTeams } from "@/features/teams/hooks/useTeams";
+import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
 import { WireframeUploadImage } from "@/components/wireframeUi/WireframeUploadImage";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";

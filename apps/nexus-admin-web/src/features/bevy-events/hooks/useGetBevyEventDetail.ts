@@ -1,8 +1,8 @@
-import { useMutation } from "@tanstack/react-query"; 
+import { useMutation } from "@tanstack/react-query";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
-import { useFetchApi } from "@/hooks/useFetchApi";
 
 /**
  * Hook to fetch detail of a single Bevy event from the database.
@@ -10,7 +10,6 @@ import { useFetchApi } from "@/hooks/useFetchApi";
  * via the "Import from Bevy" button in the form.
  */
 export const useGetBevyEventDetail = () => {
-  const callEndpoint = useFetchApi();
   return useMutation({
     mutationFn: async (eventId: string) => {
       const res = await callEndpoint(

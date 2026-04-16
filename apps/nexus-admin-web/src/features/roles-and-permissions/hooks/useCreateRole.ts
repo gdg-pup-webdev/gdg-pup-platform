@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
 type RoleInsertDTO = z.infer<typeof contract.api.v1.roles.POST.request.body>;
+
 export const useCreateRole = () => {
-  const callEndpoint = useFetchApi();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: RoleInsertDTO) => {

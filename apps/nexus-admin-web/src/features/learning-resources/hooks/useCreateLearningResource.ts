@@ -1,10 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCreateLearningResourceRequest } from "./createLearningResource";
+import { createLearningResource } from "../api/createLearningResource";
 import { CreateLearningResourceDTO } from "../types";
 
 export function useCreateLearningResource() {
-  const createLearningResource = useCreateLearningResourceRequest();
-
   const queryClient = useQueryClient();
 
   return useMutation({

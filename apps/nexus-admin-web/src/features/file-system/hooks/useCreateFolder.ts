@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { FolderInsert } from "../types";
 
 const API_URL = "http://localhost:8000";
+
 export const useCreateFolder = () => {
-  const callEndpoint = useFetchApi();
   const queryClient = useQueryClient();
 
   return useMutation({

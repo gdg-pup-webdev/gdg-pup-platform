@@ -6,7 +6,7 @@ import { LearningResourceCard } from "./LearningResourceCard";
 import { ResourceFormModal, ResourceViewModal, DeleteConfirmModal } from "./LearningResourceModals";
 import { useGetLearningResources, useCreateLearningResource, useUpdateLearningResource, useDeleteLearningResource } from "../hooks";
 import { LearningResource, CreateLearningResourceDTO, UpdateLearningResourceDTO } from "../types";
-import { useSearchTeams } from "@/features/teams/hooks/useTeams";
+import { useSearchTeams } from "@/features/teams/api/teams";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { toast } from "react-toastify";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";

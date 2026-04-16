@@ -1,12 +1,9 @@
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { CreateMemberProjectDTO } from "../types";
 
-export function useCreateMemberProjectRequest() {
-  const callEndpoint = useFetchApi();
-
-  return async function createMemberProject(
+export async function createMemberProject(
   data: CreateMemberProjectDTO,
   files?: {
     mainImage?: File;
@@ -26,5 +23,4 @@ export function useCreateMemberProjectRequest() {
     return result.body;
   }
   throw new Error("Failed to create member project");
-}
 }

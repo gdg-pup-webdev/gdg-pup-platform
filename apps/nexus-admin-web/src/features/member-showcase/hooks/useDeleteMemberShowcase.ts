@@ -1,12 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useDeleteMemberShowcaseRequest } from "./deleteMemberShowcase";
+import { deleteMemberShowcase } from "../api/deleteMemberShowcase";
 
 export function useDeleteMemberShowcase() {
-  const deleteMemberShowcase = useDeleteMemberShowcaseRequest();
-
-
-
-
   const queryClient = useQueryClient();
 
   return useMutation({

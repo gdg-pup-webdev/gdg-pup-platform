@@ -1,9 +1,9 @@
 import { configs } from "@/lib/constants/configs";
 import { contract } from "@packages/nexus-api-contracts";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 export const useSyncOneEventToBevy = () => {
-  const callEndpoint = useFetchApi();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (params: { eventId: string }) => {

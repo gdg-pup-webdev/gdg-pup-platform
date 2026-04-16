@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Loader2, AlertTriangle, Users, Plus, Trash2, UserPlus, Edit2, Check, User as UserIcon } from "lucide-react";
 import { Team, TeamInsert, TeamUpdate, TeamMember } from "../types";
-import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useTeam } from "../hooks/useTeams";
+import { useAddTeamMember, useRemoveTeamMember, useUpdateTeamMember, useTeam } from "../api/teams";
 import { toast } from "react-toastify";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";

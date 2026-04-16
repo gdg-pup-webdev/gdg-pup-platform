@@ -1,12 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useDeleteMemberProjectRequest } from "./deleteMemberProject";
+import { deleteMemberProject } from "../api/deleteMemberProject";
 
 export function useDeleteMemberProject() {
-  const deleteMemberProject = useDeleteMemberProjectRequest();
-
-
-
-
   const queryClient = useQueryClient();
 
   return useMutation({

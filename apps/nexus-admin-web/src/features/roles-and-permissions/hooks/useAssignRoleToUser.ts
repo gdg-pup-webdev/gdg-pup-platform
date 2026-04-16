@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+
 export const useAssignRoleToUser = () => {
-  const callEndpoint = useFetchApi();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {

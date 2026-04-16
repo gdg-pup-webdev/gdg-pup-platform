@@ -1,11 +1,8 @@
-import { useFetchApi } from "@/hooks/useFetchApi";
+import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export function useGetMemberProjectsRequest() {
-  const callEndpoint = useFetchApi();
-
-  return async function getMemberProjects(pageNumber = 1, pageSize = 10) {
+export async function getMemberProjects(pageNumber = 1, pageSize = 10) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.GET,
@@ -18,5 +15,4 @@ export function useGetMemberProjectsRequest() {
     return result.body;
   }
   throw new Error("Failed to fetch member projects");
-}
 }
