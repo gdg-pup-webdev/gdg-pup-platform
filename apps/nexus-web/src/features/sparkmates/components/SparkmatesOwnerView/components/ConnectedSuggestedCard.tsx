@@ -11,6 +11,8 @@ export function ConnectedSuggestedCard({
   bio: string;
   gdgId : string;
 }) {
+  const resolvedAvatarUrl = avatarUrl?.trim() ? avatarUrl : ASSETS.PROFILE.DEFAULT_AVATAR;
+
   return (
     <Link prefetch={false} href={`/sparkmates/${gdgId}`} className="relative flex items-center pl-11.5">
       <div className="w-full overflow-hidden rounded-r-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] pl-16 pr-4 py-3.5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
@@ -30,7 +32,7 @@ export function ConnectedSuggestedCard({
           className="absolute inset-0 h-full w-full object-contain" />
         <div className="absolute left-1/2 top-1/2 h-21.5 w-21.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
           <Avatar
-            src={avatarUrl}
+            src={resolvedAvatarUrl}
             alt={name}
             fallback={name.charAt(0)}
             className="h-full w-full rounded-full" />
