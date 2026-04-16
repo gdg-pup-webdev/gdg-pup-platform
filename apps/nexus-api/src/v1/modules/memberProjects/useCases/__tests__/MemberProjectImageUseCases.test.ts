@@ -156,6 +156,7 @@ const makeProject = (images: string[] = []): MemberProject =>
     description: "Member project",
     startDate: new Date("2026-01-01T00:00:00.000Z"),
     endDate: null,
+    projectLink: null,
     images,
     memberGdgId: "GDG-0001",
   });
