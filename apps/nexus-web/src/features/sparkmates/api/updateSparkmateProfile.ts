@@ -1,5 +1,5 @@
 import { contract } from "@packages/nexus-api-contracts";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { configs } from "@/configs/servers.config";
 import type { UserProfile } from "../types"; 
 

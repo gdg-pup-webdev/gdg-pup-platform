@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getSparkmateByGdgId } from "../api";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { configs } from "@/lib/constants/configs";
 import { contract } from "@packages/nexus-api-contracts";
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { useAuthContext, STATUS } from "@/features/authentication/store/useAuthStore";
 import { configs } from "@/lib/constants/configs";

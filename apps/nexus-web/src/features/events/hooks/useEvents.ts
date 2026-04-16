@@ -10,7 +10,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { EventsQueryParams, EventFilters, Event } from "../types";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { addEventImage, deleteEventImage, reorderEventImages } from "../api/eventImages";

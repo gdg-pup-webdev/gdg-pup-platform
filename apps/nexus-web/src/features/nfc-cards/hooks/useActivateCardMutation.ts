@@ -2,7 +2,7 @@ import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { contract } from "@packages/nexus-api-contracts";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { useMutation } from "@tanstack/react-query";
 
 export function useCardActivation() {

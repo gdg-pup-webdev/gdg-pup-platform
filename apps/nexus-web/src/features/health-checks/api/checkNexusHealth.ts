@@ -5,7 +5,7 @@
  * that the API is running and responding correctly.
  */
 
-import { callEndpoint } from '@packages/typed-rest/clientReact';
+import { callEndpointWithToken as callEndpoint } from "@/hooks/useFetchWithToken";
 import { contract as nexusApiContract } from '@packages/nexus-api-contracts';
 import { configs } from '@/configs/servers.config';
 import { HealthCheckResponse, HealthCheckException } from '../types';
