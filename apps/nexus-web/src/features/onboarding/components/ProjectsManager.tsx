@@ -228,6 +228,16 @@ export function ProjectsManager({
               </StyledInputContainer>
             </div>
 
+            <StyledInputContainer>
+              <Input
+                value={project.projectLink}
+                onChange={(event) => updateProject(index, "projectLink", event.target.value)}
+                placeholder="Project link (optional)"
+                containerClassName={inputBaseStyles}
+                className="text-white! py-3"
+              />
+            </StyledInputContainer>
+
             {imageInputMode === "list" ? (
               <div className="space-y-2">
                 <label className="block text-xs text-zinc-400">Project Images (max 4)</label>

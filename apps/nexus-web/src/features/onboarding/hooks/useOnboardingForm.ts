@@ -32,6 +32,7 @@ const createEmptyProject = (): ProjectFormState => ({
   startDate: "",
   endDate: "",
   description: "",
+  projectLink: "",
   imageFiles: [],
   imageUrls: [],
   originalImageUrls: [],
@@ -188,6 +189,7 @@ export function useOnboardingForm(gdgId: string) {
                 startDate: toDateInputValue(project.startDate),
                 endDate: toDateInputValue(project.endDate),
                 description: project.description,
+                projectLink: project.projectLink || "",
                 imageFiles: [],
                 imageUrls: [...images],
                 originalImageUrls: [...images],
@@ -383,6 +385,7 @@ export function useOnboardingForm(gdgId: string) {
           startDate: project.startDate,
           endDate: project.endDate || null,
           description: project.description.trim(),
+          projectLink: project.projectLink.trim() || null,
         };
 
         if (project.id) {

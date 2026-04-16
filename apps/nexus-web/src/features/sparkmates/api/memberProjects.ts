@@ -160,6 +160,7 @@ export async function createMemberProject(memberGdgId: string, project: Omit<Pro
     startDate: project.startDate,
     endDate: project.endDate || null,
     description: project.description.trim(),
+    projectLink: project.projectLink.trim() || null,
     memberGdgId,
   };
 
@@ -185,6 +186,7 @@ export async function updateMemberProject(projectId: string, project: Omit<Proje
     startDate: project.startDate,
     endDate: project.endDate || null,
     description: project.description.trim(),
+    projectLink: project.projectLink.trim() || null,
   };
 
   const result = await callEndpoint(

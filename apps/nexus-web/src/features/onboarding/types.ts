@@ -20,6 +20,7 @@ export type ProjectFormState = {
   startDate: string;
   endDate: string;
   description: string;
+  projectLink: string;
   imageFiles?: File[];
   imageUrls?: string[];
   originalImageUrls?: string[];

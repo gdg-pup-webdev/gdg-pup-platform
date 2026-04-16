@@ -33,6 +33,7 @@ const createEmptyProject = (): ProjectFormState => ({
   startDate: "",
   endDate: "",
   description: "",
+  projectLink: "",
   imageFiles: [],
   imageUrls: [],
   originalImageUrls: [],
@@ -75,6 +76,27 @@ const toImageSrc = (value: string | null | undefined): string => {
   }
 
   return value.startsWith("/") ? value : `/${value}`;
+};
+
+const toProjectLinkHref = (value: string | null | undefined): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed)) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith("//")) {
+    return `${window.location.protocol}${trimmed}`;
+  }
+
+  return `https://${trimmed}`;
 };
 
 const getFileSignature = (file: File) =>
@@ -124,6 +146,7 @@ const toProjectFormState = (project: {
   startDate: string;
   endDate: string | null;
   description: string;
+  projectLink?: string | null;
   images: string[];
 }): ProjectFormState => {
   const images = (project.images || []).filter(Boolean);
@@ -134,6 +157,7 @@ const toProjectFormState = (project: {
     startDate: project.startDate ? project.startDate.slice(0, 10) : "",
     endDate: project.endDate ? project.endDate.slice(0, 10) : "",
     description: project.description || "",
+    projectLink: project.projectLink || "",
     imageFiles: [],
     imageUrls: [...images],
     originalImageUrls: [...images],
@@ -323,6 +347,7 @@ export const ProjectDetailsView = ({
   const memberName = project.member?.name?.trim() || project.memberGdgId;
   const memberAvatar = toImageSrc(project.member?.imageUrl || ASSETS.PROFILE.DEFAULT_AVATAR);
   const startDate = formatDate(project.startDate);
+  const projectLinkHref = toProjectLinkHref(project.projectLink);
 
   const activeImageUrl = lightboxImageIndex !== null ? visibleImages[lightboxImageIndex] : null;
   const activeImageNumber = (lightboxImageIndex ?? 0) + 1;
@@ -619,16 +644,28 @@ export const ProjectDetailsView = ({
         </div>
 
         <div className="mx-auto mt-5 max-w-xl">
-          <Link href={backHref}>
+          {projectLinkHref ? (
+            <a href={projectLinkHref} target="_blank" rel="noreferrer">
+              <Button
+                variant="default"
+                size="sm"
+                iconRight={viewIcon}
+                className="w-full py-2 text-white"
+              >
+                {ctaLabel}
+              </Button>
+            </a>
+          ) : (
             <Button
               variant="default"
               size="sm"
               iconRight={viewIcon}
-              className="w-full py-2 text-white"
+              className="w-full py-2 text-white opacity-60"
+              disabled
             >
               {ctaLabel}
             </Button>
-          </Link>
+          )}
         </div>
       </div>
 
