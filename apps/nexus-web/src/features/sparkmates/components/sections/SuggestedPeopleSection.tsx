@@ -39,6 +39,10 @@ export const SuggestedPeopleSection = ({
     setViewingSearchResults(false);
   };
 
+  const handleViewAll = () => {
+    setViewingSearchResults(false);
+  };
+
   return (
     <FadeInSection delay={0.1}>
       <div className="w-full flex flex-row  gap-2">
@@ -50,18 +54,25 @@ export const SuggestedPeopleSection = ({
           containerClassName="h-9 border-white/20 bg-black/20"
           className="text-white placeholder:text-[#C1C7CD]"
         />
-        <div
-          className="w-fit flex justify-center items-center h-full border border-white/20"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="px-3 text-[#C1C7CD] hover:bg-white/10 hover:text-white"
           onClick={handleClearSearch}
+          disabled={!search && !viewingSearchResults && !trueSearch}
         >
           Clear
-        </div>
-        <div
-          className="w-fit flex justify-center items-center h-full border border-white/20"
+        </Button>
+        <Button
+          variant="colored"
+          subVariant="blue"
+          size="sm"
+          className="px-3"
           onClick={handleOnSearch}
+          disabled={!search.trim()}
         >
           Search
-        </div>
+        </Button>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -72,7 +83,8 @@ export const SuggestedPeopleSection = ({
           variant="default"
           size="sm"
           iconRight={viewIcon}
-          className="text-white"
+          className="px-3 py-1 text-white"
+          onClick={handleViewAll}
         >
           View All
         </Button>

@@ -497,9 +497,9 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
         </Text>
         <Link prefetch={false} href={viewAllProjectsHref}>
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
-            className="px-3 text-white border-white/20 hover:bg-white/10"
+            className="px-3 py-1 text-white"
             title="View All Projects"
             aria-label="View All Projects"
           >

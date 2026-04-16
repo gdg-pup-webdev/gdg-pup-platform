@@ -290,9 +290,10 @@ export function ProfileOwnerView({
               <div className="flex gap-2">
                 <Link prefetch={false} href="/sparkmates/me/analytics">
                   <Button
-                    variant="outline"
+                    variant="colored"
+                    subVariant="blue"
                     size="sm"
-                    className="px-3 py-1 text-white border-white/20 hover:bg-white/10"
+                    className="px-3 py-1 text-white"
                   >
                     Analytics
                   </Button>
