@@ -185,7 +185,7 @@ export class AuthMiddleware {
   requirePermissions =
     (requiredPermissions: Record<string, string[]>): RequestHandler =>
     async (req, res, next) => {
-      const userId = req.user?.id;
+      const userId = req.decodedToken?.memberInfo.gdgId ?? req.user?.id;
       if (!userId) {
         throw new UnauthorizedError(
           "Authentication required. No authenticated user found in request context.",

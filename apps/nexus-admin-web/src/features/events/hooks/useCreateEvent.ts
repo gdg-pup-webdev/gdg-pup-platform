@@ -10,7 +10,12 @@ export const useCreateEvent = () => {
 
   return useMutation({
     mutationFn: async (input: EventInsert) => {
-      const { image, ...eventData } = input;
+      const {
+        image,
+        highlightImageFiles,
+        originalHighlightImages,
+        ...eventData
+      } = input;
       
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,

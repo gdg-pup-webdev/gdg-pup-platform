@@ -14,15 +14,15 @@ graph TD
     %% Context A: Public Networking
     subgraph "Scenario A: Networking (Public)"
         UserPhone["Friend's Phone"]
-        Browser["Mobile Browser <br/> (Opens /tap/crd_123)"]
-        IdentityAPI["Identity API <br/> (GET /cards/:id/status)"]
-        PortfolioUI["Show Portfolio <br/> (Redirects to /id/user)"]
+        Browser["Mobile Browser <br/> (Opens /sparkmates/:gdgId?source=nfc_card)"]
+        NexusAPI["Nexus API <br/> (GET /api/v1/nfc-cards/:cardId/status)"]
+        PortfolioUI["Show Portfolio <br/> (Redirects to /sparkmates/:gdgId)"]
     end
 
     %% Context B: Event Check-in
     subgraph "Scenario B: Event Attendance (Admin)"
         AdminDevice["Organizer's Scanner <br/> (Admin App)"]
-        EventAPI["Event API <br/> (POST /api/event-system/checkin)"]
+        EventAPI["Nexus API (Events) <br/> (POST /api/v1/events/checkin)"]
         AttendanceDB[("Attendance DB")]
         SuccessMsg["User Checked In!"]
     end
@@ -30,8 +30,8 @@ graph TD
     %% Flow
     Card -->|User Taps Phone| UserPhone
     UserPhone -->|Opens URL| Browser
-    Browser --> IdentityAPI
-    IdentityAPI --> PortfolioUI
+    Browser --> NexusAPI
+    NexusAPI --> PortfolioUI
 
     Card -->|Organizer Scans| AdminDevice
     AdminDevice -->|Sends UUID + EventID| EventAPI
@@ -44,29 +44,29 @@ graph TD
 ## 2. Scenario A: Public Profile (The "Linktree")
 
 - **Context:** A user meets someone new and lets them tap their card.
-- **Trigger:** Phone opens `https://gdg-pup.com/tap/:card_uid`.
-- **Redirect Logic:** Website checks card status -> Redirects to Profile (e.g., `/id/janedoe`).
-- **API Used:** `GET /api/identity/cards/:card_uid/status`
+- **Trigger:** Phone opens `https://gdgpup.org/sparkmates/:gdgId?source=nfc_card`.
+- **Logic:** Website loads the user's public Sparkmates profile.
+- **API Used:** `GET /api/v1/nfc-cards/:cardId/status`
 
 ### Profile Payload (JSON)
 
 The endpoint returns aggregated data for the "Linktree" view.
 
 ```json
-// GET /api/identity/users/:handle
+// GET /api/v1/gdgmembers/:gdgId
 {
   "status": "success",
   "data": {
     "user": {
       "name": "Jane Doe",
-      "avatar_url": "https://...",
+      "avatarUrl": "https://...",
       "role": "MEMBER"
     },
     "profile": {
       "bio": "Full Stack Dev @ GDG",
-      "github": "https://github.com/jane",
-      "linkedin": "https://linkedin.com/in/jane",
-      "portfolio": "https://janedoe.dev"
+      "githubUrl": "https://github.com/jane",
+      "linkedinUrl": "https://linkedin.com/in/jane",
+      "portfolioUrl": "https://janedoe.dev"
     }
   }
 }
@@ -78,7 +78,7 @@ The endpoint returns aggregated data for the "Linktree" view.
 
 - **Context:** An attendee arrives at a GDG event. The organizer is holding a phone/scanner running the **Admin App**.
 - **Trigger:** The organizer actively scans the card's UUID into the attendance system.
-- **Endpoint:** `POST /api/event-system/checkin`
+- **Endpoint:** `POST /api/v1/events/checkin`
 
 ### Attendance Sequence Diagram
 
@@ -86,7 +86,7 @@ The endpoint returns aggregated data for the "Linktree" view.
 sequenceDiagram
     participant Organizer as 👮 Organizer (Admin App)
     participant Card as 💳 Attendee Card
-    participant API as 📅 Event API
+    participant API as 📅 Nexus API (Events)
     participant DB as 🗄️ Database
 
     Note over Organizer: Event: "Tech Talk 2025"
@@ -114,7 +114,7 @@ sequenceDiagram
 When the Admin App scans the card, it sends this JSON to the server:
 
 ```json
-// POST /api/event-system/checkin
+// POST /api/v1/events/checkin
 {
   "data": {
     "eventId": "evt_abc12345", // Selected by Organizer

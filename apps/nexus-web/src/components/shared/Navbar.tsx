@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { ASSETS } from "@/lib/constants/assets";
 import { cn } from "@/lib/utils";
 import { Box, Inline, Text, Button, Avatar, Stack } from "@packages/spark-ui";
@@ -15,11 +15,30 @@ import {
 
 // import { MemberInfo } from "../../../../nexus-api/src/v1/modules/authentication/domain/TokenPayload";
 
-
 interface NavbarProps {
   transparent?: boolean;
   hideAuth?: boolean;
 }
+
+const dropdownContainerClassesBase =
+  "absolute left-1/2 -translate-x-1/2 top-full pt-4 min-w-[12rem] transition-all duration-300 ease-out z-50";
+const dropdownContainerClassesRightAligned =
+  "absolute right-0 top-full pt-4 min-w-[12rem] transition-all duration-300 ease-out z-50";
+const dropdownContainerClassesOpen =
+  "opacity-100 visible translate-y-0 pointer-events-auto";
+const dropdownContainerClassesClosed =
+  "opacity-0 invisible translate-y-2 pointer-events-none";
+
+const dropdownInnerClasses = cn(
+  "flex flex-col gap-1 p-2 bg-black/80 backdrop-blur-xl",
+  "rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
+  "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]",
+);
+
+const dropdownItemClasses = cn(
+  "block w-full text-left text-white font-bold transition-all p-3 rounded-lg",
+  "hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text",
+);
 
 function useOutsideClick(callback: () => void) {
   const ref = useRef<HTMLDivElement>(null);
@@ -44,23 +63,27 @@ function useOutsideClick(callback: () => void) {
   return ref;
 }
 
+const optionsLoggedIn = [
+  {
+    label: "View Profile",
+    href: "/sparkmates/me",
+  },
+  {
+    label: "Account Settings",
+    href: "/sparkmates/me/settings",
+  },
+  {
+    label: "Sign Out",
+    href: "/signout",
+  },
+];
+
 const NavbarAvatarWidget = () => {
   const { decodedToken: user, status } = useAuthContext();
 
   const [openDropdown, setOpenDropdown] = useState(false);
 
   const dropdownRef = useOutsideClick(() => setOpenDropdown(false));
-
-  const optionsLoggedIn = [
-    {
-      label: "View Profile",
-      href: "/sparkmates",
-    },
-    {
-      label: "Sign Out",
-      href: "/signout",
-    },
-  ];
 
   //  href="/sparkmates"
   return (
@@ -69,11 +92,9 @@ const NavbarAvatarWidget = () => {
         <Box className="w-9 h-9 rounded-full bg-slate-700 animate-pulse"> </Box>
       ) : status === STATUS.AUTHENTICATED ? (
         <div
-          className="relative flex justify-center items-center group transition-all duration-200 "
+          className="relative flex justify-center items-center h-full group transition-all duration-200 cursor-pointer"
           ref={dropdownRef}
-          onClick={() => {
-            setOpenDropdown((a) => !a);
-          }}
+          onClick={() => setOpenDropdown(!openDropdown)}
         >
           {user?.memberInfo.avatarUrl ? (
             <Avatar
@@ -92,22 +113,30 @@ const NavbarAvatarWidget = () => {
             src={user?.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
           /> */}
 
-          {openDropdown && (
-            <div className="absolute bg-black border-yellow-400 text-white border-2 rounded-2xl p-2 top-full right-0">
+          <div
+            className={cn(
+              dropdownContainerClassesRightAligned,
+              openDropdown
+                ? dropdownContainerClassesOpen
+                : dropdownContainerClassesClosed,
+            )}
+          >
+            <div className={dropdownInnerClasses}>
               {optionsLoggedIn.map((option) => (
-                <Link
+                <Link prefetch={false}
                   key={option.href}
                   href={option.href}
-                  className="block w-full whitespace-nowrap p-2 rounded-lg hover:bg-gray-700 transition-all duration-100"
+                  className={dropdownItemClasses}
+                  onClick={() => setOpenDropdown(false)}
                 >
                   {option.label}
                 </Link>
               ))}
             </div>
-          )}
+          </div>
         </div>
       ) : (
-        <Link
+        <Link prefetch={false}
           href="/signin"
           className="relative flex justify-center items-center group  hover:opacity-80 hover:scale-105 transition-all duration-200"
         >
@@ -131,6 +160,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [activeMobileSection, setActiveMobileSection] = useState<string | null>(
+    null,
+  );
+  const [hideForReorderMode, setHideForReorderMode] = useState(false);
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -159,6 +192,19 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const customEvent = event as CustomEvent<{ enabled?: boolean }>;
+      setHideForReorderMode(Boolean(customEvent.detail?.enabled));
+    };
+
+    window.addEventListener("sparkmates:desktop-reorder-mode", handler as EventListener);
+
+    return () => {
+      window.removeEventListener("sparkmates:desktop-reorder-mode", handler as EventListener);
+    };
+  }, []);
+
   const dropdownLinks = {
     about: [
       { href: "/about", label: "Who is GDG" },
@@ -175,38 +221,51 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navLinks = [
     { href: "/events", label: "Events" },
-    { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/articles", label: "Articles" },
+    { href: "/merch", label: "Merch" },
     { href: "/products", label: "Products" },
   ];
 
-  const dropdownContainerClassesBase =
-    "absolute left-1/2 -translate-x-1/2 top-full pt-4 min-w-[12rem] transition-all duration-300 ease-out z-50";
-  const dropdownContainerClassesOpen =
-    "opacity-100 visible translate-y-0 pointer-events-auto";
-  const dropdownContainerClassesClosed =
-    "opacity-0 invisible translate-y-2 pointer-events-none";
-
-  const dropdownInnerClasses = cn(
-    "flex flex-col gap-1 p-2 bg-black/80 backdrop-blur-xl",
-    "rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
-    "relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]",
+  const isAboutActive = dropdownLinks.about.some((l) =>
+    pathname === l.href || pathname.startsWith(l.href + "/"),
   );
-
-  const dropdownItemClasses = cn(
-    "block w-full text-left text-white font-bold transition-all p-3 rounded-lg",
-    "hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text",
+  const isCommunityActive = dropdownLinks.community.some((l) =>
+    pathname === l.href || pathname.startsWith(l.href + "/"),
+  );
+  const isNavigationActive = navLinks.some((l) =>
+    pathname === l.href || pathname.startsWith(l.href + "/"),
   );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 transition-all duration-700 ease-out",
-      )}
-    >
-      <Box
+    <>
+      {/* Overlay Backdrop */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[49] bg-black/40 backdrop-blur-sm min-[75rem]:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={
+          hideForReorderMode
+            ? { opacity: 0, y: -90 }
+            : { opacity: 1, y: 0 }
+        }
+        transition={{ duration: hideForReorderMode ? 0.3 : 0.45, ease: "easeOut" }}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 md:px-16 md:pt-10 transition-all duration-700 ease-out",
+          hideForReorderMode && "pointer-events-none",
+        )}
+      >
+        <Box
         as="nav"
         className={cn(
           "mx-auto h-22 max-w-7xl md:rounded-[1.875rem]",
@@ -224,14 +283,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="w-full h-full"
           >
             {/* Brand */}
-            <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Link prefetch={false} href="/" className="hover:opacity-80 transition-opacity">
               <Inline gap="sm" align="center">
                 <Image
                   src={ASSETS.BRANDING.GDG_LOGO_WEBP}
                   alt="GDG Logo"
                   width={40}
                   height={40}
-                  className="w-8 h-8 lg:w-10 lg:h-10"
+                  priority
+                  quality={100}
+                  className="w-8 h-8 lg:w-10 lg:h-10 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.15)]"
                 />
                 <h1 className="text-white tracking-tight text-[1.25rem] md:text-[1.5rem] leading-[1.4] font-bold text-nowrap">
                   GDG PUP NEXUS
@@ -254,7 +315,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className={cn(
                       "flex items-center gap-1 hover:text-white transition-colors cursor-pointer h-full",
-                      openDropdown === "about" ? "text-white" : "text-gray-300",
+                      openDropdown === "about" || isAboutActive ? "text-white" : "text-gray-300",
                     )}
                   >
                     <Text variant="body" weight="bold" className="text-inherit">
@@ -286,16 +347,23 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
                   >
                     <div className={dropdownInnerClasses}>
-                      {dropdownLinks.about.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          className={dropdownItemClasses}
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
+                      {dropdownLinks.about.map((link) => {
+                        const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                        return (
+                          <Link prefetch={false}
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                              dropdownItemClasses,
+                              isActive &&
+                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] !text-transparent bg-clip-text",
+                            )}
+                            onClick={() => setOpenDropdown(null)}
+                          >
+                            {link.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -310,7 +378,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                     className={cn(
                       "flex items-center gap-1 hover:text-white transition-colors cursor-pointer h-full",
-                      openDropdown === "community"
+                      openDropdown === "community" || isCommunityActive
                         ? "text-white"
                         : "text-gray-300",
                     )}
@@ -344,38 +412,54 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
                   >
                     <div className={dropdownInnerClasses}>
-                      {dropdownLinks.community.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          className={dropdownItemClasses}
-                          onClick={() => setOpenDropdown(null)}
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
+                      {dropdownLinks.community.map((link) => {
+                        const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                        return (
+                          <Link prefetch={false}
+                            key={link.href}
+                            href={link.href}
+                            className={cn(
+                              dropdownItemClasses,
+                              isActive &&
+                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] !text-transparent bg-clip-text",
+                            )}
+                            onClick={() => setOpenDropdown(null)}
+                          >
+                            {link.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
 
                 {/* Nav Links */}
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors flex items-center h-full"
-                  >
-                    <Text variant="body" weight="bold" className="text-inherit">
-                      {link.label}
-                    </Text>
-                  </Link>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                  return (
+                    <Link prefetch={false}
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        "relative flex items-center h-full transition-colors",
+                        isActive ? "text-white" : "text-gray-300 hover:text-white",
+                      )}
+                    >
+                      <Text variant="body" weight="bold" className="text-inherit">
+                        {link.label}
+                      </Text>
+                      {isActive && (
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-white" />
+                      )}
+                    </Link>
+                  );
+                })}
               </Inline>
 
               {/* Auth Section */}
               {!hideAuth && (
-                <Inline gap="md" align="center">
-                  <Link href="/id">
+                <Inline gap="md" align="center" className="h-full">
+                  <Link prefetch={false} href="/id" className="flex items-center">
                     <Button variant="colored" subVariant="blue" size="md">
                       Get ID
                     </Button>
@@ -428,12 +512,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         </Box>
 
         {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div
-            ref={dropdownRef}
-            className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] animate-in fade-in slide-in-from-top-2 duration-200 min-[75rem]:hidden"
-          >
-            <Box
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              ref={dropdownRef}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] min-[75rem]:hidden"
+            >
+              <Box
               className={cn(
                 "py-3 w-full",
                 "bg-black/95 backdrop-blur-2xl rounded-[16px] shadow-[0px_4px_36px_0px_#FFFFFF40_inset]",
@@ -442,73 +531,222 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Stack gap="none">
                 {/* About Section */}
-                <Box className="px-5 py-3 border-b border-white/10">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "about" ? null : "about",
+                    )
+                  }
+                  className={cn(
+                    "w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header",
+                    isAboutActive && "bg-white/5",
+                  )}
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className={cn(
+                      "uppercase tracking-wider transition-colors group-hover/header:text-gray-200",
+                      isAboutActive ? "text-white" : "text-gray-400",
+                    )}
                   >
                     About
                   </Text>
-                </Box>
-                {dropdownLinks.about.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "about" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                <AnimatePresence initial={false}>
+                  {activeMobileSection === "about" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-white/5 py-2">
+                        {dropdownLinks.about.map((link) => {
+                          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                          return (
+                            <Link prefetch={false}
+                              key={link.href}
+                              href={link.href}
+                              className={cn(
+                                "block px-8 py-3 text-base font-bold transition-all hover:bg-white/10",
+                                isActive ? "text-white bg-white/10" : "text-gray-200",
+                              )}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Community Section */}
-                <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "community" ? null : "community",
+                    )
+                  }
+                  className={cn(
+                    "w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header",
+                    isCommunityActive && "bg-white/5",
+                  )}
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className={cn(
+                      "uppercase tracking-wider transition-colors group-hover/header:text-gray-200",
+                      isCommunityActive ? "text-white" : "text-gray-400",
+                    )}
                   >
                     Community
                   </Text>
-                </Box>
-                {dropdownLinks.community.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "community" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                <AnimatePresence initial={false}>
+                  {activeMobileSection === "community" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-white/5 py-2">
+                        {dropdownLinks.community.map((link) => {
+                          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                          return (
+                            <Link prefetch={false}
+                              key={link.href}
+                              href={link.href}
+                              className={cn(
+                                "block px-8 py-3 text-base font-bold transition-all hover:bg-white/10",
+                                isActive ? "text-white bg-white/10" : "text-gray-200",
+                              )}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Nav Links */}
-                <Box className="px-5 py-3 border-b border-white/10 mt-2">
+                <button
+                  onClick={() =>
+                    setActiveMobileSection(
+                      activeMobileSection === "navigation"
+                        ? null
+                        : "navigation",
+                    )
+                  }
+                  className={cn(
+                    "w-full px-5 py-4 border-b border-white/10 flex items-center justify-between group/header",
+                    isNavigationActive && "bg-white/5",
+                  )}
+                >
                   <Text
                     variant="body-sm"
                     weight="semibold"
-                    className="text-gray-400 uppercase tracking-wider"
+                    className={cn(
+                      "uppercase tracking-wider transition-colors group-hover/header:text-gray-200",
+                      isNavigationActive ? "text-white" : "text-gray-400",
+                    )}
                   >
                     Navigation
                   </Text>
-                </Box>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-8 py-3 text-base font-bold text-gray-200 transition-all hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                  <svg
+                    className={cn(
+                      "w-4 h-4 text-gray-400 transition-transform duration-200",
+                      activeMobileSection === "navigation" ? "rotate-180" : "",
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {link.label}
-                  </Link>
-                ))}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                <AnimatePresence initial={false}>
+                  {activeMobileSection === "navigation" && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-white/5 py-2">
+                        {navLinks.map((link) => {
+                          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                          return (
+                            <Link prefetch={false}
+                              key={link.href}
+                              href={link.href}
+                              className={cn(
+                                "block px-8 py-3 text-base font-bold transition-all hover:bg-white/10",
+                                isActive ? "text-white bg-white/10" : "text-gray-200",
+                              )}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {link.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Auth Section */}
                 {!hideAuth && (
-                  <Box className="px-5 py-5 mt-2 border-t border-white/10">
+                  <Box className="px-5 py-5">
                     <Stack gap="sm">
-                      <Link
+                      <Link prefetch={false}
                         href="/sparkmates"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="block w-full"
@@ -527,35 +765,47 @@ export const Navbar: React.FC<NavbarProps> = ({
                           {" "}
                         </Box>
                       ) : status === STATUS.AUTHENTICATED ? (
-                        <Link
-                          href="/sparkmates"
-                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-700 transition-colors"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          <Avatar
-                            src={
-                              // user.user_metadata?.avatar_url ||
-                              ASSETS.AUTH.AVATAR_DEFAULT
-                            }
-                            // alt={user.user_metadata?.full_name || user.email || "User"}
-                            // size="sm"
-                            // fallback={user.user_metadata?.full_name?.charAt(0) || user.email?.charAt(0) || "U"}
-                          />
-                          <Stack gap="none">
-                            <Text
-                              variant="body-sm"
-                              weight="semibold"
-                              className="text-white"
-                            >
-                              {decodedToken?.memberInfo.firstName || "User"}
-                            </Text>
-                            <Text variant="body-sm" className="text-gray-400">
-                              View Profile
-                            </Text>
-                          </Stack>
-                        </Link>
+                        <Box>
+                          <Link prefetch={false}
+                            href="/sparkmates/me"
+                            className="flex items-center gap-3 p-3 rounded-t-lg bg-white/5 border-x border-t border-white/10 hover:bg-white/10 transition-colors"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <Avatar
+                              src={
+                                decodedToken?.memberInfo.avatarUrl ||
+                                ASSETS.AUTH.AVATAR_DEFAULT
+                              }
+                            />
+                            <Stack gap="none">
+                              <Text
+                                variant="body-sm"
+                                weight="semibold"
+                                className="text-white"
+                              >
+                                {decodedToken?.memberInfo.firstName || "User"}
+                              </Text>
+                              <Text variant="body-sm" className="text-gray-400">
+                                {decodedToken?.email || "Member Profile"}
+                              </Text>
+                            </Stack>
+                          </Link>
+                          
+                          <div className="bg-black/40 py-2 rounded-b-lg border border-white/10">
+                            {optionsLoggedIn.map((link) => (
+                              <Link prefetch={false}
+                                key={link.href}
+                                href={link.href}
+                                className="block px-4 py-2.5 text-sm font-semibold text-gray-300 transition-all hover:bg-white/10 hover:text-white"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                              >
+                                {link.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </Box>
                       ) : (
-                        <Link
+                        <Link prefetch={false}
                           href="/signin"
                           className="block w-full text-center py-3 px-4 rounded-lg border border-gray-500 text-base font-bold text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
                           onClick={() => setIsMobileMenuOpen(false)}
@@ -568,9 +818,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </Stack>
             </Box>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Box>
     </motion.div>
+    </>
   );
 };

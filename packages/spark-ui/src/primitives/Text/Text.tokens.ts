@@ -78,6 +78,16 @@ export const TEXT_GRADIENTS = {
     css: "linear-gradient(180deg, #FFFFFF 1.41%, #34A853 100%)",
     tailwind: "bg-linear-to-b from-white from-[1.41%] to-[#34A853] to-100%",
   },
+
+  /**
+   * Vibrant Blue gradient (Requested by user)
+   * Direction: 0deg (bottom to top)
+   * Colors: #51A2FF 0% → #155DFC 100%
+   */
+  vibrantBlue: {
+    css: "linear-gradient(0deg, #51A2FF 0%, #155DFC 100%)",
+    tailwind: "bg-linear-[0deg,#51A2FF_0%,#155DFC_100%]",
+  },
 } as const;
 
 /**

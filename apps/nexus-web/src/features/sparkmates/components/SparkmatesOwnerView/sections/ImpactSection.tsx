@@ -2,6 +2,7 @@ import { Button, Text } from "@packages/spark-ui";
 import React from "react";
 import { viewIcon } from "../icons/viewIcon";
 import { UserProfile } from "@/features/sparkmates";
+import { ComingSoonPlaceholder } from "../../ComingSoonPlaceholder";
 
 export const ImpactSection = ({ profile }: { profile: UserProfile }) => {
   return (
@@ -10,16 +11,16 @@ export const ImpactSection = ({ profile }: { profile: UserProfile }) => {
         <Text variant="heading-6" gradient="white-blue" weight="bold">
           GDG Impact
         </Text>
-        <Button
+        {/* <Button
           variant="default"
           size="sm"
           className="text-white"
           iconRight={viewIcon}
         >
           View
-        </Button>
+        </Button> */}
       </div>
-      <Text variant="body-sm" className="text-[#C1C7CD]">
+      {/* <Text variant="body-sm" className="text-[#C1C7CD]">
         Track your milestones and growth within GDG.
       </Text>
       <div className="grid grid-cols-3 gap-4">
@@ -41,7 +42,8 @@ export const ImpactSection = ({ profile }: { profile: UserProfile }) => {
             </Text>
           </div>
         ))}
-      </div>
+      </div> */}
+      <ComingSoonPlaceholder />
     </section>
   );
 };

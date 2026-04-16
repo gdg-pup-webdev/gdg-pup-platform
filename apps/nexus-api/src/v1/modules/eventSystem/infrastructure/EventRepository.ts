@@ -1,20 +1,52 @@
 import { IEventRepository, EventFilters } from "../domain/IEventRepository";
 import { Event } from "../domain/Event";
-import { Tables, TablesInsert, TablesUpdate } from "@/v1/types/supabase.types";
+import { Tables } from "@/v1/types/supabase.types";
 import { supabase } from "@/v1/lib/supabase";
 import { handlePostgresError } from "@/v1/lib/supabase.utils";
 
 type EventRow = Tables<"event">;
-type EventInsertDTO = TablesInsert<"event">;
-type EventUpdateDTO = TablesUpdate<"event">;
+type TeamRelation = { name?: string | null } | null;
+type EventImageRow = {
+  id: string;
+  eventId: string;
+  imageUrl: string;
+  position: number;
+  createdAt: string;
+  updatedAt: string | null;
+};
+type EventRowWithTeam = EventRow & {
+  team?: TeamRelation | TeamRelation[];
+  images?: EventImageRow[] | null;
+};
 
 export class EventRepository implements IEventRepository {
   private readonly tableName = "event";
+  private readonly selectWithRelations = "*, team(name), images:event_images(*)";
 
-  private mapToDomain(row: any): Event {
+  private toImages(data: EventImageRow[] | null | undefined): string[] {
+    return [...(data || [])]
+      .sort((a, b) => a.position - b.position)
+      .map((image) => image.imageUrl)
+      .filter((imageUrl) => Boolean(imageUrl));
+  }
+
+  private extractTeamName(row: EventRowWithTeam): string | null {
+    const team = row?.team;
+
+    if (!team) return null;
+
+    if (Array.isArray(team)) {
+      const first = team[0];
+      return typeof first?.name === "string" ? first.name : null;
+    }
+
+    return typeof team.name === "string" ? team.name : null;
+  }
+
+  private mapToDomain(row: EventRowWithTeam): Event {
     /**
      * Helper to clean array fields from corrupted data.
-     * Handles: 
+     * Handles:
      * 1. Actual arrays returned by Supabase
      * 2. Corrupted nested string arrays like ["[\"a\"]"]
      * 3. Legacy comma-separated strings
@@ -22,12 +54,12 @@ export class EventRepository implements IEventRepository {
      */
     const cleanArray = (val: any): string[] => {
       if (!val) return [];
-      
+
       let workingArray: any[] = [];
-      
+
       if (Array.isArray(val)) {
         workingArray = val;
-      } else if (typeof val === 'string') {
+      } else if (typeof val === "string") {
         if (val === "[]" || val === "") return [];
         // Try parsing as JSON first (handles '["a", "b"]')
         try {
@@ -40,14 +72,14 @@ export class EventRepository implements IEventRepository {
         }
       }
 
-      // Final pass: filter out empty/nulls and RECURSIVELY check for stringified arrays 
+      // Final pass: filter out empty/nulls and RECURSIVELY check for stringified arrays
       // which is what caused the ["[\"a\"]"] issue
       return workingArray
-        .map(item => {
-          if (typeof item !== 'string') return String(item);
+        .map((item) => {
+          if (typeof item !== "string") return String(item);
           const trimmed = item.trim();
           // If the string itself looks like an array, try to parse it (handles the corruption case)
-          if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+          if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
             try {
               const nested = JSON.parse(trimmed);
               if (Array.isArray(nested)) return nested;
@@ -56,7 +88,7 @@ export class EventRepository implements IEventRepository {
           return trimmed;
         })
         .flat() // Un-nest if any strings were parsed into arrays
-        .filter(item => item && item !== "[]" && item !== "");
+        .filter((item) => item && item !== "[]" && item !== "");
     };
 
     return Event.hydrate({
@@ -69,11 +101,14 @@ export class EventRepository implements IEventRepository {
       end_date: new Date(row.end_date || ""),
       attendance_points: Number(row.attendance_points),
       attendees_count: Number(row.attendees_count),
+      rsvp:
+        row.rsvp !== null && row.rsvp !== undefined ? Number(row.rsvp) : null,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
       bevy_event_id: row.gdg_event_id?.toString() ?? null,
       creatorId: row.creator_id || "",
       image_url: row.thumbnail_url || null,
+      images: this.toImages(row.images),
       bevyPreviewUrl: row.bevy_preview_url || null,
       tags: cleanArray(row.tags),
       max_capacity: row.max_capacity ? parseInt(row.max_capacity) : 999999,
@@ -81,12 +116,13 @@ export class EventRepository implements IEventRepository {
       speakers: cleanArray(row.speakers),
       type: row.type || null,
       teamId: row.team_id || null,
+      teamName: this.extractTeamName(row),
     });
   }
 
   private mapToDTO(event: Event): any {
     const props = event.props;
-    
+
     let gdg_event_id: number | null = null;
     if (props.bevy_event_id) {
       const parsed = parseInt(props.bevy_event_id);
@@ -97,8 +133,12 @@ export class EventRepository implements IEventRepository {
 
     // Pass arrays directly to Supabase client, don't stringify
     // Multer/API layer should have already ensured these are clean arrays
-    const cleanTags = Array.isArray(props.tags) ? props.tags.filter(t => t && t !== "[]") : [];
-    const cleanSpeakers = Array.isArray(props.speakers) ? props.speakers.filter(s => s && s !== "[]") : [];
+    const cleanTags = Array.isArray(props.tags)
+      ? props.tags.filter((t) => t && t !== "[]")
+      : [];
+    const cleanSpeakers = Array.isArray(props.speakers)
+      ? props.speakers.filter((s) => s && s !== "[]")
+      : [];
 
     return {
       id: props.id,
@@ -110,6 +150,7 @@ export class EventRepository implements IEventRepository {
       end_date: props.end_date.toISOString(),
       attendance_points: props.attendance_points,
       attendees_count: props.attendees_count,
+      rsvp: props.rsvp,
       created_at: props.createdAt.toISOString(),
       updated_at: props.updatedAt.toISOString(),
       gdg_event_id,
@@ -117,7 +158,7 @@ export class EventRepository implements IEventRepository {
       bevy_preview_url: props.bevyPreviewUrl || null,
       max_capacity: props.max_capacity.toString(),
       short_description: props.short_description,
-      tags: cleanTags, 
+      tags: cleanTags,
       creator_id: props.creatorId || null,
       speakers: cleanSpeakers,
       type: props.type,
@@ -125,17 +166,47 @@ export class EventRepository implements IEventRepository {
     };
   }
 
+  private async syncImageRows(eventId: string, imageUrls: string[]): Promise<void> {
+    const { error: deleteError } = await (supabase as any)
+      .from("event_images")
+      .delete()
+      .eq("eventId", eventId);
+
+    if (deleteError) {
+      handlePostgresError(deleteError);
+    }
+
+    if (imageUrls.length === 0) {
+      return;
+    }
+
+    const payload = imageUrls.map((imageUrl, position) => ({
+      eventId,
+      imageUrl,
+      position,
+      updatedAt: new Date().toISOString(),
+    }));
+
+    const { error: insertError } = await (supabase as any)
+      .from("event_images")
+      .insert(payload);
+
+    if (insertError) {
+      handlePostgresError(insertError);
+    }
+  }
+
   async listEvents(
     pageNumber: number,
     pageSize: number,
-    filters?: EventFilters
+    filters?: EventFilters,
   ): Promise<{ list: Event[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    const selectStr = filters?.teamName 
-      ? "*, team!inner(name)" 
-      : "*, team(name)";
+    const selectStr = filters?.teamName
+      ? "*, team!inner(name), images:event_images(*)"
+      : this.selectWithRelations;
 
     let query = supabase
       .from(this.tableName)
@@ -157,7 +228,10 @@ export class EventRepository implements IEventRepository {
       if (filters.year) {
         query = query
           .gte("start_date", new Date(filters.year, 0, 1).toISOString())
-          .lte("start_date", new Date(filters.year, 11, 31, 23, 59, 59).toISOString());
+          .lte(
+            "start_date",
+            new Date(filters.year, 11, 31, 23, 59, 59).toISOString(),
+          );
       }
     }
 
@@ -167,17 +241,27 @@ export class EventRepository implements IEventRepository {
 
     if (error) handlePostgresError(error);
 
+    const typedRows = (data || []) as unknown as EventRowWithTeam[];
+
     return {
-      list: (data || []).map((row) => this.mapToDomain(row)),
+      list: typedRows.map((row) => this.mapToDomain(row)),
       count: count ?? 0,
     };
   }
 
-  async findByType(type: string, pageNumber: number, pageSize: number): Promise<{ list: Event[]; count: number }> {
+  async findByType(
+    type: string,
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ list: Event[]; count: number }> {
     return this.listEvents(pageNumber, pageSize, { type });
   }
 
-  async findByTeamId(teamId: string, pageNumber: number, pageSize: number): Promise<{ list: Event[]; count: number }> {
+  async findByTeamId(
+    teamId: string,
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ list: Event[]; count: number }> {
     return this.listEvents(pageNumber, pageSize, { teamId });
   }
 
@@ -185,22 +269,24 @@ export class EventRepository implements IEventRepository {
     pageNumber: number,
     pageSize: number,
     year: number,
-  ): Promise<{ list: Event[]; count: number }> { 
+  ): Promise<{ list: Event[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
     const { data, count, error } = await supabase
       .from(this.tableName)
-      .select("*", { count: "exact" })
+      .select(this.selectWithRelations, { count: "exact" })
       .gte("start_date", new Date(year, 0, 1).toISOString())
-      .lte("start_date", new Date(year, 11, 31).toISOString())
+      .lt("start_date", new Date(year + 1, 0, 1).toISOString())
       .order("start_date", { ascending: true })
       .range(from, to);
 
     if (error) handlePostgresError(error);
 
+    const typedRows = (data || []) as unknown as EventRowWithTeam[];
+
     return {
-      list: (data || []).map((row) => this.mapToDomain(row)),
+      list: typedRows.map((row) => this.mapToDomain(row)),
       count: count ?? 0,
     };
   }
@@ -210,11 +296,14 @@ export class EventRepository implements IEventRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .insert(dto)
-      .select("*")
+      .select("id")
       .single();
 
     if (error) handlePostgresError(error);
-    return this.mapToDomain(data);
+
+    await this.syncImageRows(data.id, event.props.images);
+
+    return await this.findById(data.id);
   }
 
   async persistUpdates(event: Event): Promise<Event> {
@@ -223,11 +312,14 @@ export class EventRepository implements IEventRepository {
       .from(this.tableName)
       .update(dto)
       .eq("id", event.props.id)
-      .select("*")
+      .select("id")
       .single();
 
     if (error) handlePostgresError(error);
-    return this.mapToDomain(data);
+
+    await this.syncImageRows(event.props.id, event.props.images);
+
+    return await this.findById(data.id);
   }
 
   async deleteEvent(eventId: string): Promise<void> {
@@ -242,24 +334,26 @@ export class EventRepository implements IEventRepository {
   async findById(eventId: string): Promise<Event> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select("*")
+      .select(this.selectWithRelations)
       .eq("id", eventId)
       .maybeSingle();
 
     if (error) handlePostgresError(error);
     if (!data) throw new Error(`Event with ID ${eventId} not found`);
 
-    return this.mapToDomain(data);
+    return this.mapToDomain(data as unknown as EventRowWithTeam);
   }
 
   async findByBevyId(bevyEventId: string): Promise<Event | undefined> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select("*")
+      .select(this.selectWithRelations)
       .eq("gdg_event_id", parseInt(bevyEventId))
       .maybeSingle();
 
     if (error) handlePostgresError(error);
-    return data ? this.mapToDomain(data) : undefined;
+    return data
+      ? this.mapToDomain(data as unknown as EventRowWithTeam)
+      : undefined;
   }
 }

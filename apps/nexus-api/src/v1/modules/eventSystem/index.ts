@@ -48,6 +48,9 @@ import { FileStorageAdapter } from "./infrastructure/FileStorageAdapter";
 import { filesModuleController } from "../filesModule";
 import { ImportAndSyncAllToBevy } from "./useCases/ImportAndSyncAllToBevy";
 import { SyncEventToBevy } from "./useCases/SyncEventToBevy";
+import { AddEventImage } from "./useCases/AddEventImage";
+import { DeleteEventImage } from "./useCases/DeleteEventImage";
+import { ReorderEventImages } from "./useCases/ReorderEventImages";
 
 // ============================================================================
 // DEPENDENCY INJECTION & INITIALIZATION
@@ -73,7 +76,10 @@ const createEventFromBevyEventUseCase = new CreateEventFromBevyEventUseCase(
   eventRepositoryAdapter,
   bevyEventServiceAdapter,
 );
-const deleteEventUseCase = new DeleteEvent(eventRepositoryAdapter);
+const deleteEventUseCase = new DeleteEvent(
+  eventRepositoryAdapter,
+  filestorageAdapter,
+);
 const getOneEventUseCase = new GetOneEvent(eventRepositoryAdapter);
 const listEventAttendeesUseCase = new ListEventAttendees(
   attendanceRepositoryAdapter,
@@ -86,6 +92,15 @@ const updateEventUseCase = new UpdateEvent(
 const listEventsByYearUseCase = new ListEventsByYear(eventRepositoryAdapter);
 const getEventsByTypeUseCase = new GetEventsByType(eventRepositoryAdapter);
 const getEventsByTeamUseCase = new GetEventsByTeam(eventRepositoryAdapter);
+const addEventImageUseCase = new AddEventImage(
+  eventRepositoryAdapter,
+  filestorageAdapter,
+);
+const deleteEventImageUseCase = new DeleteEventImage(
+  eventRepositoryAdapter,
+  filestorageAdapter,
+);
+const reorderEventImagesUseCase = new ReorderEventImages(eventRepositoryAdapter);
 
 const importandsyncuc = new ImportAndSyncAllToBevy(
   bevyEventServiceAdapter,
@@ -109,6 +124,9 @@ export const eventSystemController = new EventSystemController(
   listEventsByYearUseCase,
   getEventsByTypeUseCase,
   getEventsByTeamUseCase,
+  addEventImageUseCase,
+  deleteEventImageUseCase,
+  reorderEventImagesUseCase,
   importandsyncuc,
   syncevent,
 );

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Card, Stack, Text } from "@packages/spark-ui";
 import { Event } from "@/features/events";
 import { ASSETS } from "@/lib/constants/assets";
+import { normalizeEventDescription } from "@/features/events/utils/description";
 
 /**
  * FeaturedEventCard
@@ -30,7 +31,7 @@ export function FeaturedEventCard({ onOpenModal, event }: FeaturedEventCardProps
 
 
 
-const ABOUT_TEXT = event.description || "No description available for this event.";
+const ABOUT_TEXT = normalizeEventDescription(event.description) || "No description available for this event.";
 
 const TRUNCATED_ABOUT =
   ABOUT_TEXT.length > 493 ? ABOUT_TEXT.slice(0, 493) + "..." : ABOUT_TEXT;
@@ -58,6 +59,7 @@ const TRUNCATED_ABOUT =
           align="center"
           color="on-secondary"
           className="z-10"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
         >
           {new Date(event.end_date).toLocaleString("en-US", {
             month: "long",
@@ -73,13 +75,14 @@ const TRUNCATED_ABOUT =
           align="center"
           color="on-secondary"
           className="mt-4 z-10"
+          style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
         >
           Today&apos;s Highlight
         </Text>
       </Stack>
 
       {/* Event image card with gradient border */}
-      <div className="relative left-1/2 mt-15 flex w-[calc(100vw-2rem)] max-w-[1450px] -translate-x-1/2 justify-center z-10">
+      <div className="relative mt-15 flex w-full justify-center z-10">
         <Card
           variant="default"
           className="w-full h-[clamp(200px,25vw,360px)] rounded-[32px] max-w-none p-1 bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] overflow-hidden bg-transparent! border-0! z-10 transform transition-transform duration-1000 ease-out hover:rotate-[-1deg]"
@@ -87,7 +90,7 @@ const TRUNCATED_ABOUT =
           onMouseLeave={() => setIsCardHovered(false)}
         >
           <img
-            src={event.image_url || ASSETS.PLACEHOLDERS.DEFAULT}
+            src={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
             alt=""
             className="w-full h-full object-cover rounded-[30px]"
           />
@@ -96,7 +99,7 @@ const TRUNCATED_ABOUT =
 
       {/* About + Stats row — slides down on card hover */}
       <div
-        className={`relative left-1/2 -translate-x-1/2 w-[calc(100vw-2rem)] max-w-[1450px] flex justify-center mt-10 z-10 transition-transform duration-1000 ease-out ${
+        className={`relative w-full flex justify-center mt-10 z-10 transition-transform duration-1000 ease-out ${
           isCardHovered ? "translate-y-5" : "translate-y-0"
         }`}
       >
@@ -147,7 +150,7 @@ const TRUNCATED_ABOUT =
                   className={is39Hovered ? "" : "text-white"}
                   gradient={is39Hovered ? "white-blue" : undefined}
                 >
-                  39
+                  {event.rsvp ?? event.attendees_count}
                 </Text>
               </div>
               <div
@@ -171,7 +174,7 @@ const TRUNCATED_ABOUT =
               className="h-9 max-w-72 px-3 py-1 rounded-2xl outline-[1.50px] outline-offset-[-1.50px] outline-white inline-flex flex-col justify-center items-center gap-2"
             >
               <Text variant="body" color="on-secondary">
-                TODO: Team Here
+                {event.category}
               </Text>
             </div>
           </Stack>

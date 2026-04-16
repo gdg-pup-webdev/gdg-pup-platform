@@ -106,7 +106,7 @@ export const LoginForm = () => {
         <span className="text-white/80 text-[16px] font-medium">
           Don't have an account yet?
         </span>
-        <Link href="/signup" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>
+        <Link prefetch={false} href="/signup" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>
           Sign Up
         </Link>
       </div>

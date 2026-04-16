@@ -7,7 +7,7 @@ import { contract } from "@packages/nexus-api-contracts";
 export const useGetProfileOfUserByGdgId = (gdgId: string | undefined) => {
 
     return useQuery({
-        queryKey: ['sparkmates', 'profile'],
+        queryKey: ['sparkmates', 'profile', gdgId],
         queryFn: async () => {
             console.log("Fetching profile for GDG ID:", gdgId);
             if (!gdgId) {

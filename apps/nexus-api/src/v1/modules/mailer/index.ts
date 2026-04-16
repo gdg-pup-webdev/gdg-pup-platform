@@ -17,3 +17,4 @@ export * from "./domain/Email";
 export * from "./domain/IMailerService";
 export * from "./useCases/SendEmail";
 export * from "./templates/OtpEmailTemplate";
+export * from "./templates/NfcActivationEmailTemplate";

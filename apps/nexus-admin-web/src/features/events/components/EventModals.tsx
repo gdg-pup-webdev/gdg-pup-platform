@@ -9,6 +9,8 @@ import {
   MapPin,
   Users,
   CheckCircle,
+  ArrowUp,
+  ArrowDown,
   Plus,
   Trash2,
   Edit2,
@@ -37,6 +39,97 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { ModalActionRow } from "@/components/admin/ModalActionRow";
 import { AdminFormModal, AdminInputField, AdminListField, AdminTextAreaField } from "@/components/admin/form";
+
+const MAX_EVENT_HIGHLIGHT_IMAGES = 20;
+
+const getFileSignature = (file: File) =>
+  `${file.name}-${file.size}-${file.lastModified}-${file.type}`;
+
+const dedupeFiles = (files: File[]): File[] => {
+  const seen = new Set<string>();
+  const unique: File[] = [];
+
+  for (const file of files) {
+    const signature = getFileSignature(file);
+    if (seen.has(signature)) {
+      continue;
+    }
+
+    seen.add(signature);
+    unique.push(file);
+  }
+
+  return unique;
+};
+
+const arrayMoveLocal = <T,>(items: T[], fromIndex: number, toIndex: number): T[] => {
+  const next = [...items];
+  const [moved] = next.splice(fromIndex, 1);
+
+  if (moved === undefined) {
+    return items;
+  }
+
+  next.splice(toIndex, 0, moved);
+  return next;
+};
+
+const PendingHighlightImagePreview = ({
+  file,
+  onRemove,
+}: {
+  file: File;
+  onRemove: () => void;
+}) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewUrl(typeof reader.result === "string" ? reader.result : null);
+    };
+    reader.onerror = () => {
+      setPreviewUrl(null);
+    };
+    reader.readAsDataURL(file);
+
+    return () => {
+      if (reader.readyState === FileReader.LOADING) {
+        reader.abort();
+      }
+    };
+  }, [file]);
+
+  return (
+    <div className="rounded-sm border border-gray-100 bg-gray-50 p-2">
+      <div className="relative h-28 overflow-hidden rounded-sm border border-gray-200 bg-white">
+        {previewUrl ? (
+          <img
+            src={previewUrl}
+            alt={file.name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-xs text-gray-500">
+            Preview unavailable
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute top-1.5 right-1.5 rounded-full border border-white/50 bg-black/70 p-1 text-white transition-colors hover:bg-red-500"
+          title="Remove queued image"
+          aria-label={`Remove queued image ${file.name}`}
+        >
+          <X size={13} />
+        </button>
+      </div>
+      <p className="mt-2 truncate text-[10px] font-bold uppercase tracking-widest text-gray-500">
+        Queued: {file.name}
+      </p>
+    </div>
+  );
+};
 
 // ==========================================
 // Bevy Event Search Modal
@@ -169,6 +262,7 @@ export function EventFormModal({
     attendance_points: 10,
     max_capacity: 999999,
     image_url: null,
+    images: [],
     speakers: [],
     tags: [],
     teamId: null,
@@ -190,6 +284,26 @@ export function EventFormModal({
 
   const { data: teamsResponse, isLoading: isSearchingTeams } =
     useSearchTeams(debouncedTeamSearch);
+
+  const [selectedThumbnailPreviewUrl, setSelectedThumbnailPreviewUrl] =
+    useState<string | null>(null);
+  const [pendingHighlightImageFiles, setPendingHighlightImageFiles] =
+    useState<File[]>([]);
+  const [originalHighlightImages, setOriginalHighlightImages] =
+    useState<string[]>([]);
+
+  const highlightImages = formData.images || [];
+  const totalQueuedHighlights =
+    highlightImages.length + pendingHighlightImageFiles.length;
+  const remainingHighlightSlots = Math.max(
+    0,
+    MAX_EVENT_HIGHLIGHT_IMAGES - totalQueuedHighlights,
+  );
+  const mainImagePreviewUrl =
+    selectedThumbnailPreviewUrl ||
+    formData.image_url?.trim() ||
+    highlightImages[0] ||
+    null;
 
   useEffect(() => {
     const timer = setTimeout(
@@ -213,11 +327,36 @@ export function EventFormModal({
   }, []);
 
   const setThumbnail = (image: File | undefined) => {
-    setFormData({ ...formData, image: image });
+    setFormData((prev) => ({ ...prev, image }));
   };
 
   useEffect(() => {
+    if (!formData.image) {
+      setSelectedThumbnailPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(formData.image);
+    setSelectedThumbnailPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [formData.image]);
+
+  useEffect(() => {
     if (initialData) {
+      const currentImageUrl =
+        (typeof initialData.image_url === "string" &&
+        initialData.image_url.trim().length > 0
+          ? initialData.image_url.trim()
+          : null) ||
+        initialData.images?.find(
+          (imageUrl) =>
+            typeof imageUrl === "string" && imageUrl.trim().length > 0,
+        ) ||
+        null;
+
       setFormData({
         title: initialData.title,
         description: initialData.description || "",
@@ -233,13 +372,16 @@ export function EventFormModal({
           : "",
         attendance_points: initialData.attendance_points,
         max_capacity: initialData.max_capacity,
-        image_url: initialData.image_url || null,
+        image_url: currentImageUrl,
+        images: initialData.images || [],
         speakers: initialData.speakers || [],
         tags: initialData.tags || [],
         teamId: initialData.teamId || null,
         bevy_event_id: initialData.bevy_event_id || null,
         bevyPreviewUrl: initialData.bevyPreviewUrl || null,
       });
+      setOriginalHighlightImages(initialData.images || []);
+      setPendingHighlightImageFiles([]);
       setSelectedTeamName(
         initialData.teamId
           ? `Team (${initialData.teamId.substring(0, 8)}...)`
@@ -258,12 +400,15 @@ export function EventFormModal({
         attendance_points: 10,
         max_capacity: 999999,
         image_url: null,
+        images: [],
         speakers: [],
         tags: [],
         teamId: null,
         bevy_event_id: null,
         bevyPreviewUrl: null,
       });
+      setOriginalHighlightImages([]);
+      setPendingHighlightImageFiles([]);
       setSelectedTeamName("");
     }
   }, [initialData, isOpen]);
@@ -272,6 +417,67 @@ export function EventFormModal({
     setFormData((prev) => ({ ...prev, teamId: team.id }));
     setSelectedTeamName(team.name);
     setShowTeamDropdown(false);
+  };
+
+  const handleUploadHighlightImages = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const selectedFiles = Array.from(event.target.files || []);
+    event.currentTarget.value = "";
+
+    if (selectedFiles.length === 0) {
+      return;
+    }
+
+    if (remainingHighlightSlots <= 0) {
+      toast.error("You can only add up to 20 highlight images.");
+      return;
+    }
+
+    const maxPendingAllowed = Math.max(
+      0,
+      MAX_EVENT_HIGHLIGHT_IMAGES - highlightImages.length,
+    );
+    const nextPendingFiles = dedupeFiles([
+      ...pendingHighlightImageFiles,
+      ...selectedFiles,
+    ]).slice(0, maxPendingAllowed);
+
+    if (selectedFiles.length > nextPendingFiles.length - pendingHighlightImageFiles.length) {
+      toast.info(
+        "Some files were skipped due to duplicates or the 20-image limit.",
+      );
+    }
+
+    setPendingHighlightImageFiles(nextPendingFiles);
+  };
+
+  const handleRemoveHighlightImage = (imageIndex: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: (prev.images || []).filter((_, index) => index !== imageIndex),
+    }));
+  };
+
+  const handleMoveHighlightImage = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) {
+      return;
+    }
+
+    if (toIndex < 0 || toIndex >= highlightImages.length) {
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      images: arrayMoveLocal(prev.images || [], fromIndex, toIndex),
+    }));
+  };
+
+  const handleRemoveQueuedHighlightImage = (fileIndex: number) => {
+    setPendingHighlightImageFiles((prev) =>
+      prev.filter((_, index) => index !== fileIndex),
+    );
   };
 
   const handleBevyImport = async (bevyEventId: string) => {
@@ -315,9 +521,31 @@ export function EventFormModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const normalizedHighlights = (formData.images || [])
+      .map((imageUrl) => imageUrl.trim())
+      .filter((imageUrl) => imageUrl.length > 0);
+    const normalizedQueuedFiles = dedupeFiles(pendingHighlightImageFiles);
+
+    if (
+      normalizedHighlights.length + normalizedQueuedFiles.length >
+      MAX_EVENT_HIGHLIGHT_IMAGES
+    ) {
+      toast.error("You can only add up to 20 highlight images.");
+      return;
+    }
+
+    if (normalizedHighlights.length > MAX_EVENT_HIGHLIGHT_IMAGES) {
+      toast.error("You can only add up to 20 highlight images.");
+      return;
+    }
+
     // Ensure dates are in full ISO format for the API
     const submissionData = {
       ...formData,
+      image_url: formData.image_url?.trim() || null,
+      images: normalizedHighlights,
+      highlightImageFiles: normalizedQueuedFiles,
+      originalHighlightImages,
       start_date: formData.start_date
         ? new Date(formData.start_date).toISOString()
         : "",
@@ -354,6 +582,43 @@ export function EventFormModal({
           </div>
 
           <WireframeUploadImage image={formData.image} setImage={setThumbnail} />
+
+          <div className="sm:col-span-2">
+            <AdminInputField
+              label="Main Image URL"
+              type="url"
+              placeholder="https://example.com/event-main-image.jpg"
+              value={formData.image_url || ""}
+              helperText="Used for the event thumbnail/pubmat. Uploading a thumbnail file overrides this URL."
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  image_url: e.target.value || null,
+                }))
+              }
+            />
+          </div>
+
+          <div className="sm:col-span-2 rounded-sm border border-gray-100 bg-gray-50/50 p-3">
+            <div className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+              <ImageIcon size={12} />
+              Current Main Image Preview
+            </div>
+            {mainImagePreviewUrl ? (
+              <img
+                src={mainImagePreviewUrl}
+                alt="Current main image preview"
+                className="h-42 w-full rounded-sm border border-gray-200 object-cover"
+              />
+            ) : (
+              <div className="flex h-42 w-full items-center justify-center rounded-sm border border-dashed border-gray-200 bg-white text-xs text-gray-500">
+                No image to preview yet.
+              </div>
+            )}
+            <p className="mt-2 text-[11px] text-gray-500">
+              Preview priority: uploaded thumbnail, main image URL, then the first highlight image.
+            </p>
+          </div>
 
           <div className="sm:col-span-2">
             <AdminInputField
@@ -550,6 +815,132 @@ export function EventFormModal({
               placeholder="Add a tag and press Enter..."
             />
           </div>
+
+          <div className="sm:col-span-2">
+            <div className="rounded-sm border border-gray-100 bg-white p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <label className="block text-xs font-bold uppercase tracking-widest text-gray-500">
+                  Highlight Images
+                </label>
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                  {totalQueuedHighlights}/{MAX_EVENT_HIGHLIGHT_IMAGES}
+                </span>
+              </div>
+
+              <input
+                id="event-highlight-image-upload"
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleUploadHighlightImages}
+                disabled={isSubmitting || remainingHighlightSlots === 0}
+              />
+
+              <label
+                htmlFor="event-highlight-image-upload"
+                className={`mb-3 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-dashed py-3 text-sm font-bold transition-all ${
+                  isSubmitting || remainingHighlightSlots === 0
+                    ? "pointer-events-none border-gray-200 bg-gray-100 text-gray-400"
+                    : "border-teal-200 bg-teal-50/50 text-teal-700 hover:border-teal-300 hover:bg-teal-50"
+                }`}
+              >
+                <Plus size={16} />
+                {remainingHighlightSlots === 0
+                  ? "Maximum highlight images reached"
+                  : "Add Highlight Images"}
+              </label>
+
+              <p className="mb-3 text-[11px] text-gray-500">
+                New files are queued locally and uploaded one-by-one only after you click Save.
+              </p>
+
+              {highlightImages.length > 0 ? (
+                <>
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Existing Highlights
+                  </p>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {highlightImages.map((imageUrl, imageIndex) => (
+                      <div
+                        key={`${imageUrl}-${imageIndex}`}
+                        className="rounded-sm border border-gray-100 bg-gray-50 p-2"
+                      >
+                        <div className="relative h-28 overflow-hidden rounded-sm border border-gray-200 bg-white">
+                          <img
+                            src={imageUrl}
+                            alt={`Highlight image ${imageIndex + 1}`}
+                            className="h-full w-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveHighlightImage(imageIndex)}
+                            disabled={isSubmitting}
+                            className="absolute top-1.5 right-1.5 rounded-full border border-white/50 bg-black/70 p-1 text-white transition-colors hover:bg-red-500 disabled:opacity-60"
+                            title="Remove image"
+                            aria-label={`Remove highlight image ${imageIndex + 1}`}
+                          >
+                            <X size={13} />
+                          </button>
+                        </div>
+
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                            Position {imageIndex + 1}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveHighlightImage(imageIndex, imageIndex - 1)}
+                              disabled={isSubmitting || imageIndex === 0}
+                              className="rounded-sm border border-gray-200 bg-white p-1 text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-800 disabled:opacity-40"
+                              title="Move up"
+                              aria-label={`Move highlight image ${imageIndex + 1} up`}
+                            >
+                              <ArrowUp size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveHighlightImage(imageIndex, imageIndex + 1)}
+                              disabled={isSubmitting || imageIndex === highlightImages.length - 1}
+                              className="rounded-sm border border-gray-200 bg-white p-1 text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-800 disabled:opacity-40"
+                              title="Move down"
+                              aria-label={`Move highlight image ${imageIndex + 1} down`}
+                            >
+                              <ArrowDown size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              {pendingHighlightImageFiles.length > 0 ? (
+                <>
+                  <p className="mb-2 mt-4 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Queued Uploads
+                  </p>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {pendingHighlightImageFiles.map((file, fileIndex) => (
+                      <PendingHighlightImagePreview
+                        key={`${file.name}-${file.lastModified}-${fileIndex}`}
+                        file={file}
+                        onRemove={() => handleRemoveQueuedHighlightImage(fileIndex)}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              {highlightImages.length === 0 && pendingHighlightImageFiles.length === 0 ? (
+                <div className="rounded-sm border border-dashed border-gray-200 bg-gray-50/60 px-4 py-6 text-center text-xs text-gray-500">
+                  No highlight images yet. Add images now and they will upload when you save.
+                </div>
+              ) : null}
+            </div>
+          </div>
         </div>
       </AdminFormModal>
 
@@ -594,6 +985,7 @@ export function EventDetailsModal({
   if (!event) return null;
 
   const attendees = attendeesResponse?.data || [];
+  const mainImage = event.image_url || event.images?.[0] || null;
 
   const eventActions = [
     ...(event.bevyPreviewUrl
@@ -657,9 +1049,9 @@ export function EventDetailsModal({
         />
 
         <div className="flex flex-col sm:flex-row gap-4">
-          {event.image_url && (
+          {mainImage && (
             <img
-              src={event.image_url}
+              src={mainImage}
               alt={event.title}
               className="h-32 w-full sm:w-48 object-cover rounded-sm border border-gray-100"
             />
@@ -710,6 +1102,12 @@ export function EventDetailsModal({
                 #{tag}
               </span>
             ))}
+          </div>
+        )}
+
+        {event.images && event.images.length > 0 && (
+          <div className="text-xs font-semibold text-gray-600">
+            Highlight Images: {event.images.length}
           </div>
         )}
 

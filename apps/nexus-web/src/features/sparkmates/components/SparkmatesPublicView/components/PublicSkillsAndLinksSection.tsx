@@ -1,11 +1,11 @@
 import { SparkmatesProfile } from "@/features/sparkmates/types";
-import { Badge, Button, Text } from "@packages/spark-ui"; 
+import { Badge, Text } from "@packages/spark-ui";
 
 const SPARK_BADGE = {
   variantBlue: "blue",
 } as const;
 
-function SkillSectionIcon({ type }: { type: "technical" | "learning" | "tools" | "links" }) {
+function SkillSectionIcon({ type }: { type: "technical" | "learning" | "tools" }) {
   if (type === "technical") {
     return (
       <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth="2">
@@ -30,11 +30,6 @@ function SkillSectionIcon({ type }: { type: "technical" | "learning" | "tools" |
     );
   }
 
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M10 14 21 3M14 3h7v7M3 10v11h11" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
 }
 
 function CategoryCard({
@@ -71,54 +66,14 @@ function CategoryCard({
   );
 }
 
-function OtherLinksCard({
-  links,
-  onOpenExternal,
-}: {
-  links: string[];
-  onOpenExternal: (url: string) => void;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-6 py-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
-      <div className="mb-3 flex items-center gap-3">
-        <SkillSectionIcon type="links" />
-        <Text variant="body-lg" className="text-white" weight="medium">
-          Other Links
-        </Text>
-      </div>
-      {links.length > 0 ? (
-        <div className="space-y-2">
-          {links.map((link, index) => (
-            <Button
-              key={`${link}-${index}`}
-              variant="ghost"
-              className="h-auto w-full justify-start rounded-xl border border-white/20 bg-[#091734] px-3 py-2 text-left text-white"
-              onClick={() => onOpenExternal(link)}
-            >
-              <span className="block truncate">{link}</span>
-            </Button>
-          ))}
-        </div>
-      ) : (
-        <Text variant="body-sm" className="text-[#C1C7CD]">
-          No links yet.
-        </Text>
-      )}
-    </div>
-  );
-}
-
 export function PublicSkillsAndLinksSection({
   portfolio,
-  onOpenExternal,
 }: {
   portfolio: SparkmatesProfile | null;
-  onOpenExternal: (url: string) => void;
 }) {
   const skills = portfolio?.technicalSkills ?? [];
   const interests = portfolio?.learningInterests ?? [];
   const tools = portfolio?.toolsAndTechnologies ?? [];
-  const otherLinks = portfolio?.otherLinks ?? [];
 
   return (
     <section className="space-y-4 pt-6">
@@ -132,7 +87,6 @@ export function PublicSkillsAndLinksSection({
         <CategoryCard title="Technical Skills" chips={skills} iconType="technical" />
         <CategoryCard title="Learning Interests" chips={interests} iconType="learning" />
         <CategoryCard title="Tools & Technologies" chips={tools} iconType="tools" />
-        <OtherLinksCard links={otherLinks} onOpenExternal={onOpenExternal} />
       </div>
     </section>
   );

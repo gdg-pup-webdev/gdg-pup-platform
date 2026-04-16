@@ -4,8 +4,7 @@
  * All public image/asset paths are declared here.
  * Import from this file instead of using magic strings in components.
  *
- * Paths follow the flat Object-Action naming convention introduced in
- * Phase 2 of the asset migration. All raster images are now .webp.
+ * Paths follow the flat Object-Action naming convention.
  */
 
 export const ASSETS = {
@@ -15,6 +14,12 @@ export const ASSETS = {
         GDG_LOGO_SVG: "/branding/gdg-logo-animated.svg",
         /** Raster GDG logo (used in Navbar + Footer) */
         GDG_LOGO_WEBP: "/branding/gdg-logo.webp",
+    },
+
+    // ─── Not Found ───────────────────────────────────────────────────────────────
+    NOT_FOUND: {
+        RESTING_SPARKY: "/not-found/not-found-resting-sparky.webp",
+        THINKING_SPARKY: "/not-found/not-found-thinking-sparky.webp",
     },
 
     // ─── Home ─────────────────────────────────────────────────────────────────────
@@ -61,12 +66,13 @@ export const ASSETS = {
         STARS4: "/home/home-stars4.webp",
         STARS5: "/home/home-stars5.webp",
         STARS6: "/home/home-stars6.webp",
+        CIRBY_STICKER51: "/home/home-cirby-sticker-5-1.webp",
         ELLIPSE203: "/home/home-ellipse203.webp",
         ELLIPSE204: "/home/home-ellipse204.webp",
-        ELLIPSE208: "/home/home-ellipse208.webp",
+        ELLIPSE205: "/home/home-ellipse208.webp",
+        ELLIPSE207: "/home/home-ellipse-207.webp",
+        ELLIPSE208: "/home/home-ellipse-208.webp",
         SPACE_DUST_BLUE1: "/home/home-space-dust-blue1.webp",
-        SPACE_DUST_BLUE12: "/home/home-space-dust-blue12.webp",
-        SPACE_DUST_BLUE2: "/home/home-space-dust-blue2.webp",
         SPACE_DUST_BLUE3: "/home/home-space-dust-blue3.webp",
         HORIZON: "/home/home-horizon.webp",
         SPIRAL: "/home/home-spiral.webp",
@@ -106,6 +112,14 @@ export const ASSETS = {
             DECOR_ELEMENT_1: "/about/about-who-decor-element-1.webp",
             DECOR_ELEMENT_2: "/about/about-who-decor-element-2.webp",
         },
+        HISTORY: {
+            THE_SPARK: "/about/history/the-spark.webp",
+            YEAR_TWO_TEST: "/about/history/year-two-test.webp",
+            YEAR_THREE_TURNAROUND: "/about/history/year-three-turnaround.webp",
+            THE_IMPACT: "/about/history/the-impact.webp",
+            BG_ORBITAL_RINGS: "/about/history/bg-orbital-rings.webp",
+            BG_GEAR: "/about/history/bg-gear.webp",
+        },
     },
 
     // ─── ID card page ─────────────────────────────────────────────────────────────
@@ -137,6 +151,7 @@ export const ASSETS = {
 
         ADMINISTRATIVE: {
             CATHYREN_SACATANI: "/team/team-administrative-cathyren-sacatani.webp",
+            FRANCIS_CHUAUNSU: "/team/team-administrative-francis-jason-chuaunsu.webp",
             IRAH_JOSE: "/team/team-administrative-irah-markeisha-jose.webp",
             KURT_LOPEZ: "/team/team-administrative-kurt-lopez.webp",
             MARYROSE_MARQUEZ: "/team/team-administrative-maryrose-marquez.webp",
@@ -267,12 +282,12 @@ export const ASSETS = {
 
     // ─── Partners ─────────────────────────────────────────────────────────────────
     PARTNERS: {
-        ACADARENA: "/partners/partner-acadarena-white.png",
-        DATACAMP: "/partners/partner-datacamp-new.png",
+        ACADARENA: "/partners/partner-acadarena-white.webp",
+        DATACAMP: "/partners/partner-datacamp-new.webp",
         YSPACE: "/partners/partner-yspace.webp",
         POCKY: "/partners/partner-pocky.webp",
         PLDT: "/partners/partner-pldt.webp",
-        GLOBE: "/partners/partner-globe-white.png",
+        GLOBE: "/partners/partner-globe-white.webp",
         MOUNTAIN_DEW: "/partners/partner-mountain-dew.webp",
         WHITECLOAK: "/partners/partner-whitecloak.webp",
         FLOWERSTORE: "/partners/partner-flowerstore.webp",
@@ -281,14 +296,14 @@ export const ASSETS = {
         HEY_ROOMIE: "/partners/partner-hey-roomie.webp",
         HOMEROOM: "/partners/partner-homeroom.webp",
         GEN_AI_PH: "/partners/partner-gen-ai-ph.webp",
-        DEVCON: "/partners/partner-devcon.png",
+        DEVCON: "/partners/partner-devcon.webp",
         /** Aurora/glow SVG overlay matching Figma background */
         BG_AURORA_OVERLAY: "/partners/bg-aurora-overlay.svg",
         /** Cirby sticker mascot shown in the CTA card */
         CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
         /** Figma decorative floating assets */
         DECOR_ASSET_1: "/partners/decor-asset-1.webp",
-        DECOR_ASSET_2: "/partners/decor-asset-2.png",
+        DECOR_ASSET_2: "/partners/decor-asset-2.webp",
         DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
         DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
     },
@@ -299,6 +314,10 @@ export const ASSETS = {
         AVATAR_DEFAULT: "/auth/auth-avatar-default.webp",
         SIGNIN_LOGO: "/auth/auth-signin-logo.webp",
         SIGNIN_HORIZON: "/auth/auth-signin-horizon.webp",
+        RAINBOW_STREAK: "/auth/auth-rainbow-streak.webp",
+    },
+    EVENTS: {
+        CIRBY_ICON: "/pages/events/cirby-event-icon.webp",
     },
     MEMBER_SHOWCASE: {
         ACHIEVEMENTS: {
@@ -326,9 +345,19 @@ export const ASSETS = {
         },
     },
     PROFILE: {
-        AVATAR_RING: "/profile-avatar-ring.png",
-        DEFAULT_AVATAR: "/profile-default-avatar.png",
-        DEFAULT_BADGE: "/profile-badge-default.png",
+        AVATAR_RING: "/profile-avatar-ring.webp",
+        DEFAULT_AVATAR: "/profile-default-avatar.webp",
+        DEFAULT_BADGE: "/profile-badge-default.webp",
+    },
+    PRODUCTS: {
+        STUDY_JAM_PLACEHOLDER: "/products/iot_study_jam_image.webp",
+    },
+    SPARKMATES: {
+        HORIZON: "/sparkmates/sparkmates-horizon.webp",
+        SPARKY: "/sparkmates/sparkmates-sparky.webp",
+        SETTINGS_MOBILE_HERO: "/sparkmates/sparkmates-settings-mobile.webp",
+        SETTINGS_ELEMENT_1: "/sparkmates/sparkmates-settings-element1.webp",
+        SETTINGS_ELEMENT_2: "/sparkmates/sparkmates-settings-element2.webp",
     },
     SPARKY_POINTS: {
         SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
@@ -348,7 +377,7 @@ export const ASSETS = {
         HEADLINE_GRADIENT_CONTRIBUTORS: "/leaderboard/leaderboard-headline-gradient-contributors.webp",
         SPARKY_MASCOT: "/leaderboard/leaderboard-sparky-mascot.webp",
         GOLD_TEXTURE: "/leaderboard/leaderboard-gold-texture.webp",
-        FOOTER_MAP: "/leaderboard/leaderboard-footer-map.png",
+        FOOTER_MAP: "/leaderboard/leaderboard-footer-map.webp",
         AVATAR_GOLD: "/leaderboard/leaderboard-avatar-gold.webp",
         AVATAR_SILVER: "/leaderboard/leaderboard-avatar-silver.webp",
         AVATAR_BRONZE: "/leaderboard/leaderboard-avatar-bronze.webp",

@@ -21,7 +21,6 @@ export function useUpdateMemberProjectRequest() {
     {
       params: { id },
       body: { data },
-      files: files as any,
     }
   );
 

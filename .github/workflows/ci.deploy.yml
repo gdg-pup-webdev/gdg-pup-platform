@@ -100,4 +100,15 @@ jobs:
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ secrets.GCP_PROJECT_ID }}
           health-check-url: ${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org/api/health' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org/api/health' || 'https://api.dev.gdgpup.org/api/health' }}
-          env-vars: "ZEPTOMAIL_TOKEN=${{ secrets.ZEPTOMAIL_TOKEN }},ZEPTOMAIL_FROM_ADDRESS=${{ secrets.ZEPTOMAIL_FROM_ADDRESS }},ZEPTOMAIL_FROM_NAME=${{ secrets.ZEPTOMAIL_FROM_NAME }}"
+          memory: "512Mi"
+          env-vars: "ZEPTOMAIL_TOKEN=${{ secrets.ZEPTOMAIL_TOKEN }},\
+            ZEPTOMAIL_FROM_ADDRESS=${{ secrets.ZEPTOMAIL_FROM_ADDRESS }},\
+            ZEPTOMAIL_FROM_NAME=${{ secrets.ZEPTOMAIL_FROM_NAME }},\
+            HIDE_API_DOCS=${{ vars.HIDE_API_DOCS || secrets.HIDE_API_DOCS || 'false' }},\
+            GCS_PROJECT_ID=${{ vars.GCS_PROJECT_ID || 'gdgpup-484914' }},\
+            GCS_BUCKET_NAME=${{ vars.GCS_BUCKET_NAME || 'gdgpuporg' }},\
+            GCS_PREVIEW_URL_TYPE=${{ vars.GCS_PREVIEW_URL_TYPE || 'signed' }},\
+            GCS_SIGNED_URL_EXPIRES_SECONDS=${{ vars.GCS_SIGNED_URL_EXPIRES_SECONDS || '900' }},\
+            GCS_MAKE_PUBLIC_ON_UPLOAD=${{ vars.GCS_MAKE_PUBLIC_ON_UPLOAD || 'false' }},\
+            GCS_PUBLIC_BASE_URL=${{ vars.GCS_PUBLIC_BASE_URL || 'https://storage.googleapis.com' }},\
+            GCS_UPLOAD_PREFIX=${{ vars.GCS_UPLOAD_PREFIX || 'local-test' }}"

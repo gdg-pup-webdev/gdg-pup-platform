@@ -4,13 +4,12 @@ import Link from "next/link";
 import { CosmosParticles } from "@/components/shared";
 import { SparkmatesMascot } from "./SparkmatesMascot";
 import { SparkmatesRainbowStreak } from "./SparkmatesRainbowStreak";
-import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { useAuthContext, STATUS } from "@/features/authentication/store/useAuthStore";
 
 export const SparkmatesLanding = () => {
-  const {  status  } = useAuthContext();
-  const gdgId = "me";
+  const { status } = useAuthContext();
 
-  const portfolioHref = gdgId ? `/sparkmates/${gdgId}` : "/signin";
+  const portfolioHref = status === STATUS.AUTHENTICATED ? `/sparkmates/me` : "/signin";
 
   return (
     <CosmosParticles
@@ -87,10 +86,10 @@ export const SparkmatesLanding = () => {
               {/* CTA Buttons */}
               <div className="flex flex-col gap-[16px] items-center w-full">
                 {/* View My Portfolio — dynamic link */}
-                <Link
+                <Link prefetch={false}
                   href={portfolioHref}
                   className="relative flex items-center justify-center w-full px-[16px] py-[12px] rounded-[8px] bg-gradient-to-b from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-90"
-                  aria-label={gdgId ? `View portfolio for ${gdgId}` : "Sign in to view your portfolio"}
+                  aria-label={status === STATUS.AUTHENTICATED ? `View my portfolio` : "Sign in to view your portfolio"}
                 >
                   <span
                     className="text-white text-[18px] font-medium leading-[1.5] text-center whitespace-nowrap"
@@ -98,7 +97,7 @@ export const SparkmatesLanding = () => {
                   >
                     {status === "checking"
                       ? "Loading..."
-                      : gdgId
+                      : status === STATUS.AUTHENTICATED
                       ? "View My Portfolio"
                       : "Sign In to View Portfolio"}
                   </span>
@@ -107,7 +106,7 @@ export const SparkmatesLanding = () => {
                 </Link>
 
                 {/* View My XPark Points with rainbow bottom border */}
-                <Link
+                {/* <Link prefetch={false}
                   href="/leaderboard"
                   className="relative flex items-center justify-center px-[8px] py-[8px] transition-opacity hover:opacity-80 group overflow-hidden"
                 >
@@ -116,13 +115,13 @@ export const SparkmatesLanding = () => {
                     style={{ fontFamily: 'var(--font-google-sans, "Google Sans", sans-serif)' }}
                   >
                     View My XPark Points
-                  </span>
+                  </span> */}
                   {/* Rainbow Bottom Border Component */}
-                  <div 
+                  {/* <div 
                     className="absolute bottom-0 left-0 w-full h-[2px]"
                     style={{ background: "linear-gradient(157deg, #FB2C36 0%, #F0B100 5%, #00C950 10%, #2B7FFF 15%, #FFF 50.48%, #2B7FFF 85%, #00C950 90%, #F0B100 95%, #FB2C36 100%)" }}
                   />
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>

@@ -20,7 +20,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ASSETS } from "@/lib/constants/assets";
 
 // ─── Zoned blob background (history page only) ───────────────────────────────
@@ -262,7 +262,7 @@ const milestones = [
     title: "The Spark",
     excerpt: "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.",
     buttonColor: "green" as const,
-    image: "/about/history/the-spark.jpg",
+    image: ASSETS.ABOUT.HISTORY.THE_SPARK,
     href: "/articles/a5e895ea-1223-4958-af05-1319cc98ec0a"
   },
   {
@@ -278,7 +278,7 @@ const milestones = [
     title: "Year Two: The Test",
     excerpt: "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.",
     buttonColor: "red" as const,
-    image: "/about/history/year-two-test.jpg",
+    image: ASSETS.ABOUT.HISTORY.YEAR_TWO_TEST,
     href: "/articles/55cf5ee1-1ab1-4a9d-b9d0-497d644baa53"
   },
   {
@@ -286,7 +286,7 @@ const milestones = [
     title: "Year Three: The Turnaround",
     excerpt: "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.",
     buttonColor: "blue" as const,
-    image: "/about/history/year-three-turnaround.jpg",
+    image: ASSETS.ABOUT.HISTORY.YEAR_THREE_TURNAROUND,
     href: "/articles/aa4ec512-a068-4866-ba5d-8bf9bb90325c"
   },
   {
@@ -294,7 +294,7 @@ const milestones = [
     title: "The Impact",
     excerpt: "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.",
     buttonColor: "green" as const,
-    image: "/about/history/the-impact.png",
+    image: ASSETS.ABOUT.HISTORY.THE_IMPACT,
     href: "/articles/e5c96ec3-71c2-4e36-b065-0105aee46a08"
   },
   {
@@ -363,7 +363,7 @@ const MilestoneCard = ({
         </Text>
       </CardContent>
       <CardFooter className="justify-center">
-        <Link href={milestone.href}>
+        <Link prefetch={false} href={milestone.href}>
           <button
             className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors duration-150 ${buttonColorMap[milestone.buttonColor]}`}
           >
@@ -457,22 +457,65 @@ const StatCard = ({
   stat,
 }: {
   stat: (typeof stats)[number];
-}) => (
-  <div
-    className="p-[1.5px] rounded-2xl"
-    style={{ background: nexusStroke }}
-  >
-    <div className="flex flex-col items-center gap-4 rounded-2xl p-8 h-full bg-[#0F0E0E]">
-      {stat.icon}
-      <Text variant="heading-1" weight="bold" align="center" className="text-white">
-        {stat.value}
-      </Text>
-      <Text variant="body" weight="bold" align="center" className="text-gray-300">
-        {stat.label}
-      </Text>
+}) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [displayValue, setDisplayValue] = useState(0);
+
+  const match = stat.value.match(/^([\d.]+)(.*)$/);
+  const numericPart = match?.[1] ?? "0";
+  const parsedValue = Number.parseFloat(numericPart);
+  const targetValue = Number.isFinite(parsedValue) ? parsedValue : 0;
+  const decimalPlaces = (numericPart.split(".")[1] ?? "").length;
+  const suffix = match?.[2] ?? "";
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    let frameId = 0;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      frameId = requestAnimationFrame(() => setDisplayValue(targetValue));
+      return () => cancelAnimationFrame(frameId);
+    }
+
+    const duration = 1200;
+    const start = performance.now();
+
+    const animate = (now: number) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const nextRawValue = targetValue * progress;
+      const nextValue = decimalPlaces > 0
+        ? Number(nextRawValue.toFixed(decimalPlaces))
+        : Math.round(nextRawValue);
+      setDisplayValue(nextValue);
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [decimalPlaces, isInView, targetValue]);
+
+  return (
+    <div
+      ref={ref}
+      className="p-[1.5px] rounded-2xl"
+      style={{ background: nexusStroke }}
+    >
+      <div className="flex flex-col items-center gap-4 rounded-2xl p-8 h-full bg-[#0F0E0E]">
+        {stat.icon}
+        <Text variant="heading-1" weight="bold" align="center" className="text-white">
+          {`${displayValue}${suffix}`}
+        </Text>
+        <Text variant="body" weight="bold" align="center" className="text-gray-300">
+          {stat.label}
+        </Text>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export function HistorySection() {
@@ -484,13 +527,13 @@ export function HistorySection() {
 {/* Orbital rings */}
 <div className="absolute pointer-events-none"
   style={{ top: "12%", left: "50%", transform: "translateX(-50%)", width: "70%", opacity: 0.9 }}>
-  <Image src="/about/history/bg-orbital-rings.png" alt="" width={900} height={900} className="w-full h-auto" />
+  <Image src={ASSETS.ABOUT.HISTORY.BG_ORBITAL_RINGS} alt="" width={900} height={900} className="w-full h-auto" />
 </div>
 
 {/* Gear */}
 <div className="absolute pointer-events-none hidden lg:block"
   style={{ top: "45%", right: "-8%", width: "25%", opacity: 0.20 }}>
-  <Image src="/about/history/bg-gear.png" alt="" width={400} height={400} className="w-full h-auto" />
+  <Image src={ASSETS.ABOUT.HISTORY.BG_GEAR} alt="" width={400} height={400} className="w-full h-auto" />
 </div>
 
 {/* Star */}
@@ -597,7 +640,7 @@ export function HistorySection() {
       ))}
     </div>
     <Box>
-      <Link href="/signup">
+      <Link prefetch={false} href="/signup">
         <Button size="lg" variant="default">
           Join Our Journey
         </Button>

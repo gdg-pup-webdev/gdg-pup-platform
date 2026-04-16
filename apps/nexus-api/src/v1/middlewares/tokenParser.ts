@@ -1,4 +1,4 @@
-import { RequestHandler } from "express"; 
+import { RequestHandler } from "express";
 import { authenticationController } from "../modules/authentication/index.js";
 
 export const tokenParserFromHeaders: RequestHandler = async (

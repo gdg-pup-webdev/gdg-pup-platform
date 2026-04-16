@@ -11,6 +11,7 @@ import { LoadingCard } from "./LoadingCard";
 import { ErrorCard } from "./ErrorCard";
 import { DebugCard } from "./DebugCard";
 import { Stack, Text } from '@packages/spark-ui';
+import { LoadingScreen } from "@/components/shared";
 
 interface CardTapRouterProps {
   /** The unique identifier of the card */
@@ -80,12 +81,5 @@ export const CardTapRouter: React.FC<CardTapRouterProps> = ({
 
   // In normal mode, show a brief message while redirecting
   // (Usually won't be visible because redirect happens immediately)
-  return (
-    <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
-      <Stack gap="md" className="text-center">
-        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-zinc-500 border-t-white"></div>
-        <Text variant="body" className="text-zinc-400">{routingDecision.message}</Text>
-      </Stack>
-    </div>
-  );
+  return <LoadingScreen message={routingDecision.message} />;
 };

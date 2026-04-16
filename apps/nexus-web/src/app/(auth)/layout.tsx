@@ -49,7 +49,7 @@ export default function AuthLayout({
                   <Image
                     src="/auth/auth-nexus-logo.svg"
                     alt="Nexus Logo"
-                    className="object-contain"
+                    className="object-contain pointer-events-none select-none"
                     fill
                     unoptimized={true}
                   />

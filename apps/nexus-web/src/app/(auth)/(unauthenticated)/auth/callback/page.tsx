@@ -1,314 +1,189 @@
-import React from 'react'
+"use client";
 
-const page = () => {
-  return (
-    <div>page</div>
-  )
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AuthTransitionCard } from "@/features/authentication/components/AuthTransitionCard";
+import { resolvePostAuthTarget } from "@/features/authentication/utils/redirect";
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { LINKS } from "@/lib/constants/links";
+
+type CallbackStatus = "loading" | "success" | "error";
+
+const NEXUS_API_URL = process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
+
+function mapCallbackError(rawMessage: string) {
+  const normalized = rawMessage.toLowerCase();
+
+  if (normalized.includes("member") || normalized.includes("access denied")) {
+    return {
+      title: "Membership verification required",
+      description:
+        "Your account is not eligible yet. Contact your chapter admin if you should have access.",
+    };
+  }
+
+  if (normalized.includes("code") || normalized.includes("expired") || normalized.includes("invalid")) {
+    return {
+      title: "This sign-in link is no longer valid",
+      description: "Please retry your sign-in flow and use the latest redirect link.",
+    };
+  }
+
+  if (normalized.includes("network") || normalized.includes("fetch")) {
+    return {
+      title: "Network issue while signing in",
+      description: "We could not reach the server. Check your connection and try again.",
+    };
+  }
+
+  return {
+    title: "Unable to complete sign in",
+    description: "Something went wrong while processing your callback. Please try again.",
+  };
 }
 
-export default page
+function AuthCallbackContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { setAuthToken, memberProfile } = useAuthContext();
 
-// "use client";
+  const [status, setStatus] = useState<CallbackStatus>("loading");
+  const [description, setDescription] = useState("Completing your sign in securely...");
+  const [errorDetail, setErrorDetail] = useState<string | undefined>(undefined);
+  const [countdown, setCountdown] = useState(3);
 
-// import { useEffect, useState, Suspense } from "react";
-// import { useRouter, useSearchParams } from "next/navigation";
-// import { setCookie } from "cookies-next";
-// import { Stack, Text, Button, Container } from '@packages/spark-ui';
- 
+  const destination = useMemo(
+    () =>
+      resolvePostAuthTarget({
+        next: searchParams.get("next"),
+        callbackUrl: searchParams.get("callbackUrl"),
+        isOnboarded: memberProfile?.isOnboarded ?? undefined,
+      }),
+    [memberProfile?.isOnboarded, searchParams],
+  );
 
-// const NEXUS_API_URL =
-//   process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
+  useEffect(() => {
+    let isCancelled = false;
 
-// function AuthCallbackContent() {
-//   const router = useRouter();
-//   const searchParams = useSearchParams();
-//   const { refreshSession } = useAuthContext();
-//   const [error, setError] = useState<string | null>(null);
-//   const [loading, setLoading] = useState(true);
-//   const [status, setStatus] = useState<"loading" | "success" | "error">(
-//     "loading",
-//   );
-//   const [message, setMessage] = useState("Processing authentication...");
-//   const [debugInfo, setDebugInfo] = useState<any>(null);
+    const run = async () => {
+      try {
+        const callbackError = searchParams.get("error");
+        if (callbackError) {
+          throw new Error(searchParams.get("error_description") || callbackError);
+        }
 
-//   useEffect(() => {
-//     const handleCallback = async () => {
-//       try {
-//         // Check for hash fragments first (Implicit Flow)
-//         // We MUST verify these tokens with the backend to ensure membership check is enforced.
-//         const hash = typeof window !== "undefined" ? window.location.hash : "";
-//         const hashParams = new URLSearchParams(hash.substring(1));
-//         const accessToken = hashParams.get("access_token");
-//         const refreshToken = hashParams.get("refresh_token");
+        const code = searchParams.get("code");
+        const hash = typeof window !== "undefined" ? window.location.hash : "";
+        const hashParams = new URLSearchParams(hash.replace(/^#/, ""));
+        const accessToken = hashParams.get("access_token");
+        const refreshToken = hashParams.get("refresh_token");
 
-//         const providerToken = hashParams.get("provider_token");
+        if (!code && !accessToken) {
+          throw new Error("Missing authorization code");
+        }
 
-//         if (accessToken) {
-//           // Verify with backend
-//           const response = await fetch(
-//             `${NEXUS_API_URL}/api/v1/auth-system/exchange`,
-//             {
-//               method: "POST",
-//               headers: { "Content-Type": "application/json" },
-//               body: JSON.stringify({
-//                 data: {
-//                   access_token: accessToken,
-//                   refresh_token: refreshToken || undefined,
-//                 },
-//               }),
-//             },
-//           );
+        const payload = code
+          ? { data: { code } }
+          : { data: { access_token: accessToken, refresh_token: refreshToken || undefined } };
 
-//           const result = await response.json();
+        const response = await fetch(`${NEXUS_API_URL}/api/v1/auth-system/exchange`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-//           if (!response.ok || result.status !== "success") {
-//             const detail = result.errors?.[0]?.detail;
-//             const message =
-//               detail || result.message || "Failed to verify session token";
-//             throw new Error(message);
-//           }
+        const result = await response.json();
+        if (!response.ok || result.status !== "success") {
+          const detail = result?.errors?.[0]?.detail || result?.message || "Authentication failed";
+          throw new Error(detail);
+        }
 
-//           // Store session tokens (from backend response to be safe, or original)
-//           // Backend returns the valid session.
-//           if (result.data?.session?.access_token) {
-//             setCookie("supabaseAccessToken", result.data.session.access_token, {
-//               maxAge: 60 * 60,
-//               secure: process.env.NODE_ENV === "production",
-//               sameSite: "lax",
-//             });
-//           }
+        const token = result?.data?.token;
+        if (token) {
+          setAuthToken(token);
+          setDescription("Sign in completed. Redirecting you to your account...");
+        } else {
+          setDescription("Verification completed. Redirecting you to Sign In...");
+        }
 
-//           if (result.data?.session?.refresh_token) {
-//             setCookie(
-//               "supabaseRefreshToken",
-//               result.data.session.refresh_token,
-//               {
-//                 maxAge: 60 * 60 * 24 * 7,
-//                 secure: process.env.NODE_ENV === "production",
-//                 sameSite: "lax",
-//               },
-//             );
-//           }
+        if (isCancelled) return;
+        setStatus("success");
 
-//           if (result.data?.session?.provider_token || providerToken) {
-//             setCookie(
-//               "googleAccessToken",
-//               result.data.session?.provider_token || providerToken,
-//               {
-//                 maxAge: 60 * 60,
-//                 secure: process.env.NODE_ENV === "production",
-//                 sameSite: "lax",
-//               },
-//             );
-//           }
+        const redirectTo = token
+          ? destination
+          : `${LINKS.auth_signin}?reason=oauth-complete`;
 
-//           await refreshSession();
+        for (let i = 3; i >= 1; i -= 1) {
+          if (isCancelled) return;
+          setCountdown(i);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
 
-//           setStatus("success");
-//           setMessage("Authentication successful! Redirecting...");
-//           setLoading(false);
+        if (!isCancelled) {
+          router.push(redirectTo);
+        }
+      } catch (error) {
+        const rawMessage = error instanceof Error ? error.message : "Authentication failed";
+        const mapped = mapCallbackError(rawMessage);
 
-//           setTimeout(() => {
-//             router.push("/");
-//           }, 1500);
-//           return;
-//         }
+        if (isCancelled) return;
+        setStatus("error");
+        setDescription(mapped.description);
+        setErrorDetail(rawMessage);
+      }
+    };
 
-//         // Only check for authorization code (code flow)
-//         // We strictly ignore hash fragments to prevent bypassing backend membership checks
-//         const code = searchParams.get("code");
-//         const errorParam = searchParams.get("error");
-//         const errorDescription = searchParams.get("error_description");
+    run();
+    return () => {
+      isCancelled = true;
+    };
+  }, [destination, memberProfile?.isOnboarded, router, searchParams, setAuthToken]);
 
-//         // Collect all URL parameters for debugging
-//         const allParams: Record<string, string> = {};
-//         searchParams.forEach((value, key) => {
-//           allParams[key] = value;
-//         });
+  if (status === "loading") {
+    return (
+      <AuthTransitionCard
+        status="loading"
+        title="Finalizing your sign in"
+        description={description}
+      />
+    );
+  }
 
-//         setDebugInfo({
-//           url: typeof window !== "undefined" ? window.location.href : "N/A",
-//           params: allParams,
-//           hasCode: !!code,
-//           hasError: !!errorParam,
-//         });
+  if (status === "success") {
+    return (
+      <AuthTransitionCard
+        status="success"
+        title="Sign in successful"
+        description={description}
+        countdownSeconds={countdown}
+      />
+    );
+  }
 
-//         if (errorParam) {
-//           throw new Error(errorDescription || errorParam);
-//         }
+  return (
+    <AuthTransitionCard
+      status="error"
+      title="Sign in could not be completed"
+      description={description}
+      detail={errorDetail}
+      primaryAction={{ label: "Back to Sign In", href: LINKS.auth_signin }}
+      secondaryAction={{ label: "Go Home", href: LINKS.landing }}
+    />
+  );
+}
 
-//         if (!code) {
-//           throw new Error(
-//             `No authorization code or access token received. Check debug info below.`,
-//           );
-//         }
-
-//         // Exchange code for session
-//         const response = await fetch(
-//           `${NEXUS_API_URL}/api/v1/auth-system/exchange`,
-//           {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify({ data: { code } }),
-//           },
-//         );
-
-//         const result = await response.json();
-
-//         if (!response.ok || result.status !== "success") {
-//           const detail = result.errors?.[0]?.detail;
-//           const message =
-//             detail || result.message || "Failed to exchange authorization code";
-//           throw new Error(message);
-//         }
-
-//         // Store session tokens
-//         if (result.data?.session?.access_token) {
-//           setCookie("supabaseAccessToken", result.data.session.access_token, {
-//             maxAge: 60 * 60,
-//             secure: process.env.NODE_ENV === "production",
-//             sameSite: "lax",
-//           });
-//         }
-
-//         if (result.data?.session?.refresh_token) {
-//           setCookie("supabaseRefreshToken", result.data.session.refresh_token, {
-//             maxAge: 60 * 60 * 24 * 7,
-//             secure: process.env.NODE_ENV === "production",
-//             sameSite: "lax",
-//           });
-//         }
-
-//         if (result.data?.session?.provider_token) {
-//           setCookie("googleAccessToken", result.data.session.provider_token, {
-//             maxAge: 60 * 60,
-//             secure: process.env.NODE_ENV === "production",
-//             sameSite: "lax",
-//           });
-//         }
-
-//         await refreshSession();
-
-//         setStatus("success");
-//         setMessage("Authentication successful! Redirecting...");
-//         setLoading(false);
-
-//         // Redirect to home or dashboard
-//         setTimeout(() => {
-//           router.push("/");
-//         }, 1500);
-//       } catch (err: any) {
-//         console.error("OAuth callback error:", err);
-//         setError(err.message || "Authentication failed");
-//         setStatus("error");
-//         setLoading(false);
-//       }
-//     };
-
-//     handleCallback();
-//   }, [searchParams, router]);
-
-//   if (status === "success") {
-//     return (
-//       <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-green-50 to-blue-50">
-//         <Stack gap="md" className="text-center">
-//           <div className="text-green-500 text-6xl">✓</div>
-//           <Text variant="heading-2" className="text-gray-800">Success!</Text>
-//           <Text variant="body" className="text-gray-700">{message}</Text>
-//         </Stack>
-//       </div>
-//     );
-//   }
-
-//   const isMembershipError =
-//     error?.toLowerCase().includes("member") ||
-//     error?.toLowerCase().includes("access denied");
-
-//   if (error) {
-//     return (
-//       <Stack justify="center" align="center" className="min-h-screen px-4">
-//         <Container maxWidth="2xl" padding="none">
-//           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-//             <Stack gap="md">
-//               <Text variant="heading-2" className="text-red-600">
-//                 Authentication Error
-//               </Text>
-//               <Text variant="body" className="text-red-700">{error}</Text>
-//               {isMembershipError && (
-//                 <div className="p-4 bg-yellow-50 text-yellow-900 rounded-md border border-yellow-200">
-//                   <Stack gap="xs">
-//                     <Text variant="label">Membership Required</Text>
-//                     <Text variant="body-sm">
-//                       You must be a registered GDG member to sign in.
-//                     </Text>
-//                   </Stack>
-//                 </div>
-//               )}
-//             </Stack>
-//           </div>
-
-//           {debugInfo && (
-//             <div className="bg-gray-100 rounded-lg p-6">
-//               <Stack gap="sm">
-//                 <Text variant="heading-3">Debug Information</Text>
-//                 <pre className="bg-gray-900 text-green-400 p-4 rounded overflow-x-auto text-sm">
-//                   {JSON.stringify(debugInfo, null, 2)}
-//                 </pre>
-//               </Stack>
-//             </div>
-//           )}
-
-//           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-//             <Stack gap="sm">
-//               <Text variant="heading-3" className="text-blue-900">
-//                 Troubleshooting Steps
-//               </Text>
-//               <ul className="list-disc list-inside space-y-2 text-blue-800 text-sm">
-//                 <li>
-//                   Check that the redirect URL is configured in Supabase dashboard
-//                 </li>
-//                 <li>Verify that Google OAuth is enabled in Supabase</li>
-//                 <li>Ensure the backend API is running on {NEXUS_API_URL}</li>
-//                 <li>Check browser console for additional errors</li>
-//               </ul>
-//             </Stack>
-//           </div>
-
-//           <Button
-//             variant="default"
-//             onClick={() => router.push("/")}
-//             className="w-full"
-//           >
-//             Return Home
-//           </Button>
-//         </Container>
-//       </Stack>
-//     );
-//   }
-
-//   return (
-//     <div className="flex min-h-screen items-center justify-center">
-//       <Stack gap="md" className="text-center">
-//         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-//         <Text variant="body" className="text-gray-700">{message}</Text>
-//       </Stack>
-//     </div>
-//   );
-// }
-
-// export default function AuthCallback() {
-//   return (
-//     <Suspense
-//       fallback={
-//         <div className="flex min-h-screen items-center justify-center">
-//           <Stack gap="md" className="text-center">
-//             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-//             <Text variant="body" className="text-gray-700">Loading authentication...</Text>
-//           </Stack>
-//         </div>
-//       }
-//     >
-//       <AuthCallbackContent />
-//     </Suspense>
-//   );
-// }
+export default function AuthCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <AuthTransitionCard
+          status="loading"
+          title="Loading callback"
+          description="Preparing your authentication callback details..."
+        />
+      }
+    >
+      <AuthCallbackContent />
+    </Suspense>
+  );
+}

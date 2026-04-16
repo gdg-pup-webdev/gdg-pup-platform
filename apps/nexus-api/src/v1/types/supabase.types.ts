@@ -14,6 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_nfc_card_scans: {
+        Row: {
+          date: string
+          id: string
+          nfcCardId: string | null
+          scanContext: string | null
+          scannerId: string | null
+        }
+        Insert: {
+          date?: string
+          id?: string
+          nfcCardId?: string | null
+          scanContext?: string | null
+          scannerId?: string | null
+        }
+        Update: {
+          date?: string
+          id?: string
+          nfcCardId?: string | null
+          scanContext?: string | null
+          scannerId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_nfc_card_scans_nfcCardId_fkey"
+            columns: ["nfcCardId"]
+            isOneToOne: false
+            referencedRelation: "nfc_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_profile_views: {
+        Row: {
+          date: string
+          id: string
+          profileGdgId: string | null
+          source: string | null
+          user_agent: string | null
+          viewerGdgId: string | null
+        }
+        Insert: {
+          date?: string
+          id?: string
+          profileGdgId?: string | null
+          source?: string | null
+          user_agent?: string | null
+          viewerGdgId?: string | null
+        }
+        Update: {
+          date?: string
+          id?: string
+          profileGdgId?: string | null
+          source?: string | null
+          user_agent?: string | null
+          viewerGdgId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_profile_views_profile_gdg_id_fkey"
+            columns: ["profileGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+          {
+            foreignKeyName: "analytics_profile_views_viewerGdgId_fkey"
+            columns: ["viewerGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
+      }
       article: {
         Row: {
           author_id: string | null
@@ -99,6 +173,7 @@ export type Database = {
           gdg_event_id: number | null
           id: string
           max_capacity: string | null
+          rsvp: number | null
           short_description: string | null
           speakers: string[] | null
           start_date: string | null
@@ -122,6 +197,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           max_capacity?: string | null
+          rsvp?: number | null
           short_description?: string | null
           speakers?: string[] | null
           start_date?: string | null
@@ -145,6 +221,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           max_capacity?: string | null
+          rsvp?: number | null
           short_description?: string | null
           speakers?: string[] | null
           start_date?: string | null
@@ -208,6 +285,41 @@ export type Database = {
           },
         ]
       }
+      event_images: {
+        Row: {
+          created_at: string
+          eventId: string | null
+          id: string
+          imageUrl: string | null
+          position: number | null
+          updatedAt: string | null
+        }
+        Insert: {
+          created_at?: string
+          eventId?: string | null
+          id?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Update: {
+          created_at?: string
+          eventId?: string | null
+          id?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_images_eventId_fkey"
+            columns: ["eventId"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       file_record: {
         Row: {
           created_at: string
@@ -218,8 +330,17 @@ export type Database = {
           file_type: string
           folder_id: string | null
           id: string
+          is_deleted: boolean | null
           preview_url: string | null
+          preview_url_128: string | null
+          preview_url_256: string | null
+          preview_url_512: string | null
+          preview_url_64: string | null
           storage_ref: string | null
+          storage_ref_128: string | null
+          storage_ref_256: string | null
+          storage_ref_512: string | null
+          storage_ref_64: string | null
           updated_at: string
         }
         Insert: {
@@ -231,8 +352,17 @@ export type Database = {
           file_type?: string
           folder_id?: string | null
           id?: string
+          is_deleted?: boolean | null
           preview_url?: string | null
+          preview_url_128?: string | null
+          preview_url_256?: string | null
+          preview_url_512?: string | null
+          preview_url_64?: string | null
           storage_ref?: string | null
+          storage_ref_128?: string | null
+          storage_ref_256?: string | null
+          storage_ref_512?: string | null
+          storage_ref_64?: string | null
           updated_at?: string
         }
         Update: {
@@ -244,8 +374,17 @@ export type Database = {
           file_type?: string
           folder_id?: string | null
           id?: string
+          is_deleted?: boolean | null
           preview_url?: string | null
+          preview_url_128?: string | null
+          preview_url_256?: string | null
+          preview_url_512?: string | null
+          preview_url_64?: string | null
           storage_ref?: string | null
+          storage_ref_128?: string | null
+          storage_ref_256?: string | null
+          storage_ref_512?: string | null
+          storage_ref_64?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -304,6 +443,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
+          is_onboarded: boolean | null
           is_public: boolean | null
           last_name: string | null
           learning_interests: string | null
@@ -314,6 +454,7 @@ export type Database = {
           other_links: string | null
           portfolio_url: string | null
           program: string | null
+          section_order: string | null
           skills_summary: string | null
           suffix: string | null
           technical_skills: string | null
@@ -331,6 +472,7 @@ export type Database = {
           first_name?: string | null
           gdg_id: string
           github_url?: string | null
+          is_onboarded?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
           learning_interests?: string | null
@@ -341,6 +483,7 @@ export type Database = {
           other_links?: string | null
           portfolio_url?: string | null
           program?: string | null
+          section_order?: string | null
           skills_summary?: string | null
           suffix?: string | null
           technical_skills?: string | null
@@ -358,6 +501,7 @@ export type Database = {
           first_name?: string | null
           gdg_id?: string
           github_url?: string | null
+          is_onboarded?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
           learning_interests?: string | null
@@ -368,6 +512,7 @@ export type Database = {
           other_links?: string | null
           portfolio_url?: string | null
           program?: string | null
+          section_order?: string | null
           skills_summary?: string | null
           suffix?: string | null
           technical_skills?: string | null
@@ -461,6 +606,41 @@ export type Database = {
           },
         ]
       }
+      member_project_images: {
+        Row: {
+          created_at: string
+          id: string
+          imageUrl: string | null
+          memberProjectId: string | null
+          position: number | null
+          updatedAt: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          imageUrl?: string | null
+          memberProjectId?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          imageUrl?: string | null
+          memberProjectId?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_project_images_memberProjectId_fkey"
+            columns: ["memberProjectId"]
+            isOneToOne: false
+            referencedRelation: "member_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_projects: {
         Row: {
           createdAt: string
@@ -469,6 +649,7 @@ export type Database = {
           id: string
           mainImageUrl: string | null
           memberGdgId: string | null
+          position: number | null
           secondaryImageUrl: string | null
           startDate: string | null
           tertiaryImageUrl: string | null
@@ -482,6 +663,7 @@ export type Database = {
           id?: string
           mainImageUrl?: string | null
           memberGdgId?: string | null
+          position?: number | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
@@ -495,6 +677,7 @@ export type Database = {
           id?: string
           mainImageUrl?: string | null
           memberGdgId?: string | null
+          position?: number | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
@@ -618,6 +801,39 @@ export type Database = {
           is_used?: boolean
           otp_code?: string
           reference?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image: string
+          link: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          image: string
+          link?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image?: string
+          link?: string | null
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1346,6 +1562,8 @@ export type Database = {
           source: Database["public"]["Enums"]["sparkmates_source"]
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       verify_member: {
         Args: { search_term: string }
         Returns: {
@@ -1358,6 +1576,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
+          is_onboarded: boolean | null
           is_public: boolean | null
           last_name: string | null
           learning_interests: string | null
@@ -1368,6 +1587,7 @@ export type Database = {
           other_links: string | null
           portfolio_url: string | null
           program: string | null
+          section_order: string | null
           skills_summary: string | null
           suffix: string | null
           technical_skills: string | null

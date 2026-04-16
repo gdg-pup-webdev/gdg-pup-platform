@@ -46,6 +46,25 @@ export function LenisProvider({ children }: { children: ReactNode }) {
 
     lenisRef.current = lenis;
 
+    // ── Stop Lenis whenever a <dialog> is open so the background can't scroll ──
+    function syncLenisToDialog() {
+      const hasOpenDialog = document.querySelector("dialog") !== null;
+      if (hasOpenDialog) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    }
+
+    const observer = new MutationObserver(syncLenisToDialog);
+    observer.observe(document.body, {
+      subtree: true,
+      childList: true,
+    });
+
+    // Run once on mount in case a dialog is already open
+    syncLenisToDialog();
+
     let rafId: number;
 
     function raf(time: DOMHighResTimeStamp) {
@@ -57,6 +76,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
 
     return () => {
       cancelAnimationFrame(rafId);
+      observer.disconnect();
       lenis.destroy();
       lenisRef.current = null;
     };

@@ -1,4 +1,40 @@
 import { ChangeProfilePicture } from '../useCases/ChangeProfilePicture';
+
+const DEFAULT_SPARKMATES_SECTION_ORDER = [
+  "customButtons",
+  "skillsAndInterests",
+  "projects",
+  "gdgImpact",
+  "badges",
+] as const;
+
+export type SparkmatesSectionId =
+  (typeof DEFAULT_SPARKMATES_SECTION_ORDER)[number];
+
+const isSparkmatesSectionId = (value: string): value is SparkmatesSectionId => {
+  return (DEFAULT_SPARKMATES_SECTION_ORDER as readonly string[]).includes(value);
+};
+
+const normalizeSectionOrder = (
+  value: SparkmatesSectionId[] | string[] | undefined,
+): SparkmatesSectionId[] => {
+  const incoming: SparkmatesSectionId[] = Array.isArray(value)
+    ? value.reduce<SparkmatesSectionId[]>((acc, item) => {
+        if (typeof item === "string" && isSparkmatesSectionId(item)) {
+          acc.push(item);
+        }
+        return acc;
+      }, [])
+    : [];
+
+  const unique: SparkmatesSectionId[] = Array.from(new Set(incoming));
+  const missing: SparkmatesSectionId[] = DEFAULT_SPARKMATES_SECTION_ORDER.filter(
+    (item): item is SparkmatesSectionId => !unique.includes(item),
+  );
+
+  return [...unique, ...missing];
+};
+
 export type GdgMemberProps = {
   // Core Identifiers
   gdgId: string;
@@ -14,6 +50,8 @@ export type GdgMemberProps = {
    * profile
    */
   avatarUrl: string | null;
+  avatarUrl64: string | null;
+  avatarUrl512: string | null;
 
   // education
   program: string | null;
@@ -43,8 +81,10 @@ export type GdgMemberProps = {
   technicalSkills: string[];
   learningInterests: string[];
   toolsAndTechnologies: string[];
+  sectionOrder: SparkmatesSectionId[];
 
-  isPublic: boolean;
+  isOnboarded: boolean | null;
+  isPublic: boolean | null;
 };
 
 export type GdgMemberInsertProps = GdgMemberProps;
@@ -54,7 +94,10 @@ export class GdgMember {
   private _props: GdgMemberProps;
 
   private constructor(props: GdgMemberProps) {
-    this._props = props;
+    this._props = {
+      ...props,
+      sectionOrder: normalizeSectionOrder(props.sectionOrder),
+    };
   }
 
   static create(props: GdgMemberInsertProps): GdgMember {
@@ -73,6 +116,7 @@ export class GdgMember {
     this._props = {
       ...this._props,
       ...updates,
+      sectionOrder: normalizeSectionOrder(updates.sectionOrder ?? this._props.sectionOrder),
     };
   } 
 
@@ -84,7 +128,13 @@ export class GdgMember {
     this._props.isPublic = false
   }
 
-  changeProfilePicture(url: string) : void {
-    this._props.avatarUrl = url
+  changeProfilePicture(urls: {
+    avatarUrl: string;
+    avatarUrl64: string;
+    avatarUrl512: string;
+  }) : void {
+    this._props.avatarUrl = urls.avatarUrl
+    this._props.avatarUrl64 = urls.avatarUrl64
+    this._props.avatarUrl512 = urls.avatarUrl512
   }
 }

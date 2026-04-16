@@ -27,6 +27,24 @@ interface FileCardProps {
   isFolder?: boolean;
 }
 
+type FileRecordWithImageVariants = FileRecord & {
+  previewUrl64?: string | null;
+  previewUrl128?: string | null;
+  previewUrl256?: string | null;
+  previewUrl512?: string | null;
+};
+
+const getCardImageUrl = (file: FileRecordWithImageVariants): string | undefined => {
+  return (
+    file.previewUrl128 ||
+    file.previewUrl64 ||
+    file.previewUrl256 ||
+    file.previewUrl512 ||
+    file.previewUrl ||
+    undefined
+  );
+};
+
 export function FileCard({ file, onEdit, onDelete, onView, onOpen, isFolder }: FileCardProps) {
   const renderFileFallback = () => {
     if (isFolder) {
@@ -131,11 +149,14 @@ export function FileCard({ file, onEdit, onDelete, onView, onOpen, isFolder }: F
     ? new Date((file as FileRecord).createdAt).toLocaleDateString()
     : null;
   const isImageFile = !isFolder && ((file as FileRecord).fileType?.toLowerCase() || "").startsWith("image/");
+  const cardImageUrl = isImageFile
+    ? getCardImageUrl(file as FileRecordWithImageVariants)
+    : undefined;
 
   return (
     <AdminEntityCard
       title={name}
-      mediaImageUrl={isImageFile ? (file as FileRecord).previewUrl : undefined}
+      mediaImageUrl={cardImageUrl}
       mediaAlt={name}
       mediaFallback={renderFileFallback()}
       mediaClassName={isFolder ? "bg-gradient-to-br from-white to-teal-50" : undefined}

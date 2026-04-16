@@ -51,7 +51,7 @@ const FadeInSection = ({
 };
 export function PartnershipSection() {
   return (
-    <div className="bg-[#010B1D] relative w-full overflow-hidden pt-60 pb-48 font-['Google_Sans',sans-serif]">
+    <div className="bg-[#010B1D] relative w-full overflow-hidden pt-32 sm:pt-60 pb-24 sm:pb-48 font-['Google_Sans',sans-serif]">
       {/* Stars Background */}
       <div className="absolute inset-x-0 bottom-0 pointer-events-none opacity-40 h-[100%] w-full z-0">
         <div
@@ -122,13 +122,13 @@ export function PartnershipSection() {
           {/* Section 1 — Hero */}
           <FadeInSection className="mb-32 flex flex-col items-center w-full">
             <Stack align="center" style={{ gap: "24px" }} className="w-full">
-              <Text variant="heading-2" gradient="white-yellow" align="center">Innovation Through Collaboration</Text>
+              <Text variant="heading-2" gradient="white-yellow" align="center" className="text-[32px] sm:text-auto">Innovation Through Collaboration</Text>
 
-              <div className="bg-[rgba(255,255,255,0.05)] border border-solid border-white rounded-[28px] p-[20px] max-w-[1200px] w-full flex items-center justify-center">
+              <div className="bg-[rgba(255,255,255,0.05)] border border-solid border-white rounded-[28px] p-[16px] sm:p-[20px] max-w-[1200px] w-full flex items-center justify-center">
                 <Text
                   variant="body"
                   align="center"
-                  className="text-white text-[20px] sm:text-[18px] md:text-[24px] leading-[1.5]"
+                  className="text-white text-[16px] sm:text-[18px] md:text-[24px] leading-[1.5]"
                 >
                   We collaborate with forward-thinking organizations to foster
                   innovation, deliver meaningful programs, and bridge the gap
@@ -144,17 +144,17 @@ export function PartnershipSection() {
           <FadeInSection delay={0.1} className="mb-32 flex flex-col items-center w-full">
             <Stack align="center" style={{ gap: "28px" }} className="w-full max-w-[1000px]">
               <div className="flex flex-col items-center text-center w-full" style={{ gap: "18px" }}>
-                <h2 className="font-['Roboto',sans-serif] font-bold text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
+                <h2 className="font-['Roboto',sans-serif] font-bold text-[36px] sm:text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
                   WHY WE DO THIS
                 </h2>
 
-                <h3 className="font-bold text-[36px] text-white">
+                <h3 className="font-bold text-[24px] sm:text-[36px] leading-[1.3] text-white">
                   Creating value through trust and shared purpose
                 </h3>
               </div>
 
-              <div className="border border-white border-solid p-[20px] rounded-[28px] w-full flex items-center justify-center">
-                <p className="text-center text-[20px] leading-[1.5] text-white">
+              <div className="border border-white border-solid p-[16px] sm:p-[20px] rounded-[28px] w-full flex items-center justify-center">
+                <p className="text-center text-[16px] sm:text-[20px] leading-[1.5] text-white">
                   <span className="bg-clip-text bg-gradient-to-t from-[#51a2ff] text-transparent to-[#155dfc] font-semibold">
                     Google Developer Group PUP Nexus
                   </span>{" "}
@@ -176,7 +176,7 @@ export function PartnershipSection() {
           {/* Section 3 — Partners Grid (Figma-exact CSS Grid with explicit col/row placement) */}
           <FadeInSection delay={0.15} className="mb-32 flex flex-col items-center w-full relative">
             <Stack align="center" style={{ gap: "64px" }} className="w-full">
-              <h2 className="font-['Roboto',sans-serif] font-bold text-[32px] leading-[1.3] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] text-center w-full tracking-normal">
+              <h2 className="font-['Roboto',sans-serif] font-bold text-[28px] sm:text-[32px] leading-[1.3] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] text-center w-full tracking-normal">
                 POWERED BY OUR PARTNERS
               </h2>
 
@@ -245,7 +245,7 @@ export function PartnershipSection() {
             <div className="flex flex-col-reverse xl:flex-row items-center xl:items-center xl:justify-between p-6 sm:p-[50px] relative w-full rounded-[28px]" style={{ gap: "20px" }}>
               {/* Content */}
               <div className="flex flex-col items-center xl:items-start text-center xl:text-left shrink-0 z-10 w-full xl:w-auto" style={{ gap: "23px", maxWidth: "648px" }}>
-                <h2 className="font-['Roboto',sans-serif] font-bold text-[36px] sm:text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
+                <h2 className="font-['Roboto',sans-serif] font-bold text-[28px] sm:text-[36px] xl:text-[48px] leading-[1.2] bg-clip-text text-transparent bg-gradient-to-r from-[#FFF5C3] via-[#FCE48D] to-[#F2B64A] tracking-normal">
                   Ready to Partner With Us?
                 </h2>
 
@@ -257,13 +257,13 @@ export function PartnershipSection() {
                 </p>
 
                 <div className="pt-2">
-                  <Link href="#" className="inline-block hover:scale-105 transition-transform" style={{ textDecoration: "none" }}>
+                  <Link prefetch={false} href="https://forms.gle/UNEPNZYaATrd1jjM7" target="_blank" rel="noopener noreferrer" className="inline-block hover:scale-105 transition-transform" style={{ textDecoration: "none" }}>
                     {/* Gradient border wrapper */}
                     <div className="p-[1px] rounded-[10px] bg-[linear-gradient(90deg,#EA4335_0%,#FBBC04_33%,#34A853_66%,#4285F4_100%)] cursor-pointer" style={{ boxShadow: "0px 4px 46.1px 0px rgba(0,0,0,0.25), 0px 4px 4px 0px rgba(0,0,0,0.25)" }}>
                       {/* Inner background and shadows */}
-                      <div className="bg-gradient-to-b from-[#4A4A4A] to-[#2B2B2B] rounded-[9px] py-[12px] px-[36px] flex items-center justify-center relative overflow-hidden h-full w-full" style={{ boxShadow: "inset 0px 2px 0px 0px rgba(255,255,255,0.3)" }}>
-                        <span className="font-bold text-[24px] text-white leading-[1.5] tracking-wide text-center whitespace-nowrap" style={{ textShadow: "0px 2px 4px rgba(0,0,0,0.5)" }}>
-                          Join Now!
+                      <div className="bg-gradient-to-b from-[#4A4A4A] to-[#2B2B2B] rounded-[9px] py-[12px] px-[24px] sm:px-[36px] flex items-center justify-center relative overflow-hidden h-full w-full" style={{ boxShadow: "inset 0px 2px 0px 0px rgba(255,255,255,0.3)" }}>
+                        <span className="font-bold text-[20px] sm:text-[24px] text-white leading-[1.5] tracking-wide text-center whitespace-nowrap" style={{ textShadow: "0px 2px 4px rgba(0,0,0,0.5)" }}>
+                          Partner with Us!
                         </span>
                       </div>
                     </div>

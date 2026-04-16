@@ -61,15 +61,6 @@ export const RESOURCE_LIBRARY = [
     variant: "heading-2",
     gradient: "white-yellow",
     href: "/products/executives",
-    image: "/products/executives-logo.png",
+    image: "/products/executives-logo.webp",
   },
 ] as const;
-
-export const GDG_PRODUCTS = [
-  "GDG ID Platform",
-  "GDG Sparky Fortune",
-  "GDG Photobooth",
-  "Product Name",
-  "Product Name",
-  "Product Name",
-];

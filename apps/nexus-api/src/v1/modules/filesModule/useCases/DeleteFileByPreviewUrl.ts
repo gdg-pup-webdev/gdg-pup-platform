@@ -14,13 +14,21 @@ export class DeleteFileByPreviewUrl {
       return true;
     }
 
-    const storageRes = await this.fileStorage.deleteFile(
+    const references = [
       fileRecord.props.storageReference,
-    );
-    const repositoryRes = await this.fileRepository.deleteById(
-      fileRecord.props.id,
+      fileRecord.props.storageRef64,
+      fileRecord.props.storageRef128,
+      fileRecord.props.storageRef256,
+      fileRecord.props.storageRef512,
+    ].filter((ref): ref is string => Boolean(ref));
+
+    const storageResults = await Promise.all(
+      references.map((reference) => this.fileStorage.deleteFile(reference)),
     );
 
-    return storageRes && repositoryRes;
+    fileRecord.markAsDeleted();
+    await this.fileRepository.saveUpdates(fileRecord);
+
+    return storageResults.every(Boolean);
   }
 }

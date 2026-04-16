@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { ASSETS } from "@/lib/constants/assets";
 
 export const AuthParallaxBackground = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -30,7 +31,7 @@ export const AuthParallaxBackground = () => {
           transform: 'translate(' + (mousePosition.x * -5) + 'px, ' + (mousePosition.y * -5) + 'px)'
         }}
       >
-        <Image src="/auth/auth-rainbow-streak.png" alt="Rainbow Streak" className="object-cover blur-[150px]" fill priority />
+        <Image src={ASSETS.AUTH.RAINBOW_STREAK} alt="Rainbow Streak" className="object-cover blur-[150px]" fill priority />
       </div>
       
       <div 

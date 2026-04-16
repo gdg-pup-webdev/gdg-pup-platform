@@ -14,6 +14,7 @@ import { useSearchTeams } from "@/features/teams/hooks/useTeams";
 import { toast } from "react-toastify";
 import { useSyncAllEventToBevy } from "../hooks/useSyncAllEventToBevy";
 import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";
+import { useAddEventImage, useDeleteEventImage, useReorderEventImages } from "../hooks/useEventImageMutations";
 import { ListLoadingState } from "@/components/admin/ListLoadingState";
 import { ListErrorState } from "@/components/admin/ListErrorState";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
@@ -22,6 +23,62 @@ import { AdminSearchSection } from "@/components/admin/AdminSearchSection";
 import { AdminCardGrid } from "@/components/admin/AdminCardGrid";
 import { AdminListScaffold } from "@/components/admin/AdminListScaffold";
 import { useAdminQueryParams } from "@/lib/useAdminQueryParams";
+
+const MAX_EVENT_HIGHLIGHT_IMAGES = 20;
+
+const getFileSignature = (file: File) =>
+  `${file.name}-${file.size}-${file.lastModified}-${file.type}`;
+
+const dedupeFiles = (files: File[]): File[] => {
+  const seen = new Set<string>();
+  const unique: File[] = [];
+
+  for (const file of files) {
+    const signature = getFileSignature(file);
+    if (seen.has(signature)) {
+      continue;
+    }
+
+    seen.add(signature);
+    unique.push(file);
+  }
+
+  return unique;
+};
+
+const getRemovedImageIndices = (original: string[], desired: string[]): number[] => {
+  const desiredCounts = new Map<string, number>();
+  for (const imageUrl of desired) {
+    desiredCounts.set(imageUrl, (desiredCounts.get(imageUrl) || 0) + 1);
+  }
+
+  const runningCounts = new Map<string, number>();
+  const removedIndices: number[] = [];
+
+  for (let index = 0; index < original.length; index += 1) {
+    const imageUrl = original[index];
+    const seenCount = (runningCounts.get(imageUrl) || 0) + 1;
+    runningCounts.set(imageUrl, seenCount);
+
+    if (seenCount > (desiredCounts.get(imageUrl) || 0)) {
+      removedIndices.push(index);
+    }
+  }
+
+  return removedIndices;
+};
+
+const arrayMoveLocal = <T,>(items: T[], fromIndex: number, toIndex: number): T[] => {
+  const next = [...items];
+  const [moved] = next.splice(fromIndex, 1);
+
+  if (moved === undefined) {
+    return items;
+  }
+
+  next.splice(toIndex, 0, moved);
+  return next;
+};
 
 export const EventsList: React.FC = () => {
   const { getNumber, getString, setQueryParams } = useAdminQueryParams();
@@ -112,6 +169,9 @@ export const EventsList: React.FC = () => {
   const createFromBevyMutation = useCreateEventFromBevyEvent();
   const updateMutation = useUpdateEvent();
   const deleteMutation = useDeleteEvent();
+  const addEventImageMutation = useAddEventImage();
+  const deleteEventImageMutation = useDeleteEventImage();
+  const reorderEventImagesMutation = useReorderEventImages();
   const syncOneMutation = useSyncOneEventToBevy();
   const [syncingEventId, setSyncingEventId] = useState<string | null>(null);
 
@@ -195,12 +255,118 @@ export const EventsList: React.FC = () => {
   };
 
   const handleFormSubmit = async (data: EventInsert | EventUpdate) => {
+    const {
+      highlightImageFiles = [],
+      originalHighlightImages = [],
+      images = [],
+      ...eventPayload
+    } = data as EventInsert;
+
+    const normalizedExistingImages = (images || [])
+      .map((imageUrl) => imageUrl.trim())
+      .filter((imageUrl) => imageUrl.length > 0)
+      .slice(0, MAX_EVENT_HIGHLIGHT_IMAGES);
+    const pendingHighlightFiles = dedupeFiles(highlightImageFiles || []);
+
+    if (
+      normalizedExistingImages.length + pendingHighlightFiles.length >
+      MAX_EVENT_HIGHLIGHT_IMAGES
+    ) {
+      toast.error("You can only add up to 20 highlight images.");
+      return;
+    }
+
     try {
       if (selectedEvent) {
-        await updateMutation.mutateAsync({ eventId: selectedEvent.id, data: data as EventUpdate });
+        const originalImages = originalHighlightImages.length > 0
+          ? originalHighlightImages
+          : selectedEvent.images || [];
+
+        const removedIndices = getRemovedImageIndices(
+          originalImages,
+          normalizedExistingImages,
+        ).sort((a, b) => b - a);
+
+        for (const imageIndex of removedIndices) {
+          await deleteEventImageMutation.mutateAsync({
+            eventId: selectedEvent.id,
+            imageIndex,
+          });
+        }
+
+        const removedIndexSet = new Set<number>(removedIndices);
+        let currentExistingOrder = originalImages.filter(
+          (_, index) => !removedIndexSet.has(index),
+        );
+
+        for (let toIndex = 0; toIndex < normalizedExistingImages.length; toIndex += 1) {
+          const targetImage = normalizedExistingImages[toIndex];
+
+          if (currentExistingOrder[toIndex] === targetImage) {
+            continue;
+          }
+
+          const fromIndex = currentExistingOrder.findIndex(
+            (imageUrl, currentIndex) =>
+              currentIndex >= toIndex && imageUrl === targetImage,
+          );
+
+          if (fromIndex < 0) {
+            continue;
+          }
+
+          await reorderEventImagesMutation.mutateAsync({
+            eventId: selectedEvent.id,
+            fromIndex,
+            toIndex,
+          });
+
+          currentExistingOrder = arrayMoveLocal(
+            currentExistingOrder,
+            fromIndex,
+            toIndex,
+          );
+        }
+
+        await updateMutation.mutateAsync({
+          eventId: selectedEvent.id,
+          data: {
+            ...(eventPayload as EventUpdate),
+            images: normalizedExistingImages,
+          },
+        });
+
+        for (const image of pendingHighlightFiles) {
+          await addEventImageMutation.mutateAsync({
+            eventId: selectedEvent.id,
+            image,
+          });
+        }
+
         toast.success("Event updated successfully");
       } else {
-        await createMutation.mutateAsync(data as EventInsert);
+        const createdEventResponse = await createMutation.mutateAsync({
+          ...(eventPayload as EventInsert),
+          images: [],
+        });
+
+        const createdEventId = (createdEventResponse as any)?.data?.id as
+          | string
+          | undefined;
+
+        if (!createdEventId && pendingHighlightFiles.length > 0) {
+          throw new Error("Failed to resolve the created event ID for image upload.");
+        }
+
+        if (createdEventId) {
+          for (const image of pendingHighlightFiles) {
+            await addEventImageMutation.mutateAsync({
+              eventId: createdEventId,
+              image,
+            });
+          }
+        }
+
         toast.success("Event created successfully");
       }
       closeModal();
@@ -576,7 +742,13 @@ export const EventsList: React.FC = () => {
         onClose={closeModal}
         onSubmit={handleFormSubmit}
         initialData={modal === "edit" ? selectedEvent : undefined}
-        isSubmitting={createMutation.isPending || updateMutation.isPending}
+        isSubmitting={
+          createMutation.isPending ||
+          updateMutation.isPending ||
+          addEventImageMutation.isPending ||
+          deleteEventImageMutation.isPending ||
+          reorderEventImagesMutation.isPending
+        }
       />
 
       <EventDetailsModal

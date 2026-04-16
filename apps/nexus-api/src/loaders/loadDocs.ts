@@ -1,33 +1,91 @@
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { configs } from "../configs/configs.js";
 import { generateOpenApiOptions } from "@packages/nexus-api-contracts";
 import converter from "openapi-to-postmanv2";
+import fs from "fs";
+import path from "path";
+
+// process.cwd() resolves to apps/nexus-api/ at runtime because the Dockerfile
+// sets WORKDIR /app/apps/nexus-api before starting the server.
+const PREBUILT_SPEC_PATH = path.resolve(process.cwd(), "dist/openapi.json");
 
 let scalarMiddleware: any = null;
+let swaggerSpecCache: any = null;
+let postmanCollectionCache: any = null;
+
+/**
+ * Eagerly initializes the Swagger spec at module load time.
+ * This ensures we know immediately at startup whether the prebuilt
+ * openapi.json is present, and avoids an OOM crash on the first /docs request.
+ */
+const initSwaggerSpec = () => {
+  if (fs.existsSync(PREBUILT_SPEC_PATH)) {
+    console.log(`[docs] ✅ Pre-built OpenAPI spec found at: ${PREBUILT_SPEC_PATH}`);
+    try {
+      const raw = fs.readFileSync(PREBUILT_SPEC_PATH, "utf-8");
+      swaggerSpecCache = JSON.parse(raw);
+      console.log("[docs] ✅ OpenAPI spec loaded successfully from disk.");
+    } catch (err) {
+      console.error("[docs] ❌ Failed to parse pre-built OpenAPI spec:", err);
+    }
+  } else {
+    if (process.env.NODE_ENV === "production") {
+      // In production, never attempt dynamic generation — it will OOM.
+      // The build pipeline MUST produce dist/openapi.json before deployment.
+      console.error(
+        `[docs] ❌ CRITICAL: dist/openapi.json not found at ${PREBUILT_SPEC_PATH}. ` +
+        "Dynamic generation is disabled in production to prevent OOM crashes. " +
+        "Ensure the build step runs scripts/generate-openapi.ts before deploying."
+      );
+    } else {
+      // Fallback: dynamic generation for local dev (no pre-built file).
+      console.warn("[docs] ⚠️  Pre-built spec not found. Generating dynamically (local dev only)...");
+      const options = generateOpenApiOptions({
+        info: {
+          title: "Nexus API",
+          version: "2.1.0",
+          description: [
+            "Documentation for the GDG PUP Platform Nexus API.",
+            "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
+            "Public endpoints are marked without a lock icon in Swagger.",
+          ].join(" "),
+        },
+        servers: [
+          { url: "http://localhost:8000", description: "Local Dev" },
+          { url: "https://api.dev.gdgpup.org", description: "Development" },
+          { url: "https://api.staging.gdgpup.org", description: "Staging" },
+          { url: "https://api.gdgpup.org", description: "Production" },
+        ],
+        generateExample: true,
+      });
+      swaggerSpecCache = swaggerJsdoc(options);
+      console.log("[docs] ✅ OpenAPI spec generated dynamically.");
+    }
+  }
+};
+
+// Only initialize the spec if docs are actually going to be served.
+// No point loading/generating it if hideApiDocs=true.
+if (!configs.hideApiDocs) {
+  initSwaggerSpec();
+}
+
+const getSwaggerSpec = () => swaggerSpecCache;
 
 export const loadDocs = (app: Express) => {
-  const options = generateOpenApiOptions({
-    info: {
-      title: "Nexus API",
-      version: "2.1.0",
-      description: [
-        "Documentation for the GDG PUP Platform Nexus API.",
-        "Auth: Use `Authorization: Bearer <token>` for protected endpoints.",
-        "Public endpoints are marked without a lock icon in Swagger.",
-      ].join(" "),
-    },
-    servers: [{ url: "http://localhost:8000", description: "Local Dev" }],
-    generateExample: true,
-  });
+  if (configs.hideApiDocs) {
+    console.log("Skipping API documentation (HIDE_API_DOCS=true).");
+    return;
+  }
 
   /**
    * EXPOSE THE OPENAPI DOCUMENT
    */
   app.use("/docs/openapispec.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
-    res.send(swaggerSpec);
+    res.send(getSwaggerSpec());
   });
 
   app.use("/docs/postman-import.json", (req, res) => {
@@ -36,6 +94,11 @@ export const loadDocs = (app: Express) => {
       "attachment; filename=collection.postman_collection.json",
     );
     res.setHeader("Content-Type", "application/json");
+
+    if (postmanCollectionCache) {
+      res.send(postmanCollectionCache);
+      return;
+    }
 
     const optionsWithoutExamples = generateOpenApiOptions({
       info: {
@@ -53,7 +116,7 @@ export const loadDocs = (app: Express) => {
         { url: "https://api.staging.gdgpup.org", description: "Staging" },
         { url: "https://api.gdgpup.org", description: "Production" },
       ],
-      generateExample: true,
+      generateExample: false,
     });
     const swaggerSpecWithoutExamples = swaggerJsdoc(optionsWithoutExamples);
 
@@ -105,14 +168,13 @@ export const loadDocs = (app: Express) => {
         if (collection.item) cleanPostmanItems(collection.item);
         // --- RECURSIVE CLEANUP END ---
 
-        res.send(JSON.stringify(collection, null, 2));
+        postmanCollectionCache = JSON.stringify(collection, null, 2);
+        res.send(postmanCollectionCache);
 
         return;
       },
     );
   });
-
-  const swaggerSpec = swaggerJsdoc(options);
 
   /**
    * LOAD SWAGGER UI DOCUMENTATION
@@ -125,16 +187,20 @@ export const loadDocs = (app: Express) => {
       "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js",
     ],
   };
-  app.use(
-    "/docs/swagger",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerSpec, assetOptions),
-  );
+
+  app.use("/docs/swagger", swaggerUi.serve, (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const html = swaggerUi.generateHTML(getSwaggerSpec(), assetOptions);
+      res.send(html);
+    } catch (err) {
+      next(err);
+    }
+  });
 
   /**
    * LOAD STOPLIGHT DOCUMENTATION
    */
-  app.get("/docs/stoplight", (req, res) => {
+  /* app.get("/docs/stoplight", (req, res) => {
     res.send(`
     <!doctype html>
     <html lang="en">
@@ -145,13 +211,13 @@ export const loadDocs = (app: Express) => {
         <script src="https://unpkg.com/@stoplight/elements/web-components.min.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/@stoplight/elements/styles.min.css">
         <style>
-          /* 1. Wrap text in the CodeMirror editor (Request Body) */
+          /* 1. Wrap text in the CodeMirror editor (Request Body) *\/
           .sl-code-editor .CodeMirror-line {
             white-space: pre-wrap !important;
             word-break: break-all !important;
           }
 
-          /* 2. Wrap text in the Prism highlighter (Response Body & Samples) */
+          /* 2. Wrap text in the Prism highlighter (Response Body & Samples) *\/
           pre[class*="language-"],
           code[class*="language-"],
           .sl-panel--request-body [class*="Prism"], 
@@ -161,13 +227,13 @@ export const loadDocs = (app: Express) => {
             word-break: break-word !important;
           }
 
-          /* 3. Remove horizontal scrollbars that force single-line viewing */
+          /* 3. Remove horizontal scrollbars that force single-line viewing *\/
           .sl-overflow-x-auto {
             overflow-x: hidden !important;
             white-space: pre-wrap !important;
           }
 
-          /* Optional: Set a dark or light background to the body to prevent white flashes */
+          /* Optional: Set a dark or light background to the body to prevent white flashes *\/
           body {
             background-color: #f9fafb;
           }
@@ -182,12 +248,12 @@ export const loadDocs = (app: Express) => {
       </body>
     </html>
   `);
-  });
+  }); */
 
   /**
    * LOAD RAPI-DOC DOCUMENTATION
    */
-  app.get("/docs/rapidoc", (req, res) => {
+  /* app.get("/docs/rapidoc", (req, res) => {
     res.send(`
  <!doctype html> <!-- Important: must specify -->
 <html>
@@ -202,7 +268,7 @@ export const loadDocs = (app: Express) => {
   </body>
 </html>
   `);
-  });
+  }); */
 
   /**
    * (DEFAULT) LOAD SCALAR DOCUMENTATION
@@ -214,7 +280,7 @@ export const loadDocs = (app: Express) => {
         const { apiReference } = await import("@scalar/express-api-reference");
         scalarMiddleware = apiReference({
           theme: "default",
-          content: swaggerSpec,
+          content: getSwaggerSpec(),
           darkMode: true,
           hideTestRequestButton: false,
           pageTitle: "Nexus Api Documentation",
@@ -227,12 +293,12 @@ export const loadDocs = (app: Express) => {
     }
   });
 
-  console.log(
-    `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
-  console.log(
-    `postman-import.json is available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
+  // console.log(
+  //   `openapispec.json is available at http://localhost:${configs.port}/docs/rapidoc`,
+  // );
+  // console.log(
+  //   `postman-import.json is available at http://localhost:${configs.port}/docs/rapidoc`,
+  // );
   console.log("\n");
   console.log(
     `Scalar API docs available at http://localhost:${configs.port}/docs`,
@@ -240,11 +306,11 @@ export const loadDocs = (app: Express) => {
   console.log(
     `Swagger docs available at http://localhost:${configs.port}/docs/swagger`,
   );
-  console.log(
+  /* console.log(
     `Stoplight docs available at http://localhost:${configs.port}/docs/stoplight`,
   );
   console.log(
     `Rapidoc docs available at http://localhost:${configs.port}/docs/rapidoc`,
-  );
+  ); */
   console.log("\n");
 };
