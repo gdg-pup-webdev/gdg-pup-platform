@@ -51,8 +51,8 @@ export function MemberShowcaseSubmitStory() {
                     inspire the community.
                   </Text>
                 </Stack>
-                <Button variant="colored" subVariant="blue" size="lg">
-                  Submit your story
+                <Button asChild variant="colored" subVariant="blue" size="lg">
+                  <a href="https://forms.gle/wNpWYMT6hGPidtEL8">Submit your story</a>
                 </Button>
               </Stack>
             </motion.div>
