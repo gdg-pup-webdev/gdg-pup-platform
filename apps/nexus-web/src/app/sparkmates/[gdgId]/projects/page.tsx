@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Button, Text } from "@packages/spark-ui";
 import { CosmosParticles, LoadingScreen } from "@/components/shared";
@@ -16,12 +16,8 @@ import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/S
 
 const PROJECTS_PER_LOAD = 10;
 
-export default function PublicProjectsPage({
-  params,
-}: {
-  params: Promise<{ gdgId: string }>;
-}) {
-  const { gdgId } = React.use(params);
+export default function PublicProjectsPage() {
+  const { gdgId } = useParams<{ gdgId: string }>();
 
   const {
     data: profile,
@@ -43,7 +39,7 @@ export default function PublicProjectsPage({
   const projects = data?.pages.flatMap((page) => page.data) || [];
   const totalRecords = data?.pages[0]?.meta.totalRecords || 0;
 
-  if (isProfileLoading) {
+  if (!gdgId || isProfileLoading) {
     return <LoadingScreen message="Loading projects..." />;
   }
 
