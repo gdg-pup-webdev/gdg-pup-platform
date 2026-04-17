@@ -255,7 +255,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
       },
     },
   ],
-  "internet-of-things": [
+  iot: [
     {
       name: "Daniel Rein Cosare",
       role: "IoT Lead",
@@ -967,3 +967,6 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     },
   ],
 };
+
+// Keep legacy slug compatibility for About Team section and older links.
+TEAM_MEMBERS_BY_SLUG["internet-of-things"] = TEAM_MEMBERS_BY_SLUG.iot;
