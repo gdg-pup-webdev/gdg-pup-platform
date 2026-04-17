@@ -28,9 +28,9 @@ export class PortfolioServiceAdapter implements ISparkmatesPortfolioService {
 
   async setPortfolioVisibilityByGdgId(gdgId: string, isPublic: boolean): Promise<void> {
     if (isPublic) {
-      await gdgMembersController.makeProfilePublic(gdgId);
+      await gdgMembersController.makeProfilePublic(gdgId, gdgId);
     } else {
-      await gdgMembersController.makeProfilePrivate(gdgId);
+      await gdgMembersController.makeProfilePrivate(gdgId, gdgId);
     }
   }
  
