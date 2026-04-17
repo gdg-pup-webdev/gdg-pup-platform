@@ -27,10 +27,10 @@ const fileRepository = new SupabaseFileRepository();
 const folderRepository = new SupabaseFolderRepository();
 const gcpFileStorage = new GCPFileStorage();
 const supabaseFileStorage = new SupabaseFileStorage();
-const fileStorage: IFileStorage = new HybridFileStorage(
-  gcpFileStorage,
-  supabaseFileStorage,
-);
+const fileStorage: IFileStorage =
+  configs.fileStorage.mainProvider === "supabase"
+    ? supabaseFileStorage
+    : new HybridFileStorage(gcpFileStorage, supabaseFileStorage);
 const imageResizer = new SharpImageResizer(fileStorage);
 
 /**

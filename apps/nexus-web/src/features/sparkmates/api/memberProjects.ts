@@ -1,4 +1,5 @@
 import { contract } from "@packages/nexus-api-contracts";
+import { callEndpoint as baseCallEndpoint } from "@packages/typed-rest/clientReact";
 import { configs } from "@/configs/servers.config";
 import { extractErrorMessage } from "@/lib/utils";
 import type { ProjectFormState } from "@/features/onboarding/types"; // using the same type as Onboarding
@@ -9,6 +10,89 @@ export type MemberProjectRecord =
 
 export type MemberProjectsPaginatedResponse =
   contract.api.v1.member_projects.member.memberGdgId.GET.response[200];
+
+export type MemberProjectDetailResponse =
+  contract.api.v1.member_projects.id.GET.response[200];
+
+const toAbsoluteApiUrl = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("data:") || trimmed.startsWith("blob:")) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith("//")) {
+    return `${window.location.protocol}${trimmed}`;
+  }
+
+  const normalizedPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return `${configs.nexusApiBaseUrl}${normalizedPath}`;
+};
+
+const normalizeProjectImages = (project: Record<string, unknown>): string[] => {
+  const candidates = [
+    project.images,
+    project.imageUrls,
+    project.image_urls,
+  ];
+
+  for (const candidate of candidates) {
+    if (!Array.isArray(candidate)) {
+      continue;
+    }
+
+    const normalized = candidate
+      .map((entry) => {
+        if (typeof entry === "string") {
+          return toAbsoluteApiUrl(entry);
+        }
+
+        if (entry && typeof entry === "object") {
+          const nested =
+            (entry as { imageUrl?: unknown }).imageUrl ??
+            (entry as { image_url?: unknown }).image_url ??
+            (entry as { url?: unknown }).url ??
+            (entry as { publicUrl?: unknown }).publicUrl ??
+            (entry as { previewUrl?: unknown }).previewUrl;
+
+          if (typeof nested === "string") {
+            return toAbsoluteApiUrl(nested);
+          }
+        }
+
+        return "";
+      })
+      .filter((entry) => entry.length > 0);
+
+    if (normalized.length > 0) {
+      return [...new Set(normalized)];
+    }
+  }
+
+  const singleFields = [
+    project.mainImageUrl,
+    project.secondaryImageUrl,
+    project.tertiaryImageUrl,
+    project.main_image_url,
+    project.secondary_image_url,
+    project.tertiary_image_url,
+  ];
+
+  return singleFields
+    .map((entry) => (typeof entry === "string" ? toAbsoluteApiUrl(entry) : ""))
+    .filter((entry) => entry.length > 0);
+};
+
+const normalizeMemberProjectRecord = (project: MemberProjectRecord): MemberProjectRecord => {
+  const normalizedImages = normalizeProjectImages(project as unknown as Record<string, unknown>);
+  return {
+    ...project,
+    images: normalizedImages,
+  };
+};
 
 export async function getMemberProjectsPaginated(
   callEndpoint: CallEndpointType,
@@ -36,7 +120,10 @@ export async function getMemberProjectsPaginated(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body;
+    return {
+      ...result.body,
+      data: result.body.data.map((project) => normalizeMemberProjectRecord(project)),
+    };
   }
 
   throw new Error(
@@ -58,6 +145,23 @@ export async function getMemberProjects(
   return response.data;
 }
 
+export async function getMemberProjectById(projectId: string, token?: string) {
+  const result = await baseCallEndpoint(
+    configs.nexusApiBaseUrl,
+    contract.api.v1.member_projects.id.GET,
+    {
+      token: token ?? undefined,
+      params: { id: projectId },
+    },
+  );
+
+  if (result.status === 200 && result.body) {
+    return normalizeMemberProjectRecord(result.body.data);
+  }
+
+  throw new Error(extractErrorMessage(result.body) || "Failed to fetch project");
+}
+
 export async function createMemberProject(
   callEndpoint: CallEndpointType,
   memberGdgId: string,
@@ -69,6 +173,7 @@ export async function createMemberProject(
     startDate: project.startDate,
     endDate: project.endDate || null,
     description: project.description.trim(),
+    projectLink: project.projectLink.trim() || null,
     memberGdgId,
   };
 
@@ -82,7 +187,7 @@ export async function createMemberProject(
   );
 
   if (result.status === 201 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(
@@ -101,6 +206,7 @@ export async function updateMemberProject(
     startDate: project.startDate,
     endDate: project.endDate || null,
     description: project.description.trim(),
+    projectLink: project.projectLink.trim() || null,
   };
 
   const result = await callEndpoint(
@@ -114,7 +220,7 @@ export async function updateMemberProject(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(
@@ -163,7 +269,7 @@ export async function addMemberProjectImage(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(
@@ -190,7 +296,7 @@ export async function deleteMemberProjectImage(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(
@@ -222,7 +328,7 @@ export async function reorderMemberProjectImages(
   );
 
   if (result.status === 200 && result.body) {
-    return result.body.data;
+    return normalizeMemberProjectRecord(result.body.data);
   }
 
   throw new Error(

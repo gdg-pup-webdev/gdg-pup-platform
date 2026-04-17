@@ -253,7 +253,7 @@ export function ProfilePublicView({
         </div>
 
         <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
-          <FadeInSection className="p-0" delay={0.02}>
+          <FadeInSection className="min-w-0 p-0" delay={0.02}>
             <NameAndProfileSection profile={profile} readOnly />
 
             <div className="mt-6 space-y-6">
@@ -269,7 +269,9 @@ export function ProfilePublicView({
             </div>
           </FadeInSection>
 
-          <SuggestedPeopleSection profile={profile} readOnly />
+          <div className="min-w-0">
+            <SuggestedPeopleSection profile={profile} readOnly />
+          </div>
         </div>
       </div>
     </CosmosParticles>

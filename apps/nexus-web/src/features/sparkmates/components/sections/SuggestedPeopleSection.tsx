@@ -1,5 +1,6 @@
 import { Input, Button, Text } from "@packages/spark-ui";
 import React, { useState } from "react";
+import Link from "next/link";
 import { ConnectedSuggestedCard } from "../SparkmatesOwnerView/components/ConnectedSuggestedCard";
 import { FadeInSection } from "../SparkmatesOwnerView/components/FadeInSection";
 import { searchIcon } from "../SparkmatesOwnerView/icons/searchIcon";
@@ -40,42 +41,55 @@ export const SuggestedPeopleSection = ({
   };
 
   return (
-    <FadeInSection delay={0.1}>
-      <div className="w-full flex flex-row  gap-2">
-        <Input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search"
-          leftIcon={searchIcon}
-          containerClassName="h-9 border-white/20 bg-black/20"
-          className="text-white placeholder:text-[#C1C7CD]"
-        />
-        <div
-          className="w-fit flex justify-center items-center h-full border border-white/20"
+    <FadeInSection delay={0.1} className="min-w-0">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
+        <div className="min-w-0 flex-1 basis-full sm:basis-auto">
+          <div className="rainbow-border-animated-hover w-full rounded-lg bg-white/20 p-px">
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search"
+              leftIcon={searchIcon}
+              containerClassName="h-9 border-none bg-black/20 transition-colors group-hover:bg-[#050F22] group-focus-within:bg-[#050F22]"
+              className="text-white placeholder:text-[#C1C7CD]"
+            />
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="px-3 text-[#C1C7CD] hover:bg-white/10 hover:text-white sm:shrink-0"
           onClick={handleClearSearch}
+          disabled={!search && !viewingSearchResults && !trueSearch}
         >
           Clear
-        </div>
-        <div
-          className="w-fit flex justify-center items-center h-full border border-white/20"
+        </Button>
+        <Button
+          variant="colored"
+          subVariant="blue"
+          size="sm"
+          className="px-3 sm:shrink-0"
           onClick={handleOnSearch}
+          disabled={!search.trim()}
         >
           Search
-        </div>
+        </Button>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <Text variant="body-lg" className="text-white">
           Suggested To You
         </Text>
-        <Button
-          variant="default"
-          size="sm"
-          iconRight={viewIcon}
-          className="text-white"
-        >
-          View All
-        </Button>
+        <Link prefetch={false} href="/sparkmates/network">
+          <Button
+            variant="default"
+            size="sm"
+            iconRight={viewIcon}
+            className="px-3 py-1 text-white"
+          >
+            View All
+          </Button>
+        </Link>
       </div>
 
       <div className="mt-5 space-y-4">

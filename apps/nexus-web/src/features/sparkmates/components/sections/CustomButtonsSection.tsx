@@ -27,6 +27,77 @@ import {
   serializeCustomButtonLinks,
 } from "../../utils/customButtonFavorites";
 
+const toExternalHref = (raw: string): string | null => {
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  if (/^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed)) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith("//")) {
+    return `https:${trimmed}`;
+  }
+
+  return `https://${trimmed}`;
+};
+
+const getYoutubeEmbedUrl = (href: string): string | null => {
+  try {
+    const parsed = new URL(href);
+    const host = parsed.hostname.replace(/^www\./, "").toLowerCase();
+
+    if (host === "youtu.be") {
+      const id = parsed.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+
+    if (host.endsWith("youtube.com")) {
+      if (parsed.pathname === "/watch") {
+        const id = parsed.searchParams.get("v");
+        return id ? `https://www.youtube.com/embed/${id}` : null;
+      }
+
+      const shortId = parsed.pathname.split("/").filter(Boolean)[1];
+      if (parsed.pathname.startsWith("/shorts/") && shortId) {
+        return `https://www.youtube.com/embed/${shortId}`;
+      }
+
+      const embedId = parsed.pathname.split("/").filter(Boolean)[1];
+      if (parsed.pathname.startsWith("/embed/") && embedId) {
+        return `https://www.youtube.com/embed/${embedId}`;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+};
+
+const toPreviewMeta = (href: string): { host: string; path: string; favicon: string | null } => {
+  try {
+    const parsed = new URL(href);
+    const host = parsed.hostname.replace(/^www\./, "");
+    const path = `${parsed.pathname}${parsed.search}` || "/";
+    const favicon = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64`;
+
+    return {
+      host,
+      path,
+      favicon,
+    };
+  } catch {
+    return {
+      host: getLinkHostname(href),
+      path: href,
+      favicon: null,
+    };
+  }
+};
+
 type SortableCustomButtonItemProps = {
   id: string;
   link: string;
@@ -188,10 +259,18 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
     setLinks((previousLinks) => arrayMove(previousLinks, fromIndex, toIndex));
   };
 
-  const customLinks = links.map((url) => ({
-    title: getLinkHostname(url),
-    url,
-  }));
+  const customLinks = links.map((url) => {
+    const href = toExternalHref(url);
+    const previewMeta = href ? toPreviewMeta(href) : null;
+
+    return {
+      title: getLinkHostname(url),
+      url,
+      href,
+      embedUrl: href ? getYoutubeEmbedUrl(href) : null,
+      previewMeta,
+    };
+  });
 
   const sortableLinkIds = useMemo(
     () => links.map((link, index) => `${index}::${link}`),
@@ -224,25 +303,100 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
           {customLinks.map((item, index) => (
             <div
               key={`${item.title}-${index}`}
-              className={`relative overflow-hidden rounded-2xl p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[box-shadow,background] duration-300 ${
+              className={`group/custom-link relative overflow-hidden rounded-2xl p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[box-shadow,background] duration-300 ${
                 starredCustomButtons.has(item.url)
                   ? "rainbow-border bg-[linear-gradient(90deg,#0F2449_0%,#2A4F91_50%,#0F2449_100%)]"
                   : "border border-white/20 bg-[rgba(255,255,255,0.05)]"
               }`}
             >
               <div className="flex items-start justify-between min-w-0">
-                <div className="min-w-0 flex-1">
-                  <Text
-                    variant="body-lg"
-                    className="text-white truncate block"
-                    weight="medium"
+                {item.href ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="min-w-0 flex-1 pr-2 transition-opacity hover:opacity-95"
                   >
-                    {item.title}
-                  </Text>
-                  <Text variant="body" className="text-[#E5E5E5] break-all block pr-4">
-                    {item.url}
-                  </Text>
-                </div>
+                    <span className="relative block min-w-0">
+                      <Text
+                        variant="body-lg"
+                        className="truncate block text-white transition-opacity duration-200 group-hover/custom-link:opacity-0"
+                        weight="medium"
+                      >
+                        {item.title}
+                      </Text>
+                      <Text
+                        as="span"
+                        variant="body-lg"
+                        gradient="yellow"
+                        className="pointer-events-none absolute inset-0 block truncate opacity-0 transition-opacity duration-200 group-hover/custom-link:opacity-100"
+                        weight="bold"
+                      >
+                        {item.title}
+                      </Text>
+                    </span>
+                    <Text variant="body" className="text-[#E5E5E5] break-all block pr-4">
+                      {item.url}
+                    </Text>
+
+                    {item.embedUrl ? (
+                      <div className="mt-3 w-full overflow-hidden rounded-xl bg-[#07142b]/60 ring-1 ring-white/12">
+                        <iframe
+                          title={`Preview of ${item.title}`}
+                          src={item.embedUrl}
+                          className="h-52 w-full"
+                          loading="lazy"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          allowFullScreen
+                        />
+                      </div>
+                    ) : (
+                      <div className="mt-3 flex items-center gap-3 rounded-xl bg-[#07142b]/55 px-3 py-2.5 ring-1 ring-white/12">
+                        {item.previewMeta?.favicon ? (
+                          <img
+                            src={item.previewMeta.favicon}
+                            alt=""
+                            aria-hidden
+                            className="h-6 w-6 rounded shrink-0"
+                          />
+                        ) : null}
+                        <div className="min-w-0">
+                          <Text variant="body-sm" className="text-white truncate">
+                            {item.previewMeta?.host || item.title}
+                          </Text>
+                          <Text variant="body-sm" className="text-[#C1C7CD] truncate">
+                            {item.previewMeta?.path || item.url}
+                          </Text>
+                        </div>
+                      </div>
+                    )}
+                  </a>
+                ) : (
+                  <div className="min-w-0 flex-1 pr-2">
+                    <span className="relative block min-w-0">
+                      <Text
+                        variant="body-lg"
+                        className="truncate block text-white transition-opacity duration-200 group-hover/custom-link:opacity-0"
+                        weight="medium"
+                      >
+                        {item.title}
+                      </Text>
+                      <Text
+                        as="span"
+                        variant="body-lg"
+                        gradient="yellow"
+                        className="pointer-events-none absolute inset-0 block truncate opacity-0 transition-opacity duration-200 group-hover/custom-link:opacity-100"
+                        weight="bold"
+                      >
+                        {item.title}
+                      </Text>
+                    </span>
+                    <Text variant="body" className="text-[#E5E5E5] break-all block pr-4">
+                      {item.url}
+                    </Text>
+                  </div>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"

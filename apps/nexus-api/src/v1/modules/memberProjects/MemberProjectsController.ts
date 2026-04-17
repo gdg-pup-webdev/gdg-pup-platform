@@ -25,6 +25,7 @@ export type MemberProjectDTO = {
   startDate: string;
   endDate: string | null;
   description: string;
+  projectLink: string | null;
   images: string[];
   memberGdgId: string;
   createdAt: string;
@@ -61,6 +62,7 @@ export class MemberProjectsController {
       startDate: props.startDate.toISOString(),
       endDate: props.endDate ? props.endDate.toISOString() : null,
       description: props.description,
+      projectLink: props.projectLink,
       images: [...props.images],
       memberGdgId: props.memberGdgId,
       createdAt: props.createdAt.toISOString(),
@@ -84,6 +86,7 @@ export class MemberProjectsController {
     startDate: string;
     endDate: string | null;
     description: string;
+    projectLink?: string | null;
     images?: string[];
     memberGdgId: string;
   },
@@ -94,6 +97,7 @@ export class MemberProjectsController {
       startDate: new Date(input.startDate),
       endDate: input.endDate ? new Date(input.endDate) : null,
       description: input.description,
+      projectLink: input.projectLink ?? null,
       images: input.images,
       memberGdgId: input.memberGdgId,
     };
@@ -110,6 +114,7 @@ export class MemberProjectsController {
     startDate?: string;
     endDate?: string | null;
     description?: string;
+    projectLink?: string | null;
     images?: string[];
   },
   ): Promise<MemberProjectDTO> {
@@ -125,6 +130,7 @@ export class MemberProjectsController {
             : null
           : undefined,
       description: input.description,
+      projectLink: input.projectLink,
       images: input.images,
     };
 

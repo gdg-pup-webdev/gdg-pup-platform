@@ -9,6 +9,7 @@ export const memberProjectsRecord = cz.object({
   startDate: cz.string(),
   endDate: cz.string().nullable(),
   description: cz.string(),
+  projectLink: cz.string().nullable().optional(),
   images: cz.array(cz.string()).max(4),
   memberGdgId: cz.string(),
 

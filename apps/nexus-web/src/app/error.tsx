@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Container, Stack } from '@packages/spark-ui';
+import { useEffect } from 'react';
+import { SparkmatesBrandedErrorScreen } from '@/features/sparkmates/components/SparkmatesBrandedErrorScreen';
 
 export default function Error({
   error,
@@ -9,14 +10,16 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
-    <Container className="py-12">
-      <Stack align="center" gap="lg" className="text-center">
-        <div className="text-6xl">⚠️</div>
-        <h2 className="text-2xl font-bold text-red-600">Something went wrong!</h2>
-        <p className="text-gray-600 max-w-md">{error.message}</p>
-        <Button variant="default" onClick={reset}>Try again</Button>
-      </Stack>
-    </Container>
+    <SparkmatesBrandedErrorScreen
+      title="Something went wrong!"
+      message="We hit an unexpected issue while loading this page. Please try again."
+      onAction={reset}
+      buttonLabel="Try again"
+    />
   );
 }
