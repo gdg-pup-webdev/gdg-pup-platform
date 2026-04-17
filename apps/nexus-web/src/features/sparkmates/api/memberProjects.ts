@@ -1,4 +1,5 @@
 import { contract } from "@packages/nexus-api-contracts";
+import { callEndpoint as baseCallEndpoint } from "@packages/typed-rest/clientReact";
 import { configs } from "@/configs/servers.config";
 import { extractErrorMessage } from "@/lib/utils";
 import type { ProjectFormState } from "@/features/onboarding/types"; // using the same type as Onboarding
@@ -145,7 +146,7 @@ export async function getMemberProjects(
 }
 
 export async function getMemberProjectById(projectId: string, token?: string) {
-  const result = await callEndpoint(
+  const result = await baseCallEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.id.GET,
     {
@@ -161,7 +162,12 @@ export async function getMemberProjectById(projectId: string, token?: string) {
   throw new Error(extractErrorMessage(result.body) || "Failed to fetch project");
 }
 
-export async function createMemberProject(memberGdgId: string, project: Omit<ProjectFormState, "id">, token?: string) {
+export async function createMemberProject(
+  callEndpoint: CallEndpointType,
+  memberGdgId: string,
+  project: Omit<ProjectFormState, "id">,
+  token?: string,
+) {
   const bodyData = {
     title: project.title.trim(),
     startDate: project.startDate,
