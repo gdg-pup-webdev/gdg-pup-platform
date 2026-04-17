@@ -1,5 +1,6 @@
 import { INfcRepository } from "../domain/INfcRepository";
 import { INfcActivationEventDispatcher } from "../domain/INfcActivationEventDispatcher";
+import { ForbiddenError, NotFoundError } from "@/v1/errors/HttpError";
 
 export class ActivateByGdgId {
   constructor(
@@ -11,11 +12,13 @@ export class ActivateByGdgId {
     const card = await this.repository.findByGdgid(gdgId);
 
     if (!card) {
-      throw new Error("Card not found");
+      throw new NotFoundError("Card not found");
     }
 
     if (card.props.ownerGdgId !== actorGdgId) {
-      throw new Error("Unauthorized: Only the card owner can activate the card");
+      throw new ForbiddenError(
+        `Access denied. User '${actorGdgId}' cannot modify member '${gdgId}'.`,
+      );
     }
 
     card.activate();

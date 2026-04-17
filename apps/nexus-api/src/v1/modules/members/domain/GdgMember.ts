@@ -1,4 +1,7 @@
 import { ChangeProfilePicture } from '../useCases/ChangeProfilePicture';
+import { ValidationError } from '@/v1/errors/HttpError';
+
+export const GDG_MEMBER_LIST_FIELD_MAX_ITEMS = 20;
 
 const DEFAULT_SPARKMATES_SECTION_ORDER = [
   "customButtons",
@@ -90,6 +93,39 @@ export type GdgMemberProps = {
 export type GdgMemberInsertProps = GdgMemberProps;
 export type GdgMemberUpdateProps = Partial<GdgMemberInsertProps>;
 
+type GdgMemberListFieldName =
+  | "otherLinks"
+  | "technicalSkills"
+  | "learningInterests"
+  | "toolsAndTechnologies";
+
+const assertListFieldItemCount = (
+  fieldName: GdgMemberListFieldName,
+  values: string[] | undefined,
+): void => {
+  if (!values) {
+    return;
+  }
+
+  if (values.length > GDG_MEMBER_LIST_FIELD_MAX_ITEMS) {
+    throw new ValidationError(
+      `'${fieldName}' can contain at most ${GDG_MEMBER_LIST_FIELD_MAX_ITEMS} items.`,
+    );
+  }
+};
+
+const assertListFieldLimits = (props: {
+  otherLinks?: string[];
+  technicalSkills?: string[];
+  learningInterests?: string[];
+  toolsAndTechnologies?: string[];
+}): void => {
+  assertListFieldItemCount("otherLinks", props.otherLinks);
+  assertListFieldItemCount("technicalSkills", props.technicalSkills);
+  assertListFieldItemCount("learningInterests", props.learningInterests);
+  assertListFieldItemCount("toolsAndTechnologies", props.toolsAndTechnologies);
+};
+
 export class GdgMember {
   private _props: GdgMemberProps;
 
@@ -101,6 +137,7 @@ export class GdgMember {
   }
 
   static create(props: GdgMemberInsertProps): GdgMember {
+    assertListFieldLimits(props);
     return new GdgMember(props);
   }
 
@@ -113,6 +150,8 @@ export class GdgMember {
   }
 
   update(updates: GdgMemberUpdateProps): void {
+    assertListFieldLimits(updates);
+
     this._props = {
       ...this._props,
       ...updates,

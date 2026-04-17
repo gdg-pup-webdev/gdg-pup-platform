@@ -3,9 +3,14 @@ import {
   MEMBER_PROJECT_MAX_IMAGES,
 } from "../domain/MemberProject";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
-import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
+import {
+  ForbiddenError,
+  NotFoundError,
+  ValidationError,
+} from "@/v1/errors/HttpError";
 
 export type UpdateMemberProjectInput = {
+  actorId: string;
   id: string;
   title?: string;
   startDate?: Date;
@@ -21,6 +26,12 @@ export class UpdateMemberProject {
     const project = await this.repository.findById(input.id);
     if (!project) {
       throw new NotFoundError(`Member Project with ID ${input.id} not found`);
+    }
+
+    if (input.actorId !== project.props.memberGdgId) {
+      throw new ForbiddenError(
+        `Access denied. User '${input.actorId}' cannot modify member '${project.props.memberGdgId}'.`,
+      );
     }
 
     if (input.images !== undefined) {

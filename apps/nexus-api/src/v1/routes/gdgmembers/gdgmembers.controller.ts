@@ -8,6 +8,7 @@ import {
 } from "@/v1/modules/nfcCards";
 import { rbacController } from "@/v1/modules/rbacSystem";
 import { RbacModuleController } from "@/v1/modules/rbacSystem/RbacModuleController";
+import { UnauthorizedError } from "@/v1/errors/HttpError";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
@@ -138,7 +139,15 @@ export class GdgMembersHttpController {
 
   changeProfileImage: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.profile_image.POST,
-    async ({ input, output }) => {
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
       const file = input.files?.newProfile;
       if (!file) {
         return output(400, {
@@ -148,6 +157,7 @@ export class GdgMembersHttpController {
       }
 
       const result = await this.moduleController.changeProfilePicture(
+        actorId,
         input.params.gdgId,
         file,
       );
@@ -243,8 +253,17 @@ export class GdgMembersHttpController {
 
   getIdPatch: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.PATCH,
-    async ({ input, output }) => {
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
       const result = await this.moduleController.update(
+        actorId,
         input.params.gdgId,
         input.body.data,
       );
@@ -258,8 +277,16 @@ export class GdgMembersHttpController {
 
   getIdDelete: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.DELETE,
-    async ({ input, output }) => {
-      await this.moduleController.delete(input.params.gdgId);
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      await this.moduleController.delete(actorId, input.params.gdgId);
       return output(200, {
         status: "success",
         message: "GDG member deleted successfully",
@@ -270,8 +297,16 @@ export class GdgMembersHttpController {
 
   getIdMakePrivatePost: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.make_private.POST,
-    async ({ input, output }) => {
-      await this.moduleController.makeProfilePrivate(input.params.gdgId);
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      await this.moduleController.makeProfilePrivate(actorId, input.params.gdgId);
       return output(200, {
         status: "success",
         message: "GDG member profile made private",
@@ -282,8 +317,16 @@ export class GdgMembersHttpController {
 
   getIdMakePublicPost: RequestHandler = createExpressController(
     contract.api.v1.gdgmembers.gdgId.make_public.POST,
-    async ({ input, output }) => {
-      await this.moduleController.makeProfilePublic(input.params.gdgId);
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      await this.moduleController.makeProfilePublic(actorId, input.params.gdgId);
       return output(200, {
         status: "success",
         message: "GDG member profile made public",

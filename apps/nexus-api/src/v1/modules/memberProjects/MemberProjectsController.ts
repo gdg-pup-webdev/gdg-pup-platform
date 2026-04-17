@@ -77,15 +77,19 @@ export class MemberProjectsController {
     };
   }
 
-  async create(input: {
+  async create(
+    actorId: string,
+    input: {
     title: string;
     startDate: string;
     endDate: string | null;
     description: string;
     images?: string[];
     memberGdgId: string;
-  }): Promise<MemberProjectDTO> {
+  },
+  ): Promise<MemberProjectDTO> {
     const createInput: CreateMemberProjectInput = {
+      actorId,
       title: input.title,
       startDate: new Date(input.startDate),
       endDate: input.endDate ? new Date(input.endDate) : null,
@@ -98,15 +102,19 @@ export class MemberProjectsController {
     return this.toDTO(project);
   }
 
-  async update(input: {
+  async update(
+    actorId: string,
+    input: {
     id: string;
     title?: string;
     startDate?: string;
     endDate?: string | null;
     description?: string;
     images?: string[];
-  }): Promise<MemberProjectDTO> {
+  },
+  ): Promise<MemberProjectDTO> {
     const updateInput: UpdateMemberProjectInput = {
+      actorId,
       id: input.id,
       title: input.title,
       startDate: input.startDate ? new Date(input.startDate) : undefined,
@@ -124,8 +132,8 @@ export class MemberProjectsController {
     return this.toDTO(project);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.deleteUseCase.execute(id);
+  async delete(actorId: string, id: string): Promise<void> {
+    await this.deleteUseCase.execute(actorId, id);
   }
 
   async getOne(id: string): Promise<MemberProjectDTO> {
@@ -183,11 +191,15 @@ export class MemberProjectsController {
     };
   }
 
-  async addImage(input: {
+  async addImage(
+    actorId: string,
+    input: {
     id: string;
     image: { buffer: ArrayBuffer; name: string; type: string };
-  }): Promise<MemberProjectDTO> {
+  },
+  ): Promise<MemberProjectDTO> {
     const project = await this.addImageUseCase.execute({
+      actorId,
       projectId: input.id,
       image: new FileToUpload(input.image),
     });
@@ -195,11 +207,15 @@ export class MemberProjectsController {
     return this.toDTO(project);
   }
 
-  async deleteImage(input: {
+  async deleteImage(
+    actorId: string,
+    input: {
     id: string;
     imageIndex: number;
-  }): Promise<MemberProjectDTO> {
+  },
+  ): Promise<MemberProjectDTO> {
     const project = await this.deleteImageUseCase.execute({
+      actorId,
       projectId: input.id,
       imageIndex: input.imageIndex,
     });
@@ -207,12 +223,16 @@ export class MemberProjectsController {
     return this.toDTO(project);
   }
 
-  async reorderImages(input: {
+  async reorderImages(
+    actorId: string,
+    input: {
     id: string;
     fromIndex: number;
     toIndex: number;
-  }): Promise<MemberProjectDTO> {
+  },
+  ): Promise<MemberProjectDTO> {
     const project = await this.reorderImagesUseCase.execute({
+      actorId,
       projectId: input.id,
       fromIndex: input.fromIndex,
       toIndex: input.toIndex,
@@ -221,12 +241,16 @@ export class MemberProjectsController {
     return this.toDTO(project);
   }
 
-  async reorderProjects(input: {
+  async reorderProjects(
+    actorId: string,
+    input: {
     memberGdgId: string;
     fromIndex: number;
     toIndex: number;
-  }): Promise<void> {
+  },
+  ): Promise<void> {
     await this.reorderProjectsUseCase.execute({
+      actorId,
       memberGdgId: input.memberGdgId,
       fromIndex: input.fromIndex,
       toIndex: input.toIndex,

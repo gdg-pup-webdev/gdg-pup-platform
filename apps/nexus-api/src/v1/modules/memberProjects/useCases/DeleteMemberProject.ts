@@ -1,6 +1,6 @@
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { IFileStorage } from "../domain/IFileStorage";
-import { NotFoundError } from "@/v1/errors/HttpError";
+import { ForbiddenError, NotFoundError } from "@/v1/errors/HttpError";
 
 export class DeleteMemberProject {
   constructor(
@@ -8,10 +8,16 @@ export class DeleteMemberProject {
     private fileStorage: IFileStorage,
   ) {}
 
-  async execute(id: string): Promise<void> {
+  async execute(actorId: string, id: string): Promise<void> {
     const project = await this.repository.findById(id);
     if (!project) {
       throw new NotFoundError(`Member Project with ID ${id} not found`);
+    }
+
+    if (actorId !== project.props.memberGdgId) {
+      throw new ForbiddenError(
+        `Access denied. User '${actorId}' cannot modify member '${project.props.memberGdgId}'.`,
+      );
     }
 
     const imageUrls = [...project.props.images];

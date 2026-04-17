@@ -34,8 +34,8 @@ export class GdgMembersController {
     return data.props;
   }
 
-  async changeProfilePicture(gdgId: string, file: File) {
-    const result = await this.changePfpUseCase.execute(gdgId, {
+  async changeProfilePicture(actorId: string, gdgId: string, file: File) {
+    const result = await this.changePfpUseCase.execute(actorId, gdgId, {
       buffer: await file.arrayBuffer(),
       name: file.name,
       type: file.type,
@@ -72,8 +72,8 @@ export class GdgMembersController {
     return result.props;
   }
 
-  async delete(id: string) {
-    await this.deleteUseCase.execute(id);
+  async delete(actorId: string, id: string) {
+    await this.deleteUseCase.execute(actorId, id);
     return { success: true };
   }
 
@@ -99,18 +99,22 @@ export class GdgMembersController {
     };
   }
 
-  async update(gdgId: string, data: GdgMemberUpdateProps) {
-    const result = await this.updateMemberByGdgIdUseCase.execute(gdgId, data);
+  async update(actorId: string, gdgId: string, data: GdgMemberUpdateProps) {
+    const result = await this.updateMemberByGdgIdUseCase.execute(
+      actorId,
+      gdgId,
+      data,
+    );
     return result.props;
   }
 
-  async makeProfilePrivate(gdgId: string) {
-    await this.makeProfilePrivateUseCase.execute(gdgId);
+  async makeProfilePrivate(actorId: string, gdgId: string) {
+    await this.makeProfilePrivateUseCase.execute(actorId, gdgId);
     return { success: true };
   }
 
-  async makeProfilePublic(gdgId: string) {
-    await this.makeProfilePublicUseCase.execute(gdgId);
+  async makeProfilePublic(actorId: string, gdgId: string) {
+    await this.makeProfilePublicUseCase.execute(actorId, gdgId);
     return { success: true };
   }
 }

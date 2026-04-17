@@ -51,8 +51,8 @@ export class NfcCardsModuleController {
     };
   }
 
-  async listCardsOfUser(gdgId: string) {
-    const res = await this.listCardsOfUserUC.execute(gdgId);
+  async listCardsOfUser(actorId: string, gdgId: string) {
+    const res = await this.listCardsOfUserUC.execute(actorId, gdgId);
     return res.map((card) => ({
       id: card.props.id,
       ownerGdgId: card.props.ownerGdgId,
