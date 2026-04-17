@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Button, Text } from "@packages/spark-ui";
 import { CosmosParticles, LoadingScreen } from "@/components/shared";
@@ -16,12 +16,9 @@ import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/S
 
 const PROJECTS_PER_LOAD = 10;
 
-export default function PublicProjectsPage({
-  params,
-}: {
-  params: Promise<{ gdgId: string }>;
-}) {
-  const { gdgId } = React.use(params);
+export default function PublicProjectsPage() {
+  const params = useParams<{ gdgId: string }>();
+  const gdgId = params?.gdgId ?? "";
 
   const {
     data: profile,
