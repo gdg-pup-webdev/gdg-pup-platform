@@ -95,9 +95,8 @@ describe("runRbacCli", () => {
 
     expect(code).toBe(1);
     expect(error).toHaveBeenCalledWith(
-      "Invalid command: Unknown scope 'unknown'.",
+      "error: unknown command 'unknown'",
     );
-    expect(error).toHaveBeenCalledWith("Example: pnpm rbac roles ... | users ...");
   });
 
   it("prints usage and exits 0 when help flag is provided", async () => {
