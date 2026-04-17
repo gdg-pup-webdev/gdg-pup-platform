@@ -13,7 +13,7 @@ export default function PublicProjectDetailsPage() {
       projectId={projectId}
       backHref={`/sparkmates/${gdgId}/projects`}
       expectedMemberGdgId={gdgId}
-      ctaLabel="View All Projects"
+      ctaLabel="View Project"
     />
   );
 }

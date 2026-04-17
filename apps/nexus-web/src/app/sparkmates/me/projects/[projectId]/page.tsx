@@ -11,7 +11,7 @@ export default function MyProjectDetailsPage() {
     <ProjectDetailsView
       projectId={projectId}
       backHref="/sparkmates/me/projects"
-      ctaLabel="View My Projects"
+      ctaLabel="View Project"
       editable
     />
   );
