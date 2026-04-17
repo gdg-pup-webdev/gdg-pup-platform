@@ -1,9 +1,10 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken as callEndpoint, CallEndpointType } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { CreateLearningResourceDTO, LearningResourcesException } from "../types";
 import { configs } from "@/lib/constants/configs";
 
 export async function createLearningResource(
+  callEndpoint: CallEndpointType,
   data: CreateLearningResourceDTO,
   thumbnail?: File
 ) {

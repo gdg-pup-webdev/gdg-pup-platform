@@ -12,10 +12,12 @@ import {
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { toast } from "react-toastify";
 import type { ProjectFormState } from "@/features/onboarding/types";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export function useMemberProjects(gdgId?: string) {
   const { token } = useAuthContext();
   const queryClient = useQueryClient();
+  const callEndpoint = useCallEndpointWithToken();
 
   const invalidateProjectQueries = () => {
     queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
@@ -26,7 +28,7 @@ export function useMemberProjects(gdgId?: string) {
     queryKey: ["memberProjects", gdgId],
     queryFn: () => {
       if (!gdgId) throw new Error("No GDG ID provided");
-      return getMemberProjects(gdgId, token ?? undefined);
+      return getMemberProjects(callEndpoint, gdgId, token ?? undefined);
     },
     enabled: !!gdgId,
   });
@@ -34,7 +36,7 @@ export function useMemberProjects(gdgId?: string) {
   const createProject = useMutation({
     mutationFn: (data: Omit<ProjectFormState, "id">) => {
       if (!gdgId) throw new Error("No GDG ID provided");
-      return createMemberProject(gdgId, data, token ?? undefined);
+      return createMemberProject(callEndpoint, gdgId, data, token ?? undefined);
     },
     onSuccess: () => {
       invalidateProjectQueries();
@@ -47,7 +49,7 @@ export function useMemberProjects(gdgId?: string) {
 
   const updateProject = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Omit<ProjectFormState, "id"> }) => {
-      return updateMemberProject(id, data, token ?? undefined);
+      return updateMemberProject(callEndpoint, id, data, token ?? undefined);
     },
     onSuccess: () => {
       invalidateProjectQueries();
@@ -60,7 +62,7 @@ export function useMemberProjects(gdgId?: string) {
 
   const deleteProject = useMutation({
     mutationFn: (id: string) => {
-      return deleteMemberProject(id, token ?? undefined);
+      return deleteMemberProject(callEndpoint, id, token ?? undefined);
     },
     onSuccess: () => {
       invalidateProjectQueries();
@@ -73,7 +75,7 @@ export function useMemberProjects(gdgId?: string) {
 
   const addProjectImage = useMutation({
     mutationFn: ({ id, image }: { id: string; image: File }) => {
-      return addMemberProjectImage(id, image, token ?? undefined);
+      return addMemberProjectImage(callEndpoint, id, image, token ?? undefined);
     },
     onSuccess: () => {
       invalidateProjectQueries();
@@ -86,7 +88,7 @@ export function useMemberProjects(gdgId?: string) {
 
   const deleteProjectImage = useMutation({
     mutationFn: ({ id, imageIndex }: { id: string; imageIndex: number }) => {
-      return deleteMemberProjectImage(id, imageIndex, token ?? undefined);
+      return deleteMemberProjectImage(callEndpoint, id, imageIndex, token ?? undefined);
     },
     onSuccess: () => {
       invalidateProjectQueries();
@@ -107,7 +109,7 @@ export function useMemberProjects(gdgId?: string) {
       fromIndex: number;
       toIndex: number;
     }) => {
-      return reorderMemberProjectImages(id, fromIndex, toIndex, token ?? undefined);
+      return reorderMemberProjectImages(callEndpoint, id, fromIndex, toIndex, token ?? undefined);
     },
     onSuccess: () => {
       invalidateProjectQueries();
@@ -128,7 +130,7 @@ export function useMemberProjects(gdgId?: string) {
       fromIndex: number;
       toIndex: number;
     }) => {
-      return reorderMemberProjects(memberGdgId, fromIndex, toIndex, token ?? undefined);
+      return reorderMemberProjects(callEndpoint, memberGdgId, fromIndex, toIndex, token ?? undefined);
     },
     onSuccess: () => {
       invalidateProjectQueries();

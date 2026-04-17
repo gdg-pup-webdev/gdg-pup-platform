@@ -42,10 +42,9 @@ import { GdgMembersRouter } from "../routes/gdgmembers/gdgmembers.router";
 import { NfcCardsRouter } from "../routes/nfc-cards/nfcCards.router";
 import { NfcCardsHttpController } from "../routes/nfc-cards/nfcCards.controller";
 import { nfcCardsModuleController } from "../modules/nfcCards";
-import { memberShowcaseController } from "../modules/MemberShowcase";
+import { memberShowcaseController } from "../modules/MemberShowcase"; 
 import {
-  MemberShowcaseHttpController,
-  MemberShowcaseRouter,
+  MemberShowcaseHttpController, 
 } from "../routes/member-showcase/MemberShowcase";
 import { memberProjectsController } from "../modules/memberProjects";
 import {
@@ -59,6 +58,7 @@ import { ProductRouter } from "../routes/products/products.router";
 import { AnalyticsHttpController } from "../routes/analytics/analytics.controller";
 import { AnalyticsRouter } from "../routes/analytics/analytics.router";
 import { analyticsController } from "../modules/analytics";
+import { MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcaseRouter";
 
 export const loadRoutes = (app: Express) => {
   const analyticsHttpController = new AnalyticsHttpController(

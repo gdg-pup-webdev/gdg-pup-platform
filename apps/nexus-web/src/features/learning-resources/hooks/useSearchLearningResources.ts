@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useQuery } from "@tanstack/react-query"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export function useSearchLearningResources(query: string, limit: number = 10) {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["learning-resources", "search", query, limit],
     queryFn: async () => {
