@@ -12,7 +12,7 @@ export class NfcCardsHttpController {
   updateDestinationUrl: RequestHandler = createExpressController(
     contract.api.v1.nfc_cards.cardId.destination_url.POST,
     async ({ input, output, ctx }) => {
-      const actorGdgId = ctx.req.decodedToken?.memberInfo.gdgId
+      const actorGdgId = ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id
       if (!actorGdgId) {
         throw new UnauthorizedError(
           "Authentication required. Please provide a valid Bearer token.",
@@ -33,9 +33,19 @@ export class NfcCardsHttpController {
 
   listCardsOfUser : RequestHandler = createExpressController(
     contract.api.v1.nfc_cards.GET,
-    async ({ input, output }) => { 
+    async ({ input, output, ctx }) => {
+      const actorGdgId = ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id
+      if (!actorGdgId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
       const gdgId = input.query.gdgId;
-      const result = await this.nfccardsmodulecontroller.listCardsOfUser(gdgId );
+      const result = await this.nfccardsmodulecontroller.listCardsOfUser(
+        actorGdgId,
+        gdgId,
+      );
       return output(200, {
         status: "success",
         message: "NFC cards fetched successfully",
@@ -62,7 +72,7 @@ export class NfcCardsHttpController {
   activateCard: RequestHandler = createExpressController(
     contract.api.v1.nfc_cards.cardId.activate.POST,
     async ({ input, output, ctx }) => {
-      const actorGdgId = ctx.req.decodedToken?.memberInfo.gdgId
+      const actorGdgId = ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id
       if (!actorGdgId) {
         throw new UnauthorizedError(
           "Authentication required. Please provide a valid Bearer token.",

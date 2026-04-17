@@ -1,4 +1,5 @@
 export const MEMBER_PROJECT_MAX_IMAGES = 4;
+export const MEMBER_PROJECT_MAX_PER_MEMBER = 12;
 
 export type MemberProjectProps = {
   id: string;
