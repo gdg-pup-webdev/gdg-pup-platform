@@ -80,6 +80,7 @@ jobs:
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
           health-check-url: ${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org' || 'https://dev.gdgpup.org' }}
+          env-vars: "NEXT_PUBLIC_SITE_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org' || 'https://dev.gdgpup.org' }}"
 
   deploy-nexus-api:
     name: nexus-api
