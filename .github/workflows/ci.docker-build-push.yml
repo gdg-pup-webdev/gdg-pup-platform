@@ -56,6 +56,7 @@ jobs:
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
           build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org' || 'https://dev.gdgpup.org' }}
             NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
             NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
