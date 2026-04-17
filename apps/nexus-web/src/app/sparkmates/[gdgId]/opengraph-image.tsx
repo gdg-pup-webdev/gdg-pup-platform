@@ -9,7 +9,7 @@ export const runtime = 'edge';
 
 export default async function Image({ params }: { params: Promise<{ gdgId: string }> }) {
   const { gdgId } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gdgpup.org';
   let name = gdgId;
   let bio = "GDG PUP Sparkmate";
   let fallbackImage = `${baseUrl}${ASSETS.PROFILE.DEFAULT_AVATAR}`;
