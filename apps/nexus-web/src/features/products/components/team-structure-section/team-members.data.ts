@@ -255,7 +255,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
       },
     },
   ],
-  "internet-of-things": [
+  iot: [
     {
       name: "Daniel Rein Cosare",
       role: "IoT Lead",
