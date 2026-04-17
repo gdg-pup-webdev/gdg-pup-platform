@@ -3,6 +3,7 @@ import { Text } from "@packages/spark-ui";
 import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
 import type { Ref } from "react";
 import { MdDragIndicator } from "react-icons/md";
+import { MdCalendarMonth } from "react-icons/md";
 import Link from "next/link";
 import { editIcon } from "../icons/editIcon";
 
@@ -35,6 +36,59 @@ type ProjectCardProps = {
   isDropTarget?: boolean;
   truncateDescription?: boolean;
   projectHref?: string;
+};
+
+const displayDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+const formatDateLabel = (value?: string | null): string => {
+  if (!value) {
+    return "";
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
+
+  const isoDateMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoDateMatch) {
+    const normalizedDate = `${isoDateMatch[1]}-${isoDateMatch[2]}-${isoDateMatch[3]}T00:00:00Z`;
+    const parsed = new Date(normalizedDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      return displayDateFormatter.format(parsed);
+    }
+  }
+
+  const parsedFallback = new Date(trimmed);
+  if (!Number.isNaN(parsedFallback.getTime())) {
+    return displayDateFormatter.format(parsedFallback);
+  }
+
+  return trimmed;
+};
+
+const formatProjectDateRange = (startDate?: string, endDate?: string | null): string => {
+  const startLabel = formatDateLabel(startDate);
+  const endLabel = formatDateLabel(endDate);
+
+  if (startLabel && endLabel) {
+    return startLabel === endLabel ? startLabel : `${startLabel} - ${endLabel}`;
+  }
+
+  if (startLabel) {
+    return startLabel;
+  }
+
+  if (endLabel) {
+    return endLabel;
+  }
+
+  return "Date not set";
 };
 
 function toImageUrl(value: unknown): string | null {
@@ -116,12 +170,13 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const images = normalizeProjectImages(project);
   const visibleImages = images.slice(0, 4);
+  const projectDateRange = formatProjectDateRange(project.startDate, project.endDate);
 
   if (!project) return null;
 
   return (
     <article
-      className={`rounded-2xl border bg-[rgba(255,255,255,0.04)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition ${
+      className={`group/project-card rounded-2xl border bg-[rgba(255,255,255,0.04)] p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition ${
         isDropTarget
           ? "border-[#57CAFF]/70 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25),0_0_0_1px_rgba(87,202,255,0.5)]"
           : "border-white/15"
@@ -135,14 +190,48 @@ export function ProjectCard({
         {projectHref ? (
           <Link
             href={projectHref}
-            className="text-white font-medium text-base hover:text-[#8FC5FF] transition-colors"
+            className="min-w-0 flex-1 pr-2"
           >
-            {project.title}
+            <span className="relative block min-w-0">
+              <Text
+                as="span"
+                variant="body"
+                weight="medium"
+                className="block truncate text-white transition-opacity duration-200 group-hover/project-card:opacity-0"
+              >
+                {project.title}
+              </Text>
+              <Text
+                as="span"
+                variant="body"
+                weight="bold"
+                gradient="yellow"
+                className="pointer-events-none absolute inset-0 block truncate opacity-0 transition-opacity duration-200 group-hover/project-card:opacity-100"
+              >
+                {project.title}
+              </Text>
+            </span>
           </Link>
         ) : (
-          <Text variant="body" className="text-white" weight="medium">
-            {project.title}
-          </Text>
+          <span className="relative block min-w-0">
+            <Text
+              as="span"
+              variant="body"
+              className="block truncate text-white transition-opacity duration-200 group-hover/project-card:opacity-0"
+              weight="medium"
+            >
+              {project.title}
+            </Text>
+            <Text
+              as="span"
+              variant="body"
+              weight="bold"
+              gradient="yellow"
+              className="pointer-events-none absolute inset-0 block truncate opacity-0 transition-opacity duration-200 group-hover/project-card:opacity-100"
+            >
+              {project.title}
+            </Text>
+          </span>
         )}
         <div className="flex items-center gap-2">
           {showDragHandle && (
@@ -176,9 +265,12 @@ export function ProjectCard({
 
       {projectHref ? (
         <Link href={projectHref} className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#57CAFF]/70">
-          <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
-            {project.startDate} {project.endDate ? `· ${project.endDate}` : ""}
-          </Text>
+          <div className="mt-1 flex items-center gap-1.5 text-[#C1C7CD]">
+            <MdCalendarMonth className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Text as="span" variant="body-sm" className="text-[#C1C7CD]">
+              {projectDateRange}
+            </Text>
+          </div>
 
           <Text
             variant="body-sm"
@@ -206,9 +298,12 @@ export function ProjectCard({
         </Link>
       ) : (
         <>
-          <Text variant="body-sm" className="mt-1 text-[#C1C7CD]">
-            {project.startDate} {project.endDate ? `· ${project.endDate}` : ""}
-          </Text>
+          <div className="mt-1 flex items-center gap-1.5 text-[#C1C7CD]">
+            <MdCalendarMonth className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <Text as="span" variant="body-sm" className="text-[#C1C7CD]">
+              {projectDateRange}
+            </Text>
+          </div>
 
           <Text
             variant="body-sm"

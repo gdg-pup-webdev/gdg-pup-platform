@@ -303,7 +303,7 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
           {customLinks.map((item, index) => (
             <div
               key={`${item.title}-${index}`}
-              className={`relative overflow-hidden rounded-2xl p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[box-shadow,background] duration-300 ${
+              className={`group/custom-link relative overflow-hidden rounded-2xl p-5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)] transition-[box-shadow,background] duration-300 ${
                 starredCustomButtons.has(item.url)
                   ? "rainbow-border bg-[linear-gradient(90deg,#0F2449_0%,#2A4F91_50%,#0F2449_100%)]"
                   : "border border-white/20 bg-[rgba(255,255,255,0.05)]"
@@ -317,13 +317,24 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
                     rel="noreferrer"
                     className="min-w-0 flex-1 pr-2 transition-opacity hover:opacity-95"
                   >
-                    <Text
-                      variant="body-lg"
-                      className="text-white truncate block"
-                      weight="medium"
-                    >
-                      {item.title}
-                    </Text>
+                    <span className="relative block min-w-0">
+                      <Text
+                        variant="body-lg"
+                        className="truncate block text-white transition-opacity duration-200 group-hover/custom-link:opacity-0"
+                        weight="medium"
+                      >
+                        {item.title}
+                      </Text>
+                      <Text
+                        as="span"
+                        variant="body-lg"
+                        gradient="yellow"
+                        className="pointer-events-none absolute inset-0 block truncate opacity-0 transition-opacity duration-200 group-hover/custom-link:opacity-100"
+                        weight="bold"
+                      >
+                        {item.title}
+                      </Text>
+                    </span>
                     <Text variant="body" className="text-[#E5E5E5] break-all block pr-4">
                       {item.url}
                     </Text>
@@ -363,13 +374,24 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
                   </a>
                 ) : (
                   <div className="min-w-0 flex-1 pr-2">
-                    <Text
-                      variant="body-lg"
-                      className="text-white truncate block"
-                      weight="medium"
-                    >
-                      {item.title}
-                    </Text>
+                    <span className="relative block min-w-0">
+                      <Text
+                        variant="body-lg"
+                        className="truncate block text-white transition-opacity duration-200 group-hover/custom-link:opacity-0"
+                        weight="medium"
+                      >
+                        {item.title}
+                      </Text>
+                      <Text
+                        as="span"
+                        variant="body-lg"
+                        gradient="yellow"
+                        className="pointer-events-none absolute inset-0 block truncate opacity-0 transition-opacity duration-200 group-hover/custom-link:opacity-100"
+                        weight="bold"
+                      >
+                        {item.title}
+                      </Text>
+                    </span>
                     <Text variant="body" className="text-[#E5E5E5] break-all block pr-4">
                       {item.url}
                     </Text>
