@@ -8,9 +8,23 @@ import { DebugNavigator } from "@/features/debugging/components/DebugNavigator";
 import { Analytics } from "@/features/analytics";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "GDG PUP Nexus",
   description:
     "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
+  openGraph: {
+    type: "website",
+    siteName: "GDG PUP Nexus",
+    title: "GDG PUP Nexus",
+    description: "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
+    images: ["/og/gdgprofile.webp"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GDG PUP Nexus",
+    description: "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
+    images: ["/og/gdgprofile.webp"],
+  },
 };
 
 export default function RootLayout({

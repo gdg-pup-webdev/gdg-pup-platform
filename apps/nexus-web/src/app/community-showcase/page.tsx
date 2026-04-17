@@ -1,4 +1,12 @@
+import { Metadata } from "next";
 import { CommunityShowcaseSection } from "@/features/community-showcase";
+
+export const metadata: Metadata = {
+  title: "Community Showcase | GDG PUP Nexus",
+  description: "Discover inspiring projects and stories from the GDG PUP community. See what our members are building and sharing.",
+  openGraph: { images: ["/og/community-showcase.webp"] },
+  twitter: { images: ["/og/community-showcase.webp"] },
+};
 import { CosmosParticles } from "@/components/shared";
 
 export default function CommunityShowcasePage() {
