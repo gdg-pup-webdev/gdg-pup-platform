@@ -1,10 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useQuery } from "@tanstack/react-query"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export const useListArticles = (pageNumber = 1, pageSize = 10, eventId?: string) => {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["articles", "list", pageNumber, pageSize, eventId],
     queryFn: async () => {

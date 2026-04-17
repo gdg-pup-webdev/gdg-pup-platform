@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 
 const API_URL = "http://localhost:8000";
 
 export const useGetFolder = (folderId: string | null) => {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["folder", folderId],
     queryFn: async () => {

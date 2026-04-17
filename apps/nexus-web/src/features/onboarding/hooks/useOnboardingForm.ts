@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { useAuthContext, STATUS } from "@/features/authentication/store/useAuthStore";
 import { configs } from "@/lib/constants/configs";
@@ -122,6 +122,7 @@ export function useOnboardingForm(gdgId: string) {
   const [serverAvatarUrl, setServerAvatarUrl] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(initialState);
   const [projects, setProjects] = useState<ProjectFormState[]>([createEmptyProject()]);
+  const callEndpoint = useCallEndpointWithToken();
 
   useEffect(() => {
     if (!token || !gdgId) return;

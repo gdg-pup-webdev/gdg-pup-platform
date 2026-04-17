@@ -1,9 +1,9 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { CallEndpointType } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { UpdateMemberShowcaseDTO } from "../types";
 
-export async function updateMemberShowcase(id: string, data: UpdateMemberShowcaseDTO, thumbnailFile?: File) {
+export async function updateMemberShowcase(callEndpoint: CallEndpointType, id: string, data: UpdateMemberShowcaseDTO, thumbnailFile?: File) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_showcase.id.PATCH,
