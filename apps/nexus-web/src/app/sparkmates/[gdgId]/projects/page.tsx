@@ -17,8 +17,7 @@ import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/S
 const PROJECTS_PER_LOAD = 10;
 
 export default function PublicProjectsPage() {
-  const params = useParams<{ gdgId: string }>();
-  const gdgId = params?.gdgId ?? "";
+  const { gdgId } = useParams<{ gdgId: string }>();
 
   const {
     data: profile,
