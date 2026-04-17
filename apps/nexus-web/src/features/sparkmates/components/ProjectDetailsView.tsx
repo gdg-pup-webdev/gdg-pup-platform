@@ -27,6 +27,7 @@ interface ProjectDetailsViewProps {
 }
 
 const MAX_PROJECT_IMAGES = 4;
+const DESCRIPTION_PREVIEW_LIMIT = 420;
 
 const createEmptyProject = (): ProjectFormState => ({
   title: "",
@@ -254,6 +255,7 @@ export const ProjectDetailsView = ({
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const panStartRef = useRef({ x: 0, y: 0 });
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -346,6 +348,12 @@ export const ProjectDetailsView = ({
   const memberAvatar = toImageSrc(project.member?.imageUrl || ASSETS.PROFILE.DEFAULT_AVATAR);
   const startDate = formatDate(project.startDate);
   const projectLinkHref = toProjectLinkHref(project.projectLink);
+  const description = project.description?.trim() || "";
+  const isLongDescription = description.length > DESCRIPTION_PREVIEW_LIMIT;
+  const visibleDescription =
+    isLongDescription && !isDescriptionExpanded
+      ? `${description.slice(0, DESCRIPTION_PREVIEW_LIMIT).trimEnd()}...`
+      : description;
 
   const activeImageUrl = lightboxImageIndex !== null ? visibleImages[lightboxImageIndex] : null;
   const activeImageNumber = (lightboxImageIndex ?? 0) + 1;
@@ -417,6 +425,10 @@ export const ProjectDetailsView = ({
     setEditingProject(toProjectFormState(project));
     setIsEditModalOpen(true);
   };
+
+  useEffect(() => {
+    setIsDescriptionExpanded(false);
+  }, [projectId]);
 
   const handleUpdateProjectField = (
     index: number,
@@ -637,8 +649,17 @@ export const ProjectDetailsView = ({
 
         <div className="mx-auto mt-4 max-w-xl rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.06)] p-4 sm:p-5">
           <Text variant="body-sm" className="whitespace-pre-line text-[#E5E5E5]">
-            {project.description}
+            {visibleDescription}
           </Text>
+          {isLongDescription ? (
+            <button
+              type="button"
+              onClick={() => setIsDescriptionExpanded((previous) => !previous)}
+              className="mt-2 text-sm font-semibold text-[#F9AB00] transition hover:text-[#FFD427]"
+            >
+              {isDescriptionExpanded ? "Show less" : "Show more"}
+            </button>
+          ) : null}
         </div>
 
         <div className="mx-auto mt-5 max-w-xl">
