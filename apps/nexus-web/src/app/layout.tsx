@@ -7,25 +7,30 @@ import { ProviderCompose } from "@/providers/ProviderCompose";
 import { DebugNavigator } from "@/features/debugging/components/DebugNavigator"; 
 import { Analytics } from "@/features/analytics";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  title: "GDG PUP Nexus",
-  description:
-    "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
-  openGraph: {
-    type: "website",
-    siteName: "GDG PUP Nexus",
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://gdgpup.org";
+const OG_IMAGE = `${SITE_URL}/og/gdgprofile.webp`;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    metadataBase: new URL(SITE_URL),
     title: "GDG PUP Nexus",
-    description: "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
-    images: ["/og/gdgprofile.webp"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "GDG PUP Nexus",
-    description: "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
-    images: ["/og/gdgprofile.webp"],
-  },
-};
+    description:
+      "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
+    openGraph: {
+      type: "website",
+      siteName: "GDG PUP Nexus",
+      title: "GDG PUP Nexus",
+      description: "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
+      images: [OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "GDG PUP Nexus",
+      description: "Your gateway to the Google Developer Group at Polytechnic University of the Philippines. Connect, learn, and build with fellow developers.",
+      images: [OG_IMAGE],
+    },
+  };
+}
 
 export default function RootLayout({
   children,
