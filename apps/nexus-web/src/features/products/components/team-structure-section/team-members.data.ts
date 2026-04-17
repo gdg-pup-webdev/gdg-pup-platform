@@ -970,3 +970,4 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
 
 // Keep legacy slug compatibility for About Team section and older links.
 TEAM_MEMBERS_BY_SLUG["internet-of-things"] = TEAM_MEMBERS_BY_SLUG.iot;
+TEAM_MEMBERS_BY_SLUG.executives = TEAM_MEMBERS_BY_SLUG["tech-executives"];
