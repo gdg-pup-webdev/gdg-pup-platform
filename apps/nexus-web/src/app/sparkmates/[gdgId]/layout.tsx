@@ -8,12 +8,11 @@ type LayoutProps = {
   children: React.ReactNode;
 };
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://gdgpup.org";
-
 export async function generateMetadata({ params }: Omit<LayoutProps, 'children'>): Promise<Metadata> {
   const { gdgId } = await params;
   let title = "Sparkmate | GDG PUP Nexus";
   let description = "Checkout this member's profile on GDG PUP Nexus";
+  let images: string[] = ["/og/gdgprofile.webp"];
 
   try {
     const result = await callEndpoint(
@@ -27,26 +26,14 @@ export async function generateMetadata({ params }: Omit<LayoutProps, 'children'>
       const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim();
       title = `${fullName || data.displayName || 'Member'}'s Profile | GDG PUP`;
       description = data.bio || description;
+      if (data.avatarUrl) images = [data.avatarUrl];
     }
   } catch (error) {}
 
-  const ogImageUrl = `${SITE_URL}/sparkmates/${gdgId}/opengraph-image`;
-
-  return { 
-    title, 
-    description, 
-    openGraph: { 
-      title, 
-      description, 
-      images: [ogImageUrl] 
-    }, 
-    twitter: { 
-      card: "summary_large_image",
-      images: [ogImageUrl] 
-    } 
-  };
+  return { title, description, openGraph: { images }, twitter: { images } };
 }
 
 export default function SparkmatesLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
+
