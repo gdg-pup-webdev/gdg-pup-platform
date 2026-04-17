@@ -40,7 +40,7 @@ export default function PublicProjectsPage() {
   const projects = data?.pages.flatMap((page) => page.data) || [];
   const totalRecords = data?.pages[0]?.meta.totalRecords || 0;
 
-  if (isProfileLoading) {
+  if (!gdgId || isProfileLoading) {
     return <LoadingScreen message="Loading projects..." />;
   }
 
