@@ -603,7 +603,7 @@ export function TeamSection() {
     ),
     "internet-of-things": (
       <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["internet-of-things"].map((member) => (
+        {(TEAM_MEMBERS_BY_SLUG["internet-of-things"] ?? TEAM_MEMBERS_BY_SLUG.iot ?? []).map((member) => (
           <TeamCard
             key={member.name}
             name={member.name}
