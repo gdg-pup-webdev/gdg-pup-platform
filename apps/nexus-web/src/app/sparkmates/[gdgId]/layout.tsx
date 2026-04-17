@@ -27,7 +27,19 @@ export async function generateMetadata({ params }: Omit<LayoutProps, 'children'>
     }
   } catch (error) {}
 
-  return { title, description };
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
 }
 
 export default function SparkmatesLayout({ children }: { children: React.ReactNode }) {
