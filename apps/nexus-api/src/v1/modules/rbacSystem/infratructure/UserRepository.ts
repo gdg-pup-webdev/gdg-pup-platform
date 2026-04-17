@@ -17,8 +17,13 @@ export class UserRepository implements IUserRepository {
       .single();
 
     if (userError) {
+      // Supabase returns PGRST116 when `.single()` finds no rows.
+      if (userError.code === "PGRST116") {
+        throw new NotFoundError(`User not found: ${gdgId}`, userError);
+      }
+
       throw new InternalServerError(
-        `Failed to query user '${gdgId}' from table '${this.userTable}'.`,
+        `Failed to query user '${gdgId}' from table '${this.userTable}'. Error: ${userError.message}`,
         userError,
       );
     }

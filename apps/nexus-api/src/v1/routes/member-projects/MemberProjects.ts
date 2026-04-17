@@ -2,15 +2,23 @@ import { RequestHandler, Router } from "express";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 import { memberProjectsController as moduleController } from "@/v1/modules/memberProjects";
-import { ValidationError } from "@/v1/errors/HttpError";
+import { UnauthorizedError, ValidationError } from "@/v1/errors/HttpError";
 
 export class MemberProjectsHttpController {
   constructor(private readonly module: typeof moduleController) {}
 
   postCreate: RequestHandler = createExpressController(
     contract.api.v1.member_projects.POST,
-    async ({ input, output }) => {
-      const result = await this.module.create({
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      const result = await this.module.create(actorId, {
         ...input.body.data,
       });
 
@@ -58,8 +66,16 @@ export class MemberProjectsHttpController {
 
   patchUpdate: RequestHandler = createExpressController(
     contract.api.v1.member_projects.id.PATCH,
-    async ({ input, output }) => {
-      const result = await this.module.update({
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      const result = await this.module.update(actorId, {
         id: input.params.id,
         ...input.body.data,
       });
@@ -74,14 +90,22 @@ export class MemberProjectsHttpController {
 
   postAddImage: RequestHandler = createExpressController(
     contract.api.v1.member_projects.id.images.POST,
-    async ({ input, output }) => {
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
       const image = input.files.image;
 
       if (!image) {
         throw new ValidationError("Image file is required.");
       }
 
-      const result = await this.module.addImage({
+      const result = await this.module.addImage(actorId, {
         id: input.params.id,
         image: {
           buffer: await image.arrayBuffer(),
@@ -100,14 +124,22 @@ export class MemberProjectsHttpController {
 
   deleteImage: RequestHandler = createExpressController(
     contract.api.v1.member_projects.id.images.imageIndex.DELETE,
-    async ({ input, output }) => {
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
       const imageIndex = Number(input.params.imageIndex);
 
       if (!Number.isInteger(imageIndex) || imageIndex < 0) {
         throw new ValidationError("imageIndex must be a non-negative integer.");
       }
 
-      const result = await this.module.deleteImage({
+      const result = await this.module.deleteImage(actorId, {
         id: input.params.id,
         imageIndex,
       });
@@ -122,8 +154,16 @@ export class MemberProjectsHttpController {
 
   patchReorderImages: RequestHandler = createExpressController(
     contract.api.v1.member_projects.id.images.reorder.PATCH,
-    async ({ input, output }) => {
-      const result = await this.module.reorderImages({
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      const result = await this.module.reorderImages(actorId, {
         id: input.params.id,
         fromIndex: input.body.data.fromIndex,
         toIndex: input.body.data.toIndex,
@@ -139,8 +179,16 @@ export class MemberProjectsHttpController {
 
   deleteDelete: RequestHandler = createExpressController(
     contract.api.v1.member_projects.id.DELETE,
-    async ({ input, output }) => {
-      await this.module.delete(input.params.id);
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      await this.module.delete(actorId, input.params.id);
       return output(200, {
         status: "success",
         message: "Member project deleted successfully",
@@ -176,8 +224,16 @@ export class MemberProjectsHttpController {
 
   patchReorderProjectsByMember: RequestHandler = createExpressController(
     contract.api.v1.member_projects.member.memberGdgId.reorder.PATCH,
-    async ({ input, output }) => {
-      await this.module.reorderProjects({
+    async ({ input, output, ctx }) => {
+      const actorId =
+        ctx.req.decodedToken?.memberInfo.gdgId ?? ctx.req.user?.id;
+      if (!actorId) {
+        throw new UnauthorizedError(
+          "Authentication required. Please provide a valid Bearer token.",
+        );
+      }
+
+      await this.module.reorderProjects(actorId, {
         memberGdgId: input.params.memberGdgId,
         fromIndex: input.body.data.fromIndex,
         toIndex: input.body.data.toIndex,

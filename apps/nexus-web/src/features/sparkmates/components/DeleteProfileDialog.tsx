@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { Modal, Button, Text } from "@packages/spark-ui";
 import { useDeleteProfile } from "../hooks/useDeleteProfile";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { ASSETS } from "@/lib/constants/assets";
 
 interface DeleteProfileDialogProps {
   open: boolean;
@@ -28,28 +30,20 @@ export const DeleteProfileDialog = ({
       onOpenChange={onOpenChange}
       scrollBehavior="inside"
       size="sm"
-      className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-sm"
+      className="bg-transparent border-none p-0 shadow-none! isolate max-w-[95vw] sm:max-w-sm"
     >
       <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/90 backdrop-blur-2xl px-6 py-8 border border-red-500/20 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
         <div className="space-y-5">
           {/* Header */}
           <div className="flex flex-col items-center text-center gap-2">
-            {/* Warning icon */}
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500/15 border border-red-500/30">
-              <svg
-                className="h-7 w-7 text-red-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-                />
-              </svg>
-            </div>
+            <Image
+              src={ASSETS.SPARKY_POINTS.CIRBY_DENIED}
+              alt="Cirby crying"
+              width={96}
+              height={96}
+              className="object-contain"
+              priority
+            />
             <Text variant="heading-6" weight="bold" className="text-white">
               Delete Account
             </Text>

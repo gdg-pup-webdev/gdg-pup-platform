@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from "express";
+import { RequestHandler } from "express";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { contract } from "@packages/nexus-api-contracts";
 import { MemberShowcaseController as MemberShowcaseModuleController } from "@/v1/modules/MemberShowcase";
@@ -127,17 +127,3 @@ export class MemberShowcaseHttpController {
   );
 }
 
-export class MemberShowcaseRouter {
-  router: Router;
-
-  constructor(private readonly controller: MemberShowcaseHttpController) {
-    this.router = Router();
-
-    this.router.post("/", this.controller.postCreate);
-    this.router.get("/", this.controller.getList);
-    this.router.get("/spotlight", this.controller.getSpotlight);
-    this.router.get("/:id", this.controller.getOne);
-    this.router.patch("/:id", this.controller.patchUpdate);
-    this.router.delete("/:id", this.controller.deleteDelete);
-  }
-}

@@ -1,14 +1,12 @@
 "use client";
 
-import React from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import {
   SparkmatesPortfolio,
   type SparkmatesSource,
 } from "@/features/sparkmates";
 import { ProfilePublicView } from "@/features/sparkmates/components/SparkmatesPublicView/ProfilePublicView";
-import { useNfcCard } from "@/features/nfc-cards/hooks/useNfcCard";
-import { LoadingState } from "@/features/user-profile";
+import { useNfcCard } from "@/features/nfc-cards/hooks/useNfcCard"; 
 import { ProfileLoadingState } from "@/features/sparkmates/components/ProfileLoadingState";
 
 function normalizeSource(raw: string | null): SparkmatesSource {
@@ -19,12 +17,9 @@ function normalizeSource(raw: string | null): SparkmatesSource {
   return "direct_link";
 }
 
-export default function SparkmatesPage({
-  params,
-}: {
-  params: Promise<{ gdgId: string }>;
-}) {
-  const { gdgId } = React.use(params);
+export default function SparkmatesPage() {
+  const params = useParams<{ gdgId: string }>();
+  const gdgId = params?.gdgId ?? "";
   const searchParams = useSearchParams();
   const source = normalizeSource(searchParams.get("source"));
 

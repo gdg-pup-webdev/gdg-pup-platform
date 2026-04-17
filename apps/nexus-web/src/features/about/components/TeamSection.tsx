@@ -603,7 +603,7 @@ export function TeamSection() {
     ),
     "internet-of-things": (
       <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["internet-of-things"].map((member) => (
+        {(TEAM_MEMBERS_BY_SLUG["internet-of-things"] ?? TEAM_MEMBERS_BY_SLUG.iot ?? []).map((member) => (
           <TeamCard
             key={member.name}
             name={member.name}
@@ -620,7 +620,7 @@ export function TeamSection() {
 
   return (
     <div
-      className="relative overflow-x-clip pt-36 md:pt-60 pb-20 md:pb-48 px-4 md:px-8 lg:px-16 bg-[#010B1D]"
+      className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16 bg-[#010B1D]"
     >
       <div
         className="absolute inset-x-0 top-0 h-[620px] pointer-events-none hidden md:block"

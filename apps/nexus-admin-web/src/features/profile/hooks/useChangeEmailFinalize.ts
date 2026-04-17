@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
 export const useChangeEmailFinalize = () => {
+  const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async (
       payload: Parameters<typeof callEndpoint<typeof contract.api.v1.authentication.email.change.finalize.POST>>[2]["body"]

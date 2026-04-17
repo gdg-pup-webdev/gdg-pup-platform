@@ -1,7 +1,12 @@
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
-import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
+import {
+  ForbiddenError,
+  NotFoundError,
+  ValidationError,
+} from "@/v1/errors/HttpError";
 
 export type ReorderMemberProjectImagesInput = {
+  actorId: string;
   projectId: string;
   fromIndex: number;
   toIndex: number;
@@ -14,6 +19,12 @@ export class ReorderMemberProjectImages {
     const project = await this.repository.findById(input.projectId);
     if (!project) {
       throw new NotFoundError(`Member Project with ID ${input.projectId} not found`);
+    }
+
+    if (input.actorId !== project.props.memberGdgId) {
+      throw new ForbiddenError(
+        `Access denied. User '${input.actorId}' cannot modify member '${project.props.memberGdgId}'.`,
+      );
     }
 
     try {

@@ -11,7 +11,7 @@ export function EventsSection({ randomSeed }: { randomSeed?: number }) {
 
   return (
     <div
-      className="relative overflow-x-clip pt-36 md:pt-60 pb-14 md:pb-48 px-4 md:px-8 lg:px-16"
+      className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16"
       style={{ backgroundColor: "rgba(15, 14, 14, 1)" }}
     >
       {/* Mobile blobs */}

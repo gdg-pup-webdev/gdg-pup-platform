@@ -1,5 +1,6 @@
 import { IGdgMemberRepository } from "../domain/IGdgMemberRepository";
 import { FileToUpload, IStorageService } from "../domain/IStorageService";
+import { ForbiddenError } from "@/v1/errors/HttpError";
 
 export class ChangeProfilePicture {
   constructor(
@@ -7,7 +8,13 @@ export class ChangeProfilePicture {
     private readonly repo: IGdgMemberRepository,
   ) {}
 
-  async execute(gdgId: string, file: FileToUpload) {
+  async execute(actorId: string, gdgId: string, file: FileToUpload) {
+    if (actorId !== gdgId) {
+      throw new ForbiddenError(
+        `Access denied. User '${actorId}' cannot modify member '${gdgId}'.`,
+      );
+    }
+
     const member = await this.repo.findByGdgId(gdgId);
     if (!member) throw new Error("Member not found");
 

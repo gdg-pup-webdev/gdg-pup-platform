@@ -96,6 +96,7 @@ export class MemberProjectRepository implements IMemberProjectRepository {
       ...data,
       title: data.title || "",
       description: data.description || "",
+      projectLink: data.projectLink || null,
       images: this.toImages(data.images),
       memberGdgId: data.memberGdgId || "",
       createdAt: new Date(data.createdAt),

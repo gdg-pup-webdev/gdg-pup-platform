@@ -14,7 +14,15 @@ export class HybridFileStorage implements IFileStorage {
   ) {}
 
   async uploadFileBuffer(file: FileBuffer): Promise<UploadedFileBuffer> {
-    return this.gcsStorage.uploadFileBuffer(file);
+    try {
+      return await this.gcsStorage.uploadFileBuffer(file);
+    } catch (error) {
+      console.warn(
+        "GCS upload failed in HybridFileStorage; falling back to Supabase storage.",
+        error,
+      );
+      return this.supabaseStorage.uploadFileBuffer(file);
+    }
   }
 
   async deleteFile(storageReference: string): Promise<boolean> {
