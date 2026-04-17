@@ -14,8 +14,8 @@ export function ConnectedSuggestedCard({
   const resolvedAvatarUrl = avatarUrl?.trim() ? avatarUrl : ASSETS.PROFILE.DEFAULT_AVATAR;
 
   return (
-    <Link prefetch={false} href={`/sparkmates/${gdgId}`} className="relative flex items-center pl-11.5">
-      <div className="w-full overflow-hidden rounded-r-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] pl-16 pr-4 py-3.5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
+    <Link prefetch={false} href={`/sparkmates/${gdgId}`} className="relative flex items-center pl-9.5 sm:pl-11.5">
+      <div className="w-full overflow-hidden rounded-r-2xl border border-white/20 bg-[rgba(255,255,255,0.05)] pl-14 sm:pl-16 pr-4 py-3.5 shadow-[inset_0px_4px_16px_rgba(255,255,255,0.25)]">
         <Text variant="body-lg" className="truncate text-white" weight="medium">
           {name}
         </Text>
@@ -24,13 +24,13 @@ export function ConnectedSuggestedCard({
         </Text>
       </div>
 
-      <div className="absolute left-0 top-1/2 h-23.5 w-23.5 -translate-y-1/2">
+      <div className="absolute left-0 top-1/2 h-19 w-19 sm:h-23.5 sm:w-23.5 -translate-y-1/2">
         <img
           src={ASSETS.PROFILE.AVATAR_RING}
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-contain" />
-        <div className="absolute left-1/2 top-1/2 h-21.5 w-21.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
+        <div className="absolute left-1/2 top-1/2 h-17 w-17 sm:h-21.5 sm:w-21.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full">
           <Avatar
             src={resolvedAvatarUrl}
             alt={name}

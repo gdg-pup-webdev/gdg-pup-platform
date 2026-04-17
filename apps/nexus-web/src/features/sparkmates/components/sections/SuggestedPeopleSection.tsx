@@ -44,20 +44,22 @@ export const SuggestedPeopleSection = ({
   };
 
   return (
-    <FadeInSection delay={0.1}>
-      <div className="w-full flex flex-row  gap-2">
-        <Input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search"
-          leftIcon={searchIcon}
-          containerClassName="h-9 border-white/20 bg-black/20"
-          className="text-white placeholder:text-[#C1C7CD]"
-        />
+    <FadeInSection delay={0.1} className="min-w-0">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
+        <div className="min-w-0 flex-1 basis-full sm:basis-auto">
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search"
+            leftIcon={searchIcon}
+            containerClassName="h-9 border-white/20 bg-black/20"
+            className="text-white placeholder:text-[#C1C7CD]"
+          />
+        </div>
         <Button
           variant="ghost"
           size="sm"
-          className="px-3 text-[#C1C7CD] hover:bg-white/10 hover:text-white"
+          className="px-3 text-[#C1C7CD] hover:bg-white/10 hover:text-white sm:shrink-0"
           onClick={handleClearSearch}
           disabled={!search && !viewingSearchResults && !trueSearch}
         >
@@ -67,7 +69,7 @@ export const SuggestedPeopleSection = ({
           variant="colored"
           subVariant="blue"
           size="sm"
-          className="px-3"
+          className="px-3 sm:shrink-0"
           onClick={handleOnSearch}
           disabled={!search.trim()}
         >
