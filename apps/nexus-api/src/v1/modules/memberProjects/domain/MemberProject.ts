@@ -1,4 +1,5 @@
 export const MEMBER_PROJECT_MAX_IMAGES = 4;
+export const MEMBER_PROJECT_MAX_PER_MEMBER = 12;
 
 export type MemberProjectProps = {
   id: string;
@@ -6,6 +7,7 @@ export type MemberProjectProps = {
   startDate: Date;
   endDate: Date | null;
   description: string;
+  projectLink: string | null;
   images: string[];
   memberGdgId: string;
   createdAt: Date;
@@ -22,7 +24,7 @@ export type MemberProjectProps = {
 export type MemberProjectUpdateProps = Partial<
   Pick<
     MemberProjectProps,
-    "title" | "startDate" | "endDate" | "description" | "images"
+    "title" | "startDate" | "endDate" | "description" | "projectLink" | "images"
   >
 >;
 
@@ -57,6 +59,15 @@ export class MemberProject {
     }
   }
 
+  private static sanitizeProjectLink(projectLink: string | null | undefined): string | null {
+    if (typeof projectLink !== "string") {
+      return null;
+    }
+
+    const trimmed = projectLink.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
   public static create(
     props: Omit<
       MemberProjectProps,
@@ -68,6 +79,7 @@ export class MemberProject {
 
     return new MemberProject({
       ...props,
+      projectLink: MemberProject.sanitizeProjectLink(props.projectLink),
       images,
       id: crypto.randomUUID(),
       createdAt: now,
@@ -79,6 +91,7 @@ export class MemberProject {
   public static hydrate(props: MemberProjectProps): MemberProject {
     return new MemberProject({
       ...props,
+      projectLink: MemberProject.sanitizeProjectLink(props.projectLink),
       images: MemberProject.sanitizeImages(props.images),
     });
   }
@@ -109,6 +122,10 @@ export class MemberProject {
 
     if (props.description !== undefined) {
       nextProps.description = props.description;
+    }
+
+    if (props.projectLink !== undefined) {
+      nextProps.projectLink = MemberProject.sanitizeProjectLink(props.projectLink);
     }
 
     this._props = nextProps;

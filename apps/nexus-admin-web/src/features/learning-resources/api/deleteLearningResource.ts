@@ -1,9 +1,9 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken as callEndpoint, CallEndpointType } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { LearningResourcesException } from "../types";
-import { configs } from "@/lib/constants/configs";
+import { configs } from "@/lib/constants/configs"; 
 
-export async function deleteLearningResource(id: string) {
+export async function deleteLearningResource(callEndpoint: CallEndpointType, id: string) {
   try {
     const result = await callEndpoint(
       configs.nexusApiBaseUrl,

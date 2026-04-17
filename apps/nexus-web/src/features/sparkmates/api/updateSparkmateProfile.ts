@@ -1,12 +1,14 @@
 import { contract } from "@packages/nexus-api-contracts";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken as callEndpoint, CallEndpointType } from "@/hooks/useFetchWithToken";
 import { configs } from "@/configs/servers.config";
 import type { UserProfile } from "../types"; 
 
 export async function updateSparkmateProfile({
+  callEndpoint, 
   gdgId,
   data,
 }: {
+  callEndpoint : CallEndpointType
   gdgId: string;
   data: Partial<UserProfile>;
 }) : Promise<UserProfile> { 

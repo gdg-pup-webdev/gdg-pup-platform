@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
@@ -22,7 +22,7 @@ type ReorderEventImagesInput = EventImageBaseInput & {
   toIndex: number;
 };
 
-function useInvalidateEventQueries() {
+function useInvalidateEventQueries() { 
   const queryClient = useQueryClient();
 
   return (eventId: string) => {
@@ -33,6 +33,7 @@ function useInvalidateEventQueries() {
 
 export const useAddEventImage = () => {
   const invalidateEventQueries = useInvalidateEventQueries();
+  const callEndpoint = useCallEndpointWithToken();
 
   return useMutation({
     mutationFn: async ({ eventId, image }: AddEventImageInput) => {
@@ -60,6 +61,7 @@ export const useAddEventImage = () => {
 
 export const useDeleteEventImage = () => {
   const invalidateEventQueries = useInvalidateEventQueries();
+  const callEndpoint = useCallEndpointWithToken();
 
   return useMutation({
     mutationFn: async ({ eventId, imageIndex }: DeleteEventImageInput) => {
@@ -88,6 +90,7 @@ export const useDeleteEventImage = () => {
 
 export const useReorderEventImages = () => {
   const invalidateEventQueries = useInvalidateEventQueries();
+  const callEndpoint = useCallEndpointWithToken();
 
   return useMutation({
     mutationFn: async ({

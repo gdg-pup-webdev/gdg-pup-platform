@@ -8,8 +8,12 @@ export class StudyJamsRouter {
     this.router = Router();
 
     this.router.get("/", this.controller.listStudyJams);
-    this.router.post("/", this.controller.createStudyJam);
     this.router.get("/:studyJamId", this.controller.getOneStudyJam);
+
+    /**
+     * PROTECTED ROUTES
+     */
+    this.router.post("/", this.controller.createStudyJam);
     this.router.patch("/:studyJamId", this.controller.updateStudyJam);
     this.router.delete("/:studyJamId", this.controller.deleteStudyJam);
   }

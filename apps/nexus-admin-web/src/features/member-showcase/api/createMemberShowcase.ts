@@ -1,9 +1,9 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
-import { contract } from "@packages/nexus-api-contracts";
+ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { CreateMemberShowcaseDTO } from "../types";
+import { CallEndpointType } from '../../../hooks/useFetchWithToken';
 
-export async function createMemberShowcase(data: CreateMemberShowcaseDTO, thumbnailFile: File) {
+export async function createMemberShowcase(callEndpoint: CallEndpointType, data: CreateMemberShowcaseDTO, thumbnailFile: File) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_showcase.POST,

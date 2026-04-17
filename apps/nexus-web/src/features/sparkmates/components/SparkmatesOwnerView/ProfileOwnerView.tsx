@@ -8,19 +8,19 @@ import { AnimatePresence, motion } from "motion/react";
 import { useSparkmateProfile } from "../../hooks";
 import { SparkmatesSource } from "../../types";
 import { useUpdateSparkmateProfile } from "../../hooks/useUpdateSparkmateProfile";
-import { SkillsAndLinksSection } from "./sections/SkillsAndLinksSection"; 
+import { SkillsAndLinksSection } from "../sections/SkillsAndLinksSection"; 
 import { viewIcon } from "./icons/viewIcon"; 
 import { Divider } from "./components/Divider"; 
  import { SparkmatesRainbowStreak } from "./components/SparkmatesRainbowStreak";
 import { FadeInSection } from "./components/FadeInSection";
-import { NameAndProfileSection } from "./sections/NameAndProfileSection";
+import { NameAndProfileSection } from "../sections/NameAndProfileSection";
 import { useGetProfileOfUserByGdgId } from "../../hooks/useGetProfileOfUserByGdgId";
-import { BadgesSection } from "./sections/BadgesSection";
-import { ProjectsSection } from "./sections/ProjectsSection";
-import { ImpactSection } from "./sections/ImpactSection";
-import { SuggestedPeopleSection } from "./sections/SuggestedPeopleSection";
+import { BadgesSection } from "../sections/BadgesSection";
+import { ProjectsSection } from "../sections/ProjectsSection";
+import { ImpactSection } from "../sections/ImpactSection";
+import { SuggestedPeopleSection } from "../sections/SuggestedPeopleSection";
 import { SparkmatesMiniPreviewCard } from "./components/SparkmatesMiniPreviewCard";
-import { CustomButtonsSection } from "./sections/CustomButtonsSection";
+import { CustomButtonsSection } from "../sections/CustomButtonsSection";
 import {
   moveSparkmatesSection,
   normalizeSparkmatesSectionOrder,
@@ -282,7 +282,7 @@ export function ProfileOwnerView({
         </div>
 
         <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
-          <FadeInSection className="p-0" delay={0.02}>
+          <FadeInSection className="min-w-0 p-0" delay={0.02}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Text variant="heading-5" className="text-white">
                 My Portfolio
@@ -290,9 +290,10 @@ export function ProfileOwnerView({
               <div className="flex gap-2">
                 <Link prefetch={false} href="/sparkmates/me/analytics">
                   <Button
-                    variant="outline"
+                    variant="colored"
+                    subVariant="blue"
                     size="sm"
-                    className="px-3 py-1 text-white border-white/20 hover:bg-white/10"
+                    className="px-3 py-1 text-white"
                   >
                     Analytics
                   </Button>
@@ -431,7 +432,9 @@ export function ProfileOwnerView({
             </div>
           </FadeInSection>
 
-          {userprofile && <SuggestedPeopleSection profile={userprofile} />}
+          <div className="min-w-0">
+            {userprofile && <SuggestedPeopleSection profile={userprofile} />}
+          </div>
         </div>
 
         <Modal

@@ -13,7 +13,8 @@ import { ReorderMemberProjectImages } from "../ReorderMemberProjectImages";
 import { CreateMemberProject } from "../CreateMemberProject";
 import { UpdateMemberProject } from "../UpdateMemberProject";
 import { DeleteMemberProject } from "../DeleteMemberProject";
-import { ValidationError } from "@/v1/errors/HttpError";
+import { ForbiddenError, ValidationError } from "@/v1/errors/HttpError";
+import { MEMBER_PROJECT_MAX_PER_MEMBER } from "../../domain/MemberProject";
 
 class MockMemberProjectRepository extends IMemberProjectRepository {
   private items = new Map<string, MemberProject>();
@@ -156,6 +157,7 @@ const makeProject = (images: string[] = []): MemberProject =>
     description: "Member project",
     startDate: new Date("2026-01-01T00:00:00.000Z"),
     endDate: null,
+    projectLink: null,
     images,
     memberGdgId: "GDG-0001",
   });
@@ -176,6 +178,7 @@ describe("MemberProjects image usecases", () => {
     const usecase = new AddMemberProjectImage(repository, fileStorage);
 
     const updated = await usecase.execute({
+      actorId: "GDG-0001",
       projectId: existing.props.id,
       image: makeFile("new.png"),
     });
@@ -198,6 +201,7 @@ describe("MemberProjects image usecases", () => {
 
     await expect(
       usecase.execute({
+        actorId: "GDG-0001",
         projectId: existing.props.id,
         image: makeFile("overflow.png"),
       }),
@@ -215,6 +219,7 @@ describe("MemberProjects image usecases", () => {
 
     const usecase = new DeleteMemberProjectImage(repository, fileStorage);
     const updated = await usecase.execute({
+      actorId: "GDG-0001",
       projectId: existing.props.id,
       imageIndex: 1,
     });
@@ -239,6 +244,7 @@ describe("MemberProjects image usecases", () => {
 
     const usecase = new ReorderMemberProjectImages(repository);
     const updated = await usecase.execute({
+      actorId: "GDG-0001",
       projectId: existing.props.id,
       fromIndex: 2,
       toIndex: 0,
@@ -261,6 +267,7 @@ describe("MemberProjects image usecases", () => {
 
     const usecase = new UpdateMemberProject(repository);
     const updated = await usecase.execute({
+      actorId: "GDG-0001",
       id: existing.props.id,
       images: ["https://cdn.example.com/replacement-main.png"],
     });
@@ -280,6 +287,7 @@ describe("MemberProjects image usecases", () => {
 
     const usecase = new UpdateMemberProject(repository);
     const updated = await usecase.execute({
+      actorId: "GDG-0001",
       id: existing.props.id,
       title: "Renamed Project",
       description: "Updated description only",
@@ -298,7 +306,7 @@ describe("MemberProjects image usecases", () => {
     );
 
     const usecase = new DeleteMemberProject(repository, fileStorage);
-    await usecase.execute(existing.props.id);
+    await usecase.execute("GDG-0001", existing.props.id);
 
     expect(fileStorage.deletedPublicUrls).toEqual([
       "https://cdn.example.com/one.png",
@@ -315,6 +323,7 @@ describe("MemberProjects image usecases", () => {
 
     await expect(
       usecase.execute({
+        actorId: "GDG-0001",
         title: "Project",
         description: "Test",
         startDate: new Date("2026-01-01T00:00:00.000Z"),
@@ -329,5 +338,64 @@ describe("MemberProjects image usecases", () => {
         ],
       }),
     ).rejects.toThrow(ValidationError);
+  });
+
+  it("rejects create when actor tries to create for another member", async () => {
+    const memberService = new MockMemberService(true);
+    const usecase = new CreateMemberProject(repository, memberService);
+
+    await expect(
+      usecase.execute({
+        actorId: "GDG-0002",
+        title: "Project",
+        description: "Test",
+        startDate: new Date("2026-01-01T00:00:00.000Z"),
+        endDate: null,
+        memberGdgId: "GDG-0001",
+      }),
+    ).rejects.toThrow(ForbiddenError);
+  });
+
+  it("rejects create when member already has 12 projects", async () => {
+    const memberService = new MockMemberService(true);
+    const usecase = new CreateMemberProject(repository, memberService);
+
+    for (let i = 0; i < MEMBER_PROJECT_MAX_PER_MEMBER; i += 1) {
+      await repository.saveNew(
+        MemberProject.create({
+          title: `Project ${i + 1}`,
+          description: "Existing project",
+          startDate: new Date("2026-01-01T00:00:00.000Z"),
+          endDate: null,
+          projectLink: null,
+          images: [],
+          memberGdgId: "GDG-0001",
+        }),
+      );
+    }
+
+    await expect(
+      usecase.execute({
+        actorId: "GDG-0001",
+        title: "Overflow Project",
+        description: "Should be rejected",
+        startDate: new Date("2026-01-01T00:00:00.000Z"),
+        endDate: null,
+        memberGdgId: "GDG-0001",
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it("rejects update when actor does not own the project", async () => {
+    const existing = await repository.saveNew(makeProject());
+    const usecase = new UpdateMemberProject(repository);
+
+    await expect(
+      usecase.execute({
+        actorId: "GDG-0002",
+        id: existing.props.id,
+        title: "Unauthorized rename",
+      }),
+    ).rejects.toThrow(ForbiddenError);
   });
 });

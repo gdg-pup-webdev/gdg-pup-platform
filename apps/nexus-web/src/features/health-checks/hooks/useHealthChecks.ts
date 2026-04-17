@@ -8,10 +8,12 @@
  * 
  * @see https://tanstack.com/query/latest for TanStack Query docs
  */
+import { contract as nexusApiContract } from '@packages/nexus-api-contracts';
 
-import { useQuery } from '@tanstack/react-query';
-import { checkNexusHealth } from '../api/checkNexusHealth'; 
+import { useQuery } from '@tanstack/react-query'; 
 import { HealthCheckResponse, HealthCheckException } from '../types';
+import { useCallEndpointWithToken } from '@/hooks/useFetchWithToken';
+import { configs } from '@/lib/constants/configs';
 
 /**
  * Hook return type with all the data and states you need
@@ -61,6 +63,10 @@ interface UseHealthCheckReturn {
  * ```
  */
 export function useNexusHealthCheck(): UseHealthCheckReturn {
+
+  const callEndpoint = useCallEndpointWithToken();
+
+
   const {
     data,
     isLoading,
@@ -72,7 +78,54 @@ export function useNexusHealthCheck(): UseHealthCheckReturn {
     queryKey: ['health-check', 'nexus'],
     
     // The function that performs the health check
-    queryFn: checkNexusHealth,
+    queryFn: async () => {
+       try {
+          // Call the Nexus API health endpoint
+          const result = await callEndpoint(
+            configs.nexusApiBaseUrl,
+            nexusApiContract.api.health.GET,
+            {},
+          );
+      
+          // Check if the response is successful (status 200)
+          if (result.status === 200) {
+            return result.body as HealthCheckResponse;
+          }
+      
+          // Handle non-200 responses
+          throw new HealthCheckException(
+            'SERVER_ERROR',
+            `Nexus API returned status ${result.status}: ${result.body.message || 'Unknown error'}`
+          );
+        } catch (error) {
+          // If it's already a HealthCheckException, re-throw it
+          if (error instanceof HealthCheckException) {
+            throw error;
+          }
+      
+          // Handle network errors (fetch failures, CORS issues, etc.)
+          if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new HealthCheckException(
+              'NETWORK_ERROR',
+              `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`
+            );
+          }
+      
+          // Handle timeout errors
+          if (error instanceof Error && error.message.includes('timeout')) {
+            throw new HealthCheckException(
+              'TIMEOUT_ERROR',
+              'Nexus API health check timed out. The server may be slow or unresponsive.'
+            );
+          }
+      
+          // Handle unknown errors
+          throw new HealthCheckException(
+            'UNKNOWN_ERROR',
+            `An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
+        }
+    },
     
     // Don't run automatically - wait for manual trigger
     enabled: false,

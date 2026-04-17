@@ -11,7 +11,7 @@ export const requirePermissions = (
     const user = req.decodedToken;
     if (!user) {
       throw new UnauthorizedError(
-        "Authentication required. No authenticated user found in request context.",
+        "Authentication required. Can't verify user permissions without authentication.",
       );
     }
 

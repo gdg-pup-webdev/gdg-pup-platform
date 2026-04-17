@@ -1,13 +1,23 @@
-import { MemberProject } from "../domain/MemberProject";
+import {
+  MemberProject,
+  MEMBER_PROJECT_MAX_IMAGES,
+  MEMBER_PROJECT_MAX_PER_MEMBER,
+} from "../domain/MemberProject";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
 import { IMemberService } from "../domain/IMemberService";
-import { NotFoundError, ValidationError } from "@/v1/errors/HttpError";
+import {
+  ForbiddenError,
+  NotFoundError,
+  ValidationError,
+} from "@/v1/errors/HttpError";
 
 export type CreateMemberProjectInput = {
+  actorId: string;
   title: string;
   startDate: Date;
   endDate: Date | null;
   description: string;
+  projectLink?: string | null;
   images?: string[];
   memberGdgId: string;
 };
@@ -19,6 +29,12 @@ export class CreateMemberProject {
   ) {}
 
   async execute(input: CreateMemberProjectInput): Promise<MemberProject> {
+    if (input.actorId !== input.memberGdgId) {
+      throw new ForbiddenError(
+        `Access denied. User '${input.actorId}' cannot modify member '${input.memberGdgId}'.`,
+      );
+    }
+
     const memberExists = await this.memberModule.memberExistsByGdgId(
       input.memberGdgId,
     );
@@ -28,13 +44,22 @@ export class CreateMemberProject {
       );
     }
 
+    const { count: existingProjectsCount } =
+      await this.repository.findByMemberGdgId(input.memberGdgId, 1, 1);
+
+    if (existingProjectsCount >= MEMBER_PROJECT_MAX_PER_MEMBER) {
+      throw new ValidationError(
+        `A member can only create up to ${MEMBER_PROJECT_MAX_PER_MEMBER} projects.`,
+      );
+    }
+
     const images = [...(input.images || [])].filter(
       (image): image is string => typeof image === "string" && image.length > 0,
     );
 
-    if (images.length > 4) {
+    if (images.length > MEMBER_PROJECT_MAX_IMAGES) {
       throw new ValidationError(
-        "A member project can only contain up to 4 images.",
+        `A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`,
       );
     }
 
@@ -43,6 +68,7 @@ export class CreateMemberProject {
       startDate: input.startDate,
       endDate: input.endDate,
       description: input.description,
+      projectLink: input.projectLink ?? null,
       images,
       memberGdgId: input.memberGdgId,
     });

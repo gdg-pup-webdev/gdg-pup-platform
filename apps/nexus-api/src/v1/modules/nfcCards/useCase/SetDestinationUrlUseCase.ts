@@ -1,4 +1,5 @@
 import { INfcRepository } from "../domain/INfcRepository";
+import { ForbiddenError, ValidationError } from "@/v1/errors/HttpError";
 
 export class SetDestinationUrlUseCase {
   constructor(private readonly repository: INfcRepository) {}
@@ -7,11 +8,13 @@ export class SetDestinationUrlUseCase {
     const card = await this.repository.findById(cardId);
 
     if (card.props.ownerGdgId !== actorId) {
-      throw new Error("Unauthorized: Only the card owner can update the card");
+      throw new ForbiddenError(
+        `Access denied. User '${actorId}' cannot modify card '${cardId}'.`,
+      );
     }
 
     if (card.props.status !== "activated") {
-      throw new Error("Card is not activated");
+      throw new ValidationError("Card is not activated");
     }
 
     card.setDestinationUrl(newDestinationUrl)

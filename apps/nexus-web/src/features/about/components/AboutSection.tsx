@@ -31,7 +31,7 @@ const FadeInSection = ({
 
 export function AboutSection() {
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
       {/* Decorative Ellipse - Top Left */}
       <div
         className="absolute rounded-full pointer-events-none"

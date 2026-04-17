@@ -11,6 +11,10 @@ type FetchOptions = Omit<RequestInit, "body" | "method"> & {
 
 type ClientArgs<T extends Contract> = ValidatedInputObject<T> & FetchOptions;
 
+export type ContractType = Contract;
+export type ContractEndpointArgs <T extends Contract>= ClientArgs<T>
+export type ContractEndpointOutput<T extends Contract> = HandlerOutput<T>;
+
 /**
  */
 export const callEndpoint = async <T extends Contract>(

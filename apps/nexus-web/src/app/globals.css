@@ -295,6 +295,65 @@ body {
   z-index: -1;
 }
 
+@keyframes rainbowBorderShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.rainbow-border-animated-hover {
+  position: relative;
+  isolation: isolate;
+}
+
+.rainbow-border-animated-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    120deg,
+    #fb2c36 0%,
+    #f0b100 16%,
+    #00c950 34%,
+    #2b7fff 52%,
+    #ffffff 66%,
+    #2b7fff 78%,
+    #00c950 88%,
+    #f0b100 94%,
+    #fb2c36 100%
+  );
+  background-size: 240% 240%;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.rainbow-border-animated-hover:hover::before,
+.rainbow-border-animated-hover:focus-within::before {
+  opacity: 1;
+  animation: rainbowBorderShift 2.8s linear infinite;
+}
+
+.rainbow-border-animated-hover > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Lenis base styles to prevent duplicate/native scrollbars */
 html.lenis,
 html.lenis body {
