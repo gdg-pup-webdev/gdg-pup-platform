@@ -5,6 +5,10 @@ import { EventsHttpController } from "../events.controller";
 import { EventsRouter } from "../events.router";
 import { BadRequestError } from "@/v1/errors/HttpError";
 
+vi.mock("@/v1/middlewares/rbac.middleware", () => ({
+  requirePermissions: vi.fn(() => (req: any, res: any, next: any) => next()),
+}));
+
 describe("EventsRouter sync routes", () => {
   const syncEventToBevy = vi.fn();
   const importAndSyncAllToBevy = vi.fn();
