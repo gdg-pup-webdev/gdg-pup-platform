@@ -61,4 +61,5 @@ export const gcsStorageConfigs = {
       900,
     ),
     makePublicOnUpload: process.env.GCS_MAKE_PUBLIC_ON_UPLOAD === "true",
+    credentialsBase64: process.env.GCS_CREDENTIALS_BASE64 || "",
   }
