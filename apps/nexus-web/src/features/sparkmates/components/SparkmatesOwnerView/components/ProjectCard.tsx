@@ -291,6 +291,9 @@ export function ProjectCard({
                   src={imageUrl}
                   alt={`${project.title || "Project"} preview ${index + 1}`}
                   className="h-20 w-full rounded-md object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               ))}
             </div>
@@ -324,6 +327,9 @@ export function ProjectCard({
                   src={imageUrl}
                   alt={`${project.title || "Project"} preview ${index + 1}`}
                   className="h-20 w-full rounded-md object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               ))}
             </div>
