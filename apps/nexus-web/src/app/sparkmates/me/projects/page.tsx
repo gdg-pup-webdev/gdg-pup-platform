@@ -20,7 +20,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CosmosParticles, LoadingScreen } from "@/components/shared";
+import { CosmosParticles } from "@/components/shared";
+import { GdgLoader } from "@/components/ui/loader";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useGetProfileOfUserByGdgId } from "@/features/sparkmates/hooks/useGetProfileOfUserByGdgId";
 import { NameAndProfileSection } from "@/features/sparkmates/components/sections/NameAndProfileSection";
@@ -199,6 +200,17 @@ const areSameOrder = (left: string[], right: string[]): boolean => {
 
   return true;
 };
+
+const ProjectsPageLoader = ({ message }: { message: string }) => (
+  <div className="flex min-h-[40vh] items-center justify-center">
+    <div className="inline-flex items-center gap-2 text-zinc-300">
+      <GdgLoader size="xs" />
+      <Text variant="body-sm" className="text-zinc-300">
+        {message}
+      </Text>
+    </div>
+  </div>
+);
 
 export default function MyProjectsPage() {
   const { decodedToken, token } = useAuthContext();
@@ -562,11 +574,11 @@ export default function MyProjectsPage() {
     addProjectImage.isPending || deleteProjectImage.isPending;
 
   if (!gdgId) {
-    return <LoadingScreen message="Loading projects..." />;
+    return <ProjectsPageLoader message="Loading projects..." />;
   }
 
   if (isProfileLoading && !userProfile) {
-    return <LoadingScreen message="Loading projects..." />;
+    return <ProjectsPageLoader message="Loading projects..." />;
   }
 
   return (
@@ -653,7 +665,7 @@ export default function MyProjectsPage() {
               </div>
 
               {isLoading ? (
-                <LoadingScreen message="Loading projects..." />
+                <ProjectsPageLoader message="Loading projects..." />
               ) : isError ? (
                 <div className="rounded-2xl border border-red-500/30 bg-red-950/30 p-6 text-red-200">
                   <Text variant="body" weight="medium">

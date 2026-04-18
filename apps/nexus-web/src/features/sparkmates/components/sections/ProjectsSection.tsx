@@ -1,4 +1,4 @@
-import { Button, Text, Modal, Spinner } from "@packages/spark-ui";
+import { Button, Text, Modal } from "@packages/spark-ui";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -24,6 +24,7 @@ import { ProjectsManager } from "@/features/onboarding/components/ProjectsManage
 import { ProjectFormState } from "@/features/onboarding/types";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
 import { toast } from "react-toastify";
+import { GdgLoader } from "@/components/ui/loader";
 
 const MAX_PROJECT_IMAGES = 4;
 
@@ -513,7 +514,10 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
       
       <div className="space-y-3.5">
         {projectsQuery.isLoading ? (
-          <Text variant="body-sm" className="text-zinc-500">Loading projects...</Text>
+          <div className="inline-flex items-center gap-2 text-zinc-300">
+            <GdgLoader size="xs" />
+            <Text variant="body-sm" className="text-zinc-300">Loading projects...</Text>
+          </div>
         ) : projectList.length > 0 ? (
           <DndContext
             sensors={sensors}
@@ -600,7 +604,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
 
           {isImageMutationPending && (
             <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-[#E5E5E5]">
-              <Spinner size="sm" className="text-white" />
+              <GdgLoader size="xs" />
               <span>Saving project images...</span>
             </div>
           )}
@@ -621,7 +625,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
             <Button variant="colored" subVariant="blue" onClick={handleSave} disabled={isSaving}>
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
-                  <Spinner size="sm" className="text-white" />
+                  <GdgLoader size="xs" />
                   Saving...
                 </span>
               ) : editingProject.id ? "Save Changes" : "Create Project"}
