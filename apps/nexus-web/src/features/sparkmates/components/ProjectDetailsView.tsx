@@ -190,6 +190,12 @@ const renderImageTile = (
       alt={`${title} preview ${index + 1}`}
       fill
       className="object-cover"
+      onError={(e) => {
+        const parent = (e.currentTarget as HTMLElement).parentElement;
+        if (parent) {
+          parent.style.display = 'none';
+        }
+      }}
     />
   </button>
 );
