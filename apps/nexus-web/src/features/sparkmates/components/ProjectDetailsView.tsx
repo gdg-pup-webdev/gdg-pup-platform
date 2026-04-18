@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { CalendarDays, ChevronLeft, X } from "lucide-react";
-import { Button, Modal, Spinner, Text } from "@packages/spark-ui";
+import { Button, Modal, Text } from "@packages/spark-ui";
 import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
 import { getMemberProjectById } from "@/features/sparkmates/api/memberProjects";
@@ -17,6 +17,7 @@ import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/Pro
 import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/SparkmatesBrandedErrorScreen";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { GdgLoader } from "@/components/ui/loader";
 
 interface ProjectDetailsViewProps {
   projectId: string;
@@ -835,7 +836,7 @@ export const ProjectDetailsView = ({
               >
                 {isProjectMutationPending ? (
                   <span className="inline-flex items-center gap-2">
-                    <Spinner size="sm" className="text-white" />
+                    <GdgLoader size="xs" />
                     Saving...
                   </span>
                 ) : "Save Changes"}
