@@ -5,6 +5,7 @@ import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { toast } from "react-toastify";
 import { useSparkmateProfile } from "../../hooks";
 import { SparkmatesSource } from "../../types";
 import { useUpdateSparkmateProfile } from "../../hooks/useUpdateSparkmateProfile";
@@ -33,6 +34,20 @@ const SECTION_LABELS: Record<SparkmatesSectionId, string> = {
   projects: "Projects",
   gdgImpact: "GDG Impact",
   badges: "Badges",
+};
+
+type SharePlatform = "facebook" | "instagram" | "linkedin";
+
+const SHARE_PLATFORM_LABELS: Record<SharePlatform, string> = {
+  facebook: "Facebook",
+  instagram: "Instagram",
+  linkedin: "LinkedIn",
+};
+
+const SHARE_BUTTON_CLASSNAMES: Record<SharePlatform, string> = {
+  facebook: "px-3 py-1 text-white border border-[#4267B2]/50 bg-[#4267B2]/20 hover:bg-[#4267B2]/30",
+  instagram: "px-3 py-1 text-white border border-[#E4405F]/50 bg-[#E4405F]/20 hover:bg-[#E4405F]/30",
+  linkedin: "px-3 py-1 text-white border border-[#0A66C2]/50 bg-[#0A66C2]/20 hover:bg-[#0A66C2]/30",
 };
 
 const areSectionOrdersEqual = (
@@ -99,11 +114,28 @@ export function ProfileOwnerView({
   gdgId: string;
   source: SparkmatesSource;
 }) {
+  const shareBaseUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+    || (typeof window !== "undefined" ? window.location.origin : "https://gdgpup.org");
+
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isPreviewClosing, setIsPreviewClosing] = useState(false);
+  const [sharePrompt, setSharePrompt] = useState<{
+    isOpen: boolean;
+    platform: SharePlatform | null;
+    shareUrl: string;
+    isClipboardCopied: boolean;
+    clipboardText: string;
+  }>({
+    isOpen: false,
+    platform: null,
+    shareUrl: "",
+    isClipboardCopied: false,
+    clipboardText: "",
+  });
   const [previewTilt, setPreviewTilt] = useState({ rotateX: 0, rotateY: 0 });
   const [isDesktopReorderMode, setIsDesktopReorderMode] = useState(false);
   const [isMobileReorderModalOpen, setIsMobileReorderModalOpen] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
   const [mobileDraggingIndex, setMobileDraggingIndex] = useState<number | null>(null);
@@ -221,6 +253,145 @@ export function ProfileOwnerView({
         },
       },
     );
+  };
+
+  const getShareUrl = () => {
+    return `${shareBaseUrl}/sparkmates/${effectiveGdgId}`;
+  };
+
+  const getShareCaption = () => {
+    const displayName = userprofile?.displayName?.trim()
+      || `${userprofile?.firstName || ""} ${userprofile?.lastName || ""}`.trim()
+      || effectiveGdgId;
+    const team = userprofile?.department?.trim() || "Community";
+    const teamTag = team.replace(/[^a-zA-Z0-9]/g, "");
+    const shareUrl = getShareUrl();
+
+    return `Meet ${displayName} from GDG PUP Nexus on Sparkmates.\nExplore projects, skills, and community impact here:\n${shareUrl}\n\n#GDGPUP #Sparkmates #GDGPUPNexus #DevCommunity #CampusTech #${teamTag} #${effectiveGdgId.replace(/[^a-zA-Z0-9]/g, "")}`;
+  };
+
+  const getFacebookQuote = () => {
+    const displayName = userprofile?.displayName?.trim()
+      || `${userprofile?.firstName || ""} ${userprofile?.lastName || ""}`.trim()
+      || effectiveGdgId;
+    const facebookProfileUrl = getShareUrl();
+
+    return `Meet ${displayName} on Sparkmates: ${facebookProfileUrl} #GDGPUP #Sparkmates`;
+  };
+
+  const getLinkedInCaption = () => {
+    return getShareUrl();
+  };
+
+  const getInstagramCaption = () => {
+    return getShareUrl();
+  };
+
+  const copyTextToClipboard = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+  };
+
+  const openShareWindow = (url: string) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.open(
+      url,
+      "_blank",
+      "noopener,noreferrer,width=620,height=720",
+    );
+  };
+
+  const closeSharePrompt = () => {
+    setSharePrompt({
+      isOpen: false,
+      platform: null,
+      shareUrl: "",
+      isClipboardCopied: false,
+      clipboardText: "",
+    });
+  };
+
+  const openSharePrompt = async (
+    platform: SharePlatform,
+    shareWindowUrl: string,
+    clipboardText: string,
+  ) => {
+    setIsSharing(true);
+
+    let copied = false;
+    try {
+      await copyTextToClipboard(clipboardText);
+      copied = true;
+    } catch {
+      copied = false;
+    } finally {
+      setIsSharing(false);
+    }
+
+    setSharePrompt({
+      isOpen: true,
+      platform,
+      shareUrl: shareWindowUrl,
+      isClipboardCopied: copied,
+      clipboardText,
+    });
+  };
+
+  const handleCopyPromptText = async () => {
+    if (!sharePrompt.clipboardText) {
+      return;
+    }
+
+    try {
+      await copyTextToClipboard(sharePrompt.clipboardText);
+      setSharePrompt((previous) => ({
+        ...previous,
+        isClipboardCopied: true,
+      }));
+      toast.success("Copied to clipboard.");
+    } catch {
+      toast.error("Unable to copy clipboard in this browser.");
+    }
+  };
+
+  const handleContinueShare = () => {
+    if (!sharePrompt.shareUrl) {
+      return;
+    }
+
+    openShareWindow(sharePrompt.shareUrl);
+    closeSharePrompt();
+  };
+
+  const handleShare = async (platform: SharePlatform) => {
+    const shareUrl = getShareUrl();
+    if (!shareUrl) {
+      toast.error("Unable to build share link.");
+      return;
+    }
+
+    if (platform === "facebook") {
+      const quote = getFacebookQuote();
+      const shareUrlForFacebook = `${shareUrl}?share=facebook`;
+      const searchParams = new URLSearchParams({
+        u: shareUrlForFacebook,
+        quote,
+        hashtag: "#GDGPUP",
+      });
+      const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?${searchParams.toString()}`;
+      await openSharePrompt("facebook", facebookShareUrl, getShareCaption());
+      return;
+    }
+
+    if (platform === "linkedin") {
+      const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+      await openSharePrompt("linkedin", linkedInShareUrl, getLinkedInCaption());
+      return;
+    }
+
+    await openSharePrompt("instagram", "https://www.instagram.com/", getInstagramCaption());
   };
 
   const handleDropSection = (targetIndex: number) => {
@@ -371,7 +542,7 @@ export function ProfileOwnerView({
               <Text variant="heading-5" className="text-white">
                 My Portfolio
               </Text>
-              <div className="flex gap-2">
+              <div className="flex gap-2" role="group" aria-label="Share profile">
                 <Link prefetch={false} href="/sparkmates/me/analytics">
                   <Button
                     variant="colored"
@@ -382,6 +553,22 @@ export function ProfileOwnerView({
                     Analytics
                   </Button>
                 </Link>
+                {(["facebook", "instagram", "linkedin"] as SharePlatform[]).map((platform) => (
+                  <Button
+                    key={platform}
+                    variant="default"
+                    size="sm"
+                    className={SHARE_BUTTON_CLASSNAMES[platform]}
+                    title={`Share on ${SHARE_PLATFORM_LABELS[platform]}`}
+                    aria-label={`Share on ${SHARE_PLATFORM_LABELS[platform]}`}
+                    onClick={() => {
+                      void handleShare(platform);
+                    }}
+                    disabled={isSharing}
+                  >
+                    {SHARE_PLATFORM_LABELS[platform]}
+                  </Button>
+                ))}
                 <Button
                   variant="default"
                   size="sm"
@@ -414,9 +601,9 @@ export function ProfileOwnerView({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -24, scale: 0.985 }}
                   transition={{ duration: 0.28, ease: "easeOut" }}
-                  className="fixed left-0 right-0 top-0 z-[60] hidden md:px-16 md:pt-10 sm:block pointer-events-none"
+                  className="fixed left-0 right-0 top-0 z-60 hidden md:px-16 md:pt-10 sm:block pointer-events-none"
                 >
-                  <div className="pointer-events-auto mx-auto h-22 max-w-7xl md:rounded-[1.875rem] px-8 md:px-12 lg:px-20 flex items-center shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040,0px_4px_36px_0px_#FFFFFF40_inset] bg-black/80 backdrop-blur-xl relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-[2px] before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]">
+                  <div className="pointer-events-auto mx-auto h-22 max-w-7xl md:rounded-[1.875rem] px-8 md:px-12 lg:px-20 flex items-center shadow-[0px_4px_4px_0px_#00000040,0px_4px_46.1px_0px_#00000040,0px_4px_36px_0px_#FFFFFF40_inset] bg-black/80 backdrop-blur-xl relative isolate before:content-[''] before:absolute before:-inset-px before:rounded-[inherit] before:p-0.5 before:bg-size-[100%_100%] before:pointer-events-none before:z-[-1] before:mask-[linear-gradient(#fff_0_0),linear-gradient(#fff_0_0)] before:[mask-origin:content-box,border-box] before:[mask-clip:content-box,border-box] before:mask-exclude before:bg-[linear-gradient(to_bottom_right,#FB2C36_0%,#F0B100_5%,#00C950_10%,#2B7FFF_15%,#FFFFFF_50.48%,#2B7FFF_85%,#00C950_90%,#F0B100_95%,#FB2C36_100%)]">
                     <div className="relative flex w-full items-center justify-between gap-3">
                       <Text variant="body" className="text-white" weight="bold">
                         Reorder mode enabled: drag sections directly. Drop to save instantly.
@@ -522,13 +709,71 @@ export function ProfileOwnerView({
         </div>
 
         <Modal
+          open={sharePrompt.isOpen}
+          onOpenChange={(open) => {
+            if (open) {
+              return;
+            }
+            if (!open) {
+              closeSharePrompt();
+            }
+          }}
+          size="sm"
+          placement="center"
+          className="bg-[#081327]/95 border border-white/15 p-0 text-white"
+        >
+          <div className="w-full max-w-md px-5 py-5">
+            <Text variant="heading-6" className="text-white" weight="bold">
+              Share to {sharePrompt.platform ? SHARE_PLATFORM_LABELS[sharePrompt.platform] : "Social"}
+            </Text>
+            <Text variant="body-sm" className="mt-2 text-[#C1C7CD]">
+              {sharePrompt.isClipboardCopied
+                ? "Clipboard has been copied. Paste it in your post after the share page opens."
+                : "Unable to auto-copy clipboard in this browser. You can still continue to share."}
+            </Text>
+            <Text variant="caption" className="mt-2 text-[#A9D1FF]">
+              Tip: open the post composer, then paste from clipboard for the fastest workflow.
+            </Text>
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                className="text-white"
+                onClick={() => {
+                  void handleCopyPromptText();
+                }}
+              >
+                Copy Again
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="text-white"
+                onClick={closeSharePrompt}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="colored"
+                subVariant="blue"
+                size="sm"
+                className="text-white"
+                onClick={handleContinueShare}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </Modal>
+
+        <Modal
           open={isPreviewOpen}
           onOpenChange={handlePreviewOpenChange}
           size="sm"
           scrollBehavior="outside"
           placement="center"
           closeOnEsc={false}
-          className="bg-transparent border-none p-0 !shadow-none isolate w-full max-w-[410px]"
+          className="bg-transparent border-none p-0 shadow-none! isolate w-full max-w-102.5"
         >
           <div className="flex min-h-[calc(100dvh-1.5rem)] items-center justify-center px-3 py-2 sm:min-h-0 sm:px-4 sm:py-3">
             <div
@@ -578,7 +823,7 @@ export function ProfileOwnerView({
           onOpenChange={setIsMobileReorderModalOpen}
           size="sm"
           scrollBehavior="inside"
-          className="bg-transparent border-none p-0 !shadow-none isolate sm:hidden"
+          className="bg-transparent border-none p-0 shadow-none! isolate sm:hidden"
         >
           <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/90 backdrop-blur-2xl px-5 py-6 border border-white/10">
             <Text variant="heading-6" className="text-white" weight="bold">
