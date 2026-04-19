@@ -8,6 +8,7 @@ import { viewIcon } from "../SparkmatesOwnerView/icons/viewIcon";
 import { useSuggestedSparkmates } from "@/features/sparkmates/hooks";
 import { UserProfile } from "@/features/sparkmates/types";
 import { useSearchMember } from "@/features/sparkmates/hooks/useSearchMember";
+import { GdgLoader } from "@/components/ui/loader";
 
 export const SuggestedPeopleSection = ({
   profile,
@@ -122,17 +123,28 @@ export const SuggestedPeopleSection = ({
 
         {!viewingSearchResults && (
           <>
-            {suggestedUsers.map((member) => (
-              <ConnectedSuggestedCard
-                key={member.gdgId}
-                avatarUrl={member.avatarUrl ?? undefined}
-                name={member.displayName || member.firstName || member.gdgId}
-                bio={getSuggestedBio(member.bio)}
-                gdgId={member.gdgId}
-              />
-            ))}
+            {isLoading ? (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-5">
+                <div className="inline-flex items-center gap-2 text-[#C1C7CD]">
+                  <GdgLoader size="xs" />
+                  <Text variant="body-sm" className="text-[#C1C7CD]">
+                    Loading suggestions...
+                  </Text>
+                </div>
+              </div>
+            ) : (
+              suggestedUsers.map((member) => (
+                <ConnectedSuggestedCard
+                  key={member.gdgId}
+                  avatarUrl={member.avatarUrl ?? undefined}
+                  name={member.displayName || member.firstName || member.gdgId}
+                  bio={getSuggestedBio(member.bio)}
+                  gdgId={member.gdgId}
+                />
+              ))
+            )}
 
-            {suggestedUsers.length === 0 ? (
+            {suggestedUsers.length === 0 && !isLoading ? (
               <div className="rounded-xl border border-white/10 bg-white/5 p-5 text-center">
                 <Text variant="body-sm" className="text-[#C1C7CD]">
                   No matches found.
