@@ -1,5 +1,5 @@
 "use client";
- 
+
 import { Button, Modal, ShineBorder, Text } from "@packages/spark-ui";
 import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import Link from "next/link";
@@ -8,10 +8,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { useSparkmateProfile } from "../../hooks";
 import { SparkmatesSource } from "../../types";
 import { useUpdateSparkmateProfile } from "../../hooks/useUpdateSparkmateProfile";
-import { SkillsAndLinksSection } from "../sections/SkillsAndLinksSection"; 
-import { viewIcon } from "./icons/viewIcon"; 
-import { Divider } from "./components/Divider"; 
- import { SparkmatesRainbowStreak } from "./components/SparkmatesRainbowStreak";
+import { SkillsAndLinksSection } from "../sections/SkillsAndLinksSection";
+import { viewIcon } from "./icons/viewIcon";
+import { Divider } from "./components/Divider";
+import { SparkmatesRainbowStreak } from "./components/SparkmatesRainbowStreak";
 import { FadeInSection } from "./components/FadeInSection";
 import { NameAndProfileSection } from "../sections/NameAndProfileSection";
 import { useGetProfileOfUserByGdgId } from "../../hooks/useGetProfileOfUserByGdgId";
@@ -34,7 +34,64 @@ const SECTION_LABELS: Record<SparkmatesSectionId, string> = {
   gdgImpact: "GDG Impact",
   badges: "Badges",
 };
- 
+
+const areSectionOrdersEqual = (
+  left: SparkmatesSectionId[],
+  right: SparkmatesSectionId[],
+) => {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let index = 0; index < left.length; index += 1) {
+    if (left[index] !== right[index]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const getSectionOrderStorageKey = (gdgId: string) =>
+  `sparkmates:section-order:${gdgId}`;
+
+const readStoredSectionOrder = (
+  gdgId: string,
+): SparkmatesSectionId[] | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const raw = window.localStorage.getItem(getSectionOrderStorageKey(gdgId));
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      window.localStorage.removeItem(getSectionOrderStorageKey(gdgId));
+      return null;
+    }
+    return normalizeSparkmatesSectionOrder(parsed);
+  } catch {
+    window.localStorage.removeItem(getSectionOrderStorageKey(gdgId));
+    return null;
+  }
+};
+
+const writeStoredSectionOrder = (gdgId: string, next: SparkmatesSectionId[]) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(getSectionOrderStorageKey(gdgId), JSON.stringify(next));
+  } catch {
+    // Ignore local storage errors (quota/private mode) and keep in-memory state.
+  }
+};
+
 export function ProfileOwnerView({
   gdgId,
   source,
@@ -95,15 +152,43 @@ export function ProfileOwnerView({
     data: userprofiledata,
   } = useGetProfileOfUserByGdgId(gdgId);
   const userprofile = userprofiledata?.data;
+  const effectiveGdgId = userprofile?.gdgId || gdgId;
+  const pendingSectionOrderKeyRef = useRef<string | null>(null);
   const { mutate: updateProfileOrder, isPending: isSavingSectionOrder } =
-    useUpdateSparkmateProfile(gdgId);
+    useUpdateSparkmateProfile(effectiveGdgId);
+  const normalizedServerSectionOrder = normalizeSparkmatesSectionOrder(
+    userprofile?.sectionOrder,
+  );
+  const normalizedServerSectionOrderKey = normalizedServerSectionOrder.join("|");
   const [sectionOrder, setSectionOrder] = useState<SparkmatesSectionId[]>(
     normalizeSparkmatesSectionOrder(userprofile?.sectionOrder),
   );
 
   useEffect(() => {
-    setSectionOrder(normalizeSparkmatesSectionOrder(userprofile?.sectionOrder));
-  }, [userprofile?.sectionOrder]);
+    if (pendingSectionOrderKeyRef.current) {
+      return;
+    }
+
+    const storedOrder = readStoredSectionOrder(effectiveGdgId);
+    if (storedOrder) {
+      setSectionOrder((previous) =>
+        areSectionOrdersEqual(previous, storedOrder)
+          ? previous
+          : storedOrder,
+      );
+      return;
+    }
+
+    const nextServerOrder = normalizeSparkmatesSectionOrder(
+      userprofile?.sectionOrder,
+    );
+
+    setSectionOrder((previous) =>
+      areSectionOrdersEqual(previous, nextServerOrder)
+        ? previous
+        : nextServerOrder,
+    );
+  }, [effectiveGdgId, normalizedServerSectionOrderKey, userprofile?.sectionOrder]);
 
   useEffect(() => {
     window.dispatchEvent(
@@ -122,21 +207,20 @@ export function ProfileOwnerView({
   }, [isDesktopReorderMode]);
 
   const saveSectionOrder = (next: SparkmatesSectionId[]) => {
+    pendingSectionOrderKeyRef.current = next.join("|");
+    writeStoredSectionOrder(effectiveGdgId, next);
     setSectionOrder(next);
     updateProfileOrder(
       { sectionOrder: next },
       {
+        onSuccess: () => {
+          pendingSectionOrderKeyRef.current = null;
+        },
         onError: () => {
-          setSectionOrder(normalizeSparkmatesSectionOrder(userprofile?.sectionOrder));
+          pendingSectionOrderKeyRef.current = null;
         },
       },
     );
-  };
-
-  const handleMoveSection = (fromIndex: number, toIndex: number) => {
-    const next = moveSparkmatesSection(sectionOrder, fromIndex, toIndex);
-    if (next === sectionOrder) return;
-    saveSectionOrder(next);
   };
 
   const handleDropSection = (targetIndex: number) => {
