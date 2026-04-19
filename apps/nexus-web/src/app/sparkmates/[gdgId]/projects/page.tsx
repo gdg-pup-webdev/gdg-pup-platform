@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Button, Text } from "@packages/spark-ui";
-import { CosmosParticles, LoadingScreen } from "@/components/shared";
+import { CosmosParticles } from "@/components/shared";
+import { GdgLoader } from "@/components/ui/loader";
 import { useInfiniteMemberProjects } from "@/features/sparkmates";
 import { useSparkmateProfile } from "@/features/sparkmates/hooks/useSparkmateProfile";
 import { NameAndProfileSection } from "@/features/sparkmates/components/sections/NameAndProfileSection";
@@ -15,6 +16,17 @@ import { SortableProjectCardItem } from "@/features/sparkmates/components/Sparkm
 import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/SparkmatesBrandedErrorScreen";
 
 const PROJECTS_PER_LOAD = 10;
+
+const PublicProjectsLoader = ({ message }: { message: string }) => (
+  <div className="flex min-h-[40vh] items-center justify-center">
+    <div className="inline-flex items-center gap-2 text-zinc-300">
+      <GdgLoader size="xs" />
+      <Text variant="body-sm" className="text-zinc-300">
+        {message}
+      </Text>
+    </div>
+  </div>
+);
 
 export default function PublicProjectsPage() {
   const { gdgId } = useParams<{ gdgId: string }>();
@@ -40,7 +52,7 @@ export default function PublicProjectsPage() {
   const totalRecords = data?.pages[0]?.meta.totalRecords || 0;
 
   if (!gdgId || isProfileLoading) {
-    return <LoadingScreen message="Loading projects..." />;
+    return <PublicProjectsLoader message="Loading projects..." />;
   }
 
   if (isProfileError || !profile) {
@@ -112,7 +124,7 @@ export default function PublicProjectsPage() {
               </div>
 
               {isLoading ? (
-                <LoadingScreen message="Loading projects..." />
+                <PublicProjectsLoader message="Loading projects..." />
               ) : projects.length === 0 ? (
                 <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-8 text-center text-[#C1C7CD]">
                   <Text className="text-[#C1C7CD]" variant="body-sm">No projects yet.</Text>
