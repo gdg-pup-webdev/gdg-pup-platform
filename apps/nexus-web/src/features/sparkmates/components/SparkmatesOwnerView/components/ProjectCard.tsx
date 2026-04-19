@@ -2,7 +2,7 @@
 import { Text } from "@packages/spark-ui";
 import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
 import type { Ref } from "react";
-import { MdDragIndicator } from "react-icons/md";
+import { MdDragIndicator, MdDeleteOutline } from "react-icons/md";
 import { MdCalendarMonth } from "react-icons/md";
 import Link from "next/link";
 import { editIcon } from "../icons/editIcon";
@@ -26,6 +26,7 @@ type ProjectLike = {
 type ProjectCardProps = {
   project: ProjectLike;
   onEdit?: () => void;
+  onDelete?: () => void;
   showDragHandle?: boolean;
   dragHandleRef?: Ref<HTMLButtonElement>;
   dragHandleAttributes?: DraggableAttributes;
@@ -157,6 +158,7 @@ const normalizeProjectImages = (project: ProjectLike): string[] => {
 export function ProjectCard({
   project,
   onEdit,
+  onDelete,
   showDragHandle = false,
   dragHandleRef,
   dragHandleAttributes,
@@ -258,6 +260,18 @@ export function ProjectCard({
               title="Edit project"
             >
               {editIcon}
+            </button>
+          )}
+
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/30 text-white transition hover:border-red-500/60 hover:bg-red-500/10 hover:text-red-400"
+              aria-label="Delete project"
+              title="Delete project"
+            >
+              <MdDeleteOutline className="h-4 w-4" />
             </button>
           )}
         </div>

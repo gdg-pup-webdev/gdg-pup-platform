@@ -288,6 +288,11 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
     setIsEditModalOpen(true);
   };
 
+  const handleDeleteDirectly = (project: any) => {
+    setEditingProject(toProjectFormState(project));
+    setIsDeleteConfirmOpen(true);
+  };
+
   const handleDeleteCurrentProject = () => {
     if (!editingProject.id) {
       return;
@@ -538,6 +543,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
                       ? `/sparkmates/${profile.gdgId}/projects/${project.id}`
                       : `/sparkmates/me/projects/${project.id}`}
                     onEdit={() => handleOpenEditProjectModal(project)}
+                    onDelete={() => handleDeleteDirectly(project)}
                     sortingDisabled={reorderProjects.isPending}
                     handleDisabled={reorderProjects.isPending}
                     readOnly={readOnly}
