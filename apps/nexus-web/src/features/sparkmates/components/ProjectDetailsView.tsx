@@ -324,6 +324,10 @@ export const ProjectDetailsView = ({
     };
   }, []);
 
+  useEffect(() => {
+    setIsDescriptionExpanded(false);
+  }, [projectId]);
+
   if (isLoading) {
     return <LoadingScreen message="Loading project..." />;
   }
@@ -432,10 +436,6 @@ export const ProjectDetailsView = ({
     setEditingProject(toProjectFormState(project));
     setIsEditModalOpen(true);
   };
-
-  useEffect(() => {
-    setIsDescriptionExpanded(false);
-  }, [projectId]);
 
   const handleUpdateProjectField = (
     index: number,

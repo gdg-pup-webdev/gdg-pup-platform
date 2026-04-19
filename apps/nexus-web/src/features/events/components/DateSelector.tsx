@@ -7,6 +7,7 @@ import {
   DropdownContent,
   DropdownLabel,
   Button,
+  Text,
 } from "@packages/spark-ui";
 
 const MONTHS = [
@@ -67,9 +68,15 @@ export function DateSelector({
               variant="ghost"
               className="bg-[#1a1a1a] border border-white/10 hover:bg-[#262626] h-10 md:h-12 flex items-center gap-2 px-4 md:px-5 rounded-xl group transition-all duration-200 shadow-sm"
             >
-              <span className="text-white/90 text-sm md:text-base font-bold tracking-tight">
+              <Text
+                as="span"
+                variant="body"
+                gradient="white-green"
+                weight="bold"
+                className="text-sm md:text-base tracking-tight"
+              >
                 {MONTHS[currentMonth]} {currentYear}
-              </span>
+              </Text>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
