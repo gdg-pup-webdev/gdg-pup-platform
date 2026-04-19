@@ -220,7 +220,8 @@ export function SkillsAndLinksSection({
         />
       </div>
 
-      {profile.technicalSkills?.length === 0 &&
+      {!readOnly &&
+      profile.technicalSkills?.length === 0 &&
       profile.learningInterests?.length === 0 &&
       profile.toolsAndTechnologies?.length === 0 ? (
         <Button
