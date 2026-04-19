@@ -40,6 +40,11 @@ export const SuggestedPeopleSection = ({
     setViewingSearchResults(false);
   };
 
+  const getSuggestedBio = (bio?: string | null) => {
+    const trimmedBio = bio?.trim();
+    return trimmedBio ? trimmedBio : "No description yet.";
+  };
+
   return (
     <FadeInSection delay={0.1} className="min-w-0">
       <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
@@ -100,7 +105,7 @@ export const SuggestedPeopleSection = ({
                 key={member.gdgId}
                 avatarUrl={member.avatarUrl ?? undefined}
                 name={member.displayName || member.firstName || member.gdgId}
-                bio={member.bio || "---"}
+                bio={getSuggestedBio(member.bio)}
                 gdgId={member.gdgId}
               />
             ))}
@@ -122,7 +127,7 @@ export const SuggestedPeopleSection = ({
                 key={member.gdgId}
                 avatarUrl={member.avatarUrl ?? undefined}
                 name={member.displayName || member.firstName || member.gdgId}
-                bio={member.bio || "---"}
+                bio={getSuggestedBio(member.bio)}
                 gdgId={member.gdgId}
               />
             ))}
