@@ -19,6 +19,9 @@ export function useUpdateSparkmateProfile(gdgId?: string) {
           queryKey: ["sparkmateProfile", gdgId],
         });
         queryClient.invalidateQueries({
+          queryKey: ["sparkmates-profile", gdgId],
+        });
+        queryClient.invalidateQueries({
           queryKey: ["sparkmates", "profile", gdgId],
         });
       }
