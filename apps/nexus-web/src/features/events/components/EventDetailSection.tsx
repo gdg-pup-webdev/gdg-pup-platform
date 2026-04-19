@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Container, Stack, Text } from "@packages/spark-ui"; 
 import type { Event } from "../types";
@@ -32,7 +32,6 @@ export function EventDetailSection({
   title,
 }: EventDetailSectionProps) { 
   const router = useRouter();
-  const [expanded, setExpanded] = useState(false);
 
   const { data : eventDetail, isLoading, error} = useEvent(eventId)
  
@@ -56,17 +55,27 @@ export function EventDetailSection({
       eventDetail?.description?.trim() ||
       "Description will be available soon.",
   );
-  const isLongAbout = aboutText.length > 360;
-  const aboutPreview =
-    isLongAbout && !expanded ? `${aboutText.slice(0, 360).trimEnd()}...` : aboutText;
-  const fullAboutParagraphs = aboutText.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
-  const aboutParagraphs = aboutPreview.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
+  const aboutParagraphs = aboutText.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
+  const aboutSingleParagraph = aboutParagraphs[0] || "Description will be available soon.";
   const keyThemes : string[] = ["test"]
     // eventDetail?.tags?.filter((tag) => Boolean(tag?.trim())) ||
     // (eventDetail?.category ? [eventDetail.category] : []);
 
   const registerHref =
     eventDetail?.bevyPreviewUrl?.trim() || eventDetail?.bevyPreviewUrl?.trim() || "";
+
+  const isUpcoming = (() => {
+    if (!eventDetail?.start_date) {
+      return false;
+    }
+
+    const startDate = new Date(eventDetail.start_date);
+    if (Number.isNaN(startDate.getTime())) {
+      return false;
+    }
+
+    return startDate.getTime() > Date.now();
+  })();
 
   const dateBarLabel = useMemo(() => {
     if (!eventDetail?.start_date) return "Date to be announced";
@@ -406,40 +415,12 @@ export function EventDetailSection({
                   >
                     What is the event about?
                   </Text>
-                  <div className="space-y-3 md:hidden">
-                    {fullAboutParagraphs.map((paragraph, index) => (
-                      <Text
-                        key={`${paragraph.slice(0, 20)}-mobile-${index}`}
-                        variant="body-sm"
-                        className="text-white/85 leading-relaxed"
-                      >
-                        {renderDescriptionWithBold(paragraph)}
-                      </Text>
-                    ))}
-                  </div>
-                  <div className="hidden md:block space-y-3">
-                    {aboutParagraphs.map((paragraph, index) => (
-                      <Text
-                        key={`${paragraph.slice(0, 20)}-${index}`}
-                        variant="body-sm"
-                        className="text-white/85 leading-relaxed"
-                      >
-                        {renderDescriptionWithBold(paragraph)}
-                      </Text>
-                    ))}
-                  </div>
-                  {isLongAbout ? (
-                    <div className="mt-4 hidden md:flex w-full justify-center">
-                      <button
-                        type="button"
-                        onClick={() => setExpanded((value) => !value)}
-                        className="text-white/70 hover:text-white transition-colors text-sm inline-flex items-center gap-1 cursor-pointer"
-                      >
-                        {expanded ? "See Less" : "See More"}
-                        <span aria-hidden="true">{expanded ? "\u02c4" : "\u02c5"}</span>
-                      </button>
-                    </div>
-                  ) : null}
+                  <Text
+                    variant="body-sm"
+                    className="text-white/85 leading-relaxed"
+                  >
+                    {renderDescriptionWithBold(aboutSingleParagraph)}
+                  </Text>
 
                   <div className="mt-6 md:mt-7">
                     {registerHref ? (
@@ -449,7 +430,7 @@ export function EventDetailSection({
                         rel="noreferrer"
                         className="h-10 md:h-11 w-full rounded-md border border-[#4285F4] bg-[linear-gradient(90deg,rgba(20,57,132,0.95)_0%,rgba(43,127,255,0.95)_50%,rgba(20,57,132,0.95)_100%)] text-white text-sm md:text-base font-medium inline-flex items-center justify-center"
                       >
-                        Register
+                        {isUpcoming ? "Register" : "View Details"}
                       </a>
                     ) : (
                       <button
@@ -457,7 +438,7 @@ export function EventDetailSection({
                         disabled
                         className="h-10 md:h-11 w-full rounded-md border border-white/15 bg-white/5 text-white/50 text-sm md:text-base font-medium"
                       >
-                        Register
+                        {isUpcoming ? "Register" : "View Details"}
                       </button>
                     )}
                   </div>
