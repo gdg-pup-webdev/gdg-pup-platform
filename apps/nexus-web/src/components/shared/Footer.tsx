@@ -21,9 +21,11 @@ export const Footer: React.FC = () => {
     ],
     nexus: [
       { href: "/events", label: "Events" },
+      { href: "/articles", label: "Articles" },
+      { href: "/merch", label: "Merch" },
       { href: "/products", label: "Products" },
       { href: "/id", label: "Get ID" },
-      { href: "/profile", label: "Profile" },
+      { href: "/sparkmates/me", label: "Profile" },
     ],
   };
 
@@ -203,19 +205,11 @@ export const Footer: React.FC = () => {
             </Text>
             <Stack gap="xs" className="items-center md:items-start text-center md:text-left">
               <Link prefetch={false}
-                href="mailto:support@gdgpup.org"
+                href="mailto:gdg.pupmnl@gmail.com"
                 className="text-gray-300 hover:text-white transition-colors duration-200"
               >
                 <Text variant="body-sm" className="text-inherit">
-                  support@gdgpup.org
-                </Text>
-              </Link>
-              <Link prefetch={false}
-                href="mailto:hello@gdgpup.org"
-                className="text-gray-300 hover:text-white transition-colors duration-200"
-              >
-                <Text variant="body-sm" className="text-inherit">
-                  hello@gdgpup.org
+                  gdg.pupmnl@gmail.com
                 </Text>
               </Link>
             </Stack>
