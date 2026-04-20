@@ -20,7 +20,14 @@ export class GCPFileStorage implements IFileStorage {
       storageOptions.projectId = configs.gcp.projectId;
     }
 
-    if (configs.gcp.credentialsFile) {
+    if (configs.gcp.credentialsBase64) {
+      try {
+        const decoded = Buffer.from(configs.gcp.credentialsBase64, "base64").toString("utf-8");
+        storageOptions.credentials = JSON.parse(decoded);
+      } catch (error) {
+        console.error("Failed to parse GCS_CREDENTIALS_BASE64 as JSON:", error);
+      }
+    } else if (configs.gcp.credentialsFile) {
       storageOptions.keyFilename = configs.gcp.credentialsFile;
     }
 

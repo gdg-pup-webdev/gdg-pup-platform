@@ -1,4 +1,4 @@
-import { Button, Text, Modal, Spinner } from "@packages/spark-ui";
+import { Button, Text, Modal } from "@packages/spark-ui";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
@@ -24,8 +24,10 @@ import { ProjectsManager } from "@/features/onboarding/components/ProjectsManage
 import { ProjectFormState } from "@/features/onboarding/types";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
 import { toast } from "react-toastify";
+import { GdgLoader } from "@/components/ui/loader";
 
 const MAX_PROJECT_IMAGES = 4;
+const PROJECTS_PER_PAGE = 4;
 
 const createEmptyProject = (): ProjectFormState => ({
   title: "",
@@ -177,6 +179,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
   const [editingProject, setEditingProject] = useState<ProjectFormState>(createEmptyProject());
   const [isSavingProject, setIsSavingProject] = useState(false);
   const [orderedProjectIds, setOrderedProjectIds] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -434,6 +437,55 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
     ? orderedProjectIds
     : projectIdsFromQuery;
 
+  const totalPages = Math.max(1, Math.ceil(orderedProjectList.length / PROJECTS_PER_PAGE));
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
+  const paginatedProjectList = useMemo(() => {
+    const start = (page - 1) * PROJECTS_PER_PAGE;
+    return orderedProjectList.slice(start, start + PROJECTS_PER_PAGE);
+  }, [orderedProjectList, page]);
+
+  const paginatedProjectIds = useMemo(
+    () => paginatedProjectList.map((project: any) => String(project.id)),
+    [paginatedProjectList],
+  );
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | "...")[] = [];
+
+    if (totalPages <= 7) {
+      for (let value = 1; value <= totalPages; value += 1) {
+        pages.push(value);
+      }
+      return pages;
+    }
+
+    pages.push(1);
+
+    if (page > 3) {
+      pages.push("...");
+    }
+
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+
+    for (let value = start; value <= end; value += 1) {
+      pages.push(value);
+    }
+
+    if (page < totalPages - 2) {
+      pages.push("...");
+    }
+
+    pages.push(totalPages);
+    return pages;
+  }, [page, totalPages]);
+
   const handleProjectDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -513,36 +565,84 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
       
       <div className="space-y-3.5">
         {projectsQuery.isLoading ? (
-          <Text variant="body-sm" className="text-zinc-500">Loading projects...</Text>
+          <div className="inline-flex items-center gap-2 text-zinc-300">
+            <GdgLoader size="xs" />
+            <Text variant="body-sm" className="text-zinc-300">Loading projects...</Text>
+          </div>
         ) : projectList.length > 0 ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleProjectDragEnd}
-          >
-            <SortableContext
-              items={effectiveProjectIds}
-              strategy={verticalListSortingStrategy}
+          <>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleProjectDragEnd}
             >
-              <div className="space-y-3.5">
-                {orderedProjectList.map((project: any) => (
-                  <SortableProjectCardItem
-                    key={project.id}
-                    id={String(project.id)}
-                    project={project}
-                    projectHref={readOnly
-                      ? `/sparkmates/${profile.gdgId}/projects/${project.id}`
-                      : `/sparkmates/me/projects/${project.id}`}
-                    onEdit={() => handleOpenEditProjectModal(project)}
-                    sortingDisabled={reorderProjects.isPending}
-                    handleDisabled={reorderProjects.isPending}
-                    readOnly={readOnly}
-                    truncateDescription
-                  />
-                ))}
+              <SortableContext
+                items={paginatedProjectIds}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-3.5">
+                  {paginatedProjectList.map((project: any) => (
+                    <SortableProjectCardItem
+                      key={project.id}
+                      id={String(project.id)}
+                      project={project}
+                      projectHref={readOnly
+                        ? `/sparkmates/${profile.gdgId}/projects/${project.id}`
+                        : `/sparkmates/me/projects/${project.id}`}
+                      onEdit={() => handleOpenEditProjectModal(project)}
+                      sortingDisabled={reorderProjects.isPending}
+                      handleDisabled={reorderProjects.isPending}
+                      readOnly={readOnly}
+                      truncateDescription
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+
+            {totalPages > 1 ? (
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-[#C1C7CD]"
+                  onClick={() => setPage((previous) => Math.max(1, previous - 1))}
+                  disabled={page === 1}
+                >
+                  Prev
+                </Button>
+
+                {pageNumbers.map((entry, index) =>
+                  entry === "..." ? (
+                    <span key={`ellipsis-${index}`} className="px-2 text-sm text-[#8FA1C7]">
+                      ...
+                    </span>
+                  ) : (
+                    <Button
+                      key={`page-${entry}`}
+                      variant={entry === page ? "colored" : "ghost"}
+                      subVariant={entry === page ? "blue" : undefined}
+                      size="sm"
+                      className={entry === page ? "text-white" : "text-[#C1C7CD]"}
+                      onClick={() => setPage(entry)}
+                    >
+                      {entry}
+                    </Button>
+                  ),
+                )}
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-[#C1C7CD]"
+                  onClick={() => setPage((previous) => Math.min(totalPages, previous + 1))}
+                  disabled={page === totalPages}
+                >
+                  Next
+                </Button>
               </div>
-            </SortableContext>
-          </DndContext>
+            ) : null}
+          </>
         ) : null}
       </div>
 
@@ -600,7 +700,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
 
           {isImageMutationPending && (
             <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-[#E5E5E5]">
-              <Spinner size="sm" className="text-white" />
+              <GdgLoader size="xs" />
               <span>Saving project images...</span>
             </div>
           )}
@@ -621,7 +721,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
             <Button variant="colored" subVariant="blue" onClick={handleSave} disabled={isSaving}>
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
-                  <Spinner size="sm" className="text-white" />
+                  <GdgLoader size="xs" />
                   Saving...
                 </span>
               ) : editingProject.id ? "Save Changes" : "Create Project"}

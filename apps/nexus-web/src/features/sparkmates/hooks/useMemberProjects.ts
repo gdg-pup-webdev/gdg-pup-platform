@@ -22,6 +22,7 @@ export function useMemberProjects(gdgId?: string) {
   const invalidateProjectQueries = () => {
     queryClient.invalidateQueries({ queryKey: ["memberProjects", gdgId] });
     queryClient.invalidateQueries({ queryKey: ["memberProjectsInfinite", gdgId] });
+    queryClient.invalidateQueries({ queryKey: ["memberProjectsPage", gdgId] });
   };
 
   const projectsQuery = useQuery({

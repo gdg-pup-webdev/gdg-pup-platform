@@ -21,7 +21,6 @@ export const Footer: React.FC = () => {
     ],
     nexus: [
       { href: "/events", label: "Events" },
-      { href: "/leaderboard", label: "Leaderboard" },
       { href: "/products", label: "Products" },
       { href: "/id", label: "Get ID" },
       { href: "/profile", label: "Profile" },
@@ -182,13 +181,11 @@ export const Footer: React.FC = () => {
               Address
             </Text>
             <Text variant="body-sm" className="text-gray-300 mb-4 text-center md:text-left">
-              1016 Anonas, Sta. Mesa,
-              <br />
-              Manila, Kalakhang Maynila
+              PUP A. Mabini Campus, Anonas Street, Sta. Mesa, Manila, Philippines 1016
             </Text>
             <Box className="w-full h-32 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61782.79996828802!2d120.99703851037599!3d14.574842255264826!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c9e744a00ef5%3A0xe5f3a1331957e6b3!2s1016%20Anonas%2C%20Santa%20Mesa%2C%20Manila%2C%201008%20Kalakhang%20Maynila!5e0!3m2!1sen!2sph!4v1771607445899!5m2!1sen!2sph"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241.31249657945932!2d121.01158757552903!3d14.599078867008277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c9dd97a1439b%3A0x44e1b969e7f1f67a!2sPUP%20Main%20-%20A.%20Mabini%20Campus%2C%20Sta.%20Mesa%2C%20Manila!5e0!3m2!1sen!2sph!4v1776567874730!5m2!1sen!2sph"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

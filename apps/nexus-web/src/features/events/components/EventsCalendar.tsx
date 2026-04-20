@@ -454,7 +454,7 @@ export function EventsCalendar({
                           </p>
                         )}
                         <p className="hidden md:group-hover:block text-[9px] md:text-sm leading-tight font-semibold text-black">
-                          View More →
+                          View More
                         </p>
                       </div>
                     )}

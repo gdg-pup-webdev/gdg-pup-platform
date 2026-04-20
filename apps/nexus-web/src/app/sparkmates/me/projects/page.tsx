@@ -20,7 +20,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CosmosParticles, LoadingScreen } from "@/components/shared";
+import { CosmosParticles } from "@/components/shared";
+import { GdgLoader } from "@/components/ui/loader";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useGetProfileOfUserByGdgId } from "@/features/sparkmates/hooks/useGetProfileOfUserByGdgId";
 import { NameAndProfileSection } from "@/features/sparkmates/components/sections/NameAndProfileSection";
@@ -32,7 +33,7 @@ import { addIcon } from "@/features/sparkmates/components/SparkmatesOwnerView/ic
 import { viewIcon } from "@/features/sparkmates/components/SparkmatesOwnerView/icons/viewIcon";
 import {
   useMemberProjects,
-  useInfiniteMemberProjects,
+  useMemberProjectsPaginated,
 } from "@/features/sparkmates";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
@@ -40,7 +41,7 @@ import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/Pro
 import { getMemberProjectById } from "@/features/sparkmates/api/memberProjects";
 import { toast } from "react-toastify";
 
-const PROJECTS_PER_LOAD = 10;
+const PROJECTS_PER_PAGE = 4;
 const MAX_PROJECT_IMAGES = 4;
 
 const createEmptyProject = (): ProjectFormState => ({
@@ -200,6 +201,17 @@ const areSameOrder = (left: string[], right: string[]): boolean => {
   return true;
 };
 
+const ProjectsPageLoader = ({ message }: { message: string }) => (
+  <div className="flex min-h-[40vh] items-center justify-center">
+    <div className="inline-flex items-center gap-2 text-zinc-300">
+      <GdgLoader size="xs" />
+      <Text variant="body-sm" className="text-zinc-300">
+        {message}
+      </Text>
+    </div>
+  </div>
+);
+
 export default function MyProjectsPage() {
   const { decodedToken, token } = useAuthContext();
   const searchParams = useSearchParams();
@@ -221,6 +233,7 @@ export default function MyProjectsPage() {
   const [isSavingProject, setIsSavingProject] = useState(false);
   const [orderedProjectIds, setOrderedProjectIds] = useState<string[]>([]);
   const [handledEditProjectId, setHandledEditProjectId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -230,19 +243,54 @@ export default function MyProjectsPage() {
   );
 
   const {
-    data,
+    data: projectsResponse,
     isLoading,
     isError,
     error,
     refetch,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteMemberProjects(gdgId, PROJECTS_PER_LOAD);
+  } = useMemberProjectsPaginated(gdgId, page, PROJECTS_PER_PAGE);
 
-  const projects = data?.pages.flatMap((page) => page.data) || [];
-  const totalRecords = data?.pages[0]?.meta.totalRecords || 0;
+  const projects = projectsResponse?.data || [];
+  const totalRecords = projectsResponse?.meta.totalRecords || 0;
+  const totalPages = Math.max(1, projectsResponse?.meta.totalPages || 1);
   const editProjectId = searchParams.get("editProjectId");
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | "...")[] = [];
+
+    if (totalPages <= 7) {
+      for (let value = 1; value <= totalPages; value += 1) {
+        pages.push(value);
+      }
+      return pages;
+    }
+
+    pages.push(1);
+
+    if (page > 3) {
+      pages.push("...");
+    }
+
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+
+    for (let value = start; value <= end; value += 1) {
+      pages.push(value);
+    }
+
+    if (page < totalPages - 2) {
+      pages.push("...");
+    }
+
+    pages.push(totalPages);
+    return pages;
+  }, [page, totalPages]);
 
   const projectIdsFromQuery = useMemo(
     () => projects.map((project) => String(project.id)),
@@ -526,6 +574,8 @@ export default function MyProjectsPage() {
       return;
     }
 
+    const pageOffset = (page - 1) * PROJECTS_PER_PAGE;
+
     const nextOrder = arrayMove(effectiveProjectIds, fromIndex, toIndex);
     setOrderedProjectIds(nextOrder);
 
@@ -533,13 +583,13 @@ export default function MyProjectsPage() {
       try {
         await reorderProjects.mutateAsync({
           memberGdgId: gdgId,
-          fromIndex,
-          toIndex,
+          fromIndex: pageOffset + fromIndex,
+          toIndex: pageOffset + toIndex,
         });
       } catch {
         try {
           const rollbackResult = await refetch();
-          const backendLoadedProjects = rollbackResult.data?.pages.flatMap((page) => page.data) || projects;
+          const backendLoadedProjects = rollbackResult.data?.data || projects;
           const backendIds = backendLoadedProjects.map((project) => String(project.id));
           setOrderedProjectIds(backendIds);
         } catch {
@@ -562,11 +612,11 @@ export default function MyProjectsPage() {
     addProjectImage.isPending || deleteProjectImage.isPending;
 
   if (!gdgId) {
-    return <LoadingScreen message="Loading projects..." />;
+    return <ProjectsPageLoader message="Loading projects..." />;
   }
 
   if (isProfileLoading && !userProfile) {
-    return <LoadingScreen message="Loading projects..." />;
+    return <ProjectsPageLoader message="Loading projects..." />;
   }
 
   return (
@@ -653,7 +703,7 @@ export default function MyProjectsPage() {
               </div>
 
               {isLoading ? (
-                <LoadingScreen message="Loading projects..." />
+                <ProjectsPageLoader message="Loading projects..." />
               ) : isError ? (
                 <div className="rounded-2xl border border-red-500/30 bg-red-950/30 p-6 text-red-200">
                   <Text variant="body" weight="medium">
@@ -695,17 +745,45 @@ export default function MyProjectsPage() {
                     </SortableContext>
                   </DndContext>
 
-                  {hasNextPage ? (
-                    <div className="mt-6 flex justify-center">
+                  {totalPages > 1 ? (
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
                       <Button
-                        variant="colored"
-                        subVariant="blue"
-                        disabled={isFetchingNextPage}
-                        onClick={() => {
-                          fetchNextPage();
-                        }}
+                        variant="ghost"
+                        size="sm"
+                        className="text-[#C1C7CD]"
+                        onClick={() => setPage((previous) => Math.max(1, previous - 1))}
+                        disabled={page === 1}
                       >
-                        {isFetchingNextPage ? "Loading..." : "Load More"}
+                        Prev
+                      </Button>
+
+                      {pageNumbers.map((entry, index) =>
+                        entry === "..." ? (
+                          <span key={`ellipsis-${index}`} className="px-2 text-sm text-[#8FA1C7]">
+                            ...
+                          </span>
+                        ) : (
+                          <Button
+                            key={`page-${entry}`}
+                            variant={entry === page ? "colored" : "ghost"}
+                            subVariant={entry === page ? "blue" : undefined}
+                            size="sm"
+                            className={entry === page ? "text-white" : "text-[#C1C7CD]"}
+                            onClick={() => setPage(entry)}
+                          >
+                            {entry}
+                          </Button>
+                        ),
+                      )}
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-[#C1C7CD]"
+                        onClick={() => setPage((previous) => Math.min(totalPages, previous + 1))}
+                        disabled={page === totalPages}
+                      >
+                        Next
                       </Button>
                     </div>
                   ) : (
