@@ -54,7 +54,7 @@
     "svgo": "^4.0.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5",
+    "typescript": "^6",
     "vitest": "^4.0.18"
   }
 }
