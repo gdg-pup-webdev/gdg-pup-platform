@@ -20,6 +20,7 @@ import { SortableProjectCardItem } from "../SparkmatesOwnerView/components/Sorta
 import { addIcon } from "../SparkmatesOwnerView/icons/addIcon";
 import { UserProfile } from "@/features/sparkmates";
 import { useMemberProjects } from "@/features/sparkmates/hooks/useMemberProjects";
+import { useDeleteMemberProject } from "@/features/sparkmates/hooks/useDeleteMemberProject";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
@@ -169,11 +170,11 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
     projectsQuery,
     createProject,
     updateProject,
-    deleteProject,
     addProjectImage,
     deleteProjectImage,
     reorderProjects,
   } = useMemberProjects(profile.gdgId);
+  const deleteProject = useDeleteMemberProject({ memberGdgId: profile.gdgId });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectFormState>(createEmptyProject());
@@ -298,6 +299,12 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
     setIsDeleteConfirmOpen(true);
   };
 
+  const handleDirectDeleteProject = (project: any) => {
+    setIsEditModalOpen(false);
+    setEditingProject(toProjectFormState(project));
+    setIsDeleteConfirmOpen(true);
+  };
+
   const handleConfirmDeleteCurrentProject = async () => {
     if (!editingProject.id) {
       return;
@@ -311,8 +318,8 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
       setIsEditModalOpen(false);
       setEditingProject(createEmptyProject());
       void projectsQuery.refetch();
-    } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete project");
+    } catch {
+      // Error feedback is handled centrally in useDeleteMemberProject.
     } finally {
       setIsSavingProject(false);
     }
@@ -590,6 +597,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
                         ? `/sparkmates/${profile.gdgId}/projects/${project.id}`
                         : `/sparkmates/me/projects/${project.id}`}
                       onEdit={() => handleOpenEditProjectModal(project)}
+                      onDelete={() => handleDirectDeleteProject(project)}
                       sortingDisabled={reorderProjects.isPending}
                       handleDisabled={reorderProjects.isPending}
                       readOnly={readOnly}
