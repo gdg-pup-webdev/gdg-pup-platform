@@ -9,6 +9,7 @@ type SortableProjectCardItemProps = {
   id: string;
   project: any;
   onEdit?: () => void;
+  onDelete?: () => void;
   sortingDisabled?: boolean;
   handleDisabled?: boolean;
   isDropTarget?: boolean;
@@ -21,6 +22,7 @@ export function SortableProjectCardItem({
   id,
   project,
   onEdit,
+  onDelete,
   sortingDisabled = false,
   handleDisabled = false,
   isDropTarget = false,
@@ -63,6 +65,7 @@ export function SortableProjectCardItem({
       <ProjectCard
         project={project}
         onEdit={readOnly ? undefined : onEdit}
+        onDelete={readOnly ? undefined : onDelete}
         showDragHandle={!readOnly}
         dragHandleRef={setActivatorNodeRef}
         dragHandleAttributes={attributes}

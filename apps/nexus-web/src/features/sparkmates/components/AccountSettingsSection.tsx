@@ -16,7 +16,11 @@ export function AccountSettingsSection() {
   const { decodedToken } = useAuthContext();
   const gdgId = decodedToken?.memberInfo?.gdgId;
 
-  const { data: profileResponse, isLoading, isError } = useGetProfileOfUserByGdgId(gdgId);
+  const {
+    data: profileResponse,
+    isLoading,
+    isError,
+  } = useGetProfileOfUserByGdgId(gdgId);
   const profile = profileResponse?.data;
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -45,7 +49,6 @@ export function AccountSettingsSection() {
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6 sm:pt-10">
-
       {/* ── 1. Profile Header Card ─────────────────────────────────────────────
            rainbow-border + bg-white/5 backdrop-blur-md on ALL breakpoints.
            The mobile hero image lives in SettingsSection.tsx behind this card. */}
@@ -64,8 +67,12 @@ export function AccountSettingsSection() {
               {fullName}
             </Text>
             <div className="mt-2 flex items-center justify-center sm:justify-start gap-2">
-              <Text variant="body-sm" className="text-zinc-400">GDG ID:</Text>
-              <Text variant="body-sm" weight="bold" gradient="yellow">{profile.gdgId}</Text>
+              <Text variant="body-sm" className="text-zinc-400">
+                GDG ID:
+              </Text>
+              <Text variant="body-sm" weight="bold" gradient="yellow">
+                {profile.gdgId}
+              </Text>
             </div>
           </div>
 
@@ -100,7 +107,8 @@ export function AccountSettingsSection() {
           </div>
 
           {/* NFC Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* commented out according to issue #979 */}
+          {/* <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <Text variant="body" className="text-[#C1C7CD]">
               Near Field Communication (NFC)
             </Text>
@@ -112,7 +120,7 @@ export function AccountSettingsSection() {
             >
               {profile.isPublic ? "Turn Off" : "Turn On"}
             </Button>
-          </div>
+          </div> */}
 
           {/* Password Row */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

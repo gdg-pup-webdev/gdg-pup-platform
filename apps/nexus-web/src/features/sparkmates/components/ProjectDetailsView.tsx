@@ -10,6 +10,7 @@ import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
 import { getMemberProjectById } from "@/features/sparkmates/api/memberProjects";
 import { useMemberProjects } from "@/features/sparkmates/hooks/useMemberProjects";
+import { useDeleteMemberProject } from "@/features/sparkmates/hooks/useDeleteMemberProject";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
 import { viewIcon } from "@/features/sparkmates/components/SparkmatesOwnerView/icons/viewIcon";
@@ -280,10 +281,10 @@ export const ProjectDetailsView = ({
 
   const {
     updateProject,
-    deleteProject,
     addProjectImage,
     deleteProjectImage,
   } = useMemberProjects(project?.memberGdgId);
+  const deleteProject = useDeleteMemberProject({ memberGdgId: project?.memberGdgId });
 
   const closeLightbox = () => {
     setIsLightboxVisible(false);
@@ -586,8 +587,8 @@ export const ProjectDetailsView = ({
       setIsDeleteConfirmOpen(false);
       setIsEditModalOpen(false);
       router.push(backHref);
-    } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete project");
+    } catch {
+      // Error feedback is handled centrally in useDeleteMemberProject.
     } finally {
       setIsSavingProject(false);
     }

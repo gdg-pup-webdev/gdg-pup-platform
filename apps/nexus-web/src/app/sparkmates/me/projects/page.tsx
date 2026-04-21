@@ -35,6 +35,7 @@ import {
   useMemberProjects,
   useMemberProjectsPaginated,
 } from "@/features/sparkmates";
+import { useDeleteMemberProject } from "@/features/sparkmates/hooks/useDeleteMemberProject";
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
@@ -221,11 +222,11 @@ export default function MyProjectsPage() {
   const {
     createProject,
     updateProject,
-    deleteProject,
     addProjectImage,
     deleteProjectImage,
     reorderProjects,
   } = useMemberProjects(gdgId);
+  const deleteProject = useDeleteMemberProject({ memberGdgId: gdgId });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -471,8 +472,8 @@ export default function MyProjectsPage() {
       setIsDeleteConfirmOpen(false);
       setIsEditModalOpen(false);
       setEditingProject(createEmptyProject());
-    } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : "Failed to delete project");
+    } catch {
+      // Error feedback is handled centrally in useDeleteMemberProject.
     } finally {
       setIsSavingProject(false);
     }

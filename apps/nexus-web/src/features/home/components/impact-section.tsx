@@ -30,7 +30,7 @@ export function ImpactSection() {
       title: "2,000+ Members",
       description:
         "Fostered a vibrant and engaged ecosystem of tech enthusiasts and innovators.",
-      image: ASSETS.HOME.BLUE_IMG_PLACEHOLDER,
+      image: ASSETS.HOME.MEMBERS,
       imageAlt: "GDG PUP community",
     },
     {
@@ -38,7 +38,7 @@ export function ImpactSection() {
       title: "Multiple Tech Teams",
       description:
         "Launched specialized teams to drive technical excellence and project execution.",
-      image: ASSETS.HOME.GREEN_IMG_PLACEHOLDER,
+      image: ASSETS.HOME.MULTIPLE_TECH_TEAMS,
       imageAlt: "Student project showcase",
     },
     {
@@ -46,7 +46,7 @@ export function ImpactSection() {
       title: "Workshops & Hackathons",
       description:
         "Organized dozens of high-impact events focused on building and competing.",
-      image: ASSETS.HOME.YELLOW_IMG_PLACEHOLDER,
+      image: ASSETS.HOME.WORKSHOPS_AND_HACKATHONS,
       imageAlt: "Community learning event",
     },
     {
@@ -54,7 +54,7 @@ export function ImpactSection() {
       title: "Industry Collaborations",
       description:
         "Bridged the gap between our community and leading professional organizations.",
-      image: ASSETS.HOME.RED_IMG_PLACEHOLDER,
+      image: ASSETS.HOME.INDUSTRY_COLLABORATION,
       imageAlt: "Industry partner collaboration",
     },
   ];
@@ -256,21 +256,17 @@ export function ImpactSection() {
             />
             <div className="absolute top-75 -left-40 rotate-25">
               <PlanetCard
-                image={ASSETS.HOME.BLUE_IMG_PLACEHOLDER}
+                image={ASSETS.HOME.MEMBERS_GDG_POSE}
                 alt="planet"
                 size={200}
               />
             </div>
             <div className="absolute top-20 -right-24">
-              <PlanetCard
-                image={ASSETS.HOME.RED_IMG_PLACEHOLDER}
-                alt="planet"
-                size={220}
-              />
+              <PlanetCard image={ASSETS.HOME.MEMBERS} alt="planet" size={220} />
             </div>
             <div className="absolute -bottom-20 right-20 -scale-x-100 rotate-[-30deg]">
               <PlanetCard
-                image={ASSETS.HOME.YELLOW_IMG_PLACEHOLDER}
+                image={ASSETS.HOME.INDUSTRY_COLLABORATION}
                 alt="planet"
                 size={220}
               />
