@@ -1,5 +1,6 @@
 import { Container, Stack } from "@packages/spark-ui";
 import { BrandedSkeleton } from "@/components/shared";
+import { CAROUSEL_EDGE_FADE_CLASS } from "./carouselEdgeFadeClass";
 
 function FeaturedEventCardSkeleton() {
   return (
@@ -59,7 +60,9 @@ function PastEventsCarouselSkeleton() {
           {/* Left arrow */}
           <BrandedSkeleton className="h-15 w-15 rounded-full shrink-0" />
 
-          <div className="flex gap-8 md:gap-12 lg:gap-28 xl:gap-40 2xl:gap-35 overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]">
+          <div
+            className={`flex gap-8 md:gap-12 lg:gap-28 xl:gap-40 2xl:gap-35 overflow-hidden ${CAROUSEL_EDGE_FADE_CLASS}`}
+          >
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
