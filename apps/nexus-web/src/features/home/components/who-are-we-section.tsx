@@ -143,12 +143,10 @@ export function WhoAreWeSection() {
               >
                 Whether you’re exploring{" "}
                 <span className={rainbowGradientTextClass}>Web development</span>,{" "}
-                <span className={rainbowGradientTextClass}>
-                  Artificial Intelligence
-                </span>{" "}
+                <span className={rainbowGradientTextClass}>Data</span>{" "}
                 and{" "}
                 <span className={rainbowGradientTextClass}>Machine Learning</span>{" "}
-                (AI/ML),{" "}
+                (Data and ML), {" "}
                 <span className={rainbowGradientTextClass}>Cybersecurity</span>,{" "}
                 <span className={rainbowGradientTextClass}>Cloud Solutions</span>,{" "}
                 <span className={rainbowGradientTextClass}>UI/UX Design</span>,{" "}
@@ -160,10 +158,12 @@ export function WhoAreWeSection() {
                 or even as a core functional team member (
                 <span className={rainbowGradientTextClass}>Operations</span>,{" "}
                 <span className={rainbowGradientTextClass}>Finance</span>,{" "}
+                <span className={rainbowGradientTextClass}>Secretariat</span>,{" "}
                 <span className={rainbowGradientTextClass}>Creatives</span>,{" "}
                 <span className={rainbowGradientTextClass}>Marketing</span>,{" "}
-                <span className={rainbowGradientTextClass}>Partnerships</span>), our
-                community provides opportunities to learn, collaborate, and grow
+                <span className={rainbowGradientTextClass}>Partnerships</span>,{" "}
+                <span className={rainbowGradientTextClass}>Community Relations</span>),
+                our community provides opportunities to learn, collaborate, and grow
                 alongside peers and mentors.
                 <br />
                 <br />
