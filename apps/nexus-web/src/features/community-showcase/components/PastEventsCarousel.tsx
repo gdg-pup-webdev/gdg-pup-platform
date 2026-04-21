@@ -73,7 +73,7 @@ export function PastEventsCarousel() {
           </Button>
 
           <div className="relative z-10 flex min-w-0 flex-1 max-w-[1300px] justify-center">
-            <div className="relative w-full overflow-hidden">
+            <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]">
               {/* Draggable track */}
               <div
                 className={`flex gap-8 md:gap-12 lg:gap-28 xl:gap-40 2xl:gap-35 pb-6 pt-4 w-max ${
