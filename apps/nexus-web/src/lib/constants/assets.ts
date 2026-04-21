@@ -84,6 +84,7 @@ export const ASSETS = {
     WORKSHOPS_AND_HACKATHONS: "/home/home-workshops-n-hackathons.webp",
     MULTIPLE_TECH_TEAMS: "/home/home-multiple-tech-teams.webp",
     MEMBERS: "/home/home-members.webp",
+    MEMBERS_GDG_POSE: "/home/home-members-gdg-pose.webp",
     BLUE_CORNER: "/home/home-blue-corner.webp",
     GREEN_CORNER: "/home/home-green-corner.webp",
     RED_CORNER: "/home/home-red-corner.webp",

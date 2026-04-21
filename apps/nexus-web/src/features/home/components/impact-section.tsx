@@ -256,21 +256,17 @@ export function ImpactSection() {
             />
             <div className="absolute top-75 -left-40 rotate-25">
               <PlanetCard
-                image={ASSETS.HOME.BLUE_IMG_PLACEHOLDER}
+                image={ASSETS.HOME.MEMBERS_GDG_POSE}
                 alt="planet"
                 size={200}
               />
             </div>
             <div className="absolute top-20 -right-24">
-              <PlanetCard
-                image={ASSETS.HOME.RED_IMG_PLACEHOLDER}
-                alt="planet"
-                size={220}
-              />
+              <PlanetCard image={ASSETS.HOME.MEMBERS} alt="planet" size={220} />
             </div>
             <div className="absolute -bottom-20 right-20 -scale-x-100 rotate-[-30deg]">
               <PlanetCard
-                image={ASSETS.HOME.YELLOW_IMG_PLACEHOLDER}
+                image={ASSETS.HOME.INDUSTRY_COLLABORATION}
                 alt="planet"
                 size={220}
               />
