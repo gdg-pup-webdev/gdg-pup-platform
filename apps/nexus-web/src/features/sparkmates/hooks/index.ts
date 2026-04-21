@@ -4,5 +4,6 @@ export * from "./useActivateSparkmatesCard";
 export * from "./useSuggestedSparkmates";
 export * from "./useUpdateSparkmateProfile";
 export * from "./useMemberProjects";
+export * from "./useDeleteMemberProject";
 export * from "./useInfiniteMemberProjects";
 export * from "./useMemberProjectsPaginated";
