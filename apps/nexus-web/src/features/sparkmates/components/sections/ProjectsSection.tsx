@@ -181,6 +181,11 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
   const [isSavingProject, setIsSavingProject] = useState(false);
   const [orderedProjectIds, setOrderedProjectIds] = useState<string[]>([]);
   const [page, setPage] = useState(1);
+  const [modalErrors, setModalErrors] = useState<{
+    title?: string;
+    description?: string;
+    startDate?: string;
+  }>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -192,6 +197,11 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
   const handleUpdateProject = (index: number, field: keyof Omit<ProjectFormState, "id">, value: string | File | null) => {
     if (index !== 0) {
       return;
+    }
+
+    // Clear the inline error for the field being edited
+    if (field === "title" || field === "description" || field === "startDate") {
+      setModalErrors((prev) => ({ ...prev, [field]: undefined }));
     }
 
     setEditingProject((prev) => {
@@ -282,12 +292,14 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
   const handleOpenAddProjectModal = () => {
     setIsDeleteConfirmOpen(false);
     setEditingProject(createEmptyProject());
+    setModalErrors({});
     setIsEditModalOpen(true);
   };
 
   const handleOpenEditProjectModal = (project: any) => {
     setIsDeleteConfirmOpen(false);
     setEditingProject(toProjectFormState(project));
+    setModalErrors({});
     setIsEditModalOpen(true);
   };
 
@@ -332,10 +344,18 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
 
     const title = editingProject.title.trim();
     const description = editingProject.description.trim();
-    if (!title || !description || !editingProject.startDate) {
-      toast.error("Please complete title, description, and start date before saving.");
+
+    const nextErrors: { title?: string; description?: string; startDate?: string } = {};
+    if (!title) nextErrors.title = "Project title is required.";
+    if (!description) nextErrors.description = "Project description is required.";
+    if (!editingProject.startDate) nextErrors.startDate = "Start date is required.";
+
+    if (Object.keys(nextErrors).length > 0) {
+      setModalErrors(nextErrors);
       return;
     }
+
+    setModalErrors({});
 
     setIsSavingProject(true);
 
@@ -704,6 +724,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
             imageInputMode="list"
             updateProjectImages={handleUpdateProjectImages}
             removeExistingProjectImage={handleRemoveExistingProjectImage}
+            errors={[modalErrors]}
           />
 
           {isImageMutationPending && (

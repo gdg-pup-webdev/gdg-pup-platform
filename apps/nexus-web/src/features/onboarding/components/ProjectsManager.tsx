@@ -1,15 +1,27 @@
-import React from 'react';
+import React from "react";
 import { Input, Text } from "@packages/spark-ui";
 import { ProjectFormState } from "../types";
 import { cn } from "@/lib/utils";
 
 const MAX_PROJECT_IMAGES = 4;
 
-const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-lg p-px focus-within:p-0.5 bg-[#737373] hover:bg-linear-to-r focus-within:bg-linear-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out">
+const StyledInputContainer = ({ children, hasError }: { children: React.ReactNode; hasError?: boolean }) => (
+  <div
+    className={cn(
+      "relative group w-full rounded-lg p-px focus-within:p-0.5 hover:bg-linear-to-r focus-within:bg-linear-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out",
+      hasError ? "bg-red-500/80" : "bg-[#737373]",
+    )}
+  >
     {children}
   </div>
 );
+
+const ErrorMessage = ({ message }: { message?: string }) => {
+  if (!message) return null;
+  return <p className="mt-1 text-xs text-red-400">{message}</p>;
+};
+
+const RequiredAsterisk = () => <span className="text-red-400 ml-0.5">*</span>;
 
 const inputBaseStyles =
   "!h-auto py-2 px-3 sm:py-2.5 sm:px-4 !border-none !rounded-[7px] !ring-0 !ring-offset-0 focus-within:!ring-0 focus-within:!ring-offset-0 focus-within:!shadow-none w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
@@ -20,6 +32,12 @@ const textareaBaseStyles =
 const dateInputStyles =
   "min-h-12.5 w-full py-3! text-white [color-scheme:dark] outline-none [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100";
 
+
+type ProjectErrors = {
+  title?: string;
+  description?: string;
+  startDate?: string;
+};
 
 type ProjectsManagerProps = {
   projects: ProjectFormState[];
@@ -34,6 +52,8 @@ type ProjectsManagerProps = {
     mode?: "append" | "replace",
   ) => void;
   removeExistingProjectImage?: (index: number, imageIndex: number) => void;
+  /** Per-project validation errors, indexed to match the `projects` array. */
+  errors?: ProjectErrors[];
 };
 
 const LocalImagePreview = ({
@@ -150,6 +170,7 @@ export function ProjectsManager({
   imageInputMode = "list",
   updateProjectImages,
   removeExistingProjectImage,
+  errors,
 }: ProjectsManagerProps) {
   return (
     <div className="mt-6 sm:col-span-2">
@@ -167,7 +188,10 @@ export function ProjectsManager({
       </div>
 
       <div className="space-y-4">
-        {projects.map((project, index) => (
+        {projects.map((project, index) => {
+          const projectErrors = errors?.[index];
+
+          return (
           <div
             key={`${project.id ?? "new"}-${index}`}
             className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-4 space-y-3"
@@ -187,56 +211,82 @@ export function ProjectsManager({
               )}
             </div>
 
-            <StyledInputContainer>
-              <Input
-                value={project.title}
-                onChange={(event) => updateProject(index, "title", event.target.value)}
-                placeholder="Project title"
-                containerClassName={inputBaseStyles}
-                className="text-white! py-3"
-              />
-            </StyledInputContainer>
-
-            <div className="grid gap-3 sm:grid-cols-2 mt-3">
-              <StyledInputContainer>
-                <input
-                  type="date"
-                  value={project.startDate}
-                  onChange={(event) => updateProject(index, "startDate", event.target.value)}
-                  className={cn(inputBaseStyles, dateInputStyles)}
+            {/* Title */}
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">
+                Title<RequiredAsterisk />
+              </label>
+              <StyledInputContainer hasError={!!projectErrors?.title}>
+                <Input
+                  value={project.title}
+                  onChange={(event) => updateProject(index, "title", event.target.value)}
+                  placeholder="e.g. GDG PUP Website Redesign"
+                  containerClassName={inputBaseStyles}
+                  className="text-white! py-3"
                 />
               </StyledInputContainer>
-              <StyledInputContainer>
-                <input
-                  type="date"
-                  value={project.endDate}
-                  onChange={(event) => updateProject(index, "endDate", event.target.value)}
-                  className={cn(inputBaseStyles, dateInputStyles)}
-                />
-              </StyledInputContainer>
+              <ErrorMessage message={projectErrors?.title} />
             </div>
 
-            <div className="mt-3">
-              <StyledInputContainer>
+            {/* Dates */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">
+                  Start Date<RequiredAsterisk />
+                </label>
+                <StyledInputContainer hasError={!!projectErrors?.startDate}>
+                  <input
+                    type="date"
+                    value={project.startDate}
+                    onChange={(event) => updateProject(index, "startDate", event.target.value)}
+                    className={cn(inputBaseStyles, dateInputStyles)}
+                  />
+                </StyledInputContainer>
+                <ErrorMessage message={projectErrors?.startDate} />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-400 mb-1">End Date</label>
+                <StyledInputContainer>
+                  <input
+                    type="date"
+                    value={project.endDate}
+                    onChange={(event) => updateProject(index, "endDate", event.target.value)}
+                    className={cn(inputBaseStyles, dateInputStyles)}
+                  />
+                </StyledInputContainer>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">
+                Description<RequiredAsterisk />
+              </label>
+              <StyledInputContainer hasError={!!projectErrors?.description}>
                 <textarea
                   value={project.description}
                   onChange={(event) => updateProject(index, "description", event.target.value)}
-                  placeholder="Project description"
+                  placeholder="Describe what the project is about, your role, and its impact..."
                   rows={3}
                   className={cn(textareaBaseStyles, "min-h-28 resize-y")}
                 />
               </StyledInputContainer>
+              <ErrorMessage message={projectErrors?.description} />
             </div>
 
-            <StyledInputContainer>
-              <Input
-                value={project.projectLink}
-                onChange={(event) => updateProject(index, "projectLink", event.target.value)}
-                placeholder="Project link (optional)"
-                containerClassName={inputBaseStyles}
-                className="text-white! py-3"
-              />
-            </StyledInputContainer>
+            {/* Project Link */}
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Project Link</label>
+              <StyledInputContainer>
+                <Input
+                  value={project.projectLink}
+                  onChange={(event) => updateProject(index, "projectLink", event.target.value)}
+                  placeholder="https://github.com/... (optional)"
+                  containerClassName={inputBaseStyles}
+                  className="text-white! py-3"
+                />
+              </StyledInputContainer>
+            </div>
 
             {imageInputMode === "list" ? (
               <div className="space-y-2">
@@ -346,7 +396,8 @@ export function ProjectsManager({
               </>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
