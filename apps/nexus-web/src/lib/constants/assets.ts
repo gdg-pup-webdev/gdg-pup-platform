@@ -311,6 +311,15 @@ export const ASSETS = {
     HOMEROOM: "/partners/partner-homeroom.webp",
     GEN_AI_PH: "/partners/partner-gen-ai-ph.webp",
     DEVCON: "/partners/partner-devcon.webp",
+    SHOPEE: "/partners/partner-shopee.webp",
+    CLOUD_9: "/partners/partner-cloud9.webp",
+    OPSWERKS: "/partners/partner-opswerks.webp",
+    NEN_DIGITAL: "/partners/partner-nen-digital.webp",
+    TBIDO: "/partners/partner-tbido.webp",
+    HOME_CREDIT: "/partners/partner-home-credit.webp",
+    NOTION: "/partners/partner-notion.webp",
+    KYSPACE: "/partners/partner-kyspaces.webp",
+    MOTIVO_RED: "/partners/partner-motivo-red.webp",
     /** Aurora/glow SVG overlay matching Figma background */
     BG_AURORA_OVERLAY: "/partners/bg-aurora-overlay.svg",
     /** Cirby sticker mascot shown in the CTA card */
