@@ -5,14 +5,17 @@ import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
 import { ASSETS } from "@/lib/constants/assets";
+import { AboutHeroStage } from "./AboutHeroStage";
 
 // Animation wrapper component for fade-in on scroll
 const FadeInSection = ({
   children,
   delay = 0,
+  withY = true,
 }: {
   children: React.ReactNode;
   delay?: number;
+  withY?: boolean;
 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -20,8 +23,10 @@ const FadeInSection = ({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: withY ? 50 : 0 }}
+      animate={
+        isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: withY ? 50 : 0 }
+      }
       transition={{ duration: 0.6, delay, ease: "easeOut" }}
     >
       {children}
@@ -31,7 +36,7 @@ const FadeInSection = ({
 
 export function AboutSection() {
   return (
-    <div className="relative overflow-x-hidden pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
       {/* Decorative Ellipse - Top Left */}
       <div
         className="absolute rounded-full pointer-events-none"
@@ -231,7 +236,11 @@ export function AboutSection() {
                 <Box className="relative w-40 h-40 md:w-80 md:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
                   <motion.div
                     animate={{ y: [-12, 12, -12] }}
-                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 6,
+                      ease: "easeInOut",
+                    }}
                     className="w-full h-full"
                   >
                     <Image
@@ -281,7 +290,7 @@ export function AboutSection() {
           </FadeInSection>
 
           {/* Section 5: Our Values */}
-          <FadeInSection delay={0.1}>
+          <FadeInSection delay={0.1} withY={false}>
             <Stack
               gap="xl"
               className="w-full md:flex md:flex-row md:items-start md:gap-2xl"
@@ -289,23 +298,8 @@ export function AboutSection() {
               {/* Left: Content */}
               <Stack gap="2xl" className="md:w-1/2 items-center md:mr-10">
                 {/* mobile mascot above values */}
-                <Box className="md:hidden w-full relative h-52 flex items-center justify-center">
-                  <motion.div
-                    animate={{ y: [-10, 10, -10] }}
-                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-                    className="w-full h-full"
-                  >
-                    <Image
-                      src={ASSETS.ABOUT.WHO.MASCOT_2}
-                      alt="Our Values - Sparky Flying"
-                      width={200}
-                      height={200}
-                      className="w-full h-full object-contain pointer-events-none"
-                      style={{
-                        filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
-                      }}
-                    />
-                  </motion.div>
+                <Box className="md:hidden w-full scale-75 origin-center -mb-26 -mt-12 relative h-auto flex items-center justify-center">
+                  <AboutHeroStage />
                 </Box>
                 <Text
                   as="h2"
@@ -464,28 +458,8 @@ export function AboutSection() {
               </Stack>
 
               {/* Right: Image/Illustration */}
-              <Box className="flex justify-center md:w-1/2 relative">
-                <Box
-                  className="absolute right-0 top-0 lg:w-150 lg:h-80 flex items-center justify-center pointer-events-none"
-                  style={{ transform: "translateX(15%)" }}
-                >
-                  <motion.div
-                    animate={{ y: [-15, 15, -15] }}
-                    transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                    className="w-full h-full justify-center hidden sm:flex items-center"
-                  >
-                    <Image
-                      src={ASSETS.ABOUT.WHO.MASCOT_2}
-                      alt="Our Values - Sparky Flying"
-                      width={400}
-                      height={400}
-                      className="w-full h-full object-contain pointer-events-none"
-                      style={{
-                        filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
-                      }}
-                    />
-                  </motion.div>
-                </Box>
+              <Box className="hidden sm:flex justify-center md:w-1/2 sticky top-48 self-start">
+                <AboutHeroStage />
               </Box>
             </Stack>
           </FadeInSection>
