@@ -340,8 +340,8 @@ export const ASSETS = {
       SPARKPLUG: "/member-showcase/member-showcase-sparkplug.webp",
     },
     BACKGROUND: {
-      ORANGE_COLOR: "/member-showcase/member-showcase-orange-color.webp",
-      GREEN_COLOR: "/member-showcase/member-showcase-green-color.webp",
+      ORANGE_SPOTLIGHT: "/member-showcase/member-showcase-orange-spotlight.webp",
+      GREEN_SPOTLIGHT: "/member-showcase/member-showcase-green-spotlight.webp",
       STARS_1: "/member-showcase/member-showcase-stars-1.webp",
       STARS_2: "/member-showcase/member-showcase-stars-2.webp",
       GDG_SHADOW: "/member-showcase/member-showcase-gdg.webp",
