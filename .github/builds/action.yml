@@ -21,6 +21,14 @@ inputs:
     description: "Docker build args (newline-separated KEY=VALUE)"
     required: false
     default: ""
+  commit-sha:
+    description: "Full commit SHA to tag the image with"
+    required: true
+
+outputs:
+  image-tag:
+    description: "The unique tag used for the pushed image"
+    value: ${{ inputs.environment }}-${{ steps.short-sha.outputs.sha }}
 
 runs:
   using: composite
@@ -34,13 +42,20 @@ runs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    - name: Get short SHA
+      id: short-sha
+      shell: bash
+      run: echo "sha=$(echo ${{ inputs.commit-sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
         context: .
         file: ${{ inputs.dockerfile }}
         push: true
-        tags: gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}
+        tags: |
+          gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}-${{ steps.short-sha.outputs.sha }}
+          gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}
         build-args: ${{ inputs.build-args }}
         cache-from: type=gha,scope=${{ inputs.service }}-${{ inputs.environment }}
         cache-to: type=gha,mode=max,scope=${{ inputs.service }}-${{ inputs.environment }}
