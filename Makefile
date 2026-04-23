@@ -27,6 +27,9 @@ BASE    = -f docker-compose.yml
 # Docker Hub org
 DOCKER_ORG = gdgpup
 
+# Get short git SHA for unique tagging
+SHORT_SHA := $(shell git rev-parse --short=7 HEAD)
+
 # Services and their local image names
 SERVICES = nexus-api nexus-web
 
@@ -92,9 +95,13 @@ push-dev:
 	@for svc in $(SERVICES); do \
 		docker tag gdg-pup-platform-$$svc:gdg-pup-platform-dev $(DOCKER_ORG)/gdg-pup-platform-$$svc:dev; \
 		docker push $(DOCKER_ORG)/gdg-pup-platform-$$svc:dev; \
+		docker tag gdg-pup-platform-$$svc:gdg-pup-platform-dev $(DOCKER_ORG)/gdg-pup-platform-$$svc:dev-$(SHORT_SHA); \
+		docker push $(DOCKER_ORG)/gdg-pup-platform-$$svc:dev-$(SHORT_SHA); \
 	done
 	docker tag gdg-pup-platform-dev-storybook $(DOCKER_ORG)/gdg-pup-platform-storybook:dev
 	docker push $(DOCKER_ORG)/gdg-pup-platform-storybook:dev
+	docker tag gdg-pup-platform-dev-storybook $(DOCKER_ORG)/gdg-pup-platform-storybook:dev-$(SHORT_SHA)
+	docker push $(DOCKER_ORG)/gdg-pup-platform-storybook:dev-$(SHORT_SHA)
 
 push-staging:
 	@echo "==> Rebuilding nexus-web with custom domain URLs..."
@@ -105,9 +112,13 @@ push-staging:
 	@for svc in $(SERVICES); do \
 		docker tag gdg-pup-platform-$$svc:gdg-pup-platform-staging $(DOCKER_ORG)/gdg-pup-platform-$$svc:staging; \
 		docker push $(DOCKER_ORG)/gdg-pup-platform-$$svc:staging; \
+		docker tag gdg-pup-platform-$$svc:gdg-pup-platform-staging $(DOCKER_ORG)/gdg-pup-platform-$$svc:staging-$(SHORT_SHA); \
+		docker push $(DOCKER_ORG)/gdg-pup-platform-$$svc:staging-$(SHORT_SHA); \
 	done
 	docker tag gdg-pup-platform-staging-storybook $(DOCKER_ORG)/gdg-pup-platform-storybook:staging
 	docker push $(DOCKER_ORG)/gdg-pup-platform-storybook:staging
+	docker tag gdg-pup-platform-staging-storybook $(DOCKER_ORG)/gdg-pup-platform-storybook:staging-$(SHORT_SHA)
+	docker push $(DOCKER_ORG)/gdg-pup-platform-storybook:staging-$(SHORT_SHA)
 
 push-prod:
 	@echo "==> Rebuilding nexus-web with custom domain URLs..."
@@ -118,9 +129,13 @@ push-prod:
 	@for svc in $(SERVICES); do \
 		docker tag gdg-pup-platform-$$svc:gdg-pup-platform-prod $(DOCKER_ORG)/gdg-pup-platform-$$svc:prod; \
 		docker push $(DOCKER_ORG)/gdg-pup-platform-$$svc:prod; \
+		docker tag gdg-pup-platform-$$svc:gdg-pup-platform-prod $(DOCKER_ORG)/gdg-pup-platform-$$svc:prod-$(SHORT_SHA); \
+		docker push $(DOCKER_ORG)/gdg-pup-platform-$$svc:prod-$(SHORT_SHA); \
 	done
 	docker tag gdg-pup-platform-prod-storybook $(DOCKER_ORG)/gdg-pup-platform-storybook:prod
 	docker push $(DOCKER_ORG)/gdg-pup-platform-storybook:prod
+	docker tag gdg-pup-platform-prod-storybook $(DOCKER_ORG)/gdg-pup-platform-storybook:prod-$(SHORT_SHA)
+	docker push $(DOCKER_ORG)/gdg-pup-platform-storybook:prod-$(SHORT_SHA)
 
 # ---- Nexus Admin Web Image ----
 .PHONY: admin-web-build-dev admin-web-build-staging admin-web-build-prod admin-web-push-dev admin-web-push-staging admin-web-push-prod
@@ -198,12 +213,18 @@ admin-web-build-prod:
 
 admin-web-push-dev: admin-web-build-dev
 	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:dev
+	docker tag $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:dev $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:dev-$(SHORT_SHA)
+	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:dev-$(SHORT_SHA)
 
 admin-web-push-staging: admin-web-build-staging
 	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:staging
+	docker tag $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:staging $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:staging-$(SHORT_SHA)
+	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:staging-$(SHORT_SHA)
 
 admin-web-push-prod: admin-web-build-prod
 	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:prod
+	docker tag $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:prod $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:prod-$(SHORT_SHA)
+	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:prod-$(SHORT_SHA)
 
 # ---- Common ----
 .PHONY: down clean logs

@@ -202,6 +202,9 @@ export function PartnershipSection() {
                 <div className="flex items-center justify-center relative h-[60px] sm:h-[80px] overflow-hidden">
                   <img src={ASSETS.PARTNERS.GEN_AI_PH} alt="Gen AI PH" className="max-h-[160%] object-contain" />
                 </div>
+                <div className="flex items-center justify-center relative h-[60px] sm:h-[80px] overflow-hidden">
+                  <img src={ASSETS.PARTNERS.NEN_DIGITAL} alt="NEN Digital" className="max-h-full max-w-[80%] object-contain" />
+                </div>
                 <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
                   <img src={ASSETS.PARTNERS.DATACAMP} alt="DataCamp" className="max-h-full max-w-full object-contain" />
                 </div>
@@ -211,8 +214,6 @@ export function PartnershipSection() {
                 <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-3">
                   <img src={ASSETS.PARTNERS.YSPACE} alt="YSpace" className="max-h-full max-w-full object-contain" />
                 </div>
-
-                {/* ROW 3 — All white bg */}
                 <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
                   <img src={ASSETS.PARTNERS.WHITECLOAK} alt="Whitecloak" className="max-h-full max-w-[90%] object-contain" />
                 </div>
@@ -225,8 +226,6 @@ export function PartnershipSection() {
                 <div className="bg-white rounded-[8px] flex items-center justify-center h-[50px] sm:h-[70px] p-2">
                   <img src={ASSETS.PARTNERS.POTICO} alt="Potico" className="max-h-full max-w-[85%] object-contain" />
                 </div>
-
-                {/* ROW 4 — 3 items */}
                 <div className="bg-white rounded-[8px] flex items-center justify-center h-[50px] sm:h-[70px] p-2">
                   <img src={ASSETS.PARTNERS.FLOWERSTORE} alt="FlowerStore.ph" className="max-h-full max-w-[85%] object-contain" />
                 </div>
@@ -235,6 +234,32 @@ export function PartnershipSection() {
                 </div>
                 <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
                   <img src={ASSETS.PARTNERS.MOUNTAIN_DEW} alt="Mountain Dew" className="max-h-full max-w-[50%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.SHOPEE} alt="Shopee" className="max-h-full max-w-[85%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.CLOUD_9} alt="Cloud 9" className="max-h-full max-w-[70%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.OPSWERKS} alt="OpsWerks" className="max-h-full max-w-[80%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2 overflow-hidden">
+                  <img src={ASSETS.PARTNERS.TBIDO} alt="TBIDO" className="max-h-full max-w-full object-contain" />
+                </div>
+
+                {/* ROW 6 */}
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.HOME_CREDIT} alt="Home Credit" className="max-h-full max-w-[80%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.NOTION} alt="Notion" className="max-h-full max-w-[60%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.KYSPACE} alt="KYSpace" className="max-h-full max-w-[70%] object-contain" />
+                </div>
+                <div className="bg-white rounded-[8px] flex items-center justify-center h-[60px] sm:h-[80px] p-2">
+                  <img src={ASSETS.PARTNERS.MOTIVO_RED} alt="Motivo Red" className="max-h-full max-w-[80%] object-contain" />
                 </div>
               </div>
             </Stack>
