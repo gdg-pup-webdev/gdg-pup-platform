@@ -38,7 +38,7 @@ export function ProductsSection() {
         className="absolute -top-40 -left-40 w-[1200px] h-[1600px] rotate-[-162deg] mix-blend-screen blur-[150px] pointer-events-none z-0 -translate-x-3/5 -translate-y-1/10 opacity-30"
       />
       <img
-        className="w-155 h-auto absolute top-90 -left-125 opacity-25 translate-x-1/3"
+        className="w-155 h-auto absolute top-90 -left-125 opacity-25 -translate-x-1/3 pointer-events-none"
         src="/products/cogwheel-asset.webp"
         alt=""
       />
