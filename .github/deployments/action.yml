@@ -31,6 +31,10 @@ inputs:
     description: "Cloud Run memory limit (e.g. 512Mi, 1Gi, 2Gi). Defaults to service's existing setting if not set."
     required: false
     default: ""
+  commit-sha:
+    description: "Commit SHA to deploy the unique tag. If empty, falls back to the environment tag."
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -52,7 +56,13 @@ runs:
       shell: bash
       run: |
         SERVICE_NAME="${{ inputs.service }}-${{ inputs.environment }}"
-        IMAGE="docker.io/gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}"
+        
+        if [[ -n "${{ inputs.commit-sha }}" ]]; then
+          SHORT_SHA=$(echo "${{ inputs.commit-sha }}" | cut -c1-7)
+          IMAGE="docker.io/gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}-$SHORT_SHA"
+        else
+          IMAGE="docker.io/gdgpup/gdg-pup-platform-${{ inputs.service }}:${{ inputs.environment }}"
+        fi
 
         echo "==> Deploying $SERVICE_NAME with image $IMAGE"
 

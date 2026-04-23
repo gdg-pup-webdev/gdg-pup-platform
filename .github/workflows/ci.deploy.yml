@@ -76,6 +76,7 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-web
+          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
@@ -97,6 +98,7 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-admin-web
+          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
@@ -118,6 +120,7 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-api
+          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
@@ -136,5 +139,4 @@ jobs:
             GCS_PUBLIC_BASE_URL=${{ vars.GCS_PUBLIC_BASE_URL || 'https://storage.googleapis.com' }},\
             GCS_UPLOAD_PREFIX=${{ vars.GCS_UPLOAD_PREFIX || 'uploads' }},\
             GCS_CREDENTIALS_BASE64=${{ secrets.GCS_CREDENTIALS_BASE64 }},\
-            FORCE_REVISION=${{ github.run_id }}-${{ github.run_attempt }},\
             CLIENT_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org|https://admin.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org|https://admin.staging.gdgpup.org' || 'https://dev.gdgpup.org|https://admin.dev.gdgpup.org' }}"

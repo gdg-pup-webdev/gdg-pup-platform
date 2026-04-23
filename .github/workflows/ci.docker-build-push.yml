@@ -51,6 +51,7 @@ jobs:
       - uses: ./.github/builds
         with:
           service: nexus-web
+          commit-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-web/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -76,6 +77,7 @@ jobs:
       - uses: ./.github/builds
         with:
           service: nexus-admin-web
+          commit-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-admin-web/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -99,6 +101,7 @@ jobs:
       - uses: ./.github/builds
         with:
           service: nexus-api
+          commit-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-api/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
