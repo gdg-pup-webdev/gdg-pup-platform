@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { X, User } from "lucide-react";
 import { useListMembers } from "@/features/members/hooks/useListMembers";
+import { GdgMember } from "@/features/members/types";
 import { useGetMemberRoles, useAssignRoleToUser, useRemoveRoleFromUser, useListRoles } from "../hooks";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
@@ -47,9 +48,9 @@ export const MemberRoleAssignment: React.FC = () => {
   const assignRole = useAssignRoleToUser();
   const removeRole = useRemoveRoleFromUser();
 
-  const members = membersResponse?.data || [];
+  const members: GdgMember[] = membersResponse?.data || [];
   const selectedMember = useMemo(() => {
-    const memberFromList = members.find((member ) => member.gdgId === selectedMemberId);
+    const memberFromList = members.find((member: GdgMember) => member.gdgId === selectedMemberId);
     if (memberFromList) {
       return memberFromList;
     }
@@ -153,7 +154,7 @@ export const MemberRoleAssignment: React.FC = () => {
         }
         content={
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {members.map((member) => (
+            {members.map((member: GdgMember) => (
               <div key={member.gdgId} className="flex items-center justify-between rounded-sm border border-gray-200 bg-white p-4 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
@@ -195,7 +196,7 @@ export const MemberRoleAssignment: React.FC = () => {
           <div className="space-y-2">
             <h3 className="font-semibold text-sm text-gray-500 uppercase">Assigned Roles</h3>
             <div className="flex flex-wrap gap-2">
-              {memberRoles?.roles.map((role ) => (
+              {memberRoles?.roles.map((role: string) => (
                 <span key={role} className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">
                   {role}
                   <button onClick={() => handleRemoveRole(role)}><X size={14} /></button>
@@ -206,7 +207,7 @@ export const MemberRoleAssignment: React.FC = () => {
           <div className="space-y-2">
             <h3 className="font-semibold text-sm text-gray-500 uppercase">Available Roles</h3>
             <div className="grid grid-cols-2 gap-2">
-              {roles.map((role ) => (
+              {roles.map((role: { id: string; name: string }) => (
                 <Button key={role.id} variant="outline" onClick={() => handleAssignRole(role.name)}>
                   {role.name}
                 </Button>

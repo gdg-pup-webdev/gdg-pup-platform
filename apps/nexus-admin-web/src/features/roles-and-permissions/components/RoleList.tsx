@@ -54,7 +54,7 @@ export const RoleList: React.FC = () => {
   const deleteMutation = useDeleteRole();
   const updateMutation = useUpdateRole();
 
-  const roles = rolesResponse?.data || [];
+  const roles: RoleItem[] = rolesResponse?.data || [];
   const {data , isLoading: isRoleLoading} = useGetRoleById(selectedRoleId)
   const selectedRole = data?.data || null;
   console.log("selected role", selectedRole, selectedRoleId)
@@ -177,7 +177,7 @@ export const RoleList: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
                 {roles.length > 0 ? (
-                  roles.map((role) => (
+                  roles.map((role: RoleItem) => (
                     <tr key={role.id} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-3">

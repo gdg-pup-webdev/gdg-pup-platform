@@ -6,15 +6,26 @@ import {
 } from "@/types/repository.types.js";
 import { Tables, TablesInsert, TablesUpdate } from "@/types/supabase.types.js";
 
-type cardRow = Tables<"nfc_card">;
-type cardInsertDTO = TablesInsert<"nfc_card">;
-type cardUpdateDTO = TablesUpdate<"nfc_card">;
+type cardRow = Tables<"nfc_cards">;
+type cardInsertDTO = TablesInsert<"nfc_cards">;
+type cardUpdateDTO = TablesUpdate<"nfc_cards">;
 
-type transactionRow = Tables<"nfc_card_transaction">;
-type transactionInsertDTO = TablesInsert<"nfc_card_transaction">;
+// nfc_card_transaction is not yet reflected in generated Supabase types;
+// define the shape manually until the types are regenerated.
+type transactionRow = {
+  id: string;
+  card_id: string;
+  event_type: "ACTIVATION" | "TAP_PROFILE" | "TAP_CHECKIN";
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+type transactionInsertDTO = Omit<transactionRow, "id" | "created_at"> & {
+  id?: string;
+  created_at?: string;
+};
 
 export class CardRepository {
-  tableName = "nfc_card";
+  tableName = "nfc_cards";
   transactionTableName = "nfc_card_transaction";
 
   constructor() {}
@@ -49,8 +60,8 @@ export class CardRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .update({
-        status: "ACTIVE",
-        user_id: userId,
+        status: "activated",
+        owner_user_id: userId,
         activated_at: new Date().toISOString(),
       })
       .eq("id", cardUid)

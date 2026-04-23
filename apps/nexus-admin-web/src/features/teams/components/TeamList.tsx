@@ -31,9 +31,9 @@ export function TeamList() {
   const updateMutation = useUpdateTeam();
   const deleteMutation = useDeleteTeam();
 
-  const teams = teamsResponse?.body?.data || [];
+  const teams: Team[] = teamsResponse?.body?.data || [];
   const selectedTeam = useMemo(
-    () => teams.find((team) => team.id === selectedTeamId) || null,
+    () => teams.find((team: Team) => team.id === selectedTeamId) || null,
     [teams, selectedTeamId],
   );
 

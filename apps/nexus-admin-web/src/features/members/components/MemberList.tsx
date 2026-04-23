@@ -30,9 +30,9 @@ export const MemberList: React.FC = () => {
   const { data: membersResponse, isLoading, isError, error, refetch } = useListMembers(page, pageSize);
   const updateMutation = useUpdateMember();
 
-  const members = membersResponse?.data || [];
+  const members: GdgMember[] = membersResponse?.data || [];
   const selectedMember = useMemo(
-    () => members.find((member) => member.gdgId === selectedMemberId) || null,
+    () => members.find((member: GdgMember) => member.gdgId === selectedMemberId) || null,
     [members, selectedMemberId],
   );
 
@@ -94,7 +94,7 @@ export const MemberList: React.FC = () => {
   };
 
   // Filter members client-side for search
-  const filteredMembers = members.filter(p => 
+  const filteredMembers = members.filter((p: GdgMember) => 
     (p.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      p.middleName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      p.lastName?.toLowerCase().includes(searchQuery.toLowerCase())) ||

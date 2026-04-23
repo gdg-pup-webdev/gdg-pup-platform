@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 
-const API_URL = "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_NEXUS_API_URL || "http://localhost:8000";
 
 export const useGetFiles = (pageNumber = 1, pageSize = 10, folderId?: string | null, path?: string) => {
   const callEndpoint = useCallEndpointWithToken();
