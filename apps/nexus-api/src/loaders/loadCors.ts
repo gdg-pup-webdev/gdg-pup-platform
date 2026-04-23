@@ -13,10 +13,10 @@ export const loadCors = (app: Express) => {
     "http://127.0.0.1:3100",
   ]);
 
-  // CLIENT_URL supports comma-separated origins, e.g.:
-  //   https://dev.gdgpup.org,https://admin.dev.gdgpup.org
+  // CLIENT_URL supports comma-separated or pipe-separated origins, e.g.:
+  //   https://dev.gdgpup.org|https://admin.dev.gdgpup.org
   if (configs.clientBaseUrl) {
-    for (const url of configs.clientBaseUrl.split(",")) {
+    for (const url of configs.clientBaseUrl.split(/[,|]/)) {
       const trimmed = url.trim();
       if (trimmed) allowedOrigins.add(trimmed);
     }
