@@ -7,8 +7,9 @@ import { Activity, CheckCircle2, XCircle, RefreshCw, Server, ShieldCheck } from 
 import { useState } from "react";
 import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { configs } from "@/lib/constants/configs";
 
-const NEXUS_API_URL = "http://localhost:8000";
+const NEXUS_API_URL = configs.nexusApiBaseUrl;
 
 export default function DebugPage() {
   const [lastChecked, setLastChecked] = useState<Date | null>(null);

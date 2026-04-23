@@ -24,6 +24,21 @@ services:
     ports:
       - "3000:3000"
 
+  nexus-admin-web:
+    image: gdg-pup-platform-nexus-admin-web:${COMPOSE_PROJECT_NAME}
+    build:
+      context: .
+      dockerfile: apps/nexus-admin-web/Dockerfile
+      extra_hosts:
+        - "registry.npmjs.org:104.16.3.34"
+        - "dl-cdn.alpinelinux.org:146.75.22.132"
+        - "fonts.googleapis.com:142.250.4.95"
+        - "fonts.gstatic.com:142.250.4.94"
+    ports:
+      - "3100:3100"
+    environment:
+      - PORT=3100
+
   nexus-api:
     image: gdg-pup-platform-nexus-api:${COMPOSE_PROJECT_NAME}
     build:

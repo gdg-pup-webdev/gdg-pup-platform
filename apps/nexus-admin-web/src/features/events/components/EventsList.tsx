@@ -175,9 +175,9 @@ export const EventsList: React.FC = () => {
   const syncOneMutation = useSyncOneEventToBevy();
   const [syncingEventId, setSyncingEventId] = useState<string | null>(null);
 
-  const events = eventsResponse?.data || [];
+  const events: Event[] = eventsResponse?.data || [];
   const selectedEvent = useMemo(
-    () => events.find((event) => event.id === selectedEventId) || null,
+    () => events.find((event: Event) => event.id === selectedEventId) || null,
     [events, selectedEventId],
   );
 
@@ -411,7 +411,7 @@ export const EventsList: React.FC = () => {
   };
 
   // Filter events client-side for search (simple implementation for title/venue)
-  const filteredEvents = events.filter(e => 
+  const filteredEvents = events.filter((e: Event) => 
     e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     e.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     e.venue?.toLowerCase().includes(searchQuery.toLowerCase())

@@ -51,9 +51,9 @@ Push / PR
 
 | Branch | Environment | Domains |
 |---|---|---|
-| `deploy-develop` | `dev` | `dev.gdgpup.org`, `api.dev.gdgpup.org`, `identity.dev.gdgpup.org` |
-| `staging` | `staging` | `staging.gdgpup.org`, `api.staging.gdgpup.org`, `identity.staging.gdgpup.org` |
-| `main` | `prod` | `gdgpup.org`, `api.gdgpup.org`, `identity.gdgpup.org` |
+| `deploy-develop` | `dev` | `dev.gdgpup.org`, `admin.dev.gdgpup.org`, `api.dev.gdgpup.org`, `identity.dev.gdgpup.org` |
+| `staging` | `staging` | `staging.gdgpup.org`, `admin.staging.gdgpup.org`, `api.staging.gdgpup.org`, `identity.staging.gdgpup.org` |
+| `main` | `prod` | `gdgpup.org`, `admin.gdgpup.org`, `api.gdgpup.org`, `identity.gdgpup.org` |
 
 ---
 
@@ -64,6 +64,7 @@ Only services **whose files changed** are built and deployed. This is handled by
 | Service | Triggers on changes to |
 |---|---|
 | `nexus-web` | `apps/nexus-web/**`, `packages/**`, `docker-compose*.yml` |
+| `nexus-admin-web` | `apps/nexus-admin-web/**`, `packages/**`, `docker-compose*.yml` |
 | `nexus-api` | `apps/nexus-api/**`, `packages/**`, `docker-compose*.yml` |
 | `identity-api` | `apps/identity-api/**`, `packages/**`, `docker-compose*.yml` |
 
