@@ -28,7 +28,7 @@ BASE    = -f docker-compose.yml
 DOCKER_ORG = gdgpup
 
 # Services and their local image names
-SERVICES = identity-api nexus-api nexus-web
+SERVICES = nexus-api nexus-web
 
 # Environment-specific env files for build arg interpolation
 DEV_ENV     = --env-file apps/nexus-web/.env
