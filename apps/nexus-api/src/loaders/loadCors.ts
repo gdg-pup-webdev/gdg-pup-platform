@@ -46,7 +46,7 @@ export const loadCors = (app: Express) => {
           return;
         }
 
-        callback(new Error(`CORS blocked origin: ${origin}`));
+        callback(null, false);
       },
       credentials: true,
     }),
