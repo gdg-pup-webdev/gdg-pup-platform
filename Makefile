@@ -5,6 +5,9 @@
 #   make dev          Build & run development
 #   make staging      Build & run staging
 #   make prod         Build & run production (detached)
+#   make admin-dev-up Run nexus-admin-web in development
+#   make admin-staging-up Run nexus-admin-web in staging
+#   make admin-prod-up Run nexus-admin-web in production (detached)
 #   make dev-up       Run development (no build)
 #   make staging-up   Run staging (no build)
 #   make prod-up      Run production (no build, detached)
@@ -119,6 +122,89 @@ push-prod:
 	docker tag gdg-pup-platform-prod-storybook $(DOCKER_ORG)/gdg-pup-platform-storybook:prod
 	docker push $(DOCKER_ORG)/gdg-pup-platform-storybook:prod
 
+# ---- Nexus Admin Web Image ----
+.PHONY: admin-web-build-dev admin-web-build-staging admin-web-build-prod admin-web-push-dev admin-web-push-staging admin-web-push-prod
+
+# ---- Nexus Admin Web Runtime ----
+.PHONY: admin-dev admin-dev-up admin-dev-build admin-dev-down admin-staging admin-staging-up admin-staging-build admin-staging-down admin-prod admin-prod-up admin-prod-build admin-prod-down
+
+ADMIN_STACK_SERVICES = nexus-admin-web nexus-api 
+
+admin-dev:
+	$(COMPOSE) $(DEV_ENV) $(BASE) -f docker-compose.dev.yml up --build $(ADMIN_STACK_SERVICES)
+
+admin-dev-up:
+	$(COMPOSE) $(DEV_ENV) $(BASE) -f docker-compose.dev.yml up $(ADMIN_STACK_SERVICES)
+
+admin-dev-build:
+	$(COMPOSE) $(DEV_ENV) $(BASE) -f docker-compose.dev.yml build nexus-admin-web
+
+admin-dev-down:
+	$(COMPOSE) $(DEV_ENV) $(BASE) -f docker-compose.dev.yml rm -sf $(ADMIN_STACK_SERVICES)
+
+admin-staging:
+	$(COMPOSE) $(STAGING_ENV) $(BASE) -f docker-compose.staging.yml up --build $(ADMIN_STACK_SERVICES)
+
+admin-staging-up:
+	$(COMPOSE) $(STAGING_ENV) $(BASE) -f docker-compose.staging.yml up $(ADMIN_STACK_SERVICES)
+
+admin-staging-build:
+	$(COMPOSE) $(STAGING_ENV) $(BASE) -f docker-compose.staging.yml build nexus-admin-web
+
+admin-staging-down:
+	$(COMPOSE) $(STAGING_ENV) $(BASE) -f docker-compose.staging.yml rm -sf $(ADMIN_STACK_SERVICES)
+
+admin-prod:
+	$(COMPOSE) $(PROD_ENV) $(BASE) -f docker-compose.prod.yml up --build -d $(ADMIN_STACK_SERVICES)
+
+admin-prod-up:
+	$(COMPOSE) $(PROD_ENV) $(BASE) -f docker-compose.prod.yml up -d $(ADMIN_STACK_SERVICES)
+
+admin-prod-build:
+	$(COMPOSE) $(PROD_ENV) $(BASE) -f docker-compose.prod.yml build nexus-admin-web
+
+admin-prod-down:
+	$(COMPOSE) $(PROD_ENV) $(BASE) -f docker-compose.prod.yml rm -sf $(ADMIN_STACK_SERVICES)
+
+admin-web-build-dev:
+	docker build \
+		-f apps/nexus-admin-web/Dockerfile \
+		--build-arg NEXT_PUBLIC_NEXUS_API_URL=https://api.dev.$(DOMAIN) \
+		--build-arg NEXT_PUBLIC_IDENTITY_API_URL=https://identity.dev.$(DOMAIN) \
+		--build-arg NEXT_PUBLIC_SUPABASE_URL="$(NEXT_PUBLIC_SUPABASE_URL)" \
+		--build-arg NEXT_PUBLIC_SUPABASE_PUB_KEY="$(NEXT_PUBLIC_SUPABASE_PUB_KEY)" \
+		-t $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:dev \
+		.
+
+admin-web-build-staging:
+	docker build \
+		-f apps/nexus-admin-web/Dockerfile \
+		--build-arg NEXT_PUBLIC_NEXUS_API_URL=https://api.staging.$(DOMAIN) \
+		--build-arg NEXT_PUBLIC_IDENTITY_API_URL=https://identity.staging.$(DOMAIN) \
+		--build-arg NEXT_PUBLIC_SUPABASE_URL="$(NEXT_PUBLIC_SUPABASE_URL)" \
+		--build-arg NEXT_PUBLIC_SUPABASE_PUB_KEY="$(NEXT_PUBLIC_SUPABASE_PUB_KEY)" \
+		-t $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:staging \
+		.
+
+admin-web-build-prod:
+	docker build \
+		-f apps/nexus-admin-web/Dockerfile \
+		--build-arg NEXT_PUBLIC_NEXUS_API_URL=https://api.$(DOMAIN) \
+		--build-arg NEXT_PUBLIC_IDENTITY_API_URL=https://identity.$(DOMAIN) \
+		--build-arg NEXT_PUBLIC_SUPABASE_URL="$(NEXT_PUBLIC_SUPABASE_URL)" \
+		--build-arg NEXT_PUBLIC_SUPABASE_PUB_KEY="$(NEXT_PUBLIC_SUPABASE_PUB_KEY)" \
+		-t $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:prod \
+		.
+
+admin-web-push-dev: admin-web-build-dev
+	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:dev
+
+admin-web-push-staging: admin-web-build-staging
+	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:staging
+
+admin-web-push-prod: admin-web-build-prod
+	docker push $(DOCKER_ORG)/gdg-pup-platform-nexus-admin-web:prod
+
 # ---- Common ----
 .PHONY: down clean logs
 down:
@@ -134,9 +220,9 @@ logs:
 # Usage: make domain-status ENV=dev
 ENV ?= dev
 
-DOMAIN_MAP_dev     = dev.gdgpup.org api.dev.gdgpup.org identity.dev.gdgpup.org
-DOMAIN_MAP_staging = staging.gdgpup.org api.staging.gdgpup.org identity.staging.gdgpup.org
-DOMAIN_MAP_prod    = gdgpup.org api.gdgpup.org identity.gdgpup.org
+DOMAIN_MAP_dev     = dev.gdgpup.org admin.dev.gdgpup.org api.dev.gdgpup.org identity.dev.gdgpup.org
+DOMAIN_MAP_staging = staging.gdgpup.org admin.staging.gdgpup.org api.staging.gdgpup.org identity.staging.gdgpup.org
+DOMAIN_MAP_prod    = gdgpup.org admin.gdgpup.org api.gdgpup.org identity.gdgpup.org
 
 .PHONY: domain-status
 domain-status:

@@ -145,7 +145,7 @@ export const PortfolioSection = () => {
               <div className="space-y-1">
                 <p className="text-xs font-semibold uppercase text-gray-400">Technical Skills</p>
                 <div className="flex flex-wrap gap-1">
-                  {portfolio.technical_skills.map(skill => (
+                  {portfolio.technical_skills.map((skill: string) => (
                     <span key={skill} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded-full border border-blue-100">
                       {skill}
                     </span>
@@ -158,7 +158,7 @@ export const PortfolioSection = () => {
               <div className="space-y-1">
                 <p className="text-xs font-semibold uppercase text-gray-400">Learning Interests</p>
                 <div className="flex flex-wrap gap-1">
-                  {portfolio.learning_interests.map(interest => (
+                  {portfolio.learning_interests.map((interest: string) => (
                     <span key={interest} className="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded-full border border-green-100">
                       {interest}
                     </span>

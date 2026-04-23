@@ -113,10 +113,10 @@ export function LearningResourceList() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const resources = response?.data || [];
+  const resources: LearningResource[] = response?.data || [];
   const meta = response?.meta;
   const selectedResource = useMemo(
-    () => resources.find((resource) => resource.id === selectedResourceId) || null,
+    () => resources.find((resource: LearningResource) => resource.id === selectedResourceId) || null,
     [resources, selectedResourceId],
   );
 

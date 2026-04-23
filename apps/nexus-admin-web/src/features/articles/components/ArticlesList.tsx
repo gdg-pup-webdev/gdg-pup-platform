@@ -34,9 +34,9 @@ export const ArticlesList: React.FC = () => {
   const updateMutation = useUpdateArticle();
   const deleteMutation = useDeleteArticle();
 
-  const articles = articlesResponse?.data || [];
+  const articles: Article[] = articlesResponse?.data || [];
   const selectedArticle = useMemo(
-    () => articles.find((article) => article.id === selectedArticleId) || null,
+    () => articles.find((article: Article) => article.id === selectedArticleId) || null,
     [articles, selectedArticleId],
   );
 
@@ -135,7 +135,7 @@ export const ArticlesList: React.FC = () => {
   };
 
   // Filter articles client-side for search
-  const filteredArticles = articles.filter(a => 
+  const filteredArticles = articles.filter((a: Article) => 
     a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     a.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );

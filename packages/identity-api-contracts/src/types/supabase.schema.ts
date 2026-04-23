@@ -303,25 +303,40 @@ export const publicGdgMembersUpdateSchema = z.object({
 export const publicNfcCardRowSchema = z.object({
   activated_at: z.string().nullable(),
   created_at: z.string(),
+  gdg_id: z.string(),
   id: z.string(),
-  status: z.string(),
-  user_id: z.string().nullable(),
+  notes: z.string().nullable(),
+  owner_user_id: z.string().nullable(),
+  revoked_at: z.string().nullable(),
+  status: z.enum(["issued", "activated", "suspended", "revoked"]),
+  suspended_at: z.string().nullable(),
+  updated_at: z.string(),
 });
 
 export const publicNfcCardInsertSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
-  id: z.string(),
-  status: z.string().optional(),
-  user_id: z.string().optional().nullable(),
+  gdg_id: z.string(),
+  id: z.string().optional(),
+  notes: z.string().optional().nullable(),
+  owner_user_id: z.string().optional().nullable(),
+  revoked_at: z.string().optional().nullable(),
+  status: z.enum(["issued", "activated", "suspended", "revoked"]).optional(),
+  suspended_at: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
 
 export const publicNfcCardUpdateSchema = z.object({
   activated_at: z.string().optional().nullable(),
   created_at: z.string().optional(),
+  gdg_id: z.string().optional(),
   id: z.string().optional(),
-  status: z.string().optional(),
-  user_id: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  owner_user_id: z.string().optional().nullable(),
+  revoked_at: z.string().optional().nullable(),
+  status: z.enum(["issued", "activated", "suspended", "revoked"]).optional(),
+  suspended_at: z.string().optional().nullable(),
+  updated_at: z.string().optional(),
 });
 
 export const publicNfcCardRelationshipsSchema = z.tuple([

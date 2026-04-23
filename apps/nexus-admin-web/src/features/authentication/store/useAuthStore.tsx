@@ -4,12 +4,29 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useLogin } from "../hooks";
-import { jwtDecode } from "jwt-decode";
 import { TokenPayload } from "../types/tokenPayload";
 import { useRefreshToken } from "../hooks/useRefreshToken";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
+
+const decodeJwtPayload = (token: string): TokenPayload | null => {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      "=",
+    );
+
+    const decoded = JSON.parse(atob(padded)) as TokenPayload;
+    return decoded;
+  } catch {
+    return null;
+  }
+};
 
 export const STATUS = {
   CHECKING: "checking",
@@ -201,7 +218,7 @@ const useTokenStore = create<TokenStore>()(
       decodedToken: null,
       _hasHydrated: false,
       setToken: (token: string) =>
-        set({ token, decodedToken: jwtDecode(token) }),
+        set({ token, decodedToken: decodeJwtPayload(token) }),
       clearToken: () => set({ token: null, decodedToken: null }),
       setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
