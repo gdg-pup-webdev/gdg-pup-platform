@@ -35,6 +35,9 @@ const FadeInSection = ({
 };
 
 export function AboutSection() {
+  const rainbowGradientTextClass =
+    "bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_33%,#34A853_66%,#4285F4_100%)] bg-clip-text text-transparent font-bold";
+
   return (
     <div className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
       {/* Decorative Ellipse - Top Left */}
@@ -172,7 +175,7 @@ export function AboutSection() {
                   left: "50%",
                   top: "90%",
                   transform: "translate(-50%, -15%)",
-                  opacity: 0.9,
+                  opacity: 0.6,
                 }}
               >
                 <Image
@@ -207,22 +210,43 @@ export function AboutSection() {
 
           {/* Section 3: Hero Description */}
           <FadeInSection delay={0.3}>
-            <Stack gap="md">
-              <Text variant="body" align="center" className="text-white">
-                GDG PUP brings together students from all backgrounds who share
-                the same spark: a genuine curiosity to explore technology beyond
-                the classroom and the drive to build real, lasting connections
-                along the way. Through events, workshops, and hands-on projects,
-                we help members develop technical skills, gain real-world
-                experience, and prepare for careers in tech.
-              </Text>
+            <Box className="max-w-4xl mx-auto w-full">
+              <Card>
+                <Stack gap="md">
+                  <Text
+                    variant="body"
+                    align="center"
+                    className="text-white text-lg md:text-xl"
+                  >
+                    GDG PUP brings together{" "}
+                    <span className={rainbowGradientTextClass}>
+                      students from all backgrounds
+                    </span>{" "}
+                    who share the same spark: a genuine curiosity to explore
+                    technology beyond the classroom and the drive to build real,
+                    lasting connections along the way.{" "}
+                    <Text as="span" gradient="white-blue" weight="bold">
+                      Through events, workshops, and hands-on projects, we help
+                      members develop technical skills, gain real-world
+                      experience, and prepare for careers in tech.
+                    </Text>
+                  </Text>
 
-              <Text variant="body" align="center" className="text-white">
-                As part of the global Google Developer Groups on Campus network,
-                our members gain access to learning opportunities, tools, and a
-                community that extends beyond the university.
-              </Text>
-            </Stack>
+                  <Text
+                    variant="body"
+                    align="center"
+                    className="text-white text-lg md:text-xl"
+                  >
+                    As part of the global{" "}
+                    <span className={rainbowGradientTextClass}>
+                      Google Developer Groups on Campus
+                    </span>{" "}
+                    network, our members gain access to learning opportunities,
+                    tools, and a community that extends beyond the university.
+                  </Text>
+                </Stack>
+              </Card>
+            </Box>
           </FadeInSection>
 
           {/* Section 4: Mission */}
