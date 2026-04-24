@@ -5,7 +5,7 @@ import { useAuthContext } from "../store/useAuthStore";
 
 const WARNING_THRESHOLD_MS = 10 * 60 * 1000; // Show warning 10 minutes before timeout
 const CHECK_INTERVAL_MS = 60 * 1000; // Check every minute
-const INACTIVITY_THRESHOLD_MS = 2 * 60 * 60 * 1000; // 2 hours
+const INACTIVITY_THRESHOLD_MS = 30 * 60 * 1000; // 30 minutes
 
 interface SessionTimeoutConfig {
   onWarning?: (timeRemaining: number) => void;

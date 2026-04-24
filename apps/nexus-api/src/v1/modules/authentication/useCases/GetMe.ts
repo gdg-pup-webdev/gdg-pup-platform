@@ -26,7 +26,7 @@ export class GetMe {
       id: credential.props.id,
       email: credential.props.emailAddress,
       display_name: credential.props.emailAddress, // Using username as display_name
-      gdg_id: null, // gdg_id is usually in a separate profile table
+      gdg_id: payload.props.memberInfo.gdgId,
     };
   }
 }

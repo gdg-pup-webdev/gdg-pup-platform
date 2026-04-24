@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useSessionTimeout } from "../hooks/useSessionTimeout";
-import { useRefreshToken } from "../hooks/useRefreshToken";
 import { useAuthContext } from "../store/useAuthStore";
 import { Modal, Button, Text, Stack, Inline } from "@packages/spark-ui";
 
@@ -14,6 +13,7 @@ import { Modal, Button, Text, Stack, Inline } from "@packages/spark-ui";
 export const SessionExpirationWarning = () => {
   const [showWarning, setShowWarning] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
+  const { logout, status, refreshToken } = useAuthContext();
   const { extendSession } = useSessionTimeout({
     onWarning: (time) => {
       setTimeRemaining(time);
@@ -25,8 +25,6 @@ export const SessionExpirationWarning = () => {
       setShowWarning(false);
     },
   });
-  const { logout, token, status } = useAuthContext();
-  const refreshTokenMutation = useRefreshToken();
   const autoLogoutTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const startAutoLogoutTimer = () => {
@@ -46,13 +44,11 @@ export const SessionExpirationWarning = () => {
     }
 
     try {
-      // Refresh token to extend session
-      if (token) {
-        await refreshTokenMutation.mutateAsync({ token });
-        // Token already updated in store by mutation, just extend the timeout
-        extendSession();
-        setShowWarning(false);
-      }
+      // Refresh token to extend session using the store's refreshToken method
+      await refreshToken();
+      // Update the timeout reference and close warning
+      extendSession();
+      setShowWarning(false);
     } catch (error) {
       console.error("Failed to extend session", error);
       handleLogout();

@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { UnauthorizedError } from "../errors/HttpError";
+import { ForbiddenError, UnauthorizedError } from "../errors/HttpError";
 import { configs } from "@/configs/configs";
 
 export const requirePermissions = (
@@ -36,7 +36,7 @@ export const requirePermissions = (
     }
 
     if (missingPermissions.length > 0) {
-      throw new UnauthorizedError(
+      throw new ForbiddenError(
         `Insufficient permissions to perform this action. Missing required permission(s): [${missingPermissions
           .map((permission) => `${permission.resource}:${permission.action}`)
           .join(", ")}]. User permissions: [${userPermissions

@@ -2,6 +2,7 @@ import { IGdgMemberService, IJWTService, IRbacService } from "../domain/IAuthent
 import { TokenPayload } from "../domain/TokenPayload.js";
 import { configs } from "@/configs/configs.js";
 import { VerifyToken } from "./VerifyToken.js";
+import { UnauthorizedError } from "@/v1/errors/HttpError.js";
 
 export class RefreshToken {
   constructor(
@@ -14,14 +15,7 @@ export class RefreshToken {
     const payload = await this.verifyToken.execute(token);
  
     if (!payload) {
-      throw new Error("Invalid token.");
-    }
-
-    // Enforce absolute 2-hour limit: reject refresh if original login is > SESSION_TIMEOUT_MINUTES ago
-    const loginTime = new Date(payload.props.loginTime);
-    const sessionTimeoutMs = configs.session.timeoutMinutes * 60 * 1000;
-    if (Date.now() - loginTime.getTime() > sessionTimeoutMs) {
-      throw new Error("Session expired. Please login again.");
+      throw new UnauthorizedError("Invalid token.");
     }
  
     const gdgId = payload.props.memberInfo.gdgId;
