@@ -27,7 +27,9 @@ export const configs = {
   gcp: gcsStorageConfigs,
   jwt: {
     secret: process.env.JWT_SECRET || "secret",
-    expiresIn: process.env.JWT_EXPIRES_IN || "1h",
+  },
+  session: {
+    timeoutMinutes: 120,
   },
   zeptoMail: {
     url: process.env.ZEPTOMAIL_URL || "https://api.zeptomail.com/v1.1/email",

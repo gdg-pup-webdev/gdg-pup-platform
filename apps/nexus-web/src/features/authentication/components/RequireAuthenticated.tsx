@@ -13,13 +13,25 @@ export const RequireAuthenticated = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { status, memberProfile } = useAuthContext();
+  const { status, memberProfile, decodedToken, logout } = useAuthContext();
 
   useEffect(() => {
     if (status === STATUS.UNAUTHENTICATED) {
       console.log("Redirecting to login... unauthenticated");
       router.push(LINKS.auth_signin);
       return;
+    }
+
+    // Check if token is expired
+    if (decodedToken?.validUntil) {
+      const now = new Date();
+      const validUntil = new Date(decodedToken.validUntil);
+      if (now > validUntil) {
+        console.log("Token expired, logging out");
+        logout();
+        router.push(LINKS.auth_signin);
+        return;
+      }
     }
 
     if (status === STATUS.AUTHENTICATED) {
@@ -32,7 +44,7 @@ export const RequireAuthenticated = ({
         router.push(LINKS.onboarding);
       }
     }
-  }, [status, memberProfile, pathname, router]);
+  }, [status, memberProfile, pathname, router, decodedToken, logout]);
 
   if (status === STATUS.UNAUTHENTICATED) {
     return <LoadingScreen message="Redirecting to Sign In..." fullPage={false} showBackground={false} />;

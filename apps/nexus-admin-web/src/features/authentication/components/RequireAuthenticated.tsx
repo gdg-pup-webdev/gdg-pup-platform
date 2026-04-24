@@ -11,14 +11,27 @@ export const RequireAuthenticated = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
-  const { status } = useAuthContext();
+  const { status, decodedToken, logout } = useAuthContext();
 
   useEffect(() => {
     if (status === STATUS.UNAUTHENTICATED) {
       console.log("Redirecting to login... unauthenticated");
       router.push(LINKS.auth_signin);
+      return;
     }
-  }, [status]);
+
+    // Check if token is expired
+    if (decodedToken?.validUntil) {
+      const now = new Date();
+      const validUntil = new Date(decodedToken.validUntil);
+      if (now > validUntil) {
+        console.log("Token expired, logging out");
+        logout();
+        router.push(LINKS.auth_signin);
+        return;
+      }
+    }
+  }, [status, decodedToken, logout, router]);
 
   if (status === STATUS.UNAUTHENTICATED) {
     return (

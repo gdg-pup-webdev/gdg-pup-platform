@@ -6,6 +6,7 @@
   IGdgMemberService,
 } from "../domain/IAuthenticationInterfaces.js"; 
 import { TokenPayload } from "../domain/TokenPayload.js";
+import { configs } from "@/configs/configs.js";
 
 export class Login {
   constructor(
@@ -34,9 +35,11 @@ export class Login {
     const roles = await this.rbacService.listRolesOfUser(email);
     const memberInfo = await this.gdgMemberService.getMemberInfoByEmail(email);
 
+    const now = Date.now();
     const tokenPayload = TokenPayload.create({
       email: credential.props.emailAddress,
-      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(),
+      validUntil: new Date(now + 1000 * 60 * configs.session.timeoutMinutes).toISOString(),
+      loginTime: new Date(now).toISOString(),
       memberInfo,
       permissions,
       roles,
