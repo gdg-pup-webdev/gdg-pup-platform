@@ -32,11 +32,11 @@ export const RequireUnauthenticated = ({
 
 
   if (status === STATUS.LOGGINGOUT) {
-    <>
+    return (
       <div className="w-full h-full min-h-full flex justify-center items-center">
         Loggin out...
       </div>
-    </>;
+    );
   }
 
   return <>{children}</>;

@@ -3,9 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { useLogin } from "../hooks";
 import { TokenPayload } from "../types/tokenPayload";
-import { useRefreshToken } from "../hooks/useRefreshToken";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
@@ -49,6 +47,8 @@ interface AuthState {
   refreshToken: () => Promise<void>;
   memberProfile: any | null;
   fetchMemberProfile: () => Promise<void>;
+  sessionExpiredOnLoad: boolean;
+  clearSessionExpiredOnLoad: () => void;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -66,7 +66,6 @@ export const AuthContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const loginMutation = useLogin();
   const [state, setState] = useState<{
     status: StatusType;
     error: Error | null;
@@ -75,17 +74,44 @@ export const AuthContextProvider = ({
     error: null,
   });
   const [memberProfile, setMemberProfile] = useState<any | null>(null);
-  const { token, setToken, clearToken, decodedToken, _hasHydrated } =
-    useTokenStore();
-
-  // console.log("AuthContextProvider rendered with status:", state.status);
-
-  const refreshTokenMutation = useRefreshToken();
+  const {
+    token,
+    setToken,
+    clearToken,
+    decodedToken,
+    _hasHydrated,
+    sessionExpiredOnLoad,
+    setSessionExpiredOnLoad,
+  } = useTokenStore();
 
   const refreshToken = async () => {
+    // Prevent simultaneous refresh requests (race condition guard)
+    const { isRefreshing, setIsRefreshing } = useTokenStore.getState();
+    if (isRefreshing) {
+      console.debug("Token refresh already in progress, skipping");
+      return;
+    }
+    
+    setIsRefreshing(true);
     try {
-      const res = await refreshTokenMutation.mutateAsync({ token: token! });
-      setToken(res.data);
+      const res = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.authentication.refresh.POST,
+        {
+          body: {
+            data: {
+              token: token!,
+            },
+          },
+          token: token!,
+        },
+      );
+
+      if (res.status === 200) {
+        setToken(res.body.data);
+      } else {
+        throw new Error("Failed to refresh token");
+      }
     } catch (error) {
       console.error("error while refreshing token", error);
       clearToken();
@@ -93,28 +119,30 @@ export const AuthContextProvider = ({
         status: STATUS.UNAUTHENTICATED,
         error: error instanceof Error ? error : new Error("Unknown error"),
       });
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
-    if (!token || !decodedToken) return;
-    const REFRESH_INTERVAL = 40 * 60 * 1000;
-    const timer = setTimeout(() => {
-      refreshToken();
-    }, REFRESH_INTERVAL);
-
-    return () => clearTimeout(timer);
-  }, [token, decodedToken]);
-
-  useEffect(() => { 
     if (!_hasHydrated) return;
-    if (token) {
+
+    if (token && decodedToken?.validUntil) {
+      const validUntilTime = new Date(decodedToken.validUntil).getTime();
+      if (Date.now() >= validUntilTime) {
+        // Session expired on load
+        console.warn("Session expired on load detected");
+        setSessionExpiredOnLoad(true);
+        clearToken();
+        setState({ status: STATUS.UNAUTHENTICATED, error: null });
+        return;
+      }
+
       setState({ status: STATUS.AUTHENTICATED, error: null });
     } else {
       setState({ status: STATUS.UNAUTHENTICATED, error: null });
-      setMemberProfile(null);
     }
-  }, [token, _hasHydrated]);
+  }, [token, _hasHydrated, decodedToken, clearToken, setSessionExpiredOnLoad]);
 
   const fetchMemberProfile = async () => {
     if (!token || !decodedToken?.memberInfo.gdgId) return;
@@ -144,12 +172,25 @@ export const AuthContextProvider = ({
   const login = async (email: string, password: string) => {
     setState({ status: STATUS.LOGGINGIN, error: null });
     try {
-      const res = await loginMutation.mutateAsync({
-        email: email,
-        pass: password,
-      });
-      setToken(res.data.token);
-      setState({ status: STATUS.AUTHENTICATED, error: null });
+      const res = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.authentication.login.POST,
+        {
+          body: {
+            data: {
+              email: email,
+              pass: password,
+            },
+          },
+        },
+      );
+
+      if (res.status === 200) {
+        setToken(res.body.data.token);
+        setState({ status: STATUS.AUTHENTICATED, error: null });
+      } else {
+        throw new Error("Login failed");
+      }
     } catch (error) {
       setState({
         status: STATUS.UNAUTHENTICATED,
@@ -194,6 +235,8 @@ export const AuthContextProvider = ({
           refreshToken,
           memberProfile,
           fetchMemberProfile,
+          sessionExpiredOnLoad,
+          clearSessionExpiredOnLoad: () => setSessionExpiredOnLoad(false),
         }}
       >
         {children}
@@ -207,8 +250,12 @@ type TokenStore = {
   decodedToken: TokenPayload | null;
   setToken: (token: string) => void;
   clearToken: () => void;
-  _hasHydrated: boolean; // Add this
-  setHasHydrated: (state: boolean) => void; // Add this
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
+  isRefreshing: boolean;
+  setIsRefreshing: (state: boolean) => void;
+  sessionExpiredOnLoad: boolean;
+  setSessionExpiredOnLoad: (state: boolean) => void;
 };
 
 const useTokenStore = create<TokenStore>()(
@@ -217,10 +264,14 @@ const useTokenStore = create<TokenStore>()(
       token: null,
       decodedToken: null,
       _hasHydrated: false,
+      isRefreshing: false,
+      sessionExpiredOnLoad: false,
       setToken: (token: string) =>
-        set({ token, decodedToken: decodeJwtPayload(token) }),
+        set({ token, decodedToken: decodeJwtPayload(token), sessionExpiredOnLoad: false }),
       clearToken: () => set({ token: null, decodedToken: null }),
       setHasHydrated: (state) => set({ _hasHydrated: state }),
+      setIsRefreshing: (state) => set({ isRefreshing: state }),
+      setSessionExpiredOnLoad: (state) => set({ sessionExpiredOnLoad: state }),
     }),
     {
       name: "nexus-auth-storage",

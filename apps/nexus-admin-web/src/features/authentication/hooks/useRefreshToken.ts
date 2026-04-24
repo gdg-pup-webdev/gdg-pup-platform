@@ -21,7 +21,16 @@ export const useRefreshToken = () => {
 
       if (res.status === 200) return res.body;
 
-      throw new Error(extractErrorMessage(res.body));
+      // Handle session expiration specifically
+      const errorMessage = extractErrorMessage(res.body);
+      if (res.status === 401 || errorMessage.includes("Session expired")) {
+        const error = new Error(errorMessage || "Session expired");
+        (error as any).isSessionExpired = true;
+        throw error;
+      }
+
+      throw new Error(errorMessage);
     },
   });
 };
+
