@@ -145,9 +145,11 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   }
 
   private mapSimilarityToDomain(row: SimilarityMemberRow): GdgMember {
+    const fallbackGdgId = row.gdg_id || "unknown-member";
+
     return GdgMember.hydrate({
-      gdgId: row.gdg_id || "",
-      email: "",
+      gdgId: fallbackGdgId,
+      email: `${fallbackGdgId}@redacted.local`,
       membershipType: row.membership_type ?? null,
       avatarUrl: row.avatar_image_url ?? null,
       avatarUrl64: row.avatar_image_url ?? null,
@@ -309,7 +311,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       .select("*")
       .eq("is_public", true)
       .or(
-        `display_name.ilike.${searchTerm},email.ilike.${searchTerm},first_name.ilike.${searchTerm},last_name.ilike.${searchTerm}`,
+        `display_name.ilike.${searchTerm},first_name.ilike.${searchTerm},last_name.ilike.${searchTerm}`,
       )
       .limit(limit);
 
@@ -356,7 +358,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     if (filters.search) {
       const s = `%${filters.search}%`;
       query = query.or(
-        `display_name.ilike.${s},email.ilike.${s},first_name.ilike.${s},last_name.ilike.${s}`,
+        `display_name.ilike.${s},first_name.ilike.${s},last_name.ilike.${s}`,
       );
     }
     if (filters.program) query = query.eq("program", filters.program);
