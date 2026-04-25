@@ -29,7 +29,7 @@ export function WhoAreWeSection() {
               gradient="white-yellow"
               variant="heading-2"
               weight="bold"
-              className="mt-30 mb-2 lg:my-0"
+              className="mt-35 mb-4 lg:my-0"
             >
               Who are we
             </Text>
@@ -142,29 +142,39 @@ export function WhoAreWeSection() {
                 className="leading-8 text-lg py-16.75 px-6.75"
               >
                 Whether you’re exploring{" "}
-                <span className={rainbowGradientTextClass}>Web Development</span>,{" "}
-                <span className={rainbowGradientTextClass}>Data</span>{" "}
-                and{" "}
-                <span className={rainbowGradientTextClass}>Machine Learning</span>{" "}
-                (Data and ML), {" "}
+                <span className={rainbowGradientTextClass}>
+                  Web Development
+                </span>
+                , <span className={rainbowGradientTextClass}>Data</span> and{" "}
+                <span className={rainbowGradientTextClass}>
+                  Machine Learning
+                </span>{" "}
+                (Data and ML),{" "}
                 <span className={rainbowGradientTextClass}>Cybersecurity</span>,{" "}
-                <span className={rainbowGradientTextClass}>Cloud Solutions</span>,{" "}
-                <span className={rainbowGradientTextClass}>UI/UX Design</span>,{" "}
+                <span className={rainbowGradientTextClass}>
+                  Cloud Solutions
+                </span>
+                , <span className={rainbowGradientTextClass}>UI/UX Design</span>
+                ,{" "}
                 <span className={rainbowGradientTextClass}>
                   Internet of Things
                 </span>{" "}
                 (IoT),{" "}
-                <span className={rainbowGradientTextClass}>Project Management</span>,
-                or even as a core functional team member (
+                <span className={rainbowGradientTextClass}>
+                  Project Management
+                </span>
+                , or even as a core functional team member (
                 <span className={rainbowGradientTextClass}>Operations</span>,{" "}
                 <span className={rainbowGradientTextClass}>Finance</span>,{" "}
                 <span className={rainbowGradientTextClass}>Secretariat</span>,{" "}
                 <span className={rainbowGradientTextClass}>Creatives</span>,{" "}
                 <span className={rainbowGradientTextClass}>Marketing</span>,{" "}
                 <span className={rainbowGradientTextClass}>Partnerships</span>,{" "}
-                <span className={rainbowGradientTextClass}>Community Relations</span>),
-                our community provides opportunities to learn, collaborate, and grow
-                alongside peers and mentors.
+                <span className={rainbowGradientTextClass}>
+                  Community Relations
+                </span>
+                ), our community provides opportunities to learn, collaborate,
+                and grow alongside peers and mentors.
                 <br />
                 <br />
                 From hands-on workshops and Study Jams to hackathons, industry
