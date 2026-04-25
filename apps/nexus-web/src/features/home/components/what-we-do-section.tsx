@@ -50,7 +50,7 @@ export function WhatWeDoSection() {
                       color="on-primary"
                       className="text-2xl"
                     >
-                      We design experiences that turn {" "}
+                      We design experiences that turn{" "}
                       <br className="hidden lg:inline" />
                       curiosity into capability:
                     </Text>
@@ -92,7 +92,7 @@ export function WhatWeDoSection() {
                 width={486}
                 height={536}
                 draggable={false}
-                className="pointer-events-none select-none absolute -top-15 right-5 w-24 h-auto lg:w-[486px] lg:h-[536px] lg:-right-100 lg:top-1/2 lg:-translate-y-1/2 z-20"
+                className="pointer-events-none select-none absolute -top-15 right-2 w-24 h-auto lg:w-[486px] lg:h-[536px] lg:-right-100 lg:top-1/2 lg:-translate-y-1/2 z-20"
               />
             </div>
             <Text
