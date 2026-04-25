@@ -12,8 +12,6 @@ export class GdgMembersRouter {
     /**
      * PUBLIC ROUTES 
      */
-    this.router.get("/", this.controller.get);
-    this.router.get("/:gdgId", this.controller.getIdGet);
     this.router.get(
       "/:gdgId/suggested-users",
       this.controller.getIdSuggestedUsers,
@@ -24,7 +22,9 @@ export class GdgMembersRouter {
      */
     this.router.use(requireAuthenticated());
 
-    
+    this.router.get("/", this.controller.get);
+    this.router.get("/:gdgId", this.controller.getIdGet);
+
     this.router.post("/", this.controller.post);
     this.router.patch("/:gdgId", this.controller.getIdPatch);
     this.router.delete("/:gdgId", this.controller.getIdDelete);

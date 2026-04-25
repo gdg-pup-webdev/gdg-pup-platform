@@ -66,6 +66,40 @@ vi.mock("@packages/typed-rest/serverExpress", () => ({
     },
 }));
 
+vi.mock("@/v1/middlewares/auth.middleware", () => ({
+  requireAuthenticated:
+    () =>
+    (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction,
+    ) => {
+      if (!req.headers.authorization) {
+        res.status(401).json({
+          status: "fail",
+          message: "Authentication required. Please provide a valid Bearer token.",
+        });
+        return;
+      }
+
+      (req as express.Request & { decodedToken?: unknown }).decodedToken = {
+        memberInfo: { gdgId: "GDG-AUTH" },
+      } as any;
+      next();
+    },
+}));
+
+vi.mock("@/v1/middlewares/rbac.middleware", () => ({
+  requirePermissions:
+    () =>
+    (
+      _req: express.Request,
+      _res: express.Response,
+      next: express.NextFunction,
+    ) =>
+      next(),
+}));
+
 describe("GdgMembersRouter suggested-users route", () => {
   const getSuggestedUsers = vi.fn();
   const similarUserPayload = {
@@ -189,5 +223,29 @@ describe("GdgMembersRouter suggested-users route", () => {
       "Suggested GDG members fetched successfully",
     );
     expect(response.body.data).toEqual([similarUserPayload]);
+  });
+
+  it("requires authentication for member list", async () => {
+    const app = createApp();
+
+    const response = await request(app).get("/gdgmembers?pageNumber=1&pageSize=10");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      status: "fail",
+      message: "Authentication required. Please provide a valid Bearer token.",
+    });
+  });
+
+  it("requires authentication for member profile lookup", async () => {
+    const app = createApp();
+
+    const response = await request(app).get("/gdgmembers/GDG-1");
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      status: "fail",
+      message: "Authentication required. Please provide a valid Bearer token.",
+    });
   });
 });

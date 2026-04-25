@@ -11,7 +11,6 @@ import { string } from "zod";
 type SimilarityMemberRow = Pick<
   Tables<"gdg_members">,
   | "gdg_id"
-  | "email"
   | "membership_type"
   | "avatar_image_url"
   | "program"
@@ -45,7 +44,7 @@ const isSparkmatesSectionId = (value: string): value is SparkmatesSectionId => {
 export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   private readonly tableName = "gdg_members";
   private readonly similarityProjection =
-    "gdg_id,email,membership_type,avatar_image_url,program,year_level,department,display_name,first_name,middle_name,last_name,suffix,technical_skills,learning_interests,tools_and_technologies,is_public";
+    "gdg_id,membership_type,avatar_image_url,program,year_level,department,display_name,first_name,middle_name,last_name,suffix,technical_skills,learning_interests,tools_and_technologies,is_public";
 
   private mapToDomain(row: Tables<"gdg_members">): GdgMember {
     return GdgMember.hydrate({
@@ -148,7 +147,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   private mapSimilarityToDomain(row: SimilarityMemberRow): GdgMember {
     return GdgMember.hydrate({
       gdgId: row.gdg_id || "",
-      email: row.email || "",
+      email: "",
       membershipType: row.membership_type ?? null,
       avatarUrl: row.avatar_image_url ?? null,
       avatarUrl64: row.avatar_image_url ?? null,
@@ -308,6 +307,7 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     const { data, error } = await supabase
       .from(this.tableName)
       .select("*")
+      .eq("is_public", true)
       .or(
         `display_name.ilike.${searchTerm},email.ilike.${searchTerm},first_name.ilike.${searchTerm},last_name.ilike.${searchTerm}`,
       )
@@ -348,7 +348,10 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     pageSize: number,
     filters: GdgMemberFilters = {},
   ): Promise<{ list: GdgMember[]; count: number }> {
-    let query = supabase.from(this.tableName).select("*", { count: "exact" });
+    let query = supabase
+      .from(this.tableName)
+      .select("*", { count: "exact" })
+      .eq("is_public", true);
 
     if (filters.search) {
       const s = `%${filters.search}%`;
