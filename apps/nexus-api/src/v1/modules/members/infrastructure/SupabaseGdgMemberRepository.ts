@@ -35,6 +35,8 @@ const DEFAULT_SPARKMATES_SECTION_ORDER: SparkmatesSectionId[] = [
   "gdgImpact",
   "badges",
 ];
+const MIN_RANDOM_MEMBER_POOL_SIZE = 120;
+const MAX_RANDOM_MEMBER_POOL_SIZE = 300;
 
 const isSparkmatesSectionId = (value: string): value is SparkmatesSectionId => {
   return (DEFAULT_SPARKMATES_SECTION_ORDER as string[]).includes(value);
@@ -179,25 +181,51 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
     seed: number,
   ): Promise<{ list: GdgMember[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
-    const to = from + pageSize - 1;
+    const to = from + pageSize;
+    const fetchLimit = Math.min(
+      Math.max(to * 2, MIN_RANDOM_MEMBER_POOL_SIZE),
+      MAX_RANDOM_MEMBER_POOL_SIZE,
+    );
 
-    // We use the md5 hash of the ID concatenated with the seed to create a deterministic string
-    // and then sort by that string.
-    const { data, error } = await supabase
+    const normalizedSeed = Math.abs(seed) || 1;
+
+    const seededHash = (value: string): number => {
+      let hash = 0;
+      const input = `${normalizedSeed}:${value}`;
+
+      for (let charIndex = 0; charIndex < input.length; charIndex += 1) {
+        hash = (hash * 31 + input.charCodeAt(charIndex)) >>> 0;
+      }
+
+      return hash;
+    };
+
+    const { data, count, error } = await supabase
       .from(this.tableName)
-      .select("*")
-      // This creates a virtual order based on the seed
-      .order(`gdg_id`)
-      .range(from, to);
+      .select(this.similarityProjection, { count: "exact" })
+      .eq("is_public", true)
+      .order("gdg_id", { ascending: true, nullsFirst: false })
+      .limit(fetchLimit);
 
     if (error) throw new Error(`Database error: ${error.message}`);
+
+    const sortedBySeed = [...(data || [])].sort((left, right) => {
+      const leftKey = seededHash(left.gdg_id ?? "");
+      const rightKey = seededHash(right.gdg_id ?? "");
+      if (leftKey !== rightKey) return leftKey - rightKey;
+
+      return (left.gdg_id ?? "").localeCompare(right.gdg_id ?? "");
+    });
+
     return {
-      list: (data || []).map((row) => this.mapToDomain(row)),
-      count: data?.length || 0,
+      list: sortedBySeed
+        .slice(from, to)
+        .map((row) => this.mapSimilarityToDomain(row as SimilarityMemberRow)),
+      count: count || sortedBySeed.length,
     };
   }
 
- async findSimilarMembersBasedOnField(
+  async findSimilarMembersBasedOnField(
     memberGdgId: string,
     fieldName: string,
     fieldValue: unknown,
