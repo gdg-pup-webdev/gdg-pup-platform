@@ -5,6 +5,7 @@ export type Permission = {
 };
 
 export type MemberInfo = {
+  email: string;
   gdgId: string;
   firstName: string;
   middleName: string | null;
@@ -19,6 +20,8 @@ export type MemberInfo = {
 export type TokenPayload = {
   email: string;
   validUntil: string;
+  loginTime: string;
   memberInfo: MemberInfo;
   permissions: Permission[];
+  roles: string[];
 };

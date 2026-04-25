@@ -31,6 +31,7 @@ import { SparkmatesRainbowStreak } from "@/features/sparkmates/components/Sparkm
 import { SortableProjectCardItem } from "@/features/sparkmates/components/SparkmatesOwnerView/components/SortableProjectCardItem";
 import { addIcon } from "@/features/sparkmates/components/SparkmatesOwnerView/icons/addIcon";
 import { viewIcon } from "@/features/sparkmates/components/SparkmatesOwnerView/icons/viewIcon";
+import { ShareDropdown } from "@/features/sparkmates/components/SparkmatesOwnerView/components/ShareDropdown";
 import {
   useMemberProjects,
   useMemberProjectsPaginated,
@@ -643,7 +644,7 @@ export default function MyProjectsPage() {
               <Text variant="heading-5" className="text-white">
                 My Portfolio
               </Text>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <Link prefetch={false} href="/sparkmates/me/analytics">
                   <Button
                     variant="colored"
@@ -665,6 +666,7 @@ export default function MyProjectsPage() {
                     Preview
                   </Button>
                 </Link>
+                <ShareDropdown gdgId={gdgId} disabled={!userProfile} />
               </div>
             </div>
 

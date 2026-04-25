@@ -88,7 +88,7 @@ const benefits = [
   },
 ];
 
-const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
+const BenefitCard = ({ benefit }: { benefit: (typeof benefits)[0] }) => {
   const [hovered, setHovered] = useState(false);
   const [dims, setDims] = useState({ w: 0, h: 0 });
   const c = CARD_COLORS[benefit.color];
@@ -130,10 +130,11 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
 
   const { w, h } = dims;
   const perimeter = w > 0 ? 2 * (w + h) - 8 * R + 2 * Math.PI * R : 0;
-  const snakes = [0, 0.25, 0.5, 0.75].map(frac => frac * perimeter);
-  const path = w > 0
-    ? `M ${R},0 H ${w - R} A ${R},${R} 0 0 1 ${w},${R} V ${h - R} A ${R},${R} 0 0 1 ${w - R},${h} H ${R} A ${R},${R} 0 0 1 0,${h - R} V ${R} A ${R},${R} 0 0 1 ${R},0 Z`
-    : "";
+  const snakes = [0, 0.25, 0.5, 0.75].map((frac) => frac * perimeter);
+  const path =
+    w > 0
+      ? `M ${R},0 H ${w - R} A ${R},${R} 0 0 1 ${w},${R} V ${h - R} A ${R},${R} 0 0 1 ${w - R},${h} H ${R} A ${R},${R} 0 0 1 0,${h - R} V ${R} A ${R},${R} 0 0 1 ${R},0 Z`
+      : "";
 
   return (
     <motion.div
@@ -145,12 +146,58 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
       transition={{ duration: 0.25, ease: "easeOut" }}
     >
       {/* Static corner brackets — visible when not hovered */}
-      {!hovered && <>
-        <div className="absolute pointer-events-none z-10" style={{ top: -2, left: -2, width: CORNER, height: CORNER, borderTop: `${T}px solid ${c}`, borderLeft: `${T}px solid ${c}`, borderRadius: "20px 0 0 0" }} />
-        <div className="absolute pointer-events-none z-10" style={{ top: -2, right: -2, width: CORNER, height: CORNER, borderTop: `${T}px solid ${c}`, borderRight: `${T}px solid ${c}`, borderRadius: "0 20px 0 0" }} />
-        <div className="absolute pointer-events-none z-10" style={{ bottom: -2, left: -2, width: CORNER, height: CORNER, borderBottom: `${T}px solid ${c}`, borderLeft: `${T}px solid ${c}`, borderRadius: "0 0 0 20px" }} />
-        <div className="absolute pointer-events-none z-10" style={{ bottom: -2, right: -2, width: CORNER, height: CORNER, borderBottom: `${T}px solid ${c}`, borderRight: `${T}px solid ${c}`, borderRadius: "0 0 20px 0" }} />
-      </>}
+      {!hovered && (
+        <>
+          <div
+            className="absolute pointer-events-none z-10"
+            style={{
+              top: -2,
+              left: -2,
+              width: CORNER,
+              height: CORNER,
+              borderTop: `${T}px solid ${c}`,
+              borderLeft: `${T}px solid ${c}`,
+              borderRadius: "20px 0 0 0",
+            }}
+          />
+          <div
+            className="absolute pointer-events-none z-10"
+            style={{
+              top: -2,
+              right: -2,
+              width: CORNER,
+              height: CORNER,
+              borderTop: `${T}px solid ${c}`,
+              borderRight: `${T}px solid ${c}`,
+              borderRadius: "0 20px 0 0",
+            }}
+          />
+          <div
+            className="absolute pointer-events-none z-10"
+            style={{
+              bottom: -2,
+              left: -2,
+              width: CORNER,
+              height: CORNER,
+              borderBottom: `${T}px solid ${c}`,
+              borderLeft: `${T}px solid ${c}`,
+              borderRadius: "0 0 0 20px",
+            }}
+          />
+          <div
+            className="absolute pointer-events-none z-10"
+            style={{
+              bottom: -2,
+              right: -2,
+              width: CORNER,
+              height: CORNER,
+              borderBottom: `${T}px solid ${c}`,
+              borderRight: `${T}px solid ${c}`,
+              borderRadius: "0 0 20px 0",
+            }}
+          />
+        </>
+      )}
 
       {/* SVG snake — follows rounded path exactly */}
       {hovered && w > 0 && (
@@ -174,15 +221,15 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
           ))}
         </svg>
       )}
-        <Card
-          style={{
-            border: `1px solid ${c}`,
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            transition: "box-shadow 0.25s ease",
-            boxShadow: hovered ? `0 0 24px 2px ${c}44` : "none",
-          }}
+      <Card
+        style={{
+          border: `1px solid ${c}`,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          transition: "box-shadow 0.25s ease",
+          boxShadow: hovered ? `0 0 24px 2px ${c}44` : "none",
+        }}
       >
         <CardHeader
           style={{
@@ -211,7 +258,11 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
             paddingRight: "16px",
           }}
         >
-          <Text variant="body-sm" align="center" className="text-gray-300 text-center">
+          <Text
+            variant="body-sm"
+            align="center"
+            className="text-gray-300 text-center"
+          >
             {benefit.body}
           </Text>
         </CardContent>
@@ -227,10 +278,15 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
         >
           <motion.div
             className="absolute inset-0"
-            animate={{ scale: hovered ? 1.05 : 1 }}
+            animate={{ scale: hovered ? 1.75 : 1.5 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
           >
-            <Image src={benefit.image} alt={benefit.title} fill className="object-cover" />
+            <Image
+              src={benefit.image}
+              alt={benefit.title}
+              fill
+              className="object-cover"
+            />
           </motion.div>
         </div>
       </Card>
@@ -241,7 +297,6 @@ const BenefitCard = ({ benefit }: { benefit: typeof benefits[0] }) => {
 export function BenefitsSection() {
   return (
     <div className="relative overflow-hidden pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16 bg-[#010B1D]">
-
       <style>{`
         /* ── Ellipses ── */
         .ellipse-blue {
@@ -284,7 +339,8 @@ export function BenefitsSection() {
       <div
         className="ellipse-blue absolute rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, #4285F488 0%, #4285F444 40%, transparent 72%)",
+          background:
+            "radial-gradient(ellipse at center, #4285F488 0%, #4285F444 40%, transparent 72%)",
           filter: "blur(32px)",
           WebkitFilter: "blur(32px)",
           zIndex: 0,
@@ -300,7 +356,8 @@ export function BenefitsSection() {
           top: "clamp(-80px, -6vw, -60px)",
           left: "50%",
           transform: "translateX(-50%)",
-          background: "radial-gradient(ellipse at 50% 100%, #7EC8F8CC 0%, #4AABF066 50%, transparent 72%)",
+          background:
+            "radial-gradient(ellipse at 50% 100%, #7EC8F8CC 0%, #4AABF066 50%, transparent 72%)",
           filter: "blur(40px)",
           WebkitFilter: "blur(40px)",
           zIndex: 0,
@@ -311,7 +368,8 @@ export function BenefitsSection() {
       <div
         className="ellipse-yellow absolute rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, #FBBC0588 0%, #FBBC0544 40%, transparent 72%)",
+          background:
+            "radial-gradient(ellipse at center, #FBBC0588 0%, #FBBC0544 40%, transparent 72%)",
           filter: "blur(32px)",
           WebkitFilter: "blur(32px)",
           zIndex: 0,
@@ -322,7 +380,8 @@ export function BenefitsSection() {
       <div
         className="ellipse-red absolute rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, #EA433588 0%, #EA433544 40%, transparent 72%)",
+          background:
+            "radial-gradient(ellipse at center, #EA433588 0%, #EA433544 40%, transparent 72%)",
           filter: "blur(32px)",
           WebkitFilter: "blur(32px)",
           zIndex: 0,
@@ -333,7 +392,8 @@ export function BenefitsSection() {
       <div
         className="ellipse-green absolute rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, #34A85388 0%, #34A85344 40%, transparent 72%)",
+          background:
+            "radial-gradient(ellipse at center, #34A85388 0%, #34A85344 40%, transparent 72%)",
           filter: "blur(32px)",
           WebkitFilter: "blur(32px)",
           zIndex: 0,
@@ -363,7 +423,6 @@ export function BenefitsSection() {
         />
       </motion.div>
 
-
       <motion.div
         className="absolute pointer-events-none"
         initial={{ opacity: 0 }}
@@ -389,7 +448,6 @@ export function BenefitsSection() {
 
       <Container maxWidth="7xl" padding="lg" className="relative">
         <Stack gap="xl">
-
           {/* ── Section 1: Hero ── */}
           <FadeInSection className="mb-16">
             <Stack gap="lg" align="center">
@@ -420,13 +478,18 @@ export function BenefitsSection() {
                     paddingRight: "32px",
                   }}
                 >
-                  <Text variant="body-lg" align="center" className="text-white leading-relaxed">
+                  <Text
+                    variant="body-lg"
+                    align="center"
+                    className="text-white leading-relaxed"
+                  >
                     Being part of GDG PUP means more than joining an
                     organization—it&apos;s about gaining access to opportunities
-                    that help you grow as a developer, a leader, and a professional.
-                    As a member, you&apos;re connected to a global network supported
-                    by your own peers and industry professionals, with experiences
-                    designed to help you learn, build, and stand out.
+                    that help you grow as a developer, a leader, and a
+                    professional. As a member, you&apos;re connected to a global
+                    network supported by your own peers and industry
+                    professionals, with experiences designed to help you learn,
+                    build, and stand out.
                   </Text>
                 </CardContent>
               </Card>
@@ -445,7 +508,10 @@ export function BenefitsSection() {
                 WHAT BEING AN OFFICIAL GOOGLER INCLUDES
               </Text>
 
-              <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl" style={{ alignItems: "stretch", gridAutoRows: "1fr" }}>
+              <Grid
+                className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl"
+                style={{ alignItems: "stretch", gridAutoRows: "1fr" }}
+              >
                 {benefits.map((benefit) => (
                   <BenefitCard key={benefit.title} benefit={benefit} />
                 ))}
@@ -480,7 +546,6 @@ export function BenefitsSection() {
               </Box>
             </Stack>
           </FadeInSection>
-
         </Stack>
       </Container>
     </div>

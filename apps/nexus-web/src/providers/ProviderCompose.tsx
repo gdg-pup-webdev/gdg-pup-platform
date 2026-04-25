@@ -2,6 +2,7 @@ import { AuthContextProvider } from "@/features/authentication/store/useAuthStor
 import { QueryProvider } from "@packages/spark-tools/query";
 import React from "react";
 import { LenisProvider } from "./LenisProvider";
+import { SessionManagementWrapper } from "./SessionManagementWrapper";
 
 export const ProviderCompose = ({
   children,
@@ -11,7 +12,9 @@ export const ProviderCompose = ({
   return (
     <QueryProvider>
       <LenisProvider>
-        <AuthContextProvider>{children}</AuthContextProvider>
+        <AuthContextProvider>
+          <SessionManagementWrapper>{children}</SessionManagementWrapper>
+        </AuthContextProvider>
       </LenisProvider>
     </QueryProvider>
   );

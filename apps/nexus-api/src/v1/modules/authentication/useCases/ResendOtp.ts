@@ -1,5 +1,6 @@
 import { IUserCredentialReferenceRepository, IOTPService } from "../domain/IAuthenticationInterfaces.js";
 import { ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
+import { BadRequestError } from "@/v1/errors/HttpError.js";
 
 export class ResendOtp {
   constructor(
@@ -10,7 +11,7 @@ export class ResendOtp {
   async execute(referenceCode: string): Promise<boolean> {
     const reference = await this.referenceRepo.findByReferenceCode(referenceCode);
     if (!reference) {
-      throw new Error("Invalid reference code.");
+      throw new BadRequestError("Invalid or expired reference code.");
     }
 
     let context = "Verification";

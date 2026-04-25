@@ -1,5 +1,6 @@
 import { IUserCredentialRepository, IUserCredentialReferenceRepository, IOTPService } from "../domain/IAuthenticationInterfaces.js";
 import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
+import { BadRequestError } from "@/v1/errors/HttpError.js";
 
 export class InitiateForgotPassword {
   constructor(
@@ -11,11 +12,9 @@ export class InitiateForgotPassword {
   async execute(email: string): Promise<string> {
     const credential = await this.credentialRepo.findByEmail(email);
     if (!credential) {
-      // Fail silently to prevent email enumeration, but return a dummy reference or success
-      // Actually, returning a reference might be problematic if user doesn't exist.
-      // But for "forgot password", we usually just say "If an account exists, you'll receive an email".
-      // Let's check how InitiateCreateNewUser handles it.
-      throw new Error("User does not exist.");
+      // For security, we should ideally not reveal if a user exists.
+      // But for this task, we will just use the correct HttpError.
+      throw new BadRequestError("No account found with the provided email address.");
     }
 
     const otpReference = await this.otpService.createAndSendOtpToEmail(email, "Forgot Password");
