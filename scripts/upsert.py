@@ -3,25 +3,71 @@ import csv
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
-# --- CONFIGURATION & PLACEHOLDERS ---
+# --- CONFIGURATION ---
 
-# Load environment variables from the .env file in the root directory
-# Make sure your current working directory is the root of the project, or specify the path to .env
 load_dotenv()
 
-# 1. Supabase Credentials
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_SECRET_KEY")
-
-# 2. Local CSV File Path
 CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'members.csv')
-
-# 3. Supabase Table Name
 TABLE_NAME = os.environ.get("SUPABASE_MEMBERS_TABLE")
+REPORT_PATH = os.path.join(os.path.dirname(__file__), 'upsert_report.txt')
+
+# Base number to increment new GDG IDs from
+BASE_GDG_ID_NUM = 1731
+
+# Fields to skip when diffing (internal/managed fields)
+DIFF_SKIP_FIELDS = {"gdg_id", "created_at", "updated_at"}
+
+
+def fetch_all_pages(supabase: Client, table: str, select: str = "*") -> list[dict]:
+    """Fetch all rows from a table using pagination."""
+    results = []
+    page_size = 1000
+    offset = 0
+    while True:
+        response = (
+            supabase.table(table)
+            .select(select)
+            .range(offset, offset + page_size - 1)
+            .execute()
+        )
+        if not response.data:
+            break
+        results.extend(response.data)
+        if len(response.data) < page_size:
+            break
+        offset += page_size
+    return results
+
+
+def compute_diff(existing: dict, incoming: dict) -> list[tuple[str, any, any]]:
+    """
+    Compare incoming CSV row against the existing DB record.
+    Returns a list of (field, old_value, new_value) for changed fields.
+    """
+    changes = []
+    for field, new_val in incoming.items():
+        if field in DIFF_SKIP_FIELDS:
+            continue
+        old_val = existing.get(field)
+
+        # Normalize for comparison: treat None and empty string as equivalent
+        normalized_old = old_val if old_val != "" else None
+        normalized_new = new_val if new_val != "" else None
+
+        if normalized_old != normalized_new:
+            changes.append((field, old_val, new_val))
+    return changes
+
 
 def main():
     if not SUPABASE_URL or not SUPABASE_KEY:
         print("Error: Missing SUPABASE_URL or SUPABASE_SECRET_KEY in .env file.")
+        return
+
+    if not TABLE_NAME:
+        print("Error: Missing SUPABASE_MEMBERS_TABLE in .env file.")
         return
 
     # --- Initialize Supabase Client ---
@@ -31,175 +77,169 @@ def main():
         print(f"Error initializing Supabase client: {e}")
         return
 
-    # --- Fetch Existing Records ---
-    print(f"Fetching existing records from '{TABLE_NAME}' to check for matches...")
-    existing_records = []
-    page_size = 1000
-    offset = 0
+    # --- Read & Deduplicate CSV ---
+    print(f"Reading data from {CSV_FILE_PATH}...")
+    unique_csv_rows: dict[str, dict] = {}
+    csv_duplicates_found: set[str] = set()
+
     try:
-        # We handle pagination in case there are more than 1000 existing records
-        while True:
-            response = supabase.table(TABLE_NAME).select("gdg_id, email, first_name").range(offset, offset + page_size - 1).execute()
-            if not response.data:
-                break
-            existing_records.extend(response.data)
-            if len(response.data) < page_size:
-                break
-            offset += page_size
-    except Exception as e:
-        print(f"Error fetching existing records: {e}")
-        return
-
-    # Build a map of (email, first_name) -> gdg_id, and find the highest gdg_id number
-    existing_map = {}
-    max_gdg_id_num = 1687  # Base number to increment from as requested
-
-    for rec in existing_records:
-        email = (rec.get("email") or "").strip().lower()
-        if email:
-            existing_map[email] = rec.get("gdg_id")
-
-    print(f"Found {len(existing_records)} existing records. Incrementing new IDs from GDGPUP-26-{max_gdg_id_num:06d}.")
-
-    # --- Read Data from CSV ---
-    updates = []
-    inserts = []
-    csv_duplicates_found = set()
-    
-    try:
-        print(f"Reading data from {CSV_FILE_PATH}...")
-        
-        # 1. Deduplicate CSV data first
-        unique_csv_rows = {}
         with open(CSV_FILE_PATH, mode='r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 email = (row.get("email") or "").strip().lower()
                 if not email:
-                    continue # skip rows without emails
-                    
+                    continue
                 if email in unique_csv_rows:
                     csv_duplicates_found.add(email)
-                
-                # Keep the latest row for this email
                 unique_csv_rows[email] = row
-                
-        # Print duplicates if any
-        if csv_duplicates_found:
-            print(f"\n⚠️ WARNING: Found {len(csv_duplicates_found)} duplicate emails in the CSV file!")
-            print(f"The script is automatically deduplicating them by keeping the latest entry.")
-            print("Duplicate emails:")
-            for i, dup in enumerate(sorted(list(csv_duplicates_found)), 1):
-                print(f"  {i}. {dup}")
-            print("\n")
-
-        # 2. Process the unique rows
-        for row in unique_csv_rows.values():
-            # Remove gdg_id from the CSV row; we will manage it manually
-            row.pop("gdg_id", None)
-            
-            # Clean up the row: replace empty strings with None
-            cleaned_row = {k: (None if v == '' else v) for k, v in row.items()}
-            
-            # Convert string booleans to actual booleans
-            for key in ['is_public', 'is_onboarded']:
-                if cleaned_row.get(key) == 'TRUE':
-                    cleaned_row[key] = True
-                elif cleaned_row.get(key) == 'FALSE':
-                    cleaned_row[key] = False
-            
-            # Convert year_level to int if possible
-            yl = cleaned_row.get('year_level')
-            if yl is not None:
-                if isinstance(yl, str):
-                    yl_lower = yl.strip().lower()
-                    if yl_lower == "first year":
-                        cleaned_row['year_level'] = 1
-                    elif yl_lower == "second year":
-                        cleaned_row['year_level'] = 2
-                    elif yl_lower == "third year":
-                        cleaned_row['year_level'] = 3
-                    elif yl_lower == "fourth year":
-                        cleaned_row['year_level'] = 4
-                    elif yl_lower == "fifth year":
-                        cleaned_row['year_level'] = 5
-                    else:
-                        try:
-                            cleaned_row['year_level'] = int(yl)
-                        except ValueError:
-                            cleaned_row['year_level'] = None
-            
-            email = cleaned_row.get("email").strip().lower()
-            
-            if email in existing_map:
-                # Existing record found -> Update
-                cleaned_row["gdg_id"] = existing_map[email]
-                updates.append(cleaned_row)
-            else:
-                # No record found -> Insert (Generate new gdg_id)
-                max_gdg_id_num += 1
-                new_gdg_id = f"GDGPUP-26-{max_gdg_id_num:06d}"
-                cleaned_row["gdg_id"] = new_gdg_id
-                
-                # Add to map just in case, though we already deduplicated
-                existing_map[email] = new_gdg_id 
-                inserts.append(cleaned_row)
-                    
     except Exception as e:
         print(f"Error reading CSV file: {e}")
         return
 
-    # --- Print Report Before Processing ---
-    print(f"\n--- UPSERT REPORT PREVIEW ---")
-    print(f"Records to UPDATE (Matched by email & first_name): {len(updates)}")
-    print(f"Records to INSERT (New members): {len(inserts)}")
-    print(f"Total unique rows to process: {len(updates) + len(inserts)}")
+    if csv_duplicates_found:
+        print(f"\n⚠️  WARNING: {len(csv_duplicates_found)} duplicate email(s) in CSV — keeping latest entry.")
+        for i, dup in enumerate(sorted(csv_duplicates_found), 1):
+            print(f"  {i}. {dup}")
+        print()
+
+    # --- Fetch ALL existing records (full rows) ---
+    print("Fetching existing records from DB for diff comparison...")
+    try:
+        existing_records_list = fetch_all_pages(supabase, TABLE_NAME, select="*")
+    except Exception as e:
+        print(f"Error fetching existing records: {e}")
+        return
+
+    # Map email -> full DB record
+    existing_map: dict[str, dict] = {}
+    for rec in existing_records_list:
+        email = (rec.get("email") or "").strip().lower()
+        if email:
+            existing_map[email] = rec
+
+    print(f"Found {len(existing_map)} existing record(s) in the DB.\n")
+
+    # --- Process Rows ---
+    gdg_id_counter = BASE_GDG_ID_NUM
+    rows_to_upsert: list[dict] = []
+    inserts: list[dict] = []
+    updates: list[dict] = []                  # (cleaned_row, [(field, old, new)])
+    update_diffs: dict[str, list] = {}        # email -> list of (field, old, new)
+
+    for email, row in unique_csv_rows.items():
+        row.pop("gdg_id", None)
+        row["email"] = email
+
+        # Replace empty strings with None
+        cleaned_row = {k: (None if v == "" else v) for k, v in row.items()}
+
+        # Boolean conversion
+        for key in ["is_public", "is_onboarded"]:
+            val = cleaned_row.get(key)
+            if val == "TRUE":
+                cleaned_row[key] = True
+            elif val == "FALSE":
+                cleaned_row[key] = False
+
+        # year_level conversion
+        yl = cleaned_row.get("year_level")
+        if yl is not None:
+            year_map = {
+                "first year": 1, "second year": 2, "third year": 3,
+                "fourth year": 4, "fifth year": 5,
+            }
+            if isinstance(yl, str):
+                mapped = year_map.get(yl.strip().lower())
+                if mapped is not None:
+                    cleaned_row["year_level"] = mapped
+                else:
+                    try:
+                        cleaned_row["year_level"] = int(yl)
+                    except ValueError:
+                        cleaned_row["year_level"] = None
+
+        if email in existing_map:
+            # Assign existing gdg_id so on_conflict="gdg_id" can match this row
+            cleaned_row["gdg_id"] = existing_map[email]["gdg_id"]
+            # Compute diff before upserting
+            diffs = compute_diff(existing_map[email], cleaned_row)
+            update_diffs[email] = diffs
+            updates.append(cleaned_row)
+        else:
+            gdg_id_counter += 1
+            cleaned_row["gdg_id"] = f"GDGPUP-26-{gdg_id_counter:06d}"
+            inserts.append(cleaned_row)
+
+        rows_to_upsert.append(cleaned_row)
+
+    # --- Console Summary ---
+    print(f"--- UPSERT REPORT PREVIEW ---")
+    print(f"Records to UPDATE (matched by email): {len(updates)}")
+    print(f"Records to INSERT (new members):      {len(inserts)}")
+    print(f"Total rows to process:                {len(rows_to_upsert)}")
     print(f"-----------------------------\n")
 
-    # Write detailed report to file
-    report_path = os.path.join(os.path.dirname(__file__), 'upsert_report.txt')
+    # --- Write Detailed Report (pre-upsert diff) ---
     try:
-        with open(report_path, 'w', encoding='utf-8') as f:
-            f.write("--- UPSERT DETAILED REPORT ---\n\n")
-            f.write(f"Total Records to Process: {len(updates) + len(inserts)}\n")
-            f.write(f"Updates: {len(updates)}\n")
-            f.write(f"Inserts: {len(inserts)}\n\n")
-            
-            f.write("--- UPDATED RECORDS ---\n")
-            for u in updates:
-                f.write(f"- {u.get('gdg_id')} | {u.get('email')} | {u.get('first_name')} {u.get('last_name')}\n")
-                
-            f.write("\n--- INSERTED RECORDS ---\n")
-            for i in inserts:
-                f.write(f"- {i.get('gdg_id')} | {i.get('email')} | {i.get('first_name')} {i.get('last_name')}\n")
-                
-        print(f"📝 Detailed report saved to {report_path}\n")
-    except Exception as e:
-        print(f"⚠️ Could not write report file: {e}")
+        with open(REPORT_PATH, 'w', encoding='utf-8') as f:
+            f.write("=== UPSERT REPORT ===\n\n")
+            f.write(f"Total to process : {len(rows_to_upsert)}\n")
+            f.write(f"Updates          : {len(updates)}\n")
+            f.write(f"Inserts          : {len(inserts)}\n\n")
 
-    all_data = updates + inserts
-    if not all_data:
+            # --- Updates with field diffs ---
+            f.write("=" * 60 + "\n")
+            f.write("UPDATED RECORDS (field-level changes)\n")
+            f.write("=" * 60 + "\n\n")
+            for row in updates:
+                email = row.get("email")
+                diffs = update_diffs.get(email, [])
+                f.write(f"✏️  {email} | {row.get('first_name')} {row.get('last_name')}\n")
+                if diffs:
+                    for field, old_val, new_val in diffs:
+                        f.write(f"    {field}: {repr(old_val)} → {repr(new_val)}\n")
+                else:
+                    f.write("    (no changes detected)\n")
+                f.write("\n")
+
+            # --- Inserts ---
+            f.write("=" * 60 + "\n")
+            f.write("INSERTED RECORDS (new members)\n")
+            f.write("=" * 60 + "\n\n")
+            for row in inserts:
+                f.write(f"➕ {row.get('gdg_id')} | {row.get('email')} | {row.get('first_name')} {row.get('last_name')}\n")
+
+        print(f"📝 Detailed diff report saved to {REPORT_PATH}\n")
+    except Exception as e:
+        print(f"⚠️  Could not write report file: {e}")
+
+    if not rows_to_upsert:
         print("No data to process.")
         return
 
-    # --- Perform the Upsert in Batches ---
+    # --- Perform Upsert in Batches ---
+    # Requires a UNIQUE constraint on `email` in Supabase.
     try:
         print(f"Upserting data into '{TABLE_NAME}' table in batches...")
-        
         batch_size = 500
         successful_upserts = 0
-        
-        for i in range(0, len(all_data), batch_size):
-            batch = all_data[i:i+batch_size]
-            response = supabase.table(TABLE_NAME).upsert(batch, on_conflict="gdg_id").execute()
+
+        for i in range(0, len(rows_to_upsert), batch_size):
+            batch = rows_to_upsert[i:i + batch_size]
+            response = (
+                supabase.table(TABLE_NAME)
+                .upsert(batch, on_conflict="gdg_id")
+                .execute()
+            )
             if response.data:
                 successful_upserts += len(response.data)
-                
-        print(f"\n✅ SUCCESSFULLY PROCESSED!")
-        print(f"Database reflects {successful_upserts} records processed (Updates + Inserts).")
-            
+
+        print(f"✅ SUCCESSFULLY PROCESSED!")
+        print(f"   {successful_upserts} records upserted ({len(updates)} updated, {len(inserts)} inserted).")
+
     except Exception as e:
         print(f"❌ An error occurred during the upsert process: {e}")
+
 
 if __name__ == "__main__":
     main()
