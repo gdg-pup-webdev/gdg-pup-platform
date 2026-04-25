@@ -49,10 +49,26 @@ export default async function Image({ params }: Params) {
       const data = result.body.data;
       const fullName = `${data.firstName || ""} ${data.lastName || ""}`.trim();
       displayName = data.displayName || fullName || displayName;
-      avatarUrl = toAbsoluteAvatarUrl(data.avatarUrl || null);
+      
+      const absoluteAvatarUrl = toAbsoluteAvatarUrl(data.avatarUrl || null);
+      if (absoluteAvatarUrl) {
+        try {
+          const imageRes = await fetch(absoluteAvatarUrl);
+          if (imageRes.ok) {
+            const arrayBuffer = await imageRes.arrayBuffer();
+            const contentType = imageRes.headers.get("content-type") || "image/jpeg";
+            const base64Image = Buffer.from(arrayBuffer).toString("base64");
+            avatarUrl = `data:${contentType};base64,${base64Image}`;
+          }
+        } catch (error) {
+          console.error("Failed to fetch avatar image for OG:", error);
+        }
+      }
+      
       teamBadge = data.department?.trim() || teamBadge;
     }
-  } catch {
+  } catch (error) {
+    console.error("Failed to fetch GDG member profile for OG:", error);
     // Fall back to defaults if profile fetch fails.
   }
 
