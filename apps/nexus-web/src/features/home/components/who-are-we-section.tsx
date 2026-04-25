@@ -16,7 +16,7 @@ export function WhoAreWeSection() {
   return (
     <section className="relative z-30 pb-20 lg:py-34" ref={sectionRef}>
       <Container className="">
-        <Stack gap="2xl" align="center">
+        <Stack gap="xl" className="lg:gap-12" align="center">
           {/* Section heading */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -29,7 +29,7 @@ export function WhoAreWeSection() {
               gradient="white-yellow"
               variant="heading-2"
               weight="bold"
-              className="mt-30 mb-10 lg:my-0"
+              className="mt-30 mb-2 lg:my-0"
             >
               Who are we
             </Text>
