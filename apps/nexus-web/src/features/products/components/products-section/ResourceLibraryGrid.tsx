@@ -36,7 +36,6 @@ export function ResourceLibraryGrid() {
                   alt={item.body}
                   fill
                   priority={index < 4}
-                  loading={index < 4 ? "eager" : "lazy"}
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="object-cover scale-125 opacity-40 bg-white/10"
                 />
