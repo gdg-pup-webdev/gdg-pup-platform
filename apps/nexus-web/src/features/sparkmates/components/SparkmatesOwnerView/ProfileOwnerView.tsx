@@ -27,6 +27,7 @@ import {
   normalizeSparkmatesSectionOrder,
   SparkmatesSectionId,
 } from "../../sectionOrder";
+import { ShareDropdown } from "./components/ShareDropdown";
 
 const SECTION_LABELS: Record<SparkmatesSectionId, string> = {
   customButtons: "Custom Buttons",
@@ -542,7 +543,7 @@ export function ProfileOwnerView({
               <Text variant="heading-5" className="text-white">
                 My Portfolio
               </Text>
-              <div className="flex gap-2" role="group" aria-label="Share profile">
+              <div className="flex items-center gap-2" role="group" aria-label="Portfolio actions">
                 <Link prefetch={false} href="/sparkmates/me/analytics">
                   <Button
                     variant="colored"
@@ -553,22 +554,6 @@ export function ProfileOwnerView({
                     Analytics
                   </Button>
                 </Link>
-                {(["facebook", "instagram", "linkedin"] as SharePlatform[]).map((platform) => (
-                  <Button
-                    key={platform}
-                    variant="default"
-                    size="sm"
-                    className={SHARE_BUTTON_CLASSNAMES[platform]}
-                    title={`Share on ${SHARE_PLATFORM_LABELS[platform]}`}
-                    aria-label={`Share on ${SHARE_PLATFORM_LABELS[platform]}`}
-                    onClick={() => {
-                      void handleShare(platform);
-                    }}
-                    disabled={isSharing}
-                  >
-                    {SHARE_PLATFORM_LABELS[platform]}
-                  </Button>
-                ))}
                 <Button
                   variant="default"
                   size="sm"
@@ -582,6 +567,11 @@ export function ProfileOwnerView({
                 >
                   Preview
                 </Button>
+                <ShareDropdown
+                  gdgId={effectiveGdgId}
+                  disabled={!userprofile || isSharing}
+                  onShare={(platform) => { void handleShare(platform); }}
+                />
               </div>
             </div>
 
