@@ -35,6 +35,8 @@ const DEFAULT_SPARKMATES_SECTION_ORDER: SparkmatesSectionId[] = [
   "gdgImpact",
   "badges",
 ];
+const MIN_RANDOM_MEMBER_POOL_SIZE = 120;
+const MAX_RANDOM_MEMBER_POOL_SIZE = 300;
 
 const isSparkmatesSectionId = (value: string): value is SparkmatesSectionId => {
   return (DEFAULT_SPARKMATES_SECTION_ORDER as string[]).includes(value);
@@ -180,7 +182,10 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
   ): Promise<{ list: GdgMember[]; count: number }> {
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize;
-    const fetchLimit = Math.max(to * 2, 120);
+    const fetchLimit = Math.min(
+      Math.max(to * 2, MIN_RANDOM_MEMBER_POOL_SIZE),
+      MAX_RANDOM_MEMBER_POOL_SIZE,
+    );
 
     const normalizedSeed = Math.abs(seed) || 1;
 
@@ -188,8 +193,8 @@ export class SupabaseGdgMemberRepository implements IGdgMemberRepository {
       let hash = 0;
       const input = `${normalizedSeed}:${value}`;
 
-      for (let index = 0; index < input.length; index += 1) {
-        hash = (hash * 31 + input.charCodeAt(index)) >>> 0;
+      for (let charIndex = 0; charIndex < input.length; charIndex += 1) {
+        hash = (hash * 31 + input.charCodeAt(charIndex)) >>> 0;
       }
 
       return hash;

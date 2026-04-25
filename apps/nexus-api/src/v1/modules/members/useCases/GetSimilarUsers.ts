@@ -188,9 +188,7 @@ export class GetSimilarUsers {
       const randomMembers = await this.repo.listRandomMembers(
         1,
         remaining,
-        this.stringToNumber(
-          `${gdgMemberId}:${pageNumber}:${pageSize}:${strategy}:${Date.now()}`,
-        ),
+        this.stringToNumber(`${gdgMemberId}:${pageNumber}:${pageSize}:${strategy}`),
       );
 
       addUnique(randomMembers.list);
