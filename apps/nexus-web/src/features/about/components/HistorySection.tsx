@@ -263,7 +263,7 @@ const milestones = [
     excerpt: "Tech students at PUP had a problem. The university taught theory. Textbooks covered concepts but gave no space to build.",
     buttonColor: "green" as const,
     image: ASSETS.ABOUT.HISTORY.THE_SPARK,
-    href: "/articles/a5e895ea-1223-4958-af05-1319cc98ec0a"
+    href: "https://gdgpup.org/articles/7eaae791-88ed-4d37-8887-1499dd82e637"
   },
   {
     slug: "year-one",
@@ -271,7 +271,7 @@ const milestones = [
     excerpt: "Six tech teams formed in those first months. Data Science, Web Dev, Mobile, Cloud, Design, and Competitive Programming — all in Year One.",
     buttonColor: "yellow" as const,
     image: "/about/history/year-one-everything.webp",
-    href: "/articles/3e672b68-5890-4990-86a8-4622e019e7d3"
+    href: "https://gdgpup.org/articles/ba61c257-b7be-4623-aa67-2d544da64692"
   },
   {
     slug: "year-two",
@@ -279,7 +279,7 @@ const milestones = [
     excerpt: "Departmental exams returned to CCIS and attendance dropped across campus orgs. GDG PUP held ground by doubling down on quality.",
     buttonColor: "red" as const,
     image: ASSETS.ABOUT.HISTORY.YEAR_TWO_TEST,
-    href: "/articles/55cf5ee1-1ab1-4a9d-b9d0-497d644baa53"
+    href: "https://gdgpup.org/articles/295036a7-f221-4e46-8e73-b6a59080d3b5"
   },
   {
     slug: "year-three",
@@ -287,7 +287,7 @@ const milestones = [
     excerpt: "Xian Cheng took over as Lead. Francis Chuaunsu continued as CEO. The org leaned into community-building and external partnerships.",
     buttonColor: "blue" as const,
     image: ASSETS.ABOUT.HISTORY.YEAR_THREE_TURNAROUND,
-    href: "/articles/aa4ec512-a068-4866-ba5d-8bf9bb90325c"
+    href: "https://gdgpup.org/articles/ff062e45-f832-4028-bb6b-e8d05eeb2b96"
   },
   {
     slug: "the-impact",
@@ -295,7 +295,7 @@ const milestones = [
     excerpt: "Numbers tell part of the story. Over 2,000 members trained across three years, study jams every month, and a growing network of partners.",
     buttonColor: "green" as const,
     image: ASSETS.ABOUT.HISTORY.THE_IMPACT,
-    href: "/articles/e5c96ec3-71c2-4e36-b065-0105aee46a08"
+    href: "https://gdgpup.org/articles/b149555c-ead0-4672-b283-7650391af79a"
   },
   {
     slug: "living-community",
@@ -303,7 +303,7 @@ const milestones = [
     excerpt: "Year four arrived with new leaders ready to step up. Randy Lorenzo took the helm and the chapter kept growing — for the students, by the students.",
     buttonColor: "yellow" as const,
     image: "/about/history/the-living-community.webp",
-    href: "/articles/1713f93d-558b-4eab-9530-29d0770080f9"
+    href: "https://gdgpup.org/articles/85c2ec22-d220-4f98-ae21-2705b0f7e4f8"
   },
   {
     slug: "your-chapter",
@@ -311,7 +311,7 @@ const milestones = [
     excerpt: "Three years and counting proved something important: this community is built by the people who show up. That includes you.",
     buttonColor: "red" as const,
     image: "/about/history/your-chapter.webp",
-    href: "/articles/f946e2dd-e0e2-41f2-9329-360b5dc44c2c"
+    href: "https://gdgpup.org/articles/f1b3eae7-178e-496a-b8db-f215e031e305"
   },
 ];
 

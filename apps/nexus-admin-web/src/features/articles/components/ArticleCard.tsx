@@ -50,7 +50,7 @@ export function ArticleCard({ article, onView, onEdit, onDelete }: ArticleCardPr
         {
           key: "author",
           icon: <User size={13} />,
-          content: `Author ID: ${article.author_id?.slice(0, 8) || "Unknown"}`,
+          content: `Author ID: ${article.author_id?.slice(0, 8) || "None"}`,
           className: "font-semibold uppercase tracking-wider text-[10px]",
         },
       ]}

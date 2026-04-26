@@ -22,16 +22,17 @@ export class CreateArticle {
     if (
       !props.title ||
       !props.description ||
-      !props.content ||
-      !props.authorId
+      !props.content
     ) {
-      throw new Error("Title, description, authorId and content are required.");
+      throw new Error("Title, description, and content are required.");
     }
 
-    const userExists = await this.userService.exists(props.authorId);
-    if (!userExists) {
-      console.log("User does not exist", props.authorId);
-      throw new Error("Author does not exist");
+    if (props.authorId) {
+      const userExists = await this.userService.exists(props.authorId);
+      if (!userExists) {
+        console.log("User does not exist", props.authorId);
+        throw new Error("Author does not exist");
+      }
     }
 
     if (props.eventId) {

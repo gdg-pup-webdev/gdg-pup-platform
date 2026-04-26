@@ -12,7 +12,7 @@ export class ArticleRepository implements IArticleRepo {
       description: row.description || null,
       content: row.content || "",
       imageUrl: row.thumbnail_url || undefined,
-      authorId: row.author_id || "",
+      authorId: row.author_id || null,
       eventId: row.eventId || null,
       createdAt: new Date(row.created_at),
       updatedAt: new Date(row.updated_at),
