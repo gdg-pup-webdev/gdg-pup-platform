@@ -11,6 +11,7 @@ export const loadCors = (app: Express) => {
     "http://localhost:3100",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:3100",
+    "https://gdg-pup-platform-nexus-admin-web.vercel.app",
   ]);
 
   // CLIENT_URL supports comma-separated or pipe-separated origins, e.g.:
