@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Loader2, AlertCircle, Zap, ChevronRight } from "lucide-react";
 import { useGetBevyEvents } from "../hooks/useGetBevyEvents";
 import { useCreateEventFromBevyEvent } from "../hooks/useCreateEventFromBevyEvent";
+import { useSyncBevyEvents } from "../hooks/useSyncBevyEvents";
 import { BevyEventDetails } from "./BevyEventDetails";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
 import { AdminActionButton } from "@/components/admin/AdminActionButton";
@@ -51,6 +52,7 @@ export const BevyEventsList: React.FC = () => {
 
   const { data: bevyResponse, isLoading, isError, error, refetch } = useGetBevyEvents(page, pageSize);
   const createEventMutation = useCreateEventFromBevyEvent();
+  const syncBevyEventsMutation = useSyncBevyEvents();
 
   const events = bevyResponse?.data || [];
   const filteredEvents = events.filter((event: any) => {
@@ -100,6 +102,15 @@ export const BevyEventsList: React.FC = () => {
     }
   };
 
+  const handleSyncBevyEvents = async () => {
+    try {
+      const res = await syncBevyEventsMutation.mutateAsync();
+      alert(`Successfully synced ${res.data.syncedCount} events from Bevy!`);
+    } catch (err) {
+      alert(`Failed to sync events: ${(err as Error).message}`);
+    }
+  };
+
   return (
     <AdminListScaffold
       search={
@@ -115,9 +126,20 @@ export const BevyEventsList: React.FC = () => {
           placeholder="Search Bevy events..."
           accent="teal"
           actions={
-            <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
-              Search
-            </AdminActionButton>
+            <div className="flex gap-2">
+              <AdminActionButton 
+                variant="teal" 
+                size="sm" 
+                onClick={handleSyncBevyEvents}
+                isLoading={syncBevyEventsMutation.isPending}
+                loadingLabel="Syncing..."
+              >
+                Sync Bevy
+              </AdminActionButton>
+              <AdminActionButton variant="brandOutline" size="sm" onClick={applySearch}>
+                Search
+              </AdminActionButton>
+            </div>
           }
         />
       }

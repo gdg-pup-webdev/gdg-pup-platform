@@ -124,8 +124,8 @@ function CategoryCard({
   );
 }
 
-const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
+const StyledInputContainer = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn("relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out", className)}>
     {children}
   </div>
 );
@@ -236,7 +236,7 @@ export function SkillsAndLinksSection({
 
       {!readOnly && (
         <Modal open={isEditModalOpen} onOpenChange={setIsEditModalOpen} scrollBehavior="inside" size="sm" className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-md">
-        <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
+        <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-4 sm:px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
         <div className="space-y-6">
           <div>
             <Text variant="heading-6" weight="bold" gradient="white-yellow">Manage Skills and Interests</Text>
@@ -248,17 +248,17 @@ export function SkillsAndLinksSection({
           <div className="space-y-2 flex flex-col">
             <Text variant="body-sm" className="text-zinc-300 font-medium">Technical Skills</Text>
             <div className="flex gap-2">
-              <StyledInputContainer>
+              <StyledInputContainer className="flex-1 min-w-0">
                 <Input 
                   value={newSkill} 
                   onChange={(e) => setNewSkill(e.target.value)} 
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag(skills, setSkills, newSkill, setNewSkill))}
                   placeholder="e.g. React"
                   containerClassName={inputBaseStyles}
-                  className="text-white! py-2 sm:py-2.5"
+                  className="text-white! py-2 sm:py-2.5 min-w-0"
                 />
               </StyledInputContainer>
-              <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-4" onClick={() => handleAddTag(skills, setSkills, newSkill, setNewSkill)}>Add</Button>
+              <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-3 sm:px-4 shrink-0 !text-sm !font-medium whitespace-nowrap" onClick={() => handleAddTag(skills, setSkills, newSkill, setNewSkill)}>Add</Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {skills.map((tag, i) => (
@@ -273,17 +273,17 @@ export function SkillsAndLinksSection({
           <div className="space-y-2 flex flex-col">
             <Text variant="body-sm" className="text-zinc-300 font-medium">Interests</Text>
             <div className="flex gap-2">
-              <StyledInputContainer>
+              <StyledInputContainer className="flex-1 min-w-0">
                 <Input 
                   value={newInterest} 
                   onChange={(e) => setNewInterest(e.target.value)} 
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag(interests, setInterests, newInterest, setNewInterest))}
                   placeholder="e.g. Public Speaking"
                   containerClassName={inputBaseStyles}
-                  className="text-white! py-2 sm:py-2.5"
+                  className="text-white! py-2 sm:py-2.5 min-w-0"
                 />
               </StyledInputContainer>
-              <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-4" onClick={() => handleAddTag(interests, setInterests, newInterest, setNewInterest)}>Add</Button>
+              <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-3 sm:px-4 shrink-0 !text-sm !font-medium whitespace-nowrap" onClick={() => handleAddTag(interests, setInterests, newInterest, setNewInterest)}>Add</Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {interests.map((tag, i) => (
@@ -298,17 +298,17 @@ export function SkillsAndLinksSection({
           <div className="space-y-2 flex flex-col">
             <Text variant="body-sm" className="text-zinc-300 font-medium">Tech Stack / Tools</Text>
             <div className="flex gap-2">
-              <StyledInputContainer>
+              <StyledInputContainer className="flex-1 min-w-0">
                 <Input 
                   value={newTool} 
                   onChange={(e) => setNewTool(e.target.value)} 
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag(tools, setTools, newTool, setNewTool))}
                   placeholder="e.g. VS Code"
                   containerClassName={inputBaseStyles}
-                  className="text-white! py-2 sm:py-2.5"
+                  className="text-white! py-2 sm:py-2.5 min-w-0"
                 />
               </StyledInputContainer>
-              <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-4" onClick={() => handleAddTag(tools, setTools, newTool, setNewTool)}>Add</Button>
+              <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-3 sm:px-4 shrink-0 !text-sm !font-medium whitespace-nowrap" onClick={() => handleAddTag(tools, setTools, newTool, setNewTool)}>Add</Button>
             </div>
             <div className="flex flex-wrap gap-2">
               {tools.map((tag, i) => (
@@ -321,8 +321,8 @@ export function SkillsAndLinksSection({
           </div>
 
           <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
-            <Button variant="ghost" className="h-auto py-2 sm:py-2.5 px-6" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-            <Button variant="colored" subVariant="blue" className="h-auto py-2 sm:py-2.5 px-6" onClick={handleSave} disabled={isPending}>
+            <Button variant="ghost" className="h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+            <Button variant="colored" subVariant="blue" className="h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={handleSave} disabled={isPending}>
               {isPending ? "Saving..." : "Save Changes"}
             </Button>
           </div>

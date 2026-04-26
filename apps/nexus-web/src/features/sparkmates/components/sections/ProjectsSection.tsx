@@ -702,7 +702,7 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
         size="md"
         className="bg-transparent border-none p-0 shadow-none! isolate"
       >
-        <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
+        <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-4 sm:px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
         <div className="space-y-6">
           <div>
             <Text variant="heading-6" weight="bold" gradient="white-yellow">
@@ -734,20 +734,20 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
             </div>
           )}
           
-          <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
-            <Button variant="ghost" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t border-zinc-800/80">
+            <Button variant="ghost" className="w-full sm:w-auto h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
             {editingProject.id && (
               <Button
                 variant="colored"
                 subVariant="red"
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap"
                 onClick={handleDeleteCurrentProject}
                 disabled={isSaving}
               >
                 Delete Project
               </Button>
             )}
-            <Button variant="colored" subVariant="blue" onClick={handleSave} disabled={isSaving}>
+            <Button variant="colored" subVariant="blue" className="w-full sm:w-auto h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={handleSave} disabled={isSaving}>
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
                   <GdgLoader size="xs" />

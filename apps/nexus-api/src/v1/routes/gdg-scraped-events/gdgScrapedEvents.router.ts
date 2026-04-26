@@ -19,5 +19,6 @@ export class GdgScrapedEventsRouter {
 
     this.router.get("/", this.gdgScrapedEventsHttpController.list);
     this.router.get("/:gdg_id", this.gdgScrapedEventsHttpController.getOne);
+    this.router.post("/sync", this.gdgScrapedEventsHttpController.sync);
   }
 }
