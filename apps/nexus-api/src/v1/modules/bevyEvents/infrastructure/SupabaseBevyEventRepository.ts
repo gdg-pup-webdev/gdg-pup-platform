@@ -9,8 +9,6 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
   private readonly tableName = "scraped_gdg_events";
 
   private mapToDomain(row: ScrapedGdgEventRow): BevyEvent {
-    // We hydrate the domain entity, mapping database columns to the BevyEventProps.
-    // Since your BevyEventProps already uses snake_case, the mapping is very straightforward.
     return BevyEvent.hydrate({
       id: row.gdg_id.toString(),
       title: row.title,
@@ -38,12 +36,9 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
 
   async findAll(pageNumber: number, pageSize: number): Promise<{ list: BevyEvent[]; count: number }> {
     const query = supabase.from(this.tableName).select("*", { count: "exact" });
-
-    // Calculate the pagination range for Supabase (0-indexed inclusive)
     const from = (pageNumber - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    // Fetch paginated data, ordering by start_date so the newest/upcoming events are first
     const { data, count, error } = await query
       .order("start_date", { ascending: false }) 
       .range(from, to);
@@ -53,7 +48,6 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
     }
 
     return {
-      // Map the raw DB rows back into our clean Domain Objects
       list: (data || []).map((row) => this.mapToDomain(row)),
       count: count || 0,
     };
@@ -71,5 +65,41 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
     }
 
     return data ? this.mapToDomain(data) : undefined;
+  }
+
+  async upsertMany(events: BevyEvent[]): Promise<void> {
+    const rows = events.map(event => {
+      const props = event.props;
+      return {
+        gdg_id: parseInt(props.id),
+        title: props.title,
+        description_short: props.short_description,
+        description: props.description,
+        url: props.bevy_url,
+        start_date: props.start_date,
+        end_date: props.end_date,
+        location: props.location,
+        cover_image_url: props.cover_image_url,
+        image_square_url: props.image_square_url,
+        status: props.status,
+        event_type: props.event_type,
+        event_type_slug: props.event_type_slug,
+        tags: props.tags,
+        total_attendees: props.attendees,
+        total_capacity: props.total_capacity,
+        attendee_virtual_venue_link: props.attendee_virtual_venue_url,
+        video_url: props.video_url,
+        is_virtual_event: props.is_virtual_event,
+        last_scraped_at: new Date().toISOString(),
+      };
+    });
+
+    const { error } = await supabase
+      .from(this.tableName)
+      .upsert(rows, { onConflict: "gdg_id" });
+
+    if (error) {
+      throw new Error(`Database error upserting Bevy events: ${error.message}`);
+    }
   }
 }

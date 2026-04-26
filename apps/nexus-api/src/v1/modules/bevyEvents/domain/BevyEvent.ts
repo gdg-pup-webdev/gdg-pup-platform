@@ -25,12 +25,18 @@ export type BevyEventProps = {
 export class BevyEvent {
   private _props: BevyEventProps;
 
-  constructor(props: BevyEventProps) {
+  private constructor(props: BevyEventProps) {
     this._props = props;
   }
 
   // Hydrate is used when loading existing data from the infrastructure layer
   static hydrate(props: BevyEventProps): BevyEvent {
+    return new BevyEvent(props);
+  }
+
+  // Create is used when creating a new entity
+  static create(props: BevyEventProps): BevyEvent {
+    // In this case, props already contains the id from Bevy
     return new BevyEvent(props);
   }
 
