@@ -14,8 +14,8 @@ import {
   serializeCustomButtonLinks,
 } from "../../utils/customButtonFavorites";
 
-const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
+const StyledInputContainer = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn("relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out", className)}>
     {children}
   </div>
 );
@@ -331,7 +331,7 @@ export const NameAndProfileSection = ({
         size="sm"
         className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-md"
       >
-        <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 sm:px-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
+        <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-4 py-8 sm:px-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Text variant="heading-6" weight="bold" gradient="white-yellow">Edit Profile</Text>
@@ -390,8 +390,8 @@ export const NameAndProfileSection = ({
             </div>
 
             <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
-              <Button variant="ghost" type="button" className="h-auto py-2 sm:py-2 px-5" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
-              <Button variant="colored" subVariant="blue" type="submit" className="h-auto py-2 sm:py-2 px-5" disabled={isPending}>
+              <Button variant="ghost" type="button" className="h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+              <Button variant="colored" subVariant="blue" type="submit" className="h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" disabled={isPending}>
                 {isPending ? "Saving..." : "Save Changes"}
               </Button>
             </div>
@@ -409,7 +409,7 @@ export const NameAndProfileSection = ({
           size="sm"
           className="bg-transparent border-none p-0 !shadow-none isolate max-w-[95vw] sm:max-w-sm"
         >
-          <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-6 py-8 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
+          <div className="relative overflow-hidden w-full rounded-3xl bg-[#010B1D]/80 backdrop-blur-2xl px-4 py-8 sm:px-6 border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.6),inset_0px_4px_16px_rgba(255,255,255,0.05)]">
             <div className="space-y-4">
               <div>
                 <Text variant="heading-6" weight="bold" gradient="white-yellow">Manage Links</Text>
@@ -421,17 +421,17 @@ export const NameAndProfileSection = ({
               <div className="space-y-1.5 flex flex-col">
                 <Text variant="body-sm" className="text-zinc-300 font-medium">Link URL</Text>
                 <div className="flex gap-2">
-                  <StyledInputContainer>
+                  <StyledInputContainer className="flex-1 min-w-0">
                     <Input
                       value={newLink}
                       onChange={(e) => setNewLink(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddLink())}
                       placeholder="https://your-link.com"
                       containerClassName={inputBaseStyles}
-                      className="text-white! py-2 sm:py-2.5"
+                      className="text-white! py-2 sm:py-2.5 min-w-0"
                     />
                   </StyledInputContainer>
-                  <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-4" onClick={handleAddLink}>Add</Button>
+                  <Button variant="colored" subVariant="dark-blue" className="h-auto py-2 sm:py-2.5 px-3 sm:px-4 shrink-0 !text-sm !font-medium whitespace-nowrap" onClick={handleAddLink}>Add</Button>
                 </div>
               </div>
 
@@ -441,15 +441,15 @@ export const NameAndProfileSection = ({
                   {links.map((link, index) => (
                     <div key={index} className="flex items-center justify-between gap-2 p-3 rounded-xl border border-white/5 bg-white/5 hover:border-white/10 transition-colors">
                       <Text variant="body-sm" className="truncate flex-1 text-zinc-200">{link}</Text>
-                      <Button variant="ghost" size="sm" onClick={() => handleRemoveLink(index)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10">Remove</Button>
+                      <Button variant="ghost" size="sm" onClick={() => handleRemoveLink(index)} className="text-red-400 hover:text-red-300 hover:bg-red-400/10 !text-sm !font-medium">Remove</Button>
                     </div>
                   ))}
                 </div>
               )}
 
               <div className="flex justify-end gap-3 pt-6 border-t border-zinc-800/80">
-                <Button variant="ghost" className="h-auto py-2 sm:py-2 px-5" onClick={() => setIsLinksModalOpen(false)}>Cancel</Button>
-                <Button variant="colored" subVariant="blue" className="h-auto py-2 sm:py-2 px-5" onClick={handleSaveLinks} disabled={isPending}>
+                <Button variant="ghost" className="h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={() => setIsLinksModalOpen(false)}>Cancel</Button>
+                <Button variant="colored" subVariant="blue" className="h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={handleSaveLinks} disabled={isPending}>
                   {isPending ? "Saving..." : "Save Links"}
                 </Button>
               </div>
