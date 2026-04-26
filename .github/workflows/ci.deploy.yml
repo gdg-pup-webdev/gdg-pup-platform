@@ -76,7 +76,7 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-web
-          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
+          commit-sha: ${{ github.event.inputs.triggered_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
@@ -98,7 +98,7 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-admin-web
-          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
+          commit-sha: ${{ github.event.inputs.triggered_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
@@ -120,7 +120,7 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-api
-          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
+          commit-sha: ${{ github.event.inputs.triggered_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
