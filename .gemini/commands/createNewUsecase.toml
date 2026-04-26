@@ -1,0 +1,21 @@
+description = "Create the frontend of an api module" 
+
+
+prompt = '''
+before you start, understand the architecture on @GEMINI.md
+
+You will be making a usecase on an api module as described here - {{args}}
+
+Your job is to: 
+
+- create the new use case file. 
+- modify the domain and interfaces as required by the use case.
+- implement the use case. 
+- expose the use case with the controller. 
+- implement the infrastructure. do not implement the test cases. 
+- asssemble everything together on the index file of the module.
+- create a contract for the new api endpoint on nexus-api-contracts. 
+- create the http controller on the nexus-api. 
+- create the router on the nexus-api. 
+- adjust the routes loader if necessary. 
+'''
