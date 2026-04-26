@@ -1,8 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "../types/supabase.types";
+import { configs } from "@/configs/configs";
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SECRET_KEY;
+const supabaseUrl = configs.supabase.supabaseUrl;
+const supabaseKey = configs.supabase.supabaseKey;
 
 if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing Supabase URL or Secret Key in environment variables.");
