@@ -24,7 +24,8 @@ export function ProductsSection() {
         alt=""
         className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-auto pointer-events-none"
         style={{
-          WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 70%, transparent 100%)",
           maskImage: "linear-gradient(to bottom, black 70%, transparent 100%)",
         }}
       />
@@ -59,7 +60,7 @@ export function ProductsSection() {
       />
 
       <Container className="max-w-7xl">
-        <Stack gap="2xl" className="relative z-10">
+        <Stack gap="lg" className="relative z-10">
           <ProductsBreadcrumbs />
 
           <Text

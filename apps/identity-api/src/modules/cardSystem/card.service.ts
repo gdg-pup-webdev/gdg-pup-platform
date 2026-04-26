@@ -7,9 +7,9 @@ import {
   RepositoryError,
 } from "@/classes/ServerError.js";
 
-type cardRow = Tables<"nfc_card">;
-type cardInsertDTO = TablesInsert<"nfc_card">;
-type cardUpdateDTO = TablesInsert<"nfc_card">;
+type cardRow = Tables<"nfc_cards">;
+type cardInsertDTO = TablesInsert<"nfc_cards">;
+type cardUpdateDTO = TablesInsert<"nfc_cards">;
 
 export class CardService {
   constructor(
@@ -45,11 +45,11 @@ export class CardService {
 
     if (!card) throw new NotFoundError("Card not found");
 
-    if (card.status === "ACTIVE") {
+    if (card.status === "activated") {
       throw new BadRequestError("Card is already activated");
     }
 
-    if (card.status !== "READY") {
+    if (card.status !== "issued") {
       throw new BadRequestError(
         `Card is not ready for activation (Status: ${card.status}`,
       );

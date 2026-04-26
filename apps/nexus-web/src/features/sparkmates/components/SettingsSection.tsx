@@ -7,59 +7,110 @@ import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { ASSETS } from "@/lib/constants/assets";
 import { CosmosParticles } from "@/components/shared";
+import Link from "next/link";
+import { LINKS } from "@/lib/constants/links";
 
 // ─── Blob config ─────────────────────────────────────────────────────────────
 type BlobMotion = "vertical" | "horizontal" | "diagonal";
 
 const BLOBS = {
   yellowLeft: {
-    width: 480, height: 480,
-    top: 40, left: "-5%",
-    color: "#F9AB0040", blur: 120,
+    width: 480,
+    height: 480,
+    top: 40,
+    left: "-5%",
+    color: "#F9AB0040",
+    blur: 120,
     motion: "horizontal" as BlobMotion,
-    duration: 58, travel: 30, delay: "-14s",
-    interactive: true, interactiveStrength: 0.14,
+    duration: 58,
+    travel: 30,
+    delay: "-14s",
+    interactive: true,
+    interactiveStrength: 0.14,
   },
   greenLeft: {
-    width: 380, height: 380,
-    top: 180, left: "3%",
-    color: "#34A85340", blur: 110,
+    width: 380,
+    height: 380,
+    top: 180,
+    left: "3%",
+    color: "#34A85340",
+    blur: 110,
     motion: "diagonal" as BlobMotion,
-    duration: 72, travel: 28, delay: "-22s",
-    interactive: true, interactiveStrength: 0.16,
+    duration: 72,
+    travel: 28,
+    delay: "-22s",
+    interactive: true,
+    interactiveStrength: 0.16,
   },
   yellowRight: {
-    width: 460, height: 460,
-    top: 60, left: "65%",
-    color: "#F9AB0040", blur: 120,
+    width: 460,
+    height: 460,
+    top: 60,
+    left: "65%",
+    color: "#F9AB0040",
+    blur: 120,
     motion: "diagonal" as BlobMotion,
-    duration: 65, travel: 30, delay: "-8s",
-    interactive: true, interactiveStrength: 0.12,
+    duration: 65,
+    travel: 30,
+    delay: "-8s",
+    interactive: true,
+    interactiveStrength: 0.12,
   },
   greenRight: {
-    width: 360, height: 360,
-    top: 220, left: "76%",
-    color: "#34A85340", blur: 110,
+    width: 360,
+    height: 360,
+    top: 220,
+    left: "76%",
+    color: "#34A85340",
+    blur: 110,
     motion: "vertical" as BlobMotion,
-    duration: 80, travel: 26, delay: "-35s",
-    interactive: true, interactiveStrength: 0.15,
+    duration: 80,
+    travel: 26,
+    delay: "-35s",
+    interactive: true,
+    interactiveStrength: 0.15,
   },
-} satisfies Record<string, {
-  width: number; height: number;
-  top: number; left: string;
-  color: string; blur: number;
-  motion: BlobMotion; duration: number; travel: number; delay: string;
-  interactive: boolean; interactiveStrength: number;
-}>;
+} satisfies Record<
+  string,
+  {
+    width: number;
+    height: number;
+    top: number;
+    left: string;
+    color: string;
+    blur: number;
+    motion: BlobMotion;
+    duration: number;
+    travel: number;
+    delay: string;
+    interactive: boolean;
+    interactiveStrength: number;
+  }
+>;
 
-function motionToAnimation(blobMotion: BlobMotion, duration: number, delay: string): React.CSSProperties {
-  const keyframe = blobMotion === "vertical" ? "blobDriftV" : blobMotion === "horizontal" ? "blobDriftH" : "blobDriftD";
-  return { animation: `${keyframe} ${duration}s ease-in-out infinite`, animationDelay: delay };
+function motionToAnimation(
+  blobMotion: BlobMotion,
+  duration: number,
+  delay: string,
+): React.CSSProperties {
+  const keyframe =
+    blobMotion === "vertical"
+      ? "blobDriftV"
+      : blobMotion === "horizontal"
+        ? "blobDriftH"
+        : "blobDriftD";
+  return {
+    animation: `${keyframe} ${duration}s ease-in-out infinite`,
+    animationDelay: delay,
+  };
 }
 
 function SettingsBlobBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const refs: Record<keyof typeof BLOBS, React.RefObject<HTMLDivElement | null>> = {
+  const refs: Record<
+    keyof typeof BLOBS,
+    React.RefObject<HTMLDivElement | null>
+  > = {
     yellowLeft: useRef(null),
     greenLeft: useRef(null),
     yellowRight: useRef(null),
@@ -69,9 +120,16 @@ function SettingsBlobBackground() {
   useEffect(() => {
     const targets = (Object.keys(BLOBS) as (keyof typeof BLOBS)[])
       .filter((k) => BLOBS[k].interactive)
-      .map((k) => ({ ref: refs[k], strength: BLOBS[k].interactiveStrength, cx: 0, cy: 0 }));
+      .map((k) => ({
+        ref: refs[k],
+        strength: BLOBS[k].interactiveStrength,
+        cx: 0,
+        cy: 0,
+      }));
 
-    let mouseX = 0, mouseY = 0, rafId: number;
+    let mouseX = 0,
+      mouseY = 0,
+      rafId: number;
 
     const onMouseMove = (e: MouseEvent) => {
       const rect = containerRef.current?.getBoundingClientRect();
@@ -84,23 +142,36 @@ function SettingsBlobBackground() {
       for (const t of targets) {
         t.cx += (mouseX * t.strength - t.cx) * 0.08;
         t.cy += (mouseY * t.strength - t.cy) * 0.08;
-        if (t.ref.current) t.ref.current.style.translate = `${t.cx.toFixed(1)}px ${t.cy.toFixed(1)}px`;
+        if (t.ref.current)
+          t.ref.current.style.translate = `${t.cx.toFixed(1)}px ${t.cy.toFixed(1)}px`;
       }
       rafId = requestAnimationFrame(tick);
     };
 
     window.addEventListener("mousemove", onMouseMove);
     rafId = requestAnimationFrame(tick);
-    return () => { window.removeEventListener("mousemove", onMouseMove); cancelAnimationFrame(rafId); };
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
-  const base: React.CSSProperties = { position: "absolute", borderRadius: "50%", pointerEvents: "none", willChange: "transform" };
+  const base: React.CSSProperties = {
+    position: "absolute",
+    borderRadius: "50%",
+    pointerEvents: "none",
+    willChange: "transform",
+  };
 
-  function blobStyle(cfg: (typeof BLOBS)[keyof typeof BLOBS]): React.CSSProperties {
+  function blobStyle(
+    cfg: (typeof BLOBS)[keyof typeof BLOBS],
+  ): React.CSSProperties {
     return {
       ...base,
-      top: cfg.top, left: cfg.left,
-      width: cfg.width, height: cfg.height,
+      top: cfg.top,
+      left: cfg.left,
+      width: cfg.width,
+      height: cfg.height,
       background: cfg.color,
       filter: `blur(${cfg.blur}px)`,
       ["--travel" as string]: `${cfg.travel}px`,
@@ -109,7 +180,10 @@ function SettingsBlobBackground() {
   }
 
   return (
-    <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 pointer-events-none overflow-hidden"
+    >
       {(Object.keys(BLOBS) as (keyof typeof BLOBS)[]).map((k, i) => (
         <motion.div
           key={k}
@@ -128,7 +202,6 @@ function SettingsBlobBackground() {
 export function SettingsSection() {
   return (
     <div className="relative min-h-screen bg-[#010B1D] overflow-hidden">
-
       {/* ── CosmosParticles — desktop only (hidden on mobile for perf) ── */}
       <div className="hidden sm:block absolute inset-0 pointer-events-none z-0">
         <CosmosParticles
@@ -211,7 +284,24 @@ export function SettingsSection() {
       {/* ── Page content ──────────────────────────────────────────────────── */}
       <div className="relative z-10 px-4 sm:px-6 pb-24 pt-24 sm:pt-40">
         <div className="max-w-3xl mx-auto">
-
+          <Link
+            prefetch={false}
+            href={LINKS.sparkmates_me}
+            className="inline-flex items-center gap-2 text-white/85 hover:text-white transition-colors text-sm md:text-base w-fit"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+            <span>Back to my portfolio</span>
+          </Link>
           {/* Heading — centred on mobile, left-aligned on desktop */}
           <div className="mb-4 sm:mb-6">
             <Text
@@ -224,10 +314,10 @@ export function SettingsSection() {
             </Text>
             {/* Subtitle — centred on mobile, left + divider on desktop */}
             <p className="text-[#C1C7CD] text-center sm:text-left sm:border-b sm:border-white/10 sm:pb-6 text-sm sm:text-base">
-              Manage your personal information, security preferences, and Sparkmates visibility.
+              Manage your personal information, security preferences, and
+              Sparkmates visibility.
             </p>
           </div>
-
           <AccountSettingsSection />
         </div>
       </div>

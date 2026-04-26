@@ -19,7 +19,9 @@ export const useGetMemberRoles = (gdgId: string) => {
         }
       );
 // 
-      if (res.status === 200) return { roles: res.body.data.map(role => role.name) };
+      if (res.status === 200) {
+        return { roles: res.body.data.map((role: { name: string }) => role.name) };
+      }
 // 
       throw new Error(extractErrorMessage(res.body));
     },

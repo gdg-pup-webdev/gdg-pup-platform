@@ -5,13 +5,19 @@ import { motion } from "motion/react";
 import { CosmosParticles } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
 
+const MotionImage = motion.create(Image);
+
 interface MemberShowcaseBackgroundProps {
   children: React.ReactNode;
 }
 
 type BlobMotion = "vertical" | "horizontal" | "diagonal" | "none";
 
-function motionToAnimation(motionType: BlobMotion, duration: number, delay: string): React.CSSProperties {
+function motionToAnimation(
+  motionType: BlobMotion,
+  duration: number,
+  delay: string,
+): React.CSSProperties {
   if (motionType === "none") return {};
   const keyframe =
     motionType === "vertical"
@@ -29,44 +35,6 @@ function motionToAnimation(motionType: BlobMotion, duration: number, delay: stri
 export function MemberShowcaseBackground({
   children,
 }: MemberShowcaseBackgroundProps) {
-  const orangeBlobRef = React.useRef<HTMLDivElement>(null);
-  const greenBlobRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const targets = [
-      { ref: orangeBlobRef, strength: 0.08, cx: 0, cy: 0 },
-      { ref: greenBlobRef, strength: 0.16, cx: 0, cy: 0 },
-    ];
-
-    let mouseX = 0;
-    let mouseY = 0;
-    let rafId: number;
-
-    const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX - window.innerWidth / 2;
-      mouseY = e.clientY - window.innerHeight / 2;
-    };
-
-    const tick = () => {
-      for (const target of targets) {
-        target.cx += (mouseX * target.strength - target.cx) * 0.08;
-        target.cy += (mouseY * target.strength - target.cy) * 0.08;
-        if (target.ref.current) {
-          target.ref.current.style.translate = `${target.cx.toFixed(1)}px ${target.cy.toFixed(1)}px`;
-        }
-      }
-      rafId = requestAnimationFrame(tick);
-    };
-
-    window.addEventListener("mousemove", onMouseMove);
-    rafId = requestAnimationFrame(tick);
-
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      cancelAnimationFrame(rafId);
-    };
-  }, []);
-
   return (
     <CosmosParticles
       particleColors={["#ffffff", "#4285f4"]}
@@ -80,38 +48,59 @@ export function MemberShowcaseBackground({
       className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-28 pb-24 md:px-8 md:pt-40 md:pb-32 lg:pt-44 lg:pb-48"
     >
       <motion.div
-        ref={orangeBlobRef}
-        className="pointer-events-none absolute -top-120 -left-120 z-0"
+        className="pointer-events-none absolute -top-70 left-1/2 z-[5]"
         style={{
-          width: "clamp(24rem, 58vw, 64rem)",
-          height: "clamp(24rem, 58vw, 64rem)",
-          borderRadius: "50%",
-          background: "#FF620066",
-          filter: "blur(100px)",
+          width: "48rem",
+          height: "48rem",
+          marginLeft: "-47rem",
+          opacity: 0.8,
+          maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 50%, transparent 100%)",
           ["--travel" as string]: "34px",
           ...motionToAnimation("horizontal", 58, "-14s"),
         }}
-        initial={{ opacity: 0, scale: 0.4 }}
+        initial={{ opacity: 0, scale: 1 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 0 }}
-      />
+      >
+        <MotionImage
+          src={ASSETS.MEMBER_SHOWCASE.BACKGROUND.ORANGE_SPOTLIGHT}
+          alt="orange spotlight"
+          fill
+          priority
+          unoptimized
+          className="object-contain"
+        />
+      </motion.div>
       <motion.div
-        ref={greenBlobRef}
-        className="pointer-events-none absolute -top-120 -right-120 z-0"
+        className="pointer-events-none absolute -top-70 right-1/2 z-[5]"
         style={{
-          width: "clamp(24rem, 58vw, 64rem)",
-          height: "clamp(24rem, 58vw, 64rem)",
-          borderRadius: "50%",
-          background: "#00FF5566",
-          filter: "blur(100px)",
+          width: "48rem",
+          height: "48rem",
+          marginRight: "-47rem",
+
+          opacity: 0.8,
+          maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 50%, transparent 100%)",
           ["--travel" as string]: "38px",
           ...motionToAnimation("vertical", 88, "0s"),
         }}
-        initial={{ opacity: 0, scale: 0.4 }}
+        initial={{ opacity: 0, scale: 1 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 2.2, ease: "easeOut", delay: 0.25 }}
-      />
-        
+      >
+        <MotionImage
+          src={ASSETS.MEMBER_SHOWCASE.BACKGROUND.GREEN_SPOTLIGHT}
+          alt="green spotlight"
+          fill
+          priority
+          unoptimized
+          className="object-contain"
+        />
+      </motion.div>
+
       <Image
         src={ASSETS.MEMBER_SHOWCASE.BACKGROUND.STARS_1}
         alt="Stars decoration left"

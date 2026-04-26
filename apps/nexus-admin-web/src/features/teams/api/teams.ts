@@ -4,8 +4,9 @@ import { contract } from "@packages/nexus-api-contracts";
 import { Team, TeamInsert, TeamUpdate } from "../types";
 import { getCookie } from "cookies-next";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { configs } from "@/lib/constants/configs";
 
-const API_URL = "http://localhost:8000";
+const API_URL = configs.nexusApiBaseUrl;
 
 export const useTeams = (pageNumber = 1, pageSize = 10) => {
   const {token } = useAuthContext();

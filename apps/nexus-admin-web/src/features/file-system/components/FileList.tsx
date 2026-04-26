@@ -88,8 +88,8 @@ export function FileList() {
     refetchFolders();
   };
 
-  const rawFiles = filesResponse?.body?.data || [];
-  const rawFolders = foldersResponse?.body?.data || [];
+  const rawFiles: FileRecord[] = filesResponse?.body?.data || [];
+  const rawFolders: Folder[] = foldersResponse?.body?.data || [];
 
   const selectedItem = useMemo(() => {
     if (!selectedItemIdFromUrl) {
@@ -97,16 +97,16 @@ export function FileList() {
     }
 
     if (selectedItemTypeFromUrl === "folder") {
-      return rawFolders.find((folder) => folder.id === selectedItemIdFromUrl) || null;
+      return rawFolders.find((folder: Folder) => folder.id === selectedItemIdFromUrl) || null;
     }
 
     if (selectedItemTypeFromUrl === "file") {
-      return rawFiles.find((file) => file.id === selectedItemIdFromUrl) || null;
+      return rawFiles.find((file: FileRecord) => file.id === selectedItemIdFromUrl) || null;
     }
 
     return (
-      rawFolders.find((folder) => folder.id === selectedItemIdFromUrl) ||
-      rawFiles.find((file) => file.id === selectedItemIdFromUrl) ||
+      rawFolders.find((folder: Folder) => folder.id === selectedItemIdFromUrl) ||
+      rawFiles.find((file: FileRecord) => file.id === selectedItemIdFromUrl) ||
       null
     );
   }, [rawFiles, rawFolders, selectedItemIdFromUrl, selectedItemTypeFromUrl]);
@@ -127,7 +127,7 @@ export function FileList() {
 
   // Combine folders and files
   const items = useMemo(() => {
-    const combinedFolders: FileOrFolder[] = rawFolders.map(f => ({
+    const combinedFolders: FileOrFolder[] = rawFolders.map((f: Folder) => ({
       ...f,
       isFolder: true,
       // For compatibility with FileCard which expects FileRecord
@@ -135,7 +135,7 @@ export function FileList() {
       fileDescription: f.description || "Folder",
     } as unknown as FileOrFolder));
 
-    const combinedFiles: FileOrFolder[] = rawFiles.map(f => ({
+    const combinedFiles: FileOrFolder[] = rawFiles.map((f: FileRecord) => ({
       ...f,
       isFolder: false,
     } as unknown as FileOrFolder));

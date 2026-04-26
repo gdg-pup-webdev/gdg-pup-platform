@@ -15,7 +15,7 @@ This document outlines the CI/CD pipeline for the GDG PUP Platform monorepo. The
 | Component | Technology |
 |---|---|
 | Monorepo | pnpm + Turborepo |
-| Services | `nexus-web` (Next.js), `nexus-api` (Express), `identity-api` (Express) |
+| Services | `nexus-web` (Next.js), `nexus-admin-web` (Next.js), `nexus-api` (Express), `identity-api` (Express) |
 | Registry | Docker Hub (`gdgpup/`) |
 | Hosting | Google Cloud Run (asia-southeast1) |
 | DNS | Cloudflare → `gdgpup.org` |
@@ -26,6 +26,7 @@ This document outlines the CI/CD pipeline for the GDG PUP Platform monorepo. The
 | Service | Dev | Staging | Production |
 |---|---|---|---|
 | nexus-web | `dev.gdgpup.org` | `staging.gdgpup.org` | `gdgpup.org` |
+| nexus-admin-web | `admin.dev.gdgpup.org` | `admin.staging.gdgpup.org` | `admin.gdgpup.org` |
 | nexus-api | `api.dev.gdgpup.org` | `api.staging.gdgpup.org` | `api.gdgpup.org` |
 | identity-api | `identity.dev.gdgpup.org` | `identity.staging.gdgpup.org` | `identity.gdgpup.org` |
 
@@ -92,6 +93,7 @@ Uses `dorny/paths-filter` to detect which services changed. Only changed service
 | Service | Triggers on changes to |
 |---|---|
 | nexus-web | `apps/nexus-web/**`, `packages/**`, `docker-compose*.yml` |
+| nexus-admin-web | `apps/nexus-admin-web/**`, `packages/**`, `docker-compose*.yml` |
 | nexus-api | `apps/nexus-api/**`, `packages/**`, `docker-compose*.yml` |
 | identity-api | `apps/identity-api/**`, `packages/**`, `docker-compose*.yml` |
 
@@ -107,6 +109,7 @@ gdgpup/gdg-pup-platform-<service>:<environment>
 
 Examples:
 - `gdgpup/gdg-pup-platform-nexus-web:dev`
+- `gdgpup/gdg-pup-platform-nexus-admin-web:staging`
 - `gdgpup/gdg-pup-platform-nexus-api:staging`
 - `gdgpup/gdg-pup-platform-identity-api:prod`
 

@@ -22,6 +22,9 @@ on:
       nexus-web:
         description: "Whether nexus-web changed"
         value: ${{ jobs.detect.outputs.nexus-web }}
+      nexus-admin-web:
+        description: "Whether nexus-admin-web changed"
+        value: ${{ jobs.detect.outputs.nexus-admin-web }}
       nexus-api:
         description: "Whether nexus-api changed"
         value: ${{ jobs.detect.outputs.nexus-api }}
@@ -38,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       nexus-web: ${{ steps.filter.outputs.nexus-web }}
+      nexus-admin-web: ${{ steps.filter.outputs.nexus-admin-web }}
       nexus-api: ${{ steps.filter.outputs.nexus-api }}
       identity-api: ${{ steps.filter.outputs.identity-api }}
       environment: ${{ steps.env.outputs.environment }}
@@ -65,6 +69,11 @@ jobs:
           filters: |
             nexus-web:
               - 'apps/nexus-web/**'
+              - 'packages/**'
+              - 'docker-compose.yml'
+              - 'docker-compose.*.yml'
+            nexus-admin-web:
+              - 'apps/nexus-admin-web/**'
               - 'packages/**'
               - 'docker-compose.yml'
               - 'docker-compose.*.yml'

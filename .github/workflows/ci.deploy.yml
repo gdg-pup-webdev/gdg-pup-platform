@@ -76,11 +76,34 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-web
+          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
           health-check-url: ${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org' || 'https://dev.gdgpup.org' }}
           env-vars: "NEXT_PUBLIC_SITE_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org' || 'https://dev.gdgpup.org' }}"
+
+  deploy-nexus-admin-web:
+    name: nexus-admin-web
+    needs: detect-changes
+    # From Docker B&P automation: triggered_branch is set → always deploy
+    # From manual dispatch: respect path filter unless force_deploy is true
+    if: ${{ github.event.inputs.triggered_branch != '' || inputs.force_deploy || needs.detect-changes.outputs.nexus-admin-web == 'true' }}
+    runs-on: ubuntu-latest
+    environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets' || 'Dev Secrets' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
+      - uses: ./.github/deployments
+        with:
+          service: nexus-admin-web
+          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
+          environment: ${{ needs.detect-changes.outputs.environment }}
+          gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
+          health-check-url: ${{ needs.detect-changes.outputs.environment == 'prod' && 'https://admin.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://admin.staging.gdgpup.org' || 'https://admin.dev.gdgpup.org' }}
+          env-vars: "NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }},NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}"
 
   deploy-nexus-api:
     name: nexus-api
@@ -97,6 +120,7 @@ jobs:
       - uses: ./.github/deployments
         with:
           service: nexus-api
+          commit-sha: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           gcp-sa-key: ${{ secrets.GCP_SA_KEY }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }}
@@ -114,4 +138,5 @@ jobs:
             GCS_MAKE_PUBLIC_ON_UPLOAD=${{ vars.GCS_MAKE_PUBLIC_ON_UPLOAD || 'false' }},\
             GCS_PUBLIC_BASE_URL=${{ vars.GCS_PUBLIC_BASE_URL || 'https://storage.googleapis.com' }},\
             GCS_UPLOAD_PREFIX=${{ vars.GCS_UPLOAD_PREFIX || 'uploads' }},\
-            GCS_CREDENTIALS_BASE64=${{ secrets.GCS_CREDENTIALS_BASE64 }}"
+            GCS_CREDENTIALS_BASE64=${{ secrets.GCS_CREDENTIALS_BASE64 }},\
+            CLIENT_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org|https://admin.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org|https://admin.staging.gdgpup.org' || 'https://dev.gdgpup.org|https://admin.dev.gdgpup.org' }}"

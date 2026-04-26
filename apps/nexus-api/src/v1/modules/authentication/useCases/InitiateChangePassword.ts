@@ -1,5 +1,6 @@
 ﻿import { IUserCredentialRepository, IUserCredentialReferenceRepository, IEncryptionService, IOTPService } from "../domain/IAuthenticationInterfaces.js";
 import { UserCredentialReferenceCode, ReferenceCodeType } from "../domain/UserCredentialReferenceCode.js";
+import { BadRequestError, UnauthorizedError } from "@/v1/errors/HttpError.js";
 
 export class InitiateChangePassword {
   constructor(
@@ -12,12 +13,12 @@ export class InitiateChangePassword {
   async execute(email: string, password: string, newPassword: string): Promise<string> {
     const credential = await this.credentialRepo.findByEmail(email);
     if (!credential) {
-      throw new Error("Invalid user.");
+      throw new BadRequestError("The requested account does not exist.");
     }
 
     const isPasswordValid = await this.encryptionService.compare(password, credential.props.passwordHash);
     if (!isPasswordValid) {
-      throw new Error("Invalid password.");
+      throw new UnauthorizedError("The current password you entered is incorrect.");
     }
 
     const newPasswordHash = await this.encryptionService.hash(newPassword);

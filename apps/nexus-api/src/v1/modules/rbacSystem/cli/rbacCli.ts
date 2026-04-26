@@ -263,10 +263,10 @@ function createProgram(deps: RunRbacCliDependencies): Command {
     .exitOverride();
 
   program.configureOutput({
-    writeOut: (str) => {
+    writeOut: (str: string) => {
       writeWithLogger(logger.info, str);
     },
-    writeErr: (str) => {
+    writeErr: (str: string) => {
       writeWithLogger(logger.error, str);
     },
   });
@@ -546,11 +546,18 @@ export async function runRbacCli(
     }
 
     if (error instanceof CommanderError) {
-      if (error.code === "commander.helpDisplayed") {
+      const commanderError = error as CommanderError & {
+        code?: unknown;
+        exitCode?: unknown;
+      };
+
+      if (commanderError.code === "commander.helpDisplayed") {
         return 0;
       }
 
-      return typeof error.exitCode === "number" ? error.exitCode : 1;
+      return typeof commanderError.exitCode === "number"
+        ? commanderError.exitCode
+        : 1;
     }
 
     logger.error("RBAC command failed with an unclassified error.");

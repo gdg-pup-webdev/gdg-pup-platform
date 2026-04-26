@@ -2,8 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallEndpointWithToken  } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { FolderInsert } from "../types";
+import { configs } from "@/lib/constants/configs";
 
-const API_URL = "http://localhost:8000";
+const API_URL = configs.nexusApiBaseUrl;
 
 export const useCreateFolder = () => {
   const callEndpoint = useCallEndpointWithToken();

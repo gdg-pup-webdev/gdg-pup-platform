@@ -126,6 +126,7 @@ Each Cloud Run service is mapped to a custom subdomain on `gdgpup.org` using **C
 | Service | Dev | Staging | Prod |
 |---|---|---|---|
 | nexus-web | `dev.gdgpup.org` | `staging.gdgpup.org` | `gdgpup.org` |
+| nexus-admin-web | `admin.dev.gdgpup.org` | `admin.staging.gdgpup.org` | `admin.gdgpup.org` |
 | nexus-api | `api.dev.gdgpup.org` | `api.staging.gdgpup.org` | `api.gdgpup.org` |
 | identity-api | `identity.dev.gdgpup.org` | `identity.staging.gdgpup.org` | `identity.gdgpup.org` |
 
@@ -143,6 +144,7 @@ Domains are configured in each environment's `terraform.<env>.tfvars`:
 # Cloudflare DNS records
 domain_mappings = {
   "nexus-web"    = { subdomain = "dev" }
+  "nexus-admin-web" = { subdomain = "admin.dev" }
   "nexus-api"    = { subdomain = "api.dev" }
   "identity-api" = { subdomain = "identity.dev" }
 }

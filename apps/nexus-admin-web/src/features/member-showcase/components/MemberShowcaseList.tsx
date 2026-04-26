@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Plus, Users, Sparkles } from "lucide-react";
-import { MemberShowcase } from "../types";
+import { MemberShowcase, ShowcasedMember } from "../types";
 import { MemberShowcaseCard } from "./MemberShowcaseCard";
 import { useMemberShowcases } from "../hooks/useMemberShowcases";
 import { useSpotlight } from "../hooks/useSpotlight";
@@ -96,7 +96,7 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
                     View Full Spotlight
                   </button>
                   <div className="flex items-center -space-x-2">
-                    {spotlight.data.showcasedMembers.map((m) => (
+                    {spotlight.data.showcasedMembers.map((m: ShowcasedMember) => (
                       <div key={m.gdgId} className="h-8 w-8 overflow-hidden rounded-full border-2 border-white bg-gray-100 shadow-sm" title={m.fullName}>
                         {m.avatarUrl ? <img src={m.avatarUrl} alt={m.fullName} className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-[10px] font-bold text-gray-400">{m.firstName[0]}</div>}
                       </div>

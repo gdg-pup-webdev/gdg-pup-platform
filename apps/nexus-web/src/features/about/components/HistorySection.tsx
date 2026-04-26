@@ -542,7 +542,7 @@ export function HistorySection() {
   <Image src="/about/history/bg-star.webp" alt="" width={300} height={300} className="w-full h-auto" />
 </div>
 
-    <Container maxWidth="7xl" padding="lg" className="relative z-10 w-full overflow-hidden">        <Stack gap="2xl">
+    <Container maxWidth="7xl" padding="lg" className="relative z-10 w-full">        <Stack gap="2xl">
           {/* Section 1 — Hero */}
           <FadeInSection className="mb-32">
             <Stack gap="lg" align="center">
@@ -639,7 +639,7 @@ export function HistorySection() {
         <StatCard key={stat.label} stat={stat} />
       ))}
     </div>
-    <Box>
+    <Box className="py-4">
       <Link prefetch={false} href="/signup">
         <Button size="lg" variant="default">
           Join Our Journey

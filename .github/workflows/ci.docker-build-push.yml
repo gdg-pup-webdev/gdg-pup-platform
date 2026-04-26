@@ -51,12 +51,38 @@ jobs:
       - uses: ./.github/builds
         with:
           service: nexus-web
+          commit-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-web/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
           build-args: |
             NEXT_PUBLIC_SITE_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://staging.gdgpup.org' || 'https://dev.gdgpup.org' }}
+            NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
+            NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_PUB_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_PUB_KEY }}
+
+  build-nexus-admin-web:
+    name: nexus-admin-web
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets' || 'Dev Secrets' }}
+    # Always rebuild on release branch push; selective only for manual dispatch
+    if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-admin-web == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+      - uses: ./.github/builds
+        with:
+          service: nexus-admin-web
+          commit-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+          environment: ${{ needs.detect-changes.outputs.environment }}
+          dockerfile: apps/nexus-admin-web/Dockerfile
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD }}
+          build-args: |
             NEXT_PUBLIC_NEXUS_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://api.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://api.staging.gdgpup.org' || 'https://api.dev.gdgpup.org' }}
             NEXT_PUBLIC_IDENTITY_API_URL=${{ needs.detect-changes.outputs.environment == 'prod' && 'https://identity.gdgpup.org' || needs.detect-changes.outputs.environment == 'staging' && 'https://identity.staging.gdgpup.org' || 'https://identity.dev.gdgpup.org' }}
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -75,6 +101,7 @@ jobs:
       - uses: ./.github/builds
         with:
           service: nexus-api
+          commit-sha: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
           environment: ${{ needs.detect-changes.outputs.environment }}
           dockerfile: apps/nexus-api/Dockerfile
           dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -83,9 +110,9 @@ jobs:
   trigger-deploy:
     name: Trigger Deploy
     runs-on: ubuntu-latest
-    needs: [detect-changes, build-nexus-web, build-nexus-api]
+    needs: [detect-changes, build-nexus-web, build-nexus-admin-web, build-nexus-api]
     # Run when detect-changes passed AND all builds either succeeded or were skipped (no failures)
-    if: ${{ always() && needs.detect-changes.result == 'success' && needs.build-nexus-web.result != 'failure' && needs.build-nexus-api.result != 'failure' }}
+    if: ${{ always() && needs.detect-changes.result == 'success' && needs.build-nexus-web.result != 'failure' && needs.build-nexus-admin-web.result != 'failure' && needs.build-nexus-api.result != 'failure' }}
     steps:
       - name: Dispatch Deploy workflow
         env:

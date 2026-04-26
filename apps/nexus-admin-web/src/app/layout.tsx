@@ -4,6 +4,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContextProvider } from "@/features/authentication/store/useAuthStore";
+import { SessionManagementWrapper } from "@/providers/SessionManagementWrapper";
 
 export const metadata: Metadata = {
   title: "GDG PUP Nexus",
@@ -36,7 +37,8 @@ export default function RootLayout({
   
         <main>
           <AuthContextProvider>
-          {children}</AuthContextProvider>
+            <SessionManagementWrapper>{children}</SessionManagementWrapper>
+          </AuthContextProvider>
         </main>
         <ToastContainer position="bottom-right" />
 </QueryProvider>

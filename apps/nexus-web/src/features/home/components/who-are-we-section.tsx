@@ -16,7 +16,7 @@ export function WhoAreWeSection() {
   return (
     <section className="relative z-30 pb-20 lg:py-34" ref={sectionRef}>
       <Container className="">
-        <Stack gap="2xl" align="center">
+        <Stack gap="xl" className="lg:gap-12" align="center">
           {/* Section heading */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -29,7 +29,7 @@ export function WhoAreWeSection() {
               gradient="white-yellow"
               variant="heading-2"
               weight="bold"
-              className="mt-30 mb-10 lg:my-0"
+              className="mt-35 mb-4 lg:my-0"
             >
               Who are we
             </Text>
@@ -142,29 +142,39 @@ export function WhoAreWeSection() {
                 className="leading-8 text-lg py-16.75 px-6.75"
               >
                 Whether you’re exploring{" "}
-                <span className={rainbowGradientTextClass}>Web development</span>,{" "}
                 <span className={rainbowGradientTextClass}>
-                  Artificial Intelligence
+                  Web Development
+                </span>
+                , <span className={rainbowGradientTextClass}>Data</span> and{" "}
+                <span className={rainbowGradientTextClass}>
+                  Machine Learning
                 </span>{" "}
-                and{" "}
-                <span className={rainbowGradientTextClass}>Machine Learning</span>{" "}
-                (AI/ML),{" "}
+                (Data and ML),{" "}
                 <span className={rainbowGradientTextClass}>Cybersecurity</span>,{" "}
-                <span className={rainbowGradientTextClass}>Cloud Solutions</span>,{" "}
-                <span className={rainbowGradientTextClass}>UI/UX Design</span>,{" "}
+                <span className={rainbowGradientTextClass}>
+                  Cloud Solutions
+                </span>
+                , <span className={rainbowGradientTextClass}>UI/UX Design</span>
+                ,{" "}
                 <span className={rainbowGradientTextClass}>
                   Internet of Things
                 </span>{" "}
                 (IoT),{" "}
-                <span className={rainbowGradientTextClass}>Project Management</span>,
-                or even as a core functional team member (
+                <span className={rainbowGradientTextClass}>
+                  Project Management
+                </span>
+                , or even as a core functional team member (
                 <span className={rainbowGradientTextClass}>Operations</span>,{" "}
                 <span className={rainbowGradientTextClass}>Finance</span>,{" "}
+                <span className={rainbowGradientTextClass}>Secretariat</span>,{" "}
                 <span className={rainbowGradientTextClass}>Creatives</span>,{" "}
                 <span className={rainbowGradientTextClass}>Marketing</span>,{" "}
-                <span className={rainbowGradientTextClass}>Partnerships</span>), our
-                community provides opportunities to learn, collaborate, and grow
-                alongside peers and mentors.
+                <span className={rainbowGradientTextClass}>Partnerships</span>,{" "}
+                <span className={rainbowGradientTextClass}>
+                  Community Relations
+                </span>
+                ), our community provides opportunities to learn, collaborate,
+                and grow alongside peers and mentors.
                 <br />
                 <br />
                 From hands-on workshops and Study Jams to hackathons, industry

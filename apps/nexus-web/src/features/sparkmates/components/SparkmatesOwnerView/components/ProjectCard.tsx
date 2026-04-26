@@ -1,11 +1,15 @@
 "use client";
 import { Text } from "@packages/spark-ui";
-import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
+import type {
+  DraggableAttributes,
+  DraggableSyntheticListeners,
+} from "@dnd-kit/core";
 import type { Ref } from "react";
 import { MdDragIndicator } from "react-icons/md";
 import { MdCalendarMonth } from "react-icons/md";
 import Link from "next/link";
 import { editIcon } from "../icons/editIcon";
+import { deleteIcon } from "../icons/deleteIcon";
 
 type ProjectLike = {
   title?: string;
@@ -26,6 +30,7 @@ type ProjectLike = {
 type ProjectCardProps = {
   project: ProjectLike;
   onEdit?: () => void;
+  onDelete?: () => void;
   showDragHandle?: boolean;
   dragHandleRef?: Ref<HTMLButtonElement>;
   dragHandleAttributes?: DraggableAttributes;
@@ -72,7 +77,10 @@ const formatDateLabel = (value?: string | null): string => {
   return trimmed;
 };
 
-const formatProjectDateRange = (startDate?: string, endDate?: string | null): string => {
+const formatProjectDateRange = (
+  startDate?: string,
+  endDate?: string | null,
+): string => {
   const startLabel = formatDateLabel(startDate);
   const endLabel = formatDateLabel(endDate);
 
@@ -157,6 +165,7 @@ const normalizeProjectImages = (project: ProjectLike): string[] => {
 export function ProjectCard({
   project,
   onEdit,
+  onDelete,
   showDragHandle = false,
   dragHandleRef,
   dragHandleAttributes,
@@ -170,7 +179,10 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const images = normalizeProjectImages(project);
   const visibleImages = images.slice(0, 4);
-  const projectDateRange = formatProjectDateRange(project.startDate, project.endDate);
+  const projectDateRange = formatProjectDateRange(
+    project.startDate,
+    project.endDate,
+  );
 
   if (!project) return null;
 
@@ -188,10 +200,7 @@ export function ProjectCard({
     >
       <div className="flex items-start justify-between gap-3">
         {projectHref ? (
-          <Link
-            href={projectHref}
-            className="min-w-0 flex-1 pr-2"
-          >
+          <Link href={projectHref} className="min-w-0 flex-1 pr-2">
             <span className="relative block min-w-0">
               <Text
                 as="span"
@@ -260,11 +269,26 @@ export function ProjectCard({
               {editIcon}
             </button>
           )}
+
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/30 text-red-400 transition hover:border-red-400/60 hover:bg-red-400/10"
+              aria-label="Delete project"
+              title="Delete project"
+            >
+              {deleteIcon}
+            </button>
+          )}
         </div>
       </div>
 
       {projectHref ? (
-        <Link href={projectHref} className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#57CAFF]/70">
+        <Link
+          href={projectHref}
+          className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#57CAFF]/70"
+        >
           <div className="mt-1 flex items-center gap-1.5 text-[#C1C7CD]">
             <MdCalendarMonth className="h-4 w-4 shrink-0" aria-hidden="true" />
             <Text as="span" variant="body-sm" className="text-[#C1C7CD]">
@@ -292,7 +316,7 @@ export function ProjectCard({
                   alt={`${project.title || "Project"} preview ${index + 1}`}
                   className="h-20 w-full rounded-md object-cover"
                   onError={(e) => {
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               ))}
@@ -328,7 +352,7 @@ export function ProjectCard({
                   alt={`${project.title || "Project"} preview ${index + 1}`}
                   className="h-20 w-full rounded-md object-cover"
                   onError={(e) => {
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               ))}

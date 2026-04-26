@@ -15,7 +15,7 @@ import { RESOURCE_LIBRARY } from "./products.data";
 
 export function ResourceLibraryGrid() {
   return (
-    <Stack gap="xl">
+    <Stack gap="sm">
       <Text
         variant="heading-1"
         gradient="white-green"
@@ -26,8 +26,8 @@ export function ResourceLibraryGrid() {
         Resource Library
       </Text>
 
-      <div className="grid grid-cols-2 gap-4 mt-8 sm:gap-5 md:grid-cols-3 md:gap-6 md:mt-10 lg:grid-cols-4 lg:gap-10 lg:mt-25">
-        {RESOURCE_LIBRARY.map((item) => (
+      <div className="grid grid-cols-2 gap-4 mt-8 sm:gap-5 md:grid-cols-3 md:gap-6 md:mt-5 lg:grid-cols-4 lg:gap-10 lg:mt-10">
+        {RESOURCE_LIBRARY.map((item, index) => (
           <TiltCard key={item.href} className="relative block w-full">
             <Link prefetch={false} href={item.href} className="block w-full">
               <Card className="relative w-full aspect-[286/390] overflow-hidden rounded-[30px] @container">
@@ -35,6 +35,8 @@ export function ResourceLibraryGrid() {
                   src={item.image}
                   alt={item.body}
                   fill
+                  priority={index < 4}
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="object-cover scale-125 opacity-40 bg-white/10"
                 />
 

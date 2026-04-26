@@ -30,9 +30,9 @@ export const PortfolioList: React.FC = () => {
   const { data: portfoliosResponse, isLoading, isError, error, refetch } = useListPortfolios(page, pageSize);
   const updateMutation = useUpdatePortfolio();
 
-  const portfolios = portfoliosResponse?.data || [];
+  const portfolios: Portfolio[] = portfoliosResponse?.data || [];
   const selectedPortfolio = useMemo(
-    () => portfolios.find((portfolio) => portfolio.id === selectedPortfolioId) || null,
+    () => portfolios.find((portfolio: Portfolio) => portfolio.id === selectedPortfolioId) || null,
     [portfolios, selectedPortfolioId],
   );
 
@@ -94,7 +94,7 @@ export const PortfolioList: React.FC = () => {
   };
 
   // Filter portfolios client-side for search
-  const filteredPortfolios = portfolios.filter(p => 
+  const filteredPortfolios = portfolios.filter((p: Portfolio) => 
     (p.first_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      p.middle_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      p.last_name?.toLowerCase().includes(searchQuery.toLowerCase())) ||

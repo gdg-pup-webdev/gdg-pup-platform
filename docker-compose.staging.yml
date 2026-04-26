@@ -18,6 +18,17 @@ services:
       - apps/nexus-web/.env.staging
     restart: always
 
+  nexus-admin-web:
+    build:
+      args:
+        NEXT_PUBLIC_NEXUS_API_URL: ${NEXT_PUBLIC_NEXUS_API_URL}
+        NEXT_PUBLIC_IDENTITY_API_URL: ${NEXT_PUBLIC_IDENTITY_API_URL}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_PUB_KEY: ${NEXT_PUBLIC_SUPABASE_PUB_KEY}
+    env_file:
+      - apps/nexus-web/.env.staging
+    restart: always
+
   nexus-api:
     env_file:
       - apps/nexus-api/.env.staging

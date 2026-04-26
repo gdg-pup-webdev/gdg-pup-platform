@@ -8,399 +8,424 @@
  */
 
 export const ASSETS = {
-    // ─── Branding ────────────────────────────────────────────────────────────────
-    BRANDING: {
-        /** Animated/complex GDG SVG (used in the global loader) */
-        GDG_LOGO_SVG: "/branding/gdg-logo-animated.svg",
-        /** Raster GDG logo (used in Navbar + Footer) */
-        GDG_LOGO_WEBP: "/branding/gdg-logo.webp",
+  // ─── Branding ────────────────────────────────────────────────────────────────
+  BRANDING: {
+    /** Animated/complex GDG SVG (used in the global loader) */
+    GDG_LOGO_SVG: "/branding/gdg-logo-animated.svg",
+    /** Raster GDG logo (used in Navbar + Footer) */
+    GDG_LOGO_WEBP: "/branding/gdg-logo.webp",
+  },
+
+  // ─── Not Found ───────────────────────────────────────────────────────────────
+  NOT_FOUND: {
+    RESTING_SPARKY: "/not-found/not-found-resting-sparky.webp",
+    THINKING_SPARKY: "/not-found/not-found-thinking-sparky.webp",
+  },
+
+  // ─── Home ─────────────────────────────────────────────────────────────────────
+  HOME: {
+    HERO: {
+      /** Sparky character — foreground layer */
+      LAYER_SPARKY: "/home/home-hero-layer-sparky.webp",
+      /** Full background gradient layer */
+      LAYER_BG: "/home/home-hero-layer-bg.webp",
+      /** Mid-ground layer B1 variant 1 */
+      LAYER_B1: "/home/home-hero-layer-b1.webp",
+      /** Mid-ground layer B1 variant 2 */
+      LAYER_B2: "/home/home-hero-layer-b2.webp",
+      /** Cloud/ambient layer */
+      LAYER_CLOUDS: "/home/home-hero-layer-clouds.webp",
+      /** Depth/environment layer D-E */
+      LAYER_DE: "/home/home-hero-layer-de.webp",
+      /** Far-background layer F1 */
+      LAYER_F1: "/home/home-hero-layer-f1.webp",
+      /** Far-background layer F2 */
+      LAYER_F2: "/home/home-hero-layer-f2.webp",
+      /** Far-background layer F3 */
+      LAYER_F3: "/home/home-hero-layer-f3.webp",
+      /** Far-background layer F4 */
+      LAYER_F4: "/home/home-hero-layer-f4.webp",
+      /** Far-background layer F5 */
+      LAYER_F5: "/home/home-hero-layer-f5.webp",
+    },
+    WHO: {
+      /** Sparky & Cirby mascot illustration */
+      SPARKY_CIRBY: "/home/home-who-sparky-cirby.webp",
+    },
+    /** Diamond bullet-point SVG used in list sections */
+    BULLET_DIAMOND: "/home/home-bullet-diamond.svg",
+
+    // Newly added assets
+    LOGOS_FRAMEV2_NEUTRAL1: "/home/home-logos-framev2-neutral1.webp",
+    SPARKY_LEADERBOARD1: "/home/home-sparky-leaderboard1.webp",
+    CIRBY_STICKER21: "/home/home-cirby-sticker21.webp",
+    SPARKY_THINKING1: "/home/home-sparky-thinking1.webp",
+    STARS1: "/home/home-stars1.webp",
+    STARS2: "/home/home-stars2.webp",
+    STARS3: "/home/home-stars3.webp",
+    STARS4: "/home/home-stars4.webp",
+    STARS5: "/home/home-stars5.webp",
+    STARS6: "/home/home-stars6.webp",
+    CIRBY_STICKER51: "/home/home-cirby-sticker-5-1.webp",
+    ELLIPSE203: "/home/home-ellipse203.webp",
+    ELLIPSE204: "/home/home-ellipse204.webp",
+    ELLIPSE205: "/home/home-ellipse208.webp",
+    ELLIPSE207: "/home/home-ellipse-207.webp",
+    ELLIPSE208: "/home/home-ellipse-208.webp",
+    SPACE_DUST_BLUE1: "/home/home-space-dust-blue1.webp",
+    SPACE_DUST_BLUE3: "/home/home-space-dust-blue3.webp",
+    HORIZON: "/home/home-horizon.webp",
+    SPIRAL: "/home/home-spiral.webp",
+    BLUE_IMG_PLACEHOLDER: "/home/home-blue-img-placeholder.webp",
+    GREEN_IMG_PLACEHOLDER: "/home/home-green-img-placeholder.webp",
+    RED_IMG_PLACEHOLDER: "/home/home-red-img-placeholder.webp",
+    YELLOW_IMG_PLACEHOLDER: "/home/home-yellow-img-placeholder.webp",
+    INDUSTRY_COLLABORATION: "/home/home-industry-collaboration.webp",
+    WORKSHOPS_AND_HACKATHONS: "/home/home-workshops-n-hackathons.webp",
+    MULTIPLE_TECH_TEAMS: "/home/home-multiple-tech-teams.webp",
+    MEMBERS: "/home/home-members.webp",
+    MEMBERS_GDG_POSE: "/home/home-members-gdg-pose.webp",
+    BLUE_CORNER: "/home/home-blue-corner.webp",
+    GREEN_CORNER: "/home/home-green-corner.webp",
+    RED_CORNER: "/home/home-red-corner.webp",
+    YELLOW_CORNER: "/home/home-yellow-corner.webp",
+    HANDSHAKE_ICON: "/home/handshake-icon.svg",
+    LIGHTBULB_ICON: "/home/lightbulb-icon.svg",
+    TEAM_ICON: "/home/team-icon.svg",
+    TECH_ICON: "/home/tech-icon.svg",
+  },
+
+  // ─── About ────────────────────────────────────────────────────────────────────
+  ABOUT: {
+    BENEFITS: {
+      GOOGLE_ACCESS: "/about/about-benefits-google-access.webp",
+      HANDS_ON: "/about/about-benefits-hands-on.webp",
+      MENTORSHIP: "/about/about-benefits-mentorship.webp",
+      GROWTH_NETWORK: "/about/about-benefits-growth-network.webp",
+      LEADERSHIP: "/about/about-benefits-leadership.webp",
+      COMMUNITY: "/about/about-benefits-community.webp",
+      /** Left decorative SVG element in benefits section */
+      DECOR_LEFT: "/about/about-benefits-decor-left.svg",
+      /** Right decorative SVG element in benefits section */
+      DECOR_RIGHT: "/about/about-benefits-decor-right.webp",
+    },
+    WHO: {
+      MASCOT_1: "/about/about-who-mascot-1.webp",
+      MASCOT_2: "/about/about-who-mascot-2.webp",
+      SPIRAL: "/about/about-who-spiral.webp",
+      CARD_BULLET: "/about/about-who-card-bullet.webp",
+      DECOR_ELEMENT_1: "/about/about-who-decor-element-1.webp",
+      DECOR_ELEMENT_2: "/about/about-who-decor-element-2.webp",
+    },
+    HISTORY: {
+      THE_SPARK: "/about/history/the-spark.webp",
+      YEAR_TWO_TEST: "/about/history/year-two-test.webp",
+      YEAR_THREE_TURNAROUND: "/about/history/year-three-turnaround.webp",
+      THE_IMPACT: "/about/history/the-impact.webp",
+      BG_ORBITAL_RINGS: "/about/history/bg-orbital-rings.webp",
+      BG_GEAR: "/about/history/bg-gear.webp",
+    },
+  },
+
+  // ─── ID card page ─────────────────────────────────────────────────────────────
+  ID: {
+    BG: "/id/id-bg.webp",
+    CIRBY: "/id/id-cirby.webp",
+    DECOR_LEFT: "/id/id-decor-left.webp",
+    DECOR_RIGHT: "/id/id-decor-right.webp",
+    CARD_NAME_FRAME: "/id/id-card-name-frame.webp",
+    CARD_SPARKY: "/id/id-card-sparky.webp",
+    CARD_TEXTURE: "/id/id-card-texture.webp",
+    GETID_RECT_BLUE: "/id/id-getid-rect-blue.webp",
+    GETID_RECT_GREEN: "/id/id-getid-rect-green.webp",
+    GETID_RECT_RED: "/id/id-getid-rect-red.webp",
+    GETID_RECT_YELLOW: "/id/id-getid-rect-yellow.webp",
+    SPIRAL_CENTER: "/id/id-spiral-center.webp",
+    SPIRAL_INNER: "/id/id-spiral-inner.webp",
+    SPIRAL_OUTER: "/id/id-spiral-outer.webp",
+  },
+
+  // ─── Team ─────────────────────────────────────────────────────────────────────
+  TEAM: {
+    /** Shared mascot used on every team sub-page */
+    MASCOT: "/team/team-mascot.webp",
+    STAR: "/team/team-star.webp",
+    HERO_ICON: "/team/team-hero-icon.webp",
+    ELLIPSE_UPPER: "/team/team-ellipse-upper.webp",
+    ELLIPSE_LOWER: "/team/team-ellipse-lower.webp",
+
+    ADMINISTRATIVE: {
+      CATHYREN_SACATANI: "/team/team-administrative-cathyren-sacatani.webp",
+      FRANCIS_CHUAUNSU: "/team/team-administrative-francis-jason-chuaunsu.webp",
+      IRAH_JOSE: "/team/team-administrative-irah-markeisha-jose.webp",
+      KURT_LOPEZ: "/team/team-administrative-kurt-lopez.webp",
+      MARYROSE_MARQUEZ: "/team/team-administrative-maryrose-marquez.webp",
+      RANDY_CARLO_LORENZO: "/team/team-administrative-randy-carlo-lorenzo.webp",
+      SHUNRENN_LOCAYLOCAY: "/team/team-administrative-shunrenn-locaylocay.webp",
+      SYRUZ_KEN_DOMINGO: "/team/team-administrative-syruz-ken-domingo.webp",
     },
 
-    // ─── Not Found ───────────────────────────────────────────────────────────────
-    NOT_FOUND: {
-        RESTING_SPARKY: "/not-found/not-found-resting-sparky.webp",
-        THINKING_SPARKY: "/not-found/not-found-thinking-sparky.webp",
+    CLOUD_SOLUTIONS: {
+      JAMES_TORZAR: "/team/team-cloud-solutions-james-gabriele-torzar.webp",
+      JUSTIN_SOLOMON: "/team/team-cloud-solutions-justin-royse-solomon.webp",
+      KYLA_AGAPITO: "/team/team-cloud-solutions-kyla-marie-agapito.webp",
+      RAPHAEL_FLORES:
+        "/team/team-cloud-solutions-raphael-johnathan-flores.webp",
     },
 
-    // ─── Home ─────────────────────────────────────────────────────────────────────
-    HOME: {
-        HERO: {
-            /** Sparky character — foreground layer */
-            LAYER_SPARKY: "/home/home-hero-layer-sparky.webp",
-            /** Full background gradient layer */
-            LAYER_BG: "/home/home-hero-layer-bg.webp",
-            /** Mid-ground layer B1 variant 1 */
-            LAYER_B1: "/home/home-hero-layer-b1.webp",
-            /** Mid-ground layer B1 variant 2 */
-            LAYER_B2: "/home/home-hero-layer-b2.webp",
-            /** Cloud/ambient layer */
-            LAYER_CLOUDS: "/home/home-hero-layer-clouds.webp",
-            /** Depth/environment layer D-E */
-            LAYER_DE: "/home/home-hero-layer-de.webp",
-            /** Far-background layer F1 */
-            LAYER_F1: "/home/home-hero-layer-f1.webp",
-            /** Far-background layer F2 */
-            LAYER_F2: "/home/home-hero-layer-f2.webp",
-            /** Far-background layer F3 */
-            LAYER_F3: "/home/home-hero-layer-f3.webp",
-            /** Far-background layer F4 */
-            LAYER_F4: "/home/home-hero-layer-f4.webp",
-            /** Far-background layer F5 */
-            LAYER_F5: "/home/home-hero-layer-f5.webp",
-        },
-        WHO: {
-            /** Sparky & Cirby mascot illustration */
-            SPARKY_CIRBY: "/home/home-who-sparky-cirby.webp",
-        },
-        /** Diamond bullet-point SVG used in list sections */
-        BULLET_DIAMOND: "/home/home-bullet-diamond.svg",
-
-        // Newly added assets
-        LOGOS_FRAMEV2_NEUTRAL1: "/home/home-logos-framev2-neutral1.webp",
-        SPARKY_LEADERBOARD1: "/home/home-sparky-leaderboard1.webp",
-        CIRBY_STICKER21: "/home/home-cirby-sticker21.webp",
-        SPARKY_THINKING1: "/home/home-sparky-thinking1.webp",
-        STARS1: "/home/home-stars1.webp",
-        STARS2: "/home/home-stars2.webp",
-        STARS3: "/home/home-stars3.webp",
-        STARS4: "/home/home-stars4.webp",
-        STARS5: "/home/home-stars5.webp",
-        STARS6: "/home/home-stars6.webp",
-        CIRBY_STICKER51: "/home/home-cirby-sticker-5-1.webp",
-        ELLIPSE203: "/home/home-ellipse203.webp",
-        ELLIPSE204: "/home/home-ellipse204.webp",
-        ELLIPSE205: "/home/home-ellipse208.webp",
-        ELLIPSE207: "/home/home-ellipse-207.webp",
-        ELLIPSE208: "/home/home-ellipse-208.webp",
-        SPACE_DUST_BLUE1: "/home/home-space-dust-blue1.webp",
-        SPACE_DUST_BLUE3: "/home/home-space-dust-blue3.webp",
-        HORIZON: "/home/home-horizon.webp",
-        SPIRAL: "/home/home-spiral.webp",
-        BLUE_IMG_PLACEHOLDER: "/home/home-blue-img-placeholder.webp",
-        GREEN_IMG_PLACEHOLDER: "/home/home-green-img-placeholder.webp",
-        RED_IMG_PLACEHOLDER: "/home/home-red-img-placeholder.webp",
-        YELLOW_IMG_PLACEHOLDER: "/home/home-yellow-img-placeholder.webp",
-        BLUE_CORNER: "/home/home-blue-corner.webp",
-        GREEN_CORNER: "/home/home-green-corner.webp",
-        RED_CORNER: "/home/home-red-corner.webp",
-        YELLOW_CORNER: "/home/home-yellow-corner.webp",
-        HANDSHAKE_ICON: "/home/handshake-icon.svg",
-        LIGHTBULB_ICON: "/home/lightbulb-icon.svg",
-        TEAM_ICON: "/home/team-icon.svg",
-        TECH_ICON: "/home/tech-icon.svg",
+    COMMUNITY_RELATIONS: {
+      ERICA_MALLARI: "/team/team-community-relations-erica-mae-mallari.webp",
+      GERICK_HERNANDEZ:
+        "/team/team-community-relations-gerick-eol-hernandez.webp",
+      MARIANNE_BAUTISTA:
+        "/team/team-community-relations-marianne-mae-bautista.webp",
+      RAILLEY_NIELES: "/team/team-community-relations-railley-nieles.webp",
+      RAYMUND_DIMACUTAC:
+        "/team/team-community-relations-raymund-jr-dimacutac.webp",
+      SOLOMON_NADONGA: "/team/team-community-relations-solomon-nadonga.webp",
+      TROY_LAZARO: "/team/team-community-relations-troy-lauren-lazaro.webp",
     },
 
-    // ─── About ────────────────────────────────────────────────────────────────────
-    ABOUT: {
-        BENEFITS: {
-            GOOGLE_ACCESS: "/about/about-benefits-google-access.webp",
-            HANDS_ON: "/about/about-benefits-hands-on.webp",
-            MENTORSHIP: "/about/about-benefits-mentorship.webp",
-            GROWTH_NETWORK: "/about/about-benefits-growth-network.webp",
-            LEADERSHIP: "/about/about-benefits-leadership.webp",
-            COMMUNITY: "/about/about-benefits-community.webp",
-            /** Left decorative SVG element in benefits section */
-            DECOR_LEFT: "/about/about-benefits-decor-left.svg",
-            /** Right decorative SVG element in benefits section */
-            DECOR_RIGHT: "/about/about-benefits-decor-right.webp",
-        },
-        WHO: {
-            MASCOT_1: "/about/about-who-mascot-1.webp",
-            MASCOT_2: "/about/about-who-mascot-2.webp",
-            SPIRAL: "/about/about-who-spiral.webp",
-            CARD_BULLET: "/about/about-who-card-bullet.webp",
-            DECOR_ELEMENT_1: "/about/about-who-decor-element-1.webp",
-            DECOR_ELEMENT_2: "/about/about-who-decor-element-2.webp",
-        },
-        HISTORY: {
-            THE_SPARK: "/about/history/the-spark.webp",
-            YEAR_TWO_TEST: "/about/history/year-two-test.webp",
-            YEAR_THREE_TURNAROUND: "/about/history/year-three-turnaround.webp",
-            THE_IMPACT: "/about/history/the-impact.webp",
-            BG_ORBITAL_RINGS: "/about/history/bg-orbital-rings.webp",
-            BG_GEAR: "/about/history/bg-gear.webp",
-        },
+    CREATIVES: {
+      ALECZA_BONIFACIO: "/team/team-creatives-alecza-patrice-bonifacio.webp",
+      AYEN_MEJORADA: "/team/team-creatives-ayen-mejorada.webp",
+      CYRUZ_ARCAN: "/team/team-creatives-cyruz-cordero-arcan.webp",
+      DANIELLA_MENDOZA: "/team/team-creatives-daniella-j-mendoza.webp",
+      EMANUEL_JABON: "/team/team-creatives-emanuel-jabon.webp",
+      HESED_SUNGA: "/team/team-creatives-hesed-sunga.webp",
+      MATTHEW_CUCIO: "/team/team-creatives-matthew-erivera-cucio.webp",
+      MICHAEL_MARQUEZ: "/team/team-creatives-michael-marquez.webp",
     },
 
-    // ─── ID card page ─────────────────────────────────────────────────────────────
-    ID: {
-        BG: "/id/id-bg.webp",
-        CIRBY: "/id/id-cirby.webp",
-        DECOR_LEFT: "/id/id-decor-left.webp",
-        DECOR_RIGHT: "/id/id-decor-right.webp",
-        CARD_NAME_FRAME: "/id/id-card-name-frame.webp",
-        CARD_SPARKY: "/id/id-card-sparky.webp",
-        CARD_TEXTURE: "/id/id-card-texture.webp",
-        GETID_RECT_BLUE: "/id/id-getid-rect-blue.webp",
-        GETID_RECT_GREEN: "/id/id-getid-rect-green.webp",
-        GETID_RECT_RED: "/id/id-getid-rect-red.webp",
-        GETID_RECT_YELLOW: "/id/id-getid-rect-yellow.webp",
-        SPIRAL_CENTER: "/id/id-spiral-center.webp",
-        SPIRAL_INNER: "/id/id-spiral-inner.webp",
-        SPIRAL_OUTER: "/id/id-spiral-outer.webp",
+    CYBERSECURITY: {
+      CLARISSE_SALAZAR: "/team/team-cybersecurity-clarisse-jem-salazar.webp",
+      EMMANUEL_MUTAS: "/team/team-cybersecurity-emmanuel-mutas.webp",
+      JOHN_DUATIN: "/team/team-cybersecurity-john-victor-claudio-duatin.webp",
+      SALVADOR_JAVIER: "/team/team-cybersecurity-salvador-vincent-javier.webp",
     },
 
-    // ─── Team ─────────────────────────────────────────────────────────────────────
-    TEAM: {
-        /** Shared mascot used on every team sub-page */
-        MASCOT: "/team/team-mascot.webp",
-        STAR: "/team/team-star.webp",
-        HERO_ICON: "/team/team-hero-icon.webp",
-        ELLIPSE_UPPER: "/team/team-ellipse-upper.webp",
-        ELLIPSE_LOWER: "/team/team-ellipse-lower.webp",
-
-        ADMINISTRATIVE: {
-            CATHYREN_SACATANI: "/team/team-administrative-cathyren-sacatani.webp",
-            FRANCIS_CHUAUNSU: "/team/team-administrative-francis-jason-chuaunsu.webp",
-            IRAH_JOSE: "/team/team-administrative-irah-markeisha-jose.webp",
-            KURT_LOPEZ: "/team/team-administrative-kurt-lopez.webp",
-            MARYROSE_MARQUEZ: "/team/team-administrative-maryrose-marquez.webp",
-            RANDY_CARLO_LORENZO: "/team/team-administrative-randy-carlo-lorenzo.webp",
-            SHUNRENN_LOCAYLOCAY: "/team/team-administrative-shunrenn-locaylocay.webp",
-            SYRUZ_KEN_DOMINGO: "/team/team-administrative-syruz-ken-domingo.webp",
-        },
-
-        CLOUD_SOLUTIONS: {
-            JAMES_TORZAR: "/team/team-cloud-solutions-james-gabriele-torzar.webp",
-            JUSTIN_SOLOMON: "/team/team-cloud-solutions-justin-royse-solomon.webp",
-            KYLA_AGAPITO: "/team/team-cloud-solutions-kyla-marie-agapito.webp",
-            RAPHAEL_FLORES: "/team/team-cloud-solutions-raphael-johnathan-flores.webp",
-        },
-
-        COMMUNITY_RELATIONS: {
-            ERICA_MALLARI: "/team/team-community-relations-erica-mae-mallari.webp",
-            GERICK_HERNANDEZ: "/team/team-community-relations-gerick-eol-hernandez.webp",
-            MARIANNE_BAUTISTA: "/team/team-community-relations-marianne-mae-bautista.webp",
-            RAILLEY_NIELES: "/team/team-community-relations-railley-nieles.webp",
-            RAYMUND_DIMACUTAC: "/team/team-community-relations-raymund-jr-dimacutac.webp",
-            SOLOMON_NADONGA: "/team/team-community-relations-solomon-nadonga.webp",
-            TROY_LAZARO: "/team/team-community-relations-troy-lauren-lazaro.webp",
-        },
-
-        CREATIVES: {
-            ALECZA_BONIFACIO: "/team/team-creatives-alecza-patrice-bonifacio.webp",
-            AYEN_MEJORADA: "/team/team-creatives-ayen-mejorada.webp",
-            CYRUZ_ARCAN: "/team/team-creatives-cyruz-cordero-arcan.webp",
-            DANIELLA_MENDOZA: "/team/team-creatives-daniella-j-mendoza.webp",
-            EMANUEL_JABON: "/team/team-creatives-emanuel-jabon.webp",
-            HESED_SUNGA: "/team/team-creatives-hesed-sunga.webp",
-            MATTHEW_CUCIO: "/team/team-creatives-matthew-erivera-cucio.webp",
-            MICHAEL_MARQUEZ: "/team/team-creatives-michael-marquez.webp",
-        },
-
-        CYBERSECURITY: {
-            CLARISSE_SALAZAR: "/team/team-cybersecurity-clarisse-jem-salazar.webp",
-            EMMANUEL_MUTAS: "/team/team-cybersecurity-emmanuel-mutas.webp",
-            JOHN_DUATIN: "/team/team-cybersecurity-john-victor-claudio-duatin.webp",
-            SALVADOR_JAVIER: "/team/team-cybersecurity-salvador-vincent-javier.webp",
-        },
-
-        DATA_ML: {
-            FRANCEN_RED: "/team/team-data-ml-francen-venisse-red.webp",
-            KIAN_FLORENDO: "/team/team-data-ml-kian-angelo-florendo.webp",
-            KURT_CRUZ: "/team/team-data-ml-kurt-anthony-cruz.webp",
-            RAM_MARMOL: "/team/team-data-ml-ram-luis-marmol.webp",
-            YHASMEN_NOGALES: "/team/team-data-ml-yhasmen-nogales.webp",
-        },
-
-        INTERNET_OF_THINGS: {
-            CARL_EROSA: "/team/team-internet-of-things-carl-melvin-a-erosa.webp",
-            DANIEL_COSARE: "/team/team-internet-of-things-daniel-rein-cosare.webp",
-            SHAN_ALLEN_RIVERA: "/team/team-internet-of-things-shan-allen-t-rivera.webp",
-        },
-
-        MARKETING: {
-            CHARLES_PACUAN: "/team/team-marketing-charles-matthew-pacuan.webp",
-            CLARISSA_DELA_CRUZ: "/team/team-marketing-clarissa-jasmine-dela-cruz.webp",
-            DAVID_GABRIEL: "/team/team-marketing-david-monterde-gabriel-jr.webp",
-            EMMANUEL_BASCO: "/team/team-marketing-emmanuel-andrei-basco.webp",
-            ETHANIEL_SALES: "/team/team-marketing-ethaniel-klymore-sales.webp",
-            GIANNE_DASCO: "/team/team-marketing-gianne-crizzle-dasco.webp",
-            JADE_NAIG: "/team/team-marketing-jade-shana-emit-naig.webp",
-            JOSHUA_TANAWAN: "/team/team-marketing-joshua-tanawan.webp",
-            MARKY_CORTEZO: "/team/team-marketing-marky-cortezo.webp",
-            VICTORIA_BALGOS: "/team/team-marketing-victoria-estilong-balgos.webp",
-            VIVIENE_RABANO: "/team/team-marketing-viviene-tricia-rabano.webp",
-        },
-
-        OPERATIONS: {
-            AIFAH_MADDIE: "/team/team-operations-aifah-mae-maddie.webp",
-            ALESSA_ESTARAS: "/team/team-operations-alessa-estaras.webp",
-            CALI_RANJO: "/team/team-operations-cali-dominic-ranjo.webp",
-            CHARLES_LALATA: "/team/team-operations-charles-lalata.webp",
-            DANIELLE_LABASA: "/team/team-operations-danielle-pauleen-labasa.webp",
-            ELIJA_CABADDU: "/team/team-operations-elija-cabaddu.webp",
-            EUGENE_GONZAGA: "/team/team-operations-eugene-gonzaga.webp",
-            HANS_NAPERI: "/team/team-operations-hans-ezekiel-naperi.webp",
-            JADE_LAZARO: "/team/team-operations-jade-micah-lazaro.webp",
-            JINRIKISHA_OMELA: "/team/team-operations-jinrikisha-omela.webp",
-            KISHEY_IBANEZ: "/team/team-operations-kishey-ibanez.webp",
-            MARIA_AGUIRRE: "/team/team-operations-maria-angeline-aguirre.webp",
-        },
-
-        PARTNERSHIP: {
-            ANGELINE_MAGDALUYO: "/team/team-partnership-angeline-magdaluyo.webp",
-            ARJAY_ROSEL: "/team/team-partnership-arjay-rosel.webp",
-            CARYL_ATIENZA: "/team/team-partnership-caryl-joy-atienza.webp",
-            ELIJAH_DE_GUZMAN: "/team/team-partnership-elijah-jonathan-de-guzman.webp",
-            EMMANUEL_OAING: "/team/team-partnership-emmanuel-oaing.webp",
-            HONEYLET_IGOT: "/team/team-partnership-honeylet-igot.webp",
-            JOEWEN_BRAGASIN: "/team/team-partnership-joewen-bragasin.webp",
-            MARK_NEYPES: "/team/team-partnership-mark-joseph-neypes.webp",
-            MARY_RELATOR: "/team/team-partnership-mary-ruth-relator.webp",
-        },
-
-        PROJECT_MANAGEMENT: {
-            ABIELLE_DIG: "/team/team-project-management-abielle-viktoria-dig.webp",
-            LANCE_VARGAS: "/team/team-project-management-lance-gabriel-p-vargas.webp",
-            PATRICIA_PANLILIO: "/team/team-project-management-patricia-anne-panlilio.webp",
-            TRISHIA_MEJIA: "/team/team-project-management-trishia-sai-mejia.webp",
-        },
-
-        TECH_EXECUTIVES: {
-            AUROLD_SADULLO: "/team/team-tech-executives-aurold-john-sadullo.webp",
-            CARLOS_DE_LA_TORRE: "/team/team-tech-executives-carlos-jerico-dela-torre.webp",
-            MHYCA_MONTEROLA: "/team/team-tech-executives-mhyca-monterola.webp",
-            NYZEL_CAYAT: "/team/team-tech-executives-nyzel-cayat.webp",
-            STRAWBERRY_BALASBAS: "/team/team-tech-executives-strawberry-pink-balasbas.webp",
-        },
-
-        UI_UX: {
-            JEDIA_SAGUN: "/team/team-ui-ux-jedia-nicole-sagun.webp",
-            JOYREL_BALADJAY: "/team/team-ui-ux-joyrel-baladjay.webp",
-            KACEY_SOLIS: "/team/team-ui-ux-kacey-michaela-solis.webp",
-            KASSANDRA_BALONA: "/team/team-ui-ux-kassandra-rychelle-balona.webp",
-        },
-
-        WEB_DEVELOPMENT: {
-            DANIELLA_SIMARA: "/team/team-web-development-daniella-simara.webp",
-            ERWIN_DAGUINOTAS: "/team/team-web-development-erwin-daguinotas.webp",
-            GERALD_BERONGOY: "/team/team-web-development-gerald-berongoy.webp",
-            RHANDIE_SALES: "/team/team-web-development-rhandie-sales-jr.webp",
-        },
+    DATA_ML: {
+      FRANCEN_RED: "/team/team-data-ml-francen-venisse-red.webp",
+      KIAN_FLORENDO: "/team/team-data-ml-kian-angelo-florendo.webp",
+      KURT_CRUZ: "/team/team-data-ml-kurt-anthony-cruz.webp",
+      RAM_MARMOL: "/team/team-data-ml-ram-luis-marmol.webp",
+      YHASMEN_NOGALES: "/team/team-data-ml-yhasmen-nogales.webp",
     },
 
-    // ─── Partners ─────────────────────────────────────────────────────────────────
-    PARTNERS: {
-        ACADARENA: "/partners/partner-acadarena-white.webp",
-        DATACAMP: "/partners/partner-datacamp-new.webp",
-        YSPACE: "/partners/partner-yspace.webp",
-        POCKY: "/partners/partner-pocky.webp",
-        PLDT: "/partners/partner-pldt.webp",
-        GLOBE: "/partners/partner-globe-white.webp",
-        MOUNTAIN_DEW: "/partners/partner-mountain-dew.webp",
-        WHITECLOAK: "/partners/partner-whitecloak.webp",
-        FLOWERSTORE: "/partners/partner-flowerstore.webp",
-        POTICO: "/partners/partner-potico.webp",
-        V0: "/partners/partner-v0.webp",
-        HEY_ROOMIE: "/partners/partner-hey-roomie.webp",
-        HOMEROOM: "/partners/partner-homeroom.webp",
-        GEN_AI_PH: "/partners/partner-gen-ai-ph.webp",
-        DEVCON: "/partners/partner-devcon.webp",
-        /** Aurora/glow SVG overlay matching Figma background */
-        BG_AURORA_OVERLAY: "/partners/bg-aurora-overlay.svg",
-        /** Cirby sticker mascot shown in the CTA card */
-        CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
-        /** Figma decorative floating assets */
-        DECOR_ASSET_1: "/partners/decor-asset-1.webp",
-        DECOR_ASSET_2: "/partners/decor-asset-2.webp",
-        DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
-        DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
+    INTERNET_OF_THINGS: {
+      CARL_EROSA: "/team/team-internet-of-things-carl-melvin-a-erosa.webp",
+      DANIEL_COSARE: "/team/team-internet-of-things-daniel-rein-cosare.webp",
+      SHAN_ALLEN_RIVERA:
+        "/team/team-internet-of-things-shan-allen-t-rivera.webp",
     },
 
-    // ─── Auth ─────────────────────────────────────────────────────────────────────
-    AUTH: {
-        SPARKY: "/auth/auth-sparky.webp",
-        AVATAR_DEFAULT: "/auth/auth-avatar-default.webp",
-        SIGNIN_LOGO: "/auth/auth-signin-logo.webp",
-        SIGNIN_HORIZON: "/auth/auth-signin-horizon.webp",
-        RAINBOW_STREAK: "/auth/auth-rainbow-streak.webp",
-    },
-    EVENTS: {
-        CIRBY_ICON: "/pages/events/cirby-event-icon.webp",
-    },
-    MEMBER_SHOWCASE: {
-        ACHIEVEMENTS: {
-            CICADA: "/member-showcase/member-showcase-cicada.webp",
-            OMAGAD: "/member-showcase/member-showcase-omagad.webp",
-            SPARKPLUG: "/member-showcase/member-showcase-sparkplug.webp",
-        },
-        BACKGROUND: {
-            ORANGE_COLOR: "/member-showcase/member-showcase-orange-color.webp",
-            GREEN_COLOR: "/member-showcase/member-showcase-green-color.webp",
-            STARS_1: "/member-showcase/member-showcase-stars-1.webp",
-            STARS_2: "/member-showcase/member-showcase-stars-2.webp",
-            GDG_SHADOW: "/member-showcase/member-showcase-gdg.webp",
-            VECTOR_1296: "/member-showcase/member-showcase-vector-1296.webp",
-            VECTOR_1297: "/member-showcase/member-showcase-vector-1297.webp",
-            VECTOR_1298: "/member-showcase/member-showcase-vector-1298.webp",
-        },
-        SUBMIT_STORY: {
-            SPARKY_CIRBY: "/member-showcase/member-showcase-sparky-and-cirby-1-1.webp",
-        },
-        ICONS: {
-            LINK: "/member-showcase/member-showcase-link.svg",
-            SPOTLIGHT_PLACEHOLDER: "/member-showcase/member-showcase-spotlight-placeholder.webp",
-            SPARKY_LEADERBOARD: "/member-showcase/member-showcase-sparky-leaderboard-1.webp",
-        },
-    },
-    PROFILE: {
-        AVATAR_RING: "/profile-avatar-ring.webp",
-        DEFAULT_AVATAR: "/profile-default-avatar.webp",
-        DEFAULT_BADGE: "/profile-badge-default.webp",
-    },
-    PRODUCTS: {
-        STUDY_JAM_PLACEHOLDER: "/products/iot_study_jam_image.webp",
-    },
-    SPARKMATES: {
-        HORIZON: "/sparkmates/sparkmates-horizon.webp",
-        SPARKY: "/sparkmates/sparkmates-sparky.webp",
-        SETTINGS_MOBILE_HERO: "/sparkmates/sparkmates-settings-mobile.webp",
-        SETTINGS_ELEMENT_1: "/sparkmates/sparkmates-settings-element1.webp",
-        SETTINGS_ELEMENT_2: "/sparkmates/sparkmates-settings-element2.webp",
-    },
-    SPARKY_POINTS: {
-        SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
-        CIRBY_DISPLAY: "/sparky-points/sparkypoints-cirby-display.webp",
-        CIRBY_CONFIRM: "/sparky-points/sparkypoints-cirby-confirm.webp",
-        CIRBY_DENIED: "/sparky-points/sparkypoints-cirby-denied.webp",
-        ELLIPSES_BIG: "/sparky-points/sparkypoints-ellipses-big.webp",
-        ELLIPSES_SMALL: "/sparky-points/sparkypoints-ellipses-small.webp",
-        SPARKS_BIG: "/sparky-points/sparkypoints-sparks-big.webp",
-        SPARKS_SMALL: "/sparky-points/sparkypoints-sparks-small.webp",
+    MARKETING: {
+      CHARLES_PACUAN: "/team/team-marketing-charles-matthew-pacuan.webp",
+      CLARISSA_DELA_CRUZ:
+        "/team/team-marketing-clarissa-jasmine-dela-cruz.webp",
+      DAVID_GABRIEL: "/team/team-marketing-david-monterde-gabriel-jr.webp",
+      EMMANUEL_BASCO: "/team/team-marketing-emmanuel-andrei-basco.webp",
+      ETHANIEL_SALES: "/team/team-marketing-ethaniel-klymore-sales.webp",
+      GIANNE_DASCO: "/team/team-marketing-gianne-crizzle-dasco.webp",
+      JADE_NAIG: "/team/team-marketing-jade-shana-emit-naig.webp",
+      JOSHUA_TANAWAN: "/team/team-marketing-joshua-tanawan.webp",
+      MARKY_CORTEZO: "/team/team-marketing-marky-cortezo.webp",
+      VICTORIA_BALGOS: "/team/team-marketing-victoria-estilong-balgos.webp",
+      VIVIENE_RABANO: "/team/team-marketing-viviene-tricia-rabano.webp",
     },
 
-    // ─── Leaderboard ──────────────────────────────────────────────────────────────
-    LEADERBOARD: {
-        STARS_BG: "/leaderboard/leaderboard-stars-bg.webp",
-        HEADLINE_GRADIENT: "/leaderboard/leaderboard-headline-gradient.webp",
-        HEADLINE_GRADIENT_CONTRIBUTORS: "/leaderboard/leaderboard-headline-gradient-contributors.webp",
-        SPARKY_MASCOT: "/leaderboard/leaderboard-sparky-mascot.webp",
-        GOLD_TEXTURE: "/leaderboard/leaderboard-gold-texture.webp",
-        FOOTER_MAP: "/leaderboard/leaderboard-footer-map.webp",
-        AVATAR_GOLD: "/leaderboard/leaderboard-avatar-gold.webp",
-        AVATAR_SILVER: "/leaderboard/leaderboard-avatar-silver.webp",
-        AVATAR_BRONZE: "/leaderboard/leaderboard-avatar-bronze.webp",
-        AVATAR_PLACEHOLDER: "/leaderboard/leaderboard-avatar-placeholder.webp",
-        ARROW_LEFT: "/leaderboard/leaderboard-arrow-left.svg",
-        BLOB_BLUE_TOPLEFT: "/leaderboard/leaderboard-blob-blue-topleft.svg",
-        BLOB_GREEN_LEFT: "/leaderboard/leaderboard-blob-green-left.svg",
-        BLOB_BLUE_BOTTOMLEFT: "/leaderboard/leaderboard-blob-blue-bottomleft.svg",
-        BLOB_BLUE_GROUP_465: "/leaderboard/leaderboard-blob-blue-group-465.svg",
-        BLOB_BLUE_GROUP_466: "/leaderboard/leaderboard-blob-blue-group-466.svg",
-        BLOB_YELLOW_RIGHT: "/leaderboard/leaderboard-blob-yellow-right.svg",
-        BLOB_BLUE_RIGHT: "/leaderboard/leaderboard-blob-blue-right.svg",
-        BLOB_RED_BOTTOMRIGHT: "/leaderboard/leaderboard-blob-red-bottomright.svg",
-        ELEMENT_BOTTOMLEFT: "/leaderboard/leaderboard-element-bottomleft.svg",
-        DIAL_GROUP_248: "/leaderboard/leaderboard-dial-group-248.svg",
+    OPERATIONS: {
+      AIFAH_MADDIE: "/team/team-operations-aifah-mae-maddie.webp",
+      ALESSA_ESTARAS: "/team/team-operations-alessa-estaras.webp",
+      CALI_RANJO: "/team/team-operations-cali-dominic-ranjo.webp",
+      CHARLES_LALATA: "/team/team-operations-charles-lalata.webp",
+      DANIELLE_LABASA: "/team/team-operations-danielle-pauleen-labasa.webp",
+      ELIJA_CABADDU: "/team/team-operations-elija-cabaddu.webp",
+      EUGENE_GONZAGA: "/team/team-operations-eugene-gonzaga.webp",
+      HANS_NAPERI: "/team/team-operations-hans-ezekiel-naperi.webp",
+      JADE_LAZARO: "/team/team-operations-jade-micah-lazaro.webp",
+      JINRIKISHA_OMELA: "/team/team-operations-jinrikisha-omela.webp",
+      KISHEY_IBANEZ: "/team/team-operations-kishey-ibanez.webp",
+      MARIA_AGUIRRE: "/team/team-operations-maria-angeline-aguirre.webp",
     },
 
+    PARTNERSHIP: {
+      ANGELINE_MAGDALUYO: "/team/team-partnership-angeline-magdaluyo.webp",
+      ARJAY_ROSEL: "/team/team-partnership-arjay-rosel.webp",
+      CARYL_ATIENZA: "/team/team-partnership-caryl-joy-atienza.webp",
+      ELIJAH_DE_GUZMAN: "/team/team-partnership-elijah-jonathan-de-guzman.webp",
+      EMMANUEL_OAING: "/team/team-partnership-emmanuel-oaing.webp",
+      HONEYLET_IGOT: "/team/team-partnership-honeylet-igot.webp",
+      JOEWEN_BRAGASIN: "/team/team-partnership-joewen-bragasin.webp",
+      MARK_NEYPES: "/team/team-partnership-mark-joseph-neypes.webp",
+      MARY_RELATOR: "/team/team-partnership-mary-ruth-relator.webp",
+    },
 
-    
-    // ─── PLACEHOLDERS ──────────────────────────────────────────────────────────────
-    PLACEHOLDERS: {
-        DEFAULT : "/placeholders/default.webp",
-    }
+    PROJECT_MANAGEMENT: {
+      ABIELLE_DIG: "/team/team-project-management-abielle-viktoria-dig.webp",
+      LANCE_VARGAS: "/team/team-project-management-lance-gabriel-p-vargas.webp",
+      PATRICIA_PANLILIO:
+        "/team/team-project-management-patricia-anne-panlilio.webp",
+      TRISHIA_MEJIA: "/team/team-project-management-trishia-sai-mejia.webp",
+    },
+
+    TECH_EXECUTIVES: {
+      AUROLD_SADULLO: "/team/team-tech-executives-aurold-john-sadullo.webp",
+      CARLOS_DE_LA_TORRE:
+        "/team/team-tech-executives-carlos-jerico-dela-torre.webp",
+      MHYCA_MONTEROLA: "/team/team-tech-executives-mhyca-monterola.webp",
+      NYZEL_CAYAT: "/team/team-tech-executives-nyzel-cayat.webp",
+      STRAWBERRY_BALASBAS:
+        "/team/team-tech-executives-strawberry-pink-balasbas.webp",
+    },
+
+    UI_UX: {
+      JEDIA_SAGUN: "/team/team-ui-ux-jedia-nicole-sagun.webp",
+      JOYREL_BALADJAY: "/team/team-ui-ux-joyrel-baladjay.webp",
+      KACEY_SOLIS: "/team/team-ui-ux-kacey-michaela-solis.webp",
+      KASSANDRA_BALONA: "/team/team-ui-ux-kassandra-rychelle-balona.webp",
+    },
+
+    WEB_DEVELOPMENT: {
+      DANIELLA_SIMARA: "/team/team-web-development-daniella-simara.webp",
+      ERWIN_DAGUINOTAS: "/team/team-web-development-erwin-daguinotas.webp",
+      GERALD_BERONGOY: "/team/team-web-development-gerald-berongoy.webp",
+      RHANDIE_SALES: "/team/team-web-development-rhandie-sales-jr.webp",
+    },
+  },
+
+  // ─── Partners ─────────────────────────────────────────────────────────────────
+  PARTNERS: {
+    ACADARENA: "/partners/partner-acadarena-white.webp",
+    DATACAMP: "/partners/partner-datacamp-new.webp",
+    YSPACE: "/partners/partner-yspace.webp",
+    POCKY: "/partners/partner-pocky.webp",
+    PLDT: "/partners/partner-pldt.webp",
+    GLOBE: "/partners/partner-globe-white.webp",
+    MOUNTAIN_DEW: "/partners/partner-mountain-dew.webp",
+    WHITECLOAK: "/partners/partner-whitecloak.webp",
+    FLOWERSTORE: "/partners/partner-flowerstore.webp",
+    POTICO: "/partners/partner-potico.webp",
+    V0: "/partners/partner-v0.webp",
+    HEY_ROOMIE: "/partners/partner-hey-roomie.webp",
+    HOMEROOM: "/partners/partner-homeroom.webp",
+    GEN_AI_PH: "/partners/partner-gen-ai-ph.webp",
+    DEVCON: "/partners/partner-devcon.webp",
+    SHOPEE: "/partners/partner-shopee.webp",
+    CLOUD_9: "/partners/partner-cloud9.webp",
+    OPSWERKS: "/partners/partner-opswerks.webp",
+    NEN_DIGITAL: "/partners/partner-nen-digital.webp",
+    TBIDO: "/partners/partner-tbido.webp",
+    HOME_CREDIT: "/partners/partner-home-credit.webp",
+    NOTION: "/partners/partner-notion.webp",
+    KYSPACE: "/partners/partner-kyspaces.webp",
+    MOTIVO_RED: "/partners/partner-motivo-red.webp",
+    /** Aurora/glow SVG overlay matching Figma background */
+    BG_AURORA_OVERLAY: "/partners/bg-aurora-overlay.svg",
+    /** Cirby sticker mascot shown in the CTA card */
+    CIRBY_STICKER: "/partners/partner-cirby-sticker.webp",
+    /** Figma decorative floating assets */
+    DECOR_ASSET_1: "/partners/decor-asset-1.webp",
+    DECOR_ASSET_2: "/partners/decor-asset-2.webp",
+    DECOR_ELEMENT_3: "/partners/decor-element-3.svg",
+    DECOR_ELEMENT_4: "/partners/decor-element-4.svg",
+  },
+
+  // ─── Auth ─────────────────────────────────────────────────────────────────────
+  AUTH: {
+    SPARKY: "/auth/auth-sparky.webp",
+    AVATAR_DEFAULT: "/auth/auth-avatar-default.webp",
+    SIGNIN_LOGO: "/auth/auth-signin-logo.webp",
+    SIGNIN_HORIZON: "/auth/auth-signin-horizon.webp",
+    RAINBOW_STREAK: "/auth/auth-rainbow-streak.webp",
+  },
+  EVENTS: {
+    CIRBY_ICON: "/pages/events/cirby-event-icon.webp",
+  },
+  MEMBER_SHOWCASE: {
+    ACHIEVEMENTS: {
+      CICADA: "/member-showcase/member-showcase-cicada.webp",
+      OMAGAD: "/member-showcase/member-showcase-omagad.webp",
+      SPARKPLUG: "/member-showcase/member-showcase-sparkplug.webp",
+    },
+    BACKGROUND: {
+      ORANGE_SPOTLIGHT: "/member-showcase/member-showcase-orange-spotlight.webp",
+      GREEN_SPOTLIGHT: "/member-showcase/member-showcase-green-spotlight.webp",
+      STARS_1: "/member-showcase/member-showcase-stars-1.webp",
+      STARS_2: "/member-showcase/member-showcase-stars-2.webp",
+      GDG_SHADOW: "/member-showcase/member-showcase-gdg.webp",
+      VECTOR_1296: "/member-showcase/member-showcase-vector-1296.webp",
+      VECTOR_1297: "/member-showcase/member-showcase-vector-1297.webp",
+      VECTOR_1298: "/member-showcase/member-showcase-vector-1298.webp",
+    },
+    SUBMIT_STORY: {
+      SPARKY_CIRBY:
+        "/member-showcase/member-showcase-sparky-and-cirby-1-1.webp",
+    },
+    ICONS: {
+      LINK: "/member-showcase/member-showcase-link.svg",
+      SPOTLIGHT_PLACEHOLDER:
+        "/member-showcase/member-showcase-spotlight-placeholder.webp",
+      SPARKY_LEADERBOARD:
+        "/member-showcase/member-showcase-sparky-leaderboard-1.webp",
+    },
+  },
+  PROFILE: {
+    AVATAR_RING: "/profile-avatar-ring.webp",
+    DEFAULT_AVATAR: "/profile-default-avatar.webp",
+    DEFAULT_BADGE: "/profile-badge-default.webp",
+  },
+  PRODUCTS: {
+    STUDY_JAM_PLACEHOLDER: "/products/iot_study_jam_image.webp",
+  },
+  SPARKMATES: {
+    HORIZON: "/sparkmates/sparkmates-horizon.webp",
+    SPARKY: "/sparkmates/sparkmates-sparky.webp",
+    SETTINGS_MOBILE_HERO: "/sparkmates/sparkmates-settings-mobile.webp",
+    SETTINGS_ELEMENT_1: "/sparkmates/sparkmates-settings-element1.webp",
+    SETTINGS_ELEMENT_2: "/sparkmates/sparkmates-settings-element2.webp",
+  },
+  SPARKY_POINTS: {
+    SPARKY_FACE: "/sparky-points/sparkypoints-sparky-face.webp",
+    CIRBY_DISPLAY: "/sparky-points/sparkypoints-cirby-display.webp",
+    CIRBY_CONFIRM: "/sparky-points/sparkypoints-cirby-confirm.webp",
+    CIRBY_DENIED: "/sparky-points/sparkypoints-cirby-denied.webp",
+    ELLIPSES_BIG: "/sparky-points/sparkypoints-ellipses-big.webp",
+    ELLIPSES_SMALL: "/sparky-points/sparkypoints-ellipses-small.webp",
+    SPARKS_BIG: "/sparky-points/sparkypoints-sparks-big.webp",
+    SPARKS_SMALL: "/sparky-points/sparkypoints-sparks-small.webp",
+  },
+
+  // ─── Leaderboard ──────────────────────────────────────────────────────────────
+  LEADERBOARD: {
+    STARS_BG: "/leaderboard/leaderboard-stars-bg.webp",
+    HEADLINE_GRADIENT: "/leaderboard/leaderboard-headline-gradient.webp",
+    HEADLINE_GRADIENT_CONTRIBUTORS:
+      "/leaderboard/leaderboard-headline-gradient-contributors.webp",
+    SPARKY_MASCOT: "/leaderboard/leaderboard-sparky-mascot.webp",
+    GOLD_TEXTURE: "/leaderboard/leaderboard-gold-texture.webp",
+    FOOTER_MAP: "/leaderboard/leaderboard-footer-map.webp",
+    AVATAR_GOLD: "/leaderboard/leaderboard-avatar-gold.webp",
+    AVATAR_SILVER: "/leaderboard/leaderboard-avatar-silver.webp",
+    AVATAR_BRONZE: "/leaderboard/leaderboard-avatar-bronze.webp",
+    AVATAR_PLACEHOLDER: "/leaderboard/leaderboard-avatar-placeholder.webp",
+    ARROW_LEFT: "/leaderboard/leaderboard-arrow-left.svg",
+    BLOB_BLUE_TOPLEFT: "/leaderboard/leaderboard-blob-blue-topleft.svg",
+    BLOB_GREEN_LEFT: "/leaderboard/leaderboard-blob-green-left.svg",
+    BLOB_BLUE_BOTTOMLEFT: "/leaderboard/leaderboard-blob-blue-bottomleft.svg",
+    BLOB_BLUE_GROUP_465: "/leaderboard/leaderboard-blob-blue-group-465.svg",
+    BLOB_BLUE_GROUP_466: "/leaderboard/leaderboard-blob-blue-group-466.svg",
+    BLOB_YELLOW_RIGHT: "/leaderboard/leaderboard-blob-yellow-right.svg",
+    BLOB_BLUE_RIGHT: "/leaderboard/leaderboard-blob-blue-right.svg",
+    BLOB_RED_BOTTOMRIGHT: "/leaderboard/leaderboard-blob-red-bottomright.svg",
+    ELEMENT_BOTTOMLEFT: "/leaderboard/leaderboard-element-bottomleft.svg",
+    DIAL_GROUP_248: "/leaderboard/leaderboard-dial-group-248.svg",
+  },
+
+  // ─── PLACEHOLDERS ──────────────────────────────────────────────────────────────
+  PLACEHOLDERS: {
+    DEFAULT: "/placeholders/default.webp",
+  },
 } as const;
 
 /** Convenience type for any value in the ASSETS tree */
