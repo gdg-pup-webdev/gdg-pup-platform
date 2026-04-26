@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { X, Loader2, AlertTriangle, Calendar, User, Info, Edit2, Trash2, Image as ImageIcon, Type, FileText, Search, MapPin, Upload, CheckCircle2, Globe } from "lucide-react";
+import { X, Loader2, Calendar, User, Edit2, Trash2, Search, MapPin, CheckCircle2, Globe } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Article, ArticleInsert, ArticleUpdate } from "../types";
 import { useListEvents } from "@/features/events/hooks/useListEvents";
 import { useUploadFile } from "@/features/file-system/hooks/useUploadFile";
-import Image from "next/image";
-import { contract } from "@packages/nexus-api-contracts";
 import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
@@ -176,18 +174,6 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
   const [isEventSearchOpen, setIsEventSearchOpen] = useState(false);
   const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setThumbnail(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const items = e.clipboardData.items;
     
@@ -196,9 +182,7 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
         const file = items[i].getAsFile();
         if (!file) continue;
 
-        // Prevent default paste if it's an image
         e.preventDefault();
-
         const fileName = `pasted-image-${Date.now()}.png`;
         
         try {
@@ -216,7 +200,6 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
             const imageUrl = (res.body as any).data.previewUrl;
             const markdownImage = `![${fileName}](${imageUrl})`;
             
-            // Insert at cursor position
             const textarea = contentRef.current;
             if (textarea) {
               const start = textarea.selectionStart;
@@ -228,7 +211,6 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
               const newContent = `${before}${markdownImage}${after}`;
               setFormData({ ...formData, content: newContent });
               
-              // We need to set the cursor position after the state update
               setTimeout(() => {
                 if (textarea) {
                   textarea.focus();
@@ -261,8 +243,8 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
         published_at: initialData.published_at || new Date().toISOString(),
       });
       setPreviewUrl(initialData.image_url || null);
-      setSelectedEventTitle("Currently selected event"); 
-      setSelectedAuthorName("Currently selected author");
+      setSelectedEventTitle(initialData.event_id ? "Currently selected event" : ""); 
+      setSelectedAuthorName(initialData.author_id ? "Currently selected author" : "");
     } else {
       setFormData({
         title: "",
@@ -308,7 +290,7 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
           </div>
 
           <div className="sm:col-span-1">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Event</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500 text-[10px]">Event (Optional)</label>
             <div className="flex gap-2">
               <div className="flex-1 truncate rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600">
                 {selectedEventTitle || (formData.event_id ? `ID: ${formData.event_id.slice(0, 8)}...` : "None selected")}
@@ -324,7 +306,7 @@ export function ArticleFormModal({ isOpen, onClose, onSubmit, initialData, isSub
           </div>
 
           <div className="sm:col-span-1">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Author</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500 text-[10px]">Author (Optional)</label>
             <div className="flex gap-2">
               <div className="flex-1 truncate rounded-sm border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm text-gray-600">
                 {selectedAuthorName || (formData.author_id ? `ID: ${formData.author_id.slice(0, 8)}...` : "None selected")}
@@ -529,10 +511,9 @@ export function ArticleDetailsModal({ isOpen, onClose, article, onEdit, onDelete
             )}
             <div className="flex items-center gap-1.5">
               <User size={14} className="text-teal-600" />
-              Author ID: {article.author_id}
+              Author ID: {article.author_id || "None"}
             </div>
-          <div>Article ID: {article.id}</div>
-
+            <div>Article ID: {article.id}</div>
           </div>
           <div className="prose prose-sm max-w-none rounded-sm border border-gray-100 bg-gray-50 p-6">
              <ReactMarkdown remarkPlugins={[remarkGfm]}>
