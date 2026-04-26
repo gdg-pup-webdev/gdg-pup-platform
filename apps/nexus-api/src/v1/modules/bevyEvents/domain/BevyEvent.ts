@@ -2,7 +2,7 @@ export type BevyEventProps = {
   id: string;
   title: string;
   short_description?: string;
-  bevy_url?: string;
+  bevy_url: string;
   start_date: string;
   end_date: string;
   location?: string;

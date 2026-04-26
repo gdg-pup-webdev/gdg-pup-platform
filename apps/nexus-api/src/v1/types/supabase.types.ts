@@ -945,38 +945,6 @@ export type Database = {
         }
         Relationships: []
       }
-      sparkmates_metric_events: {
-        Row: {
-          created_at: string
-          gdg_id: string
-          id: string
-          source: Database["public"]["Enums"]["sparkmates_source"]
-          user_agent: string | null
-        }
-        Insert: {
-          created_at?: string
-          gdg_id: string
-          id?: string
-          source?: Database["public"]["Enums"]["sparkmates_source"]
-          user_agent?: string | null
-        }
-        Update: {
-          created_at?: string
-          gdg_id?: string
-          id?: string
-          source?: Database["public"]["Enums"]["sparkmates_source"]
-          user_agent?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sparkmates_metric_events_gdg_id_fkey"
-            columns: ["gdg_id"]
-            isOneToOne: false
-            referencedRelation: "gdg_members"
-            referencedColumns: ["gdg_id"]
-          },
-        ]
-      }
       survey: {
         Row: {
           attendance_code: string | null
@@ -1287,39 +1255,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_project: {
-        Row: {
-          created_at: string
-          demo_url: string | null
-          description: string | null
-          id: string
-          repo_url: string | null
-          tech_stack: string | null
-          title: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          demo_url?: string | null
-          description?: string | null
-          id?: string
-          repo_url?: string | null
-          tech_stack?: string | null
-          title: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          demo_url?: string | null
-          description?: string | null
-          id?: string
-          repo_url?: string | null
-          tech_stack?: string | null
-          title?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       user_role: {
         Row: {
           description: string
@@ -1539,22 +1474,6 @@ export type Database = {
           year_level?: never
         }
         Relationships: []
-      }
-      sparkmates_scan_counts: {
-        Row: {
-          gdg_id: string | null
-          scan_count: number | null
-          source: Database["public"]["Enums"]["sparkmates_source"] | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sparkmates_metric_events_gdg_id_fkey"
-            columns: ["gdg_id"]
-            isOneToOne: false
-            referencedRelation: "gdg_members"
-            referencedColumns: ["gdg_id"]
-          },
-        ]
       }
     }
     Functions: {

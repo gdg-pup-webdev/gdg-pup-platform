@@ -1,9 +1,10 @@
 import { supabase } from "@/v1/lib/supabase";
 import { IBevyEventRepository } from "../domain/IBevyEventRepository";
 import { BevyEvent } from "../domain/BevyEvent";
-import { Tables } from "@/v1/types/supabase.types";
+import { Tables, TablesInsert } from "@/v1/types/supabase.types";
 
 type ScrapedGdgEventRow = Tables<"scraped_gdg_events">;
+type ScrapedGdgEventInsert = TablesInsert<"scraped_gdg_events">;
 
 export class SupabaseBevyEventRepository implements IBevyEventRepository {
   private readonly tableName = "scraped_gdg_events";
@@ -13,7 +14,7 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
       id: row.gdg_id.toString(),
       title: row.title,
       short_description: row.description_short ?? undefined,
-      bevy_url: row.url ?? undefined,
+      bevy_url: row.url,
       start_date: row.start_date,
       end_date: row.end_date,
       location: row.location ?? undefined,
@@ -68,7 +69,7 @@ export class SupabaseBevyEventRepository implements IBevyEventRepository {
   }
 
   async upsertMany(events: BevyEvent[]): Promise<void> {
-    const rows = events.map(event => {
+    const rows: ScrapedGdgEventInsert[] = events.map(event => {
       const props = event.props;
       return {
         gdg_id: parseInt(props.id),
