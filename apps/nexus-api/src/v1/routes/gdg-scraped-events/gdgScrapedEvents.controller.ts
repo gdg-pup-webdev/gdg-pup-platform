@@ -57,4 +57,19 @@ export class GdgScrapedEventsHttpController {
       });
     },
   );
+
+  sync: RequestHandler = createExpressController(
+    contract.api.v1.gdg_scraped_events.sync.POST,
+    async ({ output }) => {
+      const syncedCount = await this.bevyEventsModuleController.sync();
+
+      return output(200, {
+        status: "success",
+        message: "Events synced successfully",
+        data: {
+          syncedCount,
+        },
+      });
+    },
+  );
 }
