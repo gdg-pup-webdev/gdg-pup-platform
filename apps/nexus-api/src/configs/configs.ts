@@ -12,6 +12,8 @@ const toFileStorageProvider = (
   return "gcs";
 };
 
+const useProdDb = process.env.USE_PRODUCTION_DATABASE === "true" || false;
+
 export const configs = {
   port: process.env.PORT || 8000,
   devMode: process.env.DEV_MODE === "true",
@@ -20,6 +22,8 @@ export const configs = {
     (process.env.DEV_MODE === "true" ? "http://localhost:3000" : undefined),
   supabase: {
     storageBucket: process.env.SUPABASE_STORAGE_BUCKET || "public",
+    supabaseUrl: useProdDb ? process.env.PROD_SUPABASE_URL : process.env.SUPABASE_URL,
+    supabaseKey: useProdDb ? process.env.PROD_SUPABASE_SECRET_KEY : process.env.SUPABASE_SECRET_KEY,
   },
   fileStorage: {
     mainProvider: toFileStorageProvider(process.env.FILE_STORAGE_MAIN_PROVIDER),
