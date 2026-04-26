@@ -1,12 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Stack, Input } from "@packages/spark-ui";
 import { useAuthContext } from "../store/useAuthStore";
 import Link from "next/link";
 import { Mail, Key, Eye, EyeOff } from "lucide-react";
-
-const gradientHoverUnderlineStyles = "relative inline-flex items-center after:absolute after:left-0 after:-bottom-[3px] after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-gradient-to-r after:from-[#FB2C36] after:via-[#F0B100] after:to-[#2B7FFF] after:transition-transform after:duration-300 hover:after:scale-x-100 [@media(hover:none)]:after:scale-x-100";
 
 export const LoginForm = () => {
   const { status, login, error } = useAuthContext();
@@ -20,74 +17,75 @@ export const LoginForm = () => {
     try {
       await login(email, password);
     } catch (err) {
+      // Error is handled by useAuthContext
     }
   };
 
-  // deriving states 
   const isPending = status === "checking" || status === "loggingin";
 
   return (
-    <Stack gap="lg" className="w-full">
+    <div className="flex flex-col gap-8 w-full">
       {error && (
-        <div className="bg-red-50/10 border border-red-500/50 rounded-lg p-4 mb-4 text-[14px] text-red-200">
+        <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 text-sm text-red-600 dark:text-red-400">
           {error.message}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-[24px]">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         {/* Email Field */}
-        <div className="flex flex-col gap-[8px]">
-          <label htmlFor="email" className="text-[18px] font-bold text-white">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             Email
           </label>
-          <StyledInputContainer>
-            <Input
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Mail size={18} className="text-zinc-400" />
+            </div>
+            <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              containerClassName={inputBaseStyles}
-              className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={<Mail size={24} className="text-white shrink-0" />}
-              placeholder="e.g., sparkylorenzo@gmail.com"
+              className="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="name@example.com"
             />
-          </StyledInputContainer>
+          </div>
         </div>
 
         {/* Password Field */}
-        <div className="flex flex-col gap-[8px]">
-          <label
-            htmlFor="password"
-            className="text-[18px] font-bold text-white"
-          >
-            Password
-          </label>
-          <StyledInputContainer>
-            <Input
+        <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center">
+            <label htmlFor="password" className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              Password
+            </label>
+            <Link
+              href="/forgot-password"
+              className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Key size={18} className="text-zinc-400" />
+            </div>
+            <input
               id="password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              containerClassName={inputBaseStyles}
-              className="text-[18px] text-white placeholder:text-[#737373]"
-              leftIcon={<Key size={24} className="text-white shrink-0" />}
-              rightIcon={
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-[#a3a3a3] hover:text-white transition-colors shrink-0">
-                  {showPassword ? <Eye size={24} /> : <EyeOff size={24} />}
-                </button>
-              }
-              placeholder="Enter Your Password"
+              className="block w-full pl-10 pr-10 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="••••••••"
             />
-          </StyledInputContainer>
-          <div className="flex justify-end mt-1">
-            <a
-              href="/forgot-password"
-              className={`${gradientHoverUnderlineStyles} text-white/80 text-[16px] font-bold hover:text-white transition-colors`}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
             >
-              Forgot Password?
-            </a>
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
         </div>
 
@@ -95,31 +93,19 @@ export const LoginForm = () => {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] gap-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-70 transition-all"
+          className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm hover:shadow transition-all disabled:opacity-70 disabled:cursor-not-allowed"
         >
           {isPending ? "Signing in..." : "Sign In"}
         </button>
       </form>
 
       {/* Footer / Redirect */}
-      <div className="flex justify-center mt-6 items-center gap-[8px]">
-        <span className="text-white/80 text-[16px] font-medium">
-          Don't have an account yet?
-        </span>
-        <Link href="/signup" className={`${gradientHoverUnderlineStyles} text-white font-bold`}>
+      <div className="text-center text-sm text-zinc-500 dark:text-zinc-400">
+        Don't have an account yet?{" "}
+        <Link href="/signup" className="font-semibold text-blue-600 hover:text-blue-500 transition-colors">
           Sign Up
         </Link>
       </div>
-    </Stack>
+    </div>
   );
 };
-
-// Moved outside to prevent re-renders and input defocusing
-const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] focus-within:p-[2px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] focus-within:shadow-[0_0_10px_rgba(251,44,54,0.35),0_0_20px_rgba(240,177,0,0.3),0_0_32px_rgba(43,127,255,0.4)] transition-all duration-300 ease-in-out">
-    {children}
-  </div>
-);
-
-const inputBaseStyles =
-  "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 !ring-offset-0 focus-within:!ring-0 focus-within:!ring-offset-0 focus-within:!shadow-none w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
