@@ -82,7 +82,7 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
               category={
                 <>
                   {studyjam.tags &&
-                    studyjam.tags.map((tag, tagIndex) => (
+                    studyjam.tags.slice(0, 2).map((tag, tagIndex) => (
                       <span
                         key={tagIndex}
                         className="inline-flex items-center rounded-full bg-[#EA4335]/90 px-3 py-1 text-[11px] font-medium leading-none text-white"
@@ -90,6 +90,11 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
                         {tag}
                       </span>
                     ))}
+                  {studyjam.tags && studyjam.tags.length > 2 && (
+                    <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                      +{studyjam.tags.length - 2}
+                    </span>
+                  )}
                   {/* <span className="inline-flex items-center rounded-full bg-[#B67853]/90 px-3 py-1 text-[11px] font-medium leading-none text-white">
                   Prototype
                 </span>
