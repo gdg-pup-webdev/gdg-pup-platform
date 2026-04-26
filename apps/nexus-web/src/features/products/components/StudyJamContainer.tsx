@@ -65,7 +65,7 @@ export function StudyJamContainer({
 }: StudyJamContainerProps) { 
   return (
     <div
-      className={`relative h-full w-full max-w-[340px] md:min-w-[340px] ${className}`} 
+      className={`relative h-full w-full max-w-[340px] md:min-w-[340px] flex flex-col ${className}`} 
       onClick={onClick}
     >
       <div
