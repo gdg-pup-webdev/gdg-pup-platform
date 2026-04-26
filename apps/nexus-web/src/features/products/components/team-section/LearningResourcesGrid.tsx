@@ -84,7 +84,7 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
               category={
                 <>
                   {resource.tags &&
-                    resource.tags.map((tag, index) => (
+                    resource.tags.slice(0, 2).map((tag, index) => (
                       <span
                         key={`${tag}-${index}`}
                         className="inline-flex items-center rounded-full bg-[#8B2F00]/90 px-3 py-1 text-[11px] font-medium leading-none text-white"
@@ -92,6 +92,11 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
                         {tag}
                       </span>
                     ))}
+                  {resource.tags && resource.tags.length > 2 && (
+                    <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                      +{resource.tags.length - 2}
+                    </span>
+                  )}
                 </>
               }
               onClick={() => window.open(resource.url, "_blank")}
