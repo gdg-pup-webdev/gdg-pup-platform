@@ -18,6 +18,7 @@ export class GdgMembersRouter {
       "/:gdgId/suggested-users",
       this.controller.getIdSuggestedUsers,
     );
+    this.router.get("/:gdgId/nfc-card", this.controller.getNfcCardOfUser);
 
     /**
      * AUTHENTICATED ROUTES 
@@ -40,6 +41,10 @@ export class GdgMembersRouter {
       "/:gdgId/profile-image",
       this.controller.changeProfileImage,
     );
+    this.router.post(
+      "/:gdgId/nfc-card/activate",
+      this.controller.activateNfcCardByGdgId,
+    );
 
     /**
      * PRIVATE ROUTES 
@@ -56,10 +61,5 @@ export class GdgMembersRouter {
       this.controller.deleteRoleFromUser,
     );
 
-    this.router.get("/:gdgId/nfc-card", this.controller.getNfcCardOfUser);
-    this.router.post(
-      "/:gdgId/nfc-card/activate",
-      this.controller.activateNfcCardByGdgId,
-    );
   }
 }
