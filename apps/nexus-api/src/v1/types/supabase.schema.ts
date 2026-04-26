@@ -985,40 +985,6 @@ export const publicScrapedGdgEventsUpdateSchema = z.object({
   video_url: z.string().optional().nullable(),
 });
 
-export const publicSparkmatesMetricEventsRowSchema = z.object({
-  created_at: z.string(),
-  gdg_id: z.string(),
-  id: z.string(),
-  source: publicSparkmatesSourceSchema,
-  user_agent: z.string().nullable(),
-});
-
-export const publicSparkmatesMetricEventsInsertSchema = z.object({
-  created_at: z.string().optional(),
-  gdg_id: z.string(),
-  id: z.string().optional(),
-  source: publicSparkmatesSourceSchema.optional(),
-  user_agent: z.string().optional().nullable(),
-});
-
-export const publicSparkmatesMetricEventsUpdateSchema = z.object({
-  created_at: z.string().optional(),
-  gdg_id: z.string().optional(),
-  id: z.string().optional(),
-  source: publicSparkmatesSourceSchema.optional(),
-  user_agent: z.string().optional().nullable(),
-});
-
-export const publicSparkmatesMetricEventsRelationshipsSchema = z.tuple([
-  z.object({
-    foreignKeyName: z.literal("sparkmates_metric_events_gdg_id_fkey"),
-    columns: z.tuple([z.literal("gdg_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("gdg_members"),
-    referencedColumns: z.tuple([z.literal("gdg_id")]),
-  }),
-]);
-
 export const publicSurveyRowSchema = z.object({
   attendance_code: z.string().nullable(),
   close_time: z.string().nullable(),
@@ -1337,39 +1303,6 @@ export const publicUserCredentialReferenceCodeUpdateSchema = z.object({
   type: z.string().optional().nullable(),
 });
 
-export const publicUserProjectRowSchema = z.object({
-  created_at: z.string(),
-  demo_url: z.string().nullable(),
-  description: z.string().nullable(),
-  id: z.string(),
-  repo_url: z.string().nullable(),
-  tech_stack: z.string().nullable(),
-  title: z.string(),
-  user_id: z.string(),
-});
-
-export const publicUserProjectInsertSchema = z.object({
-  created_at: z.string().optional(),
-  demo_url: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
-  id: z.string().optional(),
-  repo_url: z.string().optional().nullable(),
-  tech_stack: z.string().optional().nullable(),
-  title: z.string(),
-  user_id: z.string(),
-});
-
-export const publicUserProjectUpdateSchema = z.object({
-  created_at: z.string().optional(),
-  demo_url: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
-  id: z.string().optional(),
-  repo_url: z.string().optional().nullable(),
-  tech_stack: z.string().optional().nullable(),
-  title: z.string().optional(),
-  user_id: z.string().optional(),
-});
-
 export const publicUserRoleRowSchema = z.object({
   description: z.string(),
   id: z.string(),
@@ -1591,22 +1524,6 @@ export const publicFlatSurveyDataUpdateSchema = z.object({
   valuable_aspects: z.never().optional(),
   year_level: z.never().optional(),
 });
-
-export const publicSparkmatesScanCountsRowSchema = z.object({
-  gdg_id: z.string().nullable(),
-  scan_count: z.number().nullable(),
-  source: publicSparkmatesSourceSchema.nullable(),
-});
-
-export const publicSparkmatesScanCountsRelationshipsSchema = z.tuple([
-  z.object({
-    foreignKeyName: z.literal("sparkmates_metric_events_gdg_id_fkey"),
-    columns: z.tuple([z.literal("gdg_id")]),
-    isOneToOne: z.literal(false),
-    referencedRelation: z.literal("gdg_members"),
-    referencedColumns: z.tuple([z.literal("gdg_id")]),
-  }),
-]);
 
 export const publicGetSparkmatesAnalyticsArgsSchema = z.object({
   p_gdg_id: z.string(),

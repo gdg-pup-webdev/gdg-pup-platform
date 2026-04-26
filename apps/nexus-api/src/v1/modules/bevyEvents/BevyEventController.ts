@@ -1,6 +1,7 @@
 import { ListBevyEvents } from "./useCases/ListBevyEvents";
 import { GetBevyEvent } from "./useCases/GetBevyEvent";
 import { BevyEvent, BevyEventProps } from "./domain/BevyEvent";
+import { SyncBevyEvents } from "./useCases/SyncBevyEvents";
 
 export type BevyEventDTO = BevyEventProps;
 
@@ -8,10 +9,10 @@ export class BevyEventController {
   constructor(
     private readonly listUseCase: ListBevyEvents,
     private readonly getBevyEventUseCase: GetBevyEvent,
+    private readonly syncUseCase: SyncBevyEvents,
   ) {}
 
   private toDTO(bevyEvent: BevyEvent): BevyEventDTO {
-    // Spread the props to return a plain data structure
     return { ...bevyEvent.props };
   }
 
@@ -27,5 +28,9 @@ export class BevyEventController {
   async getById(id: string): Promise<BevyEventDTO | undefined> {
     const result = await this.getBevyEventUseCase.execute(id);
     return result ? this.toDTO(result) : undefined;
+  }
+
+  async sync(): Promise<number> {
+    return await this.syncUseCase.execute();
   }
 }
