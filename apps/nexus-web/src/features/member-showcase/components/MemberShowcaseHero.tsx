@@ -20,7 +20,7 @@ export function MemberShowcaseHero() {
       animate={prefersReduced ? undefined : "visible"}
       transition={prefersReduced ? undefined : { delay: SECTION_DELAYS.hero }}
     >
-      <Stack gap="lg" className="items-center px-1 pb-8 md:px-8 md:pb-12 lg:px-72 lg:pb-16">
+      <Stack gap="md" className="items-center">
         <motion.div variants={prefersReduced ? undefined : ITEM_VARIANTS}>
           <Text
             as="h1"
@@ -47,6 +47,7 @@ export function MemberShowcaseHero() {
           </Text>
         </motion.div>
 
+        {/*
         <motion.div
           className="w-full"
           variants={prefersReduced ? undefined : ITEM_VARIANTS}
@@ -58,6 +59,7 @@ export function MemberShowcaseHero() {
             variant="default"
           />
         </motion.div>
+        */}
       </Stack>
     </motion.div>
   );

@@ -1,14 +1,20 @@
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { 
+  CallEndpointType,
+} from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 
-export async function getMemberProjects(pageNumber = 1, pageSize = 10) {
+export async function getMemberProjects(
+  callEndpoint: CallEndpointType,
+  pageNumber = 1,
+  pageSize = 10,
+) {
   const result = await callEndpoint(
     configs.nexusApiBaseUrl,
     contract.api.v1.member_projects.GET,
     {
       query: { pageNumber, pageSize },
-    }
+    },
   );
 
   if (result.status === 200 && result.body) {

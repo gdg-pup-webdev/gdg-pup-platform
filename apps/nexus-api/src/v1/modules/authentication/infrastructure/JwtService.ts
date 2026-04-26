@@ -5,14 +5,11 @@ import { TokenPayload, TokenPayloadProps } from "../domain/TokenPayload.js";
 export class JwtService implements IJWTService {
   constructor(
     private readonly secret: string,
-    private readonly expiresIn: string = "1h",
   ) {}
 
   async sign(payload: TokenPayload): Promise<string> {
     console.log("creating jwt token with payload", payload.props);
-    return jwt.sign(payload.props, this.secret, {
-      expiresIn: this.expiresIn as jwt.SignOptions["expiresIn"],
-    });
+    return jwt.sign(payload.props, this.secret);
   }
 
   async verify(token: string): Promise<TokenPayload> {

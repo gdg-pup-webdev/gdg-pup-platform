@@ -1,16 +1,16 @@
 import Image from "next/image";
 import { CosmosParticles } from "@/components/shared";
 import { AuthParallaxBackground } from "@/features/auth/components/AuthParallaxBackground";
-import { AuthParallaxMascot } from "@/features/auth/components/AuthParallaxMascot";
-import { RequireUnauthenticated } from "@/features/authentication/components/RequireUnauthenticated";
+import { AuthParallaxMascot } from "@/features/auth/components/AuthParallaxMascot"; 
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  console.log("auth layout rendered") 
   return (
-    <RequireUnauthenticated>
+    <>
       <CosmosParticles
         particleColors={["#ffffff", "#4285f4"]}
         particleCount={350}
@@ -49,7 +49,7 @@ export default function AuthLayout({
                   <Image
                     src="/auth/auth-nexus-logo.svg"
                     alt="Nexus Logo"
-                    className="object-contain"
+                    className="object-contain pointer-events-none select-none"
                     fill
                     unoptimized={true}
                   />
@@ -62,6 +62,6 @@ export default function AuthLayout({
           </div>
         </div>
       </CosmosParticles>
-    </RequireUnauthenticated>
+    </>
   );
 }

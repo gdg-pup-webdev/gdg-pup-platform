@@ -1,5 +1,11 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { BrandedSkeleton } from "@/components/shared";
+import {
+  normalizeEventDescription,
+  splitBoldSegments,
+} from "@/features/events/utils/description";
+import { useRouter } from "next/navigation";
 
 interface StudyJamContainerProps {
   children?: ReactNode;
@@ -16,6 +22,28 @@ interface StudyJamContainerProps {
   ringGradient?: string;
   contentBackgroundColor?: string;
   contentBackdropFilter?: string;
+  onClick?: () => void;
+}
+
+function renderDescriptionContent(description: ReactNode) {
+  if (typeof description !== "string" && typeof description !== "number") {
+    return description;
+  }
+
+  const normalizedDescription = normalizeEventDescription(String(description));
+
+  return splitBoldSegments(normalizedDescription).map((segment, index) =>
+    segment.bold ? (
+      <strong
+        key={`${segment.text}-${index}`}
+        className="font-semibold text-white/90"
+      >
+        {segment.text}
+      </strong>
+    ) : (
+      <span key={`${segment.text}-${index}`}>{segment.text}</span>
+    ),
+  );
 }
 
 export function StudyJamContainer({
@@ -32,10 +60,14 @@ export function StudyJamContainer({
   contentClassName = "",
   ringGradient = "linear-gradient(90deg, #EA4335, #F9AB00, #34A853, #4285F4)",
   contentBackgroundColor = "rgba(255, 255, 255, 0.08)",
-  contentBackdropFilter = "blur(70px) saturate(180%)",
-}: StudyJamContainerProps) {
+  contentBackdropFilter = "",
+  onClick,
+}: StudyJamContainerProps) { 
   return (
-    <div className={`relative w-full max-w-85 ${className}`}>
+    <div
+      className={`relative h-full w-full max-w-[340px] md:min-w-[340px] ${className}`} 
+      onClick={onClick}
+    >
       <div
         className={`absolute inset-0 z-3 rounded-2xl pointer-events-none ${ringClassName}`}
         style={{
@@ -49,7 +81,7 @@ export function StudyJamContainer({
       />
 
       <div
-        className={`relative rounded-2xl p-4 flex flex-col items-center gap-3.25 ${contentClassName}`}
+        className={`relative h-full rounded-2xl p-4 flex flex-col items-center gap-3.25 ${contentClassName}`}
         style={{
           backgroundColor: contentBackgroundColor,
           backdropFilter: contentBackdropFilter,
@@ -70,46 +102,54 @@ export function StudyJamContainer({
               className="w-full aspect-square rounded-[11px] object-cover bg-white/5"
             />
           ) : (
-            <div className="w-full aspect-square rounded-[11px] border border-dashed border-white/40 bg-white/5" />
+            <BrandedSkeleton className="w-full aspect-square rounded-[11px]" withGradientRing />
           )}
         </div>
 
         {/* Title and subtitle container */}
         <div className="flex w-full flex-col items-center gap-3.25 text-center">
-          <div className="text-white text-2xl font-bold text-center">
+          <div className="min-h-[3.5rem] text-white text-2xl leading-tight font-bold text-center line-clamp-2">
             {title ?? (
-              <div className="h-8 w-2/3 rounded-md border border-dashed border-white/40 bg-white/5" />
+              <BrandedSkeleton className="mx-auto h-8 w-2/3 rounded-md" />
             )}
           </div>
-          <div className="text-xs italic text-white/90 text-center">
+          <div className="min-h-[1rem] text-xs italic text-white/90 text-center line-clamp-1">
             {subtitle ?? (
-              <div className="h-5 w-1/2 rounded-md border border-dashed border-white/30 bg-white/5" />
+              <BrandedSkeleton className="mx-auto h-5 w-1/2 rounded-md" />
             )}
           </div>
         </div>
 
         {/* Description, category, and date container */}
-        <div className="flex w-full flex-col items-center gap-3.25 text-center">
-          <div className="max-w-[95%] text-xs font-normal leading-relaxed text-white/80 text-center">
-            {description ?? (
-              <div className="h-5 w-full rounded-md border border-dashed border-white/30 bg-white/5" />
-            )}
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {typeof category === "string" || typeof category === "number" ? (
-              <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium leading-none text-white">
-                {category}
-              </span>
+        <div className="flex w-full flex-1 flex-col items-center gap-3.25 text-center">
+          <div className="min-h-[3.75rem] max-w-[95%] text-xs font-normal leading-relaxed text-white/80 text-center whitespace-pre-line line-clamp-4">
+            {description ? (
+              renderDescriptionContent(description)
             ) : (
-              category ?? (
-                <div className="h-6 w-28 rounded-full border border-dashed border-white/30 bg-white/5" />
-              )
+              <div className="w-full space-y-2">
+                <BrandedSkeleton className="h-3 w-full rounded" variant="text" />
+                <BrandedSkeleton className="h-3 w-5/6 rounded" variant="text" />
+                <BrandedSkeleton className="h-3 w-2/3 rounded" variant="text" />
+              </div>
             )}
           </div>
-          <div className="text-xs text-white/80">
-            {date ?? (
-              <div className="h-4 w-20 rounded-md border border-dashed border-white/30 bg-white/5" />
-            )}
+          <div className="mt-auto flex flex-col items-center gap-3.25">
+            <div className="flex min-h-6 w-full flex-wrap items-center justify-center gap-2">
+              {typeof category === "string" || typeof category === "number" ? (
+                <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-[11px] font-medium leading-none text-white">
+                  {category}
+                </span>
+              ) : (
+                (category ?? (
+                  <BrandedSkeleton className="h-6 w-28" variant="chip" />
+                ))
+              )}
+            </div>
+            <div className="text-xs text-white/80">
+              {date ?? (
+                <BrandedSkeleton className="h-4 w-20 rounded-md" variant="text" />
+              )}
+            </div>
           </div>
         </div>
 

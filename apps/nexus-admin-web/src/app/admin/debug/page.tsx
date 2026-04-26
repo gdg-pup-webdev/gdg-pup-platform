@@ -5,8 +5,11 @@ import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { Activity, CheckCircle2, XCircle, RefreshCw, Server, ShieldCheck } from "lucide-react";
 import { useState } from "react";
+import { AdminPageScaffold } from "@/components/admin/AdminPageScaffold";
+import { AdminActionButton } from "@/components/admin/AdminActionButton";
+import { configs } from "@/lib/constants/configs";
 
-const NEXUS_API_URL = "http://localhost:8000";
+const NEXUS_API_URL = configs.nexusApiBaseUrl;
 
 export default function DebugPage() {
   const [lastChecked, setLastChecked] = useState<Date | null>(null);
@@ -29,24 +32,20 @@ export default function DebugPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Diagnostics</h1>
-          <p className="mt-1 text-gray-500">
-            Monitor API connectivity and system health.
-          </p>
-        </div>
-        <button
+    <AdminPageScaffold
+      pageKey="debug"
+      actions={
+        <AdminActionButton
           onClick={handleRefreshAll}
-          disabled={isFetchingNexus}
-          className="flex items-center gap-2 rounded-sm bg-[#0B1F3B] px-4 py-2 text-sm font-medium text-white transition-all hover:bg-[#0B1F3B]/90 disabled:opacity-50"
+          isLoading={isFetchingNexus}
+          loadingLabel="Refreshing"
+          variant="brand"
         >
-          <RefreshCw size={16} className={isFetchingNexus ? "animate-spin" : ""} />
+          <RefreshCw size={16} />
           Refresh Status
-        </button>
-      </div>
+        </AdminActionButton>
+      }
+    >
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Nexus API Card */}
@@ -159,6 +158,6 @@ export default function DebugPage() {
           </div>
         </div>
       </div>
-    </div>
+    </AdminPageScaffold>
   );
 }

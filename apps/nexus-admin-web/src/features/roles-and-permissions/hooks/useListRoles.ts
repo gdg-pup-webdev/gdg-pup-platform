@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
 export const useListRoles = (params: { pageNumber?: number; pageSize?: number; userId?: string; resourceName?: string; actionName?: string } = {}) => {
   const { pageNumber = 1, pageSize = 10, ...rest } = params;
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["roles", "list", pageNumber, pageSize, rest],
     queryFn: async () => {

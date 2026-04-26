@@ -9,9 +9,16 @@ export const setupLoader = (app: Express) => {
   app.set("trust proxy", 1);
 
   // CORS config
+  // CLIENT_URL supports comma-separated origins, e.g.:
+  //   https://dev.gdgpup.org,https://admin.dev.gdgpup.org
+  const allowedOrigins = (configs.clientBaseUrl || "http://localhost:3000|http://localhost:3100")
+    .split(/[,|]/)
+    .map((u) => u.trim())
+    .filter(Boolean);
+
   app.use(
     cors({
-      origin: [configs.clientBaseUrl || "http://localhost:3000"],
+      origin: allowedOrigins,
       credentials: true,
     }),
   );

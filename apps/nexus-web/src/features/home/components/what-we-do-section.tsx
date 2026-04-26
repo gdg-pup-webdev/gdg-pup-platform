@@ -19,15 +19,15 @@ export function WhatWeDoSection() {
   ];
 
   return (
-    <section className="relative hidden lg:block z-30" ref={ref}>
-      <Container className="py-24">
+    <section className="relative z-30" ref={ref}>
+      <Container className="py-10 lg:py-24">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
         >
           {/* Content on left*/}
-          <Stack gap="2xl" align="start" className="w-[60%]">
+          <Stack gap="xl" align="start" className="w-full lg:w-[60%]">
             <Text
               as="h2"
               align="left"
@@ -50,13 +50,17 @@ export function WhatWeDoSection() {
                       color="on-primary"
                       className="text-2xl"
                     >
-                      We design experiences that turn <br />
+                      We design experiences that turn{" "}
+                      <br className="hidden lg:inline" />
                       curiosity into capability:
                     </Text>
                   </div>
                   <div className="flex flex-col gap-4">
                     {bulletItems.map((item) => (
-                      <div key={item} className="flex items-start gap-3">
+                      <div
+                        key={item}
+                        className="flex items-start gap-3 relative z-10"
+                      >
                         <Image
                           src={ASSETS.HOME.BULLET_DIAMOND}
                           alt=""
@@ -88,9 +92,18 @@ export function WhatWeDoSection() {
                 width={486}
                 height={536}
                 draggable={false}
-                className="pointer-events-none select-none absolute -right-100 top-1/2 -translate-y-1/2 z-20"
+                className="pointer-events-none select-none absolute -top-15 right-2 w-24 h-auto lg:w-[486px] lg:h-[536px] lg:-right-100 lg:top-1/2 lg:-translate-y-1/2 z-20"
               />
             </div>
+            <Text
+              align="center"
+              variant="body"
+              weight="normal"
+              color="on-primary"
+              className="text-lg mx-auto lg:mx-0"
+            >
+              Every step is built around one principle: learning by doing.
+            </Text>
           </Stack>
         </motion.div>
       </Container>

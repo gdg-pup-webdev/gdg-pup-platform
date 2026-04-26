@@ -316,7 +316,7 @@ export function MemberFormModal({ isOpen, onClose, onSubmit, initialData, isSubm
               type="checkbox"
               id="is_public"
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              checked={formData.isPublic}
+              checked={formData.isPublic ?? false}
               onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
             />
             <label htmlFor="is_public" className="text-sm font-medium text-gray-700 select-none">Make Member Public</label>

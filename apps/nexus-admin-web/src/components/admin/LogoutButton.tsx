@@ -3,11 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { INTERNAL_LINKS } from "@/lib/constants/links";
-import { LogOut } from "lucide-react";
-import { useAuthStore } from "@/features/authentication/store/useAuthStore";
+import { LogOut } from "lucide-react"; 
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 export function LogoutButton() {
-  const clearToken = useAuthStore((state) => state.clearToken);
+  const auth = useAuthContext();
+  const clearToken = auth.logout;
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 

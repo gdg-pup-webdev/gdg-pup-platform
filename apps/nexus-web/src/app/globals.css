@@ -3,15 +3,19 @@
 @import "@configs/tailwind-config/shared-styles.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0F0E0E;
+  --background: #0f0e0e;
+  --foreground: #0f0e0e;
+  /* for idHeroStage.tsx when in mobile view */
+  --spiral-outer-ratio: 602 / 388;
+  --spiral-center-ratio: 209 / 35;
+  --spiral-inner-ratio: 148 / 16;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Google Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "Google Sans Mono", "Fira Code", monospace;
   --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
 
   /* ===== Background Gradient Animation (Aceternity) ===== */
@@ -24,7 +28,6 @@
   /* ===== History page zoned blob drift ===== */
   /* --travel controls the max drift distance per blob (set as inline style) */
   @keyframes blobDriftV {
-
     0%,
     100% {
       transform: translateY(0px);
@@ -36,7 +39,6 @@
   }
 
   @keyframes blobDriftH {
-
     0%,
     100% {
       transform: translateX(0px);
@@ -48,18 +50,23 @@
   }
 
   @keyframes blobDriftD {
-
     0%,
     100% {
       transform: translate(0px, 0px);
     }
 
     33% {
-      transform: translate(var(--travel, 28px), calc(var(--travel, 28px) * 0.65));
+      transform: translate(
+        var(--travel, 28px),
+        calc(var(--travel, 28px) * 0.65)
+      );
     }
 
     66% {
-      transform: translate(calc(var(--travel, 28px) * -0.65), var(--travel, 28px));
+      transform: translate(
+        calc(var(--travel, 28px) * -0.65),
+        var(--travel, 28px)
+      );
     }
   }
 
@@ -143,7 +150,6 @@
 
   /* Platform glow ring beneath the card */
   @keyframes platformGlow {
-
     0%,
     100% {
       opacity: 0.6;
@@ -155,7 +161,6 @@
       transform: translateX(-50%) scaleX(1.06);
     }
   }
-
 
   @keyframes moveHorizontal {
     0% {
@@ -205,16 +210,22 @@
   position: relative;
   isolation: isolate;
   border-radius: 28px;
-  background: #FFFFFF14;
+  background: #ffffff14;
 }
 
 .id-info-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1px 1px 0 1px;
-  background: linear-gradient(90deg, #EA4335 0%, #F9AB00 33%, #34A853 66%, #4285F4 100%);
+  background: linear-gradient(
+    90deg,
+    #ea4335 0%,
+    #f9ab00 33%,
+    #34a853 66%,
+    #4285f4 100%
+  );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -229,15 +240,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0F0E0E;
+    --background: #0f0e0e;
     --foreground: #ededed;
+  }
+}
+@media (min-width: 640px) {
+  /* for idHeroStage.tsx medium to larger screen sizes */
+  :root {
+    --spiral-outer-ratio: 1204 / 188;
+    --spiral-center-ratio: 1018 / 125;
+    --spiral-inner-ratio: 697 / 66;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
 
 /* ── Rainbow Border Utility ────────────────────────────────────────── */
@@ -247,12 +266,23 @@ body {
 }
 
 .rainbow-border::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1.5px; /* Border thickness */
-  background: linear-gradient(157deg, #FB2C36 0%, #F0B100 5%, #00C950 10%, #2B7FFF 15%, #FFF 50.48%, #2B7FFF 85%, #00C950 90%, #F0B100 95%, #FB2C36 100%);
+  background: linear-gradient(
+    157deg,
+    #fb2c36 0%,
+    #f0b100 5%,
+    #00c950 10%,
+    #2b7fff 15%,
+    #fff 50.48%,
+    #2b7fff 85%,
+    #00c950 90%,
+    #f0b100 95%,
+    #fb2c36 100%
+  );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -265,11 +295,78 @@ body {
   z-index: -1;
 }
 
+@keyframes rainbowBorderShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.rainbow-border-animated-hover {
+  position: relative;
+  isolation: isolate;
+}
+
+.rainbow-border-animated-hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    120deg,
+    #fb2c36 0%,
+    #f0b100 16%,
+    #00c950 34%,
+    #2b7fff 52%,
+    #ffffff 66%,
+    #2b7fff 78%,
+    #00c950 88%,
+    #f0b100 94%,
+    #fb2c36 100%
+  );
+  background-size: 240% 240%;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.rainbow-border-animated-hover:hover::before,
+.rainbow-border-animated-hover:focus-within::before {
+  opacity: 1;
+  animation: rainbowBorderShift 2.8s linear infinite;
+}
+
+.rainbow-border-animated-hover > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Lenis base styles to prevent duplicate/native scrollbars */
 html.lenis,
 html.lenis body {
   height: auto;
 }
+
+/* Force the browser scrollbar gutter to remain visible while Lenis is active.
+   Without this, Chromium hides the native scrollbar track because Lenis
+   intercepts wheel events before they cause overflow on <html>.              */
+html.lenis {
+  overflow-y: scroll;
+}
+
 
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
@@ -278,3 +375,73 @@ html.lenis body {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
+/* ── Global Scrollbar — Nexus Plasma Blue ───────────────────────────── */
+
+/* Firefox-only fallback — Chromium 121+ also supports scrollbar-color, so
+   guard this block so Brave/Chrome/Edge skip it and use ::-webkit-scrollbar */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2b7fff rgba(15, 14, 14, 0.85);
+  }
+}
+
+/* Webkit (Brave, Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+
+/* Subtle dark track with a faint blue edge */
+::-webkit-scrollbar-track {
+  background: rgba(15, 14, 14, 0.9);
+  border-left: 1px solid rgba(87, 202, 255, 0.08);
+  box-shadow: inset 0 0 6px rgba(87, 202, 255, 0.04);
+}
+
+/* Glowing plasma bar: deep navy → brand blue → bright cyan hotspot → back */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #0e2a5c 0%,
+    #1a4db5 15%,
+    #2b7fff 35%,
+    #57caff 50%,
+    #2b7fff 65%,
+    #1a4db5 85%,
+    #0e2a5c 100%
+  );
+  border-radius: 9999px;
+  border: 1px solid rgba(87, 202, 255, 0.30);
+  /* Inner bloom + outer cyan glow halo */
+  box-shadow:
+    inset 0 0 10px rgba(87, 202, 255, 0.25),
+    0 0 8px  rgba(43, 127, 255, 0.45),
+    0 0 20px rgba(87, 202, 255, 0.15);
+}
+
+/* Hover — hotspot flares up, glow intensifies */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    #112f6a 0%,
+    #2158cc 15%,
+    #4a9fff 35%,
+    #8adeff 50%,
+    #4a9fff 65%,
+    #2158cc 85%,
+    #112f6a 100%
+  );
+  border-color: rgba(87, 202, 255, 0.55);
+  box-shadow:
+    inset 0 0 14px rgba(138, 222, 255, 0.35),
+    0 0 14px rgba(43, 127, 255, 0.65),
+    0 0 28px rgba(87, 202, 255, 0.25);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(15, 14, 14, 0.9);
+}
+
+

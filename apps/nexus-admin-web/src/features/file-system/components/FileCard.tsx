@@ -1,49 +1,52 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { 
   File as FileIcon, 
-  Edit2, 
-  Trash2, 
-  ExternalLink, 
   Download, 
+  ExternalLink,
   Folder as FolderIcon,
-  Image as ImageIcon,
   Video as VideoIcon,
   FileText,
   Archive,
   Music,
   FileCode,
   FileJson,
-  MoreVertical,
-  Eye
+  CalendarClock
 } from "lucide-react";
 import { FileRecord, Folder } from "../types";
+import { AdminEntityCard } from "@/components/admin/AdminEntityCard";
+import { CardActionMenuItem } from "@/components/admin/CardActionMenu";
 
 interface FileCardProps {
   file: FileRecord | Folder;
-  onEdit: (file: any) => void;
-  onDelete: (file: any) => void;
-  onView: (file: any) => void;
-  onOpen?: (file: any) => void;
+  onEdit: (file: FileRecord | Folder) => void;
+  onDelete: (file: FileRecord | Folder) => void | Promise<void>;
+  onView: (file: FileRecord | Folder) => void;
+  onOpen?: (file: FileRecord | Folder) => void;
   isFolder?: boolean;
 }
 
+type FileRecordWithImageVariants = FileRecord & {
+  previewUrl64?: string | null;
+  previewUrl128?: string | null;
+  previewUrl256?: string | null;
+  previewUrl512?: string | null;
+};
+
+const getCardImageUrl = (file: FileRecordWithImageVariants): string | undefined => {
+  return (
+    file.previewUrl128 ||
+    file.previewUrl64 ||
+    file.previewUrl256 ||
+    file.previewUrl512 ||
+    file.previewUrl ||
+    undefined
+  );
+};
+
 export function FileCard({ file, onEdit, onDelete, onView, onOpen, isFolder }: FileCardProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const renderThumbnail = () => {
+  const renderFileFallback = () => {
     if (isFolder) {
       return (
         <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-teal-100 text-teal-600 shadow-inner transition-transform duration-300 group-hover:scale-110">
@@ -56,16 +59,7 @@ export function FileCard({ file, onEdit, onDelete, onView, onOpen, isFolder }: F
     const type = fileRecord.fileType?.toLowerCase() || "";
     
     if (type.startsWith("image/")) {
-      return (
-        <div className="relative h-full w-full overflow-hidden">
-          <img 
-            src={fileRecord.previewUrl} 
-            alt={fileRecord.fileName}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-          />
-          <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
-        </div>
-      );
+      return <FileIcon size={42} strokeWidth={1.6} />;
     }
 
     let Icon = FileIcon;
@@ -115,88 +109,93 @@ export function FileCard({ file, onEdit, onDelete, onView, onOpen, isFolder }: F
     }
   };
 
-  const toggleMenu = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const extraItems: CardActionMenuItem[] = [];
+
+  if (isFolder) {
+    if (onOpen) {
+      extraItems.push({
+        key: "open-folder",
+        label: "Open Folder",
+        icon: FolderIcon,
+        onClick: () => onOpen(file),
+      });
+    }
+  } else {
+    const fileRecord = file as FileRecord;
+
+    if (fileRecord.previewUrl) {
+      extraItems.push({
+        key: "preview",
+        label: "Preview",
+        icon: ExternalLink,
+        onClick: () => {
+          window.open(fileRecord.previewUrl, "_blank", "noopener,noreferrer");
+        },
+      });
+    }
+
+    extraItems.push({
+      key: "download",
+      label: "Download",
+      icon: Download,
+      onClick: () => {
+        window.open(fileRecord.downloadUrl, "_blank", "noopener,noreferrer");
+      },
+    });
+  }
+
+  const fileTypeLabel = isFolder ? "Folder" : (file as FileRecord).fileType?.split("/")[1] || "File";
+  const fileCreatedLabel = !isFolder
+    ? new Date((file as FileRecord).createdAt).toLocaleDateString()
+    : null;
+  const isImageFile = !isFolder && ((file as FileRecord).fileType?.toLowerCase() || "").startsWith("image/");
+  const cardImageUrl = isImageFile
+    ? getCardImageUrl(file as FileRecordWithImageVariants)
+    : undefined;
 
   return (
-    <div 
-      className={`group relative flex flex-col overflow-hidden rounded-xl border border-gray-100 bg-white transition-all hover:border-teal-200 hover:shadow-lg cursor-pointer ${isFolder ? "bg-gradient-to-br from-white to-teal-50/30" : ""}`}
+    <AdminEntityCard
+      title={name}
+      mediaImageUrl={cardImageUrl}
+      mediaAlt={name}
+      mediaFallback={renderFileFallback()}
+      mediaClassName={isFolder ? "bg-gradient-to-br from-white to-teal-50" : undefined}
+      mediaLabel={
+        <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-teal-700 shadow-sm">
+          {isFolder ? "Folder" : "File"}
+        </span>
+      }
+      topMetaRight={
+        <span className="rounded-full bg-gray-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-600">
+          {fileTypeLabel}
+        </span>
+      }
+      metaItems={
+        fileCreatedLabel
+          ? [
+              {
+                key: "uploadedAt",
+                icon: <CalendarClock size={13} />,
+                content: `Uploaded ${fileCreatedLabel}`,
+                className: "font-semibold uppercase tracking-wider text-[10px]",
+              },
+            ]
+          : undefined
+      }
       onClick={handleCardClick}
-    >
-      {/* 3-Dot Menu */}
-      <div className="absolute top-2 right-2 z-10" ref={menuRef}>
-        <button
-          onClick={toggleMenu}
-          className="rounded-full p-2 text-gray-400 opacity-0 transition-all hover:bg-white hover:text-teal-600 hover:shadow-sm group-hover:opacity-100"
-        >
-          <MoreVertical size={18} />
-        </button>
-        
-        {isMenuOpen && (
-          <div className="absolute top-full right-0 mt-1 w-40 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-xl">
-            <button
-              onClick={(e) => { e.stopPropagation(); onView(file); setIsMenuOpen(false); }}
-              className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <Eye size={14} className="text-teal-500" />
-              View Details
-            </button>
-            {!isFolder && (
-              <>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onEdit(file); setIsMenuOpen(false); }}
-                  className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  <Edit2 size={14} className="text-teal-500" />
-                  Edit Info
-                </button>
-                <a
-                  href={(file as FileRecord).downloadUrl}
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  <Download size={14} className="text-teal-500" />
-                  Download
-                </a>
-              </>
-            )}
-            <div className="h-px bg-gray-50" />
-            <button
-              onClick={(e) => { e.stopPropagation(); onDelete(file); setIsMenuOpen(false); }}
-              className="flex w-full items-center gap-2 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors"
-            >
-              <Trash2 size={14} />
-              Delete
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Icon Area */}
-      <div className="flex h-36 items-center justify-center bg-gray-50/50 transition-colors group-hover:bg-teal-50/30">
-        {renderThumbnail()}
-      </div>
-
-      {/* Content Area */}
-      <div className="flex flex-1 flex-col p-4">
-        <div className="mb-2 flex items-center justify-between">
-            <div className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${isFolder ? "bg-teal-100 text-teal-700" : "bg-gray-100 text-gray-500"}`}>
-                {isFolder ? "Folder" : (file as FileRecord).fileType?.split("/")[1] || "File"}
-            </div>
-        </div>
-        
-        <h3 className="line-clamp-1 text-sm font-bold text-gray-900 transition-colors group-hover:text-teal-700">
-          {name}
-        </h3>
-        
-        {!isFolder && (
-             <p className="mt-1 text-[10px] font-medium text-gray-400">
-                Uploaded {new Date((file as FileRecord).createdAt).toLocaleDateString()}
-            </p>
-        )}
-      </div>
-    </div>
+      actions={{
+        onView: () => onView(file),
+        onEdit: !isFolder ? () => onEdit(file) : undefined,
+        onDelete: () => onDelete(file),
+        editLabel: "Edit Info",
+        deleteDialogTitle: isFolder ? "Delete Folder" : "Delete File",
+        deleteDialogDescription: (
+          <>
+            {isFolder ? "Folder" : "File"} <strong>{name}</strong> will be permanently deleted.
+          </>
+        ),
+        extraItems,
+      }}
+    />
   );
 }

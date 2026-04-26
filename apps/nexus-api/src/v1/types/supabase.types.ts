@@ -14,6 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_nfc_card_scans: {
+        Row: {
+          date: string
+          id: string
+          nfcCardId: string | null
+          scanContext: string | null
+          scannerId: string | null
+        }
+        Insert: {
+          date?: string
+          id?: string
+          nfcCardId?: string | null
+          scanContext?: string | null
+          scannerId?: string | null
+        }
+        Update: {
+          date?: string
+          id?: string
+          nfcCardId?: string | null
+          scanContext?: string | null
+          scannerId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_nfc_card_scans_nfcCardId_fkey"
+            columns: ["nfcCardId"]
+            isOneToOne: false
+            referencedRelation: "nfc_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_profile_views: {
+        Row: {
+          date: string
+          id: string
+          profileGdgId: string | null
+          source: string | null
+          user_agent: string | null
+          viewerGdgId: string | null
+        }
+        Insert: {
+          date?: string
+          id?: string
+          profileGdgId?: string | null
+          source?: string | null
+          user_agent?: string | null
+          viewerGdgId?: string | null
+        }
+        Update: {
+          date?: string
+          id?: string
+          profileGdgId?: string | null
+          source?: string | null
+          user_agent?: string | null
+          viewerGdgId?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_profile_views_profile_gdg_id_fkey"
+            columns: ["profileGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+          {
+            foreignKeyName: "analytics_profile_views_viewerGdgId_fkey"
+            columns: ["viewerGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
+      }
       article: {
         Row: {
           author_id: string | null
@@ -55,41 +129,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      }
-      article_comment: {
-        Row: {
-          article_id: string | null
-          body: string
-          created_at: string
-          id: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          article_id?: string | null
-          body: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          article_id?: string | null
-          body?: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "article_comment_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "article"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       dp_download_analytics: {
         Row: {
@@ -134,6 +173,7 @@ export type Database = {
           gdg_event_id: number | null
           id: string
           max_capacity: string | null
+          rsvp: number | null
           short_description: string | null
           speakers: string[] | null
           start_date: string | null
@@ -157,6 +197,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           max_capacity?: string | null
+          rsvp?: number | null
           short_description?: string | null
           speakers?: string[] | null
           start_date?: string | null
@@ -180,6 +221,7 @@ export type Database = {
           gdg_event_id?: number | null
           id?: string
           max_capacity?: string | null
+          rsvp?: number | null
           short_description?: string | null
           speakers?: string[] | null
           start_date?: string | null
@@ -241,100 +283,39 @@ export type Database = {
             referencedRelation: "event"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "event_attendance_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
         ]
       }
-      event_highlight: {
+      event_images: {
         Row: {
-          author_id: string
-          content: string
           created_at: string
-          description: string
-          event_id: string
+          eventId: string | null
           id: string
-          image_url: string | null
-          title: string
-          updated_at: string
+          imageUrl: string | null
+          position: number | null
+          updatedAt: string | null
         }
         Insert: {
-          author_id: string
-          content: string
           created_at?: string
-          description: string
-          event_id: string
+          eventId?: string | null
           id?: string
-          image_url?: string | null
-          title: string
-          updated_at?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
         }
         Update: {
-          author_id?: string
-          content?: string
           created_at?: string
-          description?: string
-          event_id?: string
+          eventId?: string | null
           id?: string
-          image_url?: string | null
-          title?: string
-          updated_at?: string
+          imageUrl?: string | null
+          position?: number | null
+          updatedAt?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "event_highlight_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "event_highlight_event_id_fkey"
-            columns: ["event_id"]
+            foreignKeyName: "event_images_eventId_fkey"
+            columns: ["eventId"]
             isOneToOne: false
             referencedRelation: "event"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      external_resource: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          resource_url: string
-          title: string
-          updated_at: string
-          uploader_id: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_url: string
-          title: string
-          updated_at?: string
-          uploader_id: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          resource_url?: string
-          title?: string
-          updated_at?: string
-          uploader_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "resource_uploader_id_fkey"
-            columns: ["uploader_id"]
-            isOneToOne: false
-            referencedRelation: "user"
             referencedColumns: ["id"]
           },
         ]
@@ -349,8 +330,17 @@ export type Database = {
           file_type: string
           folder_id: string | null
           id: string
+          is_deleted: boolean | null
           preview_url: string | null
+          preview_url_128: string | null
+          preview_url_256: string | null
+          preview_url_512: string | null
+          preview_url_64: string | null
           storage_ref: string | null
+          storage_ref_128: string | null
+          storage_ref_256: string | null
+          storage_ref_512: string | null
+          storage_ref_64: string | null
           updated_at: string
         }
         Insert: {
@@ -362,8 +352,17 @@ export type Database = {
           file_type?: string
           folder_id?: string | null
           id?: string
+          is_deleted?: boolean | null
           preview_url?: string | null
+          preview_url_128?: string | null
+          preview_url_256?: string | null
+          preview_url_512?: string | null
+          preview_url_64?: string | null
           storage_ref?: string | null
+          storage_ref_128?: string | null
+          storage_ref_256?: string | null
+          storage_ref_512?: string | null
+          storage_ref_64?: string | null
           updated_at?: string
         }
         Update: {
@@ -375,8 +374,17 @@ export type Database = {
           file_type?: string
           folder_id?: string | null
           id?: string
+          is_deleted?: boolean | null
           preview_url?: string | null
+          preview_url_128?: string | null
+          preview_url_256?: string | null
+          preview_url_512?: string | null
+          preview_url_64?: string | null
           storage_ref?: string | null
+          storage_ref_128?: string | null
+          storage_ref_256?: string | null
+          storage_ref_512?: string | null
+          storage_ref_64?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -435,6 +443,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
+          is_onboarded: boolean | null
           is_public: boolean | null
           last_name: string | null
           learning_interests: string | null
@@ -445,6 +454,7 @@ export type Database = {
           other_links: string | null
           portfolio_url: string | null
           program: string | null
+          section_order: string | null
           skills_summary: string | null
           suffix: string | null
           technical_skills: string | null
@@ -462,6 +472,7 @@ export type Database = {
           first_name?: string | null
           gdg_id: string
           github_url?: string | null
+          is_onboarded?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
           learning_interests?: string | null
@@ -472,6 +483,7 @@ export type Database = {
           other_links?: string | null
           portfolio_url?: string | null
           program?: string | null
+          section_order?: string | null
           skills_summary?: string | null
           suffix?: string | null
           technical_skills?: string | null
@@ -489,6 +501,7 @@ export type Database = {
           first_name?: string | null
           gdg_id?: string
           github_url?: string | null
+          is_onboarded?: boolean | null
           is_public?: boolean | null
           last_name?: string | null
           learning_interests?: string | null
@@ -499,6 +512,7 @@ export type Database = {
           other_links?: string | null
           portfolio_url?: string | null
           program?: string | null
+          section_order?: string | null
           skills_summary?: string | null
           suffix?: string | null
           technical_skills?: string | null
@@ -592,6 +606,41 @@ export type Database = {
           },
         ]
       }
+      member_project_images: {
+        Row: {
+          created_at: string
+          id: string
+          imageUrl: string | null
+          memberProjectId: string | null
+          position: number | null
+          updatedAt: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          imageUrl?: string | null
+          memberProjectId?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          imageUrl?: string | null
+          memberProjectId?: string | null
+          position?: number | null
+          updatedAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_project_images_memberProjectId_fkey"
+            columns: ["memberProjectId"]
+            isOneToOne: false
+            referencedRelation: "member_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_projects: {
         Row: {
           createdAt: string
@@ -600,6 +649,8 @@ export type Database = {
           id: string
           mainImageUrl: string | null
           memberGdgId: string | null
+          position: number | null
+          projectLink: string | null
           secondaryImageUrl: string | null
           startDate: string | null
           tertiaryImageUrl: string | null
@@ -613,6 +664,8 @@ export type Database = {
           id?: string
           mainImageUrl?: string | null
           memberGdgId?: string | null
+          position?: number | null
+          projectLink?: string | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
@@ -626,13 +679,23 @@ export type Database = {
           id?: string
           mainImageUrl?: string | null
           memberGdgId?: string | null
+          position?: number | null
+          projectLink?: string | null
           secondaryImageUrl?: string | null
           startDate?: string | null
           tertiaryImageUrl?: string | null
           title?: string | null
           updatedAt?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "member_projects_memberGdgId_fkey"
+            columns: ["memberGdgId"]
+            isOneToOne: false
+            referencedRelation: "gdg_members"
+            referencedColumns: ["gdg_id"]
+          },
+        ]
       }
       member_showcase: {
         Row: {
@@ -744,53 +807,38 @@ export type Database = {
         }
         Relationships: []
       }
-      resource_tag: {
+      products: {
         Row: {
+          category: string
+          created_at: string
+          description: string
           id: string
-          tag_name: string
+          image: string
+          link: string | null
+          name: string
+          updated_at: string
         }
         Insert: {
+          category: string
+          created_at?: string
+          description: string
           id?: string
-          tag_name: string
+          image: string
+          link?: string | null
+          name: string
+          updated_at?: string
         }
         Update: {
+          category?: string
+          created_at?: string
+          description?: string
           id?: string
-          tag_name?: string
+          image?: string
+          link?: string | null
+          name?: string
+          updated_at?: string
         }
         Relationships: []
-      }
-      resource_tag_junction: {
-        Row: {
-          id: string
-          resource_id: string
-          resource_tag_id: string
-        }
-        Insert: {
-          id?: string
-          resource_id: string
-          resource_tag_id: string
-        }
-        Update: {
-          id?: string
-          resource_id?: string
-          resource_tag_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "resource_tag_junction_resource_id_fkey"
-            columns: ["resource_id"]
-            isOneToOne: false
-            referencedRelation: "external_resource"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "resource_tag_junction_resource_tag_id_fkey"
-            columns: ["resource_tag_id"]
-            isOneToOne: false
-            referencedRelation: "resource_tag"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       reward: {
         Row: {
@@ -820,15 +868,7 @@ export type Database = {
           user_id?: string
           value?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "reward_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       scraped_gdg_events: {
         Row: {
@@ -1063,15 +1103,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "task_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       team: {
         Row: {
@@ -1136,71 +1168,6 @@ export type Database = {
             foreignKeyName: "team_member_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      test: {
-        Row: {
-          description: string | null
-          id: string
-          title: string
-        }
-        Insert: {
-          description?: string | null
-          id?: string
-          title: string
-        }
-        Update: {
-          description?: string | null
-          id?: string
-          title?: string
-        }
-        Relationships: []
-      }
-      user: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          display_name: string
-          email: string
-          first_name: string | null
-          gdg_id: string | null
-          id: string
-          last_name: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          display_name: string
-          email: string
-          first_name?: string | null
-          gdg_id?: string | null
-          id?: string
-          last_name?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          display_name?: string
-          email?: string
-          first_name?: string | null
-          gdg_id?: string | null
-          id?: string
-          last_name?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_gdg_id_fkey"
-            columns: ["gdg_id"]
-            isOneToOne: false
             referencedRelation: "gdg_members"
             referencedColumns: ["gdg_id"]
           },
@@ -1237,15 +1204,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_achievement_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_certificate: {
         Row: {
@@ -1269,15 +1228,7 @@ export type Database = {
           title?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_certificate_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_credential: {
         Row: {
@@ -1336,87 +1287,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_portfolio: {
-        Row: {
-          avatar_image_url: string | null
-          bio: string | null
-          created_at: string
-          department: string | null
-          first_name: string | null
-          gdg_id: string | null
-          github_url: string | null
-          id: string
-          is_public: boolean
-          last_name: string | null
-          learning_interests: string[] | null
-          linkedin_url: string | null
-          membership_type: string | null
-          middle_name: string | null
-          nickname: string | null
-          other_links: string[] | null
-          portfolio_url: string | null
-          program: string | null
-          skills_summary: string | null
-          technical_skills: string[] | null
-          tools_and_technologies: string[] | null
-          updated_at: string
-          user_id: string
-          year_level: number | null
-        }
-        Insert: {
-          avatar_image_url?: string | null
-          bio?: string | null
-          created_at?: string
-          department?: string | null
-          first_name?: string | null
-          gdg_id?: string | null
-          github_url?: string | null
-          id?: string
-          is_public?: boolean
-          last_name?: string | null
-          learning_interests?: string[] | null
-          linkedin_url?: string | null
-          membership_type?: string | null
-          middle_name?: string | null
-          nickname?: string | null
-          other_links?: string[] | null
-          portfolio_url?: string | null
-          program?: string | null
-          skills_summary?: string | null
-          technical_skills?: string[] | null
-          tools_and_technologies?: string[] | null
-          updated_at?: string
-          user_id: string
-          year_level?: number | null
-        }
-        Update: {
-          avatar_image_url?: string | null
-          bio?: string | null
-          created_at?: string
-          department?: string | null
-          first_name?: string | null
-          gdg_id?: string | null
-          github_url?: string | null
-          id?: string
-          is_public?: boolean
-          last_name?: string | null
-          learning_interests?: string[] | null
-          linkedin_url?: string | null
-          membership_type?: string | null
-          middle_name?: string | null
-          nickname?: string | null
-          other_links?: string[] | null
-          portfolio_url?: string | null
-          program?: string | null
-          skills_summary?: string | null
-          technical_skills?: string[] | null
-          tools_and_technologies?: string[] | null
-          updated_at?: string
-          user_id?: string
-          year_level?: number | null
-        }
-        Relationships: []
-      }
       user_project: {
         Row: {
           created_at: string
@@ -1448,15 +1318,7 @@ export type Database = {
           title?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_project_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_role: {
         Row: {
@@ -1548,15 +1410,7 @@ export type Database = {
           id?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_settings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       wallet: {
         Row: {
@@ -1586,15 +1440,7 @@ export type Database = {
           user_id?: string
           webdev_points?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "wallet_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       wallet_transaction: {
         Row: {
@@ -1624,15 +1470,7 @@ export type Database = {
           source_type?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "wallet_transaction_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
@@ -1727,6 +1565,8 @@ export type Database = {
           source: Database["public"]["Enums"]["sparkmates_source"]
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       verify_member: {
         Args: { search_term: string }
         Returns: {
@@ -1739,6 +1579,7 @@ export type Database = {
           first_name: string | null
           gdg_id: string
           github_url: string | null
+          is_onboarded: boolean | null
           is_public: boolean | null
           last_name: string | null
           learning_interests: string | null
@@ -1749,6 +1590,7 @@ export type Database = {
           other_links: string | null
           portfolio_url: string | null
           program: string | null
+          section_order: string | null
           skills_summary: string | null
           suffix: string | null
           technical_skills: string | null

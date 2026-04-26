@@ -1,21 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
-type RolePermissionInsertDTO = z.infer<typeof contract.api.v1.roles.roleName.permissions.POST.request.body>;
+type RolePermissionInsertDTO = z.infer<typeof contract.api.v1.roles.roleId.permissions.POST.request.body>;
 
-export const useAddRolePermission = (roleName: string) => {
+export const useAddRolePermission = (roleId: string) => {
+  const callEndpoint = useCallEndpointWithToken();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: RolePermissionInsertDTO) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles.roleName.permissions.POST,
+        contract.api.v1.roles.roleId.permissions.POST,
         {
-          params: { roleName },
+          params: { roleId: roleId },
           body: payload,
         }
       );
@@ -25,7 +26,7 @@ export const useAddRolePermission = (roleName: string) => {
       throw new Error(extractErrorMessage(res.body));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles", "detail", roleName] });
+      queryClient.invalidateQueries({ queryKey: ["roles", "detail"] });
     },
   });
 };

@@ -34,7 +34,7 @@ export function IdHowItWorks() {
         </div>
 
         {/* Info card — overlaps Cirby on desktop, stacks on mobile */}
-        <div className="static md:absolute right-0 top-0 bottom-0 w-full md:w-[57%] z-20 flex justify-center items-center -mt-16 md:mt-0">
+        <div className="static md:absolute right-0 top-0 bottom-0 w-full md:w-[57%] md:z-20 flex justify-center items-center -mt-16 md:mt-0">
           <div className="w-full max-w-full md:max-w-none px-4 md:px-0">
             <IdInfoCard />
           </div>

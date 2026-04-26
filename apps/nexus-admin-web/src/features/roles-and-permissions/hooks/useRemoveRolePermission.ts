@@ -1,21 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { z } from "zod";
 
-type RolePermissionRemoveDTO = z.infer<typeof contract.api.v1.roles.roleName.permissions.PATCH.request.body>;
+type RolePermissionRemoveDTO = z.infer<typeof contract.api.v1.roles.roleId.permissions.PATCH.request.body>;
 
-export const useRemoveRolePermission = (roleName: string) => {
+export const useRemoveRolePermission = (roleId: string) => {
+  const callEndpoint = useCallEndpointWithToken();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (payload: RolePermissionRemoveDTO) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.roles.roleName.permissions.PATCH,
+        contract.api.v1.roles.roleId.permissions.PATCH,
         {
-          params: { roleName },
+          params: { roleId },
           body: payload,
         }
       );
@@ -25,7 +26,7 @@ export const useRemoveRolePermission = (roleName: string) => {
       throw new Error(extractErrorMessage(res.body));
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles", "detail", roleName] });
+      queryClient.invalidateQueries({ queryKey: ["roles", "detail"] });
     },
   });
 };

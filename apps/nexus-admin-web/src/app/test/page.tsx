@@ -3,12 +3,13 @@
 import { contract } from '@packages/nexus-api-contracts'
 import { callEndpoint } from '@packages/typed-rest/clientReact'
 import React from 'react'
+import { configs } from '@/lib/constants/configs'
 
 const page = () => {
 
     const handleTest = async () => {
         const result = await callEndpoint(
-            "http://localhost:8000",
+            configs.nexusApiBaseUrl,
             contract.api.v1.gdg_teams.POST,
             {
                 body: {

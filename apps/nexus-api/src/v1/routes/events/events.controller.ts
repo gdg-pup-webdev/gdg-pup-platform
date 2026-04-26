@@ -2,11 +2,12 @@ import { eventSystemController } from "@/v1/modules/eventSystem";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
 import { RequestHandler } from "express";
+import { ValidationError } from "@/v1/errors/HttpError";
 
 export class EventsHttpController {
   constructor(private eventController: typeof eventSystemController) {}
 
-  syncOneEventToBevy : RequestHandler = createExpressController(
+  syncOneEventToBevy: RequestHandler = createExpressController(
     contract.api.v1.events.eventId.syncToBevy.POST,
     async ({ input, output }) => {
       const result = await this.eventController.syncEventToBevy(
@@ -15,7 +16,7 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: "Event synced successfully",
-        data: result
+        data: result,
       });
     },
   );
@@ -130,7 +131,7 @@ export class EventsHttpController {
         ...input.body.data,
         beviPreviewUrl: input.body.data.bevyPreviewUrl || undefined,
         image: imageFile || null,
-        image_url: input.body.data.image_url || undefined,
+        images: input.body.data.images,
         short_description: input.body.data.short_description || undefined,
         type: input.body.data.type || undefined,
         teamId: input.body.data.teamId || undefined,
@@ -168,6 +169,7 @@ export class EventsHttpController {
         input.params.eventId,
         {
           ...input.body.data,
+          images: input.body.data.images,
           image: imageFile || null,
         },
       );
@@ -175,6 +177,71 @@ export class EventsHttpController {
       return output(200, {
         status: "success",
         message: "Event updated successfully",
+        data: result as any,
+      });
+    },
+  );
+
+  postAddImage: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.images.POST,
+    async ({ input, output }) => {
+      const image = input.files.image;
+
+      if (!image) {
+        throw new ValidationError("Image file is required.");
+      }
+
+      const result = await this.eventController.addImage({
+        eventId: input.params.eventId,
+        image: {
+          buffer: await image.arrayBuffer(),
+          name: image.name,
+          type: image.type,
+        },
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Event image added successfully",
+        data: result as any,
+      });
+    },
+  );
+
+  deleteImage: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.images.imageIndex.DELETE,
+    async ({ input, output }) => {
+      const imageIndex = Number(input.params.imageIndex);
+
+      if (!Number.isInteger(imageIndex) || imageIndex < 0) {
+        throw new ValidationError("imageIndex must be a non-negative integer.");
+      }
+
+      const result = await this.eventController.deleteImage({
+        eventId: input.params.eventId,
+        imageIndex,
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Event image deleted successfully",
+        data: result as any,
+      });
+    },
+  );
+
+  patchReorderImages: RequestHandler = createExpressController(
+    contract.api.v1.events.eventId.images.reorder.PATCH,
+    async ({ input, output }) => {
+      const result = await this.eventController.reorderImages({
+        eventId: input.params.eventId,
+        fromIndex: input.body.data.fromIndex,
+        toIndex: input.body.data.toIndex,
+      });
+
+      return output(200, {
+        status: "success",
+        message: "Event images reordered successfully",
         data: result as any,
       });
     },

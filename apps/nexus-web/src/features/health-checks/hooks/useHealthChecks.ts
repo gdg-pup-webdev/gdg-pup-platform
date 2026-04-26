@@ -8,11 +8,12 @@
  * 
  * @see https://tanstack.com/query/latest for TanStack Query docs
  */
+import { contract as nexusApiContract } from '@packages/nexus-api-contracts';
 
-import { useQuery } from '@tanstack/react-query';
-import { checkNexusHealth } from '../api/checkNexusHealth';
-import { checkIdentityHealth } from '../api/checkIdentityHealth';
+import { useQuery } from '@tanstack/react-query'; 
 import { HealthCheckResponse, HealthCheckException } from '../types';
+import { useCallEndpointWithToken } from '@/hooks/useFetchWithToken';
+import { configs } from '@/lib/constants/configs';
 
 /**
  * Hook return type with all the data and states you need
@@ -62,6 +63,10 @@ interface UseHealthCheckReturn {
  * ```
  */
 export function useNexusHealthCheck(): UseHealthCheckReturn {
+
+  const callEndpoint = useCallEndpointWithToken();
+
+
   const {
     data,
     isLoading,
@@ -73,7 +78,54 @@ export function useNexusHealthCheck(): UseHealthCheckReturn {
     queryKey: ['health-check', 'nexus'],
     
     // The function that performs the health check
-    queryFn: checkNexusHealth,
+    queryFn: async () => {
+       try {
+          // Call the Nexus API health endpoint
+          const result = await callEndpoint(
+            configs.nexusApiBaseUrl,
+            nexusApiContract.api.health.GET,
+            {},
+          );
+      
+          // Check if the response is successful (status 200)
+          if (result.status === 200) {
+            return result.body as HealthCheckResponse;
+          }
+      
+          // Handle non-200 responses
+          throw new HealthCheckException(
+            'SERVER_ERROR',
+            `Nexus API returned status ${result.status}: ${result.body.message || 'Unknown error'}`
+          );
+        } catch (error) {
+          // If it's already a HealthCheckException, re-throw it
+          if (error instanceof HealthCheckException) {
+            throw error;
+          }
+      
+          // Handle network errors (fetch failures, CORS issues, etc.)
+          if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new HealthCheckException(
+              'NETWORK_ERROR',
+              `Failed to connect to Nexus API at ${configs.nexusApiBaseUrl}. Please check if the API is running.`
+            );
+          }
+      
+          // Handle timeout errors
+          if (error instanceof Error && error.message.includes('timeout')) {
+            throw new HealthCheckException(
+              'TIMEOUT_ERROR',
+              'Nexus API health check timed out. The server may be slow or unresponsive.'
+            );
+          }
+      
+          // Handle unknown errors
+          throw new HealthCheckException(
+            'UNKNOWN_ERROR',
+            `An unexpected error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
+        }
+    },
     
     // Don't run automatically - wait for manual trigger
     enabled: false,
@@ -112,79 +164,4 @@ export function useNexusHealthCheck(): UseHealthCheckReturn {
     isFetched,
   };
 }
-
-/**
- * Custom hook to check Identity API health
- * 
- * By default, this hook does NOT automatically run the health check.
- * You must call `refetch()` to trigger the check (e.g., on button click).
- * 
- * @returns UseHealthCheckReturn - Health data, loading state, and error info
- * 
- * @example
- * ```typescript
- * function IdentityHealthCheck() {
- *   const { data, isLoading, error, refetch } = useIdentityHealthCheck();
- * 
- *   return (
- *     <div>
- *       <button onClick={refetch}>Check Health</button>
- *       {isLoading && <Spinner />}
- *       {error && <ErrorMessage message={error} />}
- *       {data && <p>Status: {data.status}</p>}
- *     </div>
- *   );
- * }
- * ```
- */
-export function useIdentityHealthCheck(): UseHealthCheckReturn {
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-    isFetched,
-  } = useQuery({
-    // Unique key for this query
-    queryKey: ['health-check', 'identity'],
-    
-    // The function that performs the health check
-    queryFn: checkIdentityHealth,
-    
-    // Don't run automatically - wait for manual trigger
-    enabled: false,
-    
-    // Don't retry on failure
-    retry: false,
-    
-    // Don't cache for long
-    staleTime: 30 * 1000, // 30 seconds
-    gcTime: 60 * 1000, // 1 minute
-  });
-
-  // Extract error information if the check failed
-  let errorMessage: string | null = null;
-  let errorType: HealthCheckException['type'] | null = null;
-
-  if (error) {
-    if (error instanceof HealthCheckException) {
-      errorMessage = error.message;
-      errorType = error.type;
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-      errorType = 'UNKNOWN_ERROR';
-    } else {
-      errorMessage = 'An unknown error occurred';
-      errorType = 'UNKNOWN_ERROR';
-    }
-  }
-
-  return {
-    data: data || null,
-    isLoading,
-    error: errorMessage,
-    errorType,
-    refetch,
-    isFetched,
-  };
-}
+  

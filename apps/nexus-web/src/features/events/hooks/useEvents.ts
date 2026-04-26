@@ -7,12 +7,13 @@
 
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { EventsQueryParams, EventFilters, Event } from "../types";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
+import { extractErrorMessage } from "@/lib/utils";
 
 /**
  * Hook to fetch events with TanStack Query
@@ -39,9 +40,10 @@ import { configs } from "@/lib/constants/configs";
  * ```
  */
 export function useEvents(params: EventsQueryParams = {}) {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["events", params],
-    queryFn: async () => { 
+    queryFn: async () => {
       const result = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.events.GET,
@@ -67,6 +69,7 @@ export function useEvents(params: EventsQueryParams = {}) {
 }
 
 export function useEvent(eventId: string) {
+  const callEndpoint = useCallEndpointWithToken();
   return useQuery({
     queryKey: ["event", eventId],
     queryFn: async () => {
@@ -89,6 +92,122 @@ export function useEvent(eventId: string) {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
     retry: 2,
+  });
+}
+
+export function useAddEventImage(eventId: string, token?: string) {
+  const callEndpoint = useCallEndpointWithToken();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (image: File) => {
+      const result = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.eventId.images.POST,
+        {
+          token: token ?? undefined,
+          params: { eventId },
+          body: {},
+          files: { image },
+        },
+      );
+
+      if (result.status === 200 && result.body) {
+        return result.body.data;
+      }
+
+      throw new Error(
+        extractErrorMessage(result.body) || "Failed to add event image",
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({
+        queryKey: ["events", "detail", eventId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+}
+
+export function useDeleteEventImage(eventId: string, token?: string) {
+  const callEndpoint = useCallEndpointWithToken();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (imageIndex: number) => {
+      const result = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.eventId.images.imageIndex.DELETE,
+        {
+          token: token ?? undefined,
+          params: {
+            eventId,
+            imageIndex: String(imageIndex),
+          },
+        },
+      );
+
+      if (result.status === 200 && result.body) {
+        return result.body.data;
+      }
+
+      throw new Error(
+        extractErrorMessage(result.body) || "Failed to delete event image",
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({
+        queryKey: ["events", "detail", eventId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+}
+
+export function useReorderEventImages(eventId: string, token?: string) {
+  const callEndpoint = useCallEndpointWithToken();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      fromIndex,
+      toIndex,
+    }: {
+      fromIndex: number;
+      toIndex: number;
+    }) => {
+      const result = await callEndpoint(
+        configs.nexusApiBaseUrl,
+        contract.api.v1.events.eventId.images.reorder.PATCH,
+        {
+          token: token ?? undefined,
+          params: { eventId },
+          body: {
+            data: {
+              fromIndex,
+              toIndex,
+            },
+          },
+        },
+      );
+
+      if (result.status === 200 && result.body) {
+        return result.body.data;
+      }
+
+      throw new Error(
+        extractErrorMessage(result.body) || "Failed to reorder event images",
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({
+        queryKey: ["events", "detail", eventId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
   });
 }
 
@@ -201,7 +320,8 @@ export function useEventFilters() {
       switch (filters.sortBy) {
         case "date":
           comparison =
-            new Date(a.start_date || "").getTime() - new Date(b.start_date || "").getTime();
+            new Date(a.start_date || "").getTime() -
+            new Date(b.start_date || "").getTime();
           break;
         case "title":
           comparison = a.title.localeCompare(b.title);

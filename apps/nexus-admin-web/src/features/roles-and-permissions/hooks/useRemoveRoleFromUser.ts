@@ -1,18 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import {  useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
 export const useRemoveRoleFromUser = () => {
   const queryClient = useQueryClient();
+  const callEndpoint = useCallEndpointWithToken();
   return useMutation({
     mutationFn: async ({ gdgId, roleName }: { gdgId: string; roleName: string }) => {
+      
+      // throw new Error("This endpoint has not been implemented yet.");
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.users.userId.roles.roleName.DELETE,
+        contract.api.v1.gdgmembers.gdgId.roles.roleName.DELETE,
         {
-          params: { userId: gdgId, roleName },
+          params: { gdgId: gdgId, roleName },
         }
       );
 

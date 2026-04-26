@@ -1,47 +1,51 @@
-import { MemberProject } from "../domain/MemberProject";
+import {
+  MemberProject,
+  MEMBER_PROJECT_MAX_IMAGES,
+} from "../domain/MemberProject";
 import { IMemberProjectRepository } from "../domain/IMemberProjectRepository";
-import { IFileStorage, FileToUpload } from "../domain/IFileStorage";
+import {
+  ForbiddenError,
+  NotFoundError,
+  ValidationError,
+} from "@/v1/errors/HttpError";
 
 export type UpdateMemberProjectInput = {
+  actorId: string;
   id: string;
   title?: string;
   startDate?: Date;
   endDate?: Date | null;
   description?: string;
-  mainImage?: FileToUpload | null;
-  secondaryImage?: FileToUpload | null;
-  tertiaryImage?: FileToUpload | null;
+  projectLink?: string | null;
+  images?: string[];
 };
 
 export class UpdateMemberProject {
-  constructor(
-    private repository: IMemberProjectRepository,
-    private fileStorage: IFileStorage
-  ) {}
+  constructor(private repository: IMemberProjectRepository) {}
 
   async execute(input: UpdateMemberProjectInput): Promise<MemberProject> {
     const project = await this.repository.findById(input.id);
     if (!project) {
-      throw new Error(`Member Project with ID ${input.id} not found`);
+      throw new NotFoundError(`Member Project with ID ${input.id} not found`);
     }
 
-    let mainImageUrl = undefined;
-    let secondaryImageUrl = undefined;
-    let tertiaryImageUrl = undefined;
-
-    if (input.mainImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.mainImage);
-      mainImageUrl = uploaded.publicUrl;
+    if (input.actorId !== project.props.memberGdgId) {
+      throw new ForbiddenError(
+        `Access denied. User '${input.actorId}' cannot modify member '${project.props.memberGdgId}'.`,
+      );
     }
 
-    if (input.secondaryImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.secondaryImage);
-      secondaryImageUrl = uploaded.publicUrl;
-    }
-
-    if (input.tertiaryImage) {
-      const uploaded = await this.fileStorage.uploadFile(input.tertiaryImage);
-      tertiaryImageUrl = uploaded.publicUrl;
+    if (input.images !== undefined) {
+      if (input.images.length > MEMBER_PROJECT_MAX_IMAGES) {
+        throw new ValidationError(
+          `A member project can only contain up to ${MEMBER_PROJECT_MAX_IMAGES} images.`,
+        );
+      }
+      try {
+        project.update({ images: input.images });
+      } catch (error) {
+        throw new ValidationError((error as Error).message, error);
+      }
     }
 
     project.update({
@@ -49,9 +53,7 @@ export class UpdateMemberProject {
       startDate: input.startDate,
       endDate: input.endDate,
       description: input.description,
-      mainImageUrl,
-      secondaryImageUrl,
-      tertiaryImageUrl,
+      projectLink: input.projectLink,
     });
 
     return await this.repository.persistUpdates(project);

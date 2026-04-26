@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Button } from "@packages/spark-ui";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
+import { CarouselArrowIcon } from "@/features/community-showcase/components/CarouselArrowIcon";
 
 type GalleryItem = {
   year: number;
@@ -11,7 +13,7 @@ type GalleryItem = {
 };
 
 const CARD_GAP_PX = 16;
-const PREVIEW_IMAGE_PATH = "/pages/events/gallery-preview-year.svg";
+const PREVIEW_IMAGE_PATH = "/pages/events/gallery-preview-year.webp";
 const BORDER_GRADIENT =
   "linear-gradient(92.56deg, #EA4335 -7.33%, #F9AB00 33.65%, #34A853 72.08%, #4285F4 109.62%)";
 
@@ -21,14 +23,7 @@ function getCardsPerView(width: number): number {
   return 1;
 }
 
-function getCircularWindow<T>(items: T[], startIndex: number, count: number): T[] {
-  if (items.length === 0 || count <= 0) return [];
-
-  const total = items.length;
-  const normalizedStart = ((startIndex % total) + total) % total;
-
-  return Array.from({ length: count }, (_, i) => items[(normalizedStart + i) % total]);
-}
+// Remove unused getCircularWindow
 
 export function EventsGallery() {
   const [cardsPerView, setCardsPerView] = useState(3);
@@ -43,29 +38,33 @@ export function EventsGallery() {
   }, []);
 
   const years = useMemo<GalleryItem[]>(() => {
-    const currentYear = new Date().getFullYear();
-    return Array.from({ length: Math.max(0, currentYear - 2022 + 1) }, (_, i) => {
-      const year = 2022 + i;
+    const startYear = 2026;
+    const endYear = 2022;
+    const length = startYear - endYear + 1;
+    return Array.from({ length }, (_, i) => {
+      const year = startYear - i;
       return { year, id: `gallery-${year}` };
     });
   }, []);
 
   const totalYears = years.length;
-  const safeStartIndex = totalYears > 0 ? ((startIndex % totalYears) + totalYears) % totalYears : 0;
 
   const visibleItems = useMemo(
-    () => getCircularWindow(years, safeStartIndex, cardsPerView),
-    [years, safeStartIndex, cardsPerView],
+    () => years.slice(startIndex, startIndex + cardsPerView),
+    [years, startIndex, cardsPerView],
   );
 
+  const canGoPrev = startIndex > 0;
+  const canGoNext = startIndex + cardsPerView < totalYears;
+
   const handlePrevious = () => {
-    if (totalYears === 0) return;
+    if (!canGoPrev) return;
     setDirection("prev");
-    setStartIndex((prev) => prev - cardsPerView);
+    setStartIndex((prev) => Math.max(0, prev - cardsPerView));
   };
 
   const handleNext = () => {
-    if (totalYears === 0) return;
+    if (!canGoNext) return;
     setDirection("next");
     setStartIndex((prev) => prev + cardsPerView);
   };
@@ -73,16 +72,17 @@ export function EventsGallery() {
   return (
     <div className="w-full mt-4 md:mt-8">
       <div className="relative w-full">
-        <button
-          type="button"
+        <Button
+          variant="colored"
+          subVariant="blue"
           onClick={handlePrevious}
           aria-label="Previous gallery years"
-          className="absolute left-[-6px] md:left-[-22px] top-1/2 -translate-y-1/2 z-20 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white text-xl md:text-3xl leading-none flex items-center justify-center transition-[opacity,background-color] duration-300 bg-black/20 md:bg-transparent cursor-pointer hover:bg-black/40"
+          className={`absolute left-[-16px] md:left-[-32px] top-1/2 -translate-y-1/2 z-20 h-10 w-10 md:h-15 md:w-15 shrink-0 rounded-full transition-all duration-300 ${!canGoPrev ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         >
-          {"<"}
-        </button>
+          <CarouselArrowIcon direction="left" />
+        </Button>
 
-        <div className="mx-10 md:mx-10 overflow-hidden relative">
+        <div className="mx-10 md:mx-15 overflow-hidden relative">
           <div
             className="grid invisible pointer-events-none"
             style={{
@@ -98,7 +98,7 @@ export function EventsGallery() {
           </div>
           <AnimatePresence mode="sync" initial={false}>
             <motion.div
-              key={`${safeStartIndex}-${cardsPerView}`}
+              key={`${startIndex}-${cardsPerView}`}
               initial={{ x: direction === "next" ? 64 : -64, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: direction === "next" ? -64 : 64, opacity: 0 }}
@@ -113,8 +113,8 @@ export function EventsGallery() {
               }}
             >
               {visibleItems.map((item) => (
-                <Link
-                  key={`${item.id}-${safeStartIndex}`}
+                <Link prefetch={false}
+                  key={`${item.id}-${startIndex}`}
                   href={`/events/gallery/${item.year}`}
                   className="group relative rounded-2xl p-[1px] transition-all duration-300 ease-out hover:shadow-[0_12px_36px_rgba(0,0,0,0.42)] cursor-pointer"
                   style={{ backgroundImage: BORDER_GRADIENT }}
@@ -176,14 +176,15 @@ export function EventsGallery() {
           </AnimatePresence>
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="colored"
+          subVariant="blue"
           onClick={handleNext}
           aria-label="Next gallery years"
-          className="absolute right-[-6px] md:right-[-22px] top-1/2 -translate-y-1/2 z-20 h-9 w-9 md:h-10 md:w-10 rounded-full border border-white/70 text-white text-xl md:text-3xl leading-none flex items-center justify-center transition-[opacity,background-color] duration-300 bg-black/20 md:bg-transparent cursor-pointer hover:bg-black/40"
+          className={`absolute right-[-16px] md:right-[-32px] top-1/2 -translate-y-1/2 z-20 h-10 w-10 md:h-15 md:w-15 shrink-0 rounded-full transition-all duration-300 ${!canGoNext ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         >
-          {">"}
-        </button>
+          <CarouselArrowIcon direction="right" />
+        </Button>
       </div>
     </div>
   );

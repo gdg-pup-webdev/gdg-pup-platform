@@ -32,6 +32,18 @@ export function MemberShowcaseSubmitStory() {
         >
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
             <motion.div variants={prefersReduced ? undefined : ITEM_VARIANTS}>
+              <Stack className="items-center lg:items-end">
+                <Image
+                  src={ASSETS.MEMBER_SHOWCASE.SUBMIT_STORY.SPARKY_CIRBY}
+                  width={3023}
+                  height={4096}
+                  alt="sparky and cirby"
+                  className="h-auto w-full max-w-60 hidden lg:block md:max-w-80 lg:max-w-96"
+                />
+              </Stack>
+            </motion.div>
+
+            <motion.div variants={prefersReduced ? undefined : ITEM_VARIANTS}>
               <Stack
                 gap="xl"
                 align="center"
@@ -51,21 +63,11 @@ export function MemberShowcaseSubmitStory() {
                     inspire the community.
                   </Text>
                 </Stack>
-                <Button variant="colored" subVariant="blue" size="lg">
-                  Submit your story
+                <Button asChild variant="colored" subVariant="blue" size="lg">
+                  <a href="https://forms.gle/wNpWYMT6hGPidtEL8" target="_blank" rel="noopener noreferrer">
+                    Submit your story
+                  </a>
                 </Button>
-              </Stack>
-            </motion.div>
-
-            <motion.div variants={prefersReduced ? undefined : ITEM_VARIANTS}>
-              <Stack className="items-center lg:items-end">
-                <Image
-                  src={ASSETS.MEMBER_SHOWCASE.SUBMIT_STORY.SPARKY_CIRBY}
-                  width={3023}
-                  height={4096}
-                  alt="sparky and cirby"
-                  className="h-auto w-full max-w-60 hidden lg:block md:max-w-80 lg:max-w-96"
-                />
               </Stack>
             </motion.div>
           </div>

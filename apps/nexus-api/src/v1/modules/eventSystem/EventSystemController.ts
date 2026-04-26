@@ -13,6 +13,9 @@ import { GetEventsByType } from "./useCases/GetEventsByType";
 import { GetEventsByTeam } from "./useCases/GetEventsByTeam";
 import { ImportAndSyncAllToBevy } from "./useCases/ImportAndSyncAllToBevy";
 import { SyncEventToBevy } from "./useCases/SyncEventToBevy";
+import { AddEventImage } from "./useCases/AddEventImage";
+import { DeleteEventImage } from "./useCases/DeleteEventImage";
+import { ReorderEventImages } from "./useCases/ReorderEventImages";
 
 export class EventSystemController {
   constructor(
@@ -27,17 +30,20 @@ export class EventSystemController {
     private readonly listEventsByYearUseCase: ListEventsByYear,
     private readonly getEventsByTypeUseCase: GetEventsByType,
     private readonly getEventsByTeamUseCase: GetEventsByTeam,
-    private readonly importallandsyncuc: ImportAndSyncAllToBevy,
-    private readonly synceventtobevy: SyncEventToBevy,
+    private readonly addEventImageUseCase: AddEventImage,
+    private readonly deleteEventImageUseCase: DeleteEventImage,
+    private readonly reorderEventImagesUseCase: ReorderEventImages,
+    private readonly importAndSyncAllToBevyUseCase: ImportAndSyncAllToBevy,
+    private readonly syncEventToBevyUseCase: SyncEventToBevy,
   ) {}
 
   async syncEventToBevy(eventId: string) {
-    const res = await this.synceventtobevy.execute(eventId);
+    const res = await this.syncEventToBevyUseCase.execute(eventId);
     return this.flattenEvent(res);
   }
 
   async importAndSyncAllToBevy() {
-    return this.importallandsyncuc.execute();
+    return this.importAndSyncAllToBevyUseCase.execute();
   }
 
   private flattenEvent(event: Event) {
@@ -54,9 +60,11 @@ export class EventSystemController {
       end_date: event.props.end_date.toISOString(),
       attendance_points: event.props.attendance_points,
       attendees_count: event.props.attendees_count,
+      rsvp: event.props.rsvp,
       bevy_event_id: event.props.bevy_event_id,
       bevyPreviewUrl: event.props.bevyPreviewUrl,
       image_url: event.props.image_url,
+      images: [...event.props.images],
       tags: event.props.tags,
       max_capacity: event.props.max_capacity,
       short_description: event.props.short_description,
@@ -64,6 +72,7 @@ export class EventSystemController {
       speakers: event.props.speakers,
       type: event.props.type,
       teamId: event.props.teamId,
+      teamName: event.props.teamName ?? null,
     };
   }
 
@@ -132,9 +141,11 @@ export class EventSystemController {
     beviPreviewUrl,
     image,
     image_url,
+    images,
     tags,
     max_capacity,
     short_description,
+    rsvp,
     speakers,
     type,
     teamId,
@@ -151,9 +162,11 @@ export class EventSystemController {
     beviPreviewUrl?: string;
     image: any | null; // This is the file object from TypedRest
     image_url?: string | null;
+    images?: any;
     tags?: any;
     max_capacity?: number;
     short_description?: string;
+    rsvp?: number | null;
     speakers?: any;
     type?: string;
     teamId?: string;
@@ -181,9 +194,11 @@ export class EventSystemController {
         bevy_event_id: bevy_event_id || null,
         bevyPreviewUrl: beviPreviewUrl || null,
         image_url: image_url || null,
+        images: this.ensureArray(images),
         tags: this.ensureArray(tags),
         max_capacity: max_capacity || 99999999,
         short_description: short_description || null,
+        rsvp: rsvp ?? null,
         speakers: this.ensureArray(speakers),
         type: type || null,
         teamId: teamId || null,
@@ -266,6 +281,7 @@ export class EventSystemController {
       type?: string;
       teamId?: string;
       teamName?: string;
+      category?: string;
       year?: number;
     },
   ) {
@@ -286,10 +302,12 @@ export class EventSystemController {
     if (dto.start_date) updateProps.start_date = new Date(dto.start_date);
     if (dto.end_date) updateProps.end_date = new Date(dto.end_date);
     if (dto.bevyPreviewUrl) updateProps.bevyPreviewUrl = dto.bevyPreviewUrl;
+    if (dto.image_url !== undefined) updateProps.image_url = dto.image_url || null;
 
     // Explicitly handle array fields that might be stringified in multipart
-    if (dto.tags) updateProps.tags = this.ensureArray(dto.tags);
-    if (dto.speakers) updateProps.speakers = this.ensureArray(dto.speakers);
+    if (dto.tags !== undefined) updateProps.tags = this.ensureArray(dto.tags);
+    if (dto.speakers !== undefined) updateProps.speakers = this.ensureArray(dto.speakers);
+    if (dto.images !== undefined) updateProps.images = this.ensureArray(dto.images);
 
     let fileToUpload: FileToUpload | null = null;
     if (dto.image && typeof dto.image.arrayBuffer === "function") {
@@ -304,6 +322,44 @@ export class EventSystemController {
       ...updateProps,
       image: fileToUpload,
     });
+    return this.flattenEvent(result);
+  }
+
+  async addImage(input: {
+    eventId: string;
+    image: { buffer: ArrayBuffer; name: string; type: string };
+  }) {
+    const result = await this.addEventImageUseCase.execute({
+      eventId: input.eventId,
+      image: new FileToUpload(input.image),
+    });
+
+    return this.flattenEvent(result);
+  }
+
+  async deleteImage(input: {
+    eventId: string;
+    imageIndex: number;
+  }) {
+    const result = await this.deleteEventImageUseCase.execute({
+      eventId: input.eventId,
+      imageIndex: input.imageIndex,
+    });
+
+    return this.flattenEvent(result);
+  }
+
+  async reorderImages(input: {
+    eventId: string;
+    fromIndex: number;
+    toIndex: number;
+  }) {
+    const result = await this.reorderEventImagesUseCase.execute({
+      eventId: input.eventId,
+      fromIndex: input.fromIndex,
+      toIndex: input.toIndex,
+    });
+
     return this.flattenEvent(result);
   }
 }

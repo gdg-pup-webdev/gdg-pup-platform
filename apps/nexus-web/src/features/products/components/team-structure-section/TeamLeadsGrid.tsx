@@ -5,8 +5,16 @@ interface TeamLeadsGridProps {
   teamSlug: string;
 }
 
+const TEAM_SLUG_ALIASES: Record<string, string> = {
+  executives: "tech-executives",
+};
+
 export function TeamLeadsGrid({ teamSlug }: TeamLeadsGridProps) {
-  const members = TEAM_MEMBERS_BY_SLUG[teamSlug] ?? [];
+  const resolvedTeamSlug = TEAM_SLUG_ALIASES[teamSlug] ?? teamSlug;
+  const members =
+    TEAM_MEMBERS_BY_SLUG[teamSlug] ??
+    TEAM_MEMBERS_BY_SLUG[resolvedTeamSlug] ??
+    [];
 
   return (
     <Stack gap="xl" className="mt-16">
@@ -15,6 +23,7 @@ export function TeamLeadsGrid({ teamSlug }: TeamLeadsGridProps) {
         gradient="white-blue"
         align="center"
         weight="bold"
+        className="text-3xl leading-none sm:text-4xl md:text-5xl"
       >
         CURRENT TEAM LEADS
       </Text>

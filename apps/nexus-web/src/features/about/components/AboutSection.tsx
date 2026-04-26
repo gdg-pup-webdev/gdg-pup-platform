@@ -5,14 +5,17 @@ import Image from "next/image";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
 import { ASSETS } from "@/lib/constants/assets";
+import { AboutHeroStage } from "./AboutHeroStage";
 
 // Animation wrapper component for fade-in on scroll
 const FadeInSection = ({
   children,
   delay = 0,
+  withY = true,
 }: {
   children: React.ReactNode;
   delay?: number;
+  withY?: boolean;
 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -20,8 +23,10 @@ const FadeInSection = ({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: withY ? 50 : 0 }}
+      animate={
+        isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: withY ? 50 : 0 }
+      }
       transition={{ duration: 0.6, delay, ease: "easeOut" }}
     >
       {children}
@@ -30,8 +35,11 @@ const FadeInSection = ({
 };
 
 export function AboutSection() {
+  const rainbowGradientTextClass =
+    "bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_33%,#34A853_66%,#4285F4_100%)] bg-clip-text text-transparent font-bold";
+
   return (
-    <div className="relative overflow-x-hidden pt-60 pb-48 px-0">
+    <div className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
       {/* Decorative Ellipse - Top Left */}
       <div
         className="absolute rounded-full pointer-events-none"
@@ -81,27 +89,6 @@ export function AboutSection() {
         }}
       />
 
-      {/* Spiral Stand Decoration - positioned below video */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          width: "100vw",
-          left: "50%",
-          transform: "translateX(-50%)",
-          top: "calc(43rem + 400px)",
-          opacity: 0.9,
-          zIndex: 0,
-        }}
-      >
-        <Image
-          src={ASSETS.ABOUT.WHO.SPIRAL}
-          alt="Spiral decoration"
-          width={1400}
-          height={900}
-          className="w-full h-auto"
-        />
-      </div>
-
       {/* Decorative Element 1 - Right Side */}
       <div
         className="absolute pointer-events-none hidden md:block"
@@ -139,15 +126,11 @@ export function AboutSection() {
         />
       </div>
 
-      <Container maxWidth="full" padding="none" className="relative">
+      <Container maxWidth="7xl" padding="lg" className="relative">
         <Stack gap="2xl">
           {/* Section 1: Hero Header */}
           <FadeInSection>
-            <Stack
-              gap="lg"
-              align="center"
-              className="md:mx-10 lg:mx-35 lg:mb-20 mx-5"
-            >
+            <Stack gap="lg" align="center" className="lg:mb-20">
               <Text
                 as="h1"
                 variant="heading-2"
@@ -183,83 +166,142 @@ export function AboutSection() {
 
           {/* Section 2: Hero Media */}
           <FadeInSection delay={0.2}>
-            <Box
-              className="relative aspect-video rounded-3xl mx-5 overflow-hidden md:mx-10 lg:mx-35 lg:mb-20"
-              style={{
-                boxShadow: "0px 10px 50px 0px #EA443480",
-                zIndex: 10,
-              }}
-            >
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/HMQjlHLlmwM?si=yZRjYhCsDY1lee1h"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-                className="absolute inset-0"
-              />
-            </Box>
+            <div className="relative w-full flex justify-center lg:mb-28">
+              {/* Spiral decoration anchored to BOTTOM of video */}
+              <div
+                className="absolute pointer-events-none z-0"
+                style={{
+                  width: "min(1800px, 100vw)",
+                  left: "50%",
+                  top: "90%",
+                  transform: "translate(-50%, -15%)",
+                  opacity: 0.6,
+                }}
+              >
+                <Image
+                  src={ASSETS.ABOUT.WHO.SPIRAL}
+                  alt="Spiral decoration"
+                  width={1400}
+                  height={900}
+                  className="w-full h-auto"
+                />
+              </div>
+
+              <Box
+                className="relative aspect-video rounded-3xl overflow-hidden w-full z-10"
+                style={{
+                  boxShadow: "0px 10px 50px 0px #EA443480",
+                }}
+              >
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/HMQjlHLlmwM?si=yZRjYhCsDY1lee1h"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="absolute inset-0"
+                />
+              </Box>
+            </div>
           </FadeInSection>
 
           {/* Section 3: Hero Description */}
           <FadeInSection delay={0.3}>
-            <Stack gap="md" className="lg:mx-35 md:mx-10 mx-5">
-              <Text variant="body" align="center" className="text-white">
-                GDG PUP brings together students from all backgrounds who share
-                the same spark: a genuine curiosity to explore technology beyond
-                the classroom and the drive to build real, lasting connections
-                along the way. Through events, workshops, and hands-on projects,
-                we help members develop technical skills, gain real-world
-                experience, and prepare for careers in tech.
-              </Text>
+            <Box className="max-w-4xl mx-auto w-full">
+              <Card>
+                <Stack gap="md">
+                  <Text
+                    variant="body"
+                    align="center"
+                    className="text-white text-lg md:text-xl"
+                  >
+                    GDG PUP brings together{" "}
+                    <span className={rainbowGradientTextClass}>
+                      students from all backgrounds
+                    </span>{" "}
+                    who share the same spark: a genuine curiosity to explore
+                    technology beyond the classroom and the drive to build real,
+                    lasting connections along the way.{" "}
+                    <Text as="span" gradient="white-blue" weight="bold">
+                      Through events, workshops, and hands-on projects, we help
+                      members develop technical skills, gain real-world
+                      experience, and prepare for careers in tech.
+                    </Text>
+                  </Text>
 
-              <Text variant="body" align="center" className="text-white">
-                As part of the global Google Developer Groups on Campus network,
-                our members gain access to learning opportunities, tools, and a
-                community that extends beyond the university.
-              </Text>
-            </Stack>
+                  <Text
+                    variant="body"
+                    align="center"
+                    className="text-white text-lg md:text-xl"
+                  >
+                    As part of the global{" "}
+                    <span className={rainbowGradientTextClass}>
+                      Google Developer Groups on Campus
+                    </span>{" "}
+                    network, our members gain access to learning opportunities,
+                    tools, and a community that extends beyond the university.
+                  </Text>
+                </Stack>
+              </Card>
+            </Box>
           </FadeInSection>
 
           {/* Section 4: Mission */}
           <FadeInSection delay={0.1}>
             <Stack
-              gap="xl"
+              gap="lg"
               className="w-full md:flex md:flex-row md:items-center lg:grid-cols-3 lg:grid"
             >
               {/* Left: Image/Illustration */}
-              <Box className="flex justify-center lg:col-span-1 lg:justify-start">
+              <Box className="flex justify-center lg:col-span-1 lg:justify-end">
                 <Box className="relative w-40 h-40 md:w-80 md:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
-                  <Image
-                    src={ASSETS.ABOUT.WHO.MASCOT_1}
-                    alt="Mission - Cirby"
-                    width={400}
-                    height={400}
-                    className="w-full h-auto object-contain"
-                    style={{
-                      filter:
-                        "drop-shadow(0 10px 30px rgba(66, 133, 244, 0.3))",
+                  <motion.div
+                    animate={{ y: [-12, 12, -12] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 6,
+                      ease: "easeInOut",
                     }}
-                  />
+                    className="w-full h-full"
+                  >
+                    <Image
+                      src={ASSETS.ABOUT.WHO.MASCOT_1}
+                      alt="Mission - Cirby"
+                      width={400}
+                      height={400}
+                      className="w-full h-full object-contain pointer-events-none"
+                      style={{
+                        filter:
+                          "drop-shadow(0 10px 30px rgba(66, 133, 244, 0.3))",
+                      }}
+                    />
+                  </motion.div>
                 </Box>
               </Box>
 
               {/* Right: Content */}
               <Stack
                 gap="lg"
-                className="md:mr-10 md:pr-10 lg:col-span-2 lg:mr-35 lg:pr-35 items-center md:items-start mx-5 lg:items-start"
+                className="lg:col-span-2 items-center md:items-start lg:items-start"
               >
-                <Text as="h2" variant="heading-2" gradient="white-blue">
+                <Text
+                  as="h2"
+                  variant="heading-2"
+                  gradient="white-blue"
+                  align="center"
+                  className="md:text-left"
+                >
                   Mission
                 </Text>
 
                 <Card>
                   <Text
                     variant="body"
-                    className="text-gray-300 text-base md:text-lg leading-relaxed"
+                    align="center"
+                    className="text-gray-300 text-base md:text-lg leading-relaxed md:text-left"
                   >
                     To build an inclusive and supportive student community that
                     empowers learners to transform technical knowledge into
@@ -272,27 +314,24 @@ export function AboutSection() {
           </FadeInSection>
 
           {/* Section 5: Our Values */}
-          <FadeInSection delay={0.1}>
+          <FadeInSection delay={0.1} withY={false}>
             <Stack
               gap="xl"
-              className="w-full md:flex md:flex-row md:items-start md:gap-2xl mx-5 md:ml-10 lg:ml-35"
+              className="w-full md:flex md:flex-row md:items-start md:gap-2xl"
             >
               {/* Left: Content */}
-              <Stack gap="lg" className="md:w-1/2 items-center mr-10">
+              <Stack gap="2xl" className="md:w-1/2 items-center md:mr-10">
                 {/* mobile mascot above values */}
-                <Box className="mb-4 md:hidden">
-                  <Image
-                    src={ASSETS.ABOUT.WHO.MASCOT_2}
-                    alt="Our Values - Sparky Flying"
-                    width={200}
-                    height={200}
-                    className="w-full h-auto object-contain max-w-52 mx-auto"
-                    style={{
-                      filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
-                    }}
-                  />
+                <Box className="md:hidden w-full scale-75 origin-center -mb-26 -mt-12 relative h-auto flex items-center justify-center">
+                  <AboutHeroStage />
                 </Box>
-                <Text as="h2" variant="heading-2" gradient="white-blue">
+                <Text
+                  as="h2"
+                  variant="heading-2"
+                  gradient="white-blue"
+                  align="center"
+                  className="md:text-left"
+                >
                   Our Values
                 </Text>
 
@@ -307,12 +346,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Community-Driven Learning
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We believe learning is most powerful when it&apos;s
@@ -339,12 +385,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Learning by Doing
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We turn concepts into real solutions.{" "}
@@ -367,12 +420,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Inclusivity and Growth
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We build an inclusive community for all learners.{" "}
@@ -396,12 +456,19 @@ export function AboutSection() {
                     />
                   </div>
                   <Card>
-                    <Text variant="heading-5" gradient="blue" weight="bold">
+                    <Text
+                      variant="heading-5"
+                      gradient="vibrant-blue"
+                      weight="bold"
+                      align="center"
+                      className="sm:text-left"
+                    >
                       Innovation with Purpose
                     </Text>
                     <Text
                       variant="body"
-                      className="text-gray-300 text-base md:text-lg leading-relaxed"
+                      align="center"
+                      className="text-gray-300 text-base md:text-lg leading-relaxed sm:text-left"
                     >
                       <span className="italic font-bold">
                         We build and design for the people.{" "}
@@ -415,22 +482,8 @@ export function AboutSection() {
               </Stack>
 
               {/* Right: Image/Illustration */}
-              <Box className="flex justify-center md:w-1/2 relative">
-                <Box
-                  className="absolute right-0 top-0 lg:w-150 lg:h-80 flex items-center justify-center"
-                  style={{ transform: "translateX(15%)" }}
-                >
-                  <Image
-                    src={ASSETS.ABOUT.WHO.MASCOT_2}
-                    alt="Our Values - Sparky Flying"
-                    width={400}
-                    height={400}
-                    className="w-full h-auto object-contain hidden sm:block"
-                    style={{
-                      filter: "drop-shadow(0 10px 30px rgba(234, 67, 53, 0.3))",
-                    }}
-                  />
-                </Box>
+              <Box className="hidden sm:flex justify-center md:w-1/2 sticky top-48 self-start">
+                <AboutHeroStage />
               </Box>
             </Stack>
           </FadeInSection>

@@ -21,49 +21,40 @@ import {
   Trash2
 } from "lucide-react";
 import { FileRecord, FileRecordInsert, FileRecordUpdate, Folder, FolderInsert, FolderUpdate } from "../types";
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminFormModal, AdminInputField, AdminTextAreaField } from "@/components/admin/form";
+import { ModalActionRow, type ModalActionItem } from "@/components/admin/ModalActionRow";
 
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
+type ImageResolution = 64 | 128 | 256 | 512 | 1024;
 
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => { document.body.style.overflow = "unset"; };
-  }, [isOpen]);
+type FileRecordWithImageVariants = FileRecord & {
+  previewUrl64?: string | null;
+  previewUrl128?: string | null;
+  previewUrl256?: string | null;
+  previewUrl512?: string | null;
+};
 
-  if (!isOpen) return null;
+const IMAGE_RESOLUTION_OPTIONS: Array<{
+  resolution: ImageResolution;
+  label: string;
+  field: "previewUrl64" | "previewUrl128" | "previewUrl256" | "previewUrl512" | "previewUrl";
+}> = [
+  { resolution: 64, label: "64", field: "previewUrl64" },
+  { resolution: 128, label: "128", field: "previewUrl128" },
+  { resolution: 256, label: "256", field: "previewUrl256" },
+  { resolution: 512, label: "512", field: "previewUrl512" },
+  { resolution: 1024, label: "1024", field: "previewUrl" },
+];
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-}
+const resolveImageUrl = (
+  file: FileRecordWithImageVariants,
+  resolution: ImageResolution,
+): string | null => {
+  const found = IMAGE_RESOLUTION_OPTIONS.find((option) => option.resolution === resolution);
+  if (!found) return null;
+  return file[found.field] || null;
+};
 
 // ==========================================
 // Folder Form Modal (Create / Update)
@@ -108,61 +99,33 @@ export function FolderFormModal({ isOpen, onClose, onSubmit, initialData, isSubm
   const isEditing = !!initialData?.id;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEditing ? "Update Folder" : "Create New Folder"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Folder Name</label>
-          <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                <FolderIcon size={18} />
-            </div>
-            <input
-                required
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full rounded-sm border border-gray-200 pl-10 pr-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                placeholder="e.g. Project Documents"
-            />
-          </div>
-        </div>
+    <AdminFormModal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={isEditing ? "Update Folder" : "Create New Folder"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={isEditing ? "Update Folder" : "Create Folder"}
+    >
+      <div className="space-y-5">
+        <AdminInputField
+          label="Folder Name"
+          required
+          type="text"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          placeholder="e.g. Project Documents"
+        />
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description (Optional)</label>
-          <textarea
-            rows={3}
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="What will be stored in this folder?"
-          />
-        </div>
-
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-sm bg-gray-100 px-6 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-8 py-2 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md disabled:opacity-70"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                {isEditing ? "Updating..." : "Creating..."}
-              </>
-            ) : (
-              <>{isEditing ? "Update Folder" : "Create Folder"}</>
-            )}
-          </button>
-        </div>
-      </form>
-    </Modal>
+        <AdminTextAreaField
+          label="Description (Optional)"
+          rows={3}
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          placeholder="What will be stored in this folder?"
+        />
+      </div>
+    </AdminFormModal>
   );
 }
 
@@ -228,8 +191,15 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
   const isEditing = !!initialData?.id;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isEditing ? "Update File Info" : "Upload New File"}>
-      <form onSubmit={handleSubmit} className="space-y-5">
+    <AdminFormModal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      title={isEditing ? "Update File Info" : "Upload New File"}
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      submitLabel={isEditing ? "Update File" : "Upload File"}
+    >
+      <div className="space-y-5">
         {!isEditing && (
             <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-700">File</label>
@@ -266,75 +236,43 @@ export function FileFormModal({ isOpen, onClose, onSubmit, initialData, isSubmit
             </div>
         )}
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">File Name</label>
-          <input
-            required
-            type="text"
-            value={formData.fileName}
-            onChange={(e) => setFormData({ ...formData, fileName: e.target.value })}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="e.g. project-report.pdf"
-          />
-        </div>
+        <AdminInputField
+          label="File Name"
+          required
+          type="text"
+          value={formData.fileName}
+          onChange={(e) => setFormData({ ...formData, fileName: e.target.value })}
+          placeholder="e.g. project-report.pdf"
+        />
 
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-gray-700">Description</label>
-          <textarea
-            required
-            rows={3}
-            value={formData.fileDescription}
-            onChange={(e) => setFormData({ ...formData, fileDescription: e.target.value })}
-            className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
-            placeholder="Briefly describe what this file is for..."
-          />
-        </div>
+        <AdminTextAreaField
+          label="Description"
+          required
+          rows={3}
+          value={formData.fileDescription}
+          onChange={(e) => setFormData({ ...formData, fileDescription: e.target.value })}
+          placeholder="Briefly describe what this file is for..."
+        />
 
         {!isEditing && (
           <div>
-            <label className="mb-1.5 block text-sm font-semibold text-gray-700">Add to Subfolder (Optional)</label>
+            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">Add to Subfolder (Optional)</label>
             <div className="mb-2 flex items-center gap-2 rounded-sm bg-gray-50 p-2 text-xs text-gray-500 border border-gray-100">
               <span className="font-bold">Base Folder:</span>
               <span className="truncate">{currentPath || "Root"}</span>
             </div>
-            <input
+            <AdminInputField
+              label=""
               type="text"
               value={formData.path}
               onChange={(e) => setFormData({ ...formData, path: e.target.value })}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
               placeholder="Enter subfolder path to create new folder..."
+              helperText="Relative to the current base folder. Leave empty to upload directly to base folder."
             />
-            <p className="mt-1 text-[10px] font-medium text-gray-400 italic">
-              Relative to the current base folder. Leave empty to upload directly to base folder.
-            </p>
           </div>
         )}
-
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-sm bg-gray-100 px-6 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-8 py-2 text-sm font-bold text-white transition-all hover:bg-teal-700 hover:shadow-md disabled:opacity-70"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                {isEditing ? "Updating..." : "Uploading..."}
-              </>
-            ) : (
-              <>{isEditing ? "Update Info" : "Upload File"}</>
-            )}
-          </button>
-        </div>
-      </form>
-    </Modal>
+      </div>
+    </AdminFormModal>
   );
 }
 
@@ -351,9 +289,32 @@ interface FileDetailsModalProps {
 }
 
 export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOpen }: FileDetailsModalProps) {
-  if (!item) return null;
+  const isFolder = Boolean((item as any)?.isFolder);
+  const fileRecord = !isFolder && item ? (item as FileRecordWithImageVariants) : null;
+  const isImageFile = Boolean(
+    fileRecord && fileRecord.fileType?.toLowerCase().startsWith("image/"),
+  );
+  const [selectedResolution, setSelectedResolution] = useState<ImageResolution>(256);
 
-  const isFolder = (item as any).isFolder;
+  useEffect(() => {
+    if (!isOpen || isFolder || !fileRecord) {
+      return;
+    }
+
+    const has256 = Boolean(resolveImageUrl(fileRecord, 256));
+    if (has256) {
+      setSelectedResolution(256);
+      return;
+    }
+
+    const firstAvailable = IMAGE_RESOLUTION_OPTIONS.find((option) =>
+      Boolean(fileRecord[option.field]),
+    );
+
+    setSelectedResolution(firstAvailable?.resolution ?? 1024);
+  }, [isOpen, isFolder, fileRecord]);
+
+  if (!item) return null;
   
   const getFileIcon = () => {
     if (isFolder) return FolderIcon;
@@ -374,10 +335,77 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
   const description = isFolder ? (item as Folder).description : (item as FileRecord).fileDescription;
   const createdAt = isFolder ? (item as Folder).createdAt : (item as FileRecord).createdAt;
   const updatedAt = isFolder ? (item as Folder).updatedAt : (item as FileRecord).updatedAt;
+  const selectedImageUrl = fileRecord
+    ? resolveImageUrl(fileRecord, selectedResolution)
+    : null;
+  const fallbackImageUrl = fileRecord
+    ? IMAGE_RESOLUTION_OPTIONS.map((option) => fileRecord[option.field]).find(
+        (url): url is string => Boolean(url),
+      ) || null
+    : null;
+  const displayedImageUrl = selectedImageUrl || fallbackImageUrl;
+
+  const resourceActions: ModalActionItem[] = isFolder
+    ? [
+        {
+          key: "open-folder",
+          label: "Open Folder",
+          icon: FolderIcon,
+          onClick: () => {
+            if (!onOpen) return;
+            onOpen(item as Folder);
+            onClose();
+          },
+          disabled: !onOpen,
+        },
+      ]
+    : [
+        {
+          key: "preview",
+          label: "Preview",
+          icon: ExternalLink,
+          onClick: () => {
+            window.open((item as FileRecord).previewUrl, "_blank", "noopener,noreferrer");
+          },
+        },
+        {
+          key: "download",
+          label: "Download",
+          icon: Download,
+          onClick: () => {
+            window.open((item as FileRecord).downloadUrl, "_blank", "noopener,noreferrer");
+          },
+        },
+      ];
+
+  resourceActions.push(
+    {
+      key: "edit",
+      label: "Edit Details",
+      icon: Edit2,
+      onClick: () => {
+        onEdit(item);
+        onClose();
+      },
+      tone: "neutral",
+    },
+    {
+      key: "delete",
+      label: `Delete ${isFolder ? "Folder" : "File"}`,
+      icon: Trash2,
+      tone: "danger",
+      onClick: () => {
+        onDelete(item);
+        onClose();
+      },
+    },
+  );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={isFolder ? "Folder Details" : "File Details"}>
       <div className="space-y-6">
+        <ModalActionRow actions={resourceActions} />
+
         <div className={`flex items-start gap-4 rounded-xl border p-5 ${isFolder ? "border-teal-100 bg-teal-50/30" : "border-gray-100 bg-gray-50/30"}`}>
           <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl shadow-sm ${isFolder ? "bg-teal-100 text-teal-600" : "bg-white text-gray-400"}`}>
             <IconComponent size={32} strokeWidth={1.5} />
@@ -392,6 +420,62 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
             <p className="mt-1 text-xs font-medium text-gray-400">ID: {item.id}</p>
           </div>
         </div>
+
+        {!isFolder && isImageFile && fileRecord && (
+          <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+            <div>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Image Preview</h4>
+              <p className="mt-1 text-xs text-gray-500">
+                Selected Resolution: <span className="font-bold text-gray-700">{selectedResolution}px</span>
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4 md:flex-row">
+              <div className="flex shrink-0 gap-2 md:w-24 md:flex-col">
+                {IMAGE_RESOLUTION_OPTIONS.map((option) => {
+                  const hasResolution = Boolean(fileRecord[option.field]);
+                  const isSelected = selectedResolution === option.resolution;
+
+                  return (
+                    <button
+                      key={option.resolution}
+                      type="button"
+                      onClick={() => {
+                        if (!hasResolution) return;
+                        setSelectedResolution(option.resolution);
+                      }}
+                      disabled={!hasResolution}
+                      className={`rounded-lg border px-2 py-2 text-center text-xs font-bold transition ${
+                        isSelected
+                          ? "border-teal-500 bg-teal-50 text-teal-700"
+                          : hasResolution
+                            ? "border-gray-200 bg-white text-gray-700 hover:border-teal-300 hover:bg-teal-50/40"
+                            : "cursor-not-allowed border-gray-100 bg-gray-50 text-gray-300"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex min-h-[260px] flex-1 items-center justify-center overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
+                {displayedImageUrl ? (
+                  <img
+                    src={displayedImageUrl}
+                    alt={`${name} preview`}
+                    className="h-auto max-h-[420px] w-full object-contain"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-2 text-gray-400">
+                    <ImageIcon size={28} />
+                    <span className="text-xs font-semibold">No preview available</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
@@ -420,55 +504,6 @@ export function FileDetailsModal({ isOpen, onClose, item, onEdit, onDelete, onOp
           <h4 className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Description</h4>
           <p className="mt-1 text-sm leading-relaxed text-gray-600">{description || "No description provided."}</p>
         </div>
-
-        <div className="flex flex-col gap-3 pt-6 border-t border-gray-100">
-            <div className="flex gap-3">
-                {isFolder ? (
-                    <button 
-                        onClick={() => { onOpen?.(item as Folder); onClose(); }}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 shadow-md"
-                    >
-                        <FolderIcon size={18} />
-                        Open Folder
-                    </button>
-                ) : (
-                    <>
-                        <a 
-                            href={(item as FileRecord).previewUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-gray-200 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-gray-50"
-                        >
-                            <ExternalLink size={18} />
-                            Preview
-                        </a>
-                        <a 
-                            href={(item as FileRecord).downloadUrl} 
-                            className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-teal-600 py-3 text-sm font-bold text-white transition-all hover:bg-teal-700 shadow-md"
-                        >
-                            <Download size={18} />
-                            Download
-                        </a>
-                    </>
-                )}
-            </div>
-            <div className="flex gap-3">
-                <button 
-                    onClick={() => { onEdit(item); onClose(); }}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-gray-200 py-2.5 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-50"
-                >
-                    <Edit2 size={14} />
-                    Edit Details
-                </button>
-                <button 
-                    onClick={() => { onDelete(item); onClose(); }}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-sm border border-red-100 py-2.5 text-xs font-bold text-red-600 transition-colors hover:bg-red-50"
-                >
-                    <Trash2 size={14} />
-                    Delete {isFolder ? "Folder" : "File"}
-                </button>
-            </div>
-        </div>
       </div>
     </Modal>
   );
@@ -488,42 +523,25 @@ interface DeleteConfirmModalProps {
 
 export function DeleteConfirmModal({ isOpen, onClose, onConfirm, fileName, isDeleting, isFolder }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={isFolder ? "Delete Folder" : "Delete File"}>
-      <div className="flex flex-col items-center text-center">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
-          <AlertTriangle size={32} />
-        </div>
-        <h3 className="text-xl font-bold text-gray-900">Are you sure?</h3>
-        <p className="mt-2 text-gray-600">
-          You are about to delete <span className="font-bold text-gray-900">"{fileName}"</span>.
-          {isFolder 
-            ? " This will permanently remove the folder and ALL of its contents (files and subfolders). This action cannot be undone."
-            : " This action cannot be undone and will permanently remove the file from storage."}
-        </p>
-
-        <div className="mt-8 flex w-full items-center gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 rounded-sm bg-gray-100 py-3 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            No, Keep it
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex flex-1 items-center justify-center gap-2 rounded-sm bg-red-600 py-3 text-sm font-bold text-white transition-colors hover:bg-red-700 disabled:opacity-70"
-          >
-            {isDeleting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              "Yes, Delete it"
-            )}
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title={isFolder ? "Delete Folder" : "Delete File"}
+      cancelLabel="No, Keep it"
+      confirmLabel={isDeleting ? "Deleting..." : "Yes, Delete it"}
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Are you sure?</p>
+          <p className="mt-1 text-sm">
+            You are about to delete <span className="font-bold text-gray-900">"{fileName}"</span>.
+            {isFolder
+              ? " This will permanently remove the folder and ALL of its contents (files and subfolders). This action cannot be undone."
+              : " This action cannot be undone and will permanently remove the file from storage."}
+          </p>
+        </>
+      }
+    />
   );
 }

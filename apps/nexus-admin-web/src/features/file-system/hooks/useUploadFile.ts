@@ -1,11 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { FileRecordInsert } from "../types";
+import { configs } from "@/lib/constants/configs";
 
-const API_URL = "http://localhost:8000";
+const API_URL = configs.nexusApiBaseUrl;
 
 export const useUploadFile = () => {
+  const callEndpoint = useCallEndpointWithToken();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ data, file }: { data: FileRecordInsert; file: File }) => {

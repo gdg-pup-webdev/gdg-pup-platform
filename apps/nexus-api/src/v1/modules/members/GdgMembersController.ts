@@ -10,6 +10,10 @@ import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
 import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
 import { SearchMember } from "./useCases/SearchMember";
 import { ChangeProfilePicture } from "./useCases/ChangeProfilePicture";
+import {
+  GetSimilarUsers,
+  SimilarUsersStrategy,
+} from "./useCases/GetSimilarUsers";
 
 export class GdgMembersController {
   constructor(
@@ -21,38 +25,55 @@ export class GdgMembersController {
     private readonly updateMemberByGdgIdUseCase: UpdateMemberByGdgId,
     private readonly makeProfilePrivateUseCase: MakeProfilePrivate,
     private readonly makeProfilePublicUseCase: MakeProfilePublic,
-    private readonly searchUseCase: SearchMember, 
-    private readonly changePfpUseCase : ChangeProfilePicture
+    private readonly searchUseCase: SearchMember,
+    private readonly changePfpUseCase: ChangeProfilePicture,
+    private readonly getSuggestedUsersUseCase: GetSimilarUsers,
   ) {}
 
   private flattenMemberData(data: GdgMember) {
     return data.props;
   }
 
-  async changeProfilePicture(gdgId: string, file: File) {
-    const result = await this.changePfpUseCase.execute(gdgId, {
-      buffer:await file.arrayBuffer(),
+  async changeProfilePicture(actorId: string, gdgId: string, file: File) {
+    const result = await this.changePfpUseCase.execute(actorId, gdgId, {
+      buffer: await file.arrayBuffer(),
       name: file.name,
       type: file.type,
     });
-    
+
     return this.flattenMemberData(result);
   }
-
 
   async search(query: string, limit: number) {
     const result = await this.searchUseCase.execute(query, limit);
     return result.map((m) => m.props);
   }
 
+  async getSuggestedUsers(
+    gdgId: string,
+    pageNumber: number,
+    pageSize: number,
+    strategy: SimilarUsersStrategy = "exploratory",
+  ) {
+    const result = await this.getSuggestedUsersUseCase.execute(
+      gdgId,
+      pageNumber,
+      pageSize,
+      strategy,
+    );
+    return {
+      list: result.list.map((m) => m.props),
+      count: result.count,
+    };
+  }
 
   async addMember(data: AddGdgMemberInput) {
     const result = await this.addUseCase.execute(data);
     return result.props;
   }
 
-  async delete(id: string) {
-    await this.deleteUseCase.execute(id);
+  async delete(actorId: string, id: string) {
+    await this.deleteUseCase.execute(actorId, id);
     return { success: true };
   }
 
@@ -78,18 +99,22 @@ export class GdgMembersController {
     };
   }
 
-  async update(gdgId: string, data: GdgMemberUpdateProps) {
-    const result = await this.updateMemberByGdgIdUseCase.execute(gdgId, data);
+  async update(actorId: string, gdgId: string, data: GdgMemberUpdateProps) {
+    const result = await this.updateMemberByGdgIdUseCase.execute(
+      actorId,
+      gdgId,
+      data,
+    );
     return result.props;
   }
 
-  async makeProfilePrivate(gdgId: string) {
-    await this.makeProfilePrivateUseCase.execute(gdgId);
+  async makeProfilePrivate(actorId: string, gdgId: string) {
+    await this.makeProfilePrivateUseCase.execute(actorId, gdgId);
     return { success: true };
   }
 
-  async makeProfilePublic(gdgId: string) {
-    await this.makeProfilePublicUseCase.execute(gdgId);
+  async makeProfilePublic(actorId: string, gdgId: string) {
+    await this.makeProfilePublicUseCase.execute(actorId, gdgId);
     return { success: true };
   }
 }

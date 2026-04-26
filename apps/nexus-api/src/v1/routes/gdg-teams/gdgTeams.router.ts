@@ -4,6 +4,7 @@ import {
   authMiddlewareInstance,
 } from "@/v1/middlewares/auth.middleware";
 import { GdgTeamsHttpController } from "./gdgTeams.controller";
+import { requirePermissions } from "@/v1/middlewares/rbac.middleware";
 
 export class GdgTeamsRouter {
   router: Router;
@@ -14,60 +15,33 @@ export class GdgTeamsRouter {
   ) {
     this.router = Router();
 
-    this.router.get(
-      "/",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
-      this.controller.listTeams,
-    );
-    this.router.post(
-      "/",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["create"] }),
-      this.controller.createTeam,
-    );
-    this.router.get(
-      "/search",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
-      this.controller.searchTeams,
-    );
-    this.router.get(
-      "/:gdgTeamId",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
-      this.controller.getOneTeam,
-    );
-    this.router.patch(
-      "/:gdgTeamId",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["update"] }),
-      this.controller.updateTeam,
-    );
-    this.router.delete(
-      "/:gdgTeamId",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["delete"] }),
-      this.controller.deleteTeam,
-    );
+    /**
+     * PUBLIC ROUTES
+     */
 
-    this.router.get(
-      "/:gdgTeamId/members",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
-      this.controller.listMembers,
-    );
-    this.router.post(
-      "/:gdgTeamId/members",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["create"] }),
-      this.controller.addMember,
-    );
-    this.router.get(
-      "/:gdgTeamId/members/:memberId",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["read"] }),
-      this.controller.getMember,
-    );
+    /**
+     * PRIVATE ROUTES 
+     */
+    this.router.use(requirePermissions({
+      "gdg-teams": ["queries", "mutations"], 
+    }))
+    
+    this.router.get("/", this.controller.listTeams);
+    this.router.post("/", this.controller.createTeam);
+    this.router.get("/search", this.controller.searchTeams);
+    this.router.get("/:gdgTeamId", this.controller.getOneTeam);
+    this.router.patch("/:gdgTeamId", this.controller.updateTeam);
+    this.router.delete("/:gdgTeamId", this.controller.deleteTeam);
+
+    this.router.get("/:gdgTeamId/members", this.controller.listMembers);
+    this.router.post("/:gdgTeamId/members", this.controller.addMember);
+    this.router.get("/:gdgTeamId/members/:memberId", this.controller.getMember);
     this.router.patch(
       "/:gdgTeamId/members/:memberId",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["update"] }),
       this.controller.updateMember,
     );
     this.router.delete(
       "/:gdgTeamId/members/:memberId",
-      // this.authMiddleware.requirePermissions({ "gdg-teams": ["delete"] }),
       this.controller.deleteMember,
     );
   }

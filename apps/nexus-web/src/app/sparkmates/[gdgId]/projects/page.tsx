@@ -1,0 +1,242 @@
+"use client";
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
+import { Button, Text } from "@packages/spark-ui";
+import { useEffect, useMemo, useState } from "react";
+import { CosmosParticles } from "@/components/shared";
+import { GdgLoader } from "@/components/ui/loader";
+import { useSparkmateProfile } from "@/features/sparkmates/hooks/useSparkmateProfile";
+import { NameAndProfileSection } from "@/features/sparkmates/components/sections/NameAndProfileSection";
+import { SuggestedPeopleSection } from "@/features/sparkmates/components/sections/SuggestedPeopleSection";
+import { FadeInSection } from "@/features/sparkmates/components/SparkmatesOwnerView/components/FadeInSection";
+import { SparkmatesRainbowStreak } from "@/features/sparkmates/components/SparkmatesOwnerView/components/SparkmatesRainbowStreak";
+import { SortableProjectCardItem } from "@/features/sparkmates/components/SparkmatesOwnerView/components/SortableProjectCardItem";
+import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/SparkmatesBrandedErrorScreen";
+import { useMemberProjectsPaginated } from "@/features/sparkmates/hooks";
+
+const PROJECTS_PER_PAGE = 4;
+
+const PublicProjectsLoader = ({ message }: { message: string }) => (
+  <div className="flex min-h-[40vh] items-center justify-center">
+    <div className="inline-flex items-center gap-2 text-zinc-300">
+      <GdgLoader size="xs" />
+      <Text variant="body-sm" className="text-zinc-300">
+        {message}
+      </Text>
+    </div>
+  </div>
+);
+
+export default function PublicProjectsPage() {
+  const { gdgId } = useParams<{ gdgId: string }>();
+  const [page, setPage] = useState(1);
+
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    isError: isProfileError,
+    error: profileError,
+  } = useSparkmateProfile({ gdgId, source: "direct_link" });
+
+  const {
+    data: projectsResponse,
+    isLoading,
+    isError,
+    error,
+  } = useMemberProjectsPaginated(gdgId, page, PROJECTS_PER_PAGE);
+
+  const projects = projectsResponse?.data || [];
+  const totalRecords = projectsResponse?.meta.totalRecords || 0;
+  const totalPages = Math.max(1, projectsResponse?.meta.totalPages || 1);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | "...")[] = [];
+
+    if (totalPages <= 7) {
+      for (let value = 1; value <= totalPages; value += 1) {
+        pages.push(value);
+      }
+      return pages;
+    }
+
+    pages.push(1);
+
+    if (page > 3) {
+      pages.push("...");
+    }
+
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+
+    for (let value = start; value <= end; value += 1) {
+      pages.push(value);
+    }
+
+    if (page < totalPages - 2) {
+      pages.push("...");
+    }
+
+    pages.push(totalPages);
+    return pages;
+  }, [page, totalPages]);
+
+  if (!gdgId || isProfileLoading) {
+    return <PublicProjectsLoader message="Loading projects..." />;
+  }
+
+  if (isProfileError || !profile) {
+    const message = profileError instanceof Error
+      ? profileError.message
+      : "Unable to load sparkmates profile.";
+
+    return (
+      <SparkmatesBrandedErrorScreen
+        title="Unable to load Sparkmates profile"
+        message={message}
+        backHref="/sparkmates"
+      />
+    );
+  }
+
+  if (isError) {
+    const message = error instanceof Error
+      ? error.message
+      : "Something went wrong while loading projects.";
+
+    return (
+      <SparkmatesBrandedErrorScreen
+        title="Unable to load projects"
+        message={message}
+        backHref={`/sparkmates/${gdgId}`}
+      />
+    );
+  }
+
+  return (
+    <CosmosParticles
+      particleColors={["#ffffff", "#4285f4"]}
+      particleCount={180}
+      particleSpread={14}
+      speed={0.028}
+      particleBaseSize={75}
+      moveParticlesOnHover
+      alphaParticles={true}
+      disableRotation={false}
+      className="min-h-screen overflow-x-hidden bg-[#010B1D] bg-[radial-gradient(circle_at_30%_55%,rgba(66,133,244,0.2),transparent_30%),radial-gradient(circle_at_58%_73%,rgba(249,171,0,0.14),transparent_25%)] px-3 sm:px-6 pb-24 pt-24 sm:pt-36 text-white"
+    >
+      <div className="relative w-full">
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden hidden sm:block">
+          <SparkmatesRainbowStreak />
+        </div>
+
+        <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
+          <FadeInSection className="p-0" delay={0.02}>
+            <NameAndProfileSection profile={profile} readOnly />
+
+            <div className="mt-6 space-y-5">
+              <Link
+                prefetch={false}
+                href={`/sparkmates/${gdgId}`}
+                className="inline-flex items-center gap-2 text-[#C1C7CD] transition-colors hover:text-white"
+              >
+                <ChevronLeft size={16} />
+                <span>Back to Portfolio</span>
+              </Link>
+
+              <div>
+                <Text variant="heading-6" weight="bold" gradient="white-blue">
+                  All Projects
+                </Text>
+                <p className="mt-1 text-sm text-[#C1C7CD]">
+                  Showing {projects.length} of {totalRecords} projects.
+                </p>
+              </div>
+
+              {isLoading ? (
+                <PublicProjectsLoader message="Loading projects..." />
+              ) : projects.length === 0 ? (
+                <div className="rounded-2xl border border-white/15 bg-[rgba(255,255,255,0.04)] px-5 py-8 text-center text-[#C1C7CD]">
+                  <Text className="text-[#C1C7CD]" variant="body-sm">No projects yet.</Text>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-3.5">
+                    {projects.map((project) => (
+                      <SortableProjectCardItem
+                        key={project.id}
+                        id={String(project.id)}
+                        project={project}
+                        projectHref={`/sparkmates/${gdgId}/projects/${project.id}`}
+                        readOnly
+                        sortingDisabled
+                        handleDisabled
+                        truncateDescription
+                      />
+                    ))}
+                  </div>
+
+                  {totalPages > 1 ? (
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-[#C1C7CD]"
+                        onClick={() => setPage((previous) => Math.max(1, previous - 1))}
+                        disabled={page === 1}
+                      >
+                        Prev
+                      </Button>
+
+                      {pageNumbers.map((entry, index) =>
+                        entry === "..." ? (
+                          <span key={`ellipsis-${index}`} className="px-2 text-sm text-[#8FA1C7]">
+                            ...
+                          </span>
+                        ) : (
+                          <Button
+                            key={`page-${entry}`}
+                            variant={entry === page ? "colored" : "ghost"}
+                            subVariant={entry === page ? "blue" : undefined}
+                            size="sm"
+                            className={entry === page ? "text-white" : "text-[#C1C7CD]"}
+                            onClick={() => setPage(entry)}
+                          >
+                            {entry}
+                          </Button>
+                        ),
+                      )}
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-[#C1C7CD]"
+                        onClick={() => setPage((previous) => Math.min(totalPages, previous + 1))}
+                        disabled={page === totalPages}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="mt-6 text-center text-sm text-[#9CA3AF]">
+                      You have reached the end of projects.
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </FadeInSection>
+
+          <SuggestedPeopleSection profile={profile} readOnly />
+        </div>
+      </div>
+    </CosmosParticles>
+  );
+}

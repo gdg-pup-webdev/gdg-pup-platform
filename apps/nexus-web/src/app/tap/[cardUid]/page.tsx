@@ -16,6 +16,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { configs } from "@/configs/servers.config";
+import { LoadingScreen } from "@/components/shared";
 
 // Define the shape of the status response
 interface CardStatus {
@@ -145,12 +146,5 @@ export default function TapRouterPage() {
     );
   }
 
-  return (
-    <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">
-      <div className="text-center">
-        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-zinc-500 border-t-white"></div>
-        <p className="mt-4 text-zinc-400">Reading card...</p>
-      </div>
-    </div>
-  );
+  return <LoadingScreen message="Reading card..." />;
 }

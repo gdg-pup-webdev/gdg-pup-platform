@@ -32,7 +32,8 @@ export function IdHeroBeams() {
       style={{
         height: "calc(50% + var(--outer-y))",
         filter: "blur(8px)",
-        WebkitMaskImage: "linear-gradient(to bottom, black 55%, transparent 100%)",
+        WebkitMaskImage:
+          "linear-gradient(to bottom, black 55%, transparent 100%)",
         maskImage: "linear-gradient(to bottom, black 55%, transparent 100%)",
       }}
     >
@@ -42,16 +43,60 @@ export function IdHeroBeams() {
       >
         <Inline gap="none" className="h-full">
           <div className="relative flex-1 h-full">
-            <Spotlight id="red" fill="url(#hero-red)" style={{ width: "var(--beam-w)", height: "var(--beam-h)", top: "var(--beam-1-y)", left: "var(--beam-1-x)" } as React.CSSProperties} />
+            <Spotlight
+              id="red"
+              fill="url(#hero-red)"
+              style={
+                {
+                  width: "var(--beam-w)",
+                  height: "var(--beam-h)",
+                  top: "var(--beam-1-y)",
+                  left: "var(--beam-1-x)",
+                } as React.CSSProperties
+              }
+            />
           </div>
           <div className="relative flex-1 h-full">
-            <Spotlight id="green" fill="url(#hero-green)" style={{ width: "var(--beam-w)", height: "var(--beam-h)", top: "var(--beam-2-y)", left: "var(--beam-2-x)" } as React.CSSProperties} />
+            <Spotlight
+              id="green"
+              fill="url(#hero-green)"
+              style={
+                {
+                  width: "var(--beam-w)",
+                  height: "var(--beam-h)",
+                  top: "var(--beam-2-y)",
+                  left: "var(--beam-2-x)",
+                } as React.CSSProperties
+              }
+            />
           </div>
           <div className="relative flex-1 h-full">
-            <Spotlight id="blue" fill="url(#hero-blue)" style={{ width: "var(--beam-w)", height: "var(--beam-h)", top: "var(--beam-3-y)", left: "var(--beam-3-x)" } as React.CSSProperties} />
+            <Spotlight
+              id="blue"
+              fill="url(#hero-blue)"
+              style={
+                {
+                  width: "var(--beam-w)",
+                  height: "var(--beam-h)",
+                  top: "var(--beam-3-y)",
+                  left: "var(--beam-3-x)",
+                } as React.CSSProperties
+              }
+            />
           </div>
           <div className="relative flex-1 h-full">
-            <Spotlight id="yellow" fill="url(#hero-yellow)" style={{ width: "var(--beam-w)", height: "var(--beam-h)", top: "var(--beam-4-y)", left: "var(--beam-4-x)" } as React.CSSProperties} />
+            <Spotlight
+              id="yellow"
+              fill="url(#hero-yellow)"
+              style={
+                {
+                  width: "var(--beam-w)",
+                  height: "var(--beam-h)",
+                  top: "var(--beam-4-y)",
+                  left: "var(--beam-4-x)",
+                } as React.CSSProperties
+              }
+            />
           </div>
         </Inline>
       </Box>

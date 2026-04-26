@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { callEndpoint } from "@packages/typed-rest/clientReact"
 import { contract } from "@packages/nexus-api-contracts"
+import { configs } from "@/lib/constants/configs";
 
 export default function LandingPage() {
 
@@ -12,7 +13,7 @@ export default function LandingPage() {
     queryKey: ['test'],
     queryFn: async () => {
       const result = callEndpoint(
-        "http://localhost:8000",
+        configs.nexusApiBaseUrl,
         contract.api.v1.health.GET,
         {}
       )

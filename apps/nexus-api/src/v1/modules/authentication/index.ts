@@ -60,7 +60,7 @@ const loginUC = new Login(
   gdgMemberService,
 );
 const verifyTokenUC = new VerifyToken(jwtService);
-const getMeUC = new GetMe(jwtService, credentialRepo);
+const getMeUC = new GetMe(verifyTokenUC, credentialRepo);
 const logoutUC = new Logout();
 const initiateChangePasswordUC = new InitiateChangePassword(
   credentialRepo,
@@ -96,7 +96,7 @@ const finalizeChangeEmailUC = new FinalizeChangeEmail(
   otpService,
 );
 const deleteUserUC = new DeleteUser(credentialRepo);
-const refreshTokenUC = new RefreshToken(jwtService);
+const refreshTokenUC = new RefreshToken(verifyTokenUC, jwtService, rbacService, gdgMemberService);
 const resendOtpUC = new ResendOtp(referenceRepo, otpService);
 
 // Controller

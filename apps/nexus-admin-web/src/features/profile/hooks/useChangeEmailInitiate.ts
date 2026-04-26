@@ -1,12 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
-import { callEndpoint } from "@packages/typed-rest/clientReact";
+import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
-import { extractErrorMessage } from "@/lib/utils";
-import { useAuthStore } from "@/features/authentication/store/useAuthStore";
+import { extractErrorMessage } from "@/lib/utils";  
+import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 
 export const useChangeEmailInitiate = () => {
-  const token = useAuthStore((state) => state.token);
+  const { token}  = useAuthContext();
+  const callEndpoint = useCallEndpointWithToken();
 
   return useMutation({
     mutationFn: async (

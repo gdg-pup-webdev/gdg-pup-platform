@@ -1,14 +1,15 @@
-import { IUserCredentialRepository, IJWTService } from "../domain/IAuthenticationInterfaces.js";
+import { IUserCredentialRepository } from "../domain/IAuthenticationInterfaces.js";
+import { VerifyToken } from "./VerifyToken.js";
 
 export class GetMe {
   constructor(
-    private readonly jwtService: IJWTService,
+    private readonly verifyToken: VerifyToken,
     private readonly credentialRepo: IUserCredentialRepository
   ) {}
 
   async execute(token: string): Promise<any> {
-    const payload = await this.jwtService.verify(token);
-    const email = payload.props.email  ;
+    const payload = await this.verifyToken.execute(token);
+    const email = payload.props.email;
     
     if (!email) {
       throw new Error("Invalid token: Email not found in payload");
@@ -25,7 +26,7 @@ export class GetMe {
       id: credential.props.id,
       email: credential.props.emailAddress,
       display_name: credential.props.emailAddress, // Using username as display_name
-      gdg_id: null, // gdg_id is usually in a separate profile table
+      gdg_id: payload.props.memberInfo.gdgId,
     };
   }
 }

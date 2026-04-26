@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { ASSETS } from "@/lib/constants/assets";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
+import { LoadingScreen } from "@/components/shared";
 
 export default function ActivateCardPage() {
   // Get the cardUid from the URL parameters
@@ -105,10 +106,7 @@ export default function ActivateCardPage() {
         </div>
 
         {authStatus === "checking" ? (
-          <div className="flex flex-col items-center py-8">
-            <div className="animate-spin h-8 w-8 border-2 border-purple-500 border-t-white rounded-full mb-4"></div>
-            <p className="text-zinc-400 text-sm">Checking authentication...</p>
-          </div>
+          <LoadingScreen fullPage={false} message="Checking authentication..." />
         ) : !decodedToken ? (
           <div className="space-y-6">
             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-center">

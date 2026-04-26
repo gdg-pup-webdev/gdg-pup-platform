@@ -9,11 +9,9 @@
 export * from './components';
 
 // Hooks
-export { useNexusHealthCheck, useIdentityHealthCheck } from './hooks/useHealthChecks';
+export { useNexusHealthCheck  } from './hooks/useHealthChecks';
 
-// API functions
-export { checkNexusHealth } from './api/checkNexusHealth';
-export { checkIdentityHealth } from './api/checkIdentityHealth';
+// API functions 
 
 // Types
 export * from './types';

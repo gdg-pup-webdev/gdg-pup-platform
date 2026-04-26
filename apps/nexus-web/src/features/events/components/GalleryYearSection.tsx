@@ -1,17 +1,21 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Container, Stack, Text } from "@packages/spark-ui"; 
+import { Container, Stack, Text } from "@packages/spark-ui";
 import type { Event } from "../types";
-import { normalizeEventDescription, splitBoldSegments } from "../utils/description";
+import {
+  normalizeEventDescription,
+  splitBoldSegments,
+} from "../utils/description";
 import { useEvents } from "../hooks/useEvents";
+import { BrandedSkeleton } from "@/components/shared";
 
 type GalleryYearSectionProps = {
   yearParam: string;
 };
 
-const FALLBACK_COVER = "/pages/events/event-cover.png";
+const FALLBACK_COVER = "/pages/events/event-cover.webp";
 
 function getHighlightsRouteId(event: Event): string {
   const candidate =
@@ -52,7 +56,10 @@ function formatDateLabel(startDate?: string, endDate?: string) {
 function renderDescriptionWithBold(text: string) {
   return splitBoldSegments(text).map((segment, index) =>
     segment.bold ? (
-      <strong key={`${segment.text}-${index}`} className="font-semibold text-white">
+      <strong
+        key={`${segment.text}-${index}`}
+        className="font-semibold text-white"
+      >
         {segment.text}
       </strong>
     ) : (
@@ -70,8 +77,15 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
   const [expandedDescriptions, setExpandedDescriptions] = useState<
     Record<string, boolean>
   >({});
+  const INITIAL_COUNT = 4;
+  const STEP = 10;
+  const [pageSize, setPageSize] = useState(INITIAL_COUNT);
 
-  const {data : events, error : errorMessage, isLoading} = useEvents({ year: parsedYear  });
+  const {
+    data: events,
+    error: errorMessage,
+    isLoading,
+  } = useEvents({ year: parsedYear, pageSize });
 
   const visibleItems = useMemo(() => {
     if (!isYearValid) return [];
@@ -80,7 +94,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
   return (
     <div
-      className="relative overflow-hidden min-h-screen pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16"
+      className="relative overflow-clip min-h-screen pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16"
       style={{ backgroundColor: "rgba(15, 14, 14, 1)" }}
     >
       <div
@@ -207,7 +221,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
       <Container className="relative z-10">
         <Stack gap="xl" className="md:gap-2xl">
-          <Link
+          <Link prefetch={false}
             href="/events#events-gallery"
             className="inline-flex items-center gap-2 text-white/85 hover:text-white transition-colors text-sm md:text-base w-fit"
           >
@@ -225,7 +239,10 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
             <span>Back</span>
           </Link>
 
-          <Stack gap="lg" className="items-center !gap-3 md:!gap-6 pt-4 md:pt-8">
+          <Stack
+            gap="lg"
+            className="items-center !gap-3 md:!gap-6 pt-4 md:pt-8"
+          >
             <Text
               variant="heading-1"
               gradient="white-blue"
@@ -247,11 +264,37 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
             </Text>
           </Stack>
 
-          {isLoading ? (
-            <div className="rounded-2xl border border-white/15 bg-black/30 p-6 md:p-8">
-              <Text variant="body" className="text-white/85">
-                Loading events for {yearTitle}...
-              </Text>
+          {isLoading && !events ? (
+            <div className="space-y-10 md:space-y-14">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="animate-pulse">
+                  {/* One big rectangle skeleton */}
+                  <BrandedSkeleton className="h-[220px] md:h-[560px] w-full rounded-2xl" withGradientRing />
+
+                  <div className="mt-5 md:mt-7 space-y-6">
+                    {/* Big text skeleton like a title */}
+                    <div className="flex justify-center md:justify-start">
+                      <BrandedSkeleton className="h-7 md:h-12 w-3/4 md:w-1/2 rounded-lg" />
+                    </div>
+                    {/* Event details */}
+                    <div className="flex flex-nowrap items-center justify-center gap-2 md:gap-5">
+                      <BrandedSkeleton className="h-4 w-12 md:w-16" variant="chip" />
+                      <BrandedSkeleton className="h-4 w-24 md:w-32 rounded-lg" />
+                      <BrandedSkeleton className="h-4 w-16 md:w-20 rounded-lg" />
+                    </div>
+
+                    {/* Three stack of smaller text skeletons (description) */}
+                    <div className="space-y-3">
+                      <BrandedSkeleton className="h-4 w-full rounded" />
+                      <BrandedSkeleton className="h-4 w-full rounded" />
+                      <BrandedSkeleton className="h-4 w-3/4 rounded" />
+                    </div>
+
+                    {/* Rectangle skeleton at the bottom (button) */}
+                    <BrandedSkeleton className="h-10 md:h-11 w-full rounded-md mt-6 md:mt-7" variant="button" withGradientRing />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : !isYearValid ? (
             <div className="rounded-2xl border border-white/15 bg-black/30 p-6 md:p-8">
@@ -260,13 +303,25 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               </Text>
             </div>
           ) : errorMessage ? (
-            <div className="rounded-2xl border border-red-500/40 bg-black/30 p-6 md:p-8">
-              <Text variant="body" className="text-red-200">
-                {errorMessage.message}
+            <div className="flex flex-col items-center py-10 md:py-14 gap-8">
+              <Text
+                variant="body"
+                className="text-white/60 text-sm italic font-medium max-w-xs text-center border-t border-white/5 pt-4"
+              >
+                {errorMessage.message ||
+                  "An unexpected error occurred while loading contents."}
               </Text>
+              <div className="relative group overflow-hidden rounded-3xl">
+                <img
+                  src="/sparky-points/sparkypoints-cirby-denied.webp"
+                  alt="Failed to fetch"
+                  className="w-68 md:w-96 opacity-90 drop-shadow-2xl brightness-90 saturate-125 transition-transform duration-500 group-hover:scale-105"
+                  draggable={false}
+                />
+              </div>
             </div>
-          ) : visibleItems.length === 0 ? (
-            <div className="py-10 md:py-14">
+          ) : (visibleItems.length === 0 && !isLoading) ? (
+            <div className="flex flex-col items-center py-10 md:py-14 gap-6">
               <Text
                 variant="heading-5"
                 align="center"
@@ -274,6 +329,12 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               >
                 No events for this year
               </Text>
+              <img
+                src="/sparky-points/sparkypoints-cirby-denied.webp"
+                alt="No events found"
+                className="w-68 md:w-96 opacity-85"
+                draggable={false}
+              />
             </div>
           ) : (
             <div className="space-y-10 md:space-y-14">
@@ -282,17 +343,17 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                   event.tags?.find((theme) => Boolean(theme?.trim())) ||
                   event.category ||
                   "General";
-                const description =
-                  normalizeEventDescription(
-                    event.description?.trim() ||
-                      event.short_description?.trim() ||
-                      "Description will be announced soon.",
-                  );
+                const description = normalizeEventDescription(
+                  event.description?.trim() ||
+                    event.short_description?.trim() ||
+                    "Description will be announced soon.",
+                );
                 const venue = event.venue?.trim() || "Location TBA";
                 const routeId = getHighlightsRouteId(event);
-                const canOpen = Boolean(routeId && event.title?.trim());
                 const descriptionKey = `${event.id || routeId}-${event.start_date}`;
-                const isExpanded = Boolean(expandedDescriptions[descriptionKey]);
+                const isExpanded = Boolean(
+                  expandedDescriptions[descriptionKey],
+                );
                 const isLongDescription = description.length > 420;
                 const descriptionPreview =
                   isLongDescription && !isExpanded
@@ -305,12 +366,12 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                   >
                     <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[220px] md:min-h-[560px]">
                       <img
-                        src={event.image_url || FALLBACK_COVER}
+                        src={event.image_url || event.images?.[0] || FALLBACK_COVER}
                         alt={event.title}
                         className="absolute inset-0 h-full w-full object-cover object-center"
                         draggable={false}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/10 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
                     </div>
 
                     <div className="mt-5 md:mt-7">
@@ -337,7 +398,12 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                           >
                             <path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm12 8H5v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8Z" />
                           </svg>
-                          <span>{formatDateLabel(event.start_date || "", event.end_date || "")}</span>
+                          <span>
+                            {formatDateLabel(
+                              event.start_date || "",
+                              event.end_date || "",
+                            )}
+                          </span>
                         </span>
 
                         <span className="inline-flex items-center gap-1 text-[9px] md:text-sm whitespace-nowrap shrink-0 max-w-[120px] md:max-w-none">
@@ -356,7 +422,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
                       <Text
                         variant="body"
-                        className="text-white/85 mt-5 md:mt-6 leading-relaxed"
+                        className="text-white/85 mt-5 md:mt-6 text-justify"
                       >
                         {renderDescriptionWithBold(descriptionPreview)}
                       </Text>
@@ -374,34 +440,29 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                             className="text-white/70 hover:text-white transition-colors text-sm inline-flex items-center gap-1 cursor-pointer"
                           >
                             {isExpanded ? "See Less" : "See More"}
-                            <span aria-hidden="true">{isExpanded ? "\u02c4" : "\u02c5"}</span>
+                            <span aria-hidden="true">
+                              {isExpanded ? "\u02c4" : "\u02c5"}
+                            </span>
                           </button>
                         </div>
                       ) : null}
-
-                      {canOpen ? (
-                        <Link
-                          href={`/events/gallery/${encodeURIComponent(yearTitle)}/${encodeURIComponent(
-                            routeId,
-                          )}?title=${encodeURIComponent(event.title)}`}
-                          className="mt-6 md:mt-7 h-10 md:h-11 w-full rounded-md border border-[#4285F4] bg-[linear-gradient(90deg,rgba(20,57,132,0.9)_0%,rgba(59,141,255,0.96)_50%,rgba(20,57,132,0.9)_100%)] hover:bg-[linear-gradient(90deg,rgba(11,34,90,0.98)_0%,rgba(72,153,255,0.96)_50%,rgba(11,34,90,0.98)_100%)] text-white text-sm md:text-base font-medium inline-flex items-center justify-center gap-1 transition-[background-image,border-color,box-shadow] duration-300 ease-out hover:border-[#5B95FF] hover:shadow-[0_0_18px_rgba(66,133,244,0.32)]"
-                        >
-                          View More Event Highlights
-                          <span aria-hidden="true">&rarr;</span>
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="mt-6 md:mt-7 h-10 md:h-11 w-full rounded-md border border-white/15 bg-white/5 text-white/50 text-sm md:text-base font-medium"
-                        >
-                          No Event Highlights Available
-                        </button>
-                      )}
                     </div>
                   </article>
                 );
               })}
+
+              {events?.meta &&
+                events.data.length < events.meta.totalRecords && (
+                  <div className="mt-8 md:mt-12 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setPageSize((prev) => prev + STEP)}
+                      className="w-full md:w-fit md:min-w-[240px] px-8 py-3.5 border border-white rounded-[12px] text-white text-sm md:text-base font-medium bg-transparent hover:bg-white/10 active:bg-white/20 transition-all cursor-pointer flex items-center justify-center font-outfit"
+                    >
+                      {isLoading ? "Loading..." : "Load more"}
+                    </button>
+                  </div>
+                )}
             </div>
           )}
         </Stack>
@@ -409,4 +470,3 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
     </div>
   );
 }
-

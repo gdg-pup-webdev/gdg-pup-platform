@@ -1,10 +1,6 @@
 import { Express, Router } from "express";
-import { AuthRouter } from "../routes/auth-system/auth.route";
-import { AuthHttpController } from "../routes/auth-system/auth.controller";
 import { HealthRouter } from "../routes/health/healthCheck.route";
 import { HealthHttpController } from "../routes/health/healthCheck.controller";
-import { supabase } from "@/v1/lib/supabase";
-import { AuthService } from "@/v1/modules/authSystem_deprecated";
 import { filesModuleController } from "@/v1/modules/filesModule";
 import { FilesHttpController } from "../routes/files/files.controller";
 import { FilesRouter } from "../routes/files/files.router";
@@ -19,15 +15,8 @@ import { TasksRouter } from "../routes/tasks/tasks.router";
 import { RolesRouter } from "../routes/roles/roles.router";
 import { RolesHttpController } from "../routes/roles/roles.controller";
 import { rbacController } from "../modules/rbacSystem";
-import { UsersRouter } from "../routes/users/users.router";
-import { UsersHttpController } from "../routes/users/users.controller";
 import { GdgTeamsHttpController } from "../routes/gdg-teams/gdgTeams.controller";
 import { GdgTeamsRouter } from "../routes/gdg-teams/gdgTeams.router";
-import { sparkmatesModuleController } from "../modules/sparkmatesModule_deprecated";
-import { SparkmatesHttpController } from "../routes/sparkmates/sparkmates.controller";
-import { SparkmatesRouter } from "../routes/sparkmates/sparkmates.router";
-import { NfcSystemHttpController } from "@/v1/routes/nfc-system/nfcSystem.controller";
-import { NfcSystemRouter } from "@/v1/routes/nfc-system/nfcSystem.router";
 import { gdgMerchController } from "@/v1/modules/gdgMerch";
 import { GdgMerchHttpController } from "../routes/gdg-merch/gdgMerch.controller";
 import { GdgMerchRouter } from "../routes/gdg-merch/gdgMerch.router";
@@ -37,42 +26,53 @@ import { PointsRouter } from "../routes/points/points.router";
 import { learningResourceController } from "@/v1/modules/learningResources";
 import { LearningResourcesHttpController } from "../routes/learning-resources/learning-resources.controller";
 import { LearningResourcesRouter } from "../routes/learning-resources/learning-resources.router";
+import { StudyJamsHttpController } from "../routes/study-jams/studyJams.controller";
+import { StudyJamsRouter } from "../routes/study-jams/studyJams.router";
 import { eventSystemController } from "@/v1/modules/eventSystem";
 import { EventsHttpController } from "../routes/events/events.controller";
-import { EventsRouter } from "../routes/events/events.router"; 
+import { EventsRouter } from "../routes/events/events.router";
 import { ArticlesHttpController } from "../routes/articles/articles.controller";
 import { ArticlesRouter } from "../routes/articles/articles.router";
 import { AuthenticationHttpController } from "../routes/authentication/authentication.controller";
 import { authenticationController } from "../modules/authentication";
-import { oneTimePinController } from "../modules/oneTimePin";
 import { gdgMembersController } from "../modules/members";
-import { configs } from "@/configs/configs";
 import { AuthenticationRouter } from "../routes/authentication/authentication.router";
 import { GdgMembersHttpController } from "../routes/gdgmembers/gdgmembers.controller";
 import { GdgMembersRouter } from "../routes/gdgmembers/gdgmembers.router";
 import { NfcCardsRouter } from "../routes/nfc-cards/nfcCards.router";
 import { NfcCardsHttpController } from "../routes/nfc-cards/nfcCards.controller";
 import { nfcCardsModuleController } from "../modules/nfcCards";
-import { memberShowcaseController } from "../modules/MemberShowcase";
-import { MemberShowcaseHttpController, MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcase";
+import { memberShowcaseController } from "../modules/MemberShowcase"; 
+import {
+  MemberShowcaseHttpController, 
+} from "../routes/member-showcase/MemberShowcase";
 import { memberProjectsController } from "../modules/memberProjects";
-import { MemberProjectsHttpController, MemberProjectsRouter } from "../routes/member-projects/MemberProjects";
+import {
+  MemberProjectsHttpController,
+  MemberProjectsRouter,
+} from "../routes/member-projects/MemberProjects";
 import { articlesController } from "../modules/articles";
+import { productController } from "../modules/products";
+import { ProductHttpController } from "../routes/products/products.controller";
+import { ProductRouter } from "../routes/products/products.router";
+import { AnalyticsHttpController } from "../routes/analytics/analytics.controller";
+import { AnalyticsRouter } from "../routes/analytics/analytics.router";
+import { analyticsController } from "../modules/analytics";
+import { MemberShowcaseRouter } from "../routes/member-showcase/MemberShowcaseRouter";
 
 export const loadRoutes = (app: Express) => {
-  const supabaseClient = supabase;
+  const analyticsHttpController = new AnalyticsHttpController(
+    analyticsController,
+  );
+  const analyticsRouter = new AnalyticsRouter(analyticsHttpController);
 
   const gdgMembersHttpController = new GdgMembersHttpController(
-    gdgMembersController,
+    gdgMembersController, rbacController, nfcCardsModuleController
   );
   const gdgMembersRouter = new GdgMembersRouter(gdgMembersHttpController);
 
-  const articlesHttpController = new ArticlesHttpController(
-    articlesController,
-  );
-  const articlesRouter = new ArticlesRouter(
-    articlesHttpController,
-  );
+  const articlesHttpController = new ArticlesHttpController(articlesController);
+  const articlesRouter = new ArticlesRouter(articlesHttpController);
 
   const pointsHttpController = new PointsHttpController(pointSystemController);
   const pointsRouter = new PointsRouter(pointsHttpController);
@@ -87,10 +87,6 @@ export const loadRoutes = (app: Express) => {
     filesModuleController,
   );
   const foldersRouter = new FoldersRouter(foldersHttpController);
-
-  const authService = new AuthService(supabaseClient);
-  const authHttpController = new AuthHttpController(authService);
-  const authRouter = new AuthRouter(authHttpController);
 
   const healthHttpController = new HealthHttpController();
   const healthRouter = new HealthRouter(healthHttpController);
@@ -107,20 +103,8 @@ export const loadRoutes = (app: Express) => {
   const tasksHttpController = new TasksHttpController(taskModuleController);
   const tasksRouter = new TasksRouter(tasksHttpController);
 
-  const usersHttpController = new UsersHttpController(rbacController);
-  const usersRouter = new UsersRouter(usersHttpController);
-
   const gdgTeamsHttpController = new GdgTeamsHttpController();
   const gdgTeamsRouter = new GdgTeamsRouter(gdgTeamsHttpController);
-  const sparkmatesHttpController = new SparkmatesHttpController(
-    sparkmatesModuleController,
-  );
-  const sparkmatesRouter = new SparkmatesRouter(sparkmatesHttpController);
-
-  const nfcSystemHttpController = new NfcSystemHttpController(
-    sparkmatesModuleController,
-  );
-  const nfcSystemRouter = new NfcSystemRouter(nfcSystemHttpController);
 
   const gdgMerchHttpController = new GdgMerchHttpController(gdgMerchController);
   const gdgMerchRouter = new GdgMerchRouter(gdgMerchHttpController);
@@ -154,22 +138,30 @@ export const loadRoutes = (app: Express) => {
   const memberProjectsHttpController = new MemberProjectsHttpController(
     memberProjectsController,
   );
-  const memberProjectsRouter = new MemberProjectsRouter(memberProjectsHttpController);
+  const memberProjectsRouter = new MemberProjectsRouter(
+    memberProjectsHttpController,
+  );
+  const studyJamsHttpController = new StudyJamsHttpController();
+  const studyJamsRouter = new StudyJamsRouter(studyJamsHttpController);
+
+  const productHttpController = new ProductHttpController(productController);
+  const productRouter = new ProductRouter(productHttpController);
 
   app.use("/files", filesRouter.router);
   app.use("/folders", foldersRouter.router);
-  app.use("/auth-system", authRouter.router);
+  // app.use("/auth-system", authRouter.router);
   app.use("/health", healthRouter.router);
   app.use("/gdg-scraped-events", gdgScrapedEventsRouter.router);
   app.use("/tasks", tasksRouter.router);
   app.use("/roles", rolesRouter.router);
-  app.use("/users", usersRouter.router);
+  // app.use("/users", usersRouter.router);
   app.use("/gdg-teams", gdgTeamsRouter.router);
-  app.use("/sparkmates", sparkmatesRouter.router);
-  app.use("/nfc-system", nfcSystemRouter.router);
+  // app.use("/sparkmates", sparkmatesRouter.router);
+  // app.use("/nfc-system", nfcSystemRouter.router);
   app.use("/gdg-merch", gdgMerchRouter.router);
   app.use("/points", pointsRouter.router);
   app.use("/learning-resources", learningResourcesRouter.router);
+  app.use("/study-jams", studyJamsRouter.router);
   app.use("/events", eventsRouter.router);
   app.use("/event-system", eventsRouter.router);
   app.use("/articles", articlesRouter.router);
@@ -178,6 +170,8 @@ export const loadRoutes = (app: Express) => {
   app.use("/nfc-cards", nfcCardsRouter.router);
   app.use("/member-showcase", memberShowcaseRouter.router);
   app.use("/member-projects", memberProjectsRouter.router);
+  app.use("/products", productRouter.router);
+  app.use("/analytics", analyticsRouter.router);
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Nexus API v1" });

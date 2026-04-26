@@ -1,9 +1,16 @@
 import { IGdgMemberRepository } from "../domain/IGdgMemberRepository";
+import { ForbiddenError } from "@/v1/errors/HttpError";
 
 export class MakeProfilePrivate {
   constructor(private readonly repo: IGdgMemberRepository) {}
 
-  async execute(id: string): Promise<void> {
+  async execute(actorId: string, id: string): Promise<void> {
+    if (actorId !== id) {
+      throw new ForbiddenError(
+        `Access denied. User '${actorId}' cannot modify member '${id}'.`,
+      );
+    }
+
     const member = await this.repo.findByGdgId(id);
     
     if (!member) {

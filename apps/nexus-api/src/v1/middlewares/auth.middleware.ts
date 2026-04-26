@@ -17,6 +17,18 @@ type UserAccessProfile = {
   permissions: UserPermission[];
 };
 
+export const requireAuthenticated = (): RequestHandler => (req, res, next) => {
+  const decodedToken = req.decodedToken;
+
+  if (!decodedToken) {
+    throw new UnauthorizedError(
+      "Authentication required. Please provide a valid Bearer token.",
+    );
+  }
+
+  next();
+};
+
 /**
  * USAGE:
  * - insert into dependencies of the router
@@ -28,13 +40,19 @@ type UserAccessProfile = {
  * - use in specific route
  * router.get('/admin', this.authMiddleware.requireAdminRole(), this.adminController.getAdminData);
  */
+/**
+ * @deprecated do not use this class
+ */
 export class AuthMiddleware {
   constructor() {}
 
+  /**
+   * @deprecated use requireAuthenticated instead
+   */
   requireAuth = (): RequestHandler => (req, res, next) => {
     const decodedToken = req.decodedToken;
 
-    console.log("Checking authentication for request. Decoded token:", decodedToken);
+    // console.log("Checking authentication for request. Decoded token:", decodedToken);
 
     if (!decodedToken) {
       throw new UnauthorizedError(
@@ -42,14 +60,20 @@ export class AuthMiddleware {
       );
     }
 
-    console.log("passed")
+    // console.log("passed");
 
     next();
   };
 
+  /**
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
+   */
   requireAdminRole = (): RequestHandler =>
     this.requireAnyOfTheseRoles(["admin"]);
 
+  /**
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
+   */
   requireAnyOfTheseRoles =
     (allowedRoles: string[]): RequestHandler =>
     async (req, res, next) => {
@@ -88,7 +112,7 @@ export class AuthMiddleware {
     };
 
   /**
-   * @deprecated
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
    */
   requirePermissions_deprecated =
     (
@@ -158,12 +182,13 @@ export class AuthMiddleware {
       }
     };
 
+  /**
+   * @deprecated use the "requirePermissions" middleware from the rbac.middleware.ts file instead
+   */
   requirePermissions =
-    (
-      requiredPermissions: Record<string, string[]>,
-    ): RequestHandler =>
+    (requiredPermissions: Record<string, string[]>): RequestHandler =>
     async (req, res, next) => {
-      const userId = req.user?.id;
+      const userId = req.decodedToken?.memberInfo.gdgId ?? req.user?.id;
       if (!userId) {
         throw new UnauthorizedError(
           "Authentication required. No authenticated user found in request context.",
@@ -179,16 +204,18 @@ export class AuthMiddleware {
 
       const missingPermissions = Object.entries(requiredPermissions).flatMap(
         ([resource, actions]) =>
-          actions.filter((action) => {
-            return !userPermissions.some(
-              (userPermission) =>
-                userPermission.action === action &&
-                userPermission.resource === resource,
-            );
-          }).map((action) => ({
-            resource: resource,
-            action,
-          })),
+          actions
+            .filter((action) => {
+              return !userPermissions.some(
+                (userPermission) =>
+                  userPermission.action === action &&
+                  userPermission.resource === resource,
+              );
+            })
+            .map((action) => ({
+              resource: resource,
+              action,
+            })),
       );
 
       if (missingPermissions.length > 0) {
@@ -205,4 +232,7 @@ export class AuthMiddleware {
     };
 }
 
+/**
+ * @deprecated do not use this class instance
+ */
 export const authMiddlewareInstance = new AuthMiddleware();

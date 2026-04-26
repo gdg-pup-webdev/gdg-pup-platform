@@ -4,8 +4,8 @@ import { IEventRepository } from "../domain/IEventRepository";
 
 export class ImportAndSyncAllToBevy {
   constructor(
-    private readonly bevyservice: IBevyEventService,
-    private readonly eventrepo: IEventRepository,
+    private readonly bevyEventService: IBevyEventService,
+    private readonly eventRepository: IEventRepository,
   ) {}
 
   async execute() {
@@ -18,20 +18,23 @@ export class ImportAndSyncAllToBevy {
     const failures: { id: string; error: string }[] = [];
 
     while (true) {
-      const result = await this.bevyservice.listEvents(pageNumber, pageSize);
+      const result = await this.bevyEventService.listEvents(
+        pageNumber,
+        pageSize,
+      );
       const totalPages = result.totalPages;
 
       for (const bevyEvent of result.list) {
         try {
-          const existingEvent = await this.eventrepo.findByBevyId(
+          const existingEvent = await this.eventRepository.findByBevyId(
             bevyEvent.props.id,
           );
           if (existingEvent) {
             existingEvent.syncToBevyEvent(bevyEvent);
-            await this.eventrepo.persistUpdates(existingEvent);
+            await this.eventRepository.persistUpdates(existingEvent);
           } else {
             const newEvent = Event.createFromBevyEvent(bevyEvent);
-            await this.eventrepo.saveNew(newEvent);
+            await this.eventRepository.saveNew(newEvent);
           }
           success++;
         } catch (error) {
@@ -41,7 +44,7 @@ export class ImportAndSyncAllToBevy {
           } else {
             failures.push({
               id: bevyEvent.props.id,
-              error: "Unknown error" + (error as any).message || "",
+              error: "Unknown error",
             });
           }
         }

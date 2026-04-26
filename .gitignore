@@ -56,6 +56,8 @@ next-env.d.ts
 .env.test.local
 .env.production.local
 .env.*
+scripts/gcp-service-account.json
+apps/nexus-api/gcp-service-account.json
 *.pem
 *.key
 *.tfvars
@@ -73,3 +75,7 @@ storybook-static/
 # --- Database & Generated Types ---
 # Ignore Supabase local temp files but keep your actual migrations/types
 supabase/.temp/
+
+
+scripts/*.csv
+scripts/*.txt

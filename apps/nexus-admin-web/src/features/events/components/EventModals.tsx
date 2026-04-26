@@ -1,5 +1,4 @@
 "use client";
-import { FaSyncAlt } from "react-icons/fa";
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -10,6 +9,8 @@ import {
   MapPin,
   Users,
   CheckCircle,
+  ArrowUp,
+  ArrowDown,
   Plus,
   Trash2,
   Edit2,
@@ -22,6 +23,8 @@ import {
   Link2,
   Hash,
   Download,
+  RefreshCw,
+  ExternalLink,
 } from "lucide-react";
 import { Event, EventInsert, EventUpdate, EventAttendance } from "../types";
 import { useListAttendees } from "../hooks/useListAttendees";
@@ -30,52 +33,103 @@ import { useGetBevyEvents } from "@/features/bevy-events/hooks/useGetBevyEvents"
 import { useGetBevyEventDetail } from "@/features/bevy-events/hooks/useGetBevyEventDetail";
 import { useSearchTeams } from "@/features/teams/api/teams";
 import { toast } from "react-toastify";
-import { Pagination } from "@/components/admin/Pagination";
 import { WireframeUploadImage } from "@/components/wireframeUi/WireframeUploadImage";
-import { useSyncOneEventToBevy } from "../hooks/useSyncOneEventToBevy";
+import { FeatureModal as Modal } from "@/components/ui/FeatureModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminPaginationSection } from "@/components/admin/AdminPaginationSection";
+import { ModalActionRow } from "@/components/admin/ModalActionRow";
+import { AdminFormModal, AdminInputField, AdminListField, AdminTextAreaField } from "@/components/admin/form";
 
-// ==========================================
-// Modal Wrapper
-// ==========================================
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
+const MAX_EVENT_HIGHLIGHT_IMAGES = 20;
 
-function Modal({ isOpen, onClose, title, children }: ModalProps) {
+const getFileSignature = (file: File) =>
+  `${file.name}-${file.size}-${file.lastModified}-${file.type}`;
+
+const dedupeFiles = (files: File[]): File[] => {
+  const seen = new Set<string>();
+  const unique: File[] = [];
+
+  for (const file of files) {
+    const signature = getFileSignature(file);
+    if (seen.has(signature)) {
+      continue;
+    }
+
+    seen.add(signature);
+    unique.push(file);
+  }
+
+  return unique;
+};
+
+const arrayMoveLocal = <T,>(items: T[], fromIndex: number, toIndex: number): T[] => {
+  const next = [...items];
+  const [moved] = next.splice(fromIndex, 1);
+
+  if (moved === undefined) {
+    return items;
+  }
+
+  next.splice(toIndex, 0, moved);
+  return next;
+};
+
+const PendingHighlightImagePreview = ({
+  file,
+  onRemove,
+}: {
+  file: File;
+  onRemove: () => void;
+}) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "unset";
-    return () => {
-      document.body.style.overflow = "unset";
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewUrl(typeof reader.result === "string" ? reader.result : null);
     };
-  }, [isOpen]);
+    reader.onerror = () => {
+      setPreviewUrl(null);
+    };
+    reader.readAsDataURL(file);
 
-  if (!isOpen) return null;
+    return () => {
+      if (reader.readyState === FileReader.LOADING) {
+        reader.abort();
+      }
+    };
+  }, [file]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative w-full max-w-2xl min-w-[320px] sm:min-w-[450px] overflow-hidden rounded-sm bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
-        <div className="max-h-[85vh] overflow-y-auto p-6">{children}</div>
+    <div className="rounded-sm border border-gray-100 bg-gray-50 p-2">
+      <div className="relative h-28 overflow-hidden rounded-sm border border-gray-200 bg-white">
+        {previewUrl ? (
+          <img
+            src={previewUrl}
+            alt={file.name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-xs text-gray-500">
+            Preview unavailable
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute top-1.5 right-1.5 rounded-full border border-white/50 bg-black/70 p-1 text-white transition-colors hover:bg-red-500"
+          title="Remove queued image"
+          aria-label={`Remove queued image ${file.name}`}
+        >
+          <X size={13} />
+        </button>
       </div>
+      <p className="mt-2 truncate text-[10px] font-bold uppercase tracking-widest text-gray-500">
+        Queued: {file.name}
+      </p>
     </div>
   );
-}
+};
 
 // ==========================================
 // Bevy Event Search Modal
@@ -140,7 +194,7 @@ export function BevyEventSearchModal({
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin size={12} className="text-teal-600" />
-                      <span className="truncate max-w-[150px]">
+                      <span className="max-w-37.5 truncate">
                         {event.location || "TBA"}
                       </span>
                     </div>
@@ -149,7 +203,7 @@ export function BevyEventSearchModal({
               ))}
             </div>
 
-            <Pagination
+            <AdminPaginationSection
               currentPage={page}
               totalPages={totalPages}
               pageSize={pageSize}
@@ -208,6 +262,7 @@ export function EventFormModal({
     attendance_points: 10,
     max_capacity: 999999,
     image_url: null,
+    images: [],
     speakers: [],
     tags: [],
     teamId: null,
@@ -215,8 +270,6 @@ export function EventFormModal({
     bevyPreviewUrl: null,
   });
 
-  const [speakerInput, setSpeakerInput] = useState("");
-  const [tagInput, setTagInput] = useState("");
   const [isBevySearchOpen, setIsBevySearchOpen] = useState(false);
 
   // Bevy import detail hook
@@ -231,6 +284,26 @@ export function EventFormModal({
 
   const { data: teamsResponse, isLoading: isSearchingTeams } =
     useSearchTeams(debouncedTeamSearch);
+
+  const [selectedThumbnailPreviewUrl, setSelectedThumbnailPreviewUrl] =
+    useState<string | null>(null);
+  const [pendingHighlightImageFiles, setPendingHighlightImageFiles] =
+    useState<File[]>([]);
+  const [originalHighlightImages, setOriginalHighlightImages] =
+    useState<string[]>([]);
+
+  const highlightImages = formData.images || [];
+  const totalQueuedHighlights =
+    highlightImages.length + pendingHighlightImageFiles.length;
+  const remainingHighlightSlots = Math.max(
+    0,
+    MAX_EVENT_HIGHLIGHT_IMAGES - totalQueuedHighlights,
+  );
+  const mainImagePreviewUrl =
+    selectedThumbnailPreviewUrl ||
+    formData.image_url?.trim() ||
+    highlightImages[0] ||
+    null;
 
   useEffect(() => {
     const timer = setTimeout(
@@ -254,11 +327,36 @@ export function EventFormModal({
   }, []);
 
   const setThumbnail = (image: File | undefined) => {
-    setFormData({ ...formData, image: image });
+    setFormData((prev) => ({ ...prev, image }));
   };
 
   useEffect(() => {
+    if (!formData.image) {
+      setSelectedThumbnailPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(formData.image);
+    setSelectedThumbnailPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [formData.image]);
+
+  useEffect(() => {
     if (initialData) {
+      const currentImageUrl =
+        (typeof initialData.image_url === "string" &&
+        initialData.image_url.trim().length > 0
+          ? initialData.image_url.trim()
+          : null) ||
+        initialData.images?.find(
+          (imageUrl) =>
+            typeof imageUrl === "string" && imageUrl.trim().length > 0,
+        ) ||
+        null;
+
       setFormData({
         title: initialData.title,
         description: initialData.description || "",
@@ -274,13 +372,16 @@ export function EventFormModal({
           : "",
         attendance_points: initialData.attendance_points,
         max_capacity: initialData.max_capacity,
-        image_url: initialData.image_url || null,
+        image_url: currentImageUrl,
+        images: initialData.images || [],
         speakers: initialData.speakers || [],
         tags: initialData.tags || [],
         teamId: initialData.teamId || null,
         bevy_event_id: initialData.bevy_event_id || null,
         bevyPreviewUrl: initialData.bevyPreviewUrl || null,
       });
+      setOriginalHighlightImages(initialData.images || []);
+      setPendingHighlightImageFiles([]);
       setSelectedTeamName(
         initialData.teamId
           ? `Team (${initialData.teamId.substring(0, 8)}...)`
@@ -299,60 +400,84 @@ export function EventFormModal({
         attendance_points: 10,
         max_capacity: 999999,
         image_url: null,
+        images: [],
         speakers: [],
         tags: [],
         teamId: null,
         bevy_event_id: null,
         bevyPreviewUrl: null,
       });
+      setOriginalHighlightImages([]);
+      setPendingHighlightImageFiles([]);
       setSelectedTeamName("");
     }
   }, [initialData, isOpen]);
-
-  const handleAddSpeaker = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && speakerInput.trim()) {
-      e.preventDefault();
-      if (!formData.speakers.includes(speakerInput.trim())) {
-        setFormData((prev) => ({
-          ...prev,
-          speakers: [...prev.speakers, speakerInput.trim()],
-        }));
-      }
-      setSpeakerInput("");
-    }
-  };
-
-  const removeSpeaker = (speakerToRemove: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      speakers: prev.speakers.filter((s) => s !== speakerToRemove),
-    }));
-  };
-
-  const handleAddTag = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && tagInput.trim()) {
-      e.preventDefault();
-      if (!formData.tags.includes(tagInput.trim())) {
-        setFormData((prev) => ({
-          ...prev,
-          tags: [...prev.tags, tagInput.trim()],
-        }));
-      }
-      setTagInput("");
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((t) => t !== tagToRemove),
-    }));
-  };
 
   const handleSelectTeam = (team: any) => {
     setFormData((prev) => ({ ...prev, teamId: team.id }));
     setSelectedTeamName(team.name);
     setShowTeamDropdown(false);
+  };
+
+  const handleUploadHighlightImages = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const selectedFiles = Array.from(event.target.files || []);
+    event.currentTarget.value = "";
+
+    if (selectedFiles.length === 0) {
+      return;
+    }
+
+    if (remainingHighlightSlots <= 0) {
+      toast.error("You can only add up to 20 highlight images.");
+      return;
+    }
+
+    const maxPendingAllowed = Math.max(
+      0,
+      MAX_EVENT_HIGHLIGHT_IMAGES - highlightImages.length,
+    );
+    const nextPendingFiles = dedupeFiles([
+      ...pendingHighlightImageFiles,
+      ...selectedFiles,
+    ]).slice(0, maxPendingAllowed);
+
+    if (selectedFiles.length > nextPendingFiles.length - pendingHighlightImageFiles.length) {
+      toast.info(
+        "Some files were skipped due to duplicates or the 20-image limit.",
+      );
+    }
+
+    setPendingHighlightImageFiles(nextPendingFiles);
+  };
+
+  const handleRemoveHighlightImage = (imageIndex: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: (prev.images || []).filter((_, index) => index !== imageIndex),
+    }));
+  };
+
+  const handleMoveHighlightImage = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) {
+      return;
+    }
+
+    if (toIndex < 0 || toIndex >= highlightImages.length) {
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      images: arrayMoveLocal(prev.images || [], fromIndex, toIndex),
+    }));
+  };
+
+  const handleRemoveQueuedHighlightImage = (fileIndex: number) => {
+    setPendingHighlightImageFiles((prev) =>
+      prev.filter((_, index) => index !== fileIndex),
+    );
   };
 
   const handleBevyImport = async (bevyEventId: string) => {
@@ -396,9 +521,31 @@ export function EventFormModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const normalizedHighlights = (formData.images || [])
+      .map((imageUrl) => imageUrl.trim())
+      .filter((imageUrl) => imageUrl.length > 0);
+    const normalizedQueuedFiles = dedupeFiles(pendingHighlightImageFiles);
+
+    if (
+      normalizedHighlights.length + normalizedQueuedFiles.length >
+      MAX_EVENT_HIGHLIGHT_IMAGES
+    ) {
+      toast.error("You can only add up to 20 highlight images.");
+      return;
+    }
+
+    if (normalizedHighlights.length > MAX_EVENT_HIGHLIGHT_IMAGES) {
+      toast.error("You can only add up to 20 highlight images.");
+      return;
+    }
+
     // Ensure dates are in full ISO format for the API
     const submissionData = {
       ...formData,
+      image_url: formData.image_url?.trim() || null,
+      images: normalizedHighlights,
+      highlightImageFiles: normalizedQueuedFiles,
+      originalHighlightImages,
       start_date: formData.start_date
         ? new Date(formData.start_date).toISOString()
         : "",
@@ -413,71 +560,99 @@ export function EventFormModal({
   const teamResults = teamsResponse?.body?.data || [];
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={initialData ? "Update Event" : "Create New Event"}
-    >
-      <form onSubmit={handleSubmit} className="space-y-5">
+    <>
+      <AdminFormModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={initialData ? "Update Event" : "Create New Event"}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        submitLabel={initialData ? "Save Changes" : "Create Event"}
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {/* Bevy Import Trigger */}
           <div className="sm:col-span-2">
             <button
               type="button"
               onClick={() => setIsBevySearchOpen(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-sm border border-dashed border-teal-200 bg-teal-50/50 py-4 text-sm font-bold text-teal-700 transition-all hover:bg-teal-50 hover:border-teal-300"
+              className="flex w-full items-center justify-center gap-2 rounded-sm border border-dashed border-teal-200 bg-teal-50/50 py-4 text-sm font-bold text-teal-700 transition-all hover:border-teal-300 hover:bg-teal-50"
             >
               <Download size={18} />
               Import Details from Bevy Event
             </button>
           </div>
 
-          <WireframeUploadImage
-            image={formData.image}
-            setImage={setThumbnail}
-          />
+          <WireframeUploadImage image={formData.image} setImage={setThumbnail} />
 
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Event Title
-            </label>
-            <input
-              required
-              type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.title}
+            <AdminInputField
+              label="Main Image URL"
+              type="url"
+              placeholder="https://example.com/event-main-image.jpg"
+              value={formData.image_url || ""}
+              helperText="Used for the event thumbnail/pubmat. Uploading a thumbnail file overrides this URL."
               onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
+                setFormData((prev) => ({
+                  ...prev,
+                  image_url: e.target.value || null,
+                }))
               }
             />
           </div>
 
-          {formData.bevy_event_id && (
-            <div className="sm:col-span-2 rounded-sm bg-blue-50/50 border border-blue-100 p-3 flex items-center justify-between">
+          <div className="sm:col-span-2 rounded-sm border border-gray-100 bg-gray-50/50 p-3">
+            <div className="mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+              <ImageIcon size={12} />
+              Current Main Image Preview
+            </div>
+            {mainImagePreviewUrl ? (
+              <img
+                src={mainImagePreviewUrl}
+                alt="Current main image preview"
+                className="h-42 w-full rounded-sm border border-gray-200 object-cover"
+              />
+            ) : (
+              <div className="flex h-42 w-full items-center justify-center rounded-sm border border-dashed border-gray-200 bg-white text-xs text-gray-500">
+                No image to preview yet.
+              </div>
+            )}
+            <p className="mt-2 text-[11px] text-gray-500">
+              Preview priority: uploaded thumbnail, main image URL, then the first highlight image.
+            </p>
+          </div>
+
+          <div className="sm:col-span-2">
+            <AdminInputField
+              label="Event Title"
+              required
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            />
+          </div>
+
+          {formData.bevy_event_id ? (
+            <div className="sm:col-span-2 flex items-center justify-between rounded-sm border border-blue-100 bg-blue-50/50 p-3">
               <div className="flex items-center gap-2 text-xs font-bold text-blue-700">
                 <Link2 size={14} />
                 Linked to Bevy Event: {formData.bevy_event_id}
               </div>
-              {formData.bevyPreviewUrl && (
+              {formData.bevyPreviewUrl ? (
                 <a
                   href={formData.bevyPreviewUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] uppercase font-bold text-blue-600 hover:underline"
+                  className="text-[10px] font-bold uppercase text-blue-600 hover:underline"
                 >
                   View Source
                 </a>
-              )}
+              ) : null}
             </div>
-          )}
+          ) : null}
 
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Short Description
-            </label>
-            <input
+            <AdminInputField
+              label="Short Description"
               type="text"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
               placeholder="A brief summary of the event..."
               value={formData.short_description || ""}
               onChange={(e) =>
@@ -490,132 +665,82 @@ export function EventFormModal({
           </div>
 
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Full Description
-            </label>
-            <textarea
+            <AdminTextAreaField
+              label="Full Description"
               required
               rows={4}
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
               value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Category
-            </label>
-            <input
-              required
-              type="text"
-              placeholder="e.g. Workshop, Talk"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-            />
-          </div>
+          <AdminInputField
+            label="Category"
+            required
+            type="text"
+            placeholder="e.g. Workshop, Talk"
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Event Type (Internal)
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Study Jam, Special Event"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.type || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, type: e.target.value || null })
-              }
-            />
-          </div>
+          <AdminInputField
+            label="Event Type (Internal)"
+            type="text"
+            placeholder="e.g. Study Jam, Special Event"
+            value={formData.type || ""}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value || null })}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Venue
-            </label>
-            <input
-              required
-              type="text"
-              placeholder="Online or Physical Location"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.venue}
-              onChange={(e) =>
-                setFormData({ ...formData, venue: e.target.value })
-              }
-            />
-          </div>
+          <AdminInputField
+            label="Venue"
+            required
+            type="text"
+            placeholder="Online or Physical Location"
+            value={formData.venue}
+            onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Max Capacity
-            </label>
-            <input
-              required
-              type="number"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.max_capacity}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  max_capacity: parseInt(e.target.value) || 0,
-                })
-              }
-            />
-          </div>
+          <AdminInputField
+            label="Max Capacity"
+            required
+            type="number"
+            value={formData.max_capacity}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                max_capacity: parseInt(e.target.value, 10) || 0,
+              })
+            }
+          />
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Start Date
-            </label>
-            <input
-              required
-              type="datetime-local"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.start_date}
-              onChange={(e) =>
-                setFormData({ ...formData, start_date: e.target.value })
-              }
-            />
-          </div>
+          <AdminInputField
+            label="Start Date"
+            required
+            type="datetime-local"
+            value={formData.start_date}
+            onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              End Date
-            </label>
-            <input
-              required
-              type="datetime-local"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.end_date}
-              onChange={(e) =>
-                setFormData({ ...formData, end_date: e.target.value })
-              }
-            />
-          </div>
+          <AdminInputField
+            label="End Date"
+            required
+            type="datetime-local"
+            value={formData.end_date}
+            onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Attendance Points
-            </label>
-            <input
-              required
-              type="number"
-              className="w-full rounded-sm border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-teal-500 transition-all"
-              value={formData.attendance_points}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  attendance_points: parseInt(e.target.value) || 0,
-                })
-              }
-            />
-          </div>
+          <AdminInputField
+            label="Attendance Points"
+            required
+            type="number"
+            value={formData.attendance_points}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                attendance_points: parseInt(e.target.value, 10) || 0,
+              })
+            }
+          />
 
           <div className="relative" ref={teamDropdownRef}>
             <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
@@ -626,7 +751,7 @@ export function EventFormModal({
               <input
                 type="text"
                 placeholder="Search team..."
-                className={`w-full rounded-sm border py-2.5 pr-10 pl-10 text-sm outline-none transition-all ${
+                className={`w-full rounded-sm border py-2.5 pl-10 pr-10 text-sm outline-none transition-all ${
                   formData.teamId
                     ? "border-teal-500 bg-teal-50/30"
                     : "border-gray-200 bg-white"
@@ -639,21 +764,21 @@ export function EventFormModal({
                 onFocus={() => !formData.teamId && setShowTeamDropdown(true)}
                 readOnly={!!formData.teamId}
               />
-              {formData.teamId && (
+              {formData.teamId ? (
                 <button
                   type="button"
                   onClick={() => {
                     setFormData({ ...formData, teamId: null });
                     setSelectedTeamName("");
                   }}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-teal-600 hover:text-teal-800"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-600 hover:text-teal-800"
                 >
                   <X size={16} />
                 </button>
-              )}
+              ) : null}
             </div>
 
-            {showTeamDropdown && teamSearchQuery.length >= 2 && (
+            {showTeamDropdown && teamSearchQuery.length >= 2 ? (
               <div className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-sm border border-gray-100 bg-white shadow-xl">
                 {teamResults.length > 0 ? (
                   teamResults.map((team: any) => (
@@ -661,109 +786,163 @@ export function EventFormModal({
                       key={team.id}
                       type="button"
                       onClick={() => handleSelectTeam(team)}
-                      className="flex w-full flex-col px-4 py-3 text-left hover:bg-teal-50 transition-colors border-b border-gray-50 last:border-0"
+                      className="flex w-full flex-col border-b border-gray-50 px-4 py-3 text-left transition-colors last:border-0 hover:bg-teal-50"
                     >
-                      <span className="text-sm font-bold text-gray-900">
-                        {team.name}
-                      </span>
+                      <span className="text-sm font-bold text-gray-900">{team.name}</span>
                     </button>
                   ))
                 ) : (
-                  <div className="p-4 text-center text-sm text-gray-500 italic">
-                    No teams found.
-                  </div>
+                  <div className="p-4 text-center text-sm italic text-gray-500">No teams found.</div>
                 )}
               </div>
-            )}
+            ) : null}
           </div>
 
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Speakers
-            </label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.speakers.map((speaker) => (
-                <span
-                  key={speaker}
-                  className="flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600"
-                >
-                  {speaker}
-                  <button
-                    type="button"
-                    onClick={() => removeSpeaker(speaker)}
-                    className="hover:text-red-500"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="relative">
-              <Users className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
-                placeholder="Type speaker name and press Enter..."
-                value={speakerInput}
-                onChange={(e) => setSpeakerInput(e.target.value)}
-                onKeyDown={handleAddSpeaker}
-              />
-            </div>
+            <AdminListField
+              label="Speakers"
+              items={formData.speakers}
+              onChange={(items) => setFormData((prev) => ({ ...prev, speakers: items }))}
+              placeholder="Add a speaker and press Enter..."
+            />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-500">
-              Tags
-            </label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {formData.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center gap-1 rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-600"
-                >
-                  #{tag}
-                  <button
-                    type="button"
-                    onClick={() => removeTag(tag)}
-                    className="hover:text-red-500"
-                  >
-                    <X size={12} />
-                  </button>
+            <AdminListField
+              label="Tags"
+              items={formData.tags}
+              onChange={(items) => setFormData((prev) => ({ ...prev, tags: items }))}
+              placeholder="Add a tag and press Enter..."
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <div className="rounded-sm border border-gray-100 bg-white p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <label className="block text-xs font-bold uppercase tracking-widest text-gray-500">
+                  Highlight Images
+                </label>
+                <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-600">
+                  {totalQueuedHighlights}/{MAX_EVENT_HIGHLIGHT_IMAGES}
                 </span>
-              ))}
-            </div>
-            <div className="relative">
-              <Hash className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              </div>
+
               <input
-                type="text"
-                className="w-full rounded-sm border border-gray-200 py-2.5 pl-10 pr-4 text-sm outline-none focus:border-teal-500"
-                placeholder="Type tag and press Enter..."
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleAddTag}
+                id="event-highlight-image-upload"
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleUploadHighlightImages}
+                disabled={isSubmitting || remainingHighlightSlots === 0}
               />
+
+              <label
+                htmlFor="event-highlight-image-upload"
+                className={`mb-3 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-dashed py-3 text-sm font-bold transition-all ${
+                  isSubmitting || remainingHighlightSlots === 0
+                    ? "pointer-events-none border-gray-200 bg-gray-100 text-gray-400"
+                    : "border-teal-200 bg-teal-50/50 text-teal-700 hover:border-teal-300 hover:bg-teal-50"
+                }`}
+              >
+                <Plus size={16} />
+                {remainingHighlightSlots === 0
+                  ? "Maximum highlight images reached"
+                  : "Add Highlight Images"}
+              </label>
+
+              <p className="mb-3 text-[11px] text-gray-500">
+                New files are queued locally and uploaded one-by-one only after you click Save.
+              </p>
+
+              {highlightImages.length > 0 ? (
+                <>
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Existing Highlights
+                  </p>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {highlightImages.map((imageUrl, imageIndex) => (
+                      <div
+                        key={`${imageUrl}-${imageIndex}`}
+                        className="rounded-sm border border-gray-100 bg-gray-50 p-2"
+                      >
+                        <div className="relative h-28 overflow-hidden rounded-sm border border-gray-200 bg-white">
+                          <img
+                            src={imageUrl}
+                            alt={`Highlight image ${imageIndex + 1}`}
+                            className="h-full w-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveHighlightImage(imageIndex)}
+                            disabled={isSubmitting}
+                            className="absolute top-1.5 right-1.5 rounded-full border border-white/50 bg-black/70 p-1 text-white transition-colors hover:bg-red-500 disabled:opacity-60"
+                            title="Remove image"
+                            aria-label={`Remove highlight image ${imageIndex + 1}`}
+                          >
+                            <X size={13} />
+                          </button>
+                        </div>
+
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                            Position {imageIndex + 1}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveHighlightImage(imageIndex, imageIndex - 1)}
+                              disabled={isSubmitting || imageIndex === 0}
+                              className="rounded-sm border border-gray-200 bg-white p-1 text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-800 disabled:opacity-40"
+                              title="Move up"
+                              aria-label={`Move highlight image ${imageIndex + 1} up`}
+                            >
+                              <ArrowUp size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveHighlightImage(imageIndex, imageIndex + 1)}
+                              disabled={isSubmitting || imageIndex === highlightImages.length - 1}
+                              className="rounded-sm border border-gray-200 bg-white p-1 text-gray-600 transition-colors hover:border-gray-300 hover:text-gray-800 disabled:opacity-40"
+                              title="Move down"
+                              aria-label={`Move highlight image ${imageIndex + 1} down`}
+                            >
+                              <ArrowDown size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              {pendingHighlightImageFiles.length > 0 ? (
+                <>
+                  <p className="mb-2 mt-4 text-[10px] font-bold uppercase tracking-widest text-gray-500">
+                    Queued Uploads
+                  </p>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {pendingHighlightImageFiles.map((file, fileIndex) => (
+                      <PendingHighlightImagePreview
+                        key={`${file.name}-${file.lastModified}-${fileIndex}`}
+                        file={file}
+                        onRemove={() => handleRemoveQueuedHighlightImage(fileIndex)}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : null}
+
+              {highlightImages.length === 0 && pendingHighlightImageFiles.length === 0 ? (
+                <div className="rounded-sm border border-dashed border-gray-200 bg-gray-50/60 px-4 py-6 text-center text-xs text-gray-500">
+                  No highlight images yet. Add images now and they will upload when you save.
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
-
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex items-center gap-2 rounded-sm bg-teal-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-teal-700 disabled:opacity-50"
-          >
-            {isSubmitting && <Loader2 size={16} className="animate-spin" />}
-            {initialData ? "Save Changes" : "Create Event"}
-          </button>
-        </div>
-      </form>
+      </AdminFormModal>
 
       <BevyEventSearchModal
         isOpen={isBevySearchOpen}
@@ -771,7 +950,7 @@ export function EventFormModal({
         onSelect={handleBevyImport}
         isSubmitting={bevyImportMutation.isPending}
       />
-    </Modal>
+    </>
   );
 }
 
@@ -784,6 +963,8 @@ interface EventDetailsModalProps {
   event: Event | null;
   onEdit: (event: Event) => void;
   onDelete: (event: Event) => void;
+  onSync: (event: Event) => void | Promise<void>;
+  isSyncing?: boolean;
 }
 
 export function EventDetailsModal({
@@ -792,6 +973,8 @@ export function EventDetailsModal({
   event,
   onEdit,
   onDelete,
+  onSync,
+  isSyncing = false,
 }: EventDetailsModalProps) {
   const [page, setPage] = useState(1);
   const { data: attendeesResponse, isLoading: isAttendeesLoading } =
@@ -799,25 +982,48 @@ export function EventDetailsModal({
   const checkinMutation = useCheckinToEvent();
   const [attendeeId, setAttendeeId] = useState("");
 
-  const [syncin, setSyncing] = useState(false);
-
-  const syncMutation = useSyncOneEventToBevy();
-
   if (!event) return null;
 
   const attendees = attendeesResponse?.data || [];
+  const mainImage = event.image_url || event.images?.[0] || null;
 
-  const handleOnSync = async () => {
-    try {
-      setSyncing(true);
-      await syncMutation.mutateAsync({ eventId: event.id });
-      toast.success("Event synced successfully!");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to sync event");
-    } finally {
-      setSyncing(false);
-    }
-  };
+  const eventActions = [
+    ...(event.bevyPreviewUrl
+      ? [
+          {
+            key: "open-bevy-page",
+            label: "Open Bevy Page",
+            icon: ExternalLink,
+            onClick: () => {
+              window.open(event.bevyPreviewUrl as string, "_blank", "noopener,noreferrer");
+            },
+          },
+        ]
+      : []),
+    {
+      key: "sync",
+      label: "Sync with Bevy",
+      loadingLabel: "Syncing...",
+      icon: RefreshCw,
+      onClick: () => {
+        void onSync(event);
+      },
+      isLoading: isSyncing,
+    },
+    {
+      key: "edit",
+      label: "Edit Event",
+      icon: Edit2,
+      onClick: () => onEdit(event),
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      icon: Trash2,
+      tone: "danger" as const,
+      onClick: () => onDelete(event),
+    },
+  ];
 
   const handleCheckin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -838,37 +1044,14 @@ export function EventDetailsModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Event Details & Attendance">
       <div className="space-y-6">
-        {/* Action Buttons for the Event */}
-        <div className="flex justify-end gap-2 border-b border-gray-50 pb-4">
-          <button
-            onClick={() => handleOnSync()}
-            disabled={syncMutation.isPending}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <FaSyncAlt size={14} />
-            {syncMutation.isPending ? "Syncing..." : "Sync with Bevy"}
-          </button>
-
-          <button
-            onClick={() => onEdit(event)}
-            className="flex items-center gap-1.5 rounded-sm bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-600 hover:bg-blue-100 transition-colors"
-          >
-            <Edit2 size={14} />
-            Edit Event
-          </button>
-          <button
-            onClick={() => onDelete(event)}
-            className="flex items-center gap-1.5 rounded-sm bg-red-50 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-100 transition-colors"
-          >
-            <Trash2 size={14} />
-            Delete
-          </button>
-        </div>
+        <ModalActionRow
+          actions={eventActions}
+        />
 
         <div className="flex flex-col sm:flex-row gap-4">
-          {event.image_url && (
+          {mainImage && (
             <img
-              src={event.image_url}
+              src={mainImage}
               alt={event.title}
               className="h-32 w-full sm:w-48 object-cover rounded-sm border border-gray-100"
             />
@@ -919,6 +1102,12 @@ export function EventDetailsModal({
                 #{tag}
               </span>
             ))}
+          </div>
+        )}
+
+        {event.images && event.images.length > 0 && (
+          <div className="text-xs font-semibold text-gray-600">
+            Highlight Images: {event.images.length}
           </div>
         )}
 
@@ -1004,7 +1193,7 @@ export function EventDetailsModal({
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {attendees.map((attendee: any) => (
                     <tr key={attendee.id}>
-                      <td className="px-4 py-2.5 text-xs font-medium text-gray-900 truncate max-w-[120px]">
+                      <td className="max-w-30 truncate px-4 py-2.5 text-xs font-medium text-gray-900">
                         {attendee.user_id}
                       </td>
                       <td className="px-4 py-2.5 text-[10px] text-gray-600">
@@ -1059,43 +1248,21 @@ export function DeleteConfirmModal({
   isDeleting,
 }: DeleteConfirmModalProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delete Event">
-      <div className="space-y-5">
-        <div className="flex items-start gap-4 rounded-sm bg-red-50 p-4">
-          <div className="shrink-0 text-red-600">
-            <AlertTriangle size={24} />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-red-900">
-              Warning: Dangerous Action
-            </p>
-            <p className="mt-1 text-sm text-red-700 leading-relaxed">
-              Are you sure you want to delete{" "}
-              <span className="font-bold underline">"{itemName}"</span>? This
-              action is permanent and cannot be undone.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="flex items-center gap-2 rounded-sm bg-red-600 px-6 py-2.5 text-sm font-bold text-white transition-all hover:bg-red-700 disabled:opacity-50"
-          >
-            {isDeleting && <Loader2 size={16} className="animate-spin" />}
-            Confirm Delete
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isConfirming={isDeleting}
+      title="Delete Event"
+      confirmLabel="Confirm Delete"
+      description={
+        <>
+          <p className="text-sm font-bold text-red-900">Warning: Dangerous Action</p>
+          <p className="mt-1">
+            Are you sure you want to delete <span className="font-bold underline">"{itemName}"</span>? This action is permanent and cannot be undone.
+          </p>
+        </>
+      }
+    />
   );
 }

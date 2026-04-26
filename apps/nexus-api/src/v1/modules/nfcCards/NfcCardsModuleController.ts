@@ -1,6 +1,8 @@
+import { ActivateByGdgId } from "./useCase/ActivateByGdgId";
 import { ActivateCardUseCase } from "./useCase/ActivateCardUseCase";
 import { CreateCardsBulkUseCase } from "./useCase/CreateCardsBulkUseCase";
 import { CreateCardUseCase } from "./useCase/CreateCardUseCase";
+import { GetCardByGdgId } from "./useCase/GetCardByGdgId";
 import { GetCardStatusUseCase } from "./useCase/GetCardStatusUseCase";
 import { GetCardUseCase } from "./useCase/GetCardUseCase";
 import { GetDestinationUrlUseCase } from "./useCase/GetDestinationUrlUseCase";
@@ -17,10 +19,40 @@ export class NfcCardsModuleController {
     private readonly getDestinationUrlUC: GetDestinationUrlUseCase,
     private readonly setDestinationUrlUC: SetDestinationUrlUseCase,
     private readonly listCardsOfUserUC: ListCardsOfUserUseCase,
+    private readonly activateByGdgIdUC: ActivateByGdgId,
+    private readonly getbygdgiduc: GetCardByGdgId,
   ) {}
 
-  async listCardsOfUser(gdgId: string) {
-    const res = await this.listCardsOfUserUC.execute(gdgId);
+  async activateCardByGdgId(gdgId: string, actorGdgId: string) {
+    const res = await this.activateByGdgIdUC.execute(gdgId, actorGdgId);
+    return {
+      id: res.props.id,
+      ownerGdgId: res.props.ownerGdgId,
+      status: res.props.status,
+      notes: res.props.notes,
+      destinationUrl: res.props.destinationUrl,
+      activated_at: res.props.activated_at,
+      suspended_at: res.props.suspended_at,
+      revoked_at: res.props.revoked_at,
+    };
+  }
+
+  async getCardByGdgId(gdgId: string) {
+    const res = await this.getbygdgiduc.execute(gdgId);
+    return {
+      id: res.props.id,
+      ownerGdgId: res.props.ownerGdgId,
+      status: res.props.status,
+      notes: res.props.notes,
+      destinationUrl: res.props.destinationUrl,
+      activated_at: res.props.activated_at,
+      suspended_at: res.props.suspended_at,
+      revoked_at: res.props.revoked_at,
+    };
+  }
+
+  async listCardsOfUser(actorId: string, gdgId: string) {
+    const res = await this.listCardsOfUserUC.execute(actorId, gdgId);
     return res.map((card) => ({
       id: card.props.id,
       ownerGdgId: card.props.ownerGdgId,

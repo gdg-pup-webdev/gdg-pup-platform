@@ -1,7 +1,28 @@
 import { IGdgMemberRepository } from "../domain/IGdgMemberRepository";
-import { GdgMember, GdgMemberInsertProps, GdgMemberProps } from "../domain/GdgMember";
+import {
+  GdgMember,
+  GdgMemberInsertProps,
+  GdgMemberProps,
+  SparkmatesSectionId,
+} from "../domain/GdgMember";
 
-export type AddGdgMemberInput =   Omit<GdgMemberProps,  "gdgId" | "isPublic" | "avatarUrl">;;
+const DEFAULT_SPARKMATES_SECTION_ORDER: SparkmatesSectionId[] = [
+  "customButtons",
+  "skillsAndInterests",
+  "projects",
+  "gdgImpact",
+  "badges",
+];
+
+export type AddGdgMemberInput = Omit<
+  GdgMemberProps,
+  | "gdgId"
+  | "isPublic"
+  | "avatarUrl"
+  | "avatarUrl64"
+  | "avatarUrl512"
+  | "sectionOrder"
+>;
 
 export class AddGdgMember {
   constructor(private readonly repo: IGdgMemberRepository) {}
@@ -15,7 +36,15 @@ export class AddGdgMember {
     const id = `GDGPUP-${yearPrefix}-${paddedNumber}`;
 
     // Create the GDG member
-    const member = GdgMember.create({ ...input, gdgId: id , avatarUrl: null, isPublic: true});
+    const member = GdgMember.create({
+      ...input,
+      gdgId: id,
+      avatarUrl: null,
+      avatarUrl64: null,
+      avatarUrl512: null,
+      isPublic: true,
+      sectionOrder: DEFAULT_SPARKMATES_SECTION_ORDER,
+    });
 
     // Save the GDG member
     return await this.repo.saveNew(member);

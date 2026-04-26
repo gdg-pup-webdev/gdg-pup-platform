@@ -10,11 +10,13 @@ import { FrostedContentContainer } from "./frosted-content-container";
 export function WhoAreWeSection() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const rainbowGradientTextClass =
+    "bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_33%,#34A853_66%,#4285F4_100%)] bg-clip-text text-transparent font-bold";
 
   return (
     <section className="relative z-30 pb-20 lg:py-34" ref={sectionRef}>
       <Container className="">
-        <Stack gap="2xl" align="center">
+        <Stack gap="xl" className="lg:gap-12" align="center">
           {/* Section heading */}
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -27,7 +29,7 @@ export function WhoAreWeSection() {
               gradient="white-yellow"
               variant="heading-2"
               weight="bold"
-              className="mt-30 mb-10 lg:my-0"
+              className="mt-35 mb-4 lg:my-0"
             >
               Who are we
             </Text>
@@ -37,7 +39,7 @@ export function WhoAreWeSection() {
           <div className="flex flex-col lg:flex-row items-center justify-center gap-8.5 w-full">
             {/* Sparky mascot */}
             <motion.div
-              className="relative shrink-0 w-full max-w-153"
+              className="relative shrink-0 w-45 lg:w-153"
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
               transition={{ duration: 0.6, delay: 0, ease: "easeOut" }}
@@ -46,7 +48,8 @@ export function WhoAreWeSection() {
                 <Image
                   src={ASSETS.HOME.LOGOS_FRAMEV2_NEUTRAL1}
                   alt=""
-                  fill
+                  width={431}
+                  height={431}
                   aria-hidden
                   draggable={false}
                   className="pointer-events-none select-none object-contain"
@@ -55,8 +58,8 @@ export function WhoAreWeSection() {
               <Image
                 src={ASSETS.HOME.WHO.SPARKY_CIRBY}
                 alt="Sparky and Cirby, the GDG PUP mascots"
-                width={612}
-                height={606}
+                width={494}
+                height={530}
                 priority
                 draggable={false}
                 className="pointer-events-none select-none relative z-10 w-full h-auto object-contain"
@@ -126,7 +129,7 @@ export function WhoAreWeSection() {
           >
             <FrostedContentContainer
               ringClassName="rounded-tl-none"
-              contentClassName="rounded-tl-none p-[70px]"
+              contentClassName="rounded-tl-none"
               ringGradient="linear-gradient(90deg, #83A0FF, #1DA0FE00, #1DA0FE00, #83A0FF)"
               contentBackgroundColor="transparent"
               contentBackdropFilter="none"
@@ -134,17 +137,44 @@ export function WhoAreWeSection() {
               <Text
                 align="center"
                 variant="body"
-                weight="bold"
+                weight="normal"
                 color="on-primary"
-                className="leading-8"
+                className="leading-8 text-lg py-16.75 px-6.75"
               >
-                Whether you’re exploring Web development, Artificial
-                Intelligence and Machine Learning (AI/ML), Cybersecurity, Cloud
-                Solutions, UI/UX Design, Internet of Things (IoT), Project
-                Management, or even as a core functional team member
-                (Operations, Finance, Creatives, Marketing, Partnerships), our
-                community provides opportunities to learn, collaborate, and grow
-                alongside peers and mentors.
+                Whether you’re exploring{" "}
+                <span className={rainbowGradientTextClass}>
+                  Web Development
+                </span>
+                , <span className={rainbowGradientTextClass}>Data</span> and{" "}
+                <span className={rainbowGradientTextClass}>
+                  Machine Learning
+                </span>{" "}
+                (Data and ML),{" "}
+                <span className={rainbowGradientTextClass}>Cybersecurity</span>,{" "}
+                <span className={rainbowGradientTextClass}>
+                  Cloud Solutions
+                </span>
+                , <span className={rainbowGradientTextClass}>UI/UX Design</span>
+                ,{" "}
+                <span className={rainbowGradientTextClass}>
+                  Internet of Things
+                </span>{" "}
+                (IoT),{" "}
+                <span className={rainbowGradientTextClass}>
+                  Project Management
+                </span>
+                , or even as a core functional team member (
+                <span className={rainbowGradientTextClass}>Operations</span>,{" "}
+                <span className={rainbowGradientTextClass}>Finance</span>,{" "}
+                <span className={rainbowGradientTextClass}>Secretariat</span>,{" "}
+                <span className={rainbowGradientTextClass}>Creatives</span>,{" "}
+                <span className={rainbowGradientTextClass}>Marketing</span>,{" "}
+                <span className={rainbowGradientTextClass}>Partnerships</span>,{" "}
+                <span className={rainbowGradientTextClass}>
+                  Community Relations
+                </span>
+                ), our community provides opportunities to learn, collaborate,
+                and grow alongside peers and mentors.
                 <br />
                 <br />
                 From hands-on workshops and Study Jams to hackathons, industry
