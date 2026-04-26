@@ -1,13 +1,10 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import {
-  SparkmatesPortfolio,
-  type SparkmatesSource,
-} from "@/features/sparkmates";
+import { type SparkmatesSource } from "@/features/sparkmates";
 import { ProfilePublicView } from "@/features/sparkmates/components/SparkmatesPublicView/ProfilePublicView";
-import { useNfcCard } from "@/features/nfc-cards/hooks/useNfcCard"; 
 import { ProfileLoadingState } from "@/features/sparkmates/components/ProfileLoadingState";
+import { useNfcCard } from "@/features/nfc-cards/hooks/useNfcCard";
 
 function normalizeSource(raw: string | null): SparkmatesSource {
   if (raw === "nfc_card" || raw === "qr_code" || raw === "direct_link") {
@@ -23,19 +20,35 @@ export default function SparkmatesPage() {
   const searchParams = useSearchParams();
   const source = normalizeSource(searchParams.get("source"));
 
-  const { data, isLoading, isError, error } = useNfcCard(gdgId);
-
-  const notactivated =
-    source === "nfc_card" && data && data.status !== "activated";
-
-  if (isLoading) return <ProfileLoadingState />;
+  if (source === "nfc_card") {
+    // we separate the nfc card component so we don't have to fetch nfc card if source is not nfc card
+    return <ProfilePublicViewWithNfcCardCheck gdgId={gdgId} />;
+  }
 
   return (
     <ProfilePublicView
       gdgId={gdgId}
       source={source}
+      nfcCard={null}
+      isNfcActivationRequired={false}
+    />
+  );
+}
+
+function ProfilePublicViewWithNfcCardCheck({ gdgId }: { gdgId: string }) {
+  const { data, isLoading, error } = useNfcCard(gdgId);
+
+  const cardActivated = data?.status === "activated";
+
+  if (isLoading) return <ProfileLoadingState />;
+
+  // console.log("rendering with nfc card source", { cardActivated, nfcdata });
+  return (
+    <ProfilePublicView
+      gdgId={gdgId}
+      source={"nfc_card"}
       nfcCard={data ?? null}
-      isNfcActivationRequired={!!notactivated}
+      isNfcActivationRequired={!cardActivated}
     />
   );
 }
