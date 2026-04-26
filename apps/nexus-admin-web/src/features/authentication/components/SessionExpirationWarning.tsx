@@ -3,12 +3,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useSessionTimeout } from "../hooks/useSessionTimeout";
 import { useAuthContext } from "../store/useAuthStore";
-import { Modal, Button, Text, Stack, Inline } from "@packages/spark-ui";
 
 /**
  * Component to warn users about session expiration
- * Shows modal at 1:50 mark with option to extend session
- * Auto-logs out if no action taken within 10 minutes
+ * Shows modal with option to extend session
+ * Auto-logs out if no action taken
  */
 export const SessionExpirationWarning = () => {
   const [showWarning, setShowWarning] = useState(false);
@@ -18,7 +17,6 @@ export const SessionExpirationWarning = () => {
     onWarning: (time) => {
       setTimeRemaining(time);
       setShowWarning(true);
-      // Start countdown to auto-logout if user doesn't respond
       startAutoLogoutTimer();
     },
     onTimeout: () => {
@@ -31,7 +29,6 @@ export const SessionExpirationWarning = () => {
     if (autoLogoutTimerRef.current) {
       clearTimeout(autoLogoutTimerRef.current);
     }
-    // Auto-logout after 10 minutes of warning if user doesn't respond
     autoLogoutTimerRef.current = setTimeout(() => {
       handleLogout();
     }, 10 * 60 * 1000);
@@ -44,9 +41,7 @@ export const SessionExpirationWarning = () => {
     }
 
     try {
-      // Refresh token to extend session using the store's refreshToken method
       await refreshToken();
-      // Update the timeout reference and close warning
       extendSession();
       setShowWarning(false);
     } catch (error) {
@@ -60,22 +55,10 @@ export const SessionExpirationWarning = () => {
       clearTimeout(autoLogoutTimerRef.current);
       autoLogoutTimerRef.current = null;
     }
-    // Set a flag or just call logout directly before hiding the warning
-    // to avoid the onOpenChange refresh trigger
     logout();
     setShowWarning(false);
   };
 
-  const handleOpenChange = (open: boolean) => {
-    // If the modal is being closed and we haven't logged out, refresh the session
-    if (!open && showWarning && status === "authenticated") {
-      handleStayLoggedIn();
-    } else {
-      setShowWarning(open);
-    }
-  };
-
-  // Update time remaining display
   useEffect(() => {
     if (!showWarning) return;
 
@@ -94,44 +77,49 @@ export const SessionExpirationWarning = () => {
   const seconds = Math.floor((timeRemaining / 1000) % 60);
 
   return (
-    <Modal open={showWarning} onOpenChange={handleOpenChange} size="md" className="!bg-[#0a162a] border border-white/10 !p-0">
-      <Stack gap="md" className="p-8">
-        <div className="text-center">
-          <Text variant="heading-3" className="font-bold text-white mb-2">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Overlay */}
+      <div 
+        className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm" 
+        onClick={handleStayLoggedIn}
+      />
+      
+      {/* Content */}
+      <div className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-8 flex flex-col gap-6">
+        <div className="text-center flex flex-col gap-2">
+          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
             Session Expiring Soon
-          </Text>
-          <Text variant="body-sm" className="text-white/70 mb-4">
-            Your session will expire due to inactivity. You have{" "}
-            <span className="font-bold text-white">
+          </h3>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Your session will expire due to inactivity in{" "}
+            <span className="font-bold text-zinc-900 dark:text-zinc-100">
               {minutes}:{seconds.toString().padStart(2, "0")}
             </span>{" "}
-            minutes remaining.
-          </Text>
+            minutes.
+          </p>
         </div>
 
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-          <Text variant="caption" className="text-yellow-200/90 leading-relaxed text-center block">
-            Click <span className="font-bold">"Stay Logged In"</span> to continue your session, or you'll be automatically logged out.
-          </Text>
+        <div className="bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
+          <p className="text-xs text-yellow-700 dark:text-yellow-400">
+            Click <span className="font-bold">"Stay Logged In"</span> to continue, or you'll be automatically logged out.
+          </p>
         </div>
 
-        <Inline gap="md" className="pt-6">
-          <Button
-            variant="outline"
+        <div className="flex gap-3">
+          <button
             onClick={handleLogout}
-            className="flex-1 !bg-white/5 !text-white !border-white/10 hover:!bg-white/10"
+            className="flex-1 px-4 py-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-lg transition-all"
           >
             Logout Now
-          </Button>
-          <Button
-            variant="default"
+          </button>
+          <button
             onClick={handleStayLoggedIn}
-            className="flex-1 !bg-gradient-to-t !from-[#2b7fff] !to-[#162456] !border-none !shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)]"
+            className="flex-1 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all"
           >
             Stay Logged In
-          </Button>
-        </Inline>
-      </Stack>
-    </Modal>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuthContext } from "../store/useAuthStore";
-import { Modal, Button, Text, Stack } from "@packages/spark-ui";
 import { useRouter } from "next/navigation";
 
 /**
@@ -17,31 +16,34 @@ export const SessionExpiredOnLoadModal = () => {
     router.push("/signin");
   };
 
+  if (!sessionExpiredOnLoad) return null;
+
   return (
-    <Modal 
-      open={sessionExpiredOnLoad} 
-      onOpenChange={(open) => !open && clearSessionExpiredOnLoad()} 
-      size="md" 
-      className="!bg-[#0a162a] border border-white/10 !p-0"
-    >
-      <Stack gap="md" className="p-8">
-        <div className="text-center">
-          <Text variant="heading-3" className="font-bold text-white mb-2">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Overlay */}
+      <div 
+        className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm" 
+        onClick={clearSessionExpiredOnLoad}
+      />
+      
+      {/* Content */}
+      <div className="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-8 flex flex-col gap-6">
+        <div className="text-center flex flex-col gap-2">
+          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
             Session Expired
-          </Text>
-          <Text variant="body-sm" className="text-white/70 mb-6">
+          </h3>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             Your previous session has expired. Please log in again to continue.
-          </Text>
+          </p>
         </div>
 
-        <Button
-          variant="default"
+        <button
           onClick={handleLoginAgain}
-          className="w-full !bg-gradient-to-t !from-[#2b7fff] !to-[#162456] !border-none !shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)]"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg shadow-sm transition-all"
         >
           Log In Again
-        </Button>
-      </Stack>
-    </Modal>
+        </button>
+      </div>
+    </div>
   );
 };
