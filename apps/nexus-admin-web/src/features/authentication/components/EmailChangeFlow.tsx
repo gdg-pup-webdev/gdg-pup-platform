@@ -4,17 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useChangeEmailInitiate, useChangeEmailFinalize, useResendOtp } from "../hooks"; 
 import { LINKS } from "@/lib/constants/links";
-import { Stack, Input } from '@packages/spark-ui';
-
-const ICON_URL = "https://www.figma.com/api/mcp/asset/7a525ea7-ee44-4ac7-97cc-7d9a5fc0cd62";
-
-const StyledInputContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="relative group w-full rounded-[8px] p-[1px] bg-[#737373] hover:bg-gradient-to-r focus-within:bg-gradient-to-r hover:from-[#FB2C36] hover:via-[#F0B100] hover:to-[#2B7FFF] focus-within:from-[#FB2C36] focus-within:via-[#F0B100] focus-within:to-[#2B7FFF] transition-all duration-300">
-    {children}
-  </div>
-);
-
-const inputBaseStyles = "!h-auto !py-[16px] !px-[16px] !border-none !rounded-[7px] !ring-0 focus-within:!ring-0 w-full transition-colors bg-[#0a162a] group-hover:bg-[#010b1d] group-focus-within:bg-[#010b1d]";
 
 export const EmailChangeFlow = () => {
   const router = useRouter();
@@ -73,120 +62,72 @@ export const EmailChangeFlow = () => {
     } catch (err) {}
   };
 
+  const inputStyles = "block w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all";
+  const labelStyles = "block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5";
+  const buttonStyles = "w-full flex justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed";
+
   return (
-    <Stack gap="lg" className="w-full">
+    <div className="flex flex-col gap-6 w-full">
       {(initError || finalError || resendError) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-3 text-sm text-red-600 dark:text-red-400">
           {initError?.message || finalError?.message || resendError?.message}
         </div>
       )}
 
       {step === 1 ? (
-        <form onSubmit={handleInitiate} className="flex flex-col gap-[24px]">
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">Current Email</label>
-            <StyledInputContainer>
-              <Input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                containerClassName={inputBaseStyles}
-                className="text-[18px] text-white placeholder:text-[#737373]"
-                leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
-                placeholder="current@email.com"
-              />
-            </StyledInputContainer>
+        <form onSubmit={handleInitiate} className="flex flex-col gap-5">
+          <div>
+            <label className={labelStyles}>Current Email</label>
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputStyles} placeholder="current@email.com" />
           </div>
 
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">Current Password</label>
-            <StyledInputContainer>
-              <Input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                containerClassName={inputBaseStyles}
-                className="text-[18px] text-white placeholder:text-[#737373]"
-                leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
-                placeholder="Enter Your Password"
-              />
-            </StyledInputContainer>
+          <div>
+            <label className={labelStyles}>Current Password</label>
+            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className={inputStyles} placeholder="••••••••" />
           </div>
 
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">New Email</label>
-            <StyledInputContainer>
-              <Input
-                type="email"
-                required
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                containerClassName={inputBaseStyles}
-                className="text-[18px] text-white placeholder:text-[#737373]"
-                leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
-                placeholder="new@email.com"
-              />
-            </StyledInputContainer>
+          <div>
+            <label className={labelStyles}>New Email</label>
+            <input type="email" required value={newEmail} onChange={(e) => setNewEmail(e.target.value)} className={inputStyles} placeholder="new@email.com" />
           </div>
 
-          <button
-            type="submit"
-            disabled={isInitiating}
-            className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] gap-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-70 transition-all"
-          >
+          <button type="submit" disabled={isInitiating} className={buttonStyles}>
             {isInitiating ? "Sending OTP..." : "Initiate Email Change"}
           </button>
         </form>
       ) : (
-        <form onSubmit={handleFinalize} className="flex flex-col gap-[24px]">
-          <div className="bg-blue-900/30 border border-blue-500/50 rounded-lg p-4 text-sm text-blue-200">
-            OTP sent to <span className="font-bold text-white">{email}</span>. Please verify to change your email.
+        <form onSubmit={handleFinalize} className="flex flex-col gap-5">
+          <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 p-3 text-sm text-blue-700 dark:text-blue-300">
+            OTP sent to <span className="font-semibold">{email}</span>. Please verify to change your email.
           </div>
 
           {resendSuccess && (
-            <div className="bg-green-900/30 border border-green-500/50 rounded-lg p-4 text-sm text-green-200">
-              A new OTP has been sent to your email.
+            <div className="rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 p-3 text-sm text-green-700 dark:text-green-300 text-center">
+              A new OTP has been sent.
             </div>
           )}
 
-          <div className="flex flex-col gap-[8px]">
-            <label className="text-[18px] font-bold text-white">One-Time Password (OTP)</label>
-            <StyledInputContainer>
-              <Input
-                type="text"
-                required
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                containerClassName={inputBaseStyles}
-                className="text-[18px] text-white placeholder:text-[#737373]"
-                leftIcon={<img src={ICON_URL} alt="" className="w-[24px] h-[24px]" />}
-                placeholder="Enter 6-digit OTP"
-              />
-            </StyledInputContainer>
+          <div>
+            <label className={labelStyles}>One-Time Password (OTP)</label>
+            <input type="text" required value={otp} onChange={(e) => setOtp(e.target.value)} className={inputStyles} placeholder="000000" />
           </div>
 
-          <div className="flex justify-between items-center px-1">
+          <div className="flex justify-end">
             <button
               type="button"
               onClick={handleResendOtp}
               disabled={resendTimer > 0 || isResending}
-              className="text-[14px] font-medium text-white hover:underline disabled:opacity-50 disabled:no-underline"
+              className="text-sm font-semibold text-blue-600 hover:text-blue-500 disabled:opacity-50 transition-colors"
             >
-              {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
+              {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend OTP"}
             </button>
           </div>
 
-          <button
-            type="submit"
-            disabled={isFinalizing}
-            className="w-full flex items-center justify-center bg-gradient-to-t from-[#2b7fff] to-[#162456] border border-black shadow-[0px_4px_46.1px_0px_rgba(0,0,0,0.25),0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)] text-white text-[18px] font-medium py-[12px] px-[16px] gap-[16px] rounded-[8px] hover:brightness-110 disabled:opacity-70 transition-all"
-          >
+          <button type="submit" disabled={isFinalizing} className={buttonStyles}>
             {isFinalizing ? "Verifying..." : "Verify & Change Email"}
           </button>
         </form>
       )}
-    </Stack>
+    </div>
   );
 };
