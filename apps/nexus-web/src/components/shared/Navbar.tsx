@@ -348,7 +348,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className={dropdownInnerClasses}>
                       {dropdownLinks.about.map((link) => {
-                        const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                        const isActive = link.href === "/about"
+                          ? pathname === link.href
+                          : pathname === link.href || pathname.startsWith(link.href + "/");
                         return (
                           <Link prefetch={false}
                             key={link.href}
@@ -580,7 +582,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     >
                       <div className="bg-white/5 py-2">
                         {dropdownLinks.about.map((link) => {
-                          const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                          const isActive = link.href === "/about"
+                            ? pathname === link.href
+                            : pathname === link.href || pathname.startsWith(link.href + "/");
                           return (
                             <Link prefetch={false}
                               key={link.href}
