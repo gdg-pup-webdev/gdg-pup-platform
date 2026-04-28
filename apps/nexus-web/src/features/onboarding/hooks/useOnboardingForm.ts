@@ -499,6 +499,9 @@ export function useOnboardingForm(gdgId: string) {
         }
       }
 
+      queryClient.invalidateQueries({ queryKey: ["sparkmates", "profile", gdgId] });
+      queryClient.invalidateQueries({ queryKey: ["sparkmates-profile", gdgId] });
+
       setIsSuccess(true);
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : "Unable to save your profile.");

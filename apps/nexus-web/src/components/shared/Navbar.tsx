@@ -79,7 +79,7 @@ const optionsLoggedIn = [
 ];
 
 const NavbarAvatarWidget = () => {
-  const { decodedToken: user, status } = useAuthContext();
+  const { decodedToken: user, status, memberProfile } = useAuthContext();
 
   const [openDropdown, setOpenDropdown] = useState(false);
 
@@ -96,10 +96,10 @@ const NavbarAvatarWidget = () => {
           ref={dropdownRef}
           onClick={() => setOpenDropdown(!openDropdown)}
         >
-          {user?.memberInfo.avatarUrl ? (
+          {memberProfile?.avatarUrl || user?.memberInfo.avatarUrl ? (
             <Avatar
               className="group-hover:scale-105 transition-all duration-200"
-              src={user?.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
+              src={memberProfile?.avatarUrl || user?.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
             />
           ) : (
             <div className="w-8 flex justify-center items-center text-black font-extrabold aspect-square rounded-full bg-gray-400 group-hover:scale-105 transition-all duration-200 cursor-pointer">
@@ -142,7 +142,7 @@ const NavbarAvatarWidget = () => {
         >
           <Avatar
             className="group-hover:scale-105 transition-all duration-200"
-            src={user?.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
+            src={memberProfile?.avatarUrl || user?.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
           />
         </Link>
       )}
@@ -154,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   transparent = false,
   hideAuth = false,
 }) => {
-  const { status, decodedToken } = useAuthContext();
+  const { status, decodedToken, memberProfile } = useAuthContext();
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
