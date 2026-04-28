@@ -210,7 +210,7 @@ const TOP_LEVEL_ITEMS = [
   { id: "creatives", label: "Creatives" },
   { id: "operations", label: "Operations" },
   { id: "community-relations", label: "Community Relations" },
-  { id: "partnership", label: "Partnership" },
+  { id: "partnership", label: "Partnerships" },
 ];
 
 const TECH_ITEMS = [
