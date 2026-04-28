@@ -586,12 +586,13 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
           </Button>
         </Link>
       </div>
-      <Text variant="body-sm" className="text-[#C1C7CD]">
-        Feature your best works to highlight your skills.
-      </Text>
-      
-      <div className="space-y-3.5">
-        {projectsQuery.isLoading ? (
+      {!readOnly && (
+        <Text variant="body-sm" className="text-[#C1C7CD]">
+          Feature your best works to highlight your skills.
+        </Text>
+      )}
+
+      <div className="space-y-3.5">        {projectsQuery.isLoading ? (
           <div className="inline-flex items-center gap-2 text-zinc-300">
             <GdgLoader size="xs" />
             <Text variant="body-sm" className="text-zinc-300">Loading projects...</Text>
