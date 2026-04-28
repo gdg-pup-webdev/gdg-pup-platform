@@ -108,10 +108,6 @@ const NavbarAvatarWidget = () => {
                 "U"}
             </div>
           )}
-          {/* <Avatar
-            className="group-hover:scale-105 transition-all duration-200"
-            src={user?.memberInfo.avatarUrl || ASSETS.AUTH.AVATAR_DEFAULT}
-          /> */}
 
           <div
             className={cn(
@@ -246,7 +242,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[49] bg-black/40 backdrop-blur-sm min-[75rem]:hidden"
+            className="fixed inset-0 z-49 bg-black/40 backdrop-blur-sm min-[75rem]:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
@@ -358,7 +354,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             className={cn(
                               dropdownItemClasses,
                               isActive &&
-                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] !text-transparent bg-clip-text",
+                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] text-transparent! bg-clip-text",
                             )}
                             onClick={() => setOpenDropdown(null)}
                           >
@@ -423,7 +419,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             className={cn(
                               dropdownItemClasses,
                               isActive &&
-                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] !text-transparent bg-clip-text",
+                                "bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] text-transparent! bg-clip-text",
                             )}
                             onClick={() => setOpenDropdown(null)}
                           >
@@ -522,7 +518,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute left-0 right-0 top-full mt-4 px-4 z-[60] min-[75rem]:hidden"
+              className="absolute left-0 right-0 top-full mt-4 px-4 z-60 min-[75rem]:hidden"
             >
               <Box
               className={cn(
@@ -777,6 +773,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           >
                             <Avatar
                               src={
+                                memberProfile?.avatarUrl ||
                                 decodedToken?.memberInfo.avatarUrl ||
                                 ASSETS.AUTH.AVATAR_DEFAULT
                               }
