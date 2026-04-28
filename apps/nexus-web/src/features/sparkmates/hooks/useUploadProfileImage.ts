@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 export const useUploadProfileImage = (gdgId: string) => {
   const queryClient = useQueryClient();
-  const { token } = useAuthContext();
+  const { token, fetchMemberProfile } = useAuthContext();
   const callEndpoint = useCallEndpointWithToken();
 
   return useMutation({
@@ -27,9 +27,12 @@ export const useUploadProfileImage = (gdgId: string) => {
       if (res.status === 200) return res.body;
       throw new Error(extractErrorMessage(res.body));
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["sparkmates", "profile", gdgId] });
       queryClient.invalidateQueries({ queryKey: ["auth-me"] });
+
+      await fetchMemberProfile();
+
       toast.success("Profile picture updated successfully.");
     },
     onError: (err: Error) => {
