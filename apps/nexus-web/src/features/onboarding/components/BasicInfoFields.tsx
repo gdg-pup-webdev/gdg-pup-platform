@@ -41,7 +41,7 @@ export function BasicInfoFields({ form, updateField }: BasicInfoFieldsProps) {
         <Input
           value={form.department}
           onChange={(event) => updateField("department", event.target.value)}
-          placeholder="e.g. College of Computer and Information Sciences"
+          placeholder="e.g. Marketing Department"
           containerClassName="bg-zinc-900/50! border-zinc-700/80! hover:border-zinc-600! focus-within:border-blue-500/50!"
           className="text-white! py-3"
         />

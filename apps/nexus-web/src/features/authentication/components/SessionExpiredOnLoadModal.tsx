@@ -34,13 +34,22 @@ export const SessionExpiredOnLoadModal = () => {
           </Text>
         </div>
 
-        <Button
-          variant="default"
-          onClick={handleLoginAgain}
-          className="w-full !bg-gradient-to-t !from-[#2b7fff] !to-[#162456] !border-none !shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)]"
-        >
-          Log In Again
-        </Button>
+        <Stack gap="sm">
+          <Button
+            variant="default"
+            onClick={handleLoginAgain}
+            className="w-full !bg-gradient-to-t !from-[#2b7fff] !to-[#162456] !border-none !shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25),inset_0px_2px_0px_0px_rgba(255,255,255,0.4)]"
+          >
+            Log In Again
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={clearSessionExpiredOnLoad}
+            className="w-full text-white/70 hover:text-white"
+          >
+            Cancel
+          </Button>
+        </Stack>
       </Stack>
     </Modal>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 import { contract } from "@packages/nexus-api-contracts";
 import { useAuthContext, STATUS } from "@/features/authentication/store/useAuthStore";
@@ -123,6 +124,7 @@ export function useOnboardingForm(gdgId: string) {
   const [form, setForm] = useState<FormState>(initialState);
   const [projects, setProjects] = useState<ProjectFormState[]>([createEmptyProject()]);
   const callEndpoint = useCallEndpointWithToken();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!token || !gdgId) return;
@@ -498,6 +500,9 @@ export function useOnboardingForm(gdgId: string) {
           }
         }
       }
+
+      queryClient.invalidateQueries({ queryKey: ["sparkmates", "profile", gdgId] });
+      queryClient.invalidateQueries({ queryKey: ["sparkmates-profile", gdgId] });
 
       setIsSuccess(true);
     } catch (error: unknown) {
