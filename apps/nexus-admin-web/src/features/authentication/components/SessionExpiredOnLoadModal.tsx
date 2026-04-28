@@ -37,12 +37,20 @@ export const SessionExpiredOnLoadModal = () => {
           </p>
         </div>
 
-        <button
-          onClick={handleLoginAgain}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg shadow-sm transition-all"
-        >
-          Log In Again
-        </button>
+        <div className="flex flex-col gap-3 w-full">
+          <button
+            onClick={handleLoginAgain}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg shadow-sm transition-all"
+          >
+            Log In Again
+          </button>
+          <button
+            onClick={clearSessionExpiredOnLoad}
+            className="w-full text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 font-medium py-2 transition-all"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
