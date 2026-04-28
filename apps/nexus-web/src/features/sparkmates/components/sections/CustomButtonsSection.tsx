@@ -296,9 +296,11 @@ export const CustomButtonsSection = ({ profile, readOnly }: { profile: UserProfi
             </Button>
           )}
         </div>
-        <Text variant="body-sm" className="text-[#C1C7CD]">
-          Add a custom button that appears on your profile.
-        </Text>
+        {!readOnly && (
+          <Text variant="body-sm" className="text-[#C1C7CD]">
+            Add a custom button that appears on your profile.
+          </Text>
+        )}
         <div className="space-y-2.5">
           {customLinks.map((item, index) => (
             <div

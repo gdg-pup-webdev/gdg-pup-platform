@@ -198,9 +198,11 @@ export function SkillsAndLinksSection({
         )}
       </div>
 
-      <Text variant="body-sm" className="text-[#C1C7CD]">
-        Add your skills or what you are currently learning.
-      </Text>
+      {!readOnly && (
+        <Text variant="body-sm" className="text-[#C1C7CD]">
+          Add your skills or what you are currently learning.
+        </Text>
+      )}
 
       <div className="space-y-3">
         <CategoryCard
