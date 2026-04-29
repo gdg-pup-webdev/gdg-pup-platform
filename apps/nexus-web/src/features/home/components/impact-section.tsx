@@ -61,10 +61,10 @@ export function ImpactSection() {
 
   return (
     <section
-      className="relative hidden lg:block z-30 mt-40 lg:my-140"
+      className="relative hidden lg:block z-30 mt-40 lg:my-110"
       ref={ref}
     >
-      <Container className="pt-50">
+      <Container>
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
