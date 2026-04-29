@@ -48,11 +48,12 @@ export function MemberShowcaseBackground({
       className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-28 pb-24 md:px-8 md:pt-40 md:pb-32 lg:pt-44 lg:pb-48"
     >
       <motion.div
-        className="pointer-events-none absolute -top-70 left-1/2 z-[5]"
+        className="pointer-events-none absolute z-[5]"
         style={{
+          top: "-10rem",
+          left: "-6rem",
           width: "48rem",
           height: "48rem",
-          marginLeft: "-47rem",
           opacity: 0.8,
           maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
           WebkitMaskImage:
@@ -74,12 +75,12 @@ export function MemberShowcaseBackground({
         />
       </motion.div>
       <motion.div
-        className="pointer-events-none absolute -top-70 right-1/2 z-[5]"
+        className="pointer-events-none absolute z-[5]"
         style={{
+          top: "-10rem",
+          right: "-6rem",
           width: "48rem",
           height: "48rem",
-          marginRight: "-47rem",
-
           opacity: 0.8,
           maskImage: "linear-gradient(to bottom, black 50%, transparent 100%)",
           WebkitMaskImage:
