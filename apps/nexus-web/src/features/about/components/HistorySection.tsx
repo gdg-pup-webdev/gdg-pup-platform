@@ -520,7 +520,7 @@ const StatCard = ({
 // ─── Main component ───────────────────────────────────────────────────────────
 export function HistorySection() {
   return (
-    <div className="relative overflow-hidden pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16 bg-[#0F0E0E]">
+    <div className="relative overflow-hidden pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16 bg-[#0F0E0E]">
       {/* Zoned blob background — pinned per region, history page only */}
       <HistoryBlobBackground />
 

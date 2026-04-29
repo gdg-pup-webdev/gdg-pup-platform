@@ -116,7 +116,7 @@ export function EventHighlightsGallerySection({
 
   return (
     <div
-      className="relative overflow-hidden min-h-screen pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16"
+      className="relative overflow-hidden min-h-screen pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16"
       style={{ backgroundColor: "rgba(15, 14, 14, 1)" }}
     >
       <div

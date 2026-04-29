@@ -59,7 +59,7 @@ export function PastEventsCarousel() {
 
         {/* Carousel viewport */}
         <div
-          className="relative mt-10 flex w-full items-center justify-center gap-4 px-2 md:px-4 lg:gap-10 xl:gap-20"
+          className="relative mt-6 flex w-full items-center justify-center gap-4 px-2 md:px-4 lg:gap-6 xl:gap-8"
           onMouseEnter={() => setIsPastEventsHovered(true)}
           onMouseLeave={() => setIsPastEventsHovered(false)}
         >
@@ -79,7 +79,7 @@ export function PastEventsCarousel() {
             >
               {/* Draggable track */}
               <div
-                className={`flex gap-8 md:gap-12 lg:gap-28 xl:gap-40 2xl:gap-35 pb-6 pt-4 w-max ${
+                className={`flex gap-4 md:gap-6 lg:gap-8 xl:gap-12 2xl:gap-12 pb-4 pt-4 w-max ${
                   isPastEventsDragging
                     ? "cursor-grabbing select-none"
                     : "cursor-grab"

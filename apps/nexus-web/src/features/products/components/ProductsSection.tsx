@@ -7,7 +7,7 @@ import { GdgProductsGrid } from "./products-section/GdgProductsGrid";
 
 export function ProductsSection() {
   return (
-    <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-32 md:pt-36 lg:pt-40 pb-20 md:pb-24 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
         src="/products/space-bg-3-3.webp"
@@ -31,12 +31,12 @@ export function ProductsSection() {
       />
 
       {/* Decorative elements */}
-      <div className="absolute w-[1000px] h-[1000px] origin-top-left rotate-[7.71deg] opacity-10 mix-blend-hard-light bg-white/80 rounded-full blur-[50px] -translate-x-1/3" />
-      <div className="absolute w-[792px] h-[640px] opacity-30 bg-blue-500/20 rounded-full blur-[100px] translate-y-9/10" />
+      <div className="absolute w-250 h-250 origin-top-left rotate-[7.71deg] opacity-10 mix-blend-hard-light bg-white/80 rounded-full blur-[50px] -translate-x-1/3" />
+      <div className="absolute w-198 h-160 opacity-30 bg-blue-500/20 rounded-full blur-[100px] translate-y-9/10" />
       <img
         src="/products/gold-1.webp"
         alt=""
-        className="absolute -top-40 -left-40 w-[1200px] h-[1600px] rotate-[-162deg] mix-blend-screen blur-[150px] pointer-events-none z-0 -translate-x-3/5 -translate-y-1/10 opacity-30"
+        className="absolute -top-40 -left-40 w-300 h-400 rotate-[-162deg] mix-blend-screen blur-[150px] pointer-events-none z-0 -translate-x-3/5 -translate-y-1/10 opacity-30"
       />
       <img
         className="w-155 h-auto absolute top-90 -left-125 opacity-25 translate-x-1/3"

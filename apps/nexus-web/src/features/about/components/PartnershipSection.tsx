@@ -51,7 +51,7 @@ const FadeInSection = ({
 };
 export function PartnershipSection() {
   return (
-    <div className="bg-[#010B1D] relative w-full overflow-hidden pt-32 sm:pt-48 pb-16 sm:pb-28 font-['Google_Sans',sans-serif]">
+    <div className="bg-[#010B1D] relative w-full overflow-hidden pt-32 sm:pt-36 pb-16 sm:pb-20 font-['Google_Sans',sans-serif]">
       {/* Stars Background */}
       <div className="absolute inset-x-0 bottom-0 pointer-events-none opacity-40 h-[100%] w-full z-0">
         <div
