@@ -56,12 +56,12 @@ function PastEventsCarouselSkeleton() {
         <BrandedSkeleton className="h-10 w-52" />
         <BrandedSkeleton className="h-5 w-80 mt-1" variant="text" />
 
-        <div className="relative mt-6 flex items-center justify-center gap-4 lg:gap-6 xl:gap-8 w-full">
+        <div className="relative mt-10 flex items-center justify-center gap-4 lg:gap-10 xl:gap-20 w-full">
           {/* Left arrow */}
           <BrandedSkeleton className="h-15 w-15 rounded-full shrink-0" />
 
           <div
-            className={`flex gap-4 md:gap-6 lg:gap-6 xl:gap-8 2xl:gap-8 overflow-hidden ${CAROUSEL_EDGE_FADE_CLASS}`}
+            className={`flex gap-8 md:gap-12 lg:gap-28 xl:gap-40 2xl:gap-35 overflow-hidden ${CAROUSEL_EDGE_FADE_CLASS}`}
           >
             {Array.from({ length: 4 }).map((_, i) => (
               <div
@@ -177,7 +177,7 @@ function MobileShowcaseSkeleton() {
 
 export function CommunityShowcaseSkeleton() {
   return (
-    <div className="relative overflow-hidden pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-hidden pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
       <div className="relative mx-auto w-full max-w-7xl">
         <MobileShowcaseSkeleton />
         <DesktopShowcaseSkeleton />

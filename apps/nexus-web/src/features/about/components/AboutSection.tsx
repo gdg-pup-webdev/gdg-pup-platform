@@ -39,7 +39,7 @@ export function AboutSection() {
     "bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_33%,#34A853_66%,#4285F4_100%)] bg-clip-text text-transparent font-bold";
 
   return (
-    <div className="relative overflow-x-clip pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
       {/* Decorative Ellipse - Top Left */}
       <div
         className="absolute rounded-full pointer-events-none"

@@ -45,7 +45,7 @@ export function MemberShowcaseBackground({
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-8 pb-8 md:px-8 md:pt-12 md:pb-12 lg:pt-12 lg:pb-12"
+      className="relative overflow-x-hidden bg-[#0F0E0E] px-4 pt-28 pb-24 md:px-8 md:pt-40 md:pb-32 lg:pt-44 lg:pb-48"
     >
       <motion.div
         className="pointer-events-none absolute z-[5]"
