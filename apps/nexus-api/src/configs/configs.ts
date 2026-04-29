@@ -33,7 +33,7 @@ export const configs = {
     secret: process.env.JWT_SECRET || "secret",
   },
   session: {
-    timeoutMinutes: 120,
+    timeoutMinutes: parseInt(process.env.SESSION_TIMEOUT_MINUTES || "10080", 10),
   },
   zeptoMail: {
     url: process.env.ZEPTOMAIL_URL || "https://api.zeptomail.com/v1.1/email",
