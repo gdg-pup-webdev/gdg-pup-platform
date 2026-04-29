@@ -20,7 +20,7 @@ export function MerchSection() {
       moveParticlesOnHover
       alphaParticles={true}
       disableRotation={false}
-      className="relative overflow-x-hidden pt-40 pb-20 md:pt-48 md:pb-32 min-h-svh bg-[#0F0E0E]"
+      className="relative overflow-x-hidden pt-12 pb-8 md:pt-16 md:pb-12 min-h-svh bg-[#0F0E0E]"
     >
       <Container className="relative z-10 w-full h-full flex flex-col justify-center">
         <div className="relative mx-auto w-full max-w-6xl p-1 rainbow-border rounded-[2.5rem]">
@@ -29,7 +29,7 @@ export function MerchSection() {
             {/* Inner glow accent */}
             <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-white/10 to-transparent opacity-30 rounded-[2.5rem]" />
 
-            <div className="relative grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="relative grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
               <Stack gap="lg" className="text-center lg:text-left order-2 lg:order-1 relative z-10">
                 <Stack gap="md">
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

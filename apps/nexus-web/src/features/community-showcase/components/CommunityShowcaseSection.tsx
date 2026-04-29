@@ -32,7 +32,7 @@ export function CommunityShowcaseSection() {
   }
 
   return (
-    <div className="relative overflow-hidden pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-hidden pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16">
       <div className="relative mx-auto w-full max-w-7xl">
         <MobileShowcase events={EVENTS} />
         <DesktopShowcase onOpenModal={modal.openModal} events={EVENTS} />

@@ -18,7 +18,7 @@ export function TeamSection({ teamName, teamSlug }: TeamSectionProps) {
   const content = TEAM_CONTENT[teamSlug];
 
   return (
-    <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
         src="/products/rl-space-bg-3-3.webp"
