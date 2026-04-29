@@ -85,13 +85,13 @@ export function AccountSettingsSection() {
             >
               Upload Profile
             </Button>
-            <Button
+            {/* <Button
               variant="default"
               className="w-full bg-transparent border border-white/20 text-white hover:bg-white/5"
               onClick={() => setIsDeleteModalOpen(true)}
             >
               Delete Profile
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
