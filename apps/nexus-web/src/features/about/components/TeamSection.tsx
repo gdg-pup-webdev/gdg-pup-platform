@@ -315,7 +315,7 @@ export function TeamSection() {
         <DropdownItem
           key={id}
           onClick={() => scrollToSection(id)}
-          className={activeId === id ? "bg-white/[0.04]" : undefined}
+          className={activeId === id ? "bg-white/4" : undefined}
         >
           <Text
             as="span"
@@ -407,7 +407,7 @@ export function TeamSection() {
   // Section content map
   const SECTION_CONTENT = React.useMemo(() => ({
     administrative: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG.administrative.map((member) => (
           <TeamCard
             key={member.name}
@@ -422,7 +422,7 @@ export function TeamSection() {
       </div>
     ),
     marketing: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG.marketing.map((member) => (
           <TeamCard
             key={member.name}
@@ -437,7 +437,7 @@ export function TeamSection() {
       </div>
     ),
     creatives: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG.creatives.map((member) => (
           <TeamCard
             key={member.name}
@@ -452,7 +452,7 @@ export function TeamSection() {
       </div>
     ),
     operations: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG.operations.map((member) => (
           <TeamCard
             key={member.name}
@@ -467,7 +467,7 @@ export function TeamSection() {
       </div>
     ),
     "community-relations": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG["community-relations"].map((member) => (
           <TeamCard
             key={member.name}
@@ -482,7 +482,7 @@ export function TeamSection() {
       </div>
     ),
     partnership: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG.partnership.map((member) => (
           <TeamCard
             key={member.name}
@@ -497,7 +497,7 @@ export function TeamSection() {
       </div>
     ),
     "tech-executives": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG["tech-executives"].map((member) => (
           <TeamCard
             key={member.name}
@@ -512,7 +512,7 @@ export function TeamSection() {
       </div>
     ),
     "project-management": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG["project-management"].map((member) => (
           <TeamCard
             key={member.name}
@@ -527,7 +527,7 @@ export function TeamSection() {
       </div>
     ),
     "web-development": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG["web-development"].map((member) => (
           <TeamCard
             key={member.name}
@@ -542,7 +542,7 @@ export function TeamSection() {
       </div>
     ),
     "ui-ux": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG["ui-ux"].map((member) => (
           <TeamCard
             key={member.name}
@@ -557,7 +557,7 @@ export function TeamSection() {
       </div>
     ),
     cybersecurity: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG.cybersecurity.map((member) => (
           <TeamCard
             key={member.name}
@@ -572,7 +572,7 @@ export function TeamSection() {
       </div>
     ),
     "cloud-solutions": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG["cloud-solutions"].map((member) => (
           <TeamCard
             key={member.name}
@@ -587,7 +587,7 @@ export function TeamSection() {
       </div>
     ),
     "data-ml": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {TEAM_MEMBERS_BY_SLUG["data-ml"].map((member) => (
           <TeamCard
             key={member.name}
@@ -602,7 +602,7 @@ export function TeamSection() {
       </div>
     ),
     "internet-of-things": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
+      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-6 lg:mt-8">
         {(TEAM_MEMBERS_BY_SLUG["internet-of-things"] ?? TEAM_MEMBERS_BY_SLUG.iot ?? []).map((member) => (
           <TeamCard
             key={member.name}
@@ -620,7 +620,7 @@ export function TeamSection() {
 
   return (
     <div
-      className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16 bg-[#010B1D]"
+      className="relative overflow-x-clip pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16 bg-[#010B1D]"
     >
       <div
         className="absolute inset-x-0 top-0 h-[620px] pointer-events-none hidden md:block"
@@ -885,7 +885,7 @@ export function TeamSection() {
                   id={id}
                   // scroll-mt offsets the sticky header height so the section
                   // title isn't hidden behind the navbar after scrollIntoView
-                  className="scroll-mt-24 mb-20 last:mb-0"
+                  className="scroll-mt-8 mb-6 last:mb-0"
                 >
                   <FadeInSection>
                     <Text

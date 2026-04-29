@@ -14,10 +14,10 @@ export function SparkStartsHereSection() {
 
   return (
     <section
-      className="relative hidden lg:block z-30 mt-26.25 pb-20.25"
+      className="relative hidden lg:block z-30 mt-24 pb-16"
       ref={ref}
     >
-      <Container className="py-24">
+      <Container className="py-20">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
@@ -38,9 +38,9 @@ export function SparkStartsHereSection() {
               className="relative z-10"
               contentClassName="p-12.5"
             >
-              <div className="flex items-start gap-11 w-full">
+              <div className="flex items-start gap-6 w-full">
                 {/* Left column: heading */}
-                <Stack className="w-1/3 gap-11" align="start">
+                <Stack className="w-1/3 gap-6" align="start">
                   <Text
                     as="h2"
                     align="left"
@@ -56,7 +56,7 @@ export function SparkStartsHereSection() {
                 </Stack>
 
                 {/* Right column: rest of content*/}
-                <Stack align="start" className="w-[65%] gap-11">
+                <Stack align="start" className="w-[65%] gap-6">
                   <Text
                     as="h3"
                     align="left"

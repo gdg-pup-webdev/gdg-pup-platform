@@ -12,7 +12,7 @@ export function LeaderboardSection() {
   const [summarySource, setSummarySource] = useState<"members" | "core">("members");
 
   return (
-    <div className="relative overflow-x-hidden pt-32 md:pt-48 pb-16 md:pb-28 w-full min-h-screen bg-[#0b0b0b] text-white">
+    <div className="relative overflow-x-hidden pt-32 md:pt-36 pb-16 md:pb-20 w-full min-h-screen bg-[#0b0b0b] text-white">
       {/* Absolute positioned background art for the entire page */}
       <LeaderboardBackground />
 

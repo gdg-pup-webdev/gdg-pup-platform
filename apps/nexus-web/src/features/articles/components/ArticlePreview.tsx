@@ -263,18 +263,18 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
     return (
       <div className="relative min-h-screen bg-[#0F0E0E] overflow-hidden px-4 pb-14 md:px-8">
         <ArticleBlobBackground colors={colors} />
-        <div className="relative z-10 max-w-5xl mx-auto mt-28 md:mt-40">
+        <div className="relative z-10 max-w-5xl mx-auto mt-8 md:mt-12">
           <div className="relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/5 p-6 md:p-12 lg:p-16">
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center justify-between mb-6">
               <BrandedSkeleton className="h-4 w-36" variant="text" />
               <BrandedSkeleton className="h-8 w-36" variant="chip" />
             </div>
-            <div className="space-y-4 mb-10">
+            <div className="space-y-4 mb-6">
               <BrandedSkeleton className="h-12 w-full" variant="text" />
               <BrandedSkeleton className="h-12 w-4/5" variant="text" />
             </div>
             <BrandedSkeleton
-              className="w-full aspect-video rounded-2xl mb-12"
+              className="w-full aspect-video rounded-2xl mb-8"
               withGradientRing
             />
             <div className="space-y-4">
@@ -308,7 +308,7 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
       <ArticleBlobBackground colors={colors} />
 
       {/* ── Main Article Container ── */}
-      <div className="relative z-10 max-w-5xl mx-auto mt-28 md:mt-40">
+      <div className="relative z-10 max-w-5xl mx-auto mt-8 md:mt-12">
         {/*  THE GLASS CONTAINER 
           - bg-white/[0.03]: Adds that subtle "white opacity"
           - backdrop-blur-xl: Makes the blobs behind it look creamy and professional
@@ -335,7 +335,7 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
           {/*  INNER CONTENT PADDING */}
           <div className="p-6 md:p-12 lg:p-16">
             {/* ── Top navigation bar ── */}
-            <div className="flex items-center justify-between mb-12 text-sm font-medium">
+            <div className="flex items-center justify-between mb-8 text-sm font-medium">
               <button
                 type="button"
                 onClick={handleBack}
@@ -349,13 +349,13 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
             </div>
 
             {/* ── Article title ── */}
-            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-10 tracking-tight">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
               {article.title}
             </h1>
 
             {/* ── Hero image ── */}
             {article.image_url && (
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-12 border border-white/10 shadow-lg">
+              <div className="relative w-full aspect-video rounded-2xl overflow-hidden mb-8 border border-white/10 shadow-lg">
                 <img
                   src={article.image_url}
                   alt={article.title}

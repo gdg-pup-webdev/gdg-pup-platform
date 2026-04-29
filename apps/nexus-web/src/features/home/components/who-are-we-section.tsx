@@ -14,7 +14,7 @@ export function WhoAreWeSection() {
     "bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_33%,#34A853_66%,#4285F4_100%)] bg-clip-text text-transparent font-bold";
 
   return (
-    <section className="relative z-30 pb-20 lg:py-34" ref={sectionRef}>
+    <section className="relative z-30 pt-24 pb-16 lg:py-28" ref={sectionRef}>
       <Container className="">
         <Stack gap="xl" className="lg:gap-12" align="center">
           {/* Section heading */}
@@ -29,14 +29,14 @@ export function WhoAreWeSection() {
               gradient="white-yellow"
               variant="heading-2"
               weight="bold"
-              className="mt-35 mb-4 lg:my-0"
+              className="mt-8 mb-4 lg:my-0"
             >
               Who are we
             </Text>
           </motion.div>
 
           {/* Two-column layout: Sparky image + text */}
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-8.5 w-full">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 w-full">
             {/* Sparky mascot */}
             <motion.div
               className="relative shrink-0 w-45 lg:w-153"

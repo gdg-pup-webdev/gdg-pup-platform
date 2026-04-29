@@ -94,7 +94,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
   return (
     <div
-      className="relative overflow-clip min-h-screen pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16"
+      className="relative overflow-clip min-h-screen pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16"
       style={{ backgroundColor: "rgba(15, 14, 14, 1)" }}
     >
       <div
@@ -265,7 +265,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
           </Stack>
 
           {isLoading && !events ? (
-            <div className="space-y-10 md:space-y-14">
+            <div className="space-y-6 md:space-y-8">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="animate-pulse">
                   {/* One big rectangle skeleton */}
@@ -337,7 +337,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               />
             </div>
           ) : (
-            <div className="space-y-10 md:space-y-14">
+            <div className="space-y-6 md:space-y-8">
               {visibleItems.map((event) => {
                 const tag =
                   event.tags?.find((theme) => Boolean(theme?.trim())) ||

@@ -122,7 +122,7 @@ export const ArticleList = () => {
     <div className="relative min-h-screen bg-[#0F0E0E] overflow-hidden">
       <AmbientBackground />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 pt-28 md:pt-40 pb-20">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 pt-32 md:pt-36 pb-20 md:pb-24">
         {/* ── Page header ── */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}

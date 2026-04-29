@@ -26,7 +26,7 @@ export function ResourceLibraryGrid() {
         Resource Library
       </Text>
 
-      <div className="grid grid-cols-2 gap-4 mt-8 sm:gap-5 md:grid-cols-3 md:gap-6 md:mt-5 lg:grid-cols-4 lg:gap-10 lg:mt-10">
+      <div className="grid grid-cols-2 gap-4 mt-6 sm:gap-5 md:grid-cols-3 md:gap-6 md:mt-4 lg:grid-cols-4 lg:gap-8 lg:mt-6">
         {RESOURCE_LIBRARY.map((item, index) => (
           <TiltCard key={item.href} className="relative block w-full">
             <Link prefetch={false} href={item.href} className="block w-full">
