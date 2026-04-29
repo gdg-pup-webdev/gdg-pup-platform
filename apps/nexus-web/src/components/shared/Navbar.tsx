@@ -206,7 +206,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       { href: "/about", label: "Who is GDG" },
       { href: "/about/team", label: "Our Team" },
       { href: "/about/history", label: "History" },
-      { href: "/about/partnership", label: "Partnership" },
+      { href: "/about/partnership", label: "Partnerships" },
       { href: "/about/benefits", label: "Benefits" },
     ],
     community: [

@@ -1,6 +1,7 @@
 import { Button, Text, Modal } from "@packages/spark-ui";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   DndContext,
   KeyboardSensor,
@@ -672,7 +673,21 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
               </div>
             ) : null}
           </>
-        ) : null}
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 rounded-2xl">
+            <div className="relative h-60 w-60 drop-shadow-[0_0_20px_rgba(43,127,255,0.4)]">
+              <Image
+                src="/sparky-points/sparkypoints-cirby-confirm.webp"
+                alt="No project added yet"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <Text variant="body" className="mt-4 text-[#C1C7CD]" weight="medium">
+              No project added yet.
+            </Text>
+          </div>
+        )}
       </div>
 
       {!readOnly && (
@@ -736,19 +751,19 @@ export const ProjectsSection = ({ profile, readOnly }: { profile: UserProfile; r
           )}
           
           <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t border-zinc-800/80">
-            <Button variant="ghost" className="w-full sm:w-auto h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
+            <Button variant="ghost" className="w-full sm:w-auto h-auto py-2 sm:py-2 px-4 sm:px-5 text-sm! font-medium! whitespace-nowrap" onClick={() => setIsEditModalOpen(false)}>Cancel</Button>
             {editingProject.id && (
               <Button
                 variant="colored"
                 subVariant="red"
-                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap"
+                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white h-auto py-2 sm:py-2 px-4 sm:px-5 text-sm! font-medium! whitespace-nowrap"
                 onClick={handleDeleteCurrentProject}
                 disabled={isSaving}
               >
                 Delete Project
               </Button>
             )}
-            <Button variant="colored" subVariant="blue" className="w-full sm:w-auto h-auto py-2 sm:py-2 px-4 sm:px-5 !text-sm !font-medium whitespace-nowrap" onClick={handleSave} disabled={isSaving}>
+            <Button variant="colored" subVariant="blue" className="w-full sm:w-auto h-auto py-2 sm:py-2 px-4 sm:px-5 text-sm! font-medium! whitespace-nowrap" onClick={handleSave} disabled={isSaving}>
               {isSaving ? (
                 <span className="inline-flex items-center gap-2">
                   <GdgLoader size="xs" />
