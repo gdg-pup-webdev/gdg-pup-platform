@@ -59,7 +59,7 @@ export function MemberShowcaseList({ onCreate, onEdit, onDelete, onView }: Membe
 
   return (
     <AdminListScaffold
-      className="space-y-6 pb-8"
+      className="space-y-10 pb-20"
       leading={
         spotlight?.data ? (
           <section className="relative overflow-hidden rounded-sm border border-teal-100 bg-linear-to-br from-teal-50/50 to-white p-6 shadow-sm">

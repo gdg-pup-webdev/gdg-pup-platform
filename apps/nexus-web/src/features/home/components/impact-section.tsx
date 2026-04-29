@@ -61,10 +61,10 @@ export function ImpactSection() {
 
   return (
     <section
-      className="relative hidden lg:block z-30 mt-36 lg:my-48"
+      className="relative hidden lg:block z-30 mt-40 lg:my-140"
       ref={ref}
     >
-      <Container className="pt-20">
+      <Container className="pt-50">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
@@ -84,7 +84,7 @@ export function ImpactSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-          className="mt-8 grid grid-cols-1 auto-rows-fr gap-8 justify-items-stretch md:grid-cols-2 lg:grid-cols-4"
+          className="mt-35 grid grid-cols-1 auto-rows-fr gap-8 justify-items-stretch md:grid-cols-2 lg:grid-cols-4"
         >
           {impactCards.map((card) => (
             <ImpactCard
@@ -94,7 +94,7 @@ export function ImpactSection() {
               description={card.description}
               image={card.image}
               imageAlt={card.imageAlt}
-              className="justify-between min-h-105"
+              className="justify-between min-h-[420px]"
             />
           ))}
         </motion.div>
@@ -235,7 +235,7 @@ export function ImpactSection() {
         </motion.div>
       </Container>
       {/* we dont just host events section */}
-      <Container className="relative mt-32 flex flex-col items-center justify-center py-16 text-center">
+      <Container className="relative mt-96 flex flex-col items-center justify-center py-32 text-center">
         <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
           <div className="relative grid items-start justify-items-center">
             <Image
@@ -273,7 +273,7 @@ export function ImpactSection() {
             </div>
           </div>
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-center gap-12">
+        <div className="relative z-10 flex flex-col items-center justify-center gap-12.5">
           {/* Add text here */}
           <Text
             as="h5"

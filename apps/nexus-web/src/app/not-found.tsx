@@ -50,7 +50,7 @@ export default function NotFound() {
       </div>
 
       {/* modal */}
-      <div className="group relative z-40 flex items-center justify-center w-full px-4 shrink-0 -mt-4 sm:-mt-6 md:-mt-8">
+      <div className="group relative z-40 flex items-center justify-center w-full px-4 shrink-0 -mt-10 sm:-mt-14 md:-mt-20">
         <div className="relative rounded-[28px] rainbow-border backdrop-blur-md bg-white/5 shadow-[inset_0px_4px_16px_0px_rgba(255,255,255,0.05)] text-center w-full max-w-xl pt-14 sm:pt-16 pb-8 sm:pb-12 px-4 sm:px-12">
           <div className="-top-12 sm:-top-14 absolute left-1/2 -translate-x-1/2 z-50 group-hover:scale-105 group-hover:rotate-2 transition-all duration-200">
             <Image

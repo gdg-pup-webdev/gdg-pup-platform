@@ -268,7 +268,7 @@ const BenefitCard = ({ benefit }: { benefit: (typeof benefits)[0] }) => {
         </CardContent>
 
         <div
-          className="relative w-full rounded-xl overflow-hidden"
+          className="relative w-full rounded-[12px] overflow-hidden"
           style={{
             height: "clamp(130px, 20vw, 170px)",
             flexShrink: 0,
@@ -296,7 +296,7 @@ const BenefitCard = ({ benefit }: { benefit: (typeof benefits)[0] }) => {
 
 export function BenefitsSection() {
   return (
-    <div className="relative overflow-hidden pt-32 md:pt-36 pb-16 md:pb-20 px-4 md:px-8 lg:px-16 bg-[#010B1D]">
+    <div className="relative overflow-hidden pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16 bg-[#010B1D]">
       <style>{`
         /* ── Ellipses ── */
         .ellipse-blue {
