@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query"; 
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
-import { extractErrorMessage } from "@/lib/utils";
+import { extractAuthErrorMessage } from "@/lib/utils";
 import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export const useForgotPasswordFinalize = () => {
@@ -20,7 +20,7 @@ export const useForgotPasswordFinalize = () => {
 
       if (res.status === 200) return res.body;
 
-      throw new Error(extractErrorMessage(res.body));
+      throw new Error(extractAuthErrorMessage(res.body, "forgot-password-finalize"));
     },
   });
 };
