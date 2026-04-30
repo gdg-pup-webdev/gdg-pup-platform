@@ -29,6 +29,23 @@ export function formatDate(date:Date) {
 export function extractErrorMessage(errorBody: any, defaultMessage = "An unexpected error occurred"): string {
   if (!errorBody) return defaultMessage;
 
+  const rawMessage = getPrimaryErrorMessage(errorBody);
+  return rawMessage || defaultMessage;
+}
+
+type AuthErrorContext =
+  | "login"
+  | "forgot-password-initiate"
+  | "forgot-password-finalize"
+  | "signup-initiate"
+  | "signup-finalize"
+  | "resend-otp"
+  | "change-password-initiate"
+  | "change-password-finalize";
+
+const getPrimaryErrorMessage = (errorBody: any): string => {
+  if (!errorBody) return "";
+
   // Case 1: Simple message property
   if (typeof errorBody.message === "string") return errorBody.message;
 
@@ -37,11 +54,9 @@ export function extractErrorMessage(errorBody: any, defaultMessage = "An unexpec
   try {
     const firstLevelError = errorBody.errors?.[0];
     if (firstLevelError) {
-      // If the first level has its own errors array (like the example provided)
       const secondLevelError = firstLevelError.errors?.[0];
       if (secondLevelError?.detail) return secondLevelError.detail;
-      
-      // Fallback to title of the first level error
+
       if (firstLevelError.title) return firstLevelError.title;
     }
   } catch (e) {
@@ -53,5 +68,45 @@ export function extractErrorMessage(errorBody: any, defaultMessage = "An unexpec
     return errorBody.errors[0].detail;
   }
 
-  return defaultMessage;
+  return "";
+};
+
+const isRateLimitMessage = (message: string) => {
+  const normalized = message.toLowerCase();
+  return normalized.includes("too many") || normalized.includes("rate limit");
+};
+
+export function extractAuthErrorMessage(
+  errorBody: any,
+  context: AuthErrorContext,
+  defaultMessage = "Something went wrong. Please try again."
+): string {
+  const rawMessage = getPrimaryErrorMessage(errorBody).trim();
+  const normalized = rawMessage.toLowerCase();
+  const hasMessage = rawMessage.length > 0 && normalized !== "http error";
+
+  if (hasMessage && isRateLimitMessage(rawMessage)) {
+    return "Too many attempts. Please try again later.";
+  }
+
+  switch (context) {
+    case "login":
+      return "Incorrect email or password.";
+    case "forgot-password-initiate":
+      return "If an account exists for this email, you will receive a reset code.";
+    case "forgot-password-finalize":
+      return hasMessage ? rawMessage : "Unable to reset your password. Please try again.";
+    case "signup-initiate":
+      return hasMessage ? rawMessage : "Unable to start signup. Please try again.";
+    case "signup-finalize":
+      return hasMessage ? rawMessage : "Unable to verify the code. Please try again.";
+    case "resend-otp":
+      return hasMessage ? rawMessage : "Unable to resend the code right now. Please try again.";
+    case "change-password-initiate":
+      return hasMessage ? rawMessage : "Unable to start password change. Please try again.";
+    case "change-password-finalize":
+      return hasMessage ? rawMessage : "Unable to update your password. Please try again.";
+    default:
+      return hasMessage ? rawMessage : defaultMessage;
+  }
 }
