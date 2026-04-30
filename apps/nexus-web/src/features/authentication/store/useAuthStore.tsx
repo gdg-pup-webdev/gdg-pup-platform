@@ -13,6 +13,7 @@ import { TokenPayload } from "../types/tokenPayload";
 import { callEndpoint } from "@packages/typed-rest/clientReact";
 import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
+import { extractAuthErrorMessage } from "@/lib/utils";
 
 export const STATUS = {
   CHECKING: "checking",
@@ -178,7 +179,7 @@ export const AuthContextProvider = ({
         setToken(res.body.data.token);
         setState({ status: STATUS.AUTHENTICATED, error: null });
       } else {
-        throw new Error("Login failed");
+        throw new Error(extractAuthErrorMessage(res.body, "login"));
       }
     } catch (error) {
       setState({
