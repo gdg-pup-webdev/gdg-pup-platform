@@ -57,9 +57,7 @@ export function EventDetailSection({
   );
   const aboutParagraphs = aboutText.split(/\n{2,}|\r\n\r\n/).filter(Boolean);
   const aboutSingleParagraph = aboutParagraphs[0] || "Description will be available soon.";
-  const keyThemes : string[] = ["test"]
-    // eventDetail?.tags?.filter((tag) => Boolean(tag?.trim())) ||
-    // (eventDetail?.category ? [eventDetail.category] : []);
+  const keyThemes: string[] = eventDetail?.category ? [eventDetail.category] : [];
 
   const registerHref =
     eventDetail?.bevyPreviewUrl?.trim() || eventDetail?.bevyPreviewUrl?.trim() || "";
