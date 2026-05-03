@@ -1,5 +1,5 @@
 import { OpenApiSchemas, cz } from "@packages/typed-rest/shared";
-import { gdgMemberRecord } from "#models/v1/gdgmembers/gdgMember.js";
+import { publicGdgMemberRecord } from "#models/v1/gdgmembers/gdgMember.js";
 
 export const docs_summary = "List GDG Members";
 export const docs_description = "Retrieves a paginated list of GDG members with optional filtering.";
@@ -12,6 +12,6 @@ export const query = OpenApiSchemas.Request.Query.paginated().extend({
 });
 
 export const response = {
-  200: OpenApiSchemas.Response.paginated(gdgMemberRecord),
+  200: OpenApiSchemas.Response.paginated(publicGdgMemberRecord),
   ...OpenApiSchemas.Response.standardErrors(),
 };

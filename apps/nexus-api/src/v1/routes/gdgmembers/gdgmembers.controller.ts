@@ -179,7 +179,7 @@ export class GdgMembersHttpController {
         "exploratory",
       );
 
-      const suggestedPreview = result.list.map((member) => (member));
+      const suggestedPreview = result.list.map(({ email, ...rest }) => rest);
 
       return output(200, {
         status: "success",
@@ -208,7 +208,7 @@ export class GdgMembersHttpController {
       return output(200, {
         status: "success",
         message: "GDG members fetched successfully",
-        data: result.list,
+        data: result.list.map(({ email, ...rest }) => rest),
         meta: {
           currentPage: pageNumber,
           pageSize,
@@ -243,10 +243,13 @@ export class GdgMembersHttpController {
           message: "GDG member not found",
         });
       }
+      
+      const { email, ...rest } = result;
+
       return output(200, {
         status: "success",
         message: "GDG member fetched successfully",
-        data: result,
+        data: rest,
       });
     },
   );
