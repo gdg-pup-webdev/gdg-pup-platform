@@ -922,17 +922,6 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
       },
     },
     {
-      name: "Daniella J. Mendoza",
-      role: "Graphic Design Lead",
-      imageSrc: ASSETS.TEAM.CREATIVES.DANIELLA_MENDOZA,
-      mascotSrc: MASCOT_SRC,
-      socials: {
-        linkedin: "https://ph.linkedin.com/in/dayne-mendoza-687349330",
-        instagram: "https://www.instagram.com/gojoglazer444",
-        facebook: "https://www.facebook.com/daynemndz/",
-      },
-    },
-    {
       name: "Alecza Patrice Bonifacio",
       role: "Branding & Assets Lead",
       imageSrc: ASSETS.TEAM.CREATIVES.ALECZA_BONIFACIO,
@@ -952,6 +941,17 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
         linkedin: "https://www.linkedin.com/in/cyruz-arcan-672242330/",
         instagram: "https://www.instagram.com/saiwuz/",
         facebook: "https://www.facebook.com/Cmaj7add9",
+      },
+    },
+    {
+      name: "Daniella J. Mendoza",
+      role: "Graphic Design Lead",
+      imageSrc: ASSETS.TEAM.CREATIVES.DANIELLA_MENDOZA,
+      mascotSrc: MASCOT_SRC,
+      socials: {
+        linkedin: "https://ph.linkedin.com/in/dayne-mendoza-687349330",
+        instagram: "https://www.instagram.com/gojoglazer444",
+        facebook: "https://www.facebook.com/daynemndz/",
       },
     },
     {
