@@ -26,7 +26,7 @@
     "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@packages/nexus-api-contracts": "workspace:*",
     "@packages/typed-rest": "workspace:*",
-    "@scalar/express-api-reference": "^0.8.40",
+    "@scalar/express-api-reference": "^0.9.13",
     "@supabase/supabase-js": "^2.86.0",
     "bcrypt": "^6.0.0",
     "commander": "11.0.0",
