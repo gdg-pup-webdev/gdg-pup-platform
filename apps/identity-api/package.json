@@ -31,7 +31,7 @@
     "supazod": "^4.5.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
-    "tsc-alias": "^1.8.16",
+    "tsc-alias": "^1.8.17",
     "zod": "^4.1.12"
   },
   "devDependencies": {
