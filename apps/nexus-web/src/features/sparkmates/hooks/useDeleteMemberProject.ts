@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { deleteMemberProject } from "../api";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";

@@ -8,7 +8,7 @@ import { GdgMember, GdgMemberUpdate } from "../types";
 import { Pagination } from "./ui/Pagination";
 import { MemberDetailsModal, MemberFormModal } from "./MemberModals";
 import { MemberCard } from "./MemberCard";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 
 export const MemberList: React.FC = () => {
   const [page, setPage] = useState(1);
