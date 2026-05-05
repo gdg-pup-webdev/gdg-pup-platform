@@ -767,9 +767,6 @@ importers:
 
   packages/nexus-api-contracts:
     dependencies:
-      '@configs/typescript-config':
-        specifier: workspace:*
-        version: link:../../configs/typescript-config
       '@packages/typed-rest':
         specifier: workspace:*
         version: link:../typed-rest
@@ -789,6 +786,9 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
+      '@configs/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript-config
       '@types/node':
         specifier: 25.0.3
         version: 25.0.3
@@ -899,9 +899,6 @@ importers:
       '@asteasolutions/zod-to-openapi':
         specifier: ^8.4.0
         version: 8.4.3(zod@4.3.2)
-      '@configs/typescript-config':
-        specifier: workspace:*
-        version: link:../../configs/typescript-config
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -933,6 +930,9 @@ importers:
         specifier: 4.3.2
         version: 4.3.2
     devDependencies:
+      '@configs/typescript-config':
+        specifier: workspace:*
+        version: link:../../configs/typescript-config
       '@types/express':
         specifier: 5.0.6
         version: 5.0.6
@@ -7717,10 +7717,12 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:

@@ -130,10 +130,12 @@ describe("GdgMembersRouter suggested-users route", () => {
       1,
       "exploratory",
     );
+    const { email, ...expectedPayload } = similarUserPayload;
+
     expect(response.body).toEqual({
       status: "success",
       message: "Suggested GDG members fetched successfully",
-      data: [similarUserPayload],
+      data: [expectedPayload],
       meta: {
         currentPage: 2,
         pageSize: 1,
@@ -188,6 +190,7 @@ describe("GdgMembersRouter suggested-users route", () => {
     expect(response.body.message).toBe(
       "Suggested GDG members fetched successfully",
     );
-    expect(response.body.data).toEqual([similarUserPayload]);
+    const { email, ...expectedPayload } = similarUserPayload;
+    expect(response.body.data).toEqual([expectedPayload]);
   });
 });
