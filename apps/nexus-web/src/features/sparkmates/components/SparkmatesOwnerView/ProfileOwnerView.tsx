@@ -5,7 +5,7 @@ import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { useSparkmateProfile } from "../../hooks";
 import { SparkmatesSource } from "../../types";
 import { useUpdateSparkmateProfile } from "../../hooks/useUpdateSparkmateProfile";

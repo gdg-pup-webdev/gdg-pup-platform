@@ -41,7 +41,7 @@ import { ProjectsManager } from "@/features/onboarding/components/ProjectsManage
 import { ProjectFormState } from "@/features/onboarding/types";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
 import { getMemberProjectById } from "@/features/sparkmates/api/memberProjects";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 
 const PROJECTS_PER_PAGE = 4;
 const MAX_PROJECT_IMAGES = 4;

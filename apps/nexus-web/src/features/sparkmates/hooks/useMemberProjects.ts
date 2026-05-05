@@ -10,7 +10,7 @@ import {
   reorderMemberProjects,
 } from "../api";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import type { ProjectFormState } from "@/features/onboarding/types";
 import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 

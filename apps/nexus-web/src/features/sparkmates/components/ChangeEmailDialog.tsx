@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";  
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { Modal } from "./ui/Modal"; 
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
