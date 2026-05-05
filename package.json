@@ -21,13 +21,11 @@
     "test": "turbo run test --filter=!identity-api",
     "scan:dep": "tsx scripts/deprecated-scanner/deprecated-scanner.ts",
     "gcs:test": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts",
-    "gcs:test:keep": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts --keep",
-    "prepare": "husky"
+    "gcs:test:keep": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts --keep"
   },
   "devDependencies": {
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
-    "husky": "^9.1.7",
     "prettier": "3.7.4",
     "syncpack": "13.0.4",
     "turbo": "2.7.4",
