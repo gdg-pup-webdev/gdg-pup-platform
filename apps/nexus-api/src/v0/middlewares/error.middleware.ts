@@ -11,10 +11,10 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  const isProd = process.env.NODE_ENV === "production";
+  const isDev = process.env.DEV_MODE === "true";
 
   const buildDebugDetails = (details: Record<string, unknown>) => {
-    return isProd ? undefined : details;
+    return isDev ? details : undefined;
   };
 
   // 1. Default values
