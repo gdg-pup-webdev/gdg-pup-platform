@@ -13,6 +13,12 @@ export const globalErrorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
+  const isProd = process.env.NODE_ENV === "production";
+
+  const buildDebugDetails = (details: Record<string, unknown>) => {
+    return isProd ? undefined : details;
+  };
+
   // 1. Default values
   let statusCode = err.statusCode || 500;
   let message = err.message || "An unexpected error occurred.";
@@ -53,7 +59,7 @@ export const globalErrorHandler = (
         {
           title: err.name,
           message: err.message,
-          stack: err.stack,
+          ...(isProd ? {} : { stack: err.stack }),
         },
       ],
     });
@@ -104,6 +110,12 @@ export const globalErrorHandler = (
   }
 
   if (err instanceof HttpError) {
+    const debugDetails = buildDebugDetails({
+      last_error_stack: err.stack,
+      all_error_stack: err.getAllErrorStack(),
+      name: err.name,
+    });
+
     return res.status(err.statusCode).json({
       status: "fail",
       message: "HTTP Error",
@@ -111,17 +123,19 @@ export const globalErrorHandler = (
         {
           title: err.title,
           detail: err.detail,
-          moreDetails: {
-            last_error_stack: err.stack,
-            all_error_stack: err.getAllErrorStack(),
-            name: err.name,
-          },
+          ...(debugDetails ? { moreDetails: debugDetails } : {}),
         },
       ],
     });
   }
 
   if (err instanceof ServerError) {
+    const debugDetails = buildDebugDetails({
+      last_error_stack: err.stack,
+      all_error_stack: err.getAllErrorStack(),
+      name: err.name,
+    });
+
     return res.status(500).json({
       errors: [
         {
@@ -131,11 +145,7 @@ export const globalErrorHandler = (
             {
               title: err.title,
               detail: err.detail,
-              moreDetails: {
-                last_error_stack: err.stack,
-                all_error_stack: err.getAllErrorStack(),
-                name: err.name,
-              },
+              ...(debugDetails ? { moreDetails: debugDetails } : {}),
             },
           ],
         },
@@ -144,6 +154,8 @@ export const globalErrorHandler = (
   }
 
   if (err instanceof Error) {
+    const debugDetails = buildDebugDetails({ stack: err.stack });
+
     return res.status(500).json({
       errors: [
         {
@@ -153,9 +165,7 @@ export const globalErrorHandler = (
             {
               title: err.name,
               detail: err.message,
-              moreDetails: {
-                stack: err.stack,
-              },
+              ...(debugDetails ? { moreDetails: debugDetails } : {}),
             },
           ],
         },
