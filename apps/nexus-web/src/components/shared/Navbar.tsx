@@ -37,7 +37,7 @@ const dropdownInnerClasses = cn(
 
 const dropdownItemClasses = cn(
   "block w-full text-left text-white font-bold transition-all p-3 rounded-lg",
-  "hover:bg-[linear-gradient(0deg,#57CAFF_0%,#347999_100%)] hover:!text-transparent hover:bg-clip-text",
+  "hover:text-[#4285F4]",
 );
 
 function useOutsideClick(callback: () => void) {
