@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateSparkmateProfile } from "../api";
 import type { UserProfile } from "../types";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export function useUpdateSparkmateProfile(gdgId?: string) {

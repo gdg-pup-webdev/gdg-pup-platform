@@ -119,7 +119,7 @@ export const Footer: React.FC = () => {
 
           {/* About */}
           <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-            <Text variant="body" weight="semibold" gradient="blue">
+            <Text variant="body" weight="semibold" className="text-[#4285F4]">
               About
             </Text>
             <Stack gap="xs" className="items-center md:items-start">
@@ -139,7 +139,7 @@ export const Footer: React.FC = () => {
 
           {/* Network */}
           <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-            <Text variant="body" weight="semibold" gradient="yellow">
+            <Text variant="body" weight="semibold" className="text-[#F9AB00]">
               Network
             </Text>
             <Stack gap="xs" className="items-center md:items-start">
@@ -159,7 +159,7 @@ export const Footer: React.FC = () => {
 
           {/* Nexus */}
           <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <Text variant="body" weight="semibold" gradient="green">
+            <Text variant="body" weight="semibold" className="text-[#34A853]">
               Nexus
             </Text>
             <Stack gap="xs" className="items-center md:items-start">
@@ -179,7 +179,7 @@ export const Footer: React.FC = () => {
 
           {/* Address */}
           <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
-            <Text variant="body" weight="semibold" gradient="red">
+            <Text variant="body" weight="semibold" className="text-[#EA4335]">
               Address
             </Text>
             <Text variant="body-sm" className="text-gray-300 mb-4 text-center md:text-left">
@@ -200,7 +200,7 @@ export const Footer: React.FC = () => {
 
           {/* Contact */}
           <Box className="flex flex-col items-center md:items-start animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-            <Text variant="body" weight="semibold" gradient="red">
+            <Text variant="body" weight="semibold" className="text-[#4285F4]">
               Contact
             </Text>
             <Stack gap="xs" className="items-center md:items-start text-center md:text-left">

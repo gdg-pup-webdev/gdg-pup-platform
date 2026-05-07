@@ -16,7 +16,7 @@ import { ProjectFormState } from "@/features/onboarding/types";
 import { viewIcon } from "@/features/sparkmates/components/SparkmatesOwnerView/icons/viewIcon";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
 import { SparkmatesBrandedErrorScreen } from "@/features/sparkmates/components/SparkmatesBrandedErrorScreen";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { useRouter } from "next/navigation";
 import { GdgLoader } from "@/components/ui/loader";
 

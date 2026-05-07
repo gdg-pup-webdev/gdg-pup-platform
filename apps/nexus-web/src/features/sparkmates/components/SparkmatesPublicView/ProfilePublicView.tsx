@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Button, Text } from "@packages/spark-ui";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { CosmosParticles, LoadingScreen } from "@/components/shared";
 import { ASSETS } from "@/lib/constants/assets";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";

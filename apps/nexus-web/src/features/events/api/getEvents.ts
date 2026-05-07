@@ -1,8 +1,11 @@
 /**
- * API function to fetch events from Nexus API via Next.js proxy route.
+ * API function to fetch events from Nexus API directly.
  */
 
 import { EventsException, EventsQueryParams, EventsResponse } from "../types";
+import { configs } from "@/configs/servers.config";
+
+const trimTrailingSlash = (url: string) => url.replace(/\/+$/, "");
 
 const buildQueryString = (params: Record<string, unknown>) => {
   const searchParams = new URLSearchParams();
@@ -187,38 +190,57 @@ export async function getEvents_deprecated(
     };
 
     const qs = buildQueryString(queryParams as Record<string, unknown>);
-    const response = await fetch(`/api/events?${qs}`, {
-      method: "GET",
-      cache: "no-store",
-    });
-    const payload = await response.json();
+    const suffix = qs ? `?${qs}` : "";
+    const baseUrl = trimTrailingSlash(configs.nexusApiBaseUrl);
+    const candidatePaths = [
+      `/api/v1/gdg-scraped-events${suffix}`,
+      `/api/event-system/events${suffix}`,
+      `/api/v0/event-system/events${suffix}`,
+    ];
+    const failures: Array<{ path: string; detail: string }> = [];
 
-    // Check for successful response
-    if (
-      response.ok &&
-      payload?.status === "success" &&
-      Array.isArray(payload?.data)
-    ) {
-      return {
-        ...payload,
-        data: payload.data.map(normalizeEvent),
-      } as EventsResponse;
+    for (const path of candidatePaths) {
+      const url = `${baseUrl}${path}`;
+      const response = await fetch(url, { method: "GET", cache: "no-store" });
+      const contentType = response.headers.get("content-type") || "";
+      const payload = contentType.includes("application/json")
+        ? await response.json()
+        : await response.text();
+
+      if (
+        response.ok &&
+        payload?.status === "success" &&
+        Array.isArray(payload?.data)
+      ) {
+        return {
+          ...payload,
+          data: payload.data.map(normalizeEvent),
+        } as EventsResponse;
+      }
+
+      const detail =
+        typeof payload === "string"
+          ? payload
+          : payload?.errors?.[0]?.detail ||
+            payload?.message ||
+            `Received status ${response.status}`;
+      failures.push({ path, detail });
     }
 
-    // Handle error responses
-    const detail =
-      payload?.errors?.[0]?.detail || payload?.message || `Received status ${response.status}`;
+    const fallbackDetail = failures
+      .map((failure) => `${failure.path}: ${failure.detail}`)
+      .join(" | ");
     throw new EventsException(
       "Failed to fetch events",
       "FETCH_ERROR",
-      detail
+      fallbackDetail || "All events endpoints failed"
     );
 
   } catch (error) {
     // Network errors
     if (error instanceof TypeError && error.message.includes("fetch")) {
       throw new EventsException(
-        "Failed to connect to events proxy. Please check if Nexus Web and Nexus API are running.",
+        "Failed to connect to events service. Please check if Nexus API is running.",
         "NETWORK_ERROR",
         error.message
       );

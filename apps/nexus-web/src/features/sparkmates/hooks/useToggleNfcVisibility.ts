@@ -4,7 +4,7 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 
 export const useToggleNfcVisibility = (gdgId: string) => {
   const queryClient = useQueryClient();

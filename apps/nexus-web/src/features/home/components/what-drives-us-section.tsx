@@ -10,6 +10,7 @@ import { FrostedContentContainer } from "./frosted-content-container";
 export function WhatDrivesUsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const bulletColors = ["#4285F4", "#F9AB00", "#34A853", "#EA4335"];
 
   return (
     <section className="relative z-30" ref={ref}>
@@ -39,9 +40,13 @@ export function WhatDrivesUsSection() {
             <Text
               as="h2"
               align="left"
-              gradient="white-green"
               weight="bold"
-              className="mb-0.5 text-4xl lg:text-[4rem] text-right lg:text-left w-full"
+              variant="heading-2"
+              className="mb-0.5 text-right lg:text-left w-full text-white"
+              style={{
+                textShadow:
+                  "0 2px 4px rgba(0, 0, 0, 0.95), 0 8px 24px rgba(0, 0, 0, 0.95), 0 16px 48px rgba(0, 0, 0, 0.85)",
+              }}
             >
               What drives us
             </Text>
@@ -52,20 +57,16 @@ export function WhatDrivesUsSection() {
                   align="left"
                   variant="heading-5"
                   weight="bold"
-                  gradient="white-yellow"
-                  className="text-2xl"
+                  className="text-2xl text-white"
                 >
                   We believe that:
                 </Text>
 
                 <Inline>
-                  <Image
-                    src={ASSETS.HOME.BULLET_DIAMOND}
-                    alt="bullet point"
-                    width={16}
-                    height={16}
-                    draggable={false}
-                    className="pointer-events-none select-none"
+                  <span
+                    aria-hidden
+                    className="h-2.5 w-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: bulletColors[0] }}
                   />
                   <Text
                     align="left"
@@ -79,13 +80,10 @@ export function WhatDrivesUsSection() {
                 </Inline>
 
                 <Inline>
-                  <Image
-                    src={ASSETS.HOME.BULLET_DIAMOND}
-                    alt="bullet point"
-                    width={16}
-                    height={16}
-                    draggable={false}
-                    className="pointer-events-none select-none"
+                  <span
+                    aria-hidden
+                    className="h-2.5 w-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: bulletColors[1] }}
                   />
                   <Text
                     align="left"
@@ -99,13 +97,10 @@ export function WhatDrivesUsSection() {
                 </Inline>
 
                 <Inline>
-                  <Image
-                    src={ASSETS.HOME.BULLET_DIAMOND}
-                    alt="bullet point"
-                    width={16}
-                    height={16}
-                    draggable={false}
-                    className="pointer-events-none select-none"
+                  <span
+                    aria-hidden
+                    className="h-2.5 w-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: bulletColors[2] }}
                   />
                   <Text
                     align="left"
@@ -119,13 +114,10 @@ export function WhatDrivesUsSection() {
                 </Inline>
 
                 <Inline>
-                  <Image
-                    src={ASSETS.HOME.BULLET_DIAMOND}
-                    alt="bullet point"
-                    width={16}
-                    height={16}
-                    draggable={false}
-                    className="pointer-events-none select-none"
+                  <span
+                    aria-hidden
+                    className="h-2.5 w-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: bulletColors[3] }}
                   />
                   <Text
                     align="left"

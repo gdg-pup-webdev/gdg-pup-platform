@@ -7,7 +7,7 @@ import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 export const useLogin = () => {
   const callEndpoint = useCallEndpointWithToken();
   return useMutation({
-    mutationFn: async (payload: { email: string; pass: string }) => {
+    mutationFn: async (payload: { email: string; password: string }) => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.authentication.login.POST,
@@ -15,7 +15,7 @@ export const useLogin = () => {
           body: {
             data: {
               email: payload.email,
-              pass: payload.pass,
+              password: payload.password,
             },
           },
         },
