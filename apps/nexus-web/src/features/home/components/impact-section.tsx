@@ -14,6 +14,7 @@ const buildWords = ["Creators", "Leaders", "Community"];
 export function ImpactSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const bulletColors = ["#4285F4", "#F9AB00", "#34A853", "#EA4335"];
 
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
@@ -73,9 +74,13 @@ export function ImpactSection() {
           <Text
             as="h2"
             align="center"
-            gradient="white-blue"
             variant="heading-2"
             weight="bold"
+            className="text-white"
+            style={{
+              textShadow:
+                "0 2px 4px rgba(0, 0, 0, 0.95), 0 8px 24px rgba(0, 0, 0, 0.95), 0 16px 48px rgba(0, 0, 0, 0.85)",
+            }}
           >
             The Impact
           </Text>
@@ -112,9 +117,9 @@ export function ImpactSection() {
               <Text
                 as="h5"
                 align="left"
-                gradient="white-yellow"
                 variant="heading-5"
                 weight="bold"
+                className="text-white"
               >
                 But beyond numbers, <br />
                 GDG PUP has helped students:
@@ -125,13 +130,10 @@ export function ImpactSection() {
                   ringClassName="w-133.5"
                 >
                   <Inline>
-                    <Image
-                      src={ASSETS.HOME.BULLET_DIAMOND}
-                      alt="bullet point"
-                      width={16}
-                      height={16}
-                      draggable={false}
-                      className="pointer-events-none select-none"
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: bulletColors[0] }}
                     />
                     <Text
                       align="left"
@@ -150,13 +152,10 @@ export function ImpactSection() {
                   className="ml-8"
                 >
                   <Inline>
-                    <Image
-                      src={ASSETS.HOME.BULLET_DIAMOND}
-                      alt="bullet point"
-                      width={16}
-                      height={16}
-                      draggable={false}
-                      className="pointer-events-none select-none"
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: bulletColors[1] }}
                     />
                     <Text
                       align="left"
@@ -175,13 +174,10 @@ export function ImpactSection() {
                   className="ml-16"
                 >
                   <Inline>
-                    <Image
-                      src={ASSETS.HOME.BULLET_DIAMOND}
-                      alt="bullet point"
-                      width={16}
-                      height={16}
-                      draggable={false}
-                      className="pointer-events-none select-none"
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: bulletColors[2] }}
                     />
                     <Text
                       align="left"
@@ -200,13 +196,10 @@ export function ImpactSection() {
                   className="ml-24"
                 >
                   <Inline>
-                    <Image
-                      src={ASSETS.HOME.BULLET_DIAMOND}
-                      alt="bullet point"
-                      width={16}
-                      height={16}
-                      draggable={false}
-                      className="pointer-events-none select-none"
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: bulletColors[3] }}
                     />
                     <Text
                       align="left"
@@ -278,10 +271,9 @@ export function ImpactSection() {
           <Text
             as="h5"
             align="center"
-            gradient="white-yellow"
             variant="heading-5"
             weight="bold"
-            className="text-3xl"
+            className="text-3xl text-white"
           >
             We don’t just host events...
           </Text>
