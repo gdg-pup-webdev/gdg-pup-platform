@@ -9,9 +9,9 @@
 
 const PLANET_MASK_STYLE: React.CSSProperties = {
   WebkitMaskImage:
-    "radial-gradient(ellipse 50% 50% at 50% 50%, black 50%, rgba(0, 0, 0, 0.35) 85%, rgba(0, 0, 0, 0) 100%)",
+    "radial-gradient(ellipse 55% 55% at 50% 50%, black 40%, rgba(0, 0, 0, 0.25) 75%, rgba(0, 0, 0, 0) 100%)",
   maskImage:
-    "radial-gradient(ellipse 50% 50% at 50% 50%, black 50%, rgba(0, 0, 0, 0.35) 85%, rgba(0, 0, 0, 0) 100%)",
+    "radial-gradient(ellipse 55% 55% at 50% 50%, black 40%, rgba(0, 0, 0, 0.25) 75%, rgba(0, 0, 0, 0) 100%)",
 };
 
 interface PlanetCardProps {
@@ -34,12 +34,19 @@ export function PlanetCard({
   return (
     <div className="relative" style={style ?? { width: size, height: size }}>
       {/* Sphere */}
-      <div className="relative h-full w-full overflow-hidden rounded-full bg-black">
+      <div className="relative h-full w-full overflow-hidden rounded-full bg-[#0B0B0B]">
+        <img
+          src={image}
+          alt=""
+          aria-hidden
+          draggable={false}
+          className="absolute inset-0 h-full w-full object-cover scale-125 blur-3xl opacity-90"
+        />
         <img
           src={image}
           alt={alt}
           draggable={draggable}
-          className="h-full w-full object-cover"
+          className="relative h-full w-full object-cover object-center rounded-full"
           style={PLANET_MASK_STYLE}
         />
         {/* Dark shadow — bottom-left */}

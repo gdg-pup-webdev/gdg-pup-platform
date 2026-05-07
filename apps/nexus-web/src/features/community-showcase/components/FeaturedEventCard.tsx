@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState } from "react";
 import { Card, Stack, Text } from "@packages/spark-ui";
 import { Event } from "@/features/events";
 import { ASSETS } from "@/lib/constants/assets";
@@ -26,11 +25,6 @@ interface FeaturedEventCardProps {
 }
 
 export function FeaturedEventCard({ onOpenModal, event }: FeaturedEventCardProps) {
-  const [isCardHovered, setIsCardHovered] = useState(false);
-  const [is39Hovered, setIs39Hovered] = useState(false);
-
-
-
 const ABOUT_TEXT = normalizeEventDescription(event.description) || "No description available for this event.";
 
 const TRUNCATED_ABOUT =
@@ -41,9 +35,7 @@ const TRUNCATED_ABOUT =
       {/* Heading block — slides up on card hover */}
       <Stack
         gap="xs"
-        className={`z-10 transition-transform duration-1000 ease-out ${
-          isCardHovered ? "-translate-y-3" : "translate-y-0"
-        }`}
+        className="z-10"
       >
         <Text
           variant="heading-2"
@@ -83,25 +75,29 @@ const TRUNCATED_ABOUT =
 
       {/* Event image card with gradient border */}
       <div className="relative mt-15 flex w-full justify-center z-10">
-        <Card
-          variant="default"
-          className="w-full h-[clamp(200px,25vw,360px)] rounded-[32px] max-w-none p-1 bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] overflow-hidden bg-transparent! border-0! z-10 transform transition-transform duration-1000 ease-out hover:rotate-[-1deg]"
-          onMouseEnter={() => setIsCardHovered(true)}
-          onMouseLeave={() => setIsCardHovered(false)}
-        >
-          <img
-            src={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
-            alt=""
-            className="w-full h-full object-cover rounded-[30px]"
-          />
-        </Card>
+        <div className="relative w-full max-w-none rounded-[32px] p-[2px] bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] z-10">
+          <Card
+            variant="default"
+            className="w-full max-w-none aspect-[16/9] rounded-[30px] bg-[#0B0B0B] overflow-hidden border-0! p-3"
+          >
+            <img
+              src={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
+              alt=""
+              aria-hidden
+              className="absolute inset-0 h-full w-full object-cover blur-[18px] opacity-55"
+            />
+            <img
+              src={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
+              alt=""
+              className="relative w-full h-full object-contain rounded-[20px]"
+            />
+          </Card>
+        </div>
       </div>
 
       {/* About + Stats row — slides down on card hover */}
       <div
-        className={`relative w-full flex justify-center mt-10 z-10 transition-transform duration-1000 ease-out ${
-          isCardHovered ? "translate-y-5" : "translate-y-0"
-        }`}
+        className="relative w-full flex justify-center mt-10 z-10"
       >
         <div className="w-full flex flex-col md:flex-row gap-8">
           {/* About */}
@@ -109,17 +105,17 @@ const TRUNCATED_ABOUT =
             <button
               type="button"
               // Modal disabled for now; restore onClick={onOpenModal} when needed.
-              className="text-left group"
+              className="text-left"
             >
               <Text
                 variant="body-lg"
-                className="text-white transition-colors duration-200 group-hover:text-blue-500"
+                className="text-white"
               >
                 ABOUT THIS EVENT
               </Text>
               <Text
                 variant="body"
-                className="text-white leading-8 max-w-[55vw] xl:max-w-220 transition-colors duration-200 group-hover:text-blue-500"
+                className="text-white leading-8 max-w-[55vw] xl:max-w-220"
               >
                 {TRUNCATED_ABOUT}
               </Text>
@@ -136,36 +132,12 @@ const TRUNCATED_ABOUT =
           >
             {/* RSVP count */}
             <div>
-              <div
-                onMouseEnter={() => setIs39Hovered(true)}
-                onMouseLeave={() => setIs39Hovered(false)}
-                style={{
-                  display: "inline-block",
-                  transform: is39Hovered ? "rotate(-15.95deg)" : "rotate(0deg)",
-                  transition: "transform 1000ms ease-out",
-                }}
-              >
-                <Text
-                  variant="heading-2"
-                  className={is39Hovered ? "" : "text-white"}
-                  gradient={is39Hovered ? "white-blue" : undefined}
-                >
-                  {event.rsvp ?? event.attendees_count}
-                </Text>
-              </div>
-              <div
-                style={{
-                  transform: is39Hovered ? "translateY(20px)" : "translateY(0)",
-                  transition: "transform 1000ms ease-out",
-                }}
-              >
-                <Text
-                  variant="body"
-                  className="text-white leading-8 max-w-[600px]"
-                >
-                  RSVP&apos;d
-                </Text>
-              </div>
+              <Text variant="heading-2" className="text-white">
+                {event.rsvp ?? event.attendees_count}
+              </Text>
+              <Text variant="body" className="text-white leading-8 max-w-[600px]">
+                RSVP&apos;d
+              </Text>
             </div>
 
             {/* Category tag */}
