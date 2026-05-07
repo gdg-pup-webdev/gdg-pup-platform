@@ -155,6 +155,7 @@ export const AnalyticsPageContent = () => {
                   <Smartphone size={14} />
                   <span>Physical networking power</span>
                 </div>
+
               </div>
             </div>
 

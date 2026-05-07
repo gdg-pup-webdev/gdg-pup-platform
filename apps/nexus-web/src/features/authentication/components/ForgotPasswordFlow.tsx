@@ -98,7 +98,7 @@ export const ForgotPasswordFlow = () => {
   const handleFinalize = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await finalizeForgot({ data: { referenceCode, otp, newPass: newPassword } });
+      const res = await finalizeForgot({ data: { referenceCode, otp, newPassword: newPassword } });
       if (res?.data?.success) {
         router.push(LINKS.auth_signin);
       }

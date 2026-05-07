@@ -46,7 +46,7 @@ export const PasswordResetFlow = () => {
   const handleInitiate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await initiateReset({ data: { email, pass: password, newPass: newPassword } });
+      const res = await initiateReset({ data: { email, password: password, newPassword: newPassword } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);
