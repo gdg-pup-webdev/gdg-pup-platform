@@ -108,8 +108,8 @@ const TRUNCATED_ABOUT =
           <Stack gap="sm" className="flex-2">
             <button
               type="button"
-              onClick={onOpenModal}
-              className="text-left cursor-pointer group"
+              // Modal disabled for now; restore onClick={onOpenModal} when needed.
+              className="text-left group"
             >
               <Text
                 variant="body-lg"

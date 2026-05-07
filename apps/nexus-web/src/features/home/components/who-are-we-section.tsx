@@ -10,8 +10,7 @@ import { FrostedContentContainer } from "./frosted-content-container";
 export function WhoAreWeSection() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
-  const rainbowGradientTextClass =
-    "bg-[linear-gradient(90deg,#EA4335_0%,#F9AB00_33%,#34A853_66%,#4285F4_100%)] bg-clip-text text-transparent font-bold";
+  const rainbowGradientTextClass = "text-white font-bold";
 
   return (
     <section className="relative z-30 pb-20 lg:py-34" ref={sectionRef}>
@@ -26,12 +25,11 @@ export function WhoAreWeSection() {
             <Text
               as="h2"
               align="center"
-              gradient="white-yellow"
               variant="heading-2"
               weight="bold"
-              className="mt-35 mb-4 lg:my-0"
+              className="mt-35 mb-4 lg:my-0 text-white"
             >
-              Who are we
+              Who Are We
             </Text>
           </motion.div>
 
@@ -78,11 +76,11 @@ export function WhoAreWeSection() {
                   <Text
                     as="h3"
                     align="left"
-                    gradient="blue"
                     variant="heading-5"
                     weight="bold"
+                    className="text-white"
                   >
-                    We are More Than a Student Organization
+                    We Are More Than a Student Organization
                   </Text>
 
                   <Text
