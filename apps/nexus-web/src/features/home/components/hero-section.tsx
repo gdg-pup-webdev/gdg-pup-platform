@@ -177,7 +177,6 @@ export function HeroSection() {
           disableParallax={disableParallax}
         />
       ))}
-
       {/* CTA overlay — above all layers */}
       <motion.div
         style={{ opacity: ctaOpacity, y: prefersReduced ? 0 : ctaY }}
@@ -202,23 +201,33 @@ export function HeroSection() {
                   as="h1"
                   variant={headingVariant}
                   align="center"
-                  gradient="white-blue"
-                  weight="bold"
-                  className="leading-tight"
+                  weight="normal"
+                  className="leading-[1.05] text-white [text-shadow:0_10px_28px_rgba(0,0,0,0.95)]"
+                  style={{
+                    textShadow:
+                      "0 2px 4px rgba(0, 0, 0, 0.95), 0 8px 24px rgba(0, 0, 0, 0.95), 0 16px 48px rgba(0, 0, 0, 0.85)",
+                  }}
                 >
-                  Bridging the gap between theory and practice.
+                  <span className="block">Bridging the gap between</span>
+                  <span className="block font-semibold">
+                    theory and practice.
+                  </span>
                 </Text>
               </motion.div>
 
               <motion.div
                 variants={prefersReduced ? undefined : ctaItemVariants}
-                className="mt-4"
+                className="mt-6 md:mt-8"
               >
                 <Text
                   variant={bodyVariant}
                   align="center"
-                  weight="bold"
-                  className="text-white max-w-[54ch] mx-auto leading-relaxed"
+                  weight="normal"
+                  className="text-slate-100/90 max-w-[52ch] mx-auto leading-relaxed [text-shadow:0_8px_22px_rgba(0,0,0,0.9)]"
+                  style={{
+                    textShadow:
+                      "0 2px 4px rgba(0, 0, 0, 0.9), 0 6px 18px rgba(0, 0, 0, 0.9)",
+                  }}
                 >
                   GDG PUP helps student developers grow through real projects,
                   events, and mentorship connecting classroom learning to
@@ -228,7 +237,7 @@ export function HeroSection() {
 
               <motion.div
                 variants={prefersReduced ? undefined : ctaItemVariants}
-                className="mt-6 md:mt-8 inline-block"
+                className="mt-8 md:mt-10 inline-block"
               >
                 <Button asChild variant="default" size={ctaButtonSize}>
                   <Link prefetch={false} href="/signin">Spark your Journey</Link>
