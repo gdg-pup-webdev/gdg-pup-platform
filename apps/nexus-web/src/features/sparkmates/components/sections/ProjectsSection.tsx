@@ -25,7 +25,7 @@ import { useDeleteMemberProject } from "@/features/sparkmates/hooks/useDeleteMem
 import { ProjectsManager } from "@/features/onboarding/components/ProjectsManager";
 import { ProjectFormState } from "@/features/onboarding/types";
 import { ProjectDeleteConfirmDialog } from "@/features/sparkmates/components/ProjectDeleteConfirmDialog";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { GdgLoader } from "@/components/ui/loader";
 
 const MAX_PROJECT_IMAGES = 4;
