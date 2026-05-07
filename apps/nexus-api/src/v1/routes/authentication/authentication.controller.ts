@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { AuthenticationController as AuthModuleController } from "@/v1/modules/authentication/AuthenticationController.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
+import { BadRequestError } from "@/v1/errors/HttpError.js";
 
 export class AuthenticationHttpController {
   constructor(private readonly moduleController: AuthModuleController) {}
@@ -51,8 +52,13 @@ export class AuthenticationHttpController {
   public login: RequestHandler = createExpressController(
     contract.api.v1.authentication.login.POST,
     async ({ input, output }) => {
-      const { email, pass } = input.body.data;
-      const result = await this.moduleController.login({ email, pass });
+      const { email, password, pass } = input.body.data;
+      const resolvedPassword = password ?? pass;
+      if (!resolvedPassword) {
+        throw new BadRequestError("Password is required.");
+      }
+
+      const result = await this.moduleController.login({ email, pass: resolvedPassword });
       
       return output(200, {
         status: "success",

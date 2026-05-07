@@ -179,7 +179,7 @@ export const AuthContextProvider = ({
           body: {
             data: {
               email: email,
-              pass: password,
+              password: password,
             },
           },
         },

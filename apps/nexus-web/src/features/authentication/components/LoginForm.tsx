@@ -43,9 +43,11 @@ export const LoginForm = () => {
           <StyledInputContainer>
             <Input
               id="email"
+              name="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"
@@ -66,9 +68,11 @@ export const LoginForm = () => {
           <StyledInputContainer>
             <Input
               id="password"
+              name="password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               required
               containerClassName={inputBaseStyles}
               className="text-[18px] text-white placeholder:text-[#737373]"

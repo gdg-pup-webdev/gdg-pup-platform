@@ -20,7 +20,11 @@ export const finalizeCreateNewUserResponse = z.object({
 
 export const loginRequest = z.object({
   email: z.string().email(),
-  pass: z.string(),
+  password: z.string().min(1).optional(),
+  pass: z.string().min(1).optional(),
+}).refine((data) => Boolean(data.password || data.pass), {
+  message: "Password is required",
+  path: ["password"],
 });
 
 export const loginResponse = z.object({
