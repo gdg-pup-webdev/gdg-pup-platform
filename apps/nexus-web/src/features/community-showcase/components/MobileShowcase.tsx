@@ -99,7 +99,7 @@ export function MobileShowcase({ events }: { events: Event[] }) {
         alt=""
       />
       <img
-        className="pointer-events-none w-[33vw] max-w-123.25 h-auto right-0 top-2 absolute -mr-[11vw] -z-20"
+        className="pointer-events-none w-[33vw] max-w-123.25 h-auto right-0 top-2 absolute -mr-[11vw] -z-10"
         src="/community-showcase/community-showcase-cirby.webp"
         alt=""
       />
