@@ -10,6 +10,7 @@ import { FrostedContentContainer } from "./frosted-content-container";
 export function WhatWeDoSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const bulletColors = ["#4285F4", "#F9AB00", "#34A853", "#EA4335"];
   const bulletItems = [
     "Technical workshops powered by Google-backed tools and technologies",
     "Study Jams and skill-shares focused on hands-on learning",
@@ -31,10 +32,13 @@ export function WhatWeDoSection() {
             <Text
               as="h2"
               align="left"
-              gradient="white-green"
               variant="heading-2"
               weight="bold"
-              className="mb-0.5"
+              className="mb-0.5 text-white"
+              style={{
+                textShadow:
+                  "0 2px 4px rgba(0, 0, 0, 0.95), 0 8px 24px rgba(0, 0, 0, 0.95), 0 16px 48px rgba(0, 0, 0, 0.85)",
+              }}
             >
               What we do
             </Text>
@@ -45,10 +49,9 @@ export function WhatWeDoSection() {
                     <Text
                       as="h3"
                       align="left"
-                      gradient="white-yellow"
                       weight="bold"
                       color="on-primary"
-                      className="text-2xl"
+                      className="text-2xl text-white"
                     >
                       We design experiences that turn{" "}
                       <br className="hidden lg:inline" />
@@ -56,19 +59,18 @@ export function WhatWeDoSection() {
                     </Text>
                   </div>
                   <div className="flex flex-col gap-4">
-                    {bulletItems.map((item) => (
+                    {bulletItems.map((item, index) => (
                       <div
                         key={item}
-                        className="flex items-start gap-3 relative z-10"
+                        className="flex items-center gap-3 relative z-10"
                       >
-                        <Image
-                          src={ASSETS.HOME.BULLET_DIAMOND}
-                          alt=""
+                        <span
                           aria-hidden
-                          width={18}
-                          height={18}
-                          draggable={false}
-                          className="pointer-events-none select-none mt-1 shrink-0"
+                          className="h-2.5 w-2.5 rounded-full shrink-0"
+                          style={{
+                            backgroundColor:
+                              bulletColors[index % bulletColors.length],
+                          }}
                         />
                         <Text
                           align="left"
