@@ -109,8 +109,8 @@ export const SettingsChangePasswordDialog = ({
         const res = await initiatePasswordChange({
           data: {
             email,
-            pass: currentPassword,
-            newPass: newPassword,
+            password: currentPassword,
+            newPassword: newPassword,
           },
         });
         setReferenceCode(res.data.referenceCode);

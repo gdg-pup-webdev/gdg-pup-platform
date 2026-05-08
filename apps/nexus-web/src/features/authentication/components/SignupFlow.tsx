@@ -87,7 +87,7 @@ export const SignupFlow = () => {
     }
 
     try {
-      const res = await initiateSignup({ data: { email, pass: password } });
+      const res = await initiateSignup({ data: { email, password: password } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);
