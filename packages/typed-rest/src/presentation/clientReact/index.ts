@@ -119,6 +119,7 @@ export const callEndpoint = async <T extends Contract>(
       method: endpoint.method,
       headers: requestHeaders,
       body: processedBody,
+      credentials: "include",
       ...customConfig,
     });
 

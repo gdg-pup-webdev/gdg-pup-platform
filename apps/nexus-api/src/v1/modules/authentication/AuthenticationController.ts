@@ -1,4 +1,4 @@
-﻿import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser.js";
+import { InitiateCreateNewUser } from "./useCases/InitiateCreateNewUser.js";
 import { FinalizeCreateNewUser } from "./useCases/FinalizeCreateNewUser.js";
 import { Login } from "./useCases/Login.js";
 import { VerifyToken } from "./useCases/VerifyToken.js";
