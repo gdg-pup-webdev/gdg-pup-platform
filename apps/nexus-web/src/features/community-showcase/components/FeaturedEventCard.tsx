@@ -106,24 +106,20 @@ const TRUNCATED_ABOUT =
         <div className="w-full flex flex-col md:flex-row gap-8">
           {/* About */}
           <Stack gap="sm" className="flex-2">
-            <button
-              type="button"
-              onClick={onOpenModal}
-              className="text-left cursor-pointer group"
-            >
+            <div className="text-left">
               <Text
                 variant="body-lg"
-                className="text-white transition-colors duration-200 group-hover:text-blue-500"
+                className="text-white"
               >
                 ABOUT THIS EVENT
               </Text>
               <Text
                 variant="body"
-                className="text-white leading-8 max-w-[55vw] xl:max-w-220 transition-colors duration-200 group-hover:text-blue-500"
+                className="text-white leading-8 max-w-[55vw] xl:max-w-220"
               >
                 {TRUNCATED_ABOUT}
               </Text>
-            </button>
+            </div>
           </Stack>
 
           {/* Vertical divider */}

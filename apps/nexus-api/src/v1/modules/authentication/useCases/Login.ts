@@ -1,4 +1,4 @@
-﻿import {
+import {
   IUserCredentialRepository,
   IEncryptionService,
   IJWTService,
@@ -19,9 +19,10 @@ export class Login {
   ) {}
 
   async execute(email: string, password: string): Promise<string> {
+    const genericAuthError = "Invalid email or password.";
     const credential = await this.credentialRepo.findByEmail(email);
     if (!credential) {
-      throw new UnauthorizedError("No account found with the provided email address.");
+      throw new UnauthorizedError(genericAuthError);
     }
 
     const isPasswordValid = await this.encryptionService.compare(
@@ -29,7 +30,7 @@ export class Login {
       credential.props.passwordHash,
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedError("The password that you entered is incorrect.");
+      throw new UnauthorizedError(genericAuthError);
     }
 
     const permissions = await this.rbacService.listPermissionsOfUser(email);
@@ -47,7 +48,7 @@ export class Login {
     });
 
     const token = await this.jwtService.sign(tokenPayload);
-
+    
     return token;
   }
 }

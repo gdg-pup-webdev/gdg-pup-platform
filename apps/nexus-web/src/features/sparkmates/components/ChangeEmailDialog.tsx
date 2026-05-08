@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";  
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { Modal } from "./ui/Modal"; 
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
@@ -26,7 +26,7 @@ export const ChangeEmailDialog = ({ open, onOpenChange }: ChangeEmailDialogProps
   const handleInitiate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await initiateEmailChange({ data: { email, pass: password, newEmail } });
+      const res = await initiateEmailChange({ data: { email, password: password, newEmail } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);

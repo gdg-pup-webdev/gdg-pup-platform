@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input"; 
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { useChangePasswordFinalize } from "../hooks/useChangePasswordFinalize";
 import { useChangePasswordInitiate } from "../hooks/useChangePasswordInitiate";
 
@@ -32,7 +32,7 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
       return;
     }
     try {
-      const res = await initiatePasswordChange({ data: { email, pass: currentPassword, newPass: newPassword } });
+      const res = await initiatePasswordChange({ data: { email, password: currentPassword, newPassword: newPassword } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);

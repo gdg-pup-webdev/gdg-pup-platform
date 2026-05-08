@@ -129,6 +129,7 @@ jobs:
           env-vars: "ZEPTOMAIL_TOKEN=${{ secrets.ZEPTOMAIL_TOKEN }},\
             ZEPTOMAIL_FROM_ADDRESS=${{ secrets.ZEPTOMAIL_FROM_ADDRESS }},\
             ZEPTOMAIL_FROM_NAME=${{ secrets.ZEPTOMAIL_FROM_NAME }},\
+            DEV_MODE=${{ needs.detect-changes.outputs.environment == 'prod' && 'false' || 'true' }},\
             HIDE_API_DOCS=${{ vars.HIDE_API_DOCS || secrets.HIDE_API_DOCS || 'false' }},\
             FILE_STORAGE_MAIN_PROVIDER=${{ vars.FILE_STORAGE_MAIN_PROVIDER || 'gcs' }},\
             GCP_PROJECT_ID=${{ vars.GCP_PROJECT_ID || secrets.GCP_PROJECT_ID || 'gdgpup-484914' }},\

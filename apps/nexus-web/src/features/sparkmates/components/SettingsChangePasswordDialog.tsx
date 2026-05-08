@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Modal, Button, Text, Input } from "@packages/spark-ui";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { useChangePasswordInitiate } from "../hooks/useChangePasswordInitiate";
 import { useChangePasswordFinalize } from "../hooks/useChangePasswordFinalize";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
@@ -109,8 +109,8 @@ export const SettingsChangePasswordDialog = ({
         const res = await initiatePasswordChange({
           data: {
             email,
-            pass: currentPassword,
-            newPass: newPassword,
+            password: currentPassword,
+            newPassword: newPassword,
           },
         });
         setReferenceCode(res.data.referenceCode);

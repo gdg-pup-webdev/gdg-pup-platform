@@ -11,6 +11,7 @@ import { FrostedContentContainer } from "./frosted-content-container";
 export function SparkStartsHereSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const bulletColors = ["#4285F4", "#F9AB00", "#34A853", "#EA4335"];
 
   return (
     <section
@@ -50,8 +51,10 @@ export function SparkStartsHereSection() {
                   >
                     Your Spark Starts Here.
                   </Text>
-                  <Button asChild variant="colored" subVariant="yellow" size="lg">
-                  <Link prefetch={false} href="/signin">Spark your Journey</Link>
+                  <Button asChild variant="colored" subVariant="blue" size="lg">
+                    <Link prefetch={false} href="/signin">
+                      Spark your Journey
+                    </Link>
                   </Button>
                 </Stack>
 
@@ -73,13 +76,10 @@ export function SparkStartsHereSection() {
 
                   <Stack className="gap-3.5">
                     <Inline>
-                      <Image
-                        src={ASSETS.HOME.BULLET_DIAMOND}
-                        alt="bullet point"
-                        width={16}
-                        height={16}
-                        draggable={false}
-                        className="pointer-events-none select-none"
+                      <span
+                        aria-hidden
+                        className="h-2.5 w-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: bulletColors[0] }}
                       />
                       <Text
                         align="left"
@@ -93,13 +93,10 @@ export function SparkStartsHereSection() {
                     </Inline>
 
                     <Inline>
-                      <Image
-                        src={ASSETS.HOME.BULLET_DIAMOND}
-                        alt="bullet point"
-                        width={16}
-                        height={16}
-                        draggable={false}
-                        className="pointer-events-none select-none"
+                      <span
+                        aria-hidden
+                        className="h-2.5 w-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: bulletColors[1] }}
                       />
                       <Text
                         align="left"
@@ -113,13 +110,10 @@ export function SparkStartsHereSection() {
                     </Inline>
 
                     <Inline>
-                      <Image
-                        src={ASSETS.HOME.BULLET_DIAMOND}
-                        alt="bullet point"
-                        width={16}
-                        height={16}
-                        draggable={false}
-                        className="pointer-events-none select-none"
+                      <span
+                        aria-hidden
+                        className="h-2.5 w-2.5 rounded-full shrink-0"
+                        style={{ backgroundColor: bulletColors[2] }}
                       />
                       <Text
                         align="left"

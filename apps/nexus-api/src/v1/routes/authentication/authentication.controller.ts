@@ -2,15 +2,25 @@ import { RequestHandler } from "express";
 import { AuthenticationController as AuthModuleController } from "@/v1/modules/authentication/AuthenticationController.js";
 import { contract } from "@packages/nexus-api-contracts";
 import { createExpressController } from "@packages/typed-rest/serverExpress";
+import { BadRequestError } from "@/v1/errors/HttpError.js";
 
 export class AuthenticationHttpController {
   constructor(private readonly moduleController: AuthModuleController) {}
 
   public refreshToken: RequestHandler = createExpressController(
     contract.api.v1.authentication.refresh.POST,
-    async ({ input, output }) => {
-      const { token } = input.body.data;
+    async ({ input, output, ctx }) => {
+      const token = ctx.req.token || ctx.req.cookies?.token || input.body.data?.token;
+      if (!token) throw new Error("No token provided for refresh");
+      
       const newToken = await this.moduleController.refreshToken(token);
+      
+      ctx.res.cookie("token", newToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
       
       return output(200, {
         status: "success",
@@ -23,8 +33,8 @@ export class AuthenticationHttpController {
   public initiateCreateNewUser: RequestHandler = createExpressController(
     contract.api.v1.authentication.signup.initiate.POST,
     async ({ input, output }) => {
-      const { email, pass } = input.body.data;
-      const result = await this.moduleController.initiateCreateNewUser({ email, pass });
+      const { email, password } = input.body.data;
+      const result = await this.moduleController.initiateCreateNewUser({ email, pass: password });
       
       return output(200, {
         status: "success",
@@ -50,9 +60,17 @@ export class AuthenticationHttpController {
 
   public login: RequestHandler = createExpressController(
     contract.api.v1.authentication.login.POST,
-    async ({ input, output }) => {
-      const { email, pass } = input.body.data;
-      const result = await this.moduleController.login({ email, pass });
+    async ({ input, output, ctx }) => {
+      const { email, password } = input.body.data;
+      const result = await this.moduleController.login({ email, pass: password! });
+      
+      // Set the token as an HttpOnly, Secure, SameSite cookie
+      ctx.res.cookie("token", result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
       
       return output(200, {
         status: "success",
@@ -96,8 +114,14 @@ export class AuthenticationHttpController {
 
   public logout: RequestHandler = createExpressController(
     contract.api.v1.authentication.logout.POST,
-    async ({ output }) => {
+    async ({ output, ctx }) => {
       const result = await this.moduleController.logout();
+      
+      ctx.res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
       
       return output(200, {
         status: "success",
@@ -111,8 +135,8 @@ export class AuthenticationHttpController {
   public initiateChangePassword: RequestHandler = createExpressController(
     contract.api.v1.authentication.password.change.initiate.POST,
     async ({ input, output }) => {
-      const { email, pass, newPass } = input.body.data;
-      const result = await this.moduleController.initiateChangePassword({ email, pass, newPass });
+      const { email, password, newPassword } = input.body.data;
+      const result = await this.moduleController.initiateChangePassword({ email, pass: password, newPass: newPassword });
       
       return output(200, {
         status: "success",
@@ -153,8 +177,8 @@ export class AuthenticationHttpController {
   public finalizeForgotPassword: RequestHandler = createExpressController(
     contract.api.v1.authentication.password.forgot.finalize.POST,
     async ({ input, output }) => {
-      const { referenceCode, otp, newPass } = input.body.data;
-      const result = await this.moduleController.finalizeForgotPassword({ referenceCode, otp, newPass });
+      const { referenceCode, otp, newPassword } = input.body.data;
+      const result = await this.moduleController.finalizeForgotPassword({ referenceCode, otp, newPass: newPassword });
       
       return output(200, {
         status: "success",
@@ -181,10 +205,10 @@ export class AuthenticationHttpController {
   public initiateChangeEmail: RequestHandler = createExpressController(
     contract.api.v1.authentication.email.change.initiate.POST,
     async ({ input, output }) => {
-      const { email, pass, newEmail } = input.body.data;
+      const { email, password, newEmail } = input.body.data;
       if (!email) throw new Error("Email must be provided");
       
-      const result = await this.moduleController.initiateChangeEmail({ email, pass, newEmail });
+      const result = await this.moduleController.initiateChangeEmail({ email, pass: password, newEmail });
       
       return output(200, {
         status: "success",

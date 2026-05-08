@@ -444,4 +444,240 @@ html.lenis {
   background: rgba(15, 14, 14, 0.9);
 }
 
+/* ── React-Toastify — Nexus Brand Overrides ────────────────────────────── */
+
+/* Custom slide-up-fade entry/exit animation */
+@keyframes nexusToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes nexusToastOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+}
+
+/* Container shell */
+.Toastify__toast {
+  background: rgba(10, 10, 12, 0.82) !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.4),
+    0 12px 32px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset !important;
+  font-family: "Google Sans", system-ui, -apple-system, sans-serif !important;
+  font-size: 0.875rem !important;
+  color: rgba(255, 255, 255, 0.90) !important;
+  padding: 0 !important;
+  min-height: unset !important;
+  overflow: hidden !important;
+  cursor: default !important;
+  /* No animation here — let toastify control enter/exit via its own classes */
+  transition: transform 180ms ease, box-shadow 180ms ease !important;
+}
+
+/* Hook into toastify's slide transition classes for bottom-right */
+.Toastify__slide-enter--bottom-right,
+.Toastify__slide-enter--top-right {
+  animation: nexusToastIn 280ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+}
+
+.Toastify__slide-exit--bottom-right,
+.Toastify__slide-exit--top-right {
+  animation: nexusToastOut 220ms ease-in forwards !important;
+}
+
+.Toastify__toast--close-on-click:active {
+  transform: scale(0.98) !important;
+}
+
+/* Hover lift effect */
+.Toastify__toast:hover {
+  transform: translateY(-2px) !important;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.45),
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
+}
+
+/* Type-specific hover glow (uses --nexus-accent set inline) */
+.Toastify__toast--success:hover {
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.45),
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(52, 168, 83, 0.12) !important;
+}
+
+.Toastify__toast--error:hover {
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.45),
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(234, 67, 53, 0.12) !important;
+}
+
+.Toastify__toast--warning:hover {
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.45),
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(249, 171, 0, 0.12) !important;
+}
+
+.Toastify__toast--info:hover {
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.45),
+    0 16px 40px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(43, 127, 255, 0.12) !important;
+}
+
+/* Hide default body wrapper padding */
+.Toastify__toast-body {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Progress bar — Nexus brand gradient */
+.Toastify__progress-bar {
+  background: linear-gradient(90deg, #2b7fff 0%, #a855f7 55%, #ec4899 100%) !important;
+  opacity: 1 !important;
+  height: 2px !important;
+  border-radius: 0 !important;
+}
+
+.Toastify__progress-bar--bg {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Type-specific progress bar colours */
+.Toastify__toast--success .Toastify__progress-bar {
+  background: linear-gradient(90deg, #34a853, #2b7fff) !important;
+}
+
+.Toastify__toast--error .Toastify__progress-bar {
+  background: linear-gradient(90deg, #ea4335, #f9ab00) !important;
+}
+
+.Toastify__toast--warning .Toastify__progress-bar {
+  background: linear-gradient(90deg, #f9ab00, #ea4335) !important;
+}
+
+.Toastify__toast--info .Toastify__progress-bar {
+  background: linear-gradient(90deg, #2b7fff, #a855f7) !important;
+}
+
+/* ── NexusToast inner layout ─────────────────────────────────────────────── */
+
+/* Force the body wrapper to be a plain block so our inner flex takes over */
+.Toastify__toast-body {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  flex: 1 !important;
+}
+
+.nexus-toast-inner {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px;
+  padding: 13px 14px 13px 0;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Left accent bar */
+.nexus-toast-accent-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 16px 0 0 16px;
+  background: var(--nexus-accent, #2b7fff);
+  box-shadow: 0 0 8px var(--nexus-accent, #2b7fff);
+  flex-shrink: 0;
+}
+
+/* Icon pill */
+.nexus-toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* Text block */
+.nexus-toast-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.nexus-toast-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--nexus-accent, #2b7fff);
+  margin: 0;
+  line-height: 1;
+}
+
+.nexus-toast-message {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  line-height: 1.45;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Close button */
+.nexus-toast-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms ease, color 150ms ease;
+  padding: 0;
+  margin-right: 4px;
+}
+
+.nexus-toast-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.80);
+}
+
+
+
 

@@ -2,7 +2,7 @@ import {cz as z} from "@packages/typed-rest/shared";
 
 export const initiateCreateNewUserRequest = z.object({
   email: z.string().email(),
-  pass: z.string().min(8),
+  password: z.string().min(8),
 });
 
 export const initiateCreateNewUserResponse = z.object({
@@ -20,7 +20,10 @@ export const finalizeCreateNewUserResponse = z.object({
 
 export const loginRequest = z.object({
   email: z.string().email(),
-  pass: z.string(),
+  password: z.string().min(1).optional(),
+}).refine((data) => !!data.password, {
+  message: "Password is required",
+  path: ["password"],
 });
 
 export const loginResponse = z.object({
@@ -28,15 +31,15 @@ export const loginResponse = z.object({
 });
 
 export const verifyTokenRequest = z.object({
-  token: z.string(),
+  token: z.string().nullable().optional(),
 });
 
 export const verifyTokenResponse = z.boolean();
 
 export const initiateChangePasswordRequest = z.object({
   email: z.string().email(),
-  pass: z.string(),
-  newPass: z.string().min(8),
+  password: z.string(),
+  newPassword: z.string().min(8),
 });
 
 export const initiateChangePasswordResponse = z.object({
@@ -63,7 +66,7 @@ export const initiateForgotPasswordResponse = z.object({
 export const finalizeForgotPasswordRequest = z.object({
   referenceCode: z.string(),
   otp: z.string(),
-  newPass: z.string().min(8),
+  newPassword: z.string().min(8),
 });
 
 export const finalizeForgotPasswordResponse = z.object({
@@ -72,7 +75,7 @@ export const finalizeForgotPasswordResponse = z.object({
 
 export const initiateChangeEmailRequest = z.object({
   email: z.string().email().optional(), // Adjust based on token or body
-  pass: z.string(),
+  password: z.string(),
   newEmail: z.string().email(),
 });
 
@@ -99,7 +102,7 @@ export const resendOtpResponse = z.object({
 
 export const deleteUserRequest = z.object({
   email: z.string().email().optional(), // Might come from token
-  pass: z.string().optional(),
+  password: z.string().optional(),
 });
 
 export const deleteUserResponse = z.object({
@@ -116,4 +119,3 @@ export const meResponse = z.object({
 export const logoutResponse = z.object({
   success: z.boolean(),
 });
-

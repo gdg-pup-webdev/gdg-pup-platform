@@ -7,7 +7,7 @@ import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
 
 export const useMe = () => {
   const { token} = useAuthContext();
-    const callEndpoint = useCallEndpointWithToken();
+  const callEndpoint = useCallEndpointWithToken();
 
   return useQuery({
     queryKey: ["auth-me", token],

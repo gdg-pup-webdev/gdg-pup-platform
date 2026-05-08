@@ -8,7 +8,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { activateCard } from "../api/activateCard";
 import type { CardActivationError } from "../types";
 

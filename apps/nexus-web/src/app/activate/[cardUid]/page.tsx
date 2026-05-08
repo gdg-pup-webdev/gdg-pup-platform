@@ -14,7 +14,7 @@
 import { configs } from "@/configs/servers.config";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/nexus-toast";
 import { ASSETS } from "@/lib/constants/assets";
 import { useAuthContext } from "@/features/authentication/store/useAuthStore";
 import { LoadingScreen } from "@/components/shared";
