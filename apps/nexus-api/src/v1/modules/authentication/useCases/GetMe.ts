@@ -27,6 +27,8 @@ export class GetMe {
       email: credential.props.emailAddress,
       display_name: credential.props.emailAddress, // Using username as display_name
       gdg_id: payload.props.memberInfo.gdgId,
+      roles: payload.props.roles,
+      permissions: payload.props.permissions,
     };
   }
 }
