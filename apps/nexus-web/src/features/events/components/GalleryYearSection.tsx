@@ -85,6 +85,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
     data: events,
     error: errorMessage,
     isLoading,
+    isFetching,
   } = useEvents({ year: parsedYear, pageSize });
 
   const visibleItems = useMemo(() => {
