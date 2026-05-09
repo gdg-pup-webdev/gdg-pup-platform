@@ -19,6 +19,10 @@ export const NfcScanRecordInsertDTO = NfcScanRecord.omit({
 export const NfcAnalyticsRecord = cz.object({
   date: cz.string().datetime(),
   totalScans: cz.number(),
+  dailyStats: cz.array(cz.object({
+    date: cz.string(),
+    count: cz.number(),
+  })),
   latestScans: cz.object({
     scans: cz.array(NfcScanRecord),
     pageNumber: cz.number(),
