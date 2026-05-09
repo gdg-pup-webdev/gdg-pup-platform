@@ -49,4 +49,53 @@ export class SupabaseProfileViewRepository implements IProfileViewRepository {
 
     return { list, count: count || 0 };
   }
+  async getDailyStats(
+    gdgId: string,
+    days: number,
+  ): Promise<{ date: string; count: number }[]> {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - (days - 1));
+    startDate.setHours(0, 0, 0, 0);
+
+    const { data, error } = await supabase
+      .from(this.table)
+      .select("date")
+      .eq("profileGdgId", gdgId)
+      .gte("date", startDate.toISOString());
+
+    if (error) handlePostgresError(error);
+
+    // Group by date (YYYY-MM-DD) in local time to avoid timezone offset issues
+    const statsMap = new Map<string, number>();
+    
+    const formatDate = (d: Date) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    // Initialize map with all days
+    for (let i = 0; i < days; i++) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + i);
+      statsMap.set(formatDate(d), 0);
+    }
+
+    // Count occurrences
+    (data || []).forEach((row: any) => {
+      const rowDate = new Date(row.date);
+      const dateStr = formatDate(rowDate);
+      if (statsMap.has(dateStr)) {
+        statsMap.set(dateStr, statsMap.get(dateStr)! + 1);
+      }
+    });
+
+    // Convert to array sorted by date
+    return Array.from(statsMap.entries()).map(([date, count]) => ({
+      date,
+      count,
+    })).sort((a, b) => a.date.localeCompare(b.date));
+  }
 }

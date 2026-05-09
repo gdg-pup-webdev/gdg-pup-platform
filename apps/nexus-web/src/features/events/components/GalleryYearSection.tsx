@@ -15,7 +15,7 @@ type GalleryYearSectionProps = {
   yearParam: string;
 };
 
-const FALLBACK_COVER = "/pages/events/event-cover.webp";
+const FALLBACK_COVER = "https://res.cloudinary.com/startup-grind/image/upload/c_scale,w_2560/c_crop,h_640,w_2560,y_0.0_mul_h_sub_0.0_mul_640/c_crop,h_640,w_2560/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-goog/event_banners/GDG_Bevy_DefaultEventBanner_VKOwYjb.png";
 
 function getHighlightsRouteId(event: Event): string {
   const candidate =
@@ -85,6 +85,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
     data: events,
     error: errorMessage,
     isLoading,
+    isFetching,
   } = useEvents({ year: parsedYear, pageSize });
 
   const visibleItems = useMemo(() => {
@@ -364,14 +365,14 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                   <article
                     key={`${event.id}-${event.start_date}-${event.title}`}
                   >
-                    <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[220px] md:min-h-[560px]">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black/50 w-full flex items-center justify-center">
                       <img
                         src={event.image_url || event.images?.[0] || FALLBACK_COVER}
                         alt={event.title}
-                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        className="w-full h-auto max-h-[75vh] object-contain object-center block"
                         draggable={false}
                       />
-                      <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent pointer-events-none" />
                     </div>
 
                     <div className="mt-5 md:mt-7">

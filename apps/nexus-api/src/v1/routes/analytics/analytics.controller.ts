@@ -28,6 +28,7 @@ export class AnalyticsHttpController {
         cardId: input.params.cardId,
         pageNumber: input.query.pageNumber,
         pageSize: input.query.pageSize,
+        days: (input.query as any).days, // Type cast since generated contract type might not be updated in this file yet
       });
       return output(200, {
         status: "success",
@@ -57,6 +58,7 @@ export class AnalyticsHttpController {
         gdgId: input.params.gdgId,
         pageNumber: input.query.pageNumber,
         pageSize: input.query.pageSize,
+        days: (input.query as any).days, // Type cast since generated contract type might not be updated in this file yet
       });
       return output(200, {
         status: "success",
