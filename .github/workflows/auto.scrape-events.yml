@@ -25,4 +25,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY }}
+          API_URL: ${{ secrets.API_URL }}
         run: npx tsx scripts/sync-gdg-events.ts
