@@ -11,4 +11,8 @@ export abstract class IProfileViewRepository {
     list: ProfileViewer[];
     count: number;
   }>;
+  abstract getDailyStats(
+    gdgId: string,
+    days: number,
+  ): Promise<{ date: string; count: number }[]>;
 }
