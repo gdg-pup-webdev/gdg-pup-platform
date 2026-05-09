@@ -17,6 +17,10 @@ export const ProfileViewRecordInsertDTO = ProfileViewRecord.omit({
 export const ProfileAnalyticsRecord = cz.object({
   date: cz.string().datetime(),
   totalViews: cz.number(),
+  dailyStats: cz.array(cz.object({
+    date: cz.string(),
+    count: cz.number(),
+  })),
   latestViews: cz.object({
     views: cz.array(ProfileViewRecord),
     pageNumber: cz.number(),

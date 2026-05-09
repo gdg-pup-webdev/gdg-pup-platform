@@ -202,6 +202,18 @@ export const AuthContextProvider = ({
   const logout = async () => {
     setState({ status: STATUS.LOGGINGOUT, error: null });
     try {
+      try {
+        await callEndpoint(
+          configs.nexusApiBaseUrl,
+          contract.api.v1.authentication.logout.POST,
+          {
+            ...(token ? { token } : {}),
+          } as any,
+        );
+      } catch (err) {
+        console.error("Backend logout failed:", err);
+      }
+
       clearToken();
       setState({ status: STATUS.UNAUTHENTICATED, error: null });
 

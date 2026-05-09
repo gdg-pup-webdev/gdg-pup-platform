@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { EventsQueryParams, EventFilters, Event } from "../types";
 import { useCallEndpointWithToken } from "@/hooks/useFetchWithToken";
@@ -65,6 +65,7 @@ export function useEvents(params: EventsQueryParams = {}) {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
     retry: 2,
+    placeholderData: keepPreviousData,
   });
 }
 
