@@ -154,6 +154,35 @@ async function syncEvents() {
     console.log(
       `Sync completed successfully! Upserted ${formattedEvents.length} events.`,
     );
+
+    // Trigger backend sync to update normalized event table
+    console.log("Triggering event sync to backend...");
+    const apiUrl = process.env.API_URL || "https://api.gdgpup.org";
+    const serviceApiKey = process.env.SERVICE_API_KEY;
+    
+    if (serviceApiKey) {
+      try {
+        const response = await fetch(`${apiUrl}/api/v1/events/syncAllToBevy`, {
+          method: "POST",
+          headers: {
+            "x-service-api-key": serviceApiKey,
+            "Content-Type": "application/json"
+          }
+        });
+        if (response.ok) {
+          console.log("Successfully synced events to the main event table via Nexus API.");
+        } else {
+          console.error(`Failed to sync events to backend. Status: ${response.status}`);
+          const text = await response.text();
+          console.error("Response:", text);
+        }
+      } catch (apiError: any) {
+        console.error("Error communicating with backend API:", apiError.message);
+      }
+    } else {
+      console.warn("SERVICE_API_KEY is not set. Skipping API sync.");
+    }
+
   } catch (error: any) {
     console.error("Failed to sync GDG events:", error.message);
     process.exit(1);

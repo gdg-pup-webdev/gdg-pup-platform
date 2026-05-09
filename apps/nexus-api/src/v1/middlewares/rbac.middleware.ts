@@ -8,6 +8,14 @@ export const requirePermissions = (
   return async (req, res, next) => {
     if (configs.security.disabled) return next();
 
+    // Bypass RBAC if a valid service API key is provided
+    if (
+      configs.security.serviceApiKey &&
+      req.headers["x-service-api-key"] === configs.security.serviceApiKey
+    ) {
+      return next();
+    }
+
     const user = req.decodedToken;
     if (!user) {
       throw new UnauthorizedError(
