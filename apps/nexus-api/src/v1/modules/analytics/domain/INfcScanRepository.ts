@@ -10,4 +10,8 @@ export abstract class INfcScanRepository {
     list: NfcScan[];
     count: number;
   }>;
+  abstract getDailyStats(
+    cardId: string,
+    days: number,
+  ): Promise<{ date: string; count: number }[]>;
 }

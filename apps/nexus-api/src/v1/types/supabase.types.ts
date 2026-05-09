@@ -1411,9 +1411,14 @@ export type Database = {
     Views: {
       flat_survey_data: {
         Row: {
+          certificate_url: string | null
           college: string | null
           comments_for_speakers: string | null
           created_at: string | null
+          email: string | null
+          event_id: string | null
+          gcp_credits: string | null
+          gdg_id: string | null
           id: string | null
           is_pupian: boolean | null
           missing_content: string | null
@@ -1428,13 +1433,19 @@ export type Database = {
           rating_speakers: number | null
           rating_subject: number | null
           suggestions: string | null
+          survey_id: string | null
           valuable_aspects: string | null
           year_level: string | null
         }
         Insert: {
+          certificate_url?: string | null
           college?: never
           comments_for_speakers?: never
           created_at?: string | null
+          email?: string | null
+          event_id?: string | null
+          gcp_credits?: never
+          gdg_id?: string | null
           id?: string | null
           is_pupian?: never
           missing_content?: never
@@ -1449,13 +1460,19 @@ export type Database = {
           rating_speakers?: never
           rating_subject?: never
           suggestions?: never
+          survey_id?: string | null
           valuable_aspects?: never
           year_level?: never
         }
         Update: {
+          certificate_url?: string | null
           college?: never
           comments_for_speakers?: never
           created_at?: string | null
+          email?: string | null
+          event_id?: string | null
+          gcp_credits?: never
+          gdg_id?: string | null
           id?: string | null
           is_pupian?: never
           missing_content?: never
@@ -1470,10 +1487,26 @@ export type Database = {
           rating_speakers?: never
           rating_subject?: never
           suggestions?: never
+          survey_id?: string | null
           valuable_aspects?: never
           year_level?: never
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "survey_response_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "event"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survey_response_survey_id_fkey"
+            columns: ["survey_id"]
+            isOneToOne: false
+            referencedRelation: "survey"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {

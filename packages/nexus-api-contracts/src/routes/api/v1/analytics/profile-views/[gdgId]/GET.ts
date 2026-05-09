@@ -5,7 +5,9 @@ export const params = cz.object({
   gdgId: cz.string(),
 });
 
-export const query = OpenApiSchemas.Request.Query.paginated();
+export const query = OpenApiSchemas.Request.Query.paginated().extend({
+  days: cz.coerce.number().optional().default(7),
+});
 
 export const response = {
   200: OpenApiSchemas.Response.single(ProfileAnalyticsRecord),

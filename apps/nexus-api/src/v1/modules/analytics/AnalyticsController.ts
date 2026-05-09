@@ -17,12 +17,14 @@ export class AnalyticsController {
     cardId: string;
     pageNumber?: number;
     pageSize?: number;
+    days?: number;
   }) {
     const analytics = await this.getNfcAnalyticsUseCase.execute(props);
 
     return {
       date: analytics.date,
       totalScans: analytics.totalScans,
+      dailyStats: analytics.dailyStats,
       latestScans: {
         scans: analytics.latestScans.scans.map((scan) => ({
           id: scan.props.id,
@@ -43,16 +45,19 @@ export class AnalyticsController {
     gdgId: string;
     pageNumber?: number;
     pageSize?: number;
+    days?: number;
   }) {
     const analytics = await this.getProfileAnalyticsUseCase.execute({
         gdgId: props.gdgId,
         pageNumber: props.pageNumber,
-        pageSize: props.pageSize
+        pageSize: props.pageSize,
+        days: props.days,
     });
 
     return {
       date: analytics.date,
       totalViews: analytics.totalViews,
+      dailyStats: analytics.dailyStats,
       latestViews: {
         views: analytics.latestViews.views.map((view) => ({
           id: view.props.id,

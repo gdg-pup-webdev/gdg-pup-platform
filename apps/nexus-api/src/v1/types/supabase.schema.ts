@@ -1460,9 +1460,14 @@ export const publicWalletTransactionUpdateSchema = z.object({
 });
 
 export const publicFlatSurveyDataRowSchema = z.object({
+  certificate_url: z.string().nullable(),
   college: z.string().nullable(),
   comments_for_speakers: z.string().nullable(),
   created_at: z.string().nullable(),
+  email: z.string().nullable(),
+  event_id: z.string().nullable(),
+  gcp_credits: z.string().nullable(),
+  gdg_id: z.string().nullable(),
   id: z.string().nullable(),
   is_pupian: z.boolean().nullable(),
   missing_content: z.string().nullable(),
@@ -1477,14 +1482,20 @@ export const publicFlatSurveyDataRowSchema = z.object({
   rating_speakers: z.number().nullable(),
   rating_subject: z.number().nullable(),
   suggestions: z.string().nullable(),
+  survey_id: z.string().nullable(),
   valuable_aspects: z.string().nullable(),
   year_level: z.string().nullable(),
 });
 
 export const publicFlatSurveyDataInsertSchema = z.object({
+  certificate_url: z.string().optional().nullable(),
   college: z.never().optional(),
   comments_for_speakers: z.never().optional(),
   created_at: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  event_id: z.string().optional().nullable(),
+  gcp_credits: z.never().optional(),
+  gdg_id: z.string().optional().nullable(),
   id: z.string().optional().nullable(),
   is_pupian: z.never().optional(),
   missing_content: z.never().optional(),
@@ -1499,14 +1510,20 @@ export const publicFlatSurveyDataInsertSchema = z.object({
   rating_speakers: z.never().optional(),
   rating_subject: z.never().optional(),
   suggestions: z.never().optional(),
+  survey_id: z.string().optional().nullable(),
   valuable_aspects: z.never().optional(),
   year_level: z.never().optional(),
 });
 
 export const publicFlatSurveyDataUpdateSchema = z.object({
+  certificate_url: z.string().optional().nullable(),
   college: z.never().optional(),
   comments_for_speakers: z.never().optional(),
   created_at: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  event_id: z.string().optional().nullable(),
+  gcp_credits: z.never().optional(),
+  gdg_id: z.string().optional().nullable(),
   id: z.string().optional().nullable(),
   is_pupian: z.never().optional(),
   missing_content: z.never().optional(),
@@ -1521,9 +1538,27 @@ export const publicFlatSurveyDataUpdateSchema = z.object({
   rating_speakers: z.never().optional(),
   rating_subject: z.never().optional(),
   suggestions: z.never().optional(),
+  survey_id: z.string().optional().nullable(),
   valuable_aspects: z.never().optional(),
   year_level: z.never().optional(),
 });
+
+export const publicFlatSurveyDataRelationshipsSchema = z.tuple([
+  z.object({
+    foreignKeyName: z.literal("survey_response_event_id_fkey"),
+    columns: z.tuple([z.literal("event_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("event"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+  z.object({
+    foreignKeyName: z.literal("survey_response_survey_id_fkey"),
+    columns: z.tuple([z.literal("survey_id")]),
+    isOneToOne: z.literal(false),
+    referencedRelation: z.literal("survey"),
+    referencedColumns: z.tuple([z.literal("id")]),
+  }),
+]);
 
 export const publicGetSparkmatesAnalyticsArgsSchema = z.object({
   p_gdg_id: z.string(),
