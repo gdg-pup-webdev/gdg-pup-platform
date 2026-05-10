@@ -7,12 +7,19 @@ export const loadCors = (app: Express) => {
   app.set("trust proxy", 1);
 
   const allowedOrigins = new Set<string>([
-    "http://localhost:3000",
-    "http://localhost:3100",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3100",
     "https://gdg-pup-platform-nexus-admin-web.vercel.app",
+    "https://dev.admin.gdgpup.org",
+    "https://staging.admin.gdgpup.org",
+    "https://admin.gdgpup.org",
   ]);
+
+  // Only allow localhost origins during development
+  if (configs.devMode) {
+    allowedOrigins.add("http://localhost:3000");
+    allowedOrigins.add("http://localhost:3100");
+    allowedOrigins.add("http://127.0.0.1:3000");
+    allowedOrigins.add("http://127.0.0.1:3100");
+  }
 
   // CLIENT_URL supports comma-separated or pipe-separated origins, e.g.:
   //   https://dev.gdgpup.org|https://admin.dev.gdgpup.org

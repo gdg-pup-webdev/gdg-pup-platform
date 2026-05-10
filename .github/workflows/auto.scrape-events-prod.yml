@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install @supabase/supabase-js tsx dotenv
@@ -25,4 +25,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL_PROD }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY_PROD }}
+          SERVICE_API_KEY: ${{ secrets.SERVICE_API_KEY_PROD }}
+          API_URL: ${{ secrets.API_URL_PROD }}
         run: npx tsx scripts/sync-gdg-events.ts

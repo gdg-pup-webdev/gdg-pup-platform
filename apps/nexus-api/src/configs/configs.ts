@@ -45,6 +45,7 @@ export const configs = {
   },
   security: {
     disabled: process.env.SECURITY_DISABLED === "true" || false,
+    serviceApiKey: process.env.SERVICE_API_KEY,
   },
   hideApiDocs: process.env.HIDE_API_DOCS === "true" || false,
 };
