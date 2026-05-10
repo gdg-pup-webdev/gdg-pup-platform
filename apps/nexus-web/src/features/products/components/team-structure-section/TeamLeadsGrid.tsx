@@ -6,7 +6,7 @@ interface TeamLeadsGridProps {
 }
 
 const TEAM_SLUG_ALIASES: Record<string, string> = {
-  executives: "tech-executives",
+  community: "tech-executives",
 };
 
 export function TeamLeadsGrid({ teamSlug }: TeamLeadsGridProps) {

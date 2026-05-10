@@ -64,6 +64,7 @@ export class EventSystemController {
       bevy_event_id: event.props.bevy_event_id,
       bevyPreviewUrl: event.props.bevyPreviewUrl,
       image_url: event.props.image_url,
+      image_square_url: event.props.image_square_url,
       images: [...event.props.images],
       tags: event.props.tags,
       max_capacity: event.props.max_capacity,

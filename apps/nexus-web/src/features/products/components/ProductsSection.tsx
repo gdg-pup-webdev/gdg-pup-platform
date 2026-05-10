@@ -1,7 +1,6 @@
 "use client";
 
 import { Container, Stack, Text } from "@packages/spark-ui";
-import { ProductsBreadcrumbs } from "./products-section/ProductsBreadcrumbs";
 import { ResourceLibraryGrid } from "./products-section/ResourceLibraryGrid";
 import { GdgProductsGrid } from "./products-section/GdgProductsGrid";
 
@@ -61,8 +60,6 @@ export function ProductsSection() {
 
       <Container className="max-w-7xl">
         <Stack gap="lg" className="relative z-10">
-          <ProductsBreadcrumbs />
-
           <Text
             variant="heading-1"
             gradient="white-blue"

@@ -7,6 +7,22 @@ type BasicInfoFieldsProps = {
   updateField: (field: keyof FormState, value: string | boolean | null) => void;
 };
 
+const DEPARTMENTS = [
+  "Administrative",
+  "Marketing",
+  "Creatives",
+  "Operations",
+  "Community Relations",
+  "Partnerships",
+  "Project Management",
+  "Web Development",
+  "UI/UX",
+  "Cybersecurity",
+  "Cloud Solutions",
+  "Data and ML",
+  "Internet of Things",
+];
+
 export function BasicInfoFields({ form, updateField }: BasicInfoFieldsProps) {
   return (
     <div className="grid gap-5 sm:grid-cols-2">
@@ -38,13 +54,27 @@ export function BasicInfoFields({ form, updateField }: BasicInfoFieldsProps) {
       </div>
       <div className="sm:col-span-2 space-y-2">
         <label className="text-sm font-medium text-zinc-300">Department</label>
-        <Input
-          value={form.department}
-          onChange={(event) => updateField("department", event.target.value)}
-          placeholder="e.g. Marketing Department"
-          containerClassName="bg-zinc-900/50! border-zinc-700/80! hover:border-zinc-600! focus-within:border-blue-500/50!"
-          className="text-white! py-3"
-        />
+        <div className="relative">
+          <select
+            value={form.department}
+            onChange={(event) => updateField("department", event.target.value)}
+            className="w-full appearance-none rounded-xl border border-zinc-700/80 bg-zinc-900/50 px-4 py-3 text-zinc-200 outline-none transition-all hover:border-zinc-600 focus:border-blue-500/50 focus:bg-zinc-900/80 focus:ring-4 focus:ring-blue-500/10"
+          >
+            <option value="" disabled>
+              Select a department
+            </option>
+            {DEPARTMENTS.map((dept) => (
+              <option key={dept} value={dept} className="bg-zinc-900 text-zinc-200">
+                {dept}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-400">
+            <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
+          </div>
+        </div>
       </div>
       <div className="sm:col-span-2 space-y-2">
         <label className="text-sm font-medium text-zinc-300">Program</label>
