@@ -59,20 +59,22 @@ export function DesktopShowcase({ onOpenModal, events }: DesktopShowcaseProps) {
           {/* Section heading */}
           <Stack gap="md" className="items-center">
             <Text
+              as="h1"
               variant="heading-1"
               gradient="white-blue"
               align="center"
               weight="bold"
-              className="z-20"
+              className="text-5xl md:text-6xl lg:text-7xl z-20"
               style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))' }}
             >
               Community Showcase
             </Text>
             <Text
-              as="h2"
-              variant="body"
+              as="p"
+              variant="body-lg"
               align="center"
-              className="text-white z-10 text-sm md:text-base"
+              weight="bold"
+              className="text-white text-base md:text-lg lg:max-w-none z-10"
               style={{ textShadow: '0 0 24px rgba(0,0,0,1), 0 2px 12px rgba(0,0,0,0.9)' }}
             >
               Discover what our community has been building together.
