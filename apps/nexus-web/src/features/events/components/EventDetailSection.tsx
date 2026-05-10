@@ -358,25 +358,16 @@ export function EventDetailSection({
                     {keyThemes.length > 0 ? (
                       keyThemes.slice(0, 6).map((theme) => (
                         <span key={theme}>
-                          <span
-                            className="inline-flex md:hidden w-fit rounded-full p-[1px]"
-                            style={{
-                              background:
-                                "linear-gradient(90deg, rgba(234,67,53,1) 0%, rgba(249,171,0,1) 33%, rgba(52,168,83,1) 66%, rgba(66,133,244,1) 100%)",
-                            }}
-                          >
-                            <span
-                              className="inline-flex rounded-full text-white text-[11px] px-2.5 py-0.5"
-                              style={{
-                                backgroundColor: "rgba(0, 0, 0, 0.82)",
-                                backgroundImage: "none",
-                              }}
-                            >
+                          <span className="inline-flex md:hidden w-fit rounded-full p-px bg-[linear-gradient(90deg,#EA4335,#F9AB00_33%,#34A853_66%,#4285F4)]">
+                            <span className="inline-flex rounded-full text-white text-[11px] px-2.5 py-0.5 bg-black/[.82]">
                               {theme}
                             </span>
                           </span>
-                          <span className="hidden md:inline-flex w-fit rounded-md bg-white text-black px-3 py-1 text-sm">
-                            {theme}
+
+                          <span className="hidden md:inline-flex w-fit rounded-md p-px bg-[linear-gradient(90deg,#EA4335,#F9AB00_33%,#34A853_66%,#4285F4)]">
+                            <span className="inline-flex rounded-md text-white text-sm px-3 py-1 bg-black/[.82]">
+                              {theme}
+                            </span>
                           </span>
                         </span>
                       ))
