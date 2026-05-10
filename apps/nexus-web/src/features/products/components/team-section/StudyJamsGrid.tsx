@@ -13,7 +13,7 @@ const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
   cybersecurity: "Cybersecurity",
   "data-ml": "Data/ML",
-  executives: "Executives",
+  community: "Community",
   iot: "IoT",
   "project-management": "Project Management",
   "ui-ux": "UI/UX",
@@ -78,7 +78,9 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
                   : "Study Jam"
               }
               description={getDescriptionPreview(studyjam.description)}
-              onClick={() => {router.push(`/events/${studyjam.id}`)}}
+              onClick={() => {
+                router.push(`/events/${studyjam.id}`);
+              }}
               category={
                 <>
                   {studyjam.tags &&

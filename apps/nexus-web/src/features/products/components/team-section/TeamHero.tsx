@@ -9,7 +9,7 @@ const TEAM_IMAGES: Record<string, string> = {
   cybersecurity: "/products/cybersecurity-logo.webp",
   "cloud-solutions": "/products/cloud-solutions-logo.webp",
   "project-management": "/products/project-management-logo.webp",
-  executives: "/products/executives-logo.webp",
+  community: "/products/community-logo.webp",
 };
 
 const TEAM_GLOW_COLORS: Record<string, string> = {
@@ -20,7 +20,7 @@ const TEAM_GLOW_COLORS: Record<string, string> = {
   "data-ml": "#4285F4",
   "cloud-solutions": "#EA4335",
   "project-management": "#34A853",
-  executives: "#F9AB00",
+  community: "#F9AB00",
 };
 
 type GlowSize = {
@@ -29,13 +29,7 @@ type GlowSize = {
   lg: string;
 };
 
-const TEAM_GLOW_SIZES: Record<string, GlowSize> = {
-  executives: {
-    base: "420px",
-    md: "280px",
-    lg: "350px",
-  },
-};
+const TEAM_GLOW_SIZES: Record<string, GlowSize> = {};
 
 interface TeamHeroProps {
   teamName: string;
@@ -54,29 +48,62 @@ export function TeamHero({ teamName, teamSlug }: TeamHeroProps) {
   return (
     <div className="relative w-full mt-20 flex flex-col items-center">
       {/* Main image */}
-      <div className="relative w-full flex justify-center items-center">
-        {/* Amber glow — radial-gradient, no CPU/GPU blur */}
+      <div className="relative w-full flex justify-center items-center overflow-visible">
         <div
           className="
-    absolute rounded-full pointer-events-none z-[11]
-    w-[var(--glow-size)] h-[var(--glow-size)]
-    md:w-[var(--glow-size-md)] md:h-[var(--glow-size-md)]
-    lg:w-[var(--glow-size-lg)] lg:h-[var(--glow-size-lg)]
-  "
+        absolute left-1/2 top-1/2 rounded-full pointer-events-none z-[1]
+        w-[var(--glow-size)] h-[var(--glow-size)]
+        md:w-[var(--glow-size-md)] md:h-[var(--glow-size-md)]
+        lg:w-[var(--glow-size-lg)] lg:h-[var(--glow-size-lg)]
+      "
           style={{
-            background: `radial-gradient(ellipse at center, ${glowColor}99 0%, ${glowColor}55 35%, ${glowColor}22 60%, transparent 75%)`,
-            transform: "translateZ(0)",
+            background: `
+          radial-gradient(
+            ellipse 75% 65% at 50% 48%,
+            ${glowColor}55 0%,
+            ${glowColor}28 30%,
+            ${glowColor}12 58%,
+            transparent 82%
+          ),
+          radial-gradient(
+            ellipse 50% 40% at 28% 70%,
+            #ff3b3055 0%,
+            #ff3b3022 45%,
+            transparent 75%
+          ),
+          radial-gradient(
+            ellipse 50% 38% at 74% 68%,
+            #ffb34744 0%,
+            #ffb34718 45%,
+            transparent 75%
+          ),
+          radial-gradient(
+            ellipse 90% 35% at 50% 95%,
+            #7666ff38 0%,
+            #7666ff14 45%,
+            transparent 80%
+          )
+        `,
+            filter: "blur(22px)",
+            opacity: 1,
+            transform: "translate(-50%, -50%) translateZ(0) scale(1.45)",
+
             ["--glow-size" as string]: glowSize.base,
             ["--glow-size-md" as string]: glowSize.md,
             ["--glow-size-lg" as string]: glowSize.lg,
           }}
         />
+
         <Image
           src={imageSrc}
           alt={`${teamName} team`}
           width={900}
           height={500}
-          className="w-full max-w-[250px] md:max-w-[350px] lg:max-w-[400px] rounded-2xl object-cover relative z-12"
+          className={
+            teamSlug === "community"
+              ? "w-[250px] h-[250px] md:w-[350px] md:h-[350px] lg:w-[400px] lg:h-[400px] rounded-full object-cover relative z-12"
+              : "w-full max-w-[250px] md:max-w-[350px] lg:max-w-[400px] rounded-2xl object-cover relative z-12"
+          }
         />
       </div>
 
@@ -87,7 +114,7 @@ export function TeamHero({ teamName, teamSlug }: TeamHeroProps) {
           alt=""
           width={1200}
           height={600}
-          className="w-full h-auto  opacity-50 lg:opacity-30"
+          className="w-full h-auto mix-blend-screen opacity-50 lg:opacity-30 blur-[50px]"
         />
       </div>
 

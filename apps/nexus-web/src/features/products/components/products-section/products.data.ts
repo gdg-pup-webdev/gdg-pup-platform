@@ -56,11 +56,11 @@ export const RESOURCE_LIBRARY = [
     image: "/products/web-development-logo.webp",
   },
   {
-    header: "Executives",
-    body: "Executives",
+    header: "Community",
+    body: "Community",
     variant: "heading-2",
     gradient: "white-yellow",
-    href: "/products/executives",
-    image: "/products/executives-logo.webp",
+    href: "/products/community",
+    image: "/products/community-logo.webp",
   },
 ] as const;
