@@ -23,7 +23,7 @@ const TEAM_IMAGES: Record<string, string> = {
   cybersecurity: "/products/cybersecurity-logo.webp",
   "cloud-solutions": "/products/cloud-solutions-logo.webp",
   "project-management": "/products/project-management-logo.webp",
-  executives: "/products/executives-logo.webp",
+  community: "/products/community-logo.webp",
 };
 
 const TEAM_GLOW_COLORS: Record<string, string> = {
@@ -34,7 +34,7 @@ const TEAM_GLOW_COLORS: Record<string, string> = {
   "data-ml": "#4285F4",
   "cloud-solutions": "#EA4335",
   "project-management": "#34A853",
-  executives: "#F9AB00",
+  community: "#F9AB00",
 };
 
 type GlowSize = {
@@ -43,13 +43,7 @@ type GlowSize = {
   lg: string;
 };
 
-const TEAM_GLOW_SIZES: Record<string, GlowSize> = {
-  executives: {
-    base: "420px",
-    md: "280px",
-    lg: "350px",
-  },
-};
+const TEAM_GLOW_SIZES: Record<string, GlowSize> = {};
 
 const TEAM_TITLE_GRADIENTS: Record<string, TeamTitleGradient> = {
   "ui-ux": "white-yellow",
@@ -59,7 +53,7 @@ const TEAM_TITLE_GRADIENTS: Record<string, TeamTitleGradient> = {
   "data-ml": "white-blue",
   "cloud-solutions": "white-red",
   "project-management": "white-green",
-  executives: "white-yellow",
+  community: "white-yellow",
 };
 
 export function TeamStructureSection({
@@ -78,7 +72,7 @@ export function TeamStructureSection({
   const hideSupportGroup = teamSlug === "project-management";
 
   return (
-    <div className="relative overflow-x-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
+    <div className="relative overflow-x-hidden overflow-y-hidden pt-28 md:pt-36 lg:pt-44 pb-48 px-4 md:px-8 lg:px-16">
       {/* Background layers */}
       <img
         src="/products/rl-space-bg-3-3.webp"
@@ -119,7 +113,8 @@ export function TeamStructureSection({
           height: "min(1000px, 85vh)",
           top: "calc(4rem - 400px)",
           left: "max(calc((100vw - 80rem) / 2 - 100px), -100px)",
-          background: "radial-gradient(ellipse at center, #4285F440 0%, #4285F420 40%, transparent 70%)",
+          background:
+            "radial-gradient(ellipse at center, #4285F440 0%, #4285F420 40%, transparent 70%)",
           transform: "translateZ(0)",
           zIndex: 0,
         }}
@@ -131,7 +126,8 @@ export function TeamStructureSection({
           height: "min(1100px, 90vh)",
           top: "calc(4rem + 200px)",
           right: "max(calc((100vw - 80rem) / 2 - 400px), -200px)",
-          background: "radial-gradient(ellipse at center, #34A85340 0%, #34A85320 40%, transparent 70%)",
+          background:
+            "radial-gradient(ellipse at center, #34A85340 0%, #34A85320 40%, transparent 70%)",
           transform: "translateZ(0)",
           zIndex: 0,
         }}
@@ -171,29 +167,63 @@ export function TeamStructureSection({
 
             {/* Team image + spirals */}
             <div className="relative w-full mt-20 flex flex-col items-center">
-              {/* Amber Glow — radial-gradient, no CPU/GPU blur */}
-              <div className="relative w-full flex justify-center items-center">
+              <div className="relative w-full flex justify-center items-center overflow-visible">
                 <div
                   className="
-    absolute rounded-full pointer-events-none z-[11]
-    w-[var(--glow-size)] h-[var(--glow-size)]
-    md:w-[var(--glow-size-md)] md:h-[var(--glow-size-md)]
-    lg:w-[var(--glow-size-lg)] lg:h-[var(--glow-size-lg)]
-  "
+        absolute left-1/2 top-1/2 rounded-full pointer-events-none z-[1]
+        w-[var(--glow-size)] h-[var(--glow-size)]
+        md:w-[var(--glow-size-md)] md:h-[var(--glow-size-md)]
+        lg:w-[var(--glow-size-lg)] lg:h-[var(--glow-size-lg)]
+      "
                   style={{
-                    background: `radial-gradient(ellipse at center, ${glowColor}99 0%, ${glowColor}55 35%, ${glowColor}22 60%, transparent 75%)`,
-                    transform: "translateZ(0)",
+                    background: `
+          radial-gradient(
+            ellipse 75% 65% at 50% 48%,
+            ${glowColor}66 0%,
+            ${glowColor}38 30%,
+            ${glowColor}18 58%,
+            transparent 82%
+          ),
+          radial-gradient(
+            ellipse 50% 40% at 28% 70%,
+            #ff3b3055 0%,
+            #ff3b3022 45%,
+            transparent 75%
+          ),
+          radial-gradient(
+            ellipse 50% 38% at 74% 68%,
+            #ffb34744 0%,
+            #ffb34718 45%,
+            transparent 75%
+          ),
+          radial-gradient(
+            ellipse 90% 35% at 50% 95%,
+            #7666ff38 0%,
+            #7666ff14 45%,
+            transparent 80%
+          )
+        `,
+                    filter: "blur(22px)",
+                    opacity: 1,
+                    transform:
+                      "translate(-50%, -50%) translateZ(0) scale(1.45)",
+
                     ["--glow-size" as string]: glowSize.base,
                     ["--glow-size-md" as string]: glowSize.md,
                     ["--glow-size-lg" as string]: glowSize.lg,
                   }}
                 />
+
                 <Image
                   src={imageSrc}
                   alt={`${teamName} team`}
                   width={900}
                   height={500}
-                  className="w-full max-w-[250px] md:max-w-[350px] lg:max-w-[400px] rounded-2xl object-cover relative z-12"
+                  className={
+                    teamSlug === "community"
+                      ? "w-[250px] h-[250px] md:w-[350px] md:h-[350px] lg:w-[400px] lg:h-[400px] rounded-full object-cover relative z-12"
+                      : "w-full max-w-[250px] md:max-w-[350px] lg:max-w-[400px] rounded-2xl object-cover relative z-12"
+                  }
                 />
               </div>
 

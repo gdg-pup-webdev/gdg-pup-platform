@@ -22,6 +22,7 @@ export type EventProps = {
   rsvp: number | null;
   bevy_event_id: string | null;
   image_url: string | null;
+  image_square_url?: string | null;
   images: string[];
   bevyPreviewUrl: string | null;
 
@@ -39,10 +40,11 @@ export type EventProps = {
 
 export type EventPrototypeProps = Omit<
   EventProps,
-  "id" | "createdAt" | "updatedAt" | "attendees_count" | "rsvp" | "image_url" | "images"
+  "id" | "createdAt" | "updatedAt" | "attendees_count" | "rsvp" | "image_url" | "image_square_url" | "images"
 > & {
   rsvp?: number | null;
   image_url?: string | null;
+  image_square_url?: string | null;
   images?: string[];
 };
 
@@ -82,6 +84,7 @@ export class Event {
     return new Event({
       ...props,
       image_url: Event.sanitizeMainImage(props.image_url),
+      image_square_url: Event.sanitizeMainImage(props.image_square_url),
       images: Event.sanitizeImages(props.images || []),
     });
   }
@@ -92,11 +95,13 @@ export class Event {
 
   static create(props: EventPrototypeProps) {
     const image_url = Event.sanitizeMainImage(props.image_url);
+    const image_square_url = Event.sanitizeMainImage(props.image_square_url);
     const images = Event.sanitizeImages(props.images ?? []);
 
     return new Event({
       ...props,
       image_url,
+      image_square_url,
       images,
       id: crypto.randomUUID(),
       createdAt: new Date(),

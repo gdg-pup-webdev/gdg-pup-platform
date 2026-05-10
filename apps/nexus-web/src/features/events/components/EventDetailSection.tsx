@@ -265,16 +265,17 @@ export function EventDetailSection({
             <span>Back</span>
           </button>
 
-          <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[260px] md:min-h-[520px] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)]">
+          <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black shadow-[0_16px_40px_-12px_rgba(0,0,0,0.5)]">
             <img
               src={eventDetail?.image_url || eventDetail?.images?.[0] || "/pages/events/event-cover.webp"}
               alt={eventTitle}
-              className="absolute inset-0 h-full w-full object-cover object-center"
+              className="w-full h-auto object-contain md:object-cover"
+              style={{ minHeight: "260px" }}
               draggable={false}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent" />
             <div className="absolute z-10 left-4 top-11 md:left-10 md:top-14 max-w-[66%] md:max-w-[48%]">
-              <Text
+              {/* <Text
                 variant="heading-2"
                 weight="bold"
                 className="text-white text-[1.65rem] md:text-[4.75rem]"
@@ -285,7 +286,7 @@ export function EventDetailSection({
                 }}
               >
                 {primaryTitleDisplay}
-              </Text>
+              </Text> */}
               <div
                 className="mt-1 md:mt-2 h-[2px] w-40 md:w-56 rounded-full"
                 style={{

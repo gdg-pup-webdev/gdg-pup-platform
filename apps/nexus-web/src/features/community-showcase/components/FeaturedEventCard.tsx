@@ -61,7 +61,7 @@ const TRUNCATED_ABOUT =
           className="z-10"
           style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
         >
-          {new Date(event.end_date).toLocaleString("en-US", {
+          {new Date(event.start_date).toLocaleString("en-US", {
             month: "long",
             day: "numeric",
             year: "numeric",
