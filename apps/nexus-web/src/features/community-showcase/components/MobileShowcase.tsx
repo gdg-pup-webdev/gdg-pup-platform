@@ -114,11 +114,12 @@ export function MobileShowcase({ events }: { events: Event[] }) {
         {/* ── Section heading ── */}
         <Stack gap="md" className="items-center mb-12">
           <Text
-            variant="heading-4"
+            as="h1"
+            variant="heading-1"
             gradient="white-blue"
             align="center"
             weight="bold"
-            className="z-20"
+            className="text-5xl md:text-6xl lg:text-7xl z-20"
             style={{
               filter:
                 "drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))",
@@ -127,10 +128,14 @@ export function MobileShowcase({ events }: { events: Event[] }) {
             Community Showcase
           </Text>
           <Text
-            as="h2"
-            variant="body"
+            as="p"
+            variant="body-lg"
             align="center"
-            className="text-white text-sm md:text-base"
+            weight="bold"
+            className="text-white text-base md:text-lg lg:max-w-none z-10"
+            style={{
+              textShadow: "0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)",
+            }}
           >
             Discover what our community has been <br /> building together.
           </Text>
@@ -183,11 +188,12 @@ export function MobileShowcase({ events }: { events: Event[] }) {
             <img
               src={
                 EVENTS[0]?.image_url ||
+                EVENTS[0]?.image_square_url ||
                 EVENTS[0]?.images?.[0] ||
                 ASSETS.PLACEHOLDERS.DEFAULT
               }
               alt="Featured event"
-              className="w-full h-[clamp(72px,20vw,96px)] object-cover rounded-[14px]"
+              className="w-full h-auto object-cover rounded-[14px]"
             />
           </div>
           {/* Category tag + RSVP count */}
@@ -284,6 +290,7 @@ export function MobileShowcase({ events }: { events: Event[] }) {
                   >
                     <PlanetCard
                       image={
+                        EVENTS[mobileEventIndex].image_square_url ||
                         EVENTS[mobileEventIndex].image_url ||
                         EVENTS[mobileEventIndex].images?.[0] ||
                         ASSETS.PLACEHOLDERS.DEFAULT

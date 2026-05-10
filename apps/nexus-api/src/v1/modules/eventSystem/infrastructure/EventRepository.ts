@@ -17,11 +17,12 @@ type EventImageRow = {
 type EventRowWithTeam = EventRow & {
   team?: TeamRelation | TeamRelation[];
   images?: EventImageRow[] | null;
+  scraped_gdg_events?: { image_square_url: string | null } | null;
 };
 
 export class EventRepository implements IEventRepository {
   private readonly tableName = "event";
-  private readonly selectWithRelations = "*, team(name), images:event_images(*)";
+  private readonly selectWithRelations = "*, team(name), images:event_images(*), scraped_gdg_events(image_square_url)";
 
   private toImages(data: EventImageRow[] | null | undefined): string[] {
     return [...(data || [])]
@@ -108,6 +109,7 @@ export class EventRepository implements IEventRepository {
       bevy_event_id: row.gdg_event_id?.toString() ?? null,
       creatorId: row.creator_id || "",
       image_url: row.thumbnail_url || null,
+      image_square_url: row.scraped_gdg_events?.image_square_url || null,
       images: this.toImages(row.images),
       bevyPreviewUrl: row.bevy_preview_url || null,
       tags: cleanArray(row.tags),
@@ -205,7 +207,7 @@ export class EventRepository implements IEventRepository {
     const to = from + pageSize - 1;
 
     const selectStr = filters?.teamName
-      ? "*, team!inner(name), images:event_images(*)"
+      ? "*, team!inner(name), images:event_images(*), scraped_gdg_events(image_square_url)"
       : this.selectWithRelations;
 
     let query = supabase
