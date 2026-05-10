@@ -47,7 +47,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Joyrel Baladjay",
       role: "UI/UX Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.UI_UX.JOYREL_BALADJAY,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -59,7 +59,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Kacey Michaela Solis",
       role: "UI/UX Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.UI_UX.KACEY_SOLIS,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -95,7 +95,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Daniella Simara",
       role: "Web Development Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.DANIELLA_SIMARA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -106,7 +106,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Gerald Berongoy",
       role: "Web Development Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.GERALD_BERONGOY,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -144,7 +144,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Salvador Vincent Javier",
       role: "Cybersecurity Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.CYBERSECURITY.SALVADOR_JAVIER,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -156,7 +156,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Emmanuel Mutas",
       role: "Cybersecurity Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.CYBERSECURITY.EMMANUEL_MUTAS,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -193,7 +193,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Justin Royse Solomon",
       role: "Cloud Solutions Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.CLOUD_SOLUTIONS.JUSTIN_SOLOMON,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -205,7 +205,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Raphael Johnathan Flores",
       role: "Cloud Solutions Learning Head Committee",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.CLOUD_SOLUTIONS.RAPHAEL_FLORES,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -336,7 +336,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Trishia Sai Mejia",
       role: "Project Management Co-Lead",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.TRISHIA_MEJIA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -349,7 +349,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Abielle Viktoria Dig",
       role: "Project Management Secretary",
-      row: 1,
+      row: 2,
       imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.ABIELLE_DIG,
       mascotSrc: MASCOT_SRC,
       socials: {
