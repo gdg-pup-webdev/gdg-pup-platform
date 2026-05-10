@@ -19,6 +19,7 @@ export const eventRecord = cz.object({
   rsvp: cz.number().nullable().optional(),
   bevy_event_id: cz.string().nullable().optional(),
   image_url: cz.string().nullable().optional(),
+  image_square_url: cz.string().nullable().optional(),
   images: cz.array(cz.string()).max(20),
   bevyPreviewUrl: cz.string().nullable().optional(),
 
@@ -39,6 +40,7 @@ export const eventRecordInsertDTO = eventRecord.omit({
   updatedAt: true,
   attendees_count: true,
   teamName: true,
+  image_square_url: true,
 }).extend({
   images: cz.array(cz.string()).max(20).optional(),
 });

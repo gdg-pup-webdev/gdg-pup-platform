@@ -68,9 +68,7 @@ export function StudyJamsGrid({ teamSlug }: { teamSlug: string }) {
               key={index}
               className={`${TEAM_SECTION_CARD_CLASSNAME} hover:cursor-pointer`}
               imageSrc={
-                studyjam.image_url ||
-                studyjam.images?.[0] ||
-                ASSETS.PRODUCTS.STUDY_JAM_PLACEHOLDER
+                studyjam.image_square_url || studyjam.image_url || studyjam.images?.[0] || ASSETS.PRODUCTS.STUDY_JAM_PLACEHOLDER
               }
               imageAlt={`Study Jam ${studyjam.title}`}
               title={studyjam.title || "Study Jam"}
