@@ -208,7 +208,7 @@ export const TEAM_CONTENT: Record<string, TeamContent> = {
       "They assist in the planning, execution, and monitoring of the events organized by the Technology Department together with relevant documents, ensuring proper tracking of set deadlines, and updating the progress trackers. Associates are also involved in contributing to relevant reports, evaluations, and post-event documents to support continuous improvement and maintain clear, organized records of activities and outcomes.",
   },
 
-  executives: {
+  community: {
     description:
       "The Executives drive the strategic direction and day-to-day operations of the organization. This team oversees all departments, ensures alignment with the chapter's mission and vision, and represents GDG PUP in external engagements. Executive members develop high-level leadership, communication, and decision-making skills while building a culture of excellence, inclusivity, and innovation across every team.",
     nameColor: "text-yellow-400",

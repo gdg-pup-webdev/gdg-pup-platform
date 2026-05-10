@@ -1,5 +1,5 @@
 import { TeamSection } from "@/features/products";
 
-export default function ExecutivesTeamPage() {
+export default function CommunityTeamPage() {
   return <TeamSection teamName="Community" teamSlug="community" />;
 }

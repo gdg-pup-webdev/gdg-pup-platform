@@ -12,7 +12,7 @@ const TEAM_SLUG_TO_TEAM_NAME_MAP = {
   "cloud-solutions": "Cloud Solutions",
   cybersecurity: "Cybersecurity",
   "data-ml": "Data/ML",
-  executives: "Executives",
+  community: "Community",
   iot: "IoT",
   "project-management": "Project Management",
   "ui-ux": "UI/UX",
@@ -46,24 +46,27 @@ export function LearningResourcesGrid({ teamSlug }: { teamSlug: string }) {
 
   return (
     <Stack gap="xl" className="mt-16">
-      {
-        isLoading &&  <>
-        {/* loading rectangle */}
-        <div className="w-1/3 h-10 bg-gray-300 rounded animate-pulse mx-auto" />
-      </> 
-      }
+      {isLoading && (
+        <>
+          {/* loading rectangle */}
+          <div className="w-1/3 h-10 bg-gray-300 rounded animate-pulse mx-auto" />
+        </>
+      )}
 
-      {
-        !isLoading && !data?.data.length && ( (data?.data?.length || -1) > 0) && <> <Text
-        variant="heading-1"
-        gradient="white-blue"
-        align="center"
-        weight="bold"
-        className="text-3xl leading-none sm:text-4xl md:text-5xl"
-      >
-        LEARNING RESOURCES
-      </Text></>
-      }
+      {!isLoading && !data?.data.length && (data?.data?.length || -1) > 0 && (
+        <>
+          {" "}
+          <Text
+            variant="heading-1"
+            gradient="white-blue"
+            align="center"
+            weight="bold"
+            className="text-3xl leading-none sm:text-4xl md:text-5xl"
+          >
+            LEARNING RESOURCES
+          </Text>
+        </>
+      )}
 
       <div className="w-full flex flex-col md:flex-row flex-wrap gap-6 items-center md:items-stretch justify-center">
         {isLoading ? (
