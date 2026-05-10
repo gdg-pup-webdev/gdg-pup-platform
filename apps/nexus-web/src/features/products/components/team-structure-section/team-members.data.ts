@@ -5,6 +5,7 @@ export type TeamMember = {
   role: string;
   imageSrc: string;
   mascotSrc: string;
+  row?: number;
   socials?: {
     linkedin?: string;
     twitter?: string;
@@ -20,6 +21,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Jedia Nicole Sagun",
       role: "UI/UX Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.UI_UX.JEDIA_SAGUN,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -32,6 +34,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Kassandra Rychelle Balona",
       role: "UI/UX Co Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.UI_UX.KASSANDRA_BALONA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -44,6 +47,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Joyrel Baladjay",
       role: "UI/UX Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.UI_UX.JOYREL_BALADJAY,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -55,6 +59,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Kacey Michaela Solis",
       role: "UI/UX Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.UI_UX.KACEY_SOLIS,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -68,6 +73,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Erwin Daguinotas",
       role: "Web Development Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.ERWIN_DAGUINOTAS,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -78,6 +84,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Rhandie Sales Jr.",
       role: "Web Development Co Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.RHANDIE_SALES,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -88,6 +95,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Daniella Simara",
       role: "Web Development Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.DANIELLA_SIMARA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -98,6 +106,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Gerald Berongoy",
       role: "Web Development Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.WEB_DEVELOPMENT.GERALD_BERONGOY,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -111,6 +120,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Clarisse Jem Salazar",
       role: "Cybersecurity Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.CYBERSECURITY.CLARISSE_SALAZAR,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -122,6 +132,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "John Victor Claudio Duatin",
       role: "Cybersecurity Co-Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.CYBERSECURITY.JOHN_DUATIN,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -133,6 +144,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Salvador Vincent Javier",
       role: "Cybersecurity Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.CYBERSECURITY.SALVADOR_JAVIER,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -144,6 +156,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Emmanuel Mutas",
       role: "Cybersecurity Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.CYBERSECURITY.EMMANUEL_MUTAS,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -157,6 +170,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Kyla Marie Agapito",
       role: "Cloud Solutions Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.CLOUD_SOLUTIONS.KYLA_AGAPITO,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -167,6 +181,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "James Gabriele Torzar",
       role: "Cloud Solutions Co-Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.CLOUD_SOLUTIONS.JAMES_TORZAR,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -178,6 +193,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Justin Royse Solomon",
       role: "Cloud Solutions Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.CLOUD_SOLUTIONS.JUSTIN_SOLOMON,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -189,6 +205,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Raphael Johnathan Flores",
       role: "Cloud Solutions Learning Head Committee",
+      row: 1,
       imageSrc: ASSETS.TEAM.CLOUD_SOLUTIONS.RAPHAEL_FLORES,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -262,7 +279,8 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
       imageSrc: ASSETS.TEAM.INTERNET_OF_THINGS.DANIEL_COSARE,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "linkedin.com/in/daniel-rein-cosare-020a58288/?skipRedirect=true",
+        linkedin:
+          "linkedin.com/in/daniel-rein-cosare-020a58288/?skipRedirect=true",
         instagram: "https://www.instagram.com/rein_cosare/?hl=en",
         facebook: "https://www.facebook.com/rein.cosare.7",
       },
@@ -294,6 +312,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Patricia Anne Panlilio",
       role: "Project Management Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.PATRICIA_PANLILIO,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -305,6 +324,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Lance Gabriel P. Vargas",
       role: "Project Management Co-Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.LANCE_VARGAS,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -316,6 +336,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Trishia Sai Mejia",
       role: "Project Management Co-Lead",
+      row: 1,
       imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.TRISHIA_MEJIA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -328,6 +349,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Abielle Viktoria Dig",
       role: "Project Management Secretary",
+      row: 1,
       imageSrc: ASSETS.TEAM.PROJECT_MANAGEMENT.ABIELLE_DIG,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -399,6 +421,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Randy Carlo Lorenzo",
       role: "Chapter Lead and President",
+      row: 1,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.RANDY_CARLO_LORENZO,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -411,6 +434,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Shunrenn Locaylocay",
       role: "Chief Executive Officer (CEO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.SHUNRENN_LOCAYLOCAY,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -422,6 +446,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Syruz Ken Domingo",
       role: "Chief Secretariat (CSec)",
+      row: 2,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.SYRUZ_KEN_DOMINGO,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -433,6 +458,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Kurt Lopez",
       role: "Deputy Chief Secretariat (DCSec)",
+      row: 2,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.KURT_LOPEZ,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -444,6 +470,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Cathyren Sacatani",
       role: "Chief Finance Officer (CFO)",
+      row: 3,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.CATHYREN_SACATANI,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -455,6 +482,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Irah Markeisha Jose",
       role: "Deputy Chief Finance Officer (DCFO)",
+      row: 3,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.IRAH_JOSE,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -466,6 +494,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Maryrose Marquez",
       role: "Treasurer",
+      row: 4,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.MARYROSE_MARQUEZ,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -477,6 +506,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Francis Jason Chuaunsu",
       role: "Manegerial Consultant",
+      row: 4,
       imageSrc: ASSETS.TEAM.ADMINISTRATIVE.FRANCIS_CHUAUNSU,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -490,6 +520,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Gianne Crizzle Dasco",
       role: "Chief Marketing Officer (CMO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.MARKETING.GIANNE_DASCO,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -501,32 +532,38 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Viviene Tricia Rabano",
       role: "Deputy Chief Marketing Officer (DCMO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.MARKETING.VIVIENE_RABANO,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/viviene-rabano-98296931b",
-        instagram: "https://www.instagram.com/_rvviene?igsh=MWJkYmNxYnhld3ZsNQ==",
+        instagram:
+          "https://www.instagram.com/_rvviene?igsh=MWJkYmNxYnhld3ZsNQ==",
         facebook: "https://web.facebook.com/vvnciarabano",
       },
     },
     {
       name: "Victoria Estilong Balgos",
       role: "Social Media Manager Lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.MARKETING.VICTORIA_BALGOS,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/victoriabalgos/",
-        instagram: "https://www.instagram.com/tori_balgos?igsh=cTRrdDM5bTk3MDJh",
+        instagram:
+          "https://www.instagram.com/tori_balgos?igsh=cTRrdDM5bTk3MDJh",
         facebook: "https://www.facebook.com/VictoriaEBalgos/",
       },
     },
     {
       name: "Charles Matthew Pacuan",
       role: "Social Media Manager Co-lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.MARKETING.CHARLES_PACUAN,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "https://www.linkedin.com/in/charles-pacuan-a1866a31b/?skipRedirect=true",
+        linkedin:
+          "https://www.linkedin.com/in/charles-pacuan-a1866a31b/?skipRedirect=true",
         instagram: "https://www.instagram.com/mattyx_03/",
         facebook: "https://www.facebook.com/matt.pacuan#",
       },
@@ -534,6 +571,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "David Monterde Gabriel Jr.",
       role: "Social Media Manager Co-lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.MARKETING.DAVID_GABRIEL,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -545,6 +583,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Jade Shana Emit Naig",
       role: "Content Writer Lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.MARKETING.JADE_NAIG,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -555,6 +594,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Ethaniel Klymore Sales",
       role: "Content Writer Co-lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.MARKETING.ETHANIEL_SALES,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -566,27 +606,33 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Emmanuel Andrei Basco",
       role: "Content Calendar Manager Lead",
+      row: 4,
       imageSrc: ASSETS.TEAM.MARKETING.EMMANUEL_BASCO,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/drei-basco-852610386/",
-        instagram: "https://www.instagram.com/dreeeeiiiiiiii?igsh=dDA3cm41YThsZ3gz",
+        instagram:
+          "https://www.instagram.com/dreeeeiiiiiiii?igsh=dDA3cm41YThsZ3gz",
         facebook: "https://www.facebook.com/share/1KPQUYtTox/",
       },
     },
     {
       name: "Clarissa Jasmine Dela Cruz",
       role: "Content Manager Co-lead",
+      row: 4,
       imageSrc: ASSETS.TEAM.MARKETING.CLARISSA_DELA_CRUZ,
       mascotSrc: MASCOT_SRC,
       socials: {
-        instagram: "https://www.instagram.com/_clarissajsmn?igsh=MXEwd3h3bjNna29kdg== ",
-        facebook: "https://www.facebook.com/profile.php?id=61559315488905&mibextid=ZbWKwL",
+        instagram:
+          "https://www.instagram.com/_clarissajsmn?igsh=MXEwd3h3bjNna29kdg== ",
+        facebook:
+          "https://www.facebook.com/profile.php?id=61559315488905&mibextid=ZbWKwL",
       },
     },
     {
       name: "Marky Cortezo",
       role: "Content Creation Lead",
+      row: 4,
       imageSrc: ASSETS.TEAM.MARKETING.MARKY_CORTEZO,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -600,16 +646,18 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Elija Cabaddu",
       role: "Chief Operations Officer (COO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.OPERATIONS.ELIJA_CABADDU,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "linkedin.com/in/aijel/",
-        facebook: "https://www.facebook.com/elyuuue"
+        facebook: "https://www.facebook.com/elyuuue",
       },
     },
     {
       name: "Aifah Mae Maddie",
       role: "Deputy Chief Operations Officer (DCOO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.OPERATIONS.AIFAH_MADDIE,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -622,6 +670,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Jinrikisha Omela",
       role: "Technicals Lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.OPERATIONS.JINRIKISHA_OMELA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -633,17 +682,21 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Danielle Pauleen Labasa",
       role: "Technicals Co Lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.OPERATIONS.DANIELLE_LABASA,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "https://www.linkedin.com/in/danielle-pauleen-labasa-513a52338?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
-        instagram: "https://www.instagram.com/yeneneney?igsh=MWoweGJyaXJzZXQzYg%3D%3D&utm_source=qr",
+        linkedin:
+          "https://www.linkedin.com/in/danielle-pauleen-labasa-513a52338?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+        instagram:
+          "https://www.instagram.com/yeneneney?igsh=MWoweGJyaXJzZXQzYg%3D%3D&utm_source=qr",
         facebook: "https://www.facebook.com/share/1CXGsGW4NH/?mibextid=wwXIfr",
       },
     },
     {
       name: "Charles Lalata",
       role: "Technicals Senior Lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.OPERATIONS.CHARLES_LALATA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -655,10 +708,12 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Eugene Gonzaga",
       role: "Technicals Junior Lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.OPERATIONS.EUGENE_GONZAGA,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "https://www.linkedin.com/in/eugene-anthony-gonzaga-54a8432a6/",
+        linkedin:
+          "https://www.linkedin.com/in/eugene-anthony-gonzaga-54a8432a6/",
         twitter: "https://x.com/yujinismad",
         instagram: "https://www.instagram.com/yujin_gonzaga/",
         facebook: "https://www.facebook.com/yujin.gonzaga/",
@@ -667,17 +722,20 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Maria Angeline Aguirre",
       role: "Programs Lead",
+      row: 4,
       imageSrc: ASSETS.TEAM.OPERATIONS.MARIA_AGUIRRE,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://ph.linkedin.com/in/maria-angeline-aguirre-b1b446384",
-        instagram: "https://www.instagram.com/ilunaria__?igsh=MW1odmVqcmF6Y2xyYg%3D%3D&utm_source=qr",
+        instagram:
+          "https://www.instagram.com/ilunaria__?igsh=MW1odmVqcmF6Y2xyYg%3D%3D&utm_source=qr",
         facebook: "https://www.facebook.com/share/1GB7AFgYef/",
       },
     },
     {
       name: "Jade Micah Lazaro",
       role: "Programs Co-Lead",
+      row: 4,
       imageSrc: ASSETS.TEAM.OPERATIONS.JADE_LAZARO,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -689,6 +747,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Kishey Ibañez",
       role: "Logistics Lead",
+      row: 5,
       imageSrc: ASSETS.TEAM.OPERATIONS.KISHEY_IBANEZ,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -700,10 +759,12 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Alessa Estaras",
       role: "Logistics Co-lead",
+      row: 5,
       imageSrc: ASSETS.TEAM.OPERATIONS.ALESSA_ESTARAS,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "https://www.linkedin.com/in/alessa-estaras-944b25252?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+        linkedin:
+          "https://www.linkedin.com/in/alessa-estaras-944b25252?utm_source=share_via&utm_content=profile&utm_medium=member_android",
         instagram: "https://www.instagram.com/allezzuuh?igsh=ajM4aWZ0NXQ5NG1k",
         facebook: "https://www.facebook.com/share/1E2SZEHR1S/",
       },
@@ -711,23 +772,25 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Hans Ezekiel Naperi",
       role: "Documentations Lead",
+      row: 6,
       imageSrc: ASSETS.TEAM.OPERATIONS.HANS_NAPERI,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/hansnaperi004/",
         instagram: "https://www.instagram.com/hanz.prem/",
-        facebook: "https://www.facebook.com/hans.naperiii4"
+        facebook: "https://www.facebook.com/hans.naperiii4",
       },
     },
     {
       name: "Cali Dominic Ranjo",
       role: "Documentations Co-lead",
+      row: 6,
       imageSrc: ASSETS.TEAM.OPERATIONS.CALI_RANJO,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/cali-dominic-ranjo-a0a5a532b/",
         instagram: "https://www.instagram.com/_d0lvl/",
-        facebook: "https://www.facebook.com/dominic.ranjo.2024"
+        facebook: "https://www.facebook.com/dominic.ranjo.2024",
       },
     },
   ],
@@ -735,6 +798,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Solomon Nadonga",
       role: "Chief Community Relations Officer (CCRO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.COMMUNITY_RELATIONS.SOLOMON_NADONGA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -746,6 +810,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Railley Nieles",
       role: "Deputy Chief Community Relations Officer (DCCRO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.COMMUNITY_RELATIONS.RAILLEY_NIELES,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -757,10 +822,12 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Raymund Jr. Dimacutac",
       role: "Student Development Lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.COMMUNITY_RELATIONS.RAYMUND_DIMACUTAC,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "https://www.linkedin.com/in/dimacutac-raymund-jr-b-943a1126b/",
+        linkedin:
+          "https://www.linkedin.com/in/dimacutac-raymund-jr-b-943a1126b/",
         instagram: "https://www.instagram.com/y0_0mm?igsh=MTMya3BmeHB0aGgxNQ==",
         facebook: "https://www.facebook.com/share/1Uxq8pFYkS/",
       },
@@ -768,6 +835,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Gerick Eol Hernandez ",
       role: "Student Development Co-Lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.COMMUNITY_RELATIONS.GERICK_HERNANDEZ,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -777,34 +845,38 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Troy Lauren Lazaro",
       role: "Talent Development Lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.COMMUNITY_RELATIONS.TROY_LAZARO,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/troylazaro/",
         instagram: "https://www.instagram.com/isametroy_/",
-        facebook: "https://www.facebook.com/troylazaroTL"
+        facebook: "https://www.facebook.com/troylazaroTL",
       },
     },
     {
       name: "Erica Mae Mallari",
       role: "Talent Development Co-Lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.COMMUNITY_RELATIONS.ERICA_MALLARI,
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/erica-mae-mallari/",
         instagram: "https://www.instagram.com/eri.chees3/",
-        facebook: "https://www.facebook.com/erichu.6"
+        facebook: "https://www.facebook.com/erichu.6",
       },
     },
     {
       name: "Marianne Mae Bautista",
       role: "Community Relations Consultant",
+      row: 3,
       imageSrc: ASSETS.TEAM.COMMUNITY_RELATIONS.MARIANNE_BAUTISTA,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "https://www.linkedin.com/in/marianne-mae-bautista-clssyb-b210a62b2/",
+        linkedin:
+          "https://www.linkedin.com/in/marianne-mae-bautista-clssyb-b210a62b2/",
         instagram: "https://www.instagram.com/mai_devastashun/",
-        facebook: "https://www.facebook.com/mai.bautista.9"
+        facebook: "https://www.facebook.com/mai.bautista.9",
       },
     },
   ],
@@ -839,7 +911,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
       socials: {
         linkedin: "https://www.linkedin.com/in/ejdgm",
         instagram: "https://www.instagram.com/ejdg.exe",
-        facebook: "https://www.facebook.com/cs.ejdgm"
+        facebook: "https://www.facebook.com/cs.ejdgm",
       },
     },
     {
@@ -893,7 +965,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
       mascotSrc: MASCOT_SRC,
       socials: {
         linkedin: "https://www.linkedin.com/in/arjay-rosel-5b4a0b252/",
-        facebook: "https://www.facebook.com/roselarjayyy"
+        facebook: "https://www.facebook.com/roselarjayyy",
       },
     },
   ],
@@ -901,6 +973,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Ayen Mejorada",
       role: "Chief Creatives Officer (CCO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.CREATIVES.AYEN_MEJORADA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -912,6 +985,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Hesed Suñga",
       role: "Deputy Chief Creatives Officer (DCCO)",
+      row: 1,
       imageSrc: ASSETS.TEAM.CREATIVES.HESED_SUNGA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -924,6 +998,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Daniella J. Mendoza",
       role: "Graphic Design Lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.CREATIVES.DANIELLA_MENDOZA,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -935,10 +1010,12 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Alecza Patrice Bonifacio",
       role: "Branding & Assets Lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.CREATIVES.ALECZA_BONIFACIO,
       mascotSrc: MASCOT_SRC,
       socials: {
-        linkedin: "https://www.linkedin.com/in/alecza-patrice-bonifacio-60011a227/",
+        linkedin:
+          "https://www.linkedin.com/in/alecza-patrice-bonifacio-60011a227/",
         instagram: "https://www.instagram.com/print_xziace/",
         facebook: "https://www.facebook.com/bonifacio.apt",
       },
@@ -946,6 +1023,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Cyruz Cordero Arcan",
       role: "Branding & Assets Co-Lead",
+      row: 2,
       imageSrc: ASSETS.TEAM.CREATIVES.CYRUZ_ARCAN,
       mascotSrc: MASCOT_SRC,
       socials: {
@@ -957,6 +1035,7 @@ export const TEAM_MEMBERS_BY_SLUG: Record<string, TeamMember[]> = {
     {
       name: "Matthew Erivera Cucio",
       role: "Audio & Visuals Lead",
+      row: 3,
       imageSrc: ASSETS.TEAM.CREATIVES.MATTHEW_CUCIO,
       mascotSrc: MASCOT_SRC,
       socials: {

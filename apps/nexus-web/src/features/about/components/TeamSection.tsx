@@ -235,7 +235,8 @@ export function TeamSection() {
   const [isCoreTeamsOpen, setIsCoreTeamsOpen] = React.useState(true);
   const [isTechDepartmentOpen, setIsTechDepartmentOpen] = React.useState(true);
   const activeLabel = React.useMemo(
-    () => ALL_ITEMS.find((item) => item.id === activeId)?.label ?? "Administrative",
+    () =>
+      ALL_ITEMS.find((item) => item.id === activeId)?.label ?? "Administrative",
     [activeId],
   );
 
@@ -255,7 +256,7 @@ export function TeamSection() {
           // Fire when section crosses the upper 30% of the viewport
           rootMargin: "-20% 0px -70% 0px",
           threshold: 0,
-        }
+        },
       );
 
       observer.observe(el);
@@ -274,7 +275,7 @@ export function TeamSection() {
         const isDesktop = window.innerWidth >= 1024;
         setShowFloatingTeamNav(!isDesktop && !entry.isIntersecting);
       },
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     );
 
     observer.observe(mobileNav);
@@ -339,7 +340,13 @@ export function TeamSection() {
           onClick={() => setIsCoreTeamsOpen((prev) => !prev)}
           aria-expanded={isCoreTeamsOpen}
         >
-          <Text as="span" variant="body" weight="semibold" gradient="yellow" className="uppercase tracking-wide">
+          <Text
+            as="span"
+            variant="body"
+            weight="semibold"
+            gradient="yellow"
+            className="uppercase tracking-wide"
+          >
             Core Teams
           </Text>
           <svg
@@ -348,7 +355,13 @@ export function TeamSection() {
             fill="none"
             aria-hidden
           >
-            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M5 7.5L10 12.5L15 7.5"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
         <AnimatePresence initial={false}>
@@ -374,7 +387,13 @@ export function TeamSection() {
           onClick={() => setIsTechDepartmentOpen((prev) => !prev)}
           aria-expanded={isTechDepartmentOpen}
         >
-          <Text as="span" variant="body" weight="semibold" gradient="yellow" className="uppercase tracking-wide">
+          <Text
+            as="span"
+            variant="body"
+            weight="semibold"
+            gradient="yellow"
+            className="uppercase tracking-wide"
+          >
             Tech Department
           </Text>
           <svg
@@ -383,7 +402,13 @@ export function TeamSection() {
             fill="none"
             aria-hidden
           >
-            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M5 7.5L10 12.5L15 7.5"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
         <AnimatePresence initial={false}>
@@ -404,224 +429,69 @@ export function TeamSection() {
     );
   }
 
+  const renderTeamGroup = React.useCallback((slug: string) => {
+    const members = TEAM_MEMBERS_BY_SLUG[slug] ?? [];
+    const groupedMembers = members.reduce(
+      (acc, member) => {
+        const row = member.row ?? 0;
+        if (!acc[row]) acc[row] = [];
+        acc[row].push(member);
+        return acc;
+      },
+      {} as Record<number, typeof members>,
+    );
+
+    const sortedRows = Object.keys(groupedMembers)
+      .sort((a, b) => Number(a) - Number(b))
+      .map((k) => groupedMembers[Number(k)]);
+
+    return (
+      <div className="flex flex-col gap-10 lg:gap-15 mt-10 lg:mt-15">
+        {sortedRows.map((rowMembers, idx) => (
+          <div
+            key={idx}
+            className="flex flex-wrap justify-center gap-4 lg:gap-6"
+          >
+            {rowMembers.map((member) => (
+              <TeamCard
+                key={member.name}
+                name={member.name}
+                role={member.role}
+                imageSrc={member.imageSrc}
+                mascotSrc={member.mascotSrc}
+                socials={member.socials}
+                className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }, []);
+
   // Section content map
-  const SECTION_CONTENT = React.useMemo(() => ({
-    administrative: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG.administrative.map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    marketing: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG.marketing.map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    creatives: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG.creatives.map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    operations: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG.operations.map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "community-relations": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["community-relations"].map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    partnership: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG.partnership.map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "tech-executives": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["tech-executives"].map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "project-management": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["project-management"].map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "web-development": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["web-development"].map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "ui-ux": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["ui-ux"].map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    cybersecurity: (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG.cybersecurity.map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "cloud-solutions": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["cloud-solutions"].map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "data-ml": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {TEAM_MEMBERS_BY_SLUG["data-ml"].map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-    "internet-of-things": (
-      <div className="flex flex-wrap justify-center gap-4 lg:gap-6 mt-10 lg:mt-15">
-        {(TEAM_MEMBERS_BY_SLUG["internet-of-things"] ?? TEAM_MEMBERS_BY_SLUG.iot ?? []).map((member) => (
-          <TeamCard
-            key={member.name}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            mascotSrc={member.mascotSrc}
-            socials={member.socials}
-            className="w-full max-w-[14.8rem] lg:max-w-[17rem] xl:max-w-[19rem]"
-          />
-        ))}
-      </div>
-    ),
-  }), []);
+  const SECTION_CONTENT = React.useMemo(
+    () => ({
+      administrative: renderTeamGroup("administrative"),
+      marketing: renderTeamGroup("marketing"),
+      creatives: renderTeamGroup("creatives"),
+      operations: renderTeamGroup("operations"),
+      "community-relations": renderTeamGroup("community-relations"),
+      partnership: renderTeamGroup("partnership"),
+      "tech-executives": renderTeamGroup("tech-executives"),
+      "project-management": renderTeamGroup("project-management"),
+      "web-development": renderTeamGroup("web-development"),
+      "ui-ux": renderTeamGroup("ui-ux"),
+      cybersecurity: renderTeamGroup("cybersecurity"),
+      "cloud-solutions": renderTeamGroup("cloud-solutions"),
+      "data-ml": renderTeamGroup("data-ml"),
+      "internet-of-things": renderTeamGroup("internet-of-things"),
+    }),
+    [renderTeamGroup],
+  );
 
   return (
-    <div
-      className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16 bg-[#010B1D]"
-    >
+    <div className="relative overflow-x-clip pt-32 md:pt-48 pb-16 md:pb-28 px-4 md:px-8 lg:px-16 bg-[#010B1D]">
       <div
         className="absolute inset-x-0 top-0 h-[620px] pointer-events-none hidden md:block"
         style={{
@@ -699,7 +569,13 @@ export function TeamSection() {
         animate={{ opacity: 1, y: 0, x: 0 }}
         transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
         className="absolute pointer-events-none select-none hidden md:block"
-        style={{ top: "9.5rem", right: "-4.2rem", width: "176px", height: "256px", zIndex: 1 }}
+        style={{
+          top: "9.5rem",
+          right: "-4.2rem",
+          width: "176px",
+          height: "256px",
+          zIndex: 1,
+        }}
         aria-hidden
       >
         <Image
@@ -716,7 +592,13 @@ export function TeamSection() {
         animate={{ opacity: 1, y: 0, x: 0 }}
         transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
         className="absolute pointer-events-none select-none hidden md:block"
-        style={{ top: "73rem", left: "-3.8rem", width: "160px", height: "232px", zIndex: 1 }}
+        style={{
+          top: "73rem",
+          left: "-3.8rem",
+          width: "160px",
+          height: "232px",
+          zIndex: 1,
+        }}
         aria-hidden
       >
         <Image
@@ -770,7 +652,10 @@ export function TeamSection() {
           <div className="flex flex-col lg:flex-row gap-8 items-start flex-1 min-h-0 pb-8">
             <div className="w-full lg:w-auto lg:pb-4 lg:sticky lg:top-35 lg:self-start">
               {/* Mobile: dropdown navigator */}
-              <div ref={mobileNavRef} className="lg:hidden mb-1 w-full [&>*]:block [&>*]:w-full">
+              <div
+                ref={mobileNavRef}
+                className="lg:hidden mb-1 w-full [&>*]:block [&>*]:w-full"
+              >
                 <Dropdown>
                   <DropdownTrigger asChild>
                     <button
@@ -784,8 +669,19 @@ export function TeamSection() {
                           {activeLabel}
                         </span>
                         <span className="text-white leading-none flex items-center justify-center w-5 h-5">
-                          <svg viewBox="0 0 20 20" className="w-4 h-4 transition-transform duration-200 group-aria-expanded:rotate-180" fill="none" aria-hidden>
-                            <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          <svg
+                            viewBox="0 0 20 20"
+                            className="w-4 h-4 transition-transform duration-200 group-aria-expanded:rotate-180"
+                            fill="none"
+                            aria-hidden
+                          >
+                            <path
+                              d="M5 7.5L10 12.5L15 7.5"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
                           </svg>
                         </span>
                       </div>
@@ -829,7 +725,12 @@ export function TeamSection() {
                               fill="none"
                               aria-hidden
                             >
-                              <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                              <path
+                                d="M4 7h16M4 12h16M4 17h10"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                              />
                             </svg>
                           </span>
                         </button>
@@ -909,5 +810,3 @@ export function TeamSection() {
     </div>
   );
 }
-
-
