@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import { Text } from "@packages/spark-ui";
 import { useListArticles } from "../hooks/useListArticle";
 import { ASSETS } from "@/lib/constants/assets";
 import { BrandedSkeleton } from "@/components/shared";
@@ -130,24 +131,36 @@ export const ArticleList = () => {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="mb-14 text-center"
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-3">
+          <Text variant="caption" className="text-gray-500 tracking-[0.2em] uppercase font-semibold mb-3 inline-block">
             GDG PUP · Stories
-          </p>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            <span
-              className="bg-clip-text text-transparent"
-              style={{
-                backgroundImage:
-                "linear-gradient(to right, #EA4335, #F9AB00, #34A853, #4285F4)",
-              }}
-            >
+          </Text>
+          <Text
+            as="h1"
+            variant="heading-1"
+            gradient="white-blue"
+            align="center"
+            weight="bold"
+            className="text-5xl md:text-6xl lg:text-7xl z-20"
+            style={{
+              filter:
+                "drop-shadow(0 0 20px rgba(0,0,0,1)) drop-shadow(0 2px 10px rgba(0,0,0,0.9))",
+            }}
+          >
             Our Articles
-            </span>
-          </h1>
-          <p className="mt-4 text-gray-400 text-base md:text-lg max-w-xl mx-auto">
+          </Text>
+          <Text
+            as="p"
+            variant="body-lg"
+            align="center"
+            weight="bold"
+            className="text-white text-base md:text-lg lg:max-w-none mt-4 max-w-xl mx-auto z-10"
+            style={{
+              textShadow: "0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)",
+            }}
+          >
             Chapters of our journey — written by the community, for the
             community.
-          </p>
+          </Text>
         </motion.div>
 
         {/* ── Loading skeleton ── */}
