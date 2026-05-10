@@ -28,7 +28,7 @@ export function WhatDrivesUsSection() {
             width={473}
             height={630}
             draggable={false}
-            className="pointer-events-none select-none absolute top-0 left-0 w-24 h-auto lg:w-[473px] lg:h-[630px] lg:left-0 lg:top-1/2 lg:-translate-y-1/2 z-20"
+            className="pointer-events-none select-none absolute top-20 right-2 w-24 h-auto z-20 lg:w-[473px] lg:h-[630px] lg:left-0 lg:top-1/2 lg:-translate-y-1/2"
           />
 
           {/* Content on right */}
@@ -42,7 +42,7 @@ export function WhatDrivesUsSection() {
               align="left"
               weight="bold"
               variant="heading-2"
-              className="mb-0.5 text-right lg:text-left w-full text-white"
+              className="mb-0.5 text-left lg:text-left w-full text-white"
               style={{
                 textShadow:
                   "0 2px 4px rgba(0, 0, 0, 0.95), 0 8px 24px rgba(0, 0, 0, 0.95), 0 16px 48px rgba(0, 0, 0, 0.85)",
