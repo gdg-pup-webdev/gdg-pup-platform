@@ -169,14 +169,12 @@ export class GdgMembersHttpController {
     },
   );
 
-  getIdSuggestedUsers: RequestHandler = createExpressController(
-    contract.api.v1.gdgmembers.gdgId.suggested_users.GET,
+  getSuggestedUsers: RequestHandler = createExpressController(
+    contract.api.v1.gdgmembers.suggested_users.GET,
     async ({ input, output }) => {
       const result = await this.moduleController.getSuggestedUsers(
-        input.params.gdgId,
         input.query.pageNumber,
         input.query.pageSize,
-        "exploratory",
       );
 
       const suggestedPreview = result.list.map(({ email, ...rest }) => rest);

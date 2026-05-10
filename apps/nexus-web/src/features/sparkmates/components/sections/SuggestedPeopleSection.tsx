@@ -10,10 +10,7 @@ import { UserProfile } from "@/features/sparkmates/types";
 import { useSearchMember } from "@/features/sparkmates/hooks/useSearchMember";
 import { GdgLoader } from "@/components/ui/loader";
 
-export const SuggestedPeopleSection = ({
-  profile,
-  readOnly,
-}: {
+export const SuggestedPeopleSection = ({}: {
   profile: UserProfile;
   readOnly?: boolean;
 }) => {
@@ -21,10 +18,7 @@ export const SuggestedPeopleSection = ({
   const [trueSearch, setTrueSearch] = useState("");
   const [viewingSearchResults, setViewingSearchResults] = useState(false);
 
-  const { data, isLoading } = useSuggestedSparkmates({
-    search,
-    viewerGdgId: profile?.gdgId,
-  });
+  const { data, isLoading } = useSuggestedSparkmates();
 
   const suggestedUsers = data?.data || [];
 

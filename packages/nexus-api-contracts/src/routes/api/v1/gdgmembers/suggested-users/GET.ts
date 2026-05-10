@@ -3,7 +3,7 @@ import { OpenApiSchemas } from "@packages/typed-rest/shared";
 
 export const docs_summary = "List suggested GDG members";
 export const docs_description =
-  "Retrieves a paginated list of suggested public GDG members for discovery, including broader cross-domain recommendations.";
+  "Retrieves a paginated list of suggested public GDG members for discovery.";
 
 export const query = OpenApiSchemas.Request.Query.paginated();
 

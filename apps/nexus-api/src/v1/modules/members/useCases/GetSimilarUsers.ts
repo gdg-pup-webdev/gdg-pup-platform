@@ -30,6 +30,18 @@ export class GetSimilarUsers {
 
   constructor(private readonly repo: IGdgMemberRepository) {}
 
+  async executePublic(
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ list: GdgMember[]; count: number }> {
+    if (pageNumber < 1)
+      throw new BadRequestError("Page number must be greater than 0");
+    if (pageSize < 1)
+      throw new BadRequestError("Page size must be greater than 0");
+
+    return this.repo.listRandomMembers(pageNumber, pageSize, 1);
+  }
+
   async execute(
     gdgMemberId: string,
     pageNumber: number,

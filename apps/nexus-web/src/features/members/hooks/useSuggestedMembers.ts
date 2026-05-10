@@ -4,20 +4,15 @@ import { contract } from "@packages/nexus-api-contracts";
 import { configs } from "@/lib/constants/configs";
 import { extractErrorMessage } from "@/lib/utils";
 
-export const useSuggestedMembers = (
-  gdgId: string,
-  pageNumber = 1,
-  pageSize = 10,
-) => {
+export const useSuggestedMembers = (pageNumber = 1, pageSize = 10) => {
   const callEndpoint = useCallEndpointWithToken();
   return useQuery({
-    queryKey: ["members", "list", pageNumber, pageSize, gdgId],
+    queryKey: ["members", "suggested", pageNumber, pageSize],
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
-        contract.api.v1.gdgmembers.gdgId.suggested_users.GET,
+        contract.api.v1.gdgmembers.suggested_users.GET,
         {
-          params: { gdgId },
           query: { pageNumber, pageSize },
         },
       );
