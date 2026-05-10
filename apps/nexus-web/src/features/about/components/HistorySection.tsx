@@ -409,7 +409,7 @@ const stats = [
     <path d="M22 110 Q22 55 60 55 Q98 55 98 110Z" fill="url(#blueGradReverse)" />
   </svg>
 ),
-    value: "100+",
+    value: "1600+",
     label: "Members Empowered",
   },
   {

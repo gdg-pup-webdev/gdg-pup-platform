@@ -28,7 +28,7 @@ export function ImpactSection() {
   const impactCards = [
     {
       color: "#2E74FF",
-      title: "2,000+ Members",
+      title: "1,600+ Members",
       description:
         "Fostered a vibrant and engaged ecosystem of tech enthusiasts and innovators.",
       image: ASSETS.HOME.MEMBERS,
