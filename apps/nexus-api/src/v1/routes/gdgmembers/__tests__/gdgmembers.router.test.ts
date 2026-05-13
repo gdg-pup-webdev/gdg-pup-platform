@@ -12,12 +12,12 @@ vi.mock("@packages/nexus-api-contracts", () => ({
         gdgmembers: {
           GET: {},
           POST: {},
+          suggested_users: { GET: {} },
           gdgId: {
             GET: {},
             PATCH: {},
             DELETE: {},
             profile_image: { POST: {} },
-            suggested_users: { GET: {} },
             make_private: { POST: {} },
             make_public: { POST: {} },
             nfc_card: {
@@ -121,14 +121,12 @@ describe("GdgMembersRouter suggested-users route", () => {
     const app = createApp();
 
     const response = await request(app)
-      .get("/gdgmembers/GDG-1/suggested-users?pageNumber=2&pageSize=1")
+      .get("/gdgmembers/suggested-users?pageNumber=2&pageSize=1")
       .expect(200);
 
     expect(getSuggestedUsers).toHaveBeenCalledWith(
-      "GDG-1",
       2,
       1,
-      "exploratory",
     );
     const { email, ...expectedPayload } = similarUserPayload;
 
@@ -151,14 +149,12 @@ describe("GdgMembersRouter suggested-users route", () => {
     const app = createApp();
 
     const response = await request(app)
-      .get("/gdgmembers/GDG-1/suggested-users?pageNumber=1&pageSize=10")
+      .get("/gdgmembers/suggested-users?pageNumber=1&pageSize=10")
       .expect(200);
 
     expect(getSuggestedUsers).toHaveBeenCalledWith(
-      "GDG-1",
       1,
       10,
-      "exploratory",
     );
     expect(response.body.meta).toEqual({
       currentPage: 1,
@@ -169,7 +165,7 @@ describe("GdgMembersRouter suggested-users route", () => {
     expect(response.body.data).toEqual([]);
   });
 
-  it("uses the mixed exploratory strategy by default", async () => {
+  it("does not require a gdgId", async () => {
     getSuggestedUsers.mockResolvedValue({
       list: [similarUserPayload],
       count: 1,
@@ -178,19 +174,32 @@ describe("GdgMembersRouter suggested-users route", () => {
     const app = createApp();
 
     const response = await request(app)
-      .get("/gdgmembers/GDG-1/suggested-users?pageNumber=1&pageSize=10")
+      .get("/gdgmembers/suggested-users?pageNumber=1&pageSize=10")
       .expect(200);
 
     expect(getSuggestedUsers).toHaveBeenCalledWith(
-      "GDG-1",
       1,
       10,
-      "exploratory",
     );
     expect(response.body.message).toBe(
       "Suggested GDG members fetched successfully",
     );
     const { email, ...expectedPayload } = similarUserPayload;
     expect(response.body.data).toEqual([expectedPayload]);
+  });
+
+  it("does not process a gdgId query parameter", async () => {
+    getSuggestedUsers.mockResolvedValue({
+      list: [similarUserPayload],
+      count: 1,
+    });
+
+    const app = createApp();
+
+    await request(app)
+      .get("/gdgmembers/suggested-users?pageNumber=1&pageSize=10&gdgId=GDG-1")
+      .expect(200);
+
+    expect(getSuggestedUsers).toHaveBeenCalledWith(1, 10);
   });
 });

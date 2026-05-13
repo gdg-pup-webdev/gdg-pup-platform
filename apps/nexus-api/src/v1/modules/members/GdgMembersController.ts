@@ -10,10 +10,7 @@ import { MakeProfilePrivate } from "./useCases/MakeProfilePrivate";
 import { MakeProfilePublic } from "./useCases/MakeProfilePublic";
 import { SearchMember } from "./useCases/SearchMember";
 import { ChangeProfilePicture } from "./useCases/ChangeProfilePicture";
-import {
-  GetSimilarUsers,
-  SimilarUsersStrategy,
-} from "./useCases/GetSimilarUsers";
+import { GetSimilarUsers } from "./useCases/GetSimilarUsers";
 
 export class GdgMembersController {
   constructor(
@@ -50,16 +47,12 @@ export class GdgMembersController {
   }
 
   async getSuggestedUsers(
-    gdgId: string,
     pageNumber: number,
     pageSize: number,
-    strategy: SimilarUsersStrategy = "exploratory",
   ) {
-    const result = await this.getSuggestedUsersUseCase.execute(
-      gdgId,
+    const result = await this.getSuggestedUsersUseCase.executePublic(
       pageNumber,
       pageSize,
-      strategy,
     );
     return {
       list: result.list.map((m) => m.props),
