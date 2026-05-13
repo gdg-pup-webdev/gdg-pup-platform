@@ -32,7 +32,7 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
       return;
     }
     try {
-      const res = await initiatePasswordChange({ data: { email, pass: currentPassword, newPass: newPassword } });
+      const res = await initiatePasswordChange({ data: { email, password: currentPassword, newPassword: newPassword } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);

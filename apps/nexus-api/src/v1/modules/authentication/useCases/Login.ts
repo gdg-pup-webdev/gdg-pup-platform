@@ -1,4 +1,4 @@
-﻿import {
+import {
   IUserCredentialRepository,
   IEncryptionService,
   IJWTService,
@@ -48,7 +48,7 @@ export class Login {
     });
 
     const token = await this.jwtService.sign(tokenPayload);
-
+    
     return token;
   }
 }

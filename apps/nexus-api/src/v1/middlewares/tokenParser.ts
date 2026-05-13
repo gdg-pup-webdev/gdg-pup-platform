@@ -7,11 +7,15 @@ export const tokenParserFromHeaders: RequestHandler = async (
   next,
 ) => {
   try {
-    // 1. Extract Supabase token from "Authorization: Bearer <token>"
+    // 1. Extract Supabase token from "Authorization: Bearer <token>" or cookies
     const authHeader = req.headers.authorization;
-    const accessToken = authHeader?.startsWith("Bearer ")
+    let accessToken = authHeader?.startsWith("Bearer ")
       ? authHeader.split(" ")[1]
       : undefined;
+
+    if (!accessToken && req.cookies && req.cookies.token) {
+      accessToken = req.cookies.token;
+    }
 
     //   console.log("header", authHeader, authHeader?.split(" "))
     // console.log("Extracted access token from header:", accessToken);

@@ -101,6 +101,7 @@ export function PastEventsCarousel() {
                     <div className="flex w-full flex-col items-center">
                       <PlanetCard
                         image={
+                          event.image_square_url ||
                           event.image_url ||
                           event.images?.[0] ||
                           ASSETS.PLACEHOLDERS.DEFAULT

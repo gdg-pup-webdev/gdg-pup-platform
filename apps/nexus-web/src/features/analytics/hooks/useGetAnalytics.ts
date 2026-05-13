@@ -7,17 +7,17 @@ import { extractErrorMessage } from "@/lib/utils";
 /**
  * Hook to get NFC scan analytics for a specific card.
  */
-export const useGetNfcAnalytics = (cardId: string, pageNumber = 1, pageSize = 10) => {
+export const useGetNfcAnalytics = (cardId: string, days = 7, pageNumber = 1, pageSize = 10) => {
   const callEndpoint = useCallEndpointWithToken();
   return useQuery({
-    queryKey: ["analytics", "nfc-scans", cardId, pageNumber, pageSize],
+    queryKey: ["analytics", "nfc-scans", cardId, days, pageNumber, pageSize],
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.analytics.nfc_scans.cardId.GET,
         {
           params: { cardId },
-          query: { pageNumber, pageSize },
+          query: { pageNumber, pageSize, days } as any,
         },
       );
 
@@ -34,17 +34,17 @@ export const useGetNfcAnalytics = (cardId: string, pageNumber = 1, pageSize = 10
 /**
  * Hook to get profile view analytics for a specific member.
  */
-export const useGetProfileAnalytics = (gdgId: string, pageNumber = 1, pageSize = 10) => {
+export const useGetProfileAnalytics = (gdgId: string, days = 7, pageNumber = 1, pageSize = 10) => {
   const callEndpoint = useCallEndpointWithToken();
   return useQuery({
-    queryKey: ["analytics", "profile-views", gdgId, pageNumber, pageSize],
+    queryKey: ["analytics", "profile-views", gdgId, days, pageNumber, pageSize],
     queryFn: async () => {
       const res = await callEndpoint(
         configs.nexusApiBaseUrl,
         contract.api.v1.analytics.profile_views.gdgId.GET,
         {
           params: { gdgId },
-          query: { pageNumber, pageSize },
+          query: { pageNumber, pageSize, days } as any,
         },
       );
 

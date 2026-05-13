@@ -148,7 +148,7 @@ export function EventsSection({ randomSeed }: { randomSeed?: number }) {
               gradient="white-blue"
               align="center"
               weight="bold"
-              className="text-[1.7rem] sm:text-[2.15rem] leading-tight whitespace-nowrap md:text-[3.5rem]"
+              className="text-[1.85rem] sm:text-[2.15rem] leading-tight whitespace-nowrap md:text-[3.5rem]"
             >
               EVENTS CALENDAR
             </Text>
@@ -180,7 +180,7 @@ export function EventsSection({ randomSeed }: { randomSeed?: number }) {
               gradient="white-blue"
               align="center"
               weight="bold"
-              className="text-[1.7rem] sm:text-[2.15rem] leading-tight whitespace-nowrap md:text-[3.5rem]"
+              className="text-[1.85rem] sm:text-[2.15rem] leading-tight whitespace-nowrap md:text-[3.5rem]"
             >
               EVENTS GALLERY
             </Text>

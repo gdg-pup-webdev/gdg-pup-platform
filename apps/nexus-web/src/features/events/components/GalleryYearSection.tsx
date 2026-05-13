@@ -15,7 +15,8 @@ type GalleryYearSectionProps = {
   yearParam: string;
 };
 
-const FALLBACK_COVER = "/pages/events/event-cover.webp";
+const FALLBACK_COVER =
+  "https://res.cloudinary.com/startup-grind/image/upload/c_scale,w_2560/c_crop,h_640,w_2560,y_0.0_mul_h_sub_0.0_mul_640/c_crop,h_640,w_2560/c_fill,dpr_2.0,f_auto,g_center,q_auto:good/v1/gcs/platform-data-goog/event_banners/GDG_Bevy_DefaultEventBanner_VKOwYjb.png";
 
 function getHighlightsRouteId(event: Event): string {
   const candidate =
@@ -85,6 +86,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
     data: events,
     error: errorMessage,
     isLoading,
+    isFetching,
   } = useEvents({ year: parsedYear, pageSize });
 
   const visibleItems = useMemo(() => {
@@ -221,7 +223,8 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
 
       <Container className="relative z-10">
         <Stack gap="xl" className="md:gap-2xl">
-          <Link prefetch={false}
+          <Link
+            prefetch={false}
             href="/events#events-gallery"
             className="inline-flex items-center gap-2 text-white/85 hover:text-white transition-colors text-sm md:text-base w-fit"
           >
@@ -269,7 +272,10 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="animate-pulse">
                   {/* One big rectangle skeleton */}
-                  <BrandedSkeleton className="h-[220px] md:h-[560px] w-full rounded-2xl" withGradientRing />
+                  <BrandedSkeleton
+                    className="h-[220px] md:h-[560px] w-full rounded-2xl"
+                    withGradientRing
+                  />
 
                   <div className="mt-5 md:mt-7 space-y-6">
                     {/* Big text skeleton like a title */}
@@ -278,7 +284,10 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                     </div>
                     {/* Event details */}
                     <div className="flex flex-nowrap items-center justify-center gap-2 md:gap-5">
-                      <BrandedSkeleton className="h-4 w-12 md:w-16" variant="chip" />
+                      <BrandedSkeleton
+                        className="h-4 w-12 md:w-16"
+                        variant="chip"
+                      />
                       <BrandedSkeleton className="h-4 w-24 md:w-32 rounded-lg" />
                       <BrandedSkeleton className="h-4 w-16 md:w-20 rounded-lg" />
                     </div>
@@ -291,7 +300,11 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                     </div>
 
                     {/* Rectangle skeleton at the bottom (button) */}
-                    <BrandedSkeleton className="h-10 md:h-11 w-full rounded-md mt-6 md:mt-7" variant="button" withGradientRing />
+                    <BrandedSkeleton
+                      className="h-10 md:h-11 w-full rounded-md mt-6 md:mt-7"
+                      variant="button"
+                      withGradientRing
+                    />
                   </div>
                 </div>
               ))}
@@ -320,7 +333,7 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                 />
               </div>
             </div>
-          ) : (visibleItems.length === 0 && !isLoading) ? (
+          ) : visibleItems.length === 0 && !isLoading ? (
             <div className="flex flex-col items-center py-10 md:py-14 gap-6">
               <Text
                 variant="heading-5"
@@ -364,14 +377,16 @@ export function GalleryYearSection({ yearParam }: GalleryYearSectionProps) {
                   <article
                     key={`${event.id}-${event.start_date}-${event.title}`}
                   >
-                    <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black min-h-[220px] md:min-h-[560px]">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-black/50 w-full flex items-center justify-center">
                       <img
-                        src={event.image_url || event.images?.[0] || FALLBACK_COVER}
+                        src={
+                          event.image_url || event.images?.[0] || FALLBACK_COVER
+                        }
                         alt={event.title}
-                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        className="w-full h-auto max-h-[75vh] object-contain object-center block"
                         draggable={false}
                       />
-                      <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent pointer-events-none" />
                     </div>
 
                     <div className="mt-5 md:mt-7">

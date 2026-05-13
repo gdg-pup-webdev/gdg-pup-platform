@@ -33,7 +33,7 @@ export const EmailChangeFlow = () => {
   const handleInitiate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await initiateEmailChange({ data: { email, pass: password, newEmail } });
+      const res = await initiateEmailChange({ data: { email, password: password, newEmail } });
       if (res?.data?.referenceCode) {
         setReferenceCode(res.data.referenceCode);
         setStep(2);

@@ -336,13 +336,26 @@ export function ArticlePreview({ articleId }: ArticleDetailsModalProps) {
           <div className="p-6 md:p-12 lg:p-16">
             {/* ── Top navigation bar ── */}
             <div className="flex items-center justify-between mb-12 text-sm font-medium">
-              <button
-                type="button"
-                onClick={handleBack}
-                className="flex items-center gap-2 text-gray-400 hover:text-white transition-all"
-              >
-                Back
-              </button>
+              <div className="flex flex-row gap-2 items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="h-4 w-4"
+                  aria-hidden="true"
+                >
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="flex items-center gap-2 text-gray-400 hover:text-white transition-all"
+                >
+                  Back
+                </button>
+              </div>
               <span className="text-gray-500 bg-white/5 px-3 py-1 rounded-full border border-white/10">
                 {colors.year} • {readTime} min read
               </span>

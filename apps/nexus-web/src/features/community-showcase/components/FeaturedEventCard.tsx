@@ -61,7 +61,7 @@ const TRUNCATED_ABOUT =
           className="z-10"
           style={{ textShadow: '0 0 20px rgba(0,0,0,1), 0 2px 10px rgba(0,0,0,0.9)' }}
         >
-          {new Date(event.end_date).toLocaleString("en-US", {
+          {new Date(event.start_date).toLocaleString("en-US", {
             month: "long",
             day: "numeric",
             year: "numeric",
@@ -85,14 +85,14 @@ const TRUNCATED_ABOUT =
       <div className="relative mt-15 flex w-full justify-center z-10">
         <Card
           variant="default"
-          className="w-full h-[clamp(200px,25vw,360px)] rounded-[32px] max-w-none p-1 bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] overflow-hidden bg-transparent! border-0! z-10 transform transition-transform duration-1000 ease-out hover:rotate-[-1deg]"
+          className="w-full h-auto rounded-[32px] max-w-none p-1 bg-[linear-gradient(135deg,#EA4335,#F9AB00,#34A853,#4285F4)] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.40)] overflow-hidden bg-transparent! border-0! z-10 transform transition-transform duration-1000 ease-out hover:rotate-[-1deg]"
           onMouseEnter={() => setIsCardHovered(true)}
           onMouseLeave={() => setIsCardHovered(false)}
         >
           <img
             src={event.image_url || event.images?.[0] || ASSETS.PLACEHOLDERS.DEFAULT}
             alt=""
-            className="w-full h-full object-cover rounded-[30px]"
+            className="w-full h-auto rounded-[30px]"
           />
         </Card>
       </div>

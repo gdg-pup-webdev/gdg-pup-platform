@@ -539,11 +539,11 @@ export function ProfileOwnerView({
 
         <div className="relative z-10 mx-auto grid w-full max-w-325 gap-6 lg:grid-cols-[1fr_380px] lg:items-start">
           <FadeInSection className="min-w-0 p-0" delay={0.02}>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <Text variant="heading-5" className="text-white">
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3 mb-8 sm:mb-0">
+              <Text variant="heading-5" className="text-white text-center sm:text-left">
                 My Portfolio
               </Text>
-              <div className="flex items-center gap-2" role="group" aria-label="Portfolio actions">
+              <div className="flex flex-wrap justify-center items-center gap-2 sm:justify-end" role="group" aria-label="Portfolio actions">
                 <Link prefetch={false} href="/sparkmates/me/analytics">
                   <Button
                     variant="colored"
