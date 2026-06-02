@@ -13,10 +13,10 @@
   "dependencies": {
     "@packages/typed-rest": "workspace:*",
     "bcrypt": "^6.0.0",
-    "concurrently": "9.2.1",
+    "concurrently": "10.0.3",
     "express": "5.2.1",
     "supazod": "^4.5.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@configs/typescript-config": "workspace:*",
@@ -24,8 +24,8 @@
     "chokidar": "^5.0.0",
     "supabase": "2.70.5",
     "ts-node": "10.9.2",
-    "tsc-alias": "1.8.16",
-    "tsx": "4.21.0",
+    "tsc-alias": "1.8.17",
+    "tsx": "4.22.4",
     "typescript": "5.9.3"
   }
 }
