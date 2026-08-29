@@ -13,7 +13,7 @@
   "dependencies": {
     "@packages/typed-rest": "workspace:*",
     "bcrypt": "^6.0.0",
-    "concurrently": "9.2.1",
+    "concurrently": "10.0.3",
     "express": "5.2.1",
     "supazod": "^4.5.0",
     "zod": "^4.3.6"
