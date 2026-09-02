@@ -23,3 +23,8 @@ Do not auto-load `docs/archive/`. Do not invent a business FMD suite (no BRD / U
 ## Ownership
 
 Owner: GDG PUP Technology (incoming CTO). Handover 2026-09-02. Outgoing CTO: Carlos Jerico Dela Torre.
+## FMD
+
+**Built on FMD philosophy (v1.31.0)** - INDEX / STATE / FLAGS control plane for humans and AI; no FMD engine install.
+
+Read order stays: docs/state.md then docs/index.md then FLAGS.md then task docs.
