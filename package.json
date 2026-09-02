@@ -21,7 +21,8 @@
     "test": "turbo run test --filter=!identity-api",
     "scan:dep": "tsx scripts/deprecated-scanner/deprecated-scanner.ts",
     "gcs:test": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts",
-    "gcs:test:keep": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts --keep"
+    "gcs:test:keep": "tsx --env-file=apps/nexus-api/.env scripts/gcs-local-test.ts --keep",
+    "article:seen": "tsx --env-file=apps/nexus-api/.env scripts/publish-seen-article.ts"
   },
   "devDependencies": {
     "@types/react": "^19.2.8",

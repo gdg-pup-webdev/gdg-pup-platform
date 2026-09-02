@@ -19,8 +19,6 @@ Welcome to the **GDG PUP Platform** – a modern, full-stack monorepo built with
 
 Get the platform running on your local machine in under 5 minutes.
 
-Get the platform running on your local machine in under 5 minutes.
-
 ### Prerequisites
 
 - **Node.js** (v20+) – [Download here](https://nodejs.org/)
@@ -197,4 +195,39 @@ docker compose down
 ---
 
 _Maintained with ❤️ by the GDG PUP Team_
-_Maintained with ❤️ by the GDG PUP Team_
+
+---
+
+## Documentation
+
+- [docs/state.md](docs/state.md) - Operating position / handover
+- [docs/index.md](docs/index.md) - Doc inventory
+- [FLAGS.md](FLAGS.md) - Improvement register
+- [AGENTS.md](AGENTS.md) - Agent load order
+
+## Contributors
+
+This project is made possible by the GDG PUP community:
+
+| Role | Name |
+| --- | --- |
+| 💻 **Development** | [Aidan Tiu](https://www.linkedin.com/in/aidan-tiu-58650520b) - DevOps |
+| 💻 **Development** | [Daniella Simara](https://www.linkedin.com/in/daniella-simara) - Senior Frontend Developer |
+| 💻 **Development** | [David Gabriel](https://www.linkedin.com/in/david-gabriel-494308371) - Frontend Developer |
+| 💻 **Development** | [E-jay Pascua Detera](https://www.linkedin.com/in/e-jay-detera-56221532b) - Frontend Developer |
+| 💻 **Development** | [Erwin Daguinotas](https://www.linkedin.com/in/erwin-daguinotas) - Web Development Lead |
+| 💻 **Development** | [Francen Venisse Red](https://www.linkedin.com/in/francen-venisse-red-1021r2005) - Frontend Developer |
+| 💻 **Development** | [Gabriel Nicolai Pelagio](https://www.linkedin.com/in/gabriel-nicolai-pelagio) - Frontend Developer |
+| 💻 **Development** | [Gerald Berongoy](https://www.linkedin.com/in/geraldberongoy) - Senior Backend Developer / Web Development Learning Head |
+| 💻 **Development** | [James Gabriele Torzar](https://www.linkedin.com/in/4regab) - Cloud Solutions / Front End |
+| 💻 **Development** | [Justin Royse L. Solomon](https://www.linkedin.com/in/justin-royse-solomon) - Cloud Solutions / Front End |
+| 💻 **Development** | [Keith Justine A. Virgenes](https://www.linkedin.com/in/keith-justine-virgenes-749225302) - Backend Developer / QA |
+| 💻 **Development** | [Kian Angelo M. Florendo](https://www.linkedin.com/in/kian-angelo-florendo-b8ab82378) - Data Quality Analyst and Frontend |
+| 💻 **Development** | [Kyla Marie A. Agapito](https://www.linkedin.com/in/kyla-marie-agapito) - Cloud Solutions / DevOps |
+| 💻 **Development** | [Mobaraq Camar](https://www.linkedin.com/in/mobaraq-camar-6858b426a) - Frontend Developer |
+| 💻 **Development** | [Reynard John B. Rabanal](https://www.linkedin.com/in/reynard-john-b-rabanal-88893837a) - Frontend Dev |
+| 💻 **Development** | [Rhandie Sales](https://www.linkedin.com/in/rhandie-sales) - Senior Frontend Developer / Web Development Co Lead |
+| 💻 **Development** | Carl Fernandez |
+| 💻 **Development** | [Charles Stephen Ganade](https://www.linkedin.com/in/charles-stephen-ganade/) - Frontend Developer |
+| 💻 **Development** | matt |
+| 💻 **Development** | Randall Graida |

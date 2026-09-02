@@ -13,11 +13,8 @@ export class GdgMembersRouter {
      * PUBLIC ROUTES 
      */
     this.router.get("/", this.controller.get);
+    this.router.get("/suggested-users", this.controller.getSuggestedUsers);
     this.router.get("/:gdgId", this.controller.getIdGet);
-    this.router.get(
-      "/:gdgId/suggested-users",
-      this.controller.getIdSuggestedUsers,
-    );
     this.router.get("/:gdgId/nfc-card", this.controller.getNfcCardOfUser);
 
     /**
