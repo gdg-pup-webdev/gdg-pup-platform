@@ -1,10 +1,16 @@
 # GDG PUP Platform
 
+[![Status: Operate](https://img.shields.io/badge/Status-Operate-green)](docs/state.md)
+[![Stack: Next.js](https://img.shields.io/badge/Stack-Next.js-black)](#quick-start)
+[![FMD philosophy: 1.31.0](https://img.shields.io/badge/FMD%20philosophy-1.31.0-blue)](AGENTS.md)
+
+
 Welcome to the **GDG PUP Platform** - a modern, full-stack monorepo built with end-to-end type safety, contract-first architecture, and a unified development workflow.
 
 ## Table of Contents
 
 - [About](#about)
+- [Start here](#start-here)
 - [Quick start](#quick-start)
 - [Developer Onboarding](#developer-onboarding)
 - [Coding Guidelines](#coding-guidelines)
@@ -24,6 +30,12 @@ GDG PUP Platform (Nexus) is the flagship monorepo for GDG on Campus PUP: Nexus W
 2. **[Developer Onboarding](#developer-onboarding)** - Learn our architecture and practices
 3. **[Coding Guidelines](#coding-guidelines)** - Understand our development standards
 4. **[Start Contributing](#contributing)** - Begin making contributions
+
+## Start here
+
+- **Humans:** this README, then [docs/state.md](docs/state.md)
+- **Agents:** [AGENTS.md](AGENTS.md) (state → index → FLAGS)
+- **Contributors:** table below
 
 ## Quick start
 
@@ -204,27 +216,29 @@ _Maintained with ❤️ by the GDG PUP Team_
 
 ## Contributors
 
-This project is made possible by the GDG PUP community:
+This project is made possible by the GDG PUP community.
 
-| Role | Name |
-| --- | --- |
-| 💻 **Development** | [Aidan Tiu](https://www.linkedin.com/in/aidan-tiu-58650520b) - DevOps |
-| 💻 **Development** | [Daniella Simara](https://www.linkedin.com/in/daniella-simara) - Senior Frontend Developer |
-| 💻 **Development** | [David Gabriel](https://www.linkedin.com/in/david-gabriel-494308371) - Frontend Developer |
-| 💻 **Development** | [E-jay Pascua Detera](https://www.linkedin.com/in/e-jay-detera-56221532b) - Frontend Developer |
-| 💻 **Development** | [Erwin Daguinotas](https://www.linkedin.com/in/erwin-daguinotas) - Web Development Lead |
-| 💻 **Development** | [Francen Venisse Red](https://www.linkedin.com/in/francen-venisse-red-1021r2005) - Frontend Developer |
-| 💻 **Development** | [Gabriel Nicolai Pelagio](https://www.linkedin.com/in/gabriel-nicolai-pelagio) - Frontend Developer |
-| 💻 **Development** | [Gerald Berongoy](https://www.linkedin.com/in/geraldberongoy) - Senior Backend Developer / Web Development Learning Head |
-| 💻 **Development** | [James Gabriele Torzar](https://www.linkedin.com/in/4regab) - Cloud Solutions / Front End |
-| 💻 **Development** | [Justin Royse L. Solomon](https://www.linkedin.com/in/justin-royse-solomon) - Cloud Solutions / Front End |
-| 💻 **Development** | [Keith Justine A. Virgenes](https://www.linkedin.com/in/keith-justine-virgenes-749225302) - Backend Developer / QA |
-| 💻 **Development** | [Kian Angelo M. Florendo](https://www.linkedin.com/in/kian-angelo-florendo-b8ab82378) - Data Quality Analyst and Frontend |
-| 💻 **Development** | [Kyla Marie A. Agapito](https://www.linkedin.com/in/kyla-marie-agapito) - Cloud Solutions / DevOps |
-| 💻 **Development** | [Mobaraq Camar](https://www.linkedin.com/in/mobaraq-camar-6858b426a) - Frontend Developer |
-| 💻 **Development** | [Reynard John B. Rabanal](https://www.linkedin.com/in/reynard-john-b-rabanal-88893837a) - Frontend Dev |
-| 💻 **Development** | [Rhandie Sales](https://www.linkedin.com/in/rhandie-sales) - Senior Frontend Developer / Web Development Co Lead |
-| 💻 **Development** | Carl Fernandez |
-| 💻 **Development** | [Charles Stephen Ganade](https://www.linkedin.com/in/charles-stephen-ganade/) - Frontend Developer |
-| 💻 **Development** | matt |
-| 💻 **Development** | Randall Graida |
+| Name | Role | GitHub |
+| --- | --- | --- |
+| [Carlos Jerico Dela Torre](https://www.linkedin.com/in/delatorrecj) | Chief Technology Officer (2025-2026) | [@delatorrecj](https://github.com/delatorrecj) |
+| [Aidan Tiu](https://www.linkedin.com/in/aidan-tiu-58650520b) | DevOps | [@aidantiu](https://github.com/aidantiu) |
+| [Charles Stephen Ganade](https://www.linkedin.com/in/charles-stephen-ganade) | Frontend Developer | [@Charles-Ganade](https://github.com/Charles-Ganade) |
+| [Daniella Simara](https://www.linkedin.com/in/daniella-simara) | Senior Frontend Developer | [@dmsimara](https://github.com/dmsimara) |
+| [David Gabriel](https://www.linkedin.com/in/david-gabriel-494308371) | Frontend Developer | [@djgab16](https://github.com/djgab16) |
+| [E-jay Pascua Detera](https://www.linkedin.com/in/e-jay-detera-56221532b) | Frontend Developer | [@ejay-detera](https://github.com/ejay-detera) |
+| [Erwin Daguinotas](https://www.linkedin.com/in/erwin-daguinotas) | Web Development Lead | [@SauceCode01](https://github.com/SauceCode01) |
+| [Francen Venisse Red](https://www.linkedin.com/in/francen-venisse-red-1021r2005) | Frontend Developer | [@Francen-Red](https://github.com/Francen-Red) |
+| [Gabriel Nicolai Pelagio](https://www.linkedin.com/in/gabriel-nicolai-pelagio) | Frontend Developer | [@gabiuz](https://github.com/gabiuz) |
+| [Gerald Berongoy](https://www.linkedin.com/in/geraldberongoy) | Senior Backend Developer / Web Development Learning Head | [@geraldsberongoy](https://github.com/geraldsberongoy) |
+| [James Gabriele Torzar](https://www.linkedin.com/in/4regab) | Cloud Solutions / Front End | [@4regab](https://github.com/4regab) |
+| [Justin Royse L. Solomon](https://www.linkedin.com/in/justin-royse-solomon) | Cloud Solutions / Front End | [@Justinroyse](https://github.com/Justinroyse) |
+| [Keith Justine A. Virgenes](https://www.linkedin.com/in/keith-justine-virgenes-749225302) | Backend Developer / QA | [@jhonkeithman123](https://github.com/jhonkeithman123) |
+| [Kian Angelo M. Florendo](https://www.linkedin.com/in/kian-angelo-florendo-b8ab82378) | Data Quality Analyst and Frontend | [@kianflorendo](https://github.com/kianflorendo) |
+| [Kyla Marie A. Agapito](https://www.linkedin.com/in/kyla-marie-agapito) | Cloud Solutions / DevOps | [@KylaAgapito](https://github.com/KylaAgapito) |
+| [Mobaraq Camar](https://www.linkedin.com/in/mobaraq-camar-6858b426a) | Frontend Developer | [@Zanti00](https://github.com/Zanti00) |
+| [Reynard John B. Rabanal](https://www.linkedin.com/in/reynard-john-b-rabanal-88893837a) | Frontend Dev | [@Reynard-sys](https://github.com/Reynard-sys) |
+| [Rhandie Sales](https://www.linkedin.com/in/rhandie-sales) | Senior Frontend Developer / Web Development Co Lead | [@r0undy](https://github.com/r0undy) |
+| Carl Fernandez | Development |  |
+| matt | Development |  |
+| Randall Graida | Development |  |
+
