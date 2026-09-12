@@ -20,9 +20,9 @@
   },
   "devDependencies": {
     "@configs/typescript-config": "workspace:*",
-    "@types/node": "25.0.3",
+    "@types/node": "26.1.2",
     "chokidar": "^5.0.0",
-    "supabase": "2.70.5",
+    "supabase": "2.111.0",
     "ts-node": "10.9.2",
     "tsc-alias": "1.8.16",
     "tsx": "4.21.0",
