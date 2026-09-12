@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets' || 'Dev Secrets' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
       - uses: ./.github/deployments
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets' || 'Dev Secrets' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
       - uses: ./.github/deployments
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ needs.detect-changes.outputs.environment == 'prod' && 'Prod Secrets' || needs.detect-changes.outputs.environment == 'staging' && 'Staging Secrets' || 'Dev Secrets' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.triggered_sha || github.event.inputs.test_ref || github.sha }}
       - uses: ./.github/deployments

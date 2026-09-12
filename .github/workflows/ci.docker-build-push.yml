@@ -45,7 +45,7 @@ jobs:
     # Always rebuild on release branch push; selective only for manual dispatch
     if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-web == 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
       - uses: ./.github/builds
@@ -71,7 +71,7 @@ jobs:
     # Always rebuild on release branch push; selective only for manual dispatch
     if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-admin-web == 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
       - uses: ./.github/builds
@@ -95,7 +95,7 @@ jobs:
     # Always rebuild on release branch push; selective only for manual dispatch
     if: ${{ github.event_name == 'workflow_run' || needs.detect-changes.outputs.nexus-api == 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
       - uses: ./.github/builds
