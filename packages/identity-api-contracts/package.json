@@ -16,7 +16,7 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.4.0",
     "@packages/typed-rest": "workspace:*",
-    "concurrently": "9.2.1",
+    "concurrently": "10.0.3",
     "supazod": "^4.5.0",
     "zod": "^4.3.2"
   },
