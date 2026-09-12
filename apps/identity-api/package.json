@@ -17,7 +17,7 @@
   "dependencies": {
     "@packages/identity-api-contracts": "workspace:*",
     "@packages/typed-rest": "workspace:*",
-    "@supabase/supabase-js": "^2.86.0",
+    "@supabase/supabase-js": "^2.106.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
