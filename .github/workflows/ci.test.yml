@@ -2,9 +2,9 @@ name: CI Build & Test
 
 on:
   push:
-    branches: [deploy-develop, staging, main]
+    branches: [dev, deploy-develop, staging, main]
   pull_request:
-    branches: [staging, main]
+    branches: [dev, staging, main]
 
 concurrency:
   group: test-${{ github.ref }}
