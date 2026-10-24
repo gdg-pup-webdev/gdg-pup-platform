@@ -2,6 +2,16 @@
 
 Welcome to the **GDG PUP Platform** documentation hub. This directory contains all guides, references, and resources for developers working on the platform.
 
+## Project overview drafts
+
+The Google Doc draft is available as three Markdown snapshots:
+
+- [Current features](./current-features.md): implemented capabilities and validation limits.
+- [Future features](./future-features.md): unfinished work, proposed additions, and IoT NFC scanning with event attendance points.
+- [Current architecture](./current-architecture.md): applications, shared packages, request flows, and development conventions.
+
+These snapshots were exported on 2026-10-19; assessment dates and validation limits are stated in each file. They do not synchronize automatically with the Google Doc. See [the documentation index](./index.md) for the complete inventory.
+
 ---
 
 ## 📚 Documentation Structure
