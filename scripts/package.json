@@ -1,0 +1,17 @@
+{
+  "name": "gdg-event-scraper",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone dependencies for the scheduled GDG event scraper (scripts/sync-gdg-events.ts). Isolated from the pnpm workspace so the scheduled job installs reproducibly with npm ci.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "scrape": "tsx sync-gdg-events.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "dotenv": "^18.0.9",
+    "tsx": "^4.23.15"
+  }
+}
