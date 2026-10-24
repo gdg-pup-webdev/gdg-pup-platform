@@ -2,7 +2,7 @@
 
 **Project slug:** `gdg-pup-platform`
 **Maintained by:** GDG PUP Technology (incoming CTO)
-**Last updated:** 2026-09-02
+**Last updated:** 2026-10-20
 **Built on FMD philosophy (v1.31.0)** - INDEX / STATE / FLAGS control plane for humans and AI; no FMD engine install.
 
 **Operating position:** [state.md](state.md) - read that first.
@@ -14,12 +14,18 @@ List only artifacts that exist.
 | Artifact | File | Version | Status | Last Updated | Last Reconciled |
 | --- | --- | --- | --- | --- | --- |
 | STATE | [state.md](state.md) | 1.0 | Current | 2026-09-02 | 2026-09-02 |
-| FLAGS | [../FLAGS.md](../FLAGS.md) | 1.0 | Current | 2026-09-02 | 2026-09-02 |
+| FLAGS | [../FLAGS.md](../FLAGS.md) | 1.0 | Current | 2026-10-20 | 2026-10-20 |
 | AGENTS | [../AGENTS.md](../AGENTS.md) | 1.0 | Current | 2026-09-02 | 2026-09-02 |
 | README | [../README.md](../README.md) | - | Current | 2026-09-02 | 2026-09-02 |
 | Doc | [ARCHITECTURE.md](ARCHITECTURE.md) | - | Current | - | 2026-09-02 |
 | Doc | [DATABASE.md](DATABASE.md) | - | Current | - | 2026-09-02 |
 | Doc | [README.md](README.md) | - | Current | - | 2026-09-02 |
+| Doc | [current-features.md](current-features.md) | 1.0 | Draft snapshot | 2026-10-19 | 2026-10-19 |
+| Doc | [future-features.md](future-features.md) | 1.0 | Draft snapshot | 2026-10-19 | 2026-10-19 |
+| Doc | [current-architecture.md](current-architecture.md) | 1.0 | Draft snapshot | 2026-10-19 | 2026-10-19 |
+| Doc | [cicd-and-setup-hardening-plan.md](cicd-and-setup-hardening-plan.md) | 1.0 | Proposed; implementation pending | 2026-10-20 | 2026-10-20 |
+| Doc | [cicd-and-setup-improvement-sequencing.md](cicd-and-setup-improvement-sequencing.md) | 1.0 | Proposed; implementation pending | 2026-10-20 | 2026-10-20 |
+| Doc | [cicd-and-setup-implementation-plan.md](cicd-and-setup-implementation-plan.md) | 1.0 | Proposed; execution not started | 2026-10-20 | 2026-10-20 |
 | Doc | [CodingGuidelines/101-ApiUtilities.md](CodingGuidelines/101-ApiUtilities.md) | - | Current | - | 2026-09-02 |
 | Doc | [CodingGuidelines/102-LayeredArchitecture.md](CodingGuidelines/102-LayeredArchitecture.md) | - | Current | - | 2026-09-02 |
 | Doc | [CodingGuidelines/103-ContractFirstDevelopment.md](CodingGuidelines/103-ContractFirstDevelopment.md) | - | Current | - | 2026-09-02 |
